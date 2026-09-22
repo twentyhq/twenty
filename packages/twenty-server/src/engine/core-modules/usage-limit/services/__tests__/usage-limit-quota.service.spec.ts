@@ -137,7 +137,13 @@ describe('UsageLimitQuotaService', () => {
       ALLOWANCE_PERIOD,
     );
     creditAllowanceProvider.getCreditAllowance.mockResolvedValue(
-      allowanceMicro === null ? null : { ...ALLOWANCE_PERIOD, allowanceMicro },
+      allowanceMicro === null
+        ? null
+        : {
+            ...ALLOWANCE_PERIOD,
+            allowanceMicro,
+            validUntil: ALLOWANCE_PERIOD.periodEnd,
+          },
     );
   };
 
@@ -287,6 +293,25 @@ describe('UsageLimitQuotaService', () => {
     ]);
   });
 
+  it('expires a warm allowance counter with the earliest lapsing grant', async () => {
+    const validUntil = new Date(Date.now() + 60_000);
+
+    setAllowance(100);
+    creditAllowanceProvider.getCreditAllowance.mockResolvedValue({
+      ...ALLOWANCE_PERIOD,
+      allowanceMicro: 100,
+      validUntil,
+    });
+    cacheStorage.mget.mockResolvedValue([undefined]);
+
+    await assertQuotaNotExhausted();
+
+    const [[entries]] = cacheStorage.mset.mock.calls;
+
+    expect(entries[0].ttl).toBeLessThanOrEqual(60_000);
+    expect(entries[0].ttl).toBeGreaterThan(0);
+  });
+
   it('scopes a spent allowance counter over the live allowance', async () => {
     setAllowance(2_000_000);
     cacheStorage.mget.mockResolvedValue([0]);
@@ -332,6 +357,7 @@ describe('UsageLimitQuotaService', () => {
       allowanceMicro: 100,
       periodStart: new Date('2026-09-15T09:00:00.000Z'),
       periodEnd: new Date('2100-10-15T09:00:00.000Z'),
+      validUntil: new Date('2100-10-15T09:00:00.000Z'),
     });
     cacheStorage.mget.mockResolvedValue([undefined]);
 
@@ -703,6 +729,7 @@ describe('UsageLimitQuotaService', () => {
         ...ALLOWANCE_PERIOD,
         periodStart: new Date('2026-09-15T09:00:00.000Z'),
         allowanceMicro: 2000,
+        validUntil: ALLOWANCE_PERIOD.periodEnd,
       });
       await expect(service.getAllowanceUsage('workspace-1')).resolves.toEqual({
         limitValue: 2000,

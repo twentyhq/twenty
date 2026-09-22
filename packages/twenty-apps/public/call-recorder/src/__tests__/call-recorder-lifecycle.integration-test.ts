@@ -16,6 +16,7 @@ import {
 
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
+  CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type CallRecorderPreference } from 'src/constants/call-recorder-preference';
@@ -27,6 +28,9 @@ import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/en
 import { saveCallRecordingImportProgress } from 'src/logic-functions/data/save-call-recording-import-progress.util';
 import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 import { handleCallRecordingArtifactsImportJob } from 'src/logic-functions/flows/handle-call-recording-artifacts-import-job.util';
+import { handlePreJoinCreditCheckJob } from 'src/logic-functions/flows/handle-pre-join-credit-check-job.util';
+import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
+import { PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES } from 'src/logic-functions/constants/pre-join-credit-check-lead-minutes';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
@@ -219,6 +223,12 @@ class FakeRecallApi {
   artifactImportRequests: object[] = [];
   activeArtifactJobIds = new Set<string>();
   recoveryRequests: object[] = [];
+  creditCheckRequests: object[] = [];
+  // Undefined lets the credit verdict fall through to the real server.
+  creditAvailability:
+    | { hasAvailableCredits: true }
+    | { hasAvailableCredits: false; reason: string }
+    | undefined = undefined;
   hasExpiredMedia = false;
   failNextDelete = false;
   failCalendarEventUpdates = false;
@@ -313,6 +323,13 @@ class FakeRecallApi {
     const method: string = requestInit?.method ?? 'GET';
 
     if (
+      requestUrl === `${process.env.TWENTY_API_URL}/app/billing/credits` &&
+      this.creditAvailability !== undefined
+    ) {
+      return jsonResponse(200, this.creditAvailability);
+    }
+
+    if (
       requestUrl === `${process.env.TWENTY_API_URL}/metadata` &&
       String(requestInit?.body ?? '').includes('getJobs')
     ) {
@@ -349,6 +366,11 @@ class FakeRecallApi {
         STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
       ) {
         this.recoveryRequests.push(...payloads);
+      } else if (
+        input?.logicFunctionUniversalIdentifier ===
+        CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
+      ) {
+        this.creditCheckRequests.push(...payloads);
       } else {
         this.artifactImportRequests.push(...payloads);
       }
@@ -1074,6 +1096,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.get(botId)?.metadata).toEqual(
         buildBotMetadata(callRecordingId, workspaceId),
       );
+      expect(recall.creditCheckRequests).toEqual([{ callRecordingId }]);
     });
 
     it('creates nothing for a meeting without a conference link', async () => {
@@ -1091,6 +1114,120 @@ describe('call recorder app lifecycle (integration)', () => {
           calendarEventId: { in: [calendarEventId] },
         }),
       ).toEqual([]);
+    });
+  });
+
+  describe('credit gate', () => {
+    it('cancels the scheduled bot before it joins when the workspace cannot spend credits', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      recall.creditAvailability = {
+        hasAvailableCredits: false,
+        reason: 'no-credits',
+      };
+
+      const result = await handlePreJoinCreditCheckJob(
+        recall.creditCheckRequests[0],
+      );
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(result).toEqual({
+        status: 'blocked',
+        failureReason: 'workspace_out_of_credits',
+      });
+      expect(recall.deletedBotIds).toEqual([botId]);
+      expect(callRecording.status).toBe('NOT_RECORDED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'workspace_out_of_credits',
+      );
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(callRecording.botScheduleIdempotencyKey).toBeFalsy();
+    });
+
+    it('leaves the bot alone when the workspace can spend credits', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      recall.creditAvailability = { hasAvailableCredits: true };
+
+      const result = await handlePreJoinCreditCheckJob(
+        recall.creditCheckRequests[0],
+      );
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(result).toEqual({ status: 'allowed' });
+      expect(recall.deletedBotIds).toEqual([]);
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.externalBotId).toBe(botId);
+    });
+
+    it('runs the queued check through the real worker and leaves a funded bot alone', async ({
+      skip,
+    }) => {
+      const { findManyLogicFunctions } = await new MetadataApiClient().query({
+        findManyLogicFunctions: { name: true },
+      });
+
+      if (
+        !findManyLogicFunctions.some(
+          ({ name }) => name === 'check-credits-before-recall-bot-join',
+        )
+      ) {
+        skip('the installed call recorder predates the credit check');
+      }
+
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      // The worker runs this job, so the enqueue and the job reads must reach the real server.
+      vi.unstubAllGlobals();
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+
+      const joinAt = new Date(
+        Date.now() + PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES * 60 * 1000,
+      ).toISOString();
+      const jobId = `credit-check.${callRecordingId}.${botId}.${new Date(joinAt).getTime()}`;
+
+      await enqueuePreJoinCreditCheck({
+        callRecordingId,
+        externalBotId: botId,
+        joinAt,
+      });
+
+      await expect
+        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+        .toMatchObject([{ jobId, state: 'COMPLETED' }]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.externalBotId).toBe(botId);
+    });
+
+    it('creates no bot for a meeting about to start when the workspace cannot spend credits', async () => {
+      recall.creditAvailability = {
+        hasAvailableCredits: false,
+        reason: 'no-subscription',
+      };
+      const calendarEventId = await createCalendarEvent({
+        startsAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+      });
+
+      const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+      const [callRecording] = await findCallRecordings({
+        calendarEventId: { in: [calendarEventId] },
+      });
+
+      expect(reconciliation.action).toBe('CREATED');
+      expect(callRecording.status).toBe('NOT_RECORDED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'workspace_without_subscription',
+      );
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.bots.size).toBe(0);
+      expect(recall.creditCheckRequests).toEqual([]);
     });
   });
 

@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { ApiAccessLogMiddleware } from 'src/engine/middlewares/api-access-log.middleware';
 import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
 import { MiddlewareService } from 'src/engine/middlewares/middleware.service';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
@@ -16,7 +17,15 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     JwtModule,
     UserSessionModule,
   ],
-  providers: [MiddlewareService, CookieSessionCsrfMiddleware],
-  exports: [MiddlewareService, CookieSessionCsrfMiddleware],
+  providers: [
+    MiddlewareService,
+    CookieSessionCsrfMiddleware,
+    ApiAccessLogMiddleware,
+  ],
+  exports: [
+    MiddlewareService,
+    CookieSessionCsrfMiddleware,
+    ApiAccessLogMiddleware,
+  ],
 })
 export class MiddlewareModule {}

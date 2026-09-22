@@ -376,7 +376,7 @@ const createPolicyManagedCallRecording = async ({
   }
 
   // Winning the deterministic-id insert elects this run as the single writer that creates the bot.
-  const didScheduleBot = await scheduleRecallBotForCallRecording(client, {
+  const scheduleResult = await scheduleRecallBotForCallRecording(client, {
     callRecording: {
       id: callRecordingId,
       ...scheduledFields,
@@ -384,7 +384,11 @@ const createPolicyManagedCallRecording = async ({
     calendarEvent: representativeCalendarEvent,
   });
 
-  if (!didScheduleBot && process.env.NODE_ENV !== 'test') {
+  if (
+    scheduleResult.status !== 'scheduled' &&
+    scheduleResult.status !== 'blocked' &&
+    process.env.NODE_ENV !== 'test'
+  ) {
     console.warn(
       `[call-recorder] created callRecording ${callRecordingId}, but did not schedule a Recall bot`,
     );

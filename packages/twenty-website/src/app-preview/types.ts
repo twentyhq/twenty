@@ -2,7 +2,6 @@
 
 export type CellText = {
   type: 'text';
-  targetPageItemId?: string;
   value: string;
   shortLabel?: string;
   tone?: string;
@@ -64,6 +63,9 @@ export type ColumnDef = {
   label: string;
   width: number;
   align?: 'left' | 'right';
+  // Set when the field name is shared across objects (every object's label
+  // identifier is `name`), so the header still shows the object's own icon.
+  icon?: string;
   isFirstColumn?: boolean;
 };
 export type RowDef = {
@@ -74,10 +76,7 @@ export type RowDef = {
 export type NavbarAction = {
   icon: string;
   label?: string;
-  trailingLabel?: string;
-  labelTone?: 'primary' | 'secondary' | 'tertiary';
   variant?: 'icon';
-  desktopOnly?: boolean;
 };
 
 export type PageHeader = {
@@ -156,7 +155,6 @@ export type WorkflowPageDefinition = {
   generating?: boolean;
   header: PageHeader;
   nodes?: WorkflowNodeDef[];
-  plusNode?: { x: number; y: number };
   type: 'workflow';
 };
 

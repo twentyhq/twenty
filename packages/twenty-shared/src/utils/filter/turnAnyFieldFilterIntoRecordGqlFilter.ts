@@ -82,6 +82,17 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
         } satisfies RecordFilter);
         break;
       }
+      case FieldMetadataType.ACTOR: {
+        anyFieldRecordFilters.push({
+          ...createAnyFieldRecordFilterBaseProperties({
+            filterValue,
+            fieldMetadataItem: field,
+          }),
+          operand: ViewFilterOperand.CONTAINS,
+          type: 'ACTOR',
+        } satisfies RecordFilter);
+        break;
+      }
       case FieldMetadataType.ARRAY: {
         anyFieldRecordFilters.push({
           ...createAnyFieldRecordFilterBaseProperties({
