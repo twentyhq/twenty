@@ -12,6 +12,8 @@ export const listItemTest: TwentyUiGalleryPlayFunction = async ({
 
   const digest = canvas.getByText('Weekly digest');
 
+  expect(digest).toHaveAttribute('title', 'Weekly digest');
+
   await userEvent.click(digest);
   await waitFor(() =>
     expect(canvas.getByRole('status')).toHaveTextContent('Digest: enabled'),
