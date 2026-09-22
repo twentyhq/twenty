@@ -1,6 +1,6 @@
 # Deferred workspace migration actions
 
-Implementation: [twentyhq/twenty#26222](https://github.com/twentyhq/twenty/pull/26222) (PR 1 of 6, behind a feature flag). In-repo copy: `packages/twenty-server/docs/DEFERRED_WORKSPACE_MIGRATION_ACTIONS.md`.
+Implementation: [twentyhq/twenty#26222](https://github.com/twentyhq/twenty/pull/26222) (PR 1 of 6, merged), [twentyhq/twenty#26371](https://github.com/twentyhq/twenty/pull/26371) (PR 2, recovery), behind a feature flag. In-repo copy: `packages/twenty-server/docs/DEFERRED_WORKSPACE_MIGRATION_ACTIONS.md`.
 
 ## Problem
 
