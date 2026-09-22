@@ -8,17 +8,11 @@ import { useFeatureSetting } from 'src/front-components/hooks/use-feature-settin
 
 export const ChatSettings = () => {
   const { t } = useTranslate();
-  const {
-    settingValue,
-    isLoading,
-    hasLoadError,
-    isSaving,
-    hasSaveError,
-    updateSetting,
-  } = useFeatureSetting({
-    variableKey: CHAT_ENABLED_APPLICATION_VARIABLE_KEY,
-    isAvailable: FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED,
-  });
+  const { settingValue, isSaving, hasSaveError, updateSetting } =
+    useFeatureSetting({
+      variableKey: CHAT_ENABLED_APPLICATION_VARIABLE_KEY,
+      isAvailable: FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED,
+    });
 
   const handleChange = (isEnabled: boolean) => {
     void updateSetting(isEnabled);
@@ -33,8 +27,6 @@ export const ChatSettings = () => {
       )}
       isAvailable={FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED}
       isEnabled={isChatEnabled(settingValue)}
-      isLoading={isLoading}
-      hasLoadError={hasLoadError}
       isSaving={isSaving}
       hasSaveError={hasSaveError}
       onChange={handleChange}
