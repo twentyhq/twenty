@@ -1,19 +1,31 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource } from 'typeorm';
+import { DataSource, type QueryRunner } from 'typeorm';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { DeferredWorkspaceMigrationActionEntity } from 'src/engine/metadata-modules/deferred-workspace-migration-action/deferred-workspace-migration-action.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-max-attempts.constant';
 import { DEFERRED_WORKSPACE_MIGRATION_ACTION_STATEMENT_TIMEOUT_MS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-statement-timeout-ms.constant';
+import { RUN_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_JOB_NAME } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/run-deferred-workspace-migration-actions-job-name.constant';
 import {
   DeferredWorkspaceMigrationActionException,
   DeferredWorkspaceMigrationActionExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
+import { type RunDeferredWorkspaceMigrationActionsJobData } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-migration-actions.job';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
+import {
+  type DeferredWorkspaceMigrationAction,
+  type PersistedDeferredWorkspaceMigrationAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
+import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 
 @Injectable()
 export class DeferredWorkspaceMigrationActionRunnerService {
@@ -26,49 +38,68 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     private readonly deferredWorkspaceMigrationActionRepository: WorkspaceScopedRepository<DeferredWorkspaceMigrationActionEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
   ) {}
 
-  async executeInProcess({
+  async persist({
     deferredActions,
     workspaceId,
     applicationUniversalIdentifier,
+    queryRunner,
   }: {
     deferredActions: DeferredWorkspaceMigrationAction[];
     workspaceId: string;
     applicationUniversalIdentifier: string;
+    queryRunner: QueryRunner;
   }): Promise<void> {
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    try {
-      const results = await Promise.allSettled(
-        deferredActions.map((deferredAction) =>
-          this.workspaceMigrationRunnerActionHandlerRegistry.executeDeferredActionHandler(
-            {
-              deferredAction,
-              workspaceId,
-              applicationUniversalIdentifier,
-              attempt: 1,
-              queryRunner,
-            },
-          ),
-        ),
-      );
-
-      results.forEach((result, index) => {
-        if (result.status === 'rejected') {
-          this.logger.warn(
-            `Deferred action ${deferredActions[index].actionHandlerKey} failed for workspace ${workspaceId}: ${
-              result.reason instanceof Error
-                ? result.reason.message
-                : String(result.reason)
-            }`,
-          );
-        }
-      });
-    } finally {
-      await queryRunner.release();
+    if (deferredActions.length === 0) {
+      return;
     }
+
+    await queryRunner.manager
+      .getRepository(DeferredWorkspaceMigrationActionEntity)
+      .save(
+        deferredActions.map(({ actionHandlerKey, payload }) => ({
+          workspaceId,
+          applicationUniversalIdentifier,
+          actionHandlerKey,
+          payload,
+        })),
+      );
+  }
+
+  async dispatchAfterCommit({
+    deferredActions,
+    hasPersistedDeferredActions,
+    workspaceId,
+    applicationUniversalIdentifier,
+    allFlatEntityMaps,
+  }: {
+    deferredActions: DeferredWorkspaceMigrationAction[];
+    hasPersistedDeferredActions: boolean;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    allFlatEntityMaps: AllFlatEntityMaps;
+  }): Promise<void> {
+    if (deferredActions.length === 0) {
+      return;
+    }
+
+    if (hasPersistedDeferredActions) {
+      await this.enqueue(workspaceId);
+
+      return;
+    }
+
+    await this.executeInProcess({
+      deferredActions,
+      workspaceId,
+      applicationUniversalIdentifier,
+      allFlatEntityMaps,
+    });
   }
 
   async runPendingActions(workspaceId: string): Promise<void> {
@@ -82,6 +113,11 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       return;
     }
 
+    const allFlatEntityMaps = await this.loadFlatEntityMaps({
+      workspaceId,
+      deferredActions: pendingActions,
+    });
+
     const deferredActionDataSource =
       await this.createDeferredActionDataSource();
     const failedActionIds: string[] = [];
@@ -90,6 +126,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       for (const pendingAction of pendingActions) {
         const hasSucceeded = await this.claimAndExecute({
           pendingAction,
+          allFlatEntityMaps,
           deferredActionDataSource,
         });
 
@@ -109,11 +146,101 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     }
   }
 
+  private async enqueue(workspaceId: string): Promise<void> {
+    try {
+      await this.messageQueueService.add<RunDeferredWorkspaceMigrationActionsJobData>(
+        RUN_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_JOB_NAME,
+        { workspaceId },
+        {
+          id: `deferred-workspace-migration-actions.${workspaceId}`,
+          retryLimit: DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS - 1,
+          backoff: {
+            strategy: 'exponential',
+            initialDelayMilliseconds: 30_000,
+          },
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to enqueue deferred workspace migration actions for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private async executeInProcess({
+    deferredActions,
+    workspaceId,
+    applicationUniversalIdentifier,
+    allFlatEntityMaps,
+  }: {
+    deferredActions: DeferredWorkspaceMigrationAction[];
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    allFlatEntityMaps: AllFlatEntityMaps;
+  }): Promise<void> {
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    try {
+      for (const deferredAction of deferredActions) {
+        try {
+          await this.workspaceMigrationRunnerActionHandlerRegistry.executeDeferredActionHandler(
+            {
+              deferredAction,
+              workspaceId,
+              applicationUniversalIdentifier,
+              allFlatEntityMaps,
+              attempt: 1,
+              queryRunner,
+            },
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Deferred action ${deferredAction.actionHandlerKey} failed for workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
+      }
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  private async loadFlatEntityMaps({
+    workspaceId,
+    deferredActions,
+  }: {
+    workspaceId: string;
+    deferredActions: Pick<
+      PersistedDeferredWorkspaceMigrationAction,
+      'actionHandlerKey'
+    >[];
+  }): Promise<AllFlatEntityMaps> {
+    const metadataNames = [
+      ...new Set(
+        deferredActions.map(({ actionHandlerKey }) =>
+          this.workspaceMigrationRunnerActionHandlerRegistry.getDeferredActionMetadataName(
+            actionHandlerKey,
+          ),
+        ),
+      ),
+    ];
+
+    return this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: getMetadataNamesToLoadForWorkspaceMigration(
+          metadataNames,
+        ).map(getMetadataFlatEntityMapsKey),
+      },
+    );
+  }
+
   private async claimAndExecute({
     pendingAction,
+    allFlatEntityMaps,
     deferredActionDataSource,
   }: {
     pendingAction: DeferredWorkspaceMigrationActionEntity;
+    allFlatEntityMaps: AllFlatEntityMaps;
     deferredActionDataSource: DataSource;
   }): Promise<boolean> {
     const { id, workspaceId } = pendingAction;
@@ -142,6 +269,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
           workspaceId,
           applicationUniversalIdentifier:
             pendingAction.applicationUniversalIdentifier,
+          allFlatEntityMaps,
           attempt,
           queryRunner,
         },

@@ -8,7 +8,7 @@ Data model changes (settings UI, metadata API, application installs) become unus
 
 ## Context
 
-A workspace migration runs every action in one Postgres transaction: `WorkspaceMigrationRunnerService.executeRun` opens it (`workspace-migration-runner.service.ts:369`), sets `lock_timeout = 8s` (`:385`) and commits once after the whole action loop (`:447`). Each action handler runs two steps inside that transaction, `executeForMetadata` and `executeForWorkspaceSchema` (`workspace-migration-runner-action-handler-service.interface.ts`).
+A workspace migration runs every action in one Postgres transaction: `WorkspaceMigrationRunnerService.executeRun` opens it (`workspace-migration-runner.service.ts:349`), sets `lock_timeout = 8s` (`:365`) and commits once after the whole action loop (`:427`). Each action handler runs two steps inside that transaction, `executeForMetadata` and `executeForWorkspaceSchema` (`workspace-migration-runner-action-handler-service.interface.ts`).
 
 Every new object gets system relations: a `target<Object>Id` join column on `timelineActivity`, `attachment`, `noteTarget` and `taskTarget` (`build-system-relation-flat-field-metadatas-for-object.util.ts`). For each one the runner issues, in the same transaction:
 
@@ -57,8 +57,8 @@ Non-goals (this doc and PR 1):
 
 `BaseWorkspaceMigrationRunnerActionHandlerService` gets two methods next to `executeForMetadata` and `executeForWorkspaceSchema`:
 
-- `getDeferredAction(context)` returns the deferred action of this action instance, typed so a handler can only return its own key, or `undefined` (default). The handler owns the decision and skips the matching inline work.
-- `executeDeferredAction({ workspaceId, applicationUniversalIdentifier, payload, attempt, queryRunner })` performs the deferred work outside any transaction. It must be idempotent and treats metadata that no longer exists as an obsolete action rather than a failure.
+- `getDeferredAction(context)` returns the deferred action of this action instance, typed so a handler can only return its own key, or `undefined` (default). The handler owns the decision and skips the matching inline work. `create_index` defers only when `IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED` is on in the `featureFlagsMap` the runner passes in the context; `delete_logicFunction` always returns its cleanup.
+- `executeDeferredAction({ workspaceId, applicationUniversalIdentifier, payload, allFlatEntityMaps, attempt, queryRunner })` performs the deferred work outside any transaction. Like transactional actions, it receives the flat entity maps it needs and never reads or recomputes the workspace cache itself. It must be idempotent and treats metadata that no longer exists as an obsolete action rather than a failure.
 
 `execute()` returns `deferredActions` next to `partialOptimisticCache` and `metadataEvents`. `afterCommitSideEffects` is removed.
 
@@ -93,8 +93,10 @@ sequenceDiagram
     end
 ```
 
-- **Flag on:** the runner inserts the collected deferred actions inside the migration transaction (`persistDeferredActions`, `workspace-migration-runner.service.ts:596`), commits, then enqueues one job for the workspace (`dispatchDeferredActions`, `:623`).
-- **Flag off:** `create_index` never defers, so only the logic function cleanup produces a deferred action, and the runner executes it in process right after commit, which is today's `afterCommitSideEffects` behavior.
+The runner delegates both steps to `DeferredWorkspaceMigrationActionRunnerService`:
+
+- **Flag on:** `persist` inserts the collected deferred actions inside the migration transaction (`workspace-migration-runner.service.ts:417`), and after commit `dispatchAfterCommit` (`:556`) enqueues one job for the workspace.
+- **Flag off:** nothing is persisted. `create_index` does not defer, so only the logic function cleanup produces a deferred action, and `dispatchAfterCommit` executes it in process right after commit, which is the previous `afterCommitSideEffects` behavior.
 
 ### Storage: `core.deferredWorkspaceMigrationAction`
 
@@ -115,11 +117,11 @@ Index on `(workspaceId, status)`. A row is deleted once its action succeeds. The
 
 1. loads the workspace's `PENDING` rows once (actions created later come with their own job);
 2. claims each row with a conditional update (`PENDING` to `IN_PROGRESS`, `attempts + 1`);
-3. resolves the handler with `actionHandlerKey` (`executeDeferredActionHandler`, registry `:106`) and calls `executeDeferredAction` on a dedicated connection without the client `query_timeout` and with a server-side `statement_timeout` of one hour, so Postgres cancels a stuck statement itself;
+3. resolves the handler with `actionHandlerKey` (`executeDeferredActionHandler`, registry `:118`) and calls `executeDeferredAction` with the flat entity maps loaded once per run through `WorkspaceManyOrAllFlatEntityMapsCacheService`, for the same metadata names the migration runner would load (`getMetadataNamesToLoadForWorkspaceMigration`), on a dedicated connection without the client `query_timeout` and with a server-side `statement_timeout` of one hour, so Postgres cancels a stuck statement itself;
 4. deletes the row on success, or sets it back to `PENDING` (`FAILED` after the last attempt) with `lastError`, then moves on to the next row;
 5. fails the job at the end if any action failed, so the queue retries it.
 
-`create_index` resolves the index from the workspace cache, recomputes the cache once on a miss, and completes as obsolete if the index is still absent. On a retry it runs `DROP INDEX CONCURRENTLY IF EXISTS` first, since a failed concurrent build leaves an invalid index behind.
+`create_index` reads the index from the maps it receives and completes as obsolete if it is absent. The maps are fresh because the runner invalidates the cache after commit, before enqueueing the job. On a retry it runs `DROP INDEX CONCURRENTLY IF EXISTS` first, since a failed concurrent build leaves an invalid index behind.
 
 ## Alternatives considered
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -7,12 +8,9 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   type FlatCreateIndexAction,
   type UniversalCreateIndexAction,
@@ -35,7 +33,6 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super();
   }
@@ -125,13 +122,20 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   override async executeDeferredAction({
     workspaceId,
     payload: { indexMetadataId },
+    allFlatEntityMaps: {
+      flatIndexMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    },
     attempt,
     queryRunner,
   }: DeferredWorkspaceMigrationActionExecutionArgs<
     DeferredWorkspaceMigrationActionPayload<'create_index'>
   >): Promise<void> {
-    const { flatIndexMetadata, flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.findIndexInWorkspaceCache({ workspaceId, indexMetadataId });
+    const flatIndexMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatIndexMaps,
+      flatEntityId: indexMetadataId,
+    });
 
     if (!isDefined(flatIndexMetadata)) {
       return;
@@ -167,64 +171,16 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     });
   }
 
-  private async findIndexInWorkspaceCache({
-    workspaceId,
-    indexMetadataId,
-  }: {
-    workspaceId: string;
-    indexMetadataId: string;
-  }): Promise<{
-    flatIndexMetadata: FlatIndexMetadata | undefined;
-    flatObjectMetadataMaps: MetadataFlatEntityMaps<'objectMetadata'>;
-    flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
-  }> {
-    const indexCacheKeys = [
-      'flatIndexMaps',
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-    ] as const;
-
-    const cachedFlatEntityMaps =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        ...indexCacheKeys,
-      ]);
-
-    const hasIndexInCache = isDefined(
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityMaps: cachedFlatEntityMaps.flatIndexMaps,
-        flatEntityId: indexMetadataId,
-      }),
-    );
-
-    if (!hasIndexInCache) {
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        ...indexCacheKeys,
-      ]);
-    }
-
-    const { flatIndexMaps, flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      hasIndexInCache
-        ? cachedFlatEntityMaps
-        : await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            ...indexCacheKeys,
-          ]);
-
-    return {
-      flatIndexMetadata: findFlatEntityByIdInFlatEntityMaps({
-        flatEntityMaps: flatIndexMaps,
-        flatEntityId: indexMetadataId,
-      }),
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    };
-  }
-
   private shouldDeferIndexCreation({
-    shouldDeferWorkspaceMigrationActions,
+    featureFlagsMap,
     allFlatEntityMaps: { flatFieldMetadataMaps },
     flatAction: { flatEntity: flatIndexMetadata },
   }: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>): boolean {
-    if (!shouldDeferWorkspaceMigrationActions) {
+    if (
+      !featureFlagsMap?.[
+        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
+      ]
+    ) {
       return false;
     }
 
