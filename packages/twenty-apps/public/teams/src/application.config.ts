@@ -46,19 +46,19 @@ export default defineApplication({
       description:
         'Application (client) ID of the Entra app registration backing the Azure Bot. Public in the Bot Framework protocol and used as the expected audience when verifying inbound activities.',
       isSecret: false,
-      isRequired: true,
+      isRequired: false,
     },
     TEAMS_BOT_APP_PASSWORD: {
       description:
         'Client secret of that Entra app registration. Stored encrypted and never exposed in API responses. Used to mint Bot Connector tokens.',
       isSecret: true,
-      isRequired: true,
+      isRequired: false,
     },
     TEAMS_BOT_TENANT_ID: {
       description:
         'Directory (tenant) ID that owns the Azure Bot. Microsoft stopped issuing multi-tenant bots after 2025-07-31, so the token endpoint is tenant-scoped rather than the shared botframework.com authority.',
       isSecret: false,
-      isRequired: true,
+      isRequired: false,
     },
   },
 });

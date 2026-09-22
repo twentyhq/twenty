@@ -53,7 +53,10 @@ foundation does not yet move the separate Teams Transcripts OAuth provider.
 ## Server variables
 
 The bot's identity is an Entra app registration behind an Azure Bot resource.
-An admin fills these in under **Settings → Applications → Microsoft Teams**.
+An admin configures these on the Teams application registration under
+**Settings → Applications**. They are optional at registration so marketplace
+listing does not depend on an Azure Bot being provisioned. Chat requires all
+three credentials before bot operations can run.
 
 | Variable                 | Secret | Where it comes from                                                                                                                                                                                               |
 | ------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
