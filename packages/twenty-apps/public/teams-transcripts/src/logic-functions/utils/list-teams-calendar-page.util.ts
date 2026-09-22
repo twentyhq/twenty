@@ -24,7 +24,8 @@ export const listTeamsCalendarPage = async ({
   const query = new URLSearchParams({
     startDateTime: window.startDateTime,
     endDateTime: window.endDateTime,
-    $select: 'isOrganizer,isCancelled,onlineMeetingProvider,onlineMeeting',
+    $select:
+      'isOrganizer,isCancelled,isOnlineMeeting,onlineMeetingProvider,onlineMeeting',
     $top: String(TEAMS_CALENDAR_PAGE_SIZE),
   });
   const page = await graphFetchJson<GraphCollectionPage<TeamsCalendarEvent>>({
