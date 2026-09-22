@@ -34,7 +34,6 @@ import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/uti
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
-import { buildQuotaExhaustedException } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
@@ -91,14 +90,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     this.creditAllowanceProvider = findCreditAllowanceProvider(
       this.discoveryService,
     );
-  }
-
-  async assertQuotaNotExhausted(args: QuotaConsumeArgs): Promise<void> {
-    const exhaustedScope = await this.findExhaustedScope(args);
-
-    if (isDefined(exhaustedScope)) {
-      throw buildQuotaExhaustedException(exhaustedScope);
-    }
   }
 
   async findExhaustedScope(
