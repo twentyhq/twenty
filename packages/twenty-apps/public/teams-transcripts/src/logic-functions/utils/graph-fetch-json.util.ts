@@ -1,4 +1,4 @@
-import { isNonEmptyString, isNumber } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import {
   GRAPH_REQUEST_MAX_ATTEMPTS,
@@ -41,7 +41,7 @@ const readRetryAfterMilliseconds = (
 ): number => {
   const retryAfterSeconds = Number(response.headers.get('Retry-After'));
 
-  return isNumber(retryAfterSeconds) && retryAfterSeconds > 0
+  return retryAfterSeconds > 0
     ? retryAfterSeconds * 1_000
     : GRAPH_REQUEST_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt;
 };
@@ -49,7 +49,7 @@ const readRetryAfterMilliseconds = (
 const buildGraphRequestError = async (
   response: Response,
 ): Promise<GraphRequestError> => {
-  const body = (await response.json().catch(() => ({}))) as GraphErrorBody;
+  const body: GraphErrorBody = await response.json().catch(() => ({}));
   const errorCode = isNonEmptyString(body.error?.code)
     ? body.error.code
     : undefined;
@@ -60,12 +60,12 @@ const buildGraphRequestError = async (
     ? body.error.message
     : response.statusText;
 
-  return new GraphRequestError(
-    `Microsoft Graph request failed (${response.status}${isNonEmptyString(innerErrorCode) ? ` ${innerErrorCode}` : ''}): ${message}`,
-    response.status,
+  return new GraphRequestError({
+    message: `Microsoft Graph request failed (${response.status}${isNonEmptyString(innerErrorCode) ? ` ${innerErrorCode}` : ''}): ${message}`,
+    status: response.status,
     errorCode,
     innerErrorCode,
-  );
+  });
 };
 
 const fetchWithRetry = async ({
@@ -112,5 +112,7 @@ export const graphFetchJson = async <TResponse>({
     attempt: 0,
   });
 
-  return (await response.json()) as TResponse;
+  const body: TResponse = await response.json();
+
+  return body;
 };

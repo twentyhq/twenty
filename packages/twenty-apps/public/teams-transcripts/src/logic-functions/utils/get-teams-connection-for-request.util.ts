@@ -21,7 +21,7 @@ export const getTeamsConnectionForRequest = async (
     );
   }
 
-  if (connection.authFailedAt) {
+  if (isDefined(connection.authFailedAt)) {
     throw new Error('Reconnect Microsoft Teams in the app settings');
   }
 
