@@ -1,4 +1,4 @@
-import { convertTipTapToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertRecordRichText';
+import { convertTipTapToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertTipTapToBlockNote';
 import { parseTipTapJsonDocument } from 'twenty-shared/utils';
 
 export const convertTipTapDocumentToBlockNote = (

@@ -1,4 +1,4 @@
-import { convertBlockNoteToTipTap } from '@/object-record/record-field/ui/form-types/utils/convertRecordRichText';
+import { convertBlockNoteToTipTap } from '@/object-record/record-field/ui/form-types/utils/convertBlockNoteToTipTap';
 import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
 import { type Content } from '@tiptap/core';
 import {
