@@ -197,6 +197,12 @@ that member's own permissions, so it can never do more than the person asking.
 Accounts with no link act with the Slack Assistant role alone, so keep it scoped
 to what you're comfortable exposing to anyone who can message the bot.
 
+A second agent, `slack-assistant-read-only`, binds to the **Slack Assistant
+(read-only)** role and answers in channels whose rule caps the assistant at
+reading (see Channel rules). That role grants reads only, so an account with no
+link cannot change anything in such a channel. A linked member still acts with
+their own permissions there.
+
 ### Channel rules
 
 The **Channels** section of the app's **Settings** tab lets a member with the
@@ -212,16 +218,23 @@ Each rule names one channel and one mode:
   empty mentions are dropped before anything visible happens in Slack, and no
   Slack Assistant Request is recorded.
 
-A channel without a rule follows the workspace access mode. Direct messages
-never carry a rule: the requester is the only person there, so the workspace
-mode applies. Rules are keyed on the Slack channel id, so renaming a channel
+Each rule also carries a capability, **Full** or **Read-only**. A read-only
+channel runs the read-only agent, so the assistant's own permissions there are
+reads only: an account with no link can look records up and answer questions but
+cannot create, update or delete anything. A linked member still acts with their
+own permissions, so read-only does not take write access away from someone who
+already has it. The capability has no effect on a silent channel.
+
+A channel without a rule follows the workspace access mode with full capability.
+Direct messages never carry a rule: the requester is the only person there, so
+the workspace mode applies. Rules are keyed on the Slack channel id, so renaming a channel
 does not affect them. Slack confirms the channel when a rule is saved, so a rule
 can only target a channel or private group, never a direct message.
 
-Rules restrict who the assistant answers, not what it can do. A linked member
-who is allowed in a channel still acts with their own permissions, and an
-unlinked account still acts with the Slack Assistant role. Each rule is stored
-as a **Slack Channel Rule** record that only the app can write.
+A rule never grants more than the requester has: a linked member who is allowed
+in a channel still acts with their own permissions, and an unlinked account acts
+with the channel's agent role alone, which read-only narrows to reads. Each rule
+is stored as a **Slack Channel Rule** record that only the app can write.
 
 ## Linking Slack accounts to workspace members
 

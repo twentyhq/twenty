@@ -5,17 +5,23 @@ import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SlackChannelPicker } from 'src/front-components/components/SlackChannelPicker';
+import { SlackChannelRuleCapabilitySelect } from 'src/front-components/components/SlackChannelRuleCapabilitySelect';
 import { SlackChannelRuleModeSelect } from 'src/front-components/components/SlackChannelRuleModeSelect';
 import { SlackPickedEntityButton } from 'src/front-components/components/SlackPickedEntityButton';
 import { SlackUserLinkFormField } from 'src/front-components/components/SlackUserLinkFormField';
 import { SlackUserLinkFormHint } from 'src/front-components/components/SlackUserLinkFormHint';
+import { SLACK_CHANNEL_RULE_CAPABILITY_DESCRIPTIONS } from 'src/front-components/constants/slack-channel-rule-capability-descriptions.constant';
 import { SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS } from 'src/front-components/constants/slack-channel-rule-mode-descriptions.constant';
 import { useSetSlackChannelRule } from 'src/front-components/hooks/use-set-slack-channel-rule';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
 import { enqueueSlackToolResultSnackbar } from 'src/front-components/utils/enqueue-slack-tool-result-snackbar.util';
+import { SLACK_CHANNEL_RULE_CAPABILITY } from 'src/logic-functions/constants/slack-channel-rule-capability';
 import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-channel-rule-mode';
+import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 import { type SlackChannelSearchOption } from 'src/logic-functions/types/slack-channel-search.type';
+import { isSlackChannelRuleCapability } from 'src/logic-functions/utils/is-slack-channel-rule-capability';
+import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 
 const StyledForm = styled.form`
   display: flex;
@@ -27,6 +33,11 @@ const StyledActions = styled.div`
   display: flex;
   gap: ${() => themeCssVariables.spacing[2]};
 `;
+
+const DEFAULT_MODE: SlackChannelRuleMode =
+  SLACK_CHANNEL_RULE_MODE.LINKED_MEMBERS_ONLY;
+const DEFAULT_CAPABILITY: SlackChannelRuleCapability =
+  SLACK_CHANNEL_RULE_CAPABILITY.FULL;
 
 type SlackChannelRuleFormProps = {
   existingRules: SlackChannelRuleRecord[];
@@ -40,11 +51,12 @@ export const SlackChannelRuleForm = ({
   onCancel,
 }: SlackChannelRuleFormProps) => {
   const modeSelectId = useId();
+  const capabilitySelectId = useId();
   const [selectedChannel, setSelectedChannel] =
     useState<SlackChannelSearchOption | null>(null);
-  const [mode, setMode] = useState<SlackChannelRuleMode>(
-    SLACK_CHANNEL_RULE_MODE.LINKED_MEMBERS_ONLY,
-  );
+  const [mode, setMode] = useState<SlackChannelRuleMode>(DEFAULT_MODE);
+  const [capability, setCapability] =
+    useState<SlackChannelRuleCapability>(DEFAULT_CAPABILITY);
   const { setSlackChannelRule, savingChannelId } = useSetSlackChannelRule();
 
   const isSubmitting = isDefined(savingChannelId);
@@ -56,6 +68,25 @@ export const SlackChannelRuleForm = ({
       )
     : undefined;
 
+  const handleChannelSelect = (channel: SlackChannelSearchOption) => {
+    setSelectedChannel(channel);
+
+    const matchedRule = existingRules.find(
+      (rule) => rule.slackChannelId === channel.slackChannelId,
+    );
+
+    setMode(
+      isSlackChannelRuleMode(matchedRule?.mode)
+        ? matchedRule.mode
+        : DEFAULT_MODE,
+    );
+    setCapability(
+      isSlackChannelRuleCapability(matchedRule?.capability)
+        ? matchedRule.capability
+        : DEFAULT_CAPABILITY,
+    );
+  };
+
   const handleSubmit = async () => {
     if (!isDefined(selectedChannel)) {
       return;
@@ -65,12 +96,15 @@ export const SlackChannelRuleForm = ({
       slackChannelId: selectedChannel.slackChannelId,
       name: selectedChannel.name,
       mode,
+      capability,
     });
 
     enqueueSlackToolResultSnackbar(result);
 
     if (result.success) {
       setSelectedChannel(null);
+      setMode(DEFAULT_MODE);
+      setCapability(DEFAULT_CAPABILITY);
       onRuleSaved();
     }
   };
@@ -98,7 +132,7 @@ export const SlackChannelRuleForm = ({
           />
         ) : (
           <SlackChannelPicker
-            onSelect={setSelectedChannel}
+            onSelect={handleChannelSelect}
             disabled={isSubmitting}
             autoFocus
           />
@@ -113,10 +147,29 @@ export const SlackChannelRuleForm = ({
           ariaLabel="Rule mode"
         />
       </SlackUserLinkFormField>
+      {mode !== SLACK_CHANNEL_RULE_MODE.SILENT && (
+        <SlackUserLinkFormField label="Capability" htmlFor={capabilitySelectId}>
+          <SlackChannelRuleCapabilitySelect
+            id={capabilitySelectId}
+            value={capability}
+            onChange={setCapability}
+            disabled={isSubmitting}
+            ariaLabel="Rule capability"
+          />
+        </SlackUserLinkFormField>
+      )}
       <SlackUserLinkFormHint>
-        {isDefined(existingRule)
-          ? `This channel already has a rule; saving replaces it. ${SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS[mode]}`
-          : SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS[mode]}
+        {[
+          isDefined(existingRule)
+            ? 'This channel already has a rule; saving replaces it.'
+            : undefined,
+          SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS[mode],
+          mode === SLACK_CHANNEL_RULE_MODE.SILENT
+            ? undefined
+            : SLACK_CHANNEL_RULE_CAPABILITY_DESCRIPTIONS[capability],
+        ]
+          .filter(isDefined)
+          .join(' ')}
       </SlackUserLinkFormHint>
       <StyledActions>
         <Button

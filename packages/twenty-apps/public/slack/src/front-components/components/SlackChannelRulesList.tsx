@@ -5,6 +5,7 @@ import { Button } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { SlackChannelRuleCapabilityCell } from 'src/front-components/components/SlackChannelRuleCapabilityCell';
 import { SlackChannelRuleModeCell } from 'src/front-components/components/SlackChannelRuleModeCell';
 import {
   SlackTable,
@@ -16,9 +17,10 @@ import {
 import { useArmedRemoval } from 'src/front-components/hooks/use-armed-removal';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
 import { isFromDisconnectedSlackWorkspace } from 'src/front-components/utils/is-from-disconnected-slack-workspace.util';
+import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 
-const RULES_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) 220px 156px';
+const RULES_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) 200px 140px 156px';
 
 const StyledDetails = styled.div`
   display: flex;
@@ -62,6 +64,10 @@ type SlackChannelRulesListProps = {
     rule: SlackChannelRuleRecord,
     mode: SlackChannelRuleMode,
   ) => void;
+  onCapabilityChange: (
+    rule: SlackChannelRuleRecord,
+    capability: SlackChannelRuleCapability,
+  ) => void;
   onRemove: (rule: SlackChannelRuleRecord) => void;
   savingChannelId: string | undefined;
   removingRuleId: string | undefined;
@@ -73,6 +79,7 @@ export const SlackChannelRulesList = ({
   installedSlackTeamId,
   hasMore = false,
   onModeChange,
+  onCapabilityChange,
   onRemove,
   savingChannelId,
   removingRuleId,
@@ -99,11 +106,17 @@ export const SlackChannelRulesList = ({
       <SlackTableRow gridTemplateColumns={RULES_GRID_TEMPLATE_COLUMNS}>
         <SlackTableHeader>Channel</SlackTableHeader>
         <SlackTableHeader>Mode</SlackTableHeader>
+        <SlackTableHeader>Capability</SlackTableHeader>
         <SlackTableHeader align="right" />
       </SlackTableRow>
       <SlackTableBody>
         {slackChannelRules.map((rule) => {
           const displayedName = getDisplayedName(rule);
+          const isDisconnected = isFromDisconnectedSlackWorkspace({
+            slackTeamId: rule.slackTeamId,
+            installedSlackTeamId,
+          });
+          const isEditable = canManage && !isActionInFlight;
 
           return (
             <SlackTableRow
@@ -122,12 +135,20 @@ export const SlackChannelRulesList = ({
                 <SlackChannelRuleModeCell
                   rule={rule}
                   displayedName={displayedName}
-                  isDisconnected={isFromDisconnectedSlackWorkspace({
-                    slackTeamId: rule.slackTeamId,
-                    installedSlackTeamId,
-                  })}
-                  disabled={!canManage || isActionInFlight}
+                  isDisconnected={isDisconnected}
+                  disabled={!isEditable}
                   onModeChange={(nextMode) => onModeChange(rule, nextMode)}
+                />
+              </SlackTableCell>
+              <SlackTableCell>
+                <SlackChannelRuleCapabilityCell
+                  rule={rule}
+                  displayedName={displayedName}
+                  isDisconnected={isDisconnected}
+                  disabled={!isEditable}
+                  onCapabilityChange={(nextCapability) =>
+                    onCapabilityChange(rule, nextCapability)
+                  }
                 />
               </SlackTableCell>
               <SlackTableCell align="right">
