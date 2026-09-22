@@ -27,6 +27,11 @@ A list is a hand-picked group of people who will receive a campaign.
 2. Click **New List** and give the list a name, for example `Newsletter subscribers`.
 3. Open the list and use the **Members** field to add people.
 
+<img
+  src="/images/user-guide/email-campaigns/list-members.png"
+  style={{ width: '100%' }}
+/>
+
 You can also add a single person from their record, using the **Lists** field.
 
 <Note>
@@ -44,6 +49,11 @@ You can also add a single person from their record, using the **Lists** field.
    - **To**: the list you built in Part 1. You can also create a new list here.
    - **Unsubscribe topic**: optional. Choose a topic so that people can opt out of this kind of email only. This field appears once you have created a topic. See [Manage unsubscribes and topics](/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
    - **Subject**: the subject line recipients see.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-composer.png"
+  style={{ width: '100%' }}
+/>
 
 ## Part 3: Write the email
 
@@ -67,6 +77,11 @@ Any other text, number, date or select field on People is available too, includi
 
 For example, `Hi {{name.firstName}},` becomes `Hi Ana,` for Ana.
 
+<img
+  src="/images/user-guide/email-campaigns/campaign-variables.png"
+  style={{ width: '100%' }}
+/>
+
 <Warning>
   If a person has no value for a variable, it is left empty.
   `Hi {{name.firstName}},` becomes `Hi ,` for someone without a first name.
@@ -80,6 +95,11 @@ Twenty does not add your company's postal address for you. Add it to the bottom 
 1. Click **Test** at the top of the campaign, or press `Cmd+K` and choose **Send Test Email**.
 2. In **Recipient**, type your own address.
 3. Click **Send test email**.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-send-test.png"
+  style={{ width: '100%' }}
+/>
 
 Check the layout, the links and the sender in your inbox, on desktop and on your phone.
 
@@ -97,7 +117,17 @@ Check the layout, the links and the sender in your inbox, on desktop and on your
    - **Send later**: pick a date and time in **Send at**.
 4. Click **Send campaign** or **Schedule campaign**.
 
+<img
+  src="/images/user-guide/email-campaigns/campaign-send-panel.png"
+  style={{ width: '50%' }}
+/>
+
 To move a scheduled campaign, click **Send** again, pick a new time in **Send at** and click **Reschedule campaign**. The recipients are counted again when the campaign sends, so the number can change between now and then.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-schedule-panel.png"
+  style={{ width: '50%' }}
+/>
 
 A campaign can reach up to 10,000 people. Split larger audiences into several lists.
 
@@ -111,6 +141,11 @@ A campaign can reach up to 10,000 people. Split larger audiences into several li
 
 The campaign's **Status** shows where it is:
 
+<img
+  src="/images/user-guide/email-campaigns/campaigns-list.png"
+  style={{ width: '100%' }}
+/>
+
 | Status               | Meaning                                                                              |
 | -------------------- | ------------------------------------------------------------------------------------ |
 | **Draft**            | Not sent yet. You can edit it.                                                       |
@@ -121,6 +156,11 @@ The campaign's **Status** shows where it is:
 | **Canceled**         | Stopped before it finished.                                                          |
 
 The **Home** tab shows the delivery counts: **Sent count**, **Delivered count**, **Bounced count**, **Complained count**, **Failed count** and **Skipped count**. The **Recipients** list shows who the campaign went to.
+
+<img
+  src="/images/user-guide/email-campaigns/campaign-sent-results.png"
+  style={{ width: '100%' }}
+/>
 
 To send a similar campaign later, click **Duplicate** at the top of the campaign. It copies the email, list and settings into a new draft.
 

@@ -30,7 +30,7 @@ The sending domain comes from an email channel. If you already set up a shared i
 2. Click **Add email channel**.
 
 <img
-  src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png"
+  src="/images/user-guide/email-campaigns/channels-list.png"
   style={{ width: '100%' }}
 />
 
@@ -39,11 +39,16 @@ The sending domain comes from an email channel. If you already set up a shared i
 5. Click **Save**.
 
 <img
-  src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png"
+  src="/images/user-guide/email-campaigns/new-channel-form.png"
   style={{ width: '100%' }}
 />
 
 Twenty opens the channel. Scroll to the **Sending domain** section. It lists the records to add, grouped by what they do, with a copy button next to each value.
+
+<img
+  src="/images/user-guide/email-campaigns/sending-domain-records.png"
+  style={{ width: '100%' }}
+/>
 
 <Note>
   A domain can only be verified in one Twenty workspace. If another workspace
@@ -114,6 +119,11 @@ If your provider is not listed, the setting is usually called **DNS**, **DNS rec
 Twenty checks your records every hour on its own. To check right away, click **Check verification** in the **Sending domain** section.
 
 DNS changes usually take effect within an hour, but some providers take up to 48 hours. The domain moves from **Pending** to **Verified** once the authentication records are found, and the **Unsubscribe link** row turns **Verified** once its records are found. You can send campaigns when both are verified.
+
+<img
+  src="/images/user-guide/email-campaigns/sending-domain-verified.png"
+  style={{ width: '100%' }}
+/>
 
 The **DMARC policy** row always shows **Not set**. This is expected: Twenty suggests the record but does not check it.
 
