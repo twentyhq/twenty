@@ -110,7 +110,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
     },
     quota: {
       allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
-      allowedSpenderTypes: ['workspace', 'userWorkspace', 'application'],
+      allowedSpenderTypes: ['workspace'],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
   },

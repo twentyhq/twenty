@@ -6,7 +6,6 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
 import { CancelMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign.input';
 import { CancelMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign-output.dto';
@@ -22,7 +21,6 @@ import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import {
@@ -74,9 +72,8 @@ export class EmailingSendResolver {
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<SendEmailViaDomainOutputDTO> {
-    const spenders = { userWorkspaceId, applicationId: application?.id };
+    const spenders = { userWorkspaceId };
 
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
     await this.emailBillingService.validateEmailSendOrThrow({
