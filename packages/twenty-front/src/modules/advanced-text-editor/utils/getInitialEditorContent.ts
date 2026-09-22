@@ -6,7 +6,7 @@ export const CAPTURE_VARIABLE_TAG_REGEX = /({{[^{}]+}})/;
 
 export const getInitialEditorContent = (
   rawContent: string,
-  enableVariables = true,
+  { enableVariables = true }: { enableVariables?: boolean } = {},
 ): JSONContent => {
   const paragraphContent: JSONContent[] = [];
   const lines = rawContent.split(/\n/);

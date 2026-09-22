@@ -17,14 +17,17 @@ const isTipTapListType = (type: unknown) =>
     (listType) => listType === type,
   );
 
-const convertInlineContent = (
-  content: unknown,
-  enableVariables: boolean,
-): JSONContent[] => {
+const convertInlineContent = ({
+  content,
+  enableVariables,
+}: {
+  content: unknown;
+  enableVariables: boolean;
+}): JSONContent[] => {
   if (typeof content === 'string') {
     return (
-      getInitialEditorContent(content, enableVariables).content?.[0]?.content ??
-      []
+      getInitialEditorContent(content, { enableVariables }).content?.[0]
+        ?.content ?? []
     );
   }
   if (!isDefined(content)) {
@@ -38,15 +41,16 @@ const convertInlineContent = (
       return throwUnsupportedRecordRichTextContent();
     }
     if (item.type === 'link' && typeof item.href === 'string') {
-      return convertInlineContent(item.content, enableVariables).map(
-        (node) => ({
-          ...node,
-          marks: [
-            ...(node.marks ?? []),
-            { type: 'link', attrs: { href: item.href } },
-          ],
-        }),
-      );
+      return convertInlineContent({
+        content: item.content,
+        enableVariables,
+      }).map((node) => ({
+        ...node,
+        marks: [
+          ...(node.marks ?? []),
+          { type: 'link', attrs: { href: item.href } },
+        ],
+      }));
     }
     if (item.type === 'text' && typeof item.text === 'string') {
       const styles = isPlainObject(item.styles) ? item.styles : {};
@@ -64,7 +68,7 @@ const convertInlineContent = (
         (style) => styles[style] === true,
       ).map((type) => ({ type }));
       return (
-        getInitialEditorContent(item.text, enableVariables).content?.[0]
+        getInitialEditorContent(item.text, { enableVariables }).content?.[0]
           ?.content ?? []
       ).map((node) => ({ ...node, marks }));
     }
@@ -72,10 +76,13 @@ const convertInlineContent = (
   });
 };
 
-export const convertBlockNoteToTipTap = (
-  blocks: unknown[],
-  enableVariables: boolean,
-): JSONContent[] =>
+export const convertBlockNoteToTipTap = ({
+  blocks,
+  enableVariables,
+}: {
+  blocks: unknown[];
+  enableVariables: boolean;
+}): JSONContent[] =>
   blocks
     .flatMap((block): JSONContent[] => {
       if (!isPlainObject(block)) {
@@ -93,12 +100,18 @@ export const convertBlockNoteToTipTap = (
         return throwUnsupportedRecordRichTextContent();
       }
       const children = Array.isArray(block.children)
-        ? convertBlockNoteToTipTap(block.children, enableVariables)
+        ? convertBlockNoteToTipTap({
+            blocks: block.children,
+            enableVariables,
+          })
         : [];
       if (children.length > 0 && !isBlockNoteListItemType(block.type)) {
         return throwUnsupportedRecordRichTextContent();
       }
-      const content = convertInlineContent(block.content, enableVariables);
+      const content = convertInlineContent({
+        content: block.content,
+        enableVariables,
+      });
       if (isBlockNoteListItemType(block.type)) {
         const isTask = block.type === 'checkListItem';
         const start =

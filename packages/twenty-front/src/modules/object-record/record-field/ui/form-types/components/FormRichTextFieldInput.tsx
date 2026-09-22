@@ -46,7 +46,10 @@ export const FormRichTextFieldInput = ({
         ...(formSubmitsOnModEnter ? [FormSubmitShortcut] : []),
       ],
       parseLegacyDocument: (value: string) =>
-        parseLegacyRecordRichTextDocument(value, enableVariables),
+        parseLegacyRecordRichTextDocument({
+          serializedDocument: value,
+          enableVariables,
+        }),
     }),
     [enableVariables, formSubmitsOnModEnter],
   );

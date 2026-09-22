@@ -42,7 +42,10 @@ describe('record rich-text document compatibility', () => {
     const content = [{ type: 'paragraph', content: [] }];
 
     expect(
-      parseLegacyRecordRichTextDocument(JSON.stringify(content), false),
+      parseLegacyRecordRichTextDocument({
+        serializedDocument: JSON.stringify(content),
+        enableVariables: false,
+      }),
     ).toEqual({
       type: 'doc',
       content,
@@ -55,7 +58,10 @@ describe('record rich-text document compatibility', () => {
     ];
 
     expect(
-      parseLegacyRecordRichTextDocument(JSON.stringify(content), false),
+      parseLegacyRecordRichTextDocument({
+        serializedDocument: JSON.stringify(content),
+        enableVariables: false,
+      }),
     ).toEqual({
       type: 'doc',
       content: [
@@ -73,7 +79,10 @@ describe('record rich-text document compatibility', () => {
     ]);
 
     expect(
-      parseLegacyRecordRichTextDocument(serializedDocument, false),
+      parseLegacyRecordRichTextDocument({
+        serializedDocument,
+        enableVariables: false,
+      }),
     ).toEqual({
       type: 'doc',
       content: [
@@ -120,10 +129,10 @@ it('preserves rich formatting and nested lists through the shared editor storage
       ],
     },
   ];
-  const document = parseLegacyRecordRichTextDocument(
-    JSON.stringify(blocks),
-    false,
-  );
+  const document = parseLegacyRecordRichTextDocument({
+    serializedDocument: JSON.stringify(blocks),
+    enableVariables: false,
+  });
   expect(
     JSON.parse(convertTipTapDocumentToBlockNote(JSON.stringify(document))),
   ).toEqual(blocks);
@@ -153,27 +162,30 @@ it('preserves workflow variables through the legacy record format', () => {
   const storedValue = convertTipTapDocumentToBlockNote(
     JSON.stringify(document),
   );
-  expect(parseLegacyRecordRichTextDocument(storedValue, true)).toMatchObject(
-    document,
-  );
+  expect(
+    parseLegacyRecordRichTextDocument({
+      serializedDocument: storedValue,
+      enableVariables: true,
+    }),
+  ).toMatchObject(document);
 });
 
 it.each(['table', 'file', 'mention'])(
   'rejects unsupported legacy %s content instead of silently dropping it',
   (type) => {
     expect(() =>
-      parseLegacyRecordRichTextDocument(
-        JSON.stringify([{ type, props: {}, content: [] }]),
-        false,
-      ),
+      parseLegacyRecordRichTextDocument({
+        serializedDocument: JSON.stringify([{ type, props: {}, content: [] }]),
+        enableVariables: false,
+      }),
     ).toThrow('Unsupported record rich-text content');
   },
 );
 
 it('rejects unsupported text colors rather than losing formatting on save', () => {
   expect(() =>
-    parseLegacyRecordRichTextDocument(
-      JSON.stringify([
+    parseLegacyRecordRichTextDocument({
+      serializedDocument: JSON.stringify([
         {
           type: 'paragraph',
           props: {},
@@ -182,22 +194,22 @@ it('rejects unsupported text colors rather than losing formatting on save', () =
           ],
         },
       ]),
-      false,
-    ),
+      enableVariables: false,
+    }),
   ).toThrow('Unsupported record rich-text content');
 });
 
 it('recognizes styled BlockNote text even when optional block props are absent', () => {
   expect(
-    parseLegacyRecordRichTextDocument(
-      JSON.stringify([
+    parseLegacyRecordRichTextDocument({
+      serializedDocument: JSON.stringify([
         {
           type: 'paragraph',
           content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
         },
       ]),
-      false,
-    ),
+      enableVariables: false,
+    }),
   ).toMatchObject({
     type: 'doc',
     content: [
@@ -229,7 +241,12 @@ it.each(['left', 'center', 'right'])(
     };
     const stored = convertTipTapDocumentToBlockNote(JSON.stringify(document));
     expect(JSON.parse(stored)[0].props.textAlignment).toBe(align);
-    expect(parseLegacyRecordRichTextDocument(stored, false)).toEqual(document);
+    expect(
+      parseLegacyRecordRichTextDocument({
+        serializedDocument: stored,
+        enableVariables: false,
+      }),
+    ).toEqual(document);
   },
 );
 
@@ -242,12 +259,18 @@ it('preserves literal mustache text when variables are disabled', () => {
     },
   ];
   expect(
-    parseLegacyRecordRichTextDocument(JSON.stringify(blocks), false),
+    parseLegacyRecordRichTextDocument({
+      serializedDocument: JSON.stringify(blocks),
+      enableVariables: false,
+    }),
   ).toMatchObject({
     content: [{ content: [{ type: 'text', text: 'Use {{name}} here' }] }],
   });
   expect(
-    parseLegacyRecordRichTextDocument('Use {{name}} here', false),
+    parseLegacyRecordRichTextDocument({
+      serializedDocument: 'Use {{name}} here',
+      enableVariables: false,
+    }),
   ).toMatchObject({
     content: [{ content: [{ type: 'text', text: 'Use {{name}} here' }] }],
   });
@@ -328,10 +351,10 @@ it('keeps the start number of an ordered list typed in the shared editor', () =>
   expect(
     JSON.parse(convertTipTapDocumentToBlockNote(JSON.stringify(document))),
   ).toEqual(blocks);
-  const reopenedDocument = parseLegacyRecordRichTextDocument(
-    JSON.stringify(blocks),
-    false,
-  );
+  const reopenedDocument = parseLegacyRecordRichTextDocument({
+    serializedDocument: JSON.stringify(blocks),
+    enableVariables: false,
+  });
   expect(reopenedDocument).toMatchObject({
     content: [{ type: 'orderedList', attrs: { start: 3 } }],
   });
@@ -366,7 +389,10 @@ it('keeps adjacent ordered lists separate when the second restarts at 1', () => 
     'numberedListItem',
   ]);
   expect(
-    parseLegacyRecordRichTextDocument(JSON.stringify(blocks), false),
+    parseLegacyRecordRichTextDocument({
+      serializedDocument: JSON.stringify(blocks),
+      enableVariables: false,
+    }),
   ).toMatchObject({
     content: [
       { type: 'orderedList' },
@@ -383,13 +409,13 @@ it('continues a BlockNote numbered list whose next item carries a start, as Bloc
     content: [{ type: 'text', text, styles: {} }],
     children: [],
   });
-  const reopenedDocument = parseLegacyRecordRichTextDocument(
-    JSON.stringify([
+  const reopenedDocument = parseLegacyRecordRichTextDocument({
+    serializedDocument: JSON.stringify([
       buildNumberedListItem('First', {}),
       buildNumberedListItem('Second', { start: 1 }),
     ]),
-    false,
-  );
+    enableVariables: false,
+  });
   expect(reopenedDocument).toMatchObject({
     content: [
       {
@@ -408,9 +434,9 @@ it.each([
   },
 ])('rejects $type props the shared editor cannot keep', ({ type, props }) => {
   expect(() =>
-    parseLegacyRecordRichTextDocument(
-      JSON.stringify([{ type, props, content: [] }]),
-      false,
-    ),
+    parseLegacyRecordRichTextDocument({
+      serializedDocument: JSON.stringify([{ type, props, content: [] }]),
+      enableVariables: false,
+    }),
   ).toThrow('Unsupported record rich-text content');
 });
