@@ -224,13 +224,15 @@ export class TwentyGeneratedClient {
   }
 
   // __UPLOAD_FILE_START__
-  async uploadFile(
-    fileBuffer: Buffer,
-    filename: string,
-    // Kept for signature compatibility: the server detects the type from the bytes at completion.
-    contentType: string = 'application/octet-stream',
-    fieldMetadataUniversalIdentifier: string,
-  ): Promise<FilesFieldUploadedFile> {
+  async uploadFile({
+    fileBuffer,
+    filename,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    fileBuffer: Buffer;
+    filename: string;
+    fieldMetadataUniversalIdentifier: string;
+  }): Promise<FilesFieldUploadedFile> {
     const { createFileUpload: uploadTarget } =
       await this.executeMutationOrThrow<{
         createFileUpload: FilesFieldUploadTarget;
@@ -245,7 +247,7 @@ export class TwentyGeneratedClient {
         },
       });
 
-    await this.putFileToUploadTarget({ fileBuffer, uploadTarget });
+    await this.putFileToUploadTargetOrThrow({ fileBuffer, uploadTarget });
 
     const { completeFileUpload: uploadedFile } =
       await this.executeMutationOrThrow<{
@@ -260,7 +262,7 @@ export class TwentyGeneratedClient {
     return uploadedFile;
   }
 
-  private async putFileToUploadTarget({
+  private async putFileToUploadTargetOrThrow({
     fileBuffer,
     uploadTarget,
   }: {

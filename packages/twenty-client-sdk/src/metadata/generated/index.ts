@@ -67,8 +67,6 @@ function(options?: ClientOptions): Client {
       }
     
 // MetadataApiClient (auto-injected by twenty-client-sdk)
-
-// MetadataApiClient (auto-injected by twenty-client-sdk)
 import type { TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
 
 // Ambient type stubs for the genql-generated code this template gets
@@ -263,13 +261,15 @@ export class MetadataApiClient {
   mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
     return this.client.mutation(request);
   }
-  async uploadFile(
-    fileBuffer: Buffer,
-    filename: string,
-    // Kept for signature compatibility: the server detects the type from the bytes at completion.
-    contentType: string = 'application/octet-stream',
-    fieldMetadataUniversalIdentifier: string,
-  ): Promise<FilesFieldUploadedFile> {
+  async uploadFile({
+    fileBuffer,
+    filename,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    fileBuffer: Buffer;
+    filename: string;
+    fieldMetadataUniversalIdentifier: string;
+  }): Promise<FilesFieldUploadedFile> {
     const { createFileUpload: uploadTarget } =
       await this.executeMutationOrThrow<{
         createFileUpload: FilesFieldUploadTarget;
@@ -284,7 +284,7 @@ export class MetadataApiClient {
         },
       });
 
-    await this.putFileToUploadTarget({ fileBuffer, uploadTarget });
+    await this.putFileToUploadTargetOrThrow({ fileBuffer, uploadTarget });
 
     const { completeFileUpload: uploadedFile } =
       await this.executeMutationOrThrow<{
@@ -299,7 +299,7 @@ export class MetadataApiClient {
     return uploadedFile;
   }
 
-  private async putFileToUploadTarget({
+  private async putFileToUploadTargetOrThrow({
     fileBuffer,
     uploadTarget,
   }: {

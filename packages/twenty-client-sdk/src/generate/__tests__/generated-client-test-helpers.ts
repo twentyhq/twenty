@@ -26,12 +26,11 @@ export type GeneratedClientClass = new (options?: {
   fetch?: typeof globalThis.fetch;
 }) => {
   query: (request: Record<string, unknown>) => Promise<unknown>;
-  uploadFile: (
-    fileBuffer: Buffer,
-    filename: string,
-    contentType: string,
-    fieldMetadataUniversalIdentifier: string,
-  ) => Promise<GeneratedUploadedFile>;
+  uploadFile: (input: {
+    fileBuffer: Buffer;
+    filename: string;
+    fieldMetadataUniversalIdentifier: string;
+  }) => Promise<GeneratedUploadedFile>;
 };
 
 const stubGeneratedIndexSource = `

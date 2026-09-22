@@ -109,12 +109,11 @@ describe('Generated client wrapper uploadFile', () => {
     twentyClient: InstanceType<GeneratedClientClass>,
     fileBuffer = Buffer.from('content'),
   ) =>
-    twentyClient.uploadFile(
+    twentyClient.uploadFile({
       fileBuffer,
-      'invoice.pdf',
-      'application/pdf',
-      FIELD_METADATA_UNIVERSAL_IDENTIFIER,
-    );
+      filename: 'invoice.pdf',
+      fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
+    });
 
   beforeAll(async () => {
     ({ GeneratedClientClass: TwentyClass, cleanup } =
