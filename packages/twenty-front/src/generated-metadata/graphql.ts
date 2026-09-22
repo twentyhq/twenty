@@ -496,8 +496,11 @@ export type ApplicationHealthCheckResult = {
 export enum ApplicationHealthStatus {
   ERROR = 'ERROR',
   INFO = 'INFO',
+  NEUTRAL = 'NEUTRAL',
   OK = 'OK',
-  UNKNOWN = 'UNKNOWN'
+  SUCCESS = 'SUCCESS',
+  UNKNOWN = 'UNKNOWN',
+  WARNING = 'WARNING'
 }
 
 export type ApplicationRegistration = {

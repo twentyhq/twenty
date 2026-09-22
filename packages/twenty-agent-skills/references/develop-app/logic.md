@@ -121,7 +121,7 @@ The config takes `universalIdentifier` and `handler`. The handler takes no argum
 The handler returns `ApplicationHealthCheckResult`, a discriminated union:
 
 - `{ status: 'ok' }`
-- `{ status: 'info' | 'error'; message: string; action?: { label: string; location?: string } }`
+- `{ status: 'success' | 'info' | 'warning' | 'error' | 'neutral'; message: string; action?: { label: string; location?: string } }`
 
 `message` is shown in a banner on the app's settings page. `action` renders a button labelled `label` that switches to `location`, a settings tab id (today `general`, `variables` or `settings`); omitting it lands on the app's configuration tab. The button is omitted when the location does not exist for that app.
 

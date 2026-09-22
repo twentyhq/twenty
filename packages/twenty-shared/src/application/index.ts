@@ -38,6 +38,7 @@ export {
 } from './applicationCategoryType';
 export type {
   ApplicationHealthCheckReportedStatus,
+  ApplicationHealthCheckReportedBannerStatus,
   ApplicationHealthCheckAction,
   ApplicationHealthCheckResult,
 } from './applicationHealthType';

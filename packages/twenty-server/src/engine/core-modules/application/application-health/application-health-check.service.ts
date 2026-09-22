@@ -10,8 +10,11 @@ import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-func
 
 const REPORTED_STATUS_TO_HEALTH_STATUS = {
   ok: ApplicationHealthStatus.OK,
+  success: ApplicationHealthStatus.SUCCESS,
   info: ApplicationHealthStatus.INFO,
+  warning: ApplicationHealthStatus.WARNING,
   error: ApplicationHealthStatus.ERROR,
+  neutral: ApplicationHealthStatus.NEUTRAL,
 } as const;
 
 const UNKNOWN_HEALTH: ApplicationHealthCheckResultDTO = {

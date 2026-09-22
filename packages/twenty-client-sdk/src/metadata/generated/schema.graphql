@@ -2370,8 +2370,11 @@ type ApplicationHealthCheckResult {
 
 enum ApplicationHealthStatus {
   OK
+  SUCCESS
   INFO
+  WARNING
   ERROR
+  NEUTRAL
   UNKNOWN
 }
 

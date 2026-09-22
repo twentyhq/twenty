@@ -3,8 +3,11 @@ import { getApplicationHealthBannerAppearance } from '~/pages/settings/applicati
 
 describe('getApplicationHealthBannerAppearance', () => {
   it.each([
+    [ApplicationHealthStatus.SUCCESS, 'success'],
     [ApplicationHealthStatus.INFO, 'info'],
+    [ApplicationHealthStatus.WARNING, 'warning'],
     [ApplicationHealthStatus.ERROR, 'error'],
+    [ApplicationHealthStatus.NEUTRAL, 'neutral'],
   ])('should map %s to the %s callout variant', (healthStatus, variant) => {
     expect(getApplicationHealthBannerAppearance(healthStatus)?.variant).toBe(
       variant,

@@ -3,7 +3,10 @@ import { isApplicationHealthCheckResult } from '@/application/applicationHealthT
 describe('isApplicationHealthCheckResult', () => {
   it.each([
     [{ status: 'ok' }],
+    [{ status: 'success', message: 'Connected as acme' }],
     [{ status: 'info', message: 'Key expires soon' }],
+    [{ status: 'warning', message: 'Quota almost reached' }],
+    [{ status: 'neutral', message: 'Nothing synced yet' }],
     [
       {
         status: 'error',

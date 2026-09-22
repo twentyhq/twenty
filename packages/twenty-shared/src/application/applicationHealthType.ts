@@ -2,12 +2,25 @@ import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 export const APPLICATION_HEALTH_CHECK_REPORTED_STATUSES = [
   'ok',
+  'success',
   'info',
+  'warning',
   'error',
+  'neutral',
 ] as const;
 
 export type ApplicationHealthCheckReportedStatus =
   (typeof APPLICATION_HEALTH_CHECK_REPORTED_STATUSES)[number];
+
+export type ApplicationHealthCheckReportedBannerStatus = Exclude<
+  ApplicationHealthCheckReportedStatus,
+  'ok'
+>;
+
+const APPLICATION_HEALTH_CHECK_REPORTED_BANNER_STATUSES: readonly string[] =
+  APPLICATION_HEALTH_CHECK_REPORTED_STATUSES.filter(
+    (status) => status !== 'ok',
+  );
 
 export type ApplicationHealthCheckAction = {
   label: string;
@@ -17,10 +30,16 @@ export type ApplicationHealthCheckAction = {
 export type ApplicationHealthCheckResult =
   | { status: 'ok' }
   | {
-      status: Exclude<ApplicationHealthCheckReportedStatus, 'ok'>;
+      status: ApplicationHealthCheckReportedBannerStatus;
       message: string;
       action?: ApplicationHealthCheckAction;
     };
+
+const isApplicationHealthCheckReportedBannerStatus = (
+  value: unknown,
+): value is ApplicationHealthCheckReportedBannerStatus =>
+  isNonEmptyString(value) &&
+  APPLICATION_HEALTH_CHECK_REPORTED_BANNER_STATUSES.includes(value);
 
 export const isApplicationHealthCheckResult = (
   value: unknown,
@@ -35,7 +54,7 @@ export const isApplicationHealthCheckResult = (
     return true;
   }
 
-  if (status !== 'info' && status !== 'error') {
+  if (!isApplicationHealthCheckReportedBannerStatus(status)) {
     return false;
   }
 

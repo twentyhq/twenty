@@ -71,15 +71,21 @@ describe('ApplicationHealthCheckService', () => {
     });
   });
 
-  it('should map a reported info to INFO', async () => {
+  it.each([
+    ['success', ApplicationHealthStatus.SUCCESS],
+    ['info', ApplicationHealthStatus.INFO],
+    ['warning', ApplicationHealthStatus.WARNING],
+    ['error', ApplicationHealthStatus.ERROR],
+    ['neutral', ApplicationHealthStatus.NEUTRAL],
+  ])('should map a reported %s to %s', async (reportedStatus, healthStatus) => {
     const { service } = buildService({
       execute: jest.fn().mockResolvedValue({
-        data: { status: 'info', message: 'Expiring' },
+        data: { status: reportedStatus, message: 'Expiring' },
       }),
     });
 
     expect(await run(service)).toEqual({
-      status: ApplicationHealthStatus.INFO,
+      status: healthStatus,
       message: 'Expiring',
       action: null,
     });
