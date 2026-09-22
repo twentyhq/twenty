@@ -1,4 +1,5 @@
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { canonicalizeEmail } from 'twenty-shared/utils';
 
 export interface AddPersonEmailFiltersToQueryBuilderOptions {
   queryBuilder: WorkspaceSelectQueryBuilder;
@@ -12,7 +13,7 @@ export function addPersonEmailFiltersToQueryBuilder({
   emails,
   excludePersonIds = [],
 }: AddPersonEmailFiltersToQueryBuilderOptions): WorkspaceSelectQueryBuilder {
-  const normalizedEmails = emails.map((email) => email.toLowerCase());
+  const normalizedEmails = emails.map(canonicalizeEmail);
 
   queryBuilder = queryBuilder
     .where('LOWER("person"."emailsPrimaryEmail") IN (:...emails)', {

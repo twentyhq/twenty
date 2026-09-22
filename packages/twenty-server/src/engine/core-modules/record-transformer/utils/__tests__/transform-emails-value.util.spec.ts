@@ -131,6 +131,18 @@ describe('transformEmailsValue', () => {
     });
   });
 
+  it('should canonicalize IDNs and domain separators in both email subfields', () => {
+    expect(
+      transformEmailsValue({
+        primaryEmail: '  Admin@💩。LA.  ',
+        additionalEmails: ['Other@München．DE', 'other@xn--mnchen-3ya.de'],
+      }),
+    ).toEqual({
+      primaryEmail: 'admin@xn--ls8h.la',
+      additionalEmails: '["other@xn--mnchen-3ya.de","other@xn--mnchen-3ya.de"]',
+    });
+  });
+
   it('should handle case where primaryEmail is null and additionalEmails exist', () => {
     const value = {
       primaryEmail: null,

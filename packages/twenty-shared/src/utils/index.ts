@@ -53,6 +53,7 @@ export { turnPlainDateIntoUserTimeZoneInstantString } from './date/turnPlainDate
 export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDateToShiftedDateInSystemTimeZone';
 export { deepMerge } from './deepMerge';
 export { canConnectedAccountPerformEmailOperation } from './email/canConnectedAccountPerformEmailOperation';
+export { canonicalizeEmail } from './email/canonicalizeEmail';
 export { formatEmailAddress } from './email/formatEmailAddress';
 export { getEmailProvidersForOperation } from './email/getEmailProvidersForOperation';
 export { getSendableEmailHandles } from './email/getSendableEmailHandles';

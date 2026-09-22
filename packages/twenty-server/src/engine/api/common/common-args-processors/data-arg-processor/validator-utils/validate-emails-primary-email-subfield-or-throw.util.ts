@@ -2,7 +2,7 @@ import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
-import { emailSchema } from 'twenty-shared/utils';
+import { canonicalizeEmail, emailSchema } from 'twenty-shared/utils';
 
 import {
   CommonQueryRunnerException,
@@ -25,7 +25,12 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
     );
   }
 
-  if (!emailSchema.safeParse(value).success && isNonEmptyString(value)) {
+  const canonicalEmail = canonicalizeEmail(value);
+
+  if (
+    !emailSchema.safeParse(canonicalEmail).success &&
+    isNonEmptyString(canonicalEmail)
+  ) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(
@@ -35,5 +40,5 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
     );
   }
 
-  return value;
+  return canonicalEmail;
 };

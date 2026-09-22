@@ -99,6 +99,33 @@ describe('isRecordMatchingFilter', () => {
   });
 
   describe('Simple Filters', () => {
+    it('matches equivalent email domains in exact filters', () => {
+      const personMockObjectMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      )!;
+      const person = {
+        id: '20202020-0000-4000-8000-000000000001',
+        emails: {
+          primaryEmail: 'admin@xn--ls8h.la',
+          additionalEmails: null,
+        },
+      };
+
+      for (const primaryEmailFilter of [
+        { eq: ' Admin@💩。LA. ' },
+        { in: ['other@example.com', 'ADMIN@💩.LA'] },
+      ]) {
+        expect(
+          isRecordMatchingFilter({
+            record: person,
+            filter: { emails: { primaryEmail: primaryEmailFilter } },
+            objectMetadataItem: personMockObjectMetadataItem,
+            objectMetadataItems,
+          }),
+        ).toBe(true);
+      }
+    });
+
     it('matches a record with a simple equality filter on name', () => {
       const companyMockInFilter = {
         ...companiesMock[0],

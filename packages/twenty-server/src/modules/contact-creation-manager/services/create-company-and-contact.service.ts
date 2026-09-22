@@ -9,7 +9,7 @@ import {
   FieldActorSource,
   type FullNameMetadata,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { canonicalizeEmail, isDefined } from 'twenty-shared/utils';
 import { type DeepPartial, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -258,15 +258,15 @@ export class CreateCompanyAndPersonService {
         (person) => {
           return (
             isNonEmptyString(person.emails?.primaryEmail) &&
-            person.emails.primaryEmail.toLowerCase() ===
-              contact.handle.toLowerCase()
+            canonicalizeEmail(person.emails.primaryEmail) ===
+              canonicalizeEmail(contact.handle)
           );
         },
       );
 
       if (isDefined(existingPersonOnPrimaryEmail)) {
         shouldCreateOrRestorePeopleByHandleMap.set(
-          contact.handle.toLowerCase(),
+          canonicalizeEmail(contact.handle),
           {
             existingPerson: existingPersonOnPrimaryEmail,
           },
@@ -279,7 +279,8 @@ export class CreateCompanyAndPersonService {
           return (
             Array.isArray(person.emails?.additionalEmails) &&
             person.emails.additionalEmails.some(
-              (email) => email.toLowerCase() === contact.handle.toLowerCase(),
+              (email) =>
+                canonicalizeEmail(email) === canonicalizeEmail(contact.handle),
             )
           );
         },
@@ -287,21 +288,24 @@ export class CreateCompanyAndPersonService {
 
       if (!isDefined(existingPersonOnAdditionalEmails)) continue;
 
-      shouldCreateOrRestorePeopleByHandleMap.set(contact.handle.toLowerCase(), {
-        existingPerson: existingPersonOnAdditionalEmails,
-      });
+      shouldCreateOrRestorePeopleByHandleMap.set(
+        canonicalizeEmail(contact.handle),
+        {
+          existingPerson: existingPersonOnAdditionalEmails,
+        },
+      );
     }
 
     const contactsThatNeedPersonCreate = uniqueContacts.filter(
       (contact) =>
         !shouldCreateOrRestorePeopleByHandleMap.has(
-          contact.handle.toLowerCase(),
+          canonicalizeEmail(contact.handle),
         ),
     );
 
     const contactsThatNeedPersonRestore = uniqueContacts.filter((contact) => {
       const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
-        contact.handle.toLowerCase(),
+        canonicalizeEmail(contact.handle),
       )?.existingPerson;
 
       if (!isDefined(existingPerson)) {
@@ -365,7 +369,7 @@ export class CreateCompanyAndPersonService {
 
     for (const contact of uniqueContacts) {
       const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
-        contact.handle.toLowerCase(),
+        canonicalizeEmail(contact.handle),
       )?.existingPerson;
 
       if (!isDefined(existingPerson)) {
@@ -460,7 +464,7 @@ export class CreateCompanyAndPersonService {
       return {
         id,
         emails: {
-          primaryEmail: handle.toLowerCase(),
+          primaryEmail: canonicalizeEmail(handle),
           additionalEmails: null,
         },
         name: {
@@ -499,7 +503,7 @@ export class CreateCompanyAndPersonService {
       const { handle } = contact;
 
       const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
-        handle.toLowerCase(),
+        canonicalizeEmail(handle),
       )?.existingPerson;
 
       if (!isDefined(existingPerson) || isNull(existingPerson.deletedAt))
