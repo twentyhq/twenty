@@ -12,6 +12,7 @@ import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomEleme
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
+import { installElementContains } from '@/polyfills/dom/utils/installElementContains';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
@@ -44,6 +45,7 @@ patchRemoteElementAttributes();
 installErrorEventBridge();
 
 installDocumentGetElementById(document);
+installElementContains(Element.prototype);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
 installClassAttributeAccessors({
