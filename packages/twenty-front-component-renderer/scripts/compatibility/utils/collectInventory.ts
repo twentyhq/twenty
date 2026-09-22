@@ -35,11 +35,7 @@ export const collectInventory = ({
     const resolved = resolveInventoryTarget({ target, objects });
     if (resolved.status !== 'collected') {
       if (isUndefined(keys)) {
-        if (resolved.status === 'uninspectable') {
-          throw new Error(`Reference target ${targetId}: ${resolved.reason}`);
-        }
-        skipped.push({ id: targetId, reason: resolved.reason });
-        continue;
+        throw new Error(`Reference target ${targetId}: ${resolved.reason}`);
       }
       targets.push({
         target,

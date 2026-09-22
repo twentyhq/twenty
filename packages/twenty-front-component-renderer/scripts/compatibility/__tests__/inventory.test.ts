@@ -278,6 +278,59 @@ describe('browser API inventory', () => {
     );
   });
 
+  it.each([undefined, 42])(
+    'rejects a reference factory returning %p while recording the sandbox gap',
+    (value) => {
+      const objects = createObjects({
+        available: () => true,
+        missing: () => true,
+      });
+      const { catalog } = collectInventory({
+        objects: {
+          ...objects,
+          factories: {
+            ...objects.factories,
+            'navigator.clipboard': () => ({ readText: () => '' }),
+          },
+        },
+        runtime: 'reference',
+      });
+      const objectsWithMissingFactory = {
+        ...objects,
+        factories: { ...objects.factories, 'navigator.clipboard': () => value },
+      };
+      const { collection } = collectInventory({
+        objects: objectsWithMissingFactory,
+        catalog,
+        runtime: 'react',
+      });
+      expect(
+        collection.targets.find(
+          (target) =>
+            target.target.kind === 'factory' &&
+            target.target.name === 'navigator.clipboard',
+        ),
+      ).toMatchObject({
+        status: 'missing',
+        members: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'instance:navigator.clipboard.readText',
+            observation: { shape: 'missing' },
+          }),
+        ]),
+      });
+      expect(() =>
+        validateInventoryCollection({ catalog, collection, runtime: 'react' }),
+      ).not.toThrow();
+      expect(() =>
+        collectInventory({
+          objects: objectsWithMissingFactory,
+          runtime: 'reference',
+        }),
+      ).toThrow('Reference target instance:navigator.clipboard');
+    },
+  );
+
   it('fails a stalled collection using the external timeout supervisor', async () => {
     await expect(
       withInventoryTimeout({
