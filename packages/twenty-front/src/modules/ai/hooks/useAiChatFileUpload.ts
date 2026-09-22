@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 
-import { type AgentChatFileUIPart } from '@/ai/types/agent-chat-file-ui-part.type';
+import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {

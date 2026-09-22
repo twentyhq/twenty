@@ -8,7 +8,7 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatIndexMetadataItem } from '@/metadata-store/types/FlatIndexMetadataItem';
 import { type IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldMetadataItem';
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   type CreateIndexInput,

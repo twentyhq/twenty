@@ -3,11 +3,11 @@ import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds'
 import { useApplyBillingSubscriptionChange } from '@/settings/billing/hooks/useApplyBillingSubscriptionChange';
 import { useBillingPlanActions } from '@/settings/billing/hooks/useBillingPlanActions';
 import { useBillingSubscriptionChangeWording } from '@/settings/billing/hooks/useBillingSubscriptionChangeWording';
-import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
+import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import {
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
-} from '@/settings/billing/types/settingsBillingPlanComparison.type';
+} from '@/settings/billing/types/SettingsBillingPlanComparison';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
