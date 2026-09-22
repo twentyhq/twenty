@@ -14,6 +14,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
+import { validateViewGroupLoadLimitOrThrow } from 'src/engine/metadata-modules/flat-view/utils/validate-view-group-load-limit-or-throw.util';
 import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
@@ -39,6 +40,8 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       rawCreateViewInput,
       ['id', 'name', 'objectMetadataId'],
     );
+
+  validateViewGroupLoadLimitOrThrow(createViewInput.groupLoadLimit);
 
   const createdAt = new Date().toISOString();
   const viewId = createViewInput.id ?? v4();

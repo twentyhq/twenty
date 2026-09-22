@@ -14,6 +14,7 @@ import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { fromViewOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view/utils/from-view-overrides-to-universal-overrides.util';
 import { handleFlatViewUpdateSideEffect } from 'src/engine/metadata-modules/flat-view/utils/handle-flat-view-update-side-effect.util';
+import { validateViewGroupLoadLimitOrThrow } from 'src/engine/metadata-modules/flat-view/utils/validate-view-group-load-limit-or-throw.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
@@ -52,6 +53,8 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
       rawUpdateViewInput,
       ['id'],
     );
+
+  validateViewGroupLoadLimitOrThrow(rawUpdateViewInput.groupLoadLimit);
 
   const existingFlatViewToUpdate = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: viewToUpdateId,
