@@ -158,11 +158,12 @@ export const convertBlockNoteToTipTap = (
     })
     .reduce<JSONContent[]>((nodes, node) => {
       const previousNode = nodes.at(-1);
+      // Mirrors BlockNote, which ignores the start of a numbered item that
+      // follows another one.
       if (
         isDefined(previousNode) &&
         isTipTapListType(node.type) &&
-        previousNode.type === node.type &&
-        !isDefined(node.attrs?.start)
+        previousNode.type === node.type
       ) {
         previousNode.content = [
           ...(previousNode.content ?? []),

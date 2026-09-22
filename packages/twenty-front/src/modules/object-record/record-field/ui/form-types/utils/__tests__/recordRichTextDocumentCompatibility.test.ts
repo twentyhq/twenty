@@ -360,14 +360,43 @@ it('keeps adjacent ordered lists separate when the second restarts at 1', () => 
   const blocks = JSON.parse(
     convertTipTapDocumentToBlockNote(JSON.stringify(document)),
   );
-  expect(blocks.map((block: { props: unknown }) => block.props)).toEqual([
-    {},
-    { start: 1 },
+  expect(blocks.map((block: { type: string }) => block.type)).toEqual([
+    'numberedListItem',
+    'paragraph',
+    'numberedListItem',
   ]);
   expect(
     parseLegacyRecordRichTextDocument(JSON.stringify(blocks), false),
   ).toMatchObject({
-    content: [{ type: 'orderedList' }, { type: 'orderedList' }],
+    content: [
+      { type: 'orderedList' },
+      { type: 'paragraph' },
+      { type: 'orderedList' },
+    ],
+  });
+});
+
+it('continues a BlockNote numbered list whose next item carries a start, as BlockNote renders it', () => {
+  const buildNumberedListItem = (text: string, props: object) => ({
+    type: 'numberedListItem',
+    props,
+    content: [{ type: 'text', text, styles: {} }],
+    children: [],
+  });
+  const reopenedDocument = parseLegacyRecordRichTextDocument(
+    JSON.stringify([
+      buildNumberedListItem('First', {}),
+      buildNumberedListItem('Second', { start: 1 }),
+    ]),
+    false,
+  );
+  expect(reopenedDocument).toMatchObject({
+    content: [
+      {
+        type: 'orderedList',
+        content: [{ type: 'listItem' }, { type: 'listItem' }],
+      },
+    ],
   });
 });
 
