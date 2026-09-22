@@ -129,9 +129,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     fieldMetadata: true,
     frontComponent: true,
   },
-  workflow: {
-    workflowVersion: true,
-  },
+  workflow: {},
   workflowVersion: {
     workflow: true,
   },

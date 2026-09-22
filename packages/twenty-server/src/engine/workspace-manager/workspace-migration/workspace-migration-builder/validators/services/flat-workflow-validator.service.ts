@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CoreWorkflowMetadataExceptionCode } from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -50,7 +50,6 @@ export class FlatWorkflowValidatorService {
     flatEntityToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatWorkflowMaps: optimisticFlatWorkflowMaps,
-      flatWorkflowVersionMaps: optimisticFlatWorkflowVersionMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.workflow
@@ -74,25 +73,6 @@ export class FlatWorkflowValidatorService {
         code: CoreWorkflowMetadataExceptionCode.WORKFLOW_NOT_FOUND,
         message: t`Workflow not found`,
         userFriendlyMessage: msg`Workflow not found`,
-      });
-
-      return validationResult;
-    }
-
-    // Versions deleted by the same migration are already gone from the
-    // optimistic maps, so anything left here would outlive its workflow.
-    const remainingFlatWorkflowVersions = Object.values(
-      optimisticFlatWorkflowVersionMaps.byUniversalIdentifier,
-    ).filter(
-      (flatWorkflowVersion) =>
-        flatWorkflowVersion?.coreWorkflowId === existingWorkflow.id,
-    );
-
-    if (isNonEmptyArray(remainingFlatWorkflowVersions)) {
-      validationResult.errors.push({
-        code: CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_MISSING_WORKFLOW,
-        message: t`Workflow still has versions`,
-        userFriendlyMessage: msg`This workflow still has versions`,
       });
     }
 
