@@ -14,7 +14,6 @@ import { v4 } from 'uuid';
 
 import { settings } from 'src/engine/constants/settings';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
@@ -33,6 +32,7 @@ import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -56,9 +56,10 @@ export class FileUploadService {
     private readonly fileUrlService: FileUrlService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
-    private readonly applicationService: ApplicationService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -379,16 +380,23 @@ export class FileUploadService {
       };
     }
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
+    // Read through the workspace row rather than the workspace cache: a
+    // workspace still pending creation has no cached applications yet, and its
+    // logo is reserved before it is activated.
+    const { workspaceCustomApplicationId } =
+      await this.workspaceRepository.findOneOrFail({
+        select: ['id', 'workspaceCustomApplicationId'],
+        where: { id: workspaceId },
+      });
+
+    const workspaceCustomApplication =
+      await this.applicationRepository.findOneOrFail({
+        where: { id: workspaceCustomApplicationId, workspaceId },
+      });
 
     return {
       applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplication.universalIdentifier,
       resourcePath: name,
     };
   }

@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import gql from 'graphql-tag';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
-import { putCorePictureToUploadTarget } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
+import { putFileToUploadTarget } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
@@ -115,7 +115,7 @@ describe('New workspace logo direct upload', () => {
 
     uploadedLogoFileId = uploadTarget.fileId;
 
-    const putResponse = await putCorePictureToUploadTarget({
+    const putResponse = await putFileToUploadTarget({
       uploadTarget,
       content: ONE_BY_ONE_TRANSPARENT_PNG,
     });
