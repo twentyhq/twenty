@@ -46,16 +46,15 @@ export class MetadataEventPublisher {
     const enrichedBatch =
       await this.enrichMetadataEventBatch(metadataEventBatch);
 
-    const ownerUserWorkspaceIdByRecordId =
-      await this.resolveOwnerUserWorkspaceIdByRecordId(enrichedBatch);
+    const recipientUserWorkspaceIdsByRecordId =
+      await this.resolveRecipientUserWorkspaceIdsByRecordId(enrichedBatch);
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: enrichedBatch.workspaceId,
       updatedCollectionHash: enrichedBatch.updatedCollectionHash,
       events: enrichedBatch.events.map((event) => {
-        const ownerUserWorkspaceId = ownerUserWorkspaceIdByRecordId.get(
-          event.recordId,
-        );
+        const recipientUserWorkspaceIds =
+          recipientUserWorkspaceIdsByRecordId.get(event.recordId);
 
         return {
           type: event.type,
@@ -65,9 +64,7 @@ export class MetadataEventPublisher {
             entityName: event.metadataName,
             properties: event.properties as Record<string, unknown>,
           }),
-          recipientUserWorkspaceIds: isNonEmptyString(ownerUserWorkspaceId)
-            ? [ownerUserWorkspaceId]
-            : undefined,
+          recipientUserWorkspaceIds,
           requiredPermissionFlag:
             getRequiredPermissionFlagForBroadcastEntityName(event.metadataName),
         };
@@ -76,12 +73,14 @@ export class MetadataEventPublisher {
   }
 
   // An unowned private workflow stays workspace-wide on purpose: the read path
-  // opens it to everyone once its creator has left the workspace.
-  private async resolveOwnerUserWorkspaceIdByRecordId({
+  // opens it to everyone once its creator has left the workspace. A version
+  // whose parent is already gone is the opposite case and fails closed, since
+  // the parent is deleted before its versions are published.
+  private async resolveRecipientUserWorkspaceIdsByRecordId({
     metadataName,
     workspaceId,
     events,
-  }: MetadataEventBatch): Promise<Map<string, string>> {
+  }: MetadataEventBatch): Promise<Map<string, string[]>> {
     const flatWorkflowMaps =
       metadataName === 'workflowVersion'
         ? (
@@ -91,22 +90,45 @@ export class MetadataEventPublisher {
           ).flatWorkflowMaps
         : undefined;
 
-    const resolveOwner = (record: BroadcastEventRecord | undefined) => {
+    const resolveRecipients = (
+      record: BroadcastEventRecord | undefined,
+    ): string[] | undefined => {
       switch (metadataName) {
         case 'navigationMenuItem':
-          return record?.userWorkspaceId ?? undefined;
-        case 'workflow':
-          return getPrivateWorkflowOwner(record);
+          return isNonEmptyString(record?.userWorkspaceId)
+            ? [record.userWorkspaceId]
+            : undefined;
+        case 'workflow': {
+          const ownerUserWorkspaceId = getPrivateWorkflowOwner(record);
+
+          return isNonEmptyString(ownerUserWorkspaceId)
+            ? [ownerUserWorkspaceId]
+            : undefined;
+        }
         case 'workflowVersion': {
           const coreWorkflowId = record?.coreWorkflowId;
 
-          return isNonEmptyString(coreWorkflowId) && isDefined(flatWorkflowMaps)
-            ? getPrivateWorkflowOwner(
-                findFlatEntityByIdInFlatEntityMaps({
-                  flatEntityMaps: flatWorkflowMaps,
-                  flatEntityId: coreWorkflowId,
-                }),
-              )
+          if (
+            !isNonEmptyString(coreWorkflowId) ||
+            !isDefined(flatWorkflowMaps)
+          ) {
+            return undefined;
+          }
+
+          const parentFlatWorkflow = findFlatEntityByIdInFlatEntityMaps({
+            flatEntityMaps: flatWorkflowMaps,
+            flatEntityId: coreWorkflowId,
+          });
+
+          if (!isDefined(parentFlatWorkflow)) {
+            return [];
+          }
+
+          const ownerUserWorkspaceId =
+            getPrivateWorkflowOwner(parentFlatWorkflow);
+
+          return isNonEmptyString(ownerUserWorkspaceId)
+            ? [ownerUserWorkspaceId]
             : undefined;
         }
         default:
@@ -114,20 +136,22 @@ export class MetadataEventPublisher {
       }
     };
 
-    const ownerUserWorkspaceIdByRecordId = new Map<string, string>();
+    const recipientUserWorkspaceIdsByRecordId = new Map<string, string[]>();
 
     for (const event of events) {
-      const ownerUserWorkspaceId = resolveOwner(getBroadcastEventRecord(event));
+      const recipientUserWorkspaceIds = resolveRecipients(
+        getBroadcastEventRecord(event),
+      );
 
-      if (isNonEmptyString(ownerUserWorkspaceId)) {
-        ownerUserWorkspaceIdByRecordId.set(
+      if (isDefined(recipientUserWorkspaceIds)) {
+        recipientUserWorkspaceIdsByRecordId.set(
           event.recordId,
-          ownerUserWorkspaceId,
+          recipientUserWorkspaceIds,
         );
       }
     }
 
-    return ownerUserWorkspaceIdByRecordId;
+    return recipientUserWorkspaceIdsByRecordId;
   }
 
   private async enrichMetadataEventBatch(
