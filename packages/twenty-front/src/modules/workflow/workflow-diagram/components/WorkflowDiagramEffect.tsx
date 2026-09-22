@@ -110,7 +110,8 @@ export const WorkflowDiagramEffect = () => {
   );
 
   useEffect(() => {
-    if (!shouldWorkflowRefetchRequest) {
+    // Refetch bypasses Apollo's skip, so retain the request while the version loads.
+    if (!shouldWorkflowRefetchRequest || !isDefined(currentVersion?.id)) {
       return;
     }
 
@@ -122,6 +123,7 @@ export const WorkflowDiagramEffect = () => {
       })
       .catch(() => {});
   }, [
+    currentVersion?.id,
     shouldWorkflowRefetchRequest,
     setShouldWorkflowRefetchRequest,
     refetchContent,
