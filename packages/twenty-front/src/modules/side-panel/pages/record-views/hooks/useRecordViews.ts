@@ -63,7 +63,6 @@ export const useRecordViews = ({
         const matchingViews: View[] = [];
         const candidateViews = canReadObjectRecords ? views : [];
 
-        // Bound request concurrency for objects with many saved views.
         for (
           let offset = 0;
           offset < candidateViews.length;
@@ -77,19 +76,22 @@ export const useRecordViews = ({
             candidateViews
               .slice(offset, offset + VIEW_QUERY_CONCURRENCY)
               .map(async (view) => {
+                const filter = getRecordViewFilter({
+                  view,
+                  recordId,
+                  objectFields: objectMetadataItem.fields,
+                  fieldMetadataItems: flattenedFieldMetadataItems,
+                  filterValueDependencies,
+                });
+
+                if (!isDefined(filter)) {
+                  return undefined;
+                }
+
                 const response =
                   await client.query<RecordGqlOperationFindManyResult>({
                     query: findManyRecordsQuery,
-                    variables: {
-                      filter: getRecordViewFilter({
-                        view,
-                        recordId,
-                        objectFields: objectMetadataItem.fields,
-                        fieldMetadataItems: flattenedFieldMetadataItems,
-                        filterValueDependencies,
-                      }),
-                      limit: 1,
-                    },
+                    variables: { filter, limit: 1 },
                     fetchPolicy: 'no-cache',
                     errorPolicy: 'none',
                   });

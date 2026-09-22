@@ -1,11 +1,16 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type View } from '@/views/types/View';
+import { getRecordGroupVisibilityFilters } from '@/views/utils/getRecordGroupVisibilityFilters';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { type RecordFilterValueDependencies } from 'twenty-shared/types';
+import {
+  type RecordFilterValueDependencies,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
+  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -21,7 +26,7 @@ export const getRecordViewFilter = ({
   objectFields: FieldMetadataItem[];
   fieldMetadataItems: FieldMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
-}) => {
+}): RecordGqlOperationFilter | null => {
   const recordFilters = mapViewFiltersToFilters(
     view.viewFilters,
     fieldMetadataItems,
@@ -29,13 +34,16 @@ export const getRecordViewFilter = ({
 
   // Incomplete metadata must not turn a filtered view into a match-all view.
   if (recordFilters.length !== view.viewFilters.length) {
-    throw new Error('Unable to resolve view filters');
+    return null;
   }
+
+  const { recordFilters: recordGroupVisibilityFilters, recordGroupGqlFilter } =
+    getRecordGroupVisibilityFilters({ view, fieldMetadataItems });
 
   const filter = computeRecordGqlOperationFilter({
     fieldMetadataItems,
     filterValueDependencies,
-    recordFilters,
+    recordFilters: [...recordFilters, ...recordGroupVisibilityFilters],
     recordFilterGroups: mapViewFilterGroupsToRecordFilterGroups(
       view.viewFilterGroups ?? [],
     ),
@@ -46,5 +54,12 @@ export const getRecordViewFilter = ({
       filterValue: view.anyFieldFilterValue ?? '',
     });
 
-  return combineFilters([{ id: { eq: recordId } }, filter, anyFieldFilter]);
+  return combineFilters(
+    [
+      { id: { eq: recordId } },
+      filter,
+      anyFieldFilter,
+      recordGroupGqlFilter,
+    ].filter(isDefined),
+  );
 };

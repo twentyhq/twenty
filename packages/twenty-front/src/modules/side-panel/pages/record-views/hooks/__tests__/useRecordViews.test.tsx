@@ -2,6 +2,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { gql } from '@apollo/client';
 import { useRecordViews } from '@/side-panel/pages/record-views/hooks/useRecordViews';
 import { type View } from '@/views/types/View';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { ViewType, ViewVisibility } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -99,6 +100,32 @@ describe('useRecordViews', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.views).toEqual([]);
     expect(mockQuery).not.toHaveBeenCalled();
+  });
+
+  it('skips a view whose filters cannot be resolved without dropping the others', async () => {
+    mockViews = [
+      baseView,
+      {
+        ...baseView,
+        id: 'unresolvable',
+        viewFilters: [
+          {
+            id: 'missing',
+            fieldMetadataId: 'unavailable-field',
+            operand: ViewFilterOperand.CONTAINS,
+            value: 'Acme',
+          },
+        ],
+      },
+    ];
+    mockQuery.mockResolvedValue(response('record-1'));
+
+    const { result } = renderViews();
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.views.map((view) => view.id)).toEqual(['all']);
+    expect(result.current.error).toBe(false);
+    expect(mockQuery).toHaveBeenCalledTimes(1);
   });
 
   it('shows errors separately from an empty result and supports retry', async () => {

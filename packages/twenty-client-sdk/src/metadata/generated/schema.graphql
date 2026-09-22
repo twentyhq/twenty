@@ -204,6 +204,7 @@ enum EngineComponentKey {
   EXPORT_FROM_RECORD_INDEX
   EXPORT_FROM_RECORD_SHOW
   EXPORT_MULTIPLE_RECORDS
+  SEE_RECORD_IN_VIEW
 }
 
 enum CommandMenuItemAvailabilityType {

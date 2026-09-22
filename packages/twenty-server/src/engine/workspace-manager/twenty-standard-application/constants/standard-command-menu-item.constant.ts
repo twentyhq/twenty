@@ -6,23 +6,6 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
 export const STANDARD_COMMAND_MENU_ITEMS = {
-  seeRecordInView: {
-    universalIdentifier: '12f5ee64-7773-48f8-a989-118443a8be16',
-    label: i18nLabel(
-      msg({ message: `See in view`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconArrowUpRight',
-    isPinned: false,
-    position: 2.5,
-    shortLabel: null,
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and numberOfSelectedRecords == 1 and objectPermissions.canReadObjectRecords and noneDefined(selectedRecords, "deletedAt")',
-    availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_RECORD_IN_VIEW,
-    hotKeys: null,
-  },
   navigateToNextRecord: {
     universalIdentifier: '3db2457d-8e96-4b8e-94c9-ed95d3f95738',
     label: i18nLabel(
@@ -61,6 +44,23 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATE_TO_PREVIOUS_RECORD,
+    hotKeys: null,
+  },
+  seeRecordInView: {
+    universalIdentifier: '12f5ee64-7773-48f8-a989-118443a8be16',
+    label: i18nLabel(
+      msg({ message: `See in view`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconArrowUpRight',
+    isPinned: false,
+    position: 2.5,
+    shortLabel: null,
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'pageType == "RECORD_PAGE" and numberOfSelectedRecords == 1 and objectPermissions.canReadObjectRecords and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEE_RECORD_IN_VIEW,
     hotKeys: null,
   },
   createNewRecord: {

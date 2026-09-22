@@ -11,6 +11,7 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 
 const company = getMockObjectMetadataItemOrThrow('company');
 const person = getMockObjectMetadataItemOrThrow('person');
+const opportunity = getMockObjectMetadataItemOrThrow('opportunity');
 const nameField = company.fields.find((field) => field.name === 'name')!;
 const personCompanyField = person.fields.find(
   (field) => field.name === 'company',
@@ -48,7 +49,7 @@ const matches = (
 ) =>
   isRecordMatchingFilter({
     record: { id: recordId, deletedAt: null, ...record },
-    filter,
+    filter: filter ?? {},
     objectMetadataItem: company,
     objectMetadataItems: [company],
   });
@@ -142,8 +143,40 @@ describe('getRecordViewFilter', () => {
     }
   });
 
-  it('fails instead of silently dropping a filter with missing metadata', () => {
-    expect(() =>
+  it('excludes records sitting in a hidden group', () => {
+    const stageField = opportunity.fields.find(
+      (field) => field.name === 'stage',
+    )!;
+    const filter = getRecordViewFilter({
+      view: {
+        ...view,
+        objectMetadataId: opportunity.id,
+        type: ViewType.KANBAN,
+        mainGroupByFieldMetadataId: stageField.id,
+        viewGroups: [
+          { id: 'group-new', fieldValue: 'NEW', isVisible: true, position: 0 },
+          { id: 'group-won', fieldValue: 'WON', isVisible: false, position: 1 },
+        ],
+      },
+      recordId,
+      objectFields: opportunity.fields,
+      fieldMetadataItems: opportunity.fields,
+      filterValueDependencies: dependencies,
+    });
+    const matchesOpportunity = (stage: string) =>
+      isRecordMatchingFilter({
+        record: { id: recordId, deletedAt: null, stage },
+        filter: filter ?? {},
+        objectMetadataItem: opportunity,
+        objectMetadataItems: [opportunity],
+      });
+
+    expect(matchesOpportunity('NEW')).toBe(true);
+    expect(matchesOpportunity('WON')).toBe(false);
+  });
+
+  it('returns no filter instead of silently dropping a filter with missing metadata', () => {
+    expect(
       getFilter({
         viewFilters: [
           {
@@ -154,6 +187,6 @@ describe('getRecordViewFilter', () => {
           },
         ],
       }),
-    ).toThrow('Unable to resolve view filters');
+    ).toBeNull();
   });
 });
