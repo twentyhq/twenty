@@ -90,8 +90,6 @@ const uploadBuiltHandlerFile = async ({
     fileFolder: 'BuiltLogicFunction',
     filePath: builtHandlerPath,
     fileBuffer: Buffer.from(builtHandlerCode),
-    filename: builtHandlerPath.split('/').pop() as string,
-    contentType: 'application/javascript',
     expectToFail: false,
   });
 

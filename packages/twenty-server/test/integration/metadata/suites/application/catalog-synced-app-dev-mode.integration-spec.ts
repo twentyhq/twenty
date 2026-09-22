@@ -149,7 +149,6 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
       fileBuffer: Buffer.from(
         JSON.stringify({ name: 'published-catalog-app', version: '1.0.1' }),
       ),
-      filename: 'package.json',
       expectToFail: false,
     });
 
@@ -244,7 +243,6 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
         fileBuffer: Buffer.from(
           JSON.stringify({ name: 'owned-local-app', version: '0.0.1' }),
         ),
-        filename: 'package.json',
         expectToFail: false,
       });
 

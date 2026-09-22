@@ -6,14 +6,9 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
-import bytes from 'bytes';
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import type { FileUpload } from 'graphql-upload/processRequest.mjs';
-
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { settings } from 'src/engine/constants/settings';
 import { ApplicationDevelopmentService } from 'src/engine/core-modules/application/application-development/application-development.service';
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
 import { ApplicationExportDTO } from 'src/engine/core-modules/application/application-development/dtos/application-export.dto';
@@ -25,17 +20,14 @@ import { CreateApplicationFileUploadsInput } from 'src/engine/core-modules/appli
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
 import { ExportApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/export-application.input';
-import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UsePipes(ResolverValidationPipe)
@@ -86,32 +78,6 @@ export class ApplicationDevelopmentResolver {
       dryRun,
       inferDeletionFromMissingEntities,
       workspaceId,
-    });
-  }
-
-  @Mutation(() => FileDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  async uploadApplicationFile(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream }: FileUpload,
-    @Args()
-    {
-      applicationUniversalIdentifier,
-      fileFolder,
-      filePath,
-    }: UploadApplicationFileInput,
-  ): Promise<FileDTO> {
-    return this.applicationDevelopmentService.uploadApplicationFile({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder,
-      filePath,
-      getFileBuffer: () =>
-        streamToBuffer(
-          createReadStream(),
-          bytes(settings.storage.maxFileSize) ?? undefined,
-        ),
     });
   }
 

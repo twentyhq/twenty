@@ -98,8 +98,6 @@ describe('Logic function creation via manifest sync should fail for invalid hand
       fileFolder: 'BuiltLogicFunction',
       filePath: VALID_BUILT_PATH,
       fileBuffer: Buffer.from('dummy built handler content'),
-      filename: 'handler.mjs',
-      contentType: 'application/javascript',
       expectToFail: false,
     });
 

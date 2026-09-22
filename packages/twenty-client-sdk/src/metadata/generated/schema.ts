@@ -3624,7 +3624,6 @@ export interface Mutation {
     checkPublicDomainValidRecords?: DomainValidRecords
     createDevelopmentApplication: DevelopmentApplication
     syncApplication: WorkspaceMigration
-    uploadApplicationFile: File
     createApplicationFileUploads: CreateApplicationFileUploadsResult
     completeApplicationFileUploads: CompleteApplicationFileUploadsResult
     revokeApplicationAuthorization: Scalars['Boolean']
@@ -7455,7 +7454,6 @@ export interface MutationGenqlSelection{
     checkPublicDomainValidRecords?: (DomainValidRecordsGenqlSelection & { __args: {domain: Scalars['String']} })
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), inferDeletionFromMissingEntities?: (Scalars['Boolean'] | null)} })
-    uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
     createApplicationFileUploads?: (CreateApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], files: ApplicationFileUploadRequestInput[]} })
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }

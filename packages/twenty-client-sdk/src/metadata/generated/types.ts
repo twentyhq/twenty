@@ -10923,27 +10923,6 @@ export default {
                     ]
                 }
             ],
-            "uploadApplicationFile": [
-                306,
-                {
-                    "file": [
-                        431,
-                        "Upload!"
-                    ],
-                    "applicationUniversalIdentifier": [
-                        1,
-                        "String!"
-                    ],
-                    "fileFolder": [
-                        310,
-                        "FileFolder!"
-                    ],
-                    "filePath": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
             "createApplicationFileUploads": [
                 312,
                 {

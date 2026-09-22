@@ -13,8 +13,6 @@ const TEST_APP_ID = uuidv4();
 type UploadInput = {
   fileFolder: string;
   filePath: string;
-  filename: string;
-  contentType: string;
   fileContent: string;
 };
 
@@ -35,8 +33,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         fileFolder: 'BuiltFrontComponent',
         filePath: 'src/components/my-component.mjs',
-        filename: 'my-component.mjs',
-        contentType: 'application/javascript',
         fileContent: 'export default function MyComponent() {}',
       },
       expected: {
@@ -51,8 +47,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         fileFolder: 'BuiltLogicFunction',
         filePath: 'src/handlers/my-handler.mjs',
-        filename: 'my-handler.mjs',
-        contentType: 'application/javascript',
         fileContent: 'export default async function handler() {}',
       },
       expected: {
@@ -67,8 +61,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         fileFolder: 'Source',
         filePath: 'src/index.tsx',
-        filename: 'index.tsx',
-        contentType: 'text/plain',
         fileContent: 'export const App = () => <div>Hello</div>;',
       },
       expected: {
@@ -83,8 +75,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         fileFolder: 'PublicAsset',
         filePath: 'assets/logo.svg',
-        filename: 'logo.svg',
-        contentType: 'image/svg+xml',
         fileContent: '<svg></svg>',
       },
       expected: {
@@ -99,8 +89,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         fileFolder: 'Dependencies',
         filePath: 'yarn.lock',
-        filename: 'yarn.lock',
-        contentType: 'text/plain',
         fileContent: '# yarn lockfile v1',
       },
       expected: {
@@ -115,8 +103,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         fileFolder: 'Source',
         filePath: 'src/modules/auth/login/login.component.tsx',
-        filename: 'login.component.tsx',
-        contentType: 'text/plain',
         fileContent: 'export const Login = () => null;',
       },
       expected: {
@@ -153,8 +139,6 @@ describe('Upload application file should succeed', () => {
         fileFolder: input.fileFolder,
         filePath: input.filePath,
         fileBuffer: Buffer.from(input.fileContent),
-        filename: input.filename,
-        contentType: input.contentType,
         expectToFail: false,
       });
 

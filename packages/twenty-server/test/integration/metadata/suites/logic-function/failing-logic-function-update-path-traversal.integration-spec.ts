@@ -98,8 +98,7 @@ const FAILING_UPDATE_TEST_CASES: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title:
-      'when sourceHandlerPath is a folder path without extension',
+    title: 'when sourceHandlerPath is a folder path without extension',
     context: {
       manifest: buildManifest({
         sourceHandlerPath: 'src/logic-functions/my-handler',
@@ -152,8 +151,6 @@ describe('Logic function update via manifest sync should fail for path traversal
       fileFolder: 'BuiltLogicFunction',
       filePath: VALID_BUILT_PATH,
       fileBuffer: Buffer.from('dummy built handler content'),
-      filename: 'handler.mjs',
-      contentType: 'application/javascript',
       expectToFail: false,
     });
 

@@ -84,7 +84,6 @@ export const setupApplicationForSync = async ({
     fileFolder: 'Dependencies',
     filePath: 'package.json',
     fileBuffer: Buffer.from(packageJson),
-    filename: 'package.json',
     expectToFail: false,
     token,
   });

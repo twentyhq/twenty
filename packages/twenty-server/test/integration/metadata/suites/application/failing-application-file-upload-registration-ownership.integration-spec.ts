@@ -1,6 +1,3 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { completeApplicationFileUploads } from 'test/integration/metadata/suites/application/utils/complete-application-file-uploads.util';
@@ -21,7 +18,6 @@ import {
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const TEST_APP_UID = uuidv4();
-const STORAGE_LOCAL_PATH = join(process.cwd(), '.local-storage');
 
 const HANDLER_PATH = 'handler.mjs';
 const OWNER_HANDLER = 'export const main = () => "owner";';
@@ -118,23 +114,6 @@ const applyRegistrationOwnership = async (
   }
 };
 
-const readStoredHandler = (applicationUniversalIdentifier: string) => {
-  try {
-    return readFileSync(
-      join(
-        STORAGE_LOCAL_PATH,
-        SEED_APPLE_WORKSPACE_ID,
-        applicationUniversalIdentifier,
-        'built-logic-function',
-        HANDLER_PATH,
-      ),
-      'utf-8',
-    );
-  } catch {
-    return null;
-  }
-};
-
 const countApplicationFiles = async (
   applicationUniversalIdentifier: string,
 ) => {
@@ -200,8 +179,6 @@ describe('Application file endpoints should fail', () => {
       fileFolder: 'BuiltLogicFunction',
       filePath: HANDLER_PATH,
       fileBuffer: Buffer.from(OWNER_HANDLER),
-      filename: HANDLER_PATH,
-      contentType: 'application/javascript',
     });
 
     jest.useFakeTimers();
@@ -221,46 +198,6 @@ describe('Application file endpoints should fail', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: TEST_APP_UID,
     });
-  });
-
-  describe('uploadApplicationFile', () => {
-    it.each(eachTestingContextFilter(FAILING_TEST_CASES))(
-      '$title',
-      async ({ context }) => {
-        const applicationUniversalIdentifier =
-          getTargetApplicationUniversalIdentifier(
-            context.registrationOwnership,
-          );
-        const storedHandlerBefore = readStoredHandler(
-          applicationUniversalIdentifier,
-        );
-        const filesBefore = await countApplicationFiles(
-          applicationUniversalIdentifier,
-        );
-
-        await applyRegistrationLink(context);
-        await applyRegistrationOwnership(context.registrationOwnership);
-
-        const { errors } = await uploadApplicationFile({
-          applicationUniversalIdentifier,
-          fileFolder: 'BuiltLogicFunction',
-          filePath: HANDLER_PATH,
-          fileBuffer: Buffer.from(REPLACEMENT_HANDLER),
-          filename: HANDLER_PATH,
-          contentType: 'application/javascript',
-          expectToFail: true,
-        });
-
-        expectOneNotInternalServerErrorSnapshot({ errors, normalizeMessage });
-        expect(readStoredHandler(applicationUniversalIdentifier)).toBe(
-          storedHandlerBefore,
-        );
-        expect(
-          await countApplicationFiles(applicationUniversalIdentifier),
-        ).toBe(filesBefore);
-      },
-      30000,
-    );
   });
 
   describe('createApplicationFileUploads', () => {
