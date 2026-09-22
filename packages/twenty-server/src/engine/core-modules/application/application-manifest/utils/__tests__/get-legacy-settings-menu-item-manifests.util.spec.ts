@@ -32,7 +32,7 @@ const buildManifest = ({
   }) as unknown as Manifest;
 
 describe('getLegacySettingsMenuItemManifests', () => {
-  it('should synthesize a page for the component the deprecated pointer names', () => {
+  it('should synthesize an item for the component the deprecated pointer names', () => {
     const legacySettingsMenuItems = getLegacySettingsMenuItemManifests(
       buildManifest({
         settingsFrontComponentUniversalIdentifier:
@@ -67,7 +67,7 @@ describe('getLegacySettingsMenuItemManifests', () => {
     ).toBe(getLegacySettingsMenuItemManifests(manifest)[0].universalIdentifier);
   });
 
-  it('should synthesize nothing when the manifest already declares a page', () => {
+  it('should synthesize nothing when the manifest already declares an item', () => {
     expect(
       getLegacySettingsMenuItemManifests(
         buildManifest({

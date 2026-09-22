@@ -5,12 +5,16 @@ import {
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+// Deliberately not shared with the backfill command, which freezes what it wrote
+// the day it ran: unifying the two would make a later edit here rewrite the value
+// that command is meant to keep. Only the universalIdentifier has to agree, and
+// getLegacySettingsMenuItemUniversalIdentifier is already the single source for it.
 const LEGACY_SETTINGS_MENU_ITEM_TITLE = 'Settings';
 const LEGACY_SETTINGS_MENU_ITEM_ICON = 'IconAdjustments';
 
-// An application built before defineSettingsMenuItem existed declares no page, only
+// An application built before defineSettingsMenuItem existed declares no item, only
 // the deprecated settingsFrontComponent pointer. Without this, syncing such an
-// application would find no page in its manifest and delete the one the upgrade
+// application would find no item in its manifest and delete the one the upgrade
 // backfilled, dropping the tab the application already renders.
 export const getLegacySettingsMenuItemManifests = (
   manifest: Manifest,
