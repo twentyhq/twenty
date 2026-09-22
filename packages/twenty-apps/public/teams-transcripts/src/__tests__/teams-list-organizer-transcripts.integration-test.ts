@@ -78,6 +78,9 @@ describe('List My Teams Transcripts', () => {
       expect(calendarUrl.searchParams.get('$top')).toBe(
         String(TEAMS_CALENDAR_PAGE_SIZE),
       );
+      expect(calendarUrl.searchParams.get('$select')).toContain(
+        'isOnlineMeeting',
+      );
     });
 
     it('escapes apostrophes in the join URL before filtering meetings', async () => {

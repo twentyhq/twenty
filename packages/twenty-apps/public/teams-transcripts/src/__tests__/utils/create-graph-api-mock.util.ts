@@ -59,12 +59,24 @@ const paginate = <TItem>({
   });
 };
 
-const toGraphCalendarEvent = (event: FakeTeamsCalendarEvent) => ({
+const toGraphCalendarEvent = (
+  event: FakeTeamsCalendarEvent,
+  selectedFields: string[],
+) => ({
   isOrganizer: event.isOrganizer ?? true,
   isCancelled: event.isCancelled ?? false,
-  onlineMeetingProvider: event.onlineMeetingProvider ?? 'teamsForBusiness',
-  onlineMeeting: { joinUrl: event.joinUrl },
+  ...(selectedFields.includes('isOnlineMeeting')
+    ? {
+        isOnlineMeeting: true,
+        onlineMeetingProvider:
+          event.onlineMeetingProvider ?? 'teamsForBusiness',
+        onlineMeeting: { joinUrl: event.joinUrl },
+      }
+    : { onlineMeetingProvider: 'unknown', onlineMeeting: null }),
 });
+
+const readSelectedFields = (requestUrl: string): string[] =>
+  (new URL(requestUrl).searchParams.get('$select') ?? '').split(',');
 
 const readJoinWebUrlFilter = (requestUrl: string): string | undefined => {
   const filter = new URL(requestUrl).searchParams.get('$filter') ?? '';
@@ -116,7 +128,9 @@ export const createGraphApiMock = ({
     }),
     http.get(`${MICROSOFT_GRAPH_BASE_URL}/me/calendarView`, ({ request }) =>
       paginate({
-        items: state.calendarEvents.map(toGraphCalendarEvent),
+        items: state.calendarEvents.map((event) =>
+          toGraphCalendarEvent(event, readSelectedFields(request.url)),
+        ),
         requestUrl: request.url,
         pageSize: state.calendarPageSize,
       }),
