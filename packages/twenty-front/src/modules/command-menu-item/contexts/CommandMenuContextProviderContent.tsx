@@ -144,6 +144,7 @@ export const CommandMenuContextProviderContent = ({
 
     return mergeGlobalRecordCreationCommandMenuItems({
       commandMenuItems: contextCommandMenuItems,
+      contextObjectMetadataId: currentObjectMetadataItemId,
       globalRecordCreationCommandMenuItems,
       shouldDisplayGlobalRecordCreationCommands,
     });
