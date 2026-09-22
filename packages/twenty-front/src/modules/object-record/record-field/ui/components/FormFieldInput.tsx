@@ -73,6 +73,7 @@ type FormFieldInputProps = {
   error?: string;
   onError?: (error: string | undefined) => void;
   timeZone?: string;
+  currencyAmountUnit?: 'micros' | 'units';
 };
 
 export const FormFieldInput = ({
@@ -86,6 +87,7 @@ export const FormFieldInput = ({
   error,
   onError,
   timeZone,
+  currencyAmountUnit,
 }: FormFieldInputProps) => {
   return isFieldNumber(field) || field.type === FieldMetadataType.NUMERIC ? (
     <FormNumberFieldInput
@@ -222,6 +224,7 @@ export const FormFieldInput = ({
     />
   ) : isFieldCurrency(field) ? (
     <FormCurrencyFieldInput
+      amountUnit={currencyAmountUnit}
       label={field.label}
       defaultValue={defaultValue as FormFieldCurrencyValue | null}
       onChange={onChange}

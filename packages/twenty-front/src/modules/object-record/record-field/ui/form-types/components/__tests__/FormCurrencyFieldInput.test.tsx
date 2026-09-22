@@ -25,6 +25,7 @@ jest.mock(
 const renderCurrencyInput = (
   amountMicros: FormFieldCurrencyValue['amountMicros'],
   readonly = false,
+  amountUnit: 'micros' | 'units' | undefined = 'units',
 ) => {
   const onChange = jest.fn();
   const store = createStore();
@@ -36,6 +37,7 @@ const renderCurrencyInput = (
     return (
       <FormCurrencyFieldInput
         defaultValue={value}
+        amountUnit={amountUnit}
         readonly={readonly}
         onChange={(newValue) => {
           setValue(newValue);
@@ -128,7 +130,7 @@ jest.mock(
   }),
 );
 
-it('stores workflow condition amounts in micros', async () => {
+it('preserves raw micros in workflow conditions', async () => {
   const user = userEvent.setup();
   const onChange = jest.fn();
   render(
@@ -149,10 +151,10 @@ it('stores workflow condition amounts in micros', async () => {
     </I18nProvider>,
   );
   const input = screen.getByRole('textbox');
-  expect(input).toHaveValue('3.21');
+  expect(input).toHaveValue('3210000');
   await user.clear(input);
   await user.type(input, '24');
-  expect(onChange).toHaveBeenLastCalledWith(24_000_000);
+  expect(onChange).toHaveBeenLastCalledWith(24);
 });
 
 it('passes selected workflow variables through without converting them', async () => {
@@ -172,4 +174,18 @@ it('passes selected workflow variables through without converting them', async (
   );
   await user.click(screen.getByRole('button', { name: 'Choose variable' }));
   expect(onChange).toHaveBeenCalledWith(reference);
+});
+
+it('preserves raw micros for workflow currency forms', async () => {
+  const user = userEvent.setup();
+  const { onChange } = renderCurrencyInput(3_210_000, false, 'micros');
+  const input = screen.getByRole('textbox');
+  expect(input).toHaveValue('3210000');
+  expect(screen.getByText('Amount Micros')).toBeInTheDocument();
+  await user.clear(input);
+  await user.type(input, '24');
+  expect(onChange).toHaveBeenLastCalledWith({
+    currencyCode: CurrencyCode.USD,
+    amountMicros: 24,
+  });
 });

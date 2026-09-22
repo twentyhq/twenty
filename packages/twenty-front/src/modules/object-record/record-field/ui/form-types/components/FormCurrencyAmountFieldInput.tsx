@@ -10,7 +10,7 @@ import {
 
 type FormCurrencyAmountFieldInputProps = Pick<
   ComponentProps<typeof FormNumberFieldInput>,
-  'label' | 'defaultValue' | 'onChange' | 'VariablePicker' | 'readonly'
+  'label' | 'defaultValue' | 'onChange' | 'VariablePicker' | 'readonly' | 'hint'
 >;
 
 export const FormCurrencyAmountFieldInput = ({
@@ -19,6 +19,7 @@ export const FormCurrencyAmountFieldInput = ({
   label,
   VariablePicker,
   readonly,
+  hint,
 }: FormCurrencyAmountFieldInputProps) => {
   const amount =
     !isDefined(defaultValue) || defaultValue === ''
@@ -32,11 +33,12 @@ export const FormCurrencyAmountFieldInput = ({
       label={label}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      hint={hint}
       defaultValue={amount}
       onChange={(newAmount) =>
         onChange(
           isNumber(newAmount)
-            ? convertCurrencyAmountToCurrencyMicros(newAmount)
+            ? Math.round(convertCurrencyAmountToCurrencyMicros(newAmount))
             : newAmount,
         )
       }
