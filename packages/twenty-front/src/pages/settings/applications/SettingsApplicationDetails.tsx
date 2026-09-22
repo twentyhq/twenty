@@ -14,12 +14,11 @@ import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -43,12 +42,15 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
+import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
 import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
+import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
 import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
 import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
@@ -60,15 +62,12 @@ const GENERAL_TAB_ID = 'general';
 const VARIABLES_TAB_ID = 'variables';
 const CUSTOM_SETTINGS_TAB_ID = 'settings';
 
+const CONFIGURATION_TAB_IDS = [CUSTOM_SETTINGS_TAB_ID, VARIABLES_TAB_ID];
+
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
 
   const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    APPLICATION_DETAIL_ID,
-  );
-
-  const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     APPLICATION_DETAIL_ID,
   );
@@ -150,6 +149,7 @@ export const SettingsApplicationDetails = () => {
   };
 
   const navigate = useNavigateSettings();
+  const redirect = useNavigate();
   const handleUninstallCompleted = useCallback(() => {
     navigate(SettingsPath.Applications);
   }, [navigate]);
@@ -180,15 +180,24 @@ export const SettingsApplicationDetails = () => {
   const missingRequiredApplicationVariables =
     getMissingRequiredApplicationVariables(displayedApplicationVariables);
 
-  const configurationTabId = hasCustomSettingsTab
-    ? CUSTOM_SETTINGS_TAB_ID
-    : VARIABLES_TAB_ID;
+  const hasVariablesTab =
+    !hasCustomSettingsTab && displayedApplicationVariables.length > 0;
+
+  const { healthCheckResult, runHealthCheck } = useApplicationHealthCheck({
+    applicationId,
+    healthCheckLogicFunctionId: application?.healthCheckLogicFunctionId,
+  });
+
+  const saveApplicationVariablesAndRecheckHealth = async () => {
+    await saveApplicationVariables();
+    await runHealthCheck();
+  };
 
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
     // A custom settings tab lays out the application variables itself, so
     // exposing them again would duplicate the same fields.
-    ...(!hasCustomSettingsTab && displayedApplicationVariables.length > 0
+    ...(hasVariablesTab
       ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
       : []),
     ...(hasCustomSettingsTab
@@ -201,6 +210,38 @@ export const SettingsApplicationDetails = () => {
         ]
       : []),
   ];
+
+  const configurationTabId = tabs.find((tab) =>
+    CONFIGURATION_TAB_IDS.includes(tab.id),
+  )?.id;
+
+  const configurationTabLocation = isDefined(configurationTabId)
+    ? getSettingsPath(
+        SettingsPath.ApplicationDetail,
+        { applicationId },
+        undefined,
+        configurationTabId,
+      )
+    : undefined;
+
+  const goToConfigurationTab = isDefined(configurationTabLocation)
+    ? () => redirect(configurationTabLocation)
+    : undefined;
+
+  const healthBanner = isNonEmptyArray(missingRequiredApplicationVariables)
+    ? undefined
+    : getApplicationHealthBanner({
+        healthCheckResult,
+        fallbackLocation: configurationTabLocation,
+      });
+
+  const healthBannerAction = healthBanner?.action;
+  const healthBannerButton = isDefined(healthBannerAction)
+    ? {
+        label: healthBannerAction.label,
+        onClick: () => redirect(healthBannerAction.to),
+      }
+    : undefined;
 
   const renderActiveTabContent = () => {
     if (!isDefined(application)) {
@@ -277,7 +318,7 @@ export const SettingsApplicationDetails = () => {
               variant="solid"
               color="accent"
               size="sm"
-              onClick={saveApplicationVariables}
+              onClick={saveApplicationVariablesAndRecheckHealth}
               disabled={
                 !hasUnsavedApplicationVariables || isSavingApplicationVariables
               }
@@ -293,10 +334,21 @@ export const SettingsApplicationDetails = () => {
         }
       >
         <SettingsPageContainer overflow="visible">
-          {isNonEmptyArray(missingRequiredApplicationVariables) && (
-            <SettingsApplicationMissingConfigurationBanner
-              missingApplicationVariables={missingRequiredApplicationVariables}
-              onConfigure={() => setActiveTabId(configurationTabId)}
+          {isNonEmptyArray(missingRequiredApplicationVariables) &&
+            isDefined(goToConfigurationTab) && (
+              <SettingsApplicationMissingConfigurationBanner
+                missingApplicationVariables={
+                  missingRequiredApplicationVariables
+                }
+                onConfigure={goToConfigurationTab}
+              />
+            )}
+          {isDefined(healthBanner) && (
+            <SettingsApplicationHealthBanner
+              healthStatus={healthBanner.status}
+              title={healthBanner.title}
+              description={healthBanner.description}
+              action={healthBannerButton}
             />
           )}
           {isApplicationStopped && (

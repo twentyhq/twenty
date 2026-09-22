@@ -200,6 +200,7 @@ import { AddWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/
 import { AddAiEvaluationModelToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789918648347-add-ai-evaluation-model-to-workspace';
 import { AddIsRequiredToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789920900000-add-is-required-to-application-variables';
 import { AddDeferredWorkspaceMigrationActionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790085198967-add-deferred-workspace-migration-action-table';
+import { AddHealthCheckToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088275000-add-health-check-to-application';
 import { AddApplicationGrantedCapabilitiesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088525621-add-application-granted-capabilities';
 
 export const INSTANCE_COMMANDS = [
@@ -403,5 +404,6 @@ export const INSTANCE_COMMANDS = [
   AddAiEvaluationModelToWorkspaceFastInstanceCommand,
   AddIsRequiredToApplicationVariablesFastInstanceCommand,
   AddDeferredWorkspaceMigrationActionTableFastInstanceCommand,
+  AddHealthCheckToApplicationFastInstanceCommand,
   AddApplicationGrantedCapabilitiesFastInstanceCommand,
 ];
