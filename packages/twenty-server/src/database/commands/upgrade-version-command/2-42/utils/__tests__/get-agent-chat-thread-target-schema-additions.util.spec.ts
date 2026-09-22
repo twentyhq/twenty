@@ -78,8 +78,18 @@ describe('getAgentChatThreadTargetSchemaAdditions', () => {
     );
 
     // The far leg lives on agentChatThread, so selecting by owning object alone
-    // would emit half a relation.
+    // would emit half a relation — but a filter that emitted ONLY the far leg
+    // would satisfy that on its own, so assert the near side too.
     expect(fieldIdentifiers).toContain(RECORD_TARGETS_IDENTIFIER);
+    expect(fieldIdentifiers).toEqual(
+      expect.arrayContaining([
+        STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread.universalIdentifier,
+        STANDARD_OBJECT_FIELDS.agentChatThreadTarget.objectMetadataId
+          .universalIdentifier,
+        STANDARD_OBJECT_FIELDS.agentChatThreadTarget.recordId
+          .universalIdentifier,
+      ]),
+    );
     expect(additions.indexes.length).toBeGreaterThan(0);
   });
 

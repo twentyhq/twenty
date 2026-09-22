@@ -1,4 +1,6 @@
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -67,8 +69,19 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
       getAgentChatThreadTargetSchemaAdditions({ existing, standard });
 
     if (objects.length + fields.length + indexes.length === 0) {
+      // Empty additions mean either outcome, and they are not the same: a
+      // workspace with no agentChatThread has not been provisioned at all and
+      // will need this again once the agent history migration reaches it.
+      const hasThreadObject = isDefined(
+        existing.flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier
+        ],
+      );
+
       this.logger.log(
-        `Workspace ${workspaceId} already carries agentChatThreadTarget, skipping`,
+        hasThreadObject
+          ? `Workspace ${workspaceId} already carries agentChatThreadTarget, skipping`
+          : `Workspace ${workspaceId} has no agentChatThread yet, skipping until its agent history is migrated`,
       );
 
       return;
