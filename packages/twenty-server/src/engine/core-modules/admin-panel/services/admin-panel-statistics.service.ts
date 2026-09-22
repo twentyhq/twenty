@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type FullNameMetadata } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
 import { Brackets, ILike, IsNull, Repository } from 'typeorm';
 
 import { type AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
 import { type AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
+import { AdminPanelWorkspaceMemberNamesService } from 'src/engine/core-modules/admin-panel/services/admin-panel-workspace-member-names.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const RECENT_USERS_LIMIT = 10;
@@ -19,6 +23,7 @@ export class AdminPanelStatisticsService {
   constructor(
     private readonly fileUrlService: FileUrlService,
     private readonly userService: UserService,
+    private readonly workspaceMemberNamesService: AdminPanelWorkspaceMemberNamesService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -47,7 +52,7 @@ export class AdminPanelStatisticsService {
       .addOrderBy('userWorkspace.createdAt', 'DESC')
       .take(RECENT_USERS_LIMIT);
 
-    if (trimmedSearch && trimmedSearch.length > 0) {
+    if (isNonEmptyString(trimmedSearch)) {
       const like = `%${trimmedSearch}%`;
 
       queryBuilder.andWhere(
@@ -64,18 +69,22 @@ export class AdminPanelStatisticsService {
 
     const users = await queryBuilder.getMany();
 
-    const signedAvatarUrlByUserId =
-      await this.buildSignedAvatarUrlByUserId(users);
+    const [signedAvatarUrlByUserId, workspaceMemberNamesByUserId] =
+      await Promise.all([
+        this.buildSignedAvatarUrlByUserId(users),
+        this.buildWorkspaceMemberNamesByUserId(users),
+      ]);
 
     return Promise.all(
       users.map(async (user) => {
         const displayWorkspace = user.userWorkspaces[0]?.workspace;
+        const memberName = workspaceMemberNamesByUserId.get(user.id);
 
         return {
           id: user.id,
           email: user.email,
-          firstName: user.firstName ?? undefined,
-          lastName: user.lastName ?? undefined,
+          firstName: memberName?.firstName ?? user.firstName ?? undefined,
+          lastName: memberName?.lastName ?? user.lastName ?? undefined,
           createdAt: user.createdAt,
           avatarUrl: signedAvatarUrlByUserId.get(user.id) ?? null,
           workspaceName: displayWorkspace?.displayName ?? null,
@@ -142,6 +151,52 @@ export class AdminPanelStatisticsService {
         totalUsers: row.totalUsers,
       })),
     );
+  }
+
+  private async buildWorkspaceMemberNamesByUserId(
+    users: UserEntity[],
+  ): Promise<Map<string, FullNameMetadata>> {
+    const namesByUserId = new Map<string, FullNameMetadata>();
+    const userIdsByWorkspaceId = new Map<string, Set<string>>();
+
+    for (const user of users) {
+      const displayWorkspace = user.userWorkspaces[0]?.workspace;
+
+      if (
+        !isDefined(displayWorkspace) ||
+        !isWorkspaceProvisioned(displayWorkspace)
+      ) {
+        continue;
+      }
+
+      const userIds =
+        userIdsByWorkspaceId.get(displayWorkspace.id) ?? new Set<string>();
+
+      userIds.add(user.id);
+      userIdsByWorkspaceId.set(displayWorkspace.id, userIds);
+    }
+
+    await Promise.all(
+      Array.from(userIdsByWorkspaceId.entries()).map(
+        async ([workspaceId, userIds]) => {
+          const namesForWorkspace =
+            await this.workspaceMemberNamesService.getNamesByUserId({
+              workspaceId,
+              userIds: Array.from(userIds),
+            });
+
+          for (const userId of userIds) {
+            const name = namesForWorkspace.get(userId);
+
+            if (isDefined(name)) {
+              namesByUserId.set(userId, name);
+            }
+          }
+        },
+      ),
+    );
+
+    return namesByUserId;
   }
 
   private async buildSignedAvatarUrlByUserId(

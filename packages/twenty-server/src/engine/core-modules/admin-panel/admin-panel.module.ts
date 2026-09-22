@@ -24,6 +24,7 @@ import { AdminPanelServerAdminService } from 'src/engine/core-modules/admin-pane
 import { AdminPanelSigningKeyService } from 'src/engine/core-modules/admin-panel/services/admin-panel-signing-key.service';
 import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
+import { AdminPanelWorkspaceMemberNamesService } from 'src/engine/core-modules/admin-panel/services/admin-panel-workspace-member-names.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -100,6 +101,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelUserLookupService,
     AdminPanelServerAdminService,
     AdminPanelStatisticsService,
+    AdminPanelWorkspaceMemberNamesService,
     AdminPanelBillingService,
     AdminPanelChatService,
     AdminPanelGlobalChatThreadsService,

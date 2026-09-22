@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
+import { AdminPanelWorkspaceMemberNamesService } from 'src/engine/core-modules/admin-panel/services/admin-panel-workspace-member-names.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -27,6 +28,7 @@ export class AdminPanelUserLookupService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly fileUrlService: FileUrlService,
     private readonly userService: UserService,
+    private readonly workspaceMemberNamesService: AdminPanelWorkspaceMemberNamesService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -81,63 +83,83 @@ export class AdminPanelUserLookupService {
 
     const allFeatureFlagKeys = Object.values(FeatureFlagKey);
 
-    const workspaces = await Promise.all(
+    const workspaceResults = await Promise.all(
       targetUser.userWorkspaces.map(async (userWorkspace) => {
         const workspaceUsers = userWorkspace.workspace.workspaceUsers.filter(
           (workspaceUser) => isDefined(workspaceUser.user),
         );
-        const avatarUrlsByUserId =
-          await this.userService.loadSignedAvatarUrlsByUserId({
+        const [avatarUrlsByUserId, namesByUserId] = await Promise.all([
+          this.userService.loadSignedAvatarUrlsByUserId({
             workspace: userWorkspace.workspace,
             fallbackAvatarUrlsByUserId:
               this.buildFallbackAvatarUrlsByUserId(workspaceUsers),
-          });
+          }),
+          this.workspaceMemberNamesService.getNamesByUserIdIfProvisioned({
+            workspace: userWorkspace.workspace,
+            userIds: workspaceUsers.map(
+              (workspaceUser) => workspaceUser.user.id,
+            ),
+          }),
+        ]);
 
         return {
-          id: userWorkspace.workspace.id,
-          name: userWorkspace.workspace.displayName ?? '',
-          totalUsers: workspaceUsers.length,
-          activationStatus: userWorkspace.workspace.activationStatus,
-          createdAt: userWorkspace.workspace.createdAt,
-          logo:
-            (await this.fileUrlService.signWorkspaceLogoUrl(
-              userWorkspace.workspace,
-            )) ?? undefined,
-          allowImpersonation: userWorkspace.workspace.allowImpersonation,
-          workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
-            subdomain: userWorkspace.workspace.subdomain,
-            customDomain: userWorkspace.workspace.customDomain,
-            isCustomDomainEnabled:
-              userWorkspace.workspace.isCustomDomainEnabled,
-          }),
-          users: workspaceUsers.map((workspaceUser) => ({
-            id: workspaceUser.user.id,
-            email: workspaceUser.user.email,
-            firstName: workspaceUser.user.firstName,
-            lastName: workspaceUser.user.lastName,
-            avatarUrl: avatarUrlsByUserId.get(workspaceUser.user.id) ?? null,
-            createdAt: workspaceUser.user.createdAt,
-          })),
-          featureFlags: allFeatureFlagKeys.map((key) => ({
-            key,
-            value:
-              userWorkspace.workspace.featureFlags?.find(
-                (flag) => flag.key === key,
-              )?.value ?? false,
-          })),
+          targetUserName: namesByUserId.get(targetUser.id),
+          workspace: {
+            id: userWorkspace.workspace.id,
+            name: userWorkspace.workspace.displayName ?? '',
+            totalUsers: workspaceUsers.length,
+            activationStatus: userWorkspace.workspace.activationStatus,
+            createdAt: userWorkspace.workspace.createdAt,
+            logo:
+              (await this.fileUrlService.signWorkspaceLogoUrl(
+                userWorkspace.workspace,
+              )) ?? undefined,
+            allowImpersonation: userWorkspace.workspace.allowImpersonation,
+            workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
+              subdomain: userWorkspace.workspace.subdomain,
+              customDomain: userWorkspace.workspace.customDomain,
+              isCustomDomainEnabled:
+                userWorkspace.workspace.isCustomDomainEnabled,
+            }),
+            users: workspaceUsers.map((workspaceUser) => {
+              const memberName = namesByUserId.get(workspaceUser.user.id);
+
+              return {
+                id: workspaceUser.user.id,
+                email: workspaceUser.user.email,
+                firstName:
+                  memberName?.firstName ?? workspaceUser.user.firstName,
+                lastName: memberName?.lastName ?? workspaceUser.user.lastName,
+                avatarUrl:
+                  avatarUrlsByUserId.get(workspaceUser.user.id) ?? null,
+                createdAt: workspaceUser.user.createdAt,
+              };
+            }),
+            featureFlags: allFeatureFlagKeys.map((key) => ({
+              key,
+              value:
+                userWorkspace.workspace.featureFlags?.find(
+                  (flag) => flag.key === key,
+                )?.value ?? false,
+            })),
+          },
         };
       }),
     );
+
+    const resolvedTargetUserName = workspaceResults.find((result) =>
+      isDefined(result.targetUserName),
+    )?.targetUserName;
 
     return {
       user: {
         id: targetUser.id,
         email: targetUser.email,
-        firstName: targetUser.firstName,
-        lastName: targetUser.lastName,
+        firstName: resolvedTargetUserName?.firstName ?? targetUser.firstName,
+        lastName: resolvedTargetUserName?.lastName ?? targetUser.lastName,
         createdAt: targetUser.createdAt,
       },
-      workspaces,
+      workspaces: workspaceResults.map((result) => result.workspace),
     };
   }
 
@@ -168,13 +190,18 @@ export class AdminPanelUserLookupService {
     const definedWorkspaceUsers = workspaceUsers.filter((wu) =>
       isDefined(wu.user),
     );
-    const avatarUrlsByUserId =
-      await this.userService.loadSignedAvatarUrlsByUserId({
+    const [avatarUrlsByUserId, namesByUserId] = await Promise.all([
+      this.userService.loadSignedAvatarUrlsByUserId({
         workspace,
         fallbackAvatarUrlsByUserId: this.buildFallbackAvatarUrlsByUserId(
           definedWorkspaceUsers,
         ),
-      });
+      }),
+      this.workspaceMemberNamesService.getNamesByUserIdIfProvisioned({
+        workspace,
+        userIds: definedWorkspaceUsers.map((wu) => wu.user.id),
+      }),
+    ]);
 
     const workspaceInfo = {
       id: workspace.id,
@@ -191,14 +218,18 @@ export class AdminPanelUserLookupService {
         customDomain: workspace.customDomain,
         isCustomDomainEnabled: workspace.isCustomDomainEnabled,
       }),
-      users: definedWorkspaceUsers.map((wu) => ({
-        id: wu.user.id,
-        email: wu.user.email,
-        firstName: wu.user.firstName,
-        lastName: wu.user.lastName,
-        avatarUrl: avatarUrlsByUserId.get(wu.user.id) ?? null,
-        createdAt: wu.user.createdAt,
-      })),
+      users: definedWorkspaceUsers.map((wu) => {
+        const memberName = namesByUserId.get(wu.user.id);
+
+        return {
+          id: wu.user.id,
+          email: wu.user.email,
+          firstName: memberName?.firstName ?? wu.user.firstName,
+          lastName: memberName?.lastName ?? wu.user.lastName,
+          avatarUrl: avatarUrlsByUserId.get(wu.user.id) ?? null,
+          createdAt: wu.user.createdAt,
+        };
+      }),
       featureFlags: allFeatureFlagKeys.map((key) => ({
         key,
         value: featureFlags.find((flag) => flag.key === key)?.value ?? false,
@@ -206,14 +237,17 @@ export class AdminPanelUserLookupService {
     };
 
     const firstUser = workspaceUsers.find((wu) => isDefined(wu.user))?.user;
+    const firstUserName = isDefined(firstUser)
+      ? namesByUserId.get(firstUser.id)
+      : undefined;
 
     return {
       user: isDefined(firstUser)
         ? {
             id: firstUser.id,
             email: firstUser.email,
-            firstName: firstUser.firstName,
-            lastName: firstUser.lastName,
+            firstName: firstUserName?.firstName ?? firstUser.firstName,
+            lastName: firstUserName?.lastName ?? firstUser.lastName,
             avatarUrl: avatarUrlsByUserId.get(firstUser.id) ?? null,
             createdAt: firstUser.createdAt,
           }
