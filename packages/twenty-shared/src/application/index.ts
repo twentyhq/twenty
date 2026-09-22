@@ -28,6 +28,11 @@ export {
   isRecurringChargeAmount,
   isRecurringCharge,
 } from './applicationBillingType';
+export type { ApplicationCapability } from './applicationCapabilityType';
+export {
+  APPLICATION_CAPABILITIES,
+  isApplicationCapability,
+} from './applicationCapabilityType';
 export type {
   KnownApplicationCategory,
   ApplicationCategory,

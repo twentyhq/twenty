@@ -59,7 +59,8 @@ jobs:
             A pull request changed files in the app-development platform. Your job is to
             decide whether the documentation under
             `packages/twenty-docs/developers/extend/apps/` (English pages only — ignore
-            `packages/twenty-docs/l/`) is impacted, and report your findings as ONE pull
+            the translated copies under `packages/twenty-docs/<language>/`, such as
+            `packages/twenty-docs/fr/`) is impacted, and report your findings as ONE pull
             request comment.
 
             ## Step 1 — Understand the change

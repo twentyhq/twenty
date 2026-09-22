@@ -6,6 +6,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Breaking Changes
+
+- **`MetadataApiClient.uploadFile` in `twenty-client-sdk` takes one object and no longer accepts a content type.** The file now goes straight to Twenty's file storage (the API issues an upload target, the client sends the bytes there, then the API confirms the upload) instead of being streamed through the GraphQL API, and the MIME type is detected from the bytes on completion. Update every call:
+
+  ```diff
+  - const uploaded = await metadataClient.uploadFile(
+  -   fileBuffer,
+  -   'invoice.pdf',
+  -   'application/pdf',
+  -   FIELD_UNIVERSAL_IDENTIFIER,
+  - );
+  + const uploaded = await metadataClient.uploadFile({
+  +   fileBuffer,
+  +   filename: 'invoice.pdf',
+  +   fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+  + });
+  ```
+
+  The returned `{ id, path, size, createdAt, url }` is unchanged. `uploadFile` now requires a Twenty server that exposes the `createFileUpload` and `completeFileUpload` mutations.
+
 ### Removed
 
 - **The per-file multipart fallback in `twenty app deploy` and `twenty app dev`.** Application files are only uploaded straight to file storage now (`createApplicationFileUploads`, PUT, `completeApplicationFileUploads`). The CLI no longer falls back to the `uploadApplicationFile` mutation on a server that lacks the batch mutations, so deploying to a server older than the direct upload fails instead of degrading.
