@@ -34,6 +34,16 @@ export const SidePanelWorkflowSelectAction = ({
     (model) => model.modelId === JEV_MODEL_ID && model.isAvailable,
   );
 
+  const aiActions = AI_ACTIONS.map((action) =>
+    action.type === 'CLASSIFY' && !isJevAvailable
+      ? {
+          ...action,
+          disabled: true,
+          contextualText: t`TypeSafe AI API key missing`,
+        }
+      : action,
+  );
+
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -71,17 +81,7 @@ export const SidePanelWorkflowSelectAction = ({
         {t`AI`}
       </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={AI_ACTIONS.map((action) =>
-          action.type === 'CLASSIFY'
-            ? {
-                ...action,
-                disabled: !isJevAvailable,
-                contextualText: isJevAvailable
-                  ? undefined
-                  : t`TypeSafe AI API key missing`,
-              }
-            : action,
-        )}
+        actions={aiActions}
         onClick={handleActionClick}
       />
 

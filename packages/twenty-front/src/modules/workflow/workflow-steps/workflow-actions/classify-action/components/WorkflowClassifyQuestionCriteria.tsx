@@ -16,21 +16,21 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledRow = styled.div`
-  align-items: end;
-  display: grid;
+const StyledCriterion = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: minmax(0, 1fr) auto;
+`;
 
-  & > :nth-child(2) {
-    grid-column: 1;
-    grid-row: 2;
-  }
+const StyledNameRow = styled.div`
+  align-items: end;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
 
-  & > button {
-    grid-column: 2;
-    grid-row: 1;
-  }
+const StyledGrowingField = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 type WorkflowClassifyQuestionCriteriaProps = {
@@ -91,18 +91,34 @@ export const WorkflowClassifyQuestionCriteria = ({
   return (
     <StyledContainer>
       {visibleRows.map((criterion, index) => (
-        <StyledRow key={criterion.id}>
-          <FormTextFieldInput
-            label={
-              variant === 'options'
-                ? t`Option ${index + 1} name`
-                : t`Level ${index + 1} name`
-            }
-            defaultValue={criterion.name}
-            placeholder={variant === 'options' ? t`Engineer` : t`Satisfied`}
-            readonly={readonly}
-            onChange={(name) => changeCriterion(criterion.id, { name })}
-          />
+        <StyledCriterion key={criterion.id}>
+          <StyledNameRow>
+            <StyledGrowingField>
+              <FormTextFieldInput
+                label={
+                  variant === 'options'
+                    ? t`Option ${index + 1} name`
+                    : t`Level ${index + 1} name`
+                }
+                defaultValue={criterion.name}
+                placeholder={variant === 'options' ? t`Engineer` : t`Satisfied`}
+                readonly={readonly}
+                onChange={(name) => changeCriterion(criterion.id, { name })}
+              />
+            </StyledGrowingField>
+            {!readonly && (
+              <Button
+                disabled={criterion.id === emptyCriterion.id}
+                startIcon={<IconTrash />}
+                aria-label={
+                  variant === 'options' ? t`Delete option` : t`Delete level`
+                }
+                onClick={() =>
+                  onChange(criteria.filter((row) => row.id !== criterion.id))
+                }
+              />
+            )}
+          </StyledNameRow>
           <FormTextFieldInput
             label={
               variant === 'options' ? t`Description (optional)` : t`Description`
@@ -119,19 +135,7 @@ export const WorkflowClassifyQuestionCriteria = ({
               changeCriterion(criterion.id, { description })
             }
           />
-          {!readonly && (
-            <Button
-              disabled={criterion.id === emptyCriterion.id}
-              startIcon={<IconTrash />}
-              aria-label={
-                variant === 'options' ? t`Delete option` : t`Delete level`
-              }
-              onClick={() =>
-                onChange(criteria.filter((row) => row.id !== criterion.id))
-              }
-            />
-          )}
-        </StyledRow>
+        </StyledCriterion>
       ))}
     </StyledContainer>
   );

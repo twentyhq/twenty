@@ -40,11 +40,11 @@ const StyledNameRow = styled.div`
   align-items: end;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+`;
 
-  & > :first-child {
-    flex: 1;
-    min-width: 0;
-  }
+const StyledGrowingField = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 type WorkflowEditActionClassifyProps = {
@@ -156,14 +156,16 @@ export const WorkflowEditActionClassify = ({
 
             <FormFieldInputContainer>
               <StyledNameRow>
-                <FormTextFieldInput
-                  key={question.type}
-                  label={t`Name`}
-                  defaultValue={question.name}
-                  placeholder={namePlaceholders[question.type]}
-                  readonly={readonly}
-                  onChange={(name) => updateQuestion(question.id, { name })}
-                />
+                <StyledGrowingField>
+                  <FormTextFieldInput
+                    key={question.type}
+                    label={t`Name`}
+                    defaultValue={question.name}
+                    placeholder={namePlaceholders[question.type]}
+                    readonly={readonly}
+                    onChange={(name) => updateQuestion(question.id, { name })}
+                  />
+                </StyledGrowingField>
                 {!readonly && questions.length > 1 && (
                   <Button
                     startIcon={<IconTrash />}
