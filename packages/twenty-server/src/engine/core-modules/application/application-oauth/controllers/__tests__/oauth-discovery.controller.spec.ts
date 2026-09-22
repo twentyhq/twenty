@@ -148,7 +148,8 @@ describe('OAuthDiscoveryController', () => {
       expect(
         await controller.getAuthorizationServerMetadata(request),
       ).toMatchObject({ cli_client_id: 'cli-client-id' });
-      expect(findOrCreateCliRegistrationMock).toHaveBeenCalled();
+      expect(findOrCreateCliRegistrationMock).toHaveBeenCalledTimes(1);
+      expect(findOrCreateCliRegistrationMock).toHaveBeenCalledWith();
     });
   });
 });
