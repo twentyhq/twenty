@@ -16,9 +16,14 @@ export function getUniqueContactsAndHandles(contacts: Contact[]): {
     ...contact,
     handle: normalizeEmailAddress(contact.handle),
   }));
-  const uniqueHandles = uniq(normalizedContacts.map((contact) => contact.handle));
+  const uniqueHandles = uniq(
+    normalizedContacts.map((contact) => contact.handle),
+  );
 
-  const uniqueContacts = uniqBy(normalizedContacts, (contact) => contact.handle);
+  const uniqueContacts = uniqBy(
+    normalizedContacts,
+    (contact) => contact.handle,
+  );
 
   return { uniqueContacts, uniqueHandles };
 }

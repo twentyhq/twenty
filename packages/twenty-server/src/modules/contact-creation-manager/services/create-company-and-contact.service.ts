@@ -89,15 +89,15 @@ export class CreateCompanyAndPersonService {
         select: ['id', 'isInternalMessagesImportEnabled'],
       });
 
-      const { uniqueContacts: canonicalContacts } = getUniqueContactsAndHandles(
-        contactsToCreate,
-      );
-      const uniqueContacts = filterOutContactsThatBelongToSelfOrWorkspaceMembers(
-        canonicalContacts,
-        connectedAccount,
-        workspaceMembers,
-        workspace?.isInternalMessagesImportEnabled ?? false,
-      );
+      const { uniqueContacts: canonicalContacts } =
+        getUniqueContactsAndHandles(contactsToCreate);
+      const uniqueContacts =
+        filterOutContactsThatBelongToSelfOrWorkspaceMembers(
+          canonicalContacts,
+          connectedAccount,
+          workspaceMembers,
+          workspace?.isInternalMessagesImportEnabled ?? false,
+        );
       const uniqueHandles = uniqueContacts.map((contact) => contact.handle);
 
       if (uniqueHandles.length === 0) {

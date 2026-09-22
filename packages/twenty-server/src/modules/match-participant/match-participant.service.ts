@@ -159,10 +159,9 @@ export class MatchParticipantService<
         ...new Set(participants.map((participant) => participant.handle)),
       ].filter(isDefined);
       const canonicalEmailByHandle = new Map(
-        uniqueParticipantsHandles.map((handle) => [
-          handle,
-          normalizeEmailAddress(handle),
-        ] as const),
+        uniqueParticipantsHandles.map(
+          (handle) => [handle, normalizeEmailAddress(handle)] as const,
+        ),
       );
 
       const queryBuilder = addPersonEmailFiltersToQueryBuilder({
