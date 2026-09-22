@@ -30,6 +30,18 @@ export const getLegacySettingsMenuItemManifests = (
     return [];
   }
 
+  // The pre-install phase syncs the application with its legacy pointer intact but
+  // with frontComponents emptied, so synthesizing there would point the item at a
+  // component that phase never installs and fail the whole install.
+  const manifestDeclaresFrontComponent = manifest.frontComponents.some(
+    (frontComponent) =>
+      frontComponent.universalIdentifier === frontComponentUniversalIdentifier,
+  );
+
+  if (!manifestDeclaresFrontComponent) {
+    return [];
+  }
+
   return [
     {
       universalIdentifier: getLegacySettingsMenuItemUniversalIdentifier({

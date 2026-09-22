@@ -12,9 +12,11 @@ const FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
 const buildManifest = ({
   settingsFrontComponentUniversalIdentifier,
   settingsMenuItems = [],
+  frontComponentUniversalIdentifiers = [FRONT_COMPONENT_UNIVERSAL_IDENTIFIER],
 }: {
   settingsFrontComponentUniversalIdentifier?: string;
   settingsMenuItems?: unknown[];
+  frontComponentUniversalIdentifiers?: string[];
 }) =>
   ({
     application: {
@@ -28,6 +30,9 @@ const buildManifest = ({
             },
           }),
     },
+    frontComponents: frontComponentUniversalIdentifiers.map(
+      (universalIdentifier) => ({ universalIdentifier }),
+    ),
     settingsMenuItems,
   }) as unknown as Manifest;
 
@@ -65,6 +70,21 @@ describe('getLegacySettingsMenuItemManifests', () => {
     expect(
       getLegacySettingsMenuItemManifests(manifest)[0].universalIdentifier,
     ).toBe(getLegacySettingsMenuItemManifests(manifest)[0].universalIdentifier);
+  });
+
+  // The pre-install phase syncs manifest.application with its legacy pointer intact
+  // but frontComponents emptied, so synthesizing there would fail the whole install
+  // on a component that phase never registers.
+  it('should synthesize nothing when the manifest carries no matching front component', () => {
+    const legacySettingsMenuItems = getLegacySettingsMenuItemManifests(
+      buildManifest({
+        settingsFrontComponentUniversalIdentifier:
+          FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+        frontComponentUniversalIdentifiers: [],
+      }),
+    );
+
+    expect(legacySettingsMenuItems).toEqual([]);
   });
 
   it('should synthesize nothing when the manifest already declares an item', () => {

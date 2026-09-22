@@ -14,6 +14,7 @@ import { SettingsMenuItemExceptionCode } from 'src/engine/metadata-modules/setti
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
+import { type FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
@@ -52,11 +53,10 @@ export class FlatSettingsMenuItemValidatorService {
   public validateFlatSettingsMenuItemCreation({
     flatEntityToValidate: flatSettingsMenuItem,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatSettingsMenuItemMaps: optimisticFlatSettingsMenuItemMaps,
       flatFrontComponentMaps,
     },
-    remainingFlatEntityMapsToValidate,
-  }: UniversalFlatEntityValidationArgs<
+    finalFlatEntityMaps,
+  }: FlatEntityCreationValidationArgs<
     typeof ALL_METADATA_NAME.settingsMenuItem
   >): FailedFlatEntityValidation<'settingsMenuItem', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -108,10 +108,7 @@ export class FlatSettingsMenuItemValidatorService {
           flatSettingsMenuItem.applicationUniversalIdentifier,
         scope: flatSettingsMenuItem.scope,
         position: flatSettingsMenuItem.position,
-        flatSettingsMenuItemMapsToSearch: [
-          optimisticFlatSettingsMenuItemMaps,
-          remainingFlatEntityMapsToValidate,
-        ],
+        flatSettingsMenuItemMapsToSearch: [finalFlatEntityMaps],
       })
     ) {
       validationResult.errors.push({
