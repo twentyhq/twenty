@@ -94,8 +94,7 @@ export const useFindManyRecordIndexTableParams = (
     objectNameSingular,
     filter: combinedFilter,
     orderBy,
-    // Ungrouped views fall through to QUERY_DEFAULT_LIMIT_RECORDS, grouped ones
-    // page each group separately so they use the per-view group load limit
+    // Omitting limit lets ungrouped views fall through to QUERY_DEFAULT_LIMIT_RECORDS
     ...(isDefined(currentRecordGroupDefinition)
       ? { limit: recordIndexGroupLoadLimit }
       : {}),
