@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { type z } from 'zod';
 
 import { inventoryFindingSchema } from '../schemas/inventoryFindingSchema';
+import { getInventoryFindingObservation } from './getInventoryFindingObservation';
 import { getInventoryTargetId } from './getInventoryTargetId';
 import { validateInventoryCollection } from './validateInventoryCollection';
 
@@ -38,15 +39,6 @@ export const compareInventoryCollections = ({
       if (isUndefined(expected)) {
         throw new Error(`Missing reference member: ${id}`);
       }
-      const isShapeDifferent =
-        observation.shape !== expected.shape ||
-        (observation.shape === 'accessor' &&
-          expected.shape === 'accessor' &&
-          (observation.getter !== expected.getter ||
-            observation.setter !== expected.setter)) ||
-        (observation.shape === 'value' &&
-          expected.shape === 'value' &&
-          observation.valueType !== expected.valueType);
       const hasPlacement = 'depth' in observation && 'depth' in expected;
       const isDescriptorDifferent =
         hasPlacement &&
@@ -59,15 +51,10 @@ export const compareInventoryCollections = ({
         id,
         targetId: getInventoryTargetId(target),
         runtime,
-        observation:
-          expected.shape === 'uninspectable'
-            ? 'uninspectable'
-            : observation.shape === 'missing' ||
-                observation.shape === 'uninspectable'
-              ? observation.shape
-              : isShapeDifferent
-                ? 'shape-mismatch'
-                : 'present-behavior-unverified',
+        observation: getInventoryFindingObservation({
+          reference: expected,
+          sandbox: observation,
+        }),
         behavior: 'unverified',
         isPlacementDifferent:
           hasPlacement && observation.depth !== expected.depth,
