@@ -594,7 +594,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 questions: [
                   {
                     id: v4(),
-                    name: 'category',
+                    name: '',
                     type: 'choice',
                     instructions: '',
                     criteria: [],

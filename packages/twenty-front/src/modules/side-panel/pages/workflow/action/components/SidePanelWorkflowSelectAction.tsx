@@ -1,3 +1,5 @@
+import { JEV_MODEL_ID } from 'twenty-shared/ai';
+import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
@@ -26,6 +28,11 @@ export const SidePanelWorkflowSelectAction = ({
   onActionSelected: (selection: WorkflowActionSelection) => void;
 }) => {
   const { t } = useLingui();
+
+  const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
+  const isJevAvailable = aiEvaluationModels.some(
+    (model) => model.modelId === JEV_MODEL_ID && model.isAvailable,
+  );
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -64,7 +71,17 @@ export const SidePanelWorkflowSelectAction = ({
         {t`AI`}
       </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={AI_ACTIONS}
+        actions={AI_ACTIONS.map((action) =>
+          action.type === 'CLASSIFY'
+            ? {
+                ...action,
+                disabled: !isJevAvailable,
+                contextualText: isJevAvailable
+                  ? undefined
+                  : t`TypeSafe AI API key missing`,
+              }
+            : action,
+        )}
         onClick={handleActionClick}
       />
 
