@@ -79,6 +79,7 @@ export const UpdateMultipleRecordsForm = ({
 
           return (
             <FormFieldInput
+              currencyAmountUnit="units"
               key={fieldDefinition.metadata.fieldName}
               readonly={disabled}
               field={fieldDefinition}

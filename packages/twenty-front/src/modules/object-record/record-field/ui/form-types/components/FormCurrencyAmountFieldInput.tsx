@@ -13,6 +13,20 @@ type FormCurrencyAmountFieldInputProps = Pick<
   'label' | 'defaultValue' | 'onChange' | 'VariablePicker' | 'readonly' | 'hint'
 >;
 
+const getAmountFromAmountMicros = (
+  amountMicros: FormCurrencyAmountFieldInputProps['defaultValue'],
+) => {
+  if (!isDefined(amountMicros) || amountMicros === '') {
+    return '';
+  }
+
+  if (isStandaloneVariableString(amountMicros)) {
+    return amountMicros;
+  }
+
+  return convertCurrencyMicrosToCurrencyAmount(Number(amountMicros));
+};
+
 export const FormCurrencyAmountFieldInput = ({
   defaultValue,
   onChange,
@@ -21,24 +35,17 @@ export const FormCurrencyAmountFieldInput = ({
   readonly,
   hint,
 }: FormCurrencyAmountFieldInputProps) => {
-  const amount =
-    !isDefined(defaultValue) || defaultValue === ''
-      ? ''
-      : isStandaloneVariableString(defaultValue)
-        ? defaultValue
-        : convertCurrencyMicrosToCurrencyAmount(Number(defaultValue));
-
   return (
     <FormNumberFieldInput
       label={label}
       VariablePicker={VariablePicker}
       readonly={readonly}
       hint={hint}
-      defaultValue={amount}
+      defaultValue={getAmountFromAmountMicros(defaultValue)}
       onChange={(newAmount) =>
         onChange(
           isNumber(newAmount)
-            ? Math.round(convertCurrencyAmountToCurrencyMicros(newAmount))
+            ? convertCurrencyAmountToCurrencyMicros(newAmount)
             : newAmount,
         )
       }
