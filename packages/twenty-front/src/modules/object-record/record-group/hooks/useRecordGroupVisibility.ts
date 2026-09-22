@@ -8,10 +8,17 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 
 export const useRecordGroupVisibility = () => {
   const store = useStore();
+
+  // Request tokens, not rendered state: they only decide whether a settling
+  // mutation is still the most recent one, so they must not trigger a render.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const latestHideEmptyRecordGroupsRequestIdRef = useRef(0);
+  // oxlint-disable-next-line twenty/no-state-useref
+  const latestGroupLoadLimitRequestIdRef = useRef(0);
 
   const recordIndexShouldHideEmptyRecordGroups =
     useAtomComponentStateCallbackState(
@@ -41,10 +48,15 @@ export const useRecordGroupVisibility = () => {
   // mutation has to put the previous value back: the menu would otherwise keep
   // showing a setting the view never took. The error is rethrown so failures
   // stay as visible as they were before the rollback.
+  // The dropdown stays open after a choice, so a second change can be made while
+  // the first is still in flight: only the latest request may write the atom,
+  // otherwise a late rollback would undo a choice the user has since replaced.
   const handleHideEmptyRecordGroupChange = useCallback(async () => {
     const previousHideState = store.get(recordIndexShouldHideEmptyRecordGroups);
 
     const newHideState = !previousHideState;
+
+    const requestId = ++latestHideEmptyRecordGroupsRequestIdRef.current;
 
     store.set(recordIndexShouldHideEmptyRecordGroups, newHideState);
 
@@ -53,7 +65,9 @@ export const useRecordGroupVisibility = () => {
         shouldHideEmptyGroups: newHideState,
       });
     } catch (error) {
-      store.set(recordIndexShouldHideEmptyRecordGroups, previousHideState);
+      if (latestHideEmptyRecordGroupsRequestIdRef.current === requestId) {
+        store.set(recordIndexShouldHideEmptyRecordGroups, previousHideState);
+      }
 
       throw error;
     }
@@ -63,6 +77,8 @@ export const useRecordGroupVisibility = () => {
     async (limit: number) => {
       const previousLimit = store.get(recordIndexGroupLoadLimit);
 
+      const requestId = ++latestGroupLoadLimitRequestIdRef.current;
+
       store.set(recordIndexGroupLoadLimit, limit);
 
       try {
@@ -70,7 +86,9 @@ export const useRecordGroupVisibility = () => {
           groupLoadLimit: limit,
         });
       } catch (error) {
-        store.set(recordIndexGroupLoadLimit, previousLimit);
+        if (latestGroupLoadLimitRequestIdRef.current === requestId) {
+          store.set(recordIndexGroupLoadLimit, previousLimit);
+        }
 
         throw error;
       }

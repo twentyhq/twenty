@@ -43,6 +43,18 @@ const shouldHideEmptyGroupsAtom =
     instanceId: INSTANCE_ID,
   });
 
+const createDeferredViewUpdate = () => {
+  let resolveViewUpdate!: () => void;
+  let rejectViewUpdate!: (error: Error) => void;
+
+  const promise = new Promise<void>((resolve, reject) => {
+    resolveViewUpdate = resolve;
+    rejectViewUpdate = reject;
+  });
+
+  return { promise, resolveViewUpdate, rejectViewUpdate };
+};
+
 describe('useRecordGroupVisibility', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -83,6 +95,131 @@ describe('useRecordGroupVisibility', () => {
     });
 
     expect(store.get(groupLoadLimitAtom)).toBe(8);
+  });
+
+  it('should keep the newest group load limit when an older request fails afterwards', async () => {
+    const store = createStore();
+    store.set(groupLoadLimitAtom, 8);
+
+    const olderViewUpdate = createDeferredViewUpdate();
+    const newerViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => olderViewUpdate.promise)
+      .mockImplementationOnce(() => newerViewUpdate.promise);
+
+    const { result } = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let olderCall!: Promise<void>;
+    let newerCall!: Promise<void>;
+
+    act(() => {
+      olderCall = result.current.handleGroupLoadLimitChange(25);
+      newerCall = result.current.handleGroupLoadLimitChange(50);
+    });
+
+    const olderCallAssertion =
+      expect(olderCall).rejects.toThrow('Network error');
+
+    await act(async () => {
+      newerViewUpdate.resolveViewUpdate();
+      await newerCall;
+    });
+
+    await act(async () => {
+      olderViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await olderCallAssertion;
+    });
+
+    expect(store.get(groupLoadLimitAtom)).toBe(50);
+  });
+
+  it('should keep the newest group load limit when an older request fails while the newer one is still in flight', async () => {
+    const store = createStore();
+    store.set(groupLoadLimitAtom, 8);
+
+    const olderViewUpdate = createDeferredViewUpdate();
+    const newerViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => olderViewUpdate.promise)
+      .mockImplementationOnce(() => newerViewUpdate.promise);
+
+    const { result } = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let olderCall!: Promise<void>;
+    let newerCall!: Promise<void>;
+
+    act(() => {
+      olderCall = result.current.handleGroupLoadLimitChange(25);
+      newerCall = result.current.handleGroupLoadLimitChange(50);
+    });
+
+    const olderCallAssertion =
+      expect(olderCall).rejects.toThrow('Network error');
+
+    await act(async () => {
+      olderViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await olderCallAssertion;
+    });
+
+    expect(store.get(groupLoadLimitAtom)).toBe(50);
+
+    await act(async () => {
+      newerViewUpdate.resolveViewUpdate();
+      await newerCall;
+    });
+
+    expect(store.get(groupLoadLimitAtom)).toBe(50);
+  });
+
+  it('should keep the newest hide-empty-groups state when an older request fails afterwards', async () => {
+    const store = createStore();
+    store.set(shouldHideEmptyGroupsAtom, false);
+
+    const firstViewUpdate = createDeferredViewUpdate();
+    const secondViewUpdate = createDeferredViewUpdate();
+    const thirdViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => firstViewUpdate.promise)
+      .mockImplementationOnce(() => secondViewUpdate.promise)
+      .mockImplementationOnce(() => thirdViewUpdate.promise);
+
+    const { result } = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let firstCall!: Promise<void>;
+    let secondCall!: Promise<void>;
+    let thirdCall!: Promise<void>;
+
+    act(() => {
+      firstCall = result.current.handleHideEmptyRecordGroupChange();
+      secondCall = result.current.handleHideEmptyRecordGroupChange();
+      thirdCall = result.current.handleHideEmptyRecordGroupChange();
+    });
+
+    const firstCallAssertion =
+      expect(firstCall).rejects.toThrow('Network error');
+
+    await act(async () => {
+      thirdViewUpdate.resolveViewUpdate();
+      secondViewUpdate.resolveViewUpdate();
+
+      await Promise.all([thirdCall, secondCall]);
+    });
+
+    await act(async () => {
+      firstViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await firstCallAssertion;
+    });
+
+    expect(store.get(shouldHideEmptyGroupsAtom)).toBe(true);
   });
 
   it('should restore the previous hide-empty-groups state when the view update fails', async () => {
