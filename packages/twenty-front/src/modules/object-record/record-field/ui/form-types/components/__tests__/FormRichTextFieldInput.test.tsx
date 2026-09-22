@@ -57,6 +57,34 @@ it('edits record text without a variable picker and reopens the saved BlockNote 
   expect(screen.getByRole('textbox')).toHaveTextContent('Hello');
 });
 
+it('leaves the Mod+Enter submit shortcut to the form instead of inserting a line break', async () => {
+  const onChange = jest.fn();
+  const onFormKeyDown = jest.fn();
+  render(
+    <div onKeyDown={onFormKeyDown}>
+      <FormRichTextFieldInput
+        label="Body"
+        defaultValue={undefined}
+        onChange={onChange}
+      />
+    </div>,
+    { wrapper: Wrapper },
+  );
+  await userEvent.click(screen.getByRole('textbox'));
+  await userEvent.keyboard('Hello{Control>}{Enter}{/Control}');
+  expect(onFormKeyDown).toHaveBeenCalledWith(
+    expect.objectContaining({ key: 'Enter', ctrlKey: true }),
+  );
+  expect(JSON.parse(onChange.mock.calls.at(-1)?.[0].blocknote)).toEqual([
+    {
+      type: 'paragraph',
+      props: {},
+      content: [{ type: 'text', text: 'Hello', styles: {} }],
+      children: [],
+    },
+  ]);
+});
+
 it('protects unsupported stored blocks from being overwritten', () => {
   const onChange = jest.fn();
   render(
