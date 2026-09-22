@@ -13,8 +13,6 @@ const DEFERRED_WORKSPACE_MIGRATION_ACTIONS_METRIC_NAME =
 const DEFERRED_WORKSPACE_MIGRATION_ACTION_STATUSES: DeferredWorkspaceMigrationActionStatus[] =
   ['PENDING', 'IN_PROGRESS', 'FAILED'];
 
-// Counts rows across every workspace, so it reads the global repository: there
-// is no workspace context during a metrics scrape.
 @Injectable()
 export class DeferredWorkspaceMigrationActionGaugeService implements OnModuleInit {
   constructor(

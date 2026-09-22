@@ -243,8 +243,6 @@ export class DeferredWorkspaceMigrationActionRunnerService {
         RUN_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_JOB_NAME,
         { workspaceId },
         {
-          // A job arriving while one runs waits for it: two concurrent runs
-          // would each skip the other's claimed rows and break the ordering.
           deduplication: {
             id: `deferred-workspace-migration-actions:${workspaceId}`,
             keepLastIfActive: true,
