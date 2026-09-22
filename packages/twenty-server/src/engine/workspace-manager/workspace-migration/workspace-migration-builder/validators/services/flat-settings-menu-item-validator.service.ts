@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isReservedSettingsMenuItemTitle } from 'twenty-shared/application';
+import {
+  isReservedSettingsMenuItemTitle,
+  type SettingsMenuItemScope,
+} from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,12 +20,12 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 type SettingsMenuItemPositionCollisionArgs = {
   universalIdentifier: string;
   applicationUniversalIdentifier: string;
-  scope: string;
+  scope: SettingsMenuItemScope;
   position: number;
   flatSettingsMenuItemMapsToSearch: MetadataUniversalFlatEntityMaps<'settingsMenuItem'>[];
 };
 
-// Two pages of the same application sharing a position in the same scope would
+// Two menu items of the same application sharing a position in the same scope would
 // render in an order the manifest does not determine, so the sync refuses it
 // rather than picking a winner.
 const hasSettingsMenuItemPositionCollision = ({
