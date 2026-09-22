@@ -60,19 +60,6 @@ describe('computeInitialObjectViewToCreate', () => {
     expect(initialView.icon).toBe(VIEW_TYPE_DEFAULT_ICONS[ViewType.LIST]);
   });
 
-  it('should sort after the standard kanban view on opportunity', () => {
-    const initialView = computeInitialObjectViewToCreate({
-      objectMetadata: {
-        universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
-        labelPlural: 'Opportunities',
-      },
-      applicationUniversalIdentifier,
-    });
-
-    expect(initialView.type).toBe(ViewType.TABLE);
-    expect(initialView.position).toBeGreaterThan(2);
-  });
-
   it('should sort after a view initial at position zero', () => {
     const initialView = computeInitialObjectViewToCreate({
       objectMetadata,

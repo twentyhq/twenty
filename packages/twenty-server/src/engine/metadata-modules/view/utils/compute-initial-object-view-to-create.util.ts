@@ -2,7 +2,8 @@ import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-mod
 import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 
 import { buildBaseUniversalFlatView } from 'src/engine/metadata-modules/view/utils/build-base-universal-flat-view.util';
-import { getInitialObjectViewDefault } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-default.util';
+import { INITIAL_OBJECT_VIEW_POSITION } from 'src/engine/metadata-modules/view/constants/initial-object-view-defaults.constant';
+import { getInitialObjectViewType } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-type.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
@@ -18,9 +19,7 @@ export const computeInitialObjectViewToCreate = ({
   applicationUniversalIdentifier: string;
   objectMetadata: InitialObjectViewObjectMetadata;
 }): UniversalFlatView & { id: string } => {
-  const { type, position } = getInitialObjectViewDefault(
-    objectMetadata.universalIdentifier,
-  );
+  const type = getInitialObjectViewType(objectMetadata.universalIdentifier);
 
   return buildBaseUniversalFlatView({
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
@@ -33,7 +32,7 @@ export const computeInitialObjectViewToCreate = ({
     key: null,
     icon: VIEW_TYPE_DEFAULT_ICONS[type],
     type,
-    position,
+    position: INITIAL_OBJECT_VIEW_POSITION,
     isSystemSideEffect: false,
   });
 };
