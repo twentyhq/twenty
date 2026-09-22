@@ -177,6 +177,94 @@ describe('useRecordGroupVisibility', () => {
     expect(store.get(groupLoadLimitAtom)).toBe(50);
   });
 
+  it('should keep the newest group load limit when a request from an unmounted menu fails afterwards', async () => {
+    const store = createStore();
+    store.set(groupLoadLimitAtom, 8);
+
+    const olderViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => olderViewUpdate.promise)
+      .mockResolvedValueOnce(undefined);
+
+    const { result: firstMenu, unmount: unmountFirstMenu } = renderHook(
+      () => useRecordGroupVisibility(),
+      { wrapper: getWrapper(store) },
+    );
+
+    let olderCall!: Promise<void>;
+
+    act(() => {
+      olderCall = firstMenu.current.handleGroupLoadLimitChange(25);
+    });
+
+    const olderCallAssertion =
+      expect(olderCall).rejects.toThrow('Network error');
+
+    unmountFirstMenu();
+
+    const { result: secondMenu } = renderHook(
+      () => useRecordGroupVisibility(),
+      { wrapper: getWrapper(store) },
+    );
+
+    await act(async () => {
+      await secondMenu.current.handleGroupLoadLimitChange(50);
+    });
+
+    await act(async () => {
+      olderViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await olderCallAssertion;
+    });
+
+    expect(store.get(groupLoadLimitAtom)).toBe(50);
+  });
+
+  it('should keep the newest hide-empty-groups state when a request from an unmounted menu fails afterwards', async () => {
+    const store = createStore();
+    store.set(shouldHideEmptyGroupsAtom, false);
+
+    const firstViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => firstViewUpdate.promise)
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined);
+
+    const { result: firstMenu, unmount: unmountFirstMenu } = renderHook(
+      () => useRecordGroupVisibility(),
+      { wrapper: getWrapper(store) },
+    );
+
+    let firstCall!: Promise<void>;
+
+    act(() => {
+      firstCall = firstMenu.current.handleHideEmptyRecordGroupChange();
+    });
+
+    const firstCallAssertion =
+      expect(firstCall).rejects.toThrow('Network error');
+
+    unmountFirstMenu();
+
+    const { result: secondMenu } = renderHook(
+      () => useRecordGroupVisibility(),
+      { wrapper: getWrapper(store) },
+    );
+
+    await act(async () => {
+      await secondMenu.current.handleHideEmptyRecordGroupChange();
+      await secondMenu.current.handleHideEmptyRecordGroupChange();
+    });
+
+    await act(async () => {
+      firstViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await firstCallAssertion;
+    });
+
+    expect(store.get(shouldHideEmptyGroupsAtom)).toBe(true);
+  });
+
   it('should keep the newest hide-empty-groups state when an older request fails afterwards', async () => {
     const store = createStore();
     store.set(shouldHideEmptyGroupsAtom, false);

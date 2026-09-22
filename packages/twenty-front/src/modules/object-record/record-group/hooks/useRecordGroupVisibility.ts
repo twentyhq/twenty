@@ -1,5 +1,3 @@
-import { useStore } from 'jotai';
-
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
@@ -8,17 +6,26 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
-import { useCallback, useRef } from 'react';
+import { type Atom, useStore } from 'jotai';
+import { useCallback } from 'react';
+
+// Keyed by the view instance atom instead of a ref: the submenus unmount on
+// navigation, and a request from an unmounted menu must still see newer choices.
+const latestRequestIdByAtom = new WeakMap<Atom<unknown>, number>();
+
+const startRequest = (settingAtom: Atom<unknown>) => {
+  const requestId = (latestRequestIdByAtom.get(settingAtom) ?? 0) + 1;
+
+  latestRequestIdByAtom.set(settingAtom, requestId);
+
+  return requestId;
+};
+
+const isLatestRequest = (settingAtom: Atom<unknown>, requestId: number) =>
+  latestRequestIdByAtom.get(settingAtom) === requestId;
 
 export const useRecordGroupVisibility = () => {
   const store = useStore();
-
-  // Request tokens, not rendered state: they only decide whether a settling
-  // mutation is still the most recent one, so they must not trigger a render.
-  // oxlint-disable-next-line twenty/no-state-useref
-  const latestHideEmptyRecordGroupsRequestIdRef = useRef(0);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const latestGroupLoadLimitRequestIdRef = useRef(0);
 
   const recordIndexShouldHideEmptyRecordGroups =
     useAtomComponentStateCallbackState(
@@ -56,7 +63,7 @@ export const useRecordGroupVisibility = () => {
 
     const newHideState = !previousHideState;
 
-    const requestId = ++latestHideEmptyRecordGroupsRequestIdRef.current;
+    const requestId = startRequest(recordIndexShouldHideEmptyRecordGroups);
 
     store.set(recordIndexShouldHideEmptyRecordGroups, newHideState);
 
@@ -65,7 +72,7 @@ export const useRecordGroupVisibility = () => {
         shouldHideEmptyGroups: newHideState,
       });
     } catch (error) {
-      if (latestHideEmptyRecordGroupsRequestIdRef.current === requestId) {
+      if (isLatestRequest(recordIndexShouldHideEmptyRecordGroups, requestId)) {
         store.set(recordIndexShouldHideEmptyRecordGroups, previousHideState);
       }
 
@@ -77,7 +84,7 @@ export const useRecordGroupVisibility = () => {
     async (limit: number) => {
       const previousLimit = store.get(recordIndexGroupLoadLimit);
 
-      const requestId = ++latestGroupLoadLimitRequestIdRef.current;
+      const requestId = startRequest(recordIndexGroupLoadLimit);
 
       store.set(recordIndexGroupLoadLimit, limit);
 
@@ -86,7 +93,7 @@ export const useRecordGroupVisibility = () => {
           groupLoadLimit: limit,
         });
       } catch (error) {
-        if (latestGroupLoadLimitRequestIdRef.current === requestId) {
+        if (isLatestRequest(recordIndexGroupLoadLimit, requestId)) {
           store.set(recordIndexGroupLoadLimit, previousLimit);
         }
 
