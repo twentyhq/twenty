@@ -8,7 +8,7 @@ import {
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isSupportedViewGroupLoadLimit } from 'twenty-shared/utils';
 
 import {
   ApplicationException,
@@ -16,17 +16,16 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
-const getViewManifestGroupLoadLimitOrThrow = (viewManifest: ViewManifest): number => {
+const getViewManifestGroupLoadLimitOrThrow = (
+  viewManifest: ViewManifest,
+): number => {
   const groupLoadLimit = viewManifest.groupLoadLimit;
 
   if (!isDefined(groupLoadLimit)) {
     return DEFAULT_VIEW_GROUP_LOAD_LIMIT;
   }
 
-  // Grouped queries page on this value and the Group options menu can only preselect a limit it offers, so an unsupported value would leave the view on a limit no one can change from the UI
-  if (
-    !VIEW_GROUP_LOAD_LIMIT_OPTIONS.some((option) => option === groupLoadLimit)
-  ) {
+  if (!isSupportedViewGroupLoadLimit(groupLoadLimit)) {
     const viewName = viewManifest.name;
     const allowedGroupLoadLimits = VIEW_GROUP_LOAD_LIMIT_OPTIONS.join(', ');
 
