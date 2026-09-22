@@ -40,7 +40,7 @@ const convertInlineNodes = (nodes: JSONContent[]): Record<string, unknown>[] =>
 export const convertTipTapToBlockNote = (
   nodes: JSONContent[],
 ): Record<string, unknown>[] =>
-  nodes.flatMap((node): Record<string, unknown>[] => {
+  nodes.flatMap((node, nodeIndex): Record<string, unknown>[] => {
     switch (node.type) {
       case 'paragraph':
       case 'heading':
@@ -59,6 +59,9 @@ export const convertTipTapToBlockNote = (
         const listItemType =
           TIPTAP_LIST_TYPE_TO_BLOCKNOTE_LIST_ITEM_TYPE[node.type];
         const start = node.attrs?.start;
+        // BlockNote joins adjacent numbered items into one list unless the
+        // first item of the next list carries an explicit start.
+        const followsOrderedList = nodes[nodeIndex - 1]?.type === 'orderedList';
         return (node.content ?? []).map((item, index) => {
           const [paragraph, ...children] = item.content ?? [];
           if (paragraph?.type !== 'paragraph') {
@@ -69,7 +72,9 @@ export const convertTipTapToBlockNote = (
             props:
               node.type === 'taskList'
                 ? { checked: item.attrs?.checked === true }
-                : index === 0 && typeof start === 'number' && start !== 1
+                : index === 0 &&
+                    typeof start === 'number' &&
+                    (start !== 1 || followsOrderedList)
                   ? { start }
                   : {},
             content: convertInlineNodes(paragraph.content ?? []),

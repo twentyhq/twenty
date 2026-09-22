@@ -342,6 +342,35 @@ it('keeps the start number of an ordered list typed in the shared editor', () =>
   ).toEqual(blocks);
 });
 
+it('keeps adjacent ordered lists separate when the second restarts at 1', () => {
+  const buildOrderedList = (text: string) => ({
+    type: 'orderedList',
+    attrs: { start: 1, type: null },
+    content: [
+      {
+        type: 'listItem',
+        content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+      },
+    ],
+  });
+  const document = {
+    type: 'doc',
+    content: [buildOrderedList('First'), buildOrderedList('Restarted')],
+  };
+  const blocks = JSON.parse(
+    convertTipTapDocumentToBlockNote(JSON.stringify(document)),
+  );
+  expect(blocks.map((block: { props: unknown }) => block.props)).toEqual([
+    {},
+    { start: 1 },
+  ]);
+  expect(
+    parseLegacyRecordRichTextDocument(JSON.stringify(blocks), false),
+  ).toMatchObject({
+    content: [{ type: 'orderedList' }, { type: 'orderedList' }],
+  });
+});
+
 it.each([
   { type: 'heading', props: { level: 2, isToggleable: true } },
   {
