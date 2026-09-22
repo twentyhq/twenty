@@ -469,7 +469,8 @@ jobs:
       - name: Allow removal of unreleased metadata fields
         if: steps.validate-schemas.outputs.valid == 'true'
         run: |
-          cp -R /tmp/api-compatibility packages/twenty-server/scripts/api-compatibility
+          mkdir -p packages/twenty-server/scripts/api-compatibility
+          cp -R /tmp/api-compatibility/. packages/twenty-server/scripts/api-compatibility/
           npx tsx packages/twenty-server/scripts/api-compatibility/prepare-metadata-baseline.ts \
             main-metadata-schema-introspection.json \
             current-metadata-schema-introspection.json \
