@@ -1,4 +1,6 @@
 import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
+import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { ViewType } from 'twenty-shared/types';
 
 import { computeInitialObjectViewToCreate } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-to-create.util';
@@ -42,6 +44,33 @@ describe('computeInitialObjectViewToCreate', () => {
         objectUniversalIdentifier: objectMetadata.universalIdentifier,
       }),
     );
+  });
+
+  it('should be a list view on message campaign', () => {
+    const initialView = computeInitialObjectViewToCreate({
+      objectMetadata: {
+        universalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageCampaign,
+        labelPlural: 'Campaigns',
+      },
+      applicationUniversalIdentifier,
+    });
+
+    expect(initialView.type).toBe(ViewType.LIST);
+    expect(initialView.icon).toBe(VIEW_TYPE_DEFAULT_ICONS[ViewType.LIST]);
+  });
+
+  it('should sort after the standard kanban view on opportunity', () => {
+    const initialView = computeInitialObjectViewToCreate({
+      objectMetadata: {
+        universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+        labelPlural: 'Opportunities',
+      },
+      applicationUniversalIdentifier,
+    });
+
+    expect(initialView.type).toBe(ViewType.TABLE);
+    expect(initialView.position).toBeGreaterThan(2);
   });
 
   it('should sort after a view initial at position zero', () => {
