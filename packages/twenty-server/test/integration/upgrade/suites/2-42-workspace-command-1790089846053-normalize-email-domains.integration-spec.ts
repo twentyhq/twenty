@@ -50,7 +50,7 @@ describe('NormalizeEmailDomainsCommand (integration)', () => {
       dataSource,
     });
 
-  const createPerson = async (id = randomUUID()): Promise<string> => {
+  const createPerson = async (id: string = randomUUID()): Promise<string> => {
     const response = await makeGraphqlAPIRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',

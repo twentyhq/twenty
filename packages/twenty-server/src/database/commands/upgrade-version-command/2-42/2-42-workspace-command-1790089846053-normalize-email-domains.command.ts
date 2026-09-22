@@ -90,7 +90,9 @@ export class NormalizeEmailDomainsCommand extends ProvisionedWorkspaceCommandRun
         }
 
         const tableName = computeObjectTargetTable(objectMetadata);
-        const existingColumns = await runner.query<{ columnName: string }[]>(
+        const existingColumns = await runner.manager.query<
+          { columnName: string }[]
+        >(
           `SELECT attname AS "columnName"
 FROM pg_attribute
 WHERE attrelid = to_regclass($1)
@@ -213,7 +215,7 @@ WHERE candidate."id" IN (
 `);
       }
 
-      const [counts] = await runner.query<
+      const [counts] = await runner.manager.query<
         {
           rewriteCount: string;
           updateCount: string;
@@ -248,7 +250,7 @@ FROM ${candidateTable}
       );
 
       if (collisionCount > 0) {
-        const collisions = await runner.query<
+        const collisions = await runner.manager.query<
           { id: string; primaryEmail: string }[]
         >(`
 SELECT "id", "primaryEmail"
@@ -283,7 +285,7 @@ LIMIT 20
     let afterId = FIRST_RECORD_ID;
 
     for (;;) {
-      const rows = await runner.query<EmailRow[]>(
+      const rows = await runner.manager.query<EmailRow[]>(
         `
 SELECT "id",
        ${primaryColumn} AS "primaryEmail",
@@ -367,7 +369,7 @@ FROM jsonb_to_recordset($1::jsonb) AS changes(
     let afterId = FIRST_RECORD_ID;
 
     for (;;) {
-      const batch = await runner.query<{ id: string }[]>(
+      const batch = await runner.manager.query<{ id: string }[]>(
         `SELECT "id" FROM ${candidateTable} WHERE "id" > $1 ORDER BY "id" LIMIT $2`,
         [afterId, UPDATE_BATCH_SIZE],
       );
