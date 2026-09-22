@@ -12,7 +12,6 @@ import { settings } from 'src/engine/constants/settings';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
-import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -42,7 +41,7 @@ export class FileCorePictureResolver {
 
   @Mutation(() => FileWithSignedUrlDTO, {
     deprecationReason:
-      'Use createWorkspaceLogoUpload and completeWorkspaceLogoUpload, which send the logo straight to file storage.',
+      'Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
   @UseGuards(
     WorkspaceAuthGuard,
@@ -67,7 +66,7 @@ export class FileCorePictureResolver {
 
   @Mutation(() => FileWithSignedUrlDTO, {
     deprecationReason:
-      'Use createWorkspaceMemberProfilePictureUpload and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.',
+      'Use createFileUpload with the CorePicture folder and completeFileUpload, which send the picture straight to file storage.',
   })
   @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
   async uploadWorkspaceMemberProfilePicture(
@@ -89,25 +88,6 @@ export class FileCorePictureResolver {
     );
   }
 
-  @Mutation(() => FileUploadTargetDTO)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
-  async createWorkspaceLogoUpload(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args({ name: 'filename', type: () => String })
-    filename: string,
-    @Args({ name: 'size', type: () => Number })
-    size: number,
-  ): Promise<FileUploadTargetDTO> {
-    return this.fileCorePictureService.createWorkspaceLogoUpload({
-      workspaceId,
-      filename,
-      size,
-    });
-  }
-
   @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(
     WorkspaceAuthGuard,
@@ -122,38 +102,5 @@ export class FileCorePictureResolver {
       workspaceId,
       fileId,
     });
-  }
-
-  @Mutation(() => FileUploadTargetDTO)
-  @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
-  async createWorkspaceMemberProfilePictureUpload(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args({ name: 'filename', type: () => String })
-    filename: string,
-    @Args({ name: 'size', type: () => Number })
-    size: number,
-  ): Promise<FileUploadTargetDTO> {
-    return this.fileCorePictureService.createWorkspaceMemberProfilePictureUpload(
-      {
-        workspaceId,
-        filename,
-        size,
-      },
-    );
-  }
-
-  @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
-  async completeWorkspaceMemberProfilePictureUpload(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args({ name: 'fileId', type: () => String })
-    fileId: string,
-  ): Promise<FileWithSignedUrlDTO> {
-    return this.fileCorePictureService.completeWorkspaceMemberProfilePictureUpload(
-      {
-        workspaceId,
-        fileId,
-      },
-    );
   }
 }

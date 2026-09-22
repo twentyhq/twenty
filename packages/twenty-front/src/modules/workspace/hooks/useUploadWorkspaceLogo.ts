@@ -1,17 +1,15 @@
-import { putFileToUploadTarget } from '@/file/utils/putFileToUploadTarget';
+import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { t } from '@lingui/core/macro';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   CompleteWorkspaceLogoUploadDocument,
-  CreateWorkspaceLogoUploadDocument,
+  FileFolder,
   type FileWithSignedUrl,
 } from '~/generated-metadata/graphql';
 
 export const useUploadWorkspaceLogo = () => {
-  const [createWorkspaceLogoUpload] = useMutation(
-    CreateWorkspaceLogoUploadDocument,
-  );
+  const { createFileUploadAndPutFile } = useDirectFileUpload();
   const [completeWorkspaceLogoUpload] = useMutation(
     CompleteWorkspaceLogoUploadDocument,
   );
@@ -19,20 +17,12 @@ export const useUploadWorkspaceLogo = () => {
   const uploadWorkspaceLogo = async (
     file: File,
   ): Promise<FileWithSignedUrl> => {
-    const createResult = await createWorkspaceLogoUpload({
-      variables: { filename: file.name, size: file.size },
+    const { fileId } = await createFileUploadAndPutFile(file, {
+      fileFolder: FileFolder.CorePicture,
     });
 
-    const uploadTarget = createResult?.data?.createWorkspaceLogoUpload;
-
-    if (!isDefined(uploadTarget)) {
-      throw new Error(t`Failed to initiate logo upload`);
-    }
-
-    await putFileToUploadTarget({ file, uploadTarget });
-
     const completeResult = await completeWorkspaceLogoUpload({
-      variables: { fileId: uploadTarget.fileId },
+      variables: { fileId },
     });
 
     const uploadedLogo = completeResult?.data?.completeWorkspaceLogoUpload;

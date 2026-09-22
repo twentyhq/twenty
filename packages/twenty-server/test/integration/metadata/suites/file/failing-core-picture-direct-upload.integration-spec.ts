@@ -1,10 +1,12 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import {
-  type CorePictureUploadTarget,
   completeWorkspaceLogoUploadMutation,
-  createWorkspaceLogoUploadMutation,
-  putCorePictureToUploadTarget,
+  createCorePictureUpload,
 } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
+import {
+  createFileUploadMutation,
+  putFileToUploadTarget,
+} from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,23 +17,6 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const MINIMAL_PDF = Buffer.from(
   '%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF',
 );
-
-const createWorkspaceLogoUpload = async ({
-  filename,
-  size,
-}: {
-  filename: string;
-  size: number;
-}): Promise<CorePictureUploadTarget> => {
-  const response = await makeMetadataAPIRequest({
-    query: createWorkspaceLogoUploadMutation,
-    variables: { filename, size },
-  });
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.createWorkspaceLogoUpload;
-};
 
 const completeWorkspaceLogoUpload = async (fileId: string) => {
   const response = await makeMetadataAPIRequest({
@@ -77,7 +62,7 @@ describe('Core picture direct upload should fail', () => {
   });
 
   it('should refuse to bind a logo whose bytes were never uploaded', async () => {
-    const uploadTarget = await createWorkspaceLogoUpload({
+    const uploadTarget = await createCorePictureUpload({
       filename: 'logo.png',
       size: ONE_BY_ONE_TRANSPARENT_PNG.length,
     });
@@ -99,14 +84,14 @@ describe('Core picture direct upload should fail', () => {
   }, 30000);
 
   it('should refuse a logo whose content is not an image', async () => {
-    const uploadTarget = await createWorkspaceLogoUpload({
+    const uploadTarget = await createCorePictureUpload({
       filename: 'logo.pdf',
       size: MINIMAL_PDF.length,
     });
 
     reservedFileIds.push(uploadTarget.fileId);
 
-    const putResponse = await putCorePictureToUploadTarget({
+    const putResponse = await putFileToUploadTarget({
       uploadTarget,
       content: MINIMAL_PDF,
     });
@@ -123,6 +108,43 @@ describe('Core picture direct upload should fail', () => {
     expect(await findWorkspaceLogoFileId()).not.toBe(uploadTarget.fileId);
   }, 30000);
 
+  it('should refuse to bind a file reserved outside the core picture folder', async () => {
+    const createResponse = await makeMetadataAPIRequest({
+      query: createFileUploadMutation,
+      variables: {
+        filename: 'logo.png',
+        size: ONE_BY_ONE_TRANSPARENT_PNG.length,
+        fileFolder: 'Workflow',
+      },
+    });
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    const uploadTarget = createResponse.body.data.createFileUpload;
+
+    reservedFileIds.push(uploadTarget.fileId);
+
+    const putResponse = await putFileToUploadTarget({
+      uploadTarget,
+      content: ONE_BY_ONE_TRANSPARENT_PNG,
+    });
+
+    expect(putResponse.status).toBe(204);
+
+    const { data, errors } = await completeWorkspaceLogoUpload(
+      uploadTarget.fileId,
+    );
+
+    expect(data).toBeNull();
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+      normalizeMessage: (message) =>
+        message.replace(uploadTarget.fileId, '<fileId>'),
+    });
+    expect(await findFileStatus(uploadTarget.fileId)).toBe(FILE_STATUS.PENDING);
+    expect(await findWorkspaceLogoFileId()).not.toBe(uploadTarget.fileId);
+  }, 30000);
+
   it('should refuse to complete an unknown file', async () => {
     const unknownFileId = uuidv4();
 
@@ -133,15 +155,5 @@ describe('Core picture direct upload should fail', () => {
       errors,
       normalizeMessage: (message) => message.replace(unknownFileId, '<fileId>'),
     });
-  }, 30000);
-
-  it('should refuse to reserve an empty logo', async () => {
-    const response = await makeMetadataAPIRequest({
-      query: createWorkspaceLogoUploadMutation,
-      variables: { filename: 'logo.png', size: 0 },
-    });
-
-    expect(response.body.data).toBeNull();
-    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   }, 30000);
 });

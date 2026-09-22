@@ -12,6 +12,18 @@ exports[`Core picture direct upload should fail should refuse a logo whose conte
 }
 `;
 
+exports[`Core picture direct upload should fail should refuse to bind a file reserved outside the core picture folder 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "FILE_NOT_FOUND",
+    "userFriendlyMessage": "File not found.",
+  },
+  "message": "File not found: <fileId>",
+  "name": "NotFoundError",
+}
+`;
+
 exports[`Core picture direct upload should fail should refuse to bind a logo whose bytes were never uploaded 1`] = `
 {
   "extensions": {
@@ -33,17 +45,5 @@ exports[`Core picture direct upload should fail should refuse to complete an unk
   },
   "message": "File not found: <fileId>",
   "name": "NotFoundError",
-}
-`;
-
-exports[`Core picture direct upload should fail should refuse to reserve an empty logo 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "FILE_TOO_LARGE",
-    "userFriendlyMessage": "The file is empty or exceeds the maximum allowed size.",
-  },
-  "message": "Invalid file size 0 (max 1073741824 bytes)",
-  "name": "UserInputError",
 }
 `;
