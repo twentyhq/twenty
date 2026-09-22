@@ -21,11 +21,20 @@ SETTINGS
     -- default 150 GiB ceiling lets the scheduler pick merges that cannot fit in RAM
     max_bytes_to_merge_at_max_space_in_pool = 209715200;
 
+ALTER TABLE
+    objectEvent
+    -- the cap is per table and follows it through the swap, so applying it here is
+    -- what stops the backup retrying the same oversized merge during the backfill
+    MODIFY SETTING max_bytes_to_merge_at_max_space_in_pool = 209715200;
+
+EXCHANGE TABLES
+    -- swapping before the copy freezes the source, so no event written while the
+    -- backfill runs can be lost. EXCHANGE is atomic, a two-pair RENAME is not
+    objectEvent AND objectEvent_v2;
+
 RENAME TABLE
-    -- the swap happens before the copy so the source stops receiving writes; copying
-    -- first would silently lose every event written while the copy was running
-    objectEvent TO objectEvent_backup_drop_manually_after_check,
-    objectEvent_v2 TO objectEvent;
+    -- objectEvent_v2 now holds the pre-migration data and nothing reads that name
+    objectEvent_v2 TO objectEvent_backup_drop_manually_after_check;
 
 INSERT INTO
     objectEvent (event, timestamp, userId, workspaceId, recordId, objectMetadataId, properties, isCustom)
