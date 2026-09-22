@@ -25,11 +25,21 @@ jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain', () => ({
 
 const mockUseSignInWithDosId = useSignInWithDosId as jest.Mock;
 
-const renderEffect = (search = '') =>
+type EffectProps = {
+  hasWorkspaceSso?: boolean;
+  isWorkspacePublicDataLoading?: boolean;
+};
+
+const renderEffect = (search = '', props: EffectProps = {}) =>
   render(
     <MemoryRouter initialEntries={[`/welcome${search}`]}>
       <JotaiProvider store={jotaiStore}>
-        <SignInUpDosIdAutoRedirectEffect />
+        <SignInUpDosIdAutoRedirectEffect
+          hasWorkspaceSso={props.hasWorkspaceSso ?? false}
+          isWorkspacePublicDataLoading={
+            props.isWorkspacePublicDataLoading ?? false
+          }
+        />
       </JotaiProvider>
     </MemoryRouter>,
   );
@@ -50,6 +60,7 @@ describe('SignInUpDosIdAutoRedirectEffect', () => {
       sso: [],
     });
     jotaiStore.set(clientConfigApiStatusState.atom, {
+      isSaved: false,
       isLoading: false,
       isLoadedOnce: true,
       isErrored: false,
@@ -58,6 +69,10 @@ describe('SignInUpDosIdAutoRedirectEffect', () => {
     jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
     jotaiStore.set(isCookieAuthActiveState.atom, false);
     mockUseSignInWithDosId.mockReturnValue({ signInWithDosId });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it('redirects to DOS ID when it is the only transport', () => {
@@ -84,17 +99,14 @@ describe('SignInUpDosIdAutoRedirectEffect', () => {
     expect(signInWithDosId).not.toHaveBeenCalled();
   });
 
-  it('does not redirect when workspace SSO is configured', () => {
-    jotaiStore.set(authProvidersState.atom, {
-      google: false,
-      magicLink: false,
-      password: false,
-      microsoft: false,
-      dosId: true,
-      sso: [{ id: 'sso-1', name: 'Okta', type: 'SAML', status: 'Active' }],
-    });
+  it('does not redirect while the workspace has SSO configured', () => {
+    renderEffect('', { hasWorkspaceSso: true });
 
-    renderEffect();
+    expect(signInWithDosId).not.toHaveBeenCalled();
+  });
+
+  it('does not redirect while workspace public data is still loading', () => {
+    renderEffect('', { isWorkspacePublicDataLoading: true });
 
     expect(signInWithDosId).not.toHaveBeenCalled();
   });
@@ -121,6 +133,7 @@ describe('SignInUpDosIdAutoRedirectEffect', () => {
 
   it('does not redirect while the client config has not loaded', () => {
     jotaiStore.set(clientConfigApiStatusState.atom, {
+      isSaved: false,
       isLoading: true,
       isLoadedOnce: false,
       isErrored: false,
@@ -139,5 +152,26 @@ describe('SignInUpDosIdAutoRedirectEffect', () => {
     expect(
       Number(sessionStorage.getItem('dos-id-auto-redirect-attempted-at')),
     ).toBeGreaterThan(0);
+  });
+
+  it('redirects again once the cooldown has expired', () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-01-01T00:00:00Z'));
+
+    renderEffect();
+
+    expect(signInWithDosId).toHaveBeenCalledTimes(1);
+
+    // A bounce landing back on /welcome within the cooldown stays put...
+    jest.setSystemTime(new Date('2026-01-01T00:00:10Z'));
+    renderEffect();
+
+    expect(signInWithDosId).toHaveBeenCalledTimes(1);
+
+    // ...but a much later arrival (new tab, next day) retries the redirect.
+    jest.setSystemTime(new Date('2026-01-01T00:05:00Z'));
+    renderEffect();
+
+    expect(signInWithDosId).toHaveBeenCalledTimes(2);
   });
 });

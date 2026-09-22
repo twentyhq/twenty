@@ -206,7 +206,12 @@ export const SignInUp = () => {
 
   return (
     <>
-      <SignInUpDosIdAutoRedirectEffect />
+      <SignInUpDosIdAutoRedirectEffect
+        isWorkspacePublicDataLoading={getPublicWorkspaceDataLoading}
+        hasWorkspaceSso={
+          (workspacePublicData?.authProviders?.sso?.length ?? 0) > 0
+        }
+      />
       {signInUpStep === SignInUpStep.WorkspaceCreation ? (
         <OnboardingLayout
           onBack={

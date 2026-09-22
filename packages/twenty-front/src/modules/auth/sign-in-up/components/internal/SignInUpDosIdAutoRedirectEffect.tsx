@@ -24,18 +24,18 @@ const REDIRECT_ATTEMPT_STORAGE_KEY = 'dos-id-auto-redirect-attempted-at';
 // again, so neither a failing IdP nor a cancelled consent can loop.
 const REDIRECT_ATTEMPT_COOLDOWN_MS = 30_000;
 
+// Number(null) and Number('garbage') both fail the finite+window check, so
+// a missing or corrupt stamp simply reads as "no recent attempt".
 const wasRedirectAttemptedRecently = (): boolean => {
-  const attemptedAt = sessionStorage.getItem(REDIRECT_ATTEMPT_STORAGE_KEY);
+  const attemptedAt = Number(
+    sessionStorage.getItem(REDIRECT_ATTEMPT_STORAGE_KEY),
+  );
 
   return (
-    isDefinedAttemptTimestamp(attemptedAt) &&
+    Number.isFinite(attemptedAt) &&
     Date.now() - attemptedAt < REDIRECT_ATTEMPT_COOLDOWN_MS
   );
 };
-
-const isDefinedAttemptTimestamp = (
-  value: string | null,
-): value is `${number}` => value !== null && !Number.isNaN(Number(value));
 
 // When DOS ID is the only enabled sign-in transport, reaching the welcome
 // page goes straight to the identity provider instead of asking the user to
@@ -45,7 +45,20 @@ const isDefinedAttemptTimestamp = (
 // ?direct=1, an ssoExchangeToken in the hash takes the page over, any step
 // past Init means a flow is already in progress, and the cooldown covers
 // every other bounce path the URL-based checks cannot see.
-export const SignInUpDosIdAutoRedirectEffect = () => {
+type SignInUpDosIdAutoRedirectEffectProps = {
+  // Workspace-scoped SSO lives in the workspace public data (not the global
+  // client config, whose sso field is always empty); while it is still
+  // loading the redirect waits, so a workspace with SSO configured always
+  // gets its identity-provider selection page instead of being sent to
+  // DOS ID.
+  isWorkspacePublicDataLoading: boolean;
+  hasWorkspaceSso: boolean;
+};
+
+export const SignInUpDosIdAutoRedirectEffect = ({
+  isWorkspacePublicDataLoading,
+  hasWorkspaceSso,
+}: SignInUpDosIdAutoRedirectEffectProps) => {
   const { signInWithDosId } = useSignInWithDosId();
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
   const authProviders = useAtomStateValue(authProvidersState);
@@ -74,12 +87,15 @@ export const SignInUpDosIdAutoRedirectEffect = () => {
       return;
     }
 
+    if (isWorkspacePublicDataLoading || hasWorkspaceSso) {
+      return;
+    }
+
     if (
       !authProviders.dosId ||
       authProviders.password ||
       authProviders.google ||
-      authProviders.microsoft ||
-      authProviders.sso.length > 0
+      authProviders.microsoft
     ) {
       return;
     }
@@ -115,12 +131,13 @@ export const SignInUpDosIdAutoRedirectEffect = () => {
     authProviders.google,
     authProviders.microsoft,
     authProviders.password,
-    authProviders.sso,
     clientConfigApiStatus.isLoadedOnce,
     hasRedirected,
+    hasWorkspaceSso,
     isDefaultDomain,
     isLogged,
     isMultiWorkspaceEnabled,
+    isWorkspacePublicDataLoading,
     lastAuthenticatedMethod,
     searchParams,
     setLastAuthenticatedMethod,
