@@ -9,7 +9,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   seeRecordInView: {
     universalIdentifier: '12f5ee64-7773-48f8-a989-118443a8be16',
     label: i18nLabel(
-      msg({ message: `See in view…`, context: 'commandMenuItem.label' }),
+      msg({ message: `See in view`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconArrowUpRight',
     isPinned: false,

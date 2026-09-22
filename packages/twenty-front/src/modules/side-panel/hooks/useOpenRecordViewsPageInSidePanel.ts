@@ -22,7 +22,7 @@ export const useOpenRecordViewsPageInSidePanel = () => {
       );
       navigateSidePanel({
         page: SidePanelPages.RecordViews,
-        pageTitle: t`See in view…`,
+        pageTitle: t`See in view`,
         pageIcon: IconArrowUpRight,
         pageId,
       });

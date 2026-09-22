@@ -114,6 +114,31 @@ describe('SidePanelTopBar', () => {
     mockContextChips = [];
   });
 
+  it('renders the supplied page icon beside its title', () => {
+    const page: SidePanelNavigationStackItem = {
+      page: SidePanelPages.RecordViews,
+      pageTitle: 'See in view',
+      pageIcon: IconDotsVertical,
+      pageId: 'record-views',
+    };
+    mockContextChips = [
+      {
+        page,
+        text: page.pageTitle,
+        Icons: [<span key="icon" role="img" aria-label="Command icon" />],
+      },
+    ];
+
+    renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelNavigationStack: [page],
+      }),
+    );
+
+    expect(screen.getByRole('heading', { name: 'See in view' })).toBeVisible();
+    expect(screen.getByRole('img', { name: 'Command icon' })).toBeVisible();
+  });
+
   it('keeps the command menu search input focused while arrowing through items', async () => {
     const { store } = renderSidePanelCommandMenu();
 

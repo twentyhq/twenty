@@ -61,5 +61,11 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     return <SidePanelAskAiInfo />;
   }
 
-  return <HeaderIdentifier title={pageChip.text ?? ''} />;
+  return (
+    <HeaderIdentifier
+      title={pageChip.text ?? ''}
+      icon={pageChip.Icons?.[0]}
+      iconColor={pageChip.page?.pageIconColor}
+    />
+  );
 };
