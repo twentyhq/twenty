@@ -61,6 +61,8 @@ describe('Upload application file — SVG sanitization (end-to-end)', () => {
       fileFolder: 'PublicAsset',
       filePath,
       fileBuffer: Buffer.from(MALICIOUS_SVG, 'utf-8'),
+      filename: 'malicious.svg',
+      contentType: 'image/svg+xml',
       expectToFail: false,
     });
 
@@ -102,6 +104,8 @@ describe('Upload application file — SVG sanitization (end-to-end)', () => {
       fileFolder: 'PublicAsset',
       filePath,
       fileBuffer: Buffer.from(BENIGN_SVG, 'utf-8'),
+      filename: 'benign.svg',
+      contentType: 'image/svg+xml',
       expectToFail: false,
     });
 

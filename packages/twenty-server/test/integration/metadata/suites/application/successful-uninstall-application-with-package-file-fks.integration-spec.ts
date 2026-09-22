@@ -41,6 +41,8 @@ describe('Uninstall application with package file FKs populated', () => {
       fileFolder: 'Dependencies',
       filePath: 'yarn.lock',
       fileBuffer: Buffer.from('# test yarn.lock\n'),
+      filename: 'yarn.lock',
+      contentType: 'text/plain',
       expectToFail: false,
     });
 

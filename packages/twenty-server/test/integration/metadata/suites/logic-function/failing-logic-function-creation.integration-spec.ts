@@ -82,8 +82,7 @@ const FAILING_CREATION_TEST_CASES: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title:
-      'when builtHandlerPath is a folder path without extension (bare UUID)',
+    title: 'when builtHandlerPath is a folder path without extension (bare UUID)',
     context: {
       manifest: buildManifest({
         builtHandlerPath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
@@ -142,6 +141,8 @@ describe('Logic function creation via manifest sync should fail for path travers
       fileFolder: 'BuiltLogicFunction',
       filePath: VALID_BUILT_PATH,
       fileBuffer: Buffer.from('dummy built handler content'),
+      filename: 'handler.mjs',
+      contentType: 'application/javascript',
       expectToFail: false,
     });
 

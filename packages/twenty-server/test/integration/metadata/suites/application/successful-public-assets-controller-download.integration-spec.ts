@@ -41,6 +41,8 @@ describe('Public assets controller download should succeed', () => {
       fileFolder: 'PublicAsset',
       filePath: PUBLIC_ASSET_PATH,
       fileBuffer: Buffer.from(PUBLIC_ASSET_CONTENT),
+      filename: 'logo.svg',
+      contentType: PUBLIC_ASSET_CONTENT_TYPE,
       expectToFail: false,
     });
 

@@ -99,7 +99,8 @@ const FAILING_UPDATE_TEST_CASES: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title: 'when sourceComponentPath is a folder path without extension',
+    title:
+      'when sourceComponentPath is a folder path without extension',
     context: {
       manifest: buildManifest({
         sourceComponentPath: 'src/front-components/my-component',
@@ -151,6 +152,8 @@ describe('Front component update via manifest sync should fail for path traversa
       fileFolder: 'BuiltFrontComponent',
       filePath: VALID_BUILT_PATH,
       fileBuffer: Buffer.from('dummy built component content'),
+      filename: 'test.mjs',
+      contentType: 'application/javascript',
       expectToFail: false,
     });
 

@@ -19,6 +19,7 @@ const UNKNOWN_APPLICATION_ID = uuidv4();
 const PUBLIC_ASSET_PATH = 'assets/logo.svg';
 const PUBLIC_ASSET_CONTENT = '<svg><circle r="10" /></svg>';
 const PERSISTED_PUBLIC_ASSET_CONTENT = '<svg><circle r="10"></circle></svg>';
+const PUBLIC_ASSET_CONTENT_TYPE = 'image/svg+xml';
 
 type FailingCase = {
   buildUrl: (validApplicationId: string) => string;
@@ -101,6 +102,8 @@ describe('Public assets controller download should fail', () => {
       fileFolder: 'PublicAsset',
       filePath: PUBLIC_ASSET_PATH,
       fileBuffer: Buffer.from(PUBLIC_ASSET_CONTENT),
+      filename: 'logo.svg',
+      contentType: PUBLIC_ASSET_CONTENT_TYPE,
       expectToFail: false,
     });
 

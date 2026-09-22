@@ -72,6 +72,8 @@ describe('Front component application variables', () => {
       fileFolder: 'BuiltFrontComponent',
       filePath: BUILT_COMPONENT_PATH,
       fileBuffer: Buffer.from('dummy built component content'),
+      filename: 'variables.mjs',
+      contentType: 'application/javascript',
       expectToFail: false,
     });
 

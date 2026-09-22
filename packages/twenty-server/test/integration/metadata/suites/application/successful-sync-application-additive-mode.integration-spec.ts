@@ -211,6 +211,8 @@ describe('Manifest sync - additive mode', () => {
       fileFolder: 'BuiltFrontComponent',
       filePath: BUILT_SETTINGS_COMPONENT_PATH,
       fileBuffer: Buffer.from('dummy built component content'),
+      filename: 'settings.mjs',
+      contentType: 'application/javascript',
       expectToFail: false,
     });
 

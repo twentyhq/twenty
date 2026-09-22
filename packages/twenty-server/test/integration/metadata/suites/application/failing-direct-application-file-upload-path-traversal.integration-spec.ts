@@ -1,7 +1,7 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { createApplicationFileUploads } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
-import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -11,10 +11,16 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const UNKNOWN_APP_ID = uuidv4();
 
+// The batch reservation reports a bad file as a per-file error and keeps the
+// request alive; only a request-level problem (unknown or missing application)
+// fails the whole mutation.
+type FailureLevel = 'request' | 'file';
+
 type TestContext = {
   applicationUniversalIdentifier: string;
   fileFolder: string;
   filePath: string;
+  failureLevel: FailureLevel;
 };
 
 const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
@@ -25,6 +31,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       fileFolder: 'BuiltFrontComponent',
       filePath:
         '../../../other-workspace/other-app/BuiltFrontComponent/stolen.mjs',
+      failureLevel: 'file',
     },
   },
   {
@@ -33,6 +40,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'BuiltFrontComponent',
       filePath: '../../etc/passwd',
+      failureLevel: 'file',
     },
   },
   {
@@ -41,6 +49,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'BuiltFrontComponent',
       filePath: '/etc/passwd',
+      failureLevel: 'file',
     },
   },
   {
@@ -49,6 +58,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'BuiltFrontComponent',
       filePath: '..\\..\\..\\etc\\passwd',
+      failureLevel: 'file',
     },
   },
   {
@@ -57,6 +67,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'BuiltFrontComponent',
       filePath: '',
+      failureLevel: 'file',
     },
   },
   {
@@ -66,6 +77,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: UNKNOWN_APP_ID,
       fileFolder: 'BuiltFrontComponent',
       filePath: 'src/components/legit.mjs',
+      failureLevel: 'request',
     },
   },
   {
@@ -74,6 +86,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: '',
       fileFolder: 'BuiltFrontComponent',
       filePath: 'src/components/legit.mjs',
+      failureLevel: 'request',
     },
   },
   {
@@ -82,6 +95,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'CorePicture',
       filePath: 'src/components/legit.mjs',
+      failureLevel: 'file',
     },
   },
   {
@@ -90,6 +104,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'BuiltFrontComponent',
       filePath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
+      failureLevel: 'file',
     },
   },
   {
@@ -98,6 +113,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'Source',
       filePath: 'src/logic-functions/my-handler',
+      failureLevel: 'file',
     },
   },
   {
@@ -107,6 +123,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'BuiltFrontComponent',
       filePath: 'src/components/component.js',
+      failureLevel: 'file',
     },
   },
   {
@@ -116,6 +133,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'BuiltLogicFunction',
       filePath: 'src/handlers/handler.html',
+      failureLevel: 'file',
     },
   },
   {
@@ -125,6 +143,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'Source',
       filePath: 'src/index.js',
+      failureLevel: 'file',
     },
   },
   {
@@ -134,11 +153,12 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'Dependencies',
       filePath: 'install.sh',
+      failureLevel: 'file',
     },
   },
 ];
 
-describe('Upload application file should fail', () => {
+describe('Application file upload reservation should fail', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
@@ -159,19 +179,40 @@ describe('Upload application file should fail', () => {
     async ({ context }) => {
       jest.useRealTimers();
 
-      const { errors } = await uploadApplicationFile({
+      const { data, errors } = await createApplicationFileUploads({
         applicationUniversalIdentifier: context.applicationUniversalIdentifier,
-        fileFolder: context.fileFolder,
-        filePath: context.filePath,
-        fileBuffer: Buffer.from('content'),
-        filename: 'test-file.mjs',
-        contentType: 'application/javascript',
-        expectToFail: true,
+        files: [
+          {
+            fileFolder: context.fileFolder,
+            filePath: context.filePath,
+            size: 'content'.length,
+          },
+        ],
+        expectToFail: context.failureLevel === 'request',
       });
 
       jest.useFakeTimers();
 
-      expectOneNotInternalServerErrorSnapshot({ errors });
+      if (context.failureLevel === 'request') {
+        expectOneNotInternalServerErrorSnapshot({ errors });
+
+        return;
+      }
+
+      expect(errors).toBeUndefined();
+
+      const { targets, errors: reservationErrors } =
+        data.createApplicationFileUploads;
+
+      expect(targets).toEqual([]);
+      expect(reservationErrors).toEqual([
+        {
+          fileFolder: context.fileFolder,
+          filePath: context.filePath,
+          message: expect.any(String),
+        },
+      ]);
+      expect(reservationErrors[0].message).toMatchSnapshot();
     },
     60000,
   );

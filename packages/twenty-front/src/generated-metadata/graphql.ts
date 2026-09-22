@@ -3261,6 +3261,8 @@ export type Mutation = {
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
   uploadAppTarball: ApplicationRegistration;
+  /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
+  uploadApplicationFile: File;
   uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl;
   uploadNewWorkspaceLogo: FileWithSignedUrl;
   uploadWorkspaceLogo: FileWithSignedUrl;
@@ -4481,6 +4483,14 @@ export type MutationUpgradeApplicationArgs = {
 
 export type MutationUploadAppTarballArgs = {
   file: Scalars['Upload']['input'];
+};
+
+
+export type MutationUploadApplicationFileArgs = {
+  applicationUniversalIdentifier: Scalars['String']['input'];
+  file: Scalars['Upload']['input'];
+  fileFolder: FileFolder;
+  filePath: Scalars['String']['input'];
 };
 
 

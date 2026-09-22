@@ -4,6 +4,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  ALLOWED_APPLICATION_FILE_FOLDERS,
   APP_DEV_RATE_LIMIT_MAX,
   APP_DEV_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/application/application-development/constants/application-development.constants';
@@ -27,6 +28,8 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
+import { type FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const APP_SYNC_LOCK_OPTIONS = { ttl: 60_000, ms: 500, maxRetries: 120 };
@@ -172,6 +175,73 @@ export class ApplicationDevelopmentService {
       `app-sync:${workspaceId}`,
       APP_SYNC_LOCK_OPTIONS,
     );
+  }
+
+  async uploadApplicationFile({
+    workspaceId,
+    applicationUniversalIdentifier,
+    fileFolder,
+    filePath,
+    getFileBuffer,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    fileFolder: FileFolder;
+    filePath: string;
+    // Lazy so rejected or rate-limited uploads are not buffered into memory.
+    getFileBuffer: () => Promise<Buffer>;
+  }): Promise<FileDTO> {
+    await this.throttlePerApplication(
+      applicationUniversalIdentifier,
+      workspaceId,
+    );
+
+    if (!ALLOWED_APPLICATION_FILE_FOLDERS.includes(fileFolder)) {
+      throw new ApplicationException(
+        `Invalid fileFolder for application file upload. Allowed values: ${ALLOWED_APPLICATION_FILE_FOLDERS.join(', ')}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const pathValidationResult = validateFilePath({
+      resourcePath: filePath,
+      fileFolder,
+    });
+
+    if (!pathValidationResult.isValid) {
+      throw new ApplicationException(
+        pathValidationResult.error,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      },
+    );
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        'Application not found in workspace.',
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
+      universalIdentifier: applicationUniversalIdentifier,
+      workspaceId,
+    });
+
+    return await this.fileStorageService.writeFile({
+      sourceFile: await getFileBuffer(),
+      fileFolder,
+      applicationUniversalIdentifier,
+      workspaceId,
+      resourcePath: filePath,
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
   }
 
   private async applyManifestSync(
