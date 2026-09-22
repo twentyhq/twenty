@@ -1,4 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -6,14 +5,10 @@ import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
@@ -21,6 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 const StyledDropdownMenuContainer = styled.div`
   align-items: center;
@@ -57,19 +53,8 @@ export const RecordIndexCommandMenuDropdown = () => {
   );
 
   const { openSidePanelMenu } = useSidePanelMenu();
-
-  const selectedItemIdArray = [
-    ...recordIndexCommandMenuItems.map((item) => item.id),
-    ...(shouldShowMoreActions ? ['more-actions'] : []),
-  ];
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       data-select-disable
       dropdownPlacement="bottom-start"
@@ -82,36 +67,20 @@ export const RecordIndexCommandMenuDropdown = () => {
           <StyledDropdownMenuContainer
             data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
           >
-            <DropdownMenuItemsContainer>
-              <SelectableList
-                focusId={dropdownId}
-                selectableItemIdArray={selectedItemIdArray}
-                selectableListInstanceId={dropdownId}
-              >
-                {recordIndexCommandMenuItems.map((item) => (
-                  <CommandMenuItemRenderer item={item} key={item.id} />
-                ))}
-                {shouldShowMoreActions && (
-                  <SelectableListItem
-                    itemId="more-actions"
-                    key="more-actions"
-                    onEnter={() => {
-                      closeDropdown(dropdownId);
-                      openSidePanelMenu();
-                    }}
-                  >
-                    <ListItem
-                      startIcon={<IconLayoutSidebarRightExpand />}
-                      onClick={() => {
-                        closeDropdown(dropdownId);
-                        openSidePanelMenu();
-                      }}
-                      focused={selectedItemId === 'more-actions'}
-                    >{t`More actions`}</ListItem>
-                  </SelectableListItem>
-                )}
-              </SelectableList>
-            </DropdownMenuItemsContainer>
+            <Menu.Group>
+              {recordIndexCommandMenuItems.map((item) => (
+                <CommandMenuItemRenderer item={item} key={item.id} />
+              ))}
+              {shouldShowMoreActions && (
+                <Menu.Item
+                  startIcon={<IconLayoutSidebarRightExpand />}
+                  onClick={() => {
+                    closeDropdown(dropdownId);
+                    openSidePanelMenu();
+                  }}
+                >{t`More actions`}</Menu.Item>
+              )}
+            </Menu.Group>
           </StyledDropdownMenuContainer>
         </DropdownContent>
       }

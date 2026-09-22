@@ -1,14 +1,9 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems';
-import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,6 +16,7 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { IconLego, IconSettings, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 export const WorkflowStepFooter = ({
   stepId,
@@ -50,22 +46,6 @@ export const WorkflowStepFooter = ({
   const agentId = workflowAiAgentActionAgent?.id;
   const hasViewAgentOption = isDefined(agentId);
   const hasViewRoleOption = isDefined(workflowAiAgentActionAgent?.roleId);
-
-  const selectableItemIdArray = [
-    WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode,
-    ...(stepId !== TRIGGER_STEP_ID
-      ? [
-          WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode,
-          WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings,
-        ]
-      : []),
-    ...(hasViewAgentOption ? ['view-agent'] : []),
-    ...(hasViewRoleOption ? ['view-role'] : []),
-    ...(!shouldPinDeleteButton
-      ? [WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode]
-      : []),
-  ];
-
   const handleChangeNodeType = () => {
     closeDropdown(dropdownId);
 
@@ -106,19 +86,9 @@ export const WorkflowStepFooter = ({
       });
     }
   };
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   const OptionsDropdown = (
-    <OptionsDropdownMenu
-      dropdownId={dropdownId}
-      selectableItemIdArray={selectableItemIdArray}
-    >
+    <OptionsDropdownMenu dropdownId={dropdownId}>
       <WorkflowStepOptionsMenuItems
-        selectedItemId={selectedItemId}
         changeNodeText={t`Change node type`}
         onChangeNode={handleChangeNodeType}
         onDuplicateNode={
@@ -127,37 +97,22 @@ export const WorkflowStepFooter = ({
         onDeleteNode={!shouldPinDeleteButton ? handleDeleteNode : undefined}
       >
         {stepId !== TRIGGER_STEP_ID ? (
-          <SelectableListItem
-            itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings}
-            onEnter={handleNodeSettings}
-          >
-            <ListItem
-              focused={
-                selectedItemId ===
-                WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings
-              }
-              onClick={handleNodeSettings}
-              startIcon={<IconSettings />}
-            >{t`Node settings`}</ListItem>
-          </SelectableListItem>
+          <Menu.Item
+            onClick={handleNodeSettings}
+            startIcon={<IconSettings />}
+          >{t`Node settings`}</Menu.Item>
         ) : null}
         {hasViewAgentOption ? (
-          <SelectableListItem itemId="view-agent" onEnter={handleViewAgent}>
-            <ListItem
-              focused={selectedItemId === 'view-agent'}
-              onClick={handleViewAgent}
-              startIcon={<IconLego />}
-            >{t`View Agent`}</ListItem>
-          </SelectableListItem>
+          <Menu.Item
+            onClick={handleViewAgent}
+            startIcon={<IconLego />}
+          >{t`View Agent`}</Menu.Item>
         ) : null}
         {hasViewRoleOption ? (
-          <SelectableListItem itemId="view-role" onEnter={handleViewRole}>
-            <ListItem
-              focused={selectedItemId === 'view-role'}
-              onClick={handleViewRole}
-              startIcon={<IconUsers />}
-            >{t`View Role`}</ListItem>
-          </SelectableListItem>
+          <Menu.Item
+            onClick={handleViewRole}
+            startIcon={<IconUsers />}
+          >{t`View Role`}</Menu.Item>
         ) : null}
       </WorkflowStepOptionsMenuItems>
     </OptionsDropdownMenu>

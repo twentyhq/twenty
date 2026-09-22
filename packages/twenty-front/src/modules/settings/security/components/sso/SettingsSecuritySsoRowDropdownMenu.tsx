@@ -1,10 +1,8 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useDeleteSsoIdentityProvider } from '@/settings/security/hooks/useDeleteSsoIdentityProvider';
 import { useUpdateSsoIdentityProvider } from '@/settings/security/hooks/useUpdateSsoIdentityProvider';
 import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,6 +10,7 @@ import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
 import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type SettingsSecuritySsoRowDropdownMenuProps = {
   ssoIdp: Omit<SsoIdentityProvider, '__typename'>;
@@ -66,7 +65,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
       clickableComponent={
@@ -76,8 +75,8 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               startIcon={<IconArchive />}
               onClick={() => {
                 toggleSsoIdentityProviderStatus(ssoIdp.id);
@@ -85,16 +84,16 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
               }}
             >
               {ssoIdp.status === 'Active' ? t`Deactivate` : t`Activate`}
-            </ListItem>
-            <ListItem
+            </Menu.Item>
+            <Menu.Item
               color="danger"
               startIcon={<IconTrash />}
               onClick={() => {
                 handleDeleteSsoIdentityProvider(ssoIdp.id);
                 closeDropdown(dropdownId);
               }}
-            >{t`Delete`}</ListItem>
-          </DropdownMenuItemsContainer>
+            >{t`Delete`}</Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
     />

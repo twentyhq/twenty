@@ -1,11 +1,9 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { RUN_EVALUATION_INPUT } from '@/ai/graphql/mutations/runEvaluationInput';
 import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -31,6 +29,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
 import { getOperationName } from '~/utils/getOperationName';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 const DELETE_EVAL_INPUT_MODAL_ID = 'delete-eval-input-modal';
 
@@ -162,7 +161,7 @@ export const SettingsAgentEvalsTab = ({
             getItemLabel={(item) => item.text}
             RowIcon={IconMessage}
             RowRightComponent={({ item }) => (
-              <Dropdown
+              <DropdownMenu
                 dropdownId={`eval-input-dropdown-${item.id}`}
                 dropdownPlacement="right-start"
                 clickableComponent={
@@ -176,17 +175,17 @@ export const SettingsAgentEvalsTab = ({
                 }
                 dropdownComponents={
                   <DropdownContent>
-                    <DropdownMenuItemsContainer>
-                      <ListItem
+                    <Menu.Group>
+                      <Menu.Item
                         startIcon={<IconPlayerPlay />}
                         onClick={() => handleRunInput(item.text, item.id)}
-                      >{t`Run`}</ListItem>
-                      <ListItem
+                      >{t`Run`}</Menu.Item>
+                      <Menu.Item
                         color="danger"
                         startIcon={<IconTrash />}
                         onClick={() => openDeleteModal(item.id)}
-                      >{t`Delete`}</ListItem>
-                    </DropdownMenuItemsContainer>
+                      >{t`Delete`}</Menu.Item>
+                    </Menu.Group>
                   </DropdownContent>
                 }
               />

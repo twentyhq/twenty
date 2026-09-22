@@ -1,9 +1,8 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ViewType } from '@/views/types/ViewType';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 export const RecordBoardColumnDropdownMenu = () => {
   const recordGroupActions = useRecordGroupActions({
@@ -12,17 +11,17 @@ export const RecordBoardColumnDropdownMenu = () => {
 
   return (
     <DropdownContent selectDisabled>
-      <DropdownMenuItemsContainer>
+      <Menu.Group>
         {recordGroupActions.map((action) => (
-          <ListItem
+          <Menu.Item
             key={action.id}
             onClick={action.callback}
             startIcon={<SelectOptionIcon Icon={action.icon} />}
           >
             {action.label}
-          </ListItem>
+          </Menu.Item>
         ))}
-      </DropdownMenuItemsContainer>
+      </Menu.Group>
     </DropdownContent>
   );
 };

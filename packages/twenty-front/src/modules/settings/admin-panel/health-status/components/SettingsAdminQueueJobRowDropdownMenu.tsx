@@ -1,12 +1,11 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
 import { JobState } from '~/generated-admin/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type SettingsAdminQueueJobRowDropdownMenuProps = {
   jobId: string;
@@ -35,7 +34,7 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
       clickableComponent={
@@ -45,19 +44,19 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
+          <Menu.Group>
             {jobState === JobState.FAILED && onRetry && (
-              <ListItem
+              <Menu.Item
                 startIcon={<IconRefresh />}
                 onClick={handleRetry}
-              >{t`Retry`}</ListItem>
+              >{t`Retry`}</Menu.Item>
             )}
-            <ListItem
+            <Menu.Item
               color="danger"
               startIcon={<IconTrash />}
               onClick={handleDelete}
-            >{t`Delete`}</ListItem>
-          </DropdownMenuItemsContainer>
+            >{t`Delete`}</Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
     />

@@ -1,7 +1,5 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { t } from '@lingui/core/macro';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
@@ -14,6 +12,7 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;
@@ -86,29 +85,29 @@ export const MultiItemFieldMenuItem = <T,>({
       dropdownId={dropdownId}
       dropdownContent={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
+          <Menu.Group>
             {showSetAsPrimaryButton && (
-              <ListItem
+              <Menu.Item
                 startIcon={<IconBookmarkPlus />}
                 onClick={handleSetAsPrimaryClick}
-              >{t`Set as Primary`}</ListItem>
+              >{t`Set as Primary`}</Menu.Item>
             )}
-            <ListItem
+            <Menu.Item
               startIcon={<IconPencil />}
               onClick={handleEditClick}
-            >{t`Edit`}</ListItem>
-            <ListItem
+            >{t`Edit`}</Menu.Item>
+            <Menu.Item
               color="danger"
               startIcon={<IconTrash />}
               onClick={handleDeleteClick}
-            >{t`Delete`}</ListItem>
+            >{t`Delete`}</Menu.Item>
             {showCopyButton && (
-              <ListItem
+              <Menu.Item
                 startIcon={<IconCopy />}
                 onClick={handleCopyClick}
-              >{t`Copy`}</ListItem>
+              >{t`Copy`}</Menu.Item>
             )}
-          </DropdownMenuItemsContainer>
+          </Menu.Group>
         </DropdownContent>
       }
     />

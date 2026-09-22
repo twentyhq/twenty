@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { type Placement } from '@floating-ui/react';
 import { type MouseEvent, type ReactNode } from 'react';
 import { type IconComponent, IconDotsVertical } from 'twenty-ui/icon';
@@ -69,7 +69,7 @@ export const MenuItemWithOptionDropdown = ({
     startIcon={<ListItemIcon icon={LeftIcon} />}
     hasSubmenu={hasSubMenu}
     actions={
-      <Dropdown
+      <DropdownMenu
         clickableComponent={
           <LightIconButton
             size="sm"

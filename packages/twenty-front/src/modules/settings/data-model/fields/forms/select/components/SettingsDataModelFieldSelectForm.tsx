@@ -1,4 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -23,9 +22,8 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -43,7 +41,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 
-import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
+import { CardContent, CardFooter, Menu } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
@@ -365,7 +363,7 @@ export const SettingsDataModelFieldSelectForm = ({
                     </StyledOptionsLabel>
                   </StyledLabelContainer>
                   {!disabled && (
-                    <Dropdown
+                    <DropdownMenu
                       dropdownId={OPTIONS_DROPDOWN_ID}
                       clickableComponent={
                         <LightIconButton
@@ -379,8 +377,8 @@ export const SettingsDataModelFieldSelectForm = ({
                         <DropdownContent
                           widthInPixels={GenericDropdownContentWidth.Narrow}
                         >
-                          <DropdownMenuItemsContainer>
-                            <ListItem
+                          <Menu.Group>
+                            <Menu.Item
                               startIcon={<IconPencil />}
                               onClick={() => {
                                 if (!isBulkInputMode) {
@@ -395,16 +393,16 @@ export const SettingsDataModelFieldSelectForm = ({
                               }}
                             >
                               {isBulkInputMode ? t`Single edit` : t`Bulk edit`}
-                            </ListItem>
-                            <ListItem
+                            </Menu.Item>
+                            <Menu.Item
                               color="danger"
                               startIcon={<IconTrash />}
                               onClick={() => {
                                 onChange([]);
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                               }}
-                            >{t`Remove all`}</ListItem>
-                          </DropdownMenuItemsContainer>
+                            >{t`Remove all`}</Menu.Item>
+                          </Menu.Group>
                         </DropdownContent>
                       }
                     />

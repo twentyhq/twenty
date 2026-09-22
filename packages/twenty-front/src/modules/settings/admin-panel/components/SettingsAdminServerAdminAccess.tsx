@@ -1,11 +1,9 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
 import { TwoFactorAuthenticationVerificationCodeSlot } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeSlot';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -24,6 +22,7 @@ import {
   GetServerAdminsDocument,
   UpdateServerAdminAccessDocument,
 } from '~/generated-admin/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type ServerAdminAccessUpdate = {
   canAccessFullAdminPanel?: boolean;
@@ -162,7 +161,7 @@ export const SettingsAdminServerAdminAccess = ({
         ) : (
           <StyledNoAccess>{t`No access`}</StyledNoAccess>
         )}
-        <Dropdown
+        <DropdownMenu
           dropdownId={dropdownId}
           dropdownPlacement="right-start"
           clickableComponent={
@@ -172,8 +171,8 @@ export const SettingsAdminServerAdminAccess = ({
           }
           dropdownComponents={
             <DropdownContent>
-              <DropdownMenuItemsContainer>
-                <ListItem
+              <Menu.Group>
+                <Menu.Item
                   disabled={isLastFullAdmin}
                   onClick={() =>
                     requestChange({
@@ -188,8 +187,8 @@ export const SettingsAdminServerAdminAccess = ({
                   {canAccessFullAdminPanel
                     ? t`Revoke admin panel access`
                     : t`Grant admin panel access`}
-                </ListItem>
-                <ListItem
+                </Menu.Item>
+                <Menu.Item
                   onClick={() =>
                     requestChange({
                       description: t`impersonation`,
@@ -201,9 +200,9 @@ export const SettingsAdminServerAdminAccess = ({
                   {canImpersonate
                     ? t`Disable impersonation`
                     : t`Enable impersonation`}
-                </ListItem>
+                </Menu.Item>
                 {!hasFullAccess && (
-                  <ListItem
+                  <Menu.Item
                     onClick={() =>
                       requestChange({
                         description: t`full server access`,
@@ -214,9 +213,9 @@ export const SettingsAdminServerAdminAccess = ({
                         },
                       })
                     }
-                  >{t`Grant full access`}</ListItem>
+                  >{t`Grant full access`}</Menu.Item>
                 )}
-              </DropdownMenuItemsContainer>
+              </Menu.Group>
             </DropdownContent>
           }
         />

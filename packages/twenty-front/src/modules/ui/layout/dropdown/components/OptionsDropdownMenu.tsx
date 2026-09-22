@@ -1,26 +1,20 @@
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import {
-  Dropdown,
-  type DropdownProps,
-} from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { type DropdownMenuProps } from '@/ui/layout/dropdown/types/DropdownMenuProps';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useId } from 'react';
+import { type ReactNode, type ReactElement, useId } from 'react';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 
 type OptionsDropdownMenuProps = {
   dropdownId?: string;
-  selectableListId?: string;
-  selectableItemIdArray?: string[];
-  clickableComponent?: ReactNode;
-  dropdownPlacement?: DropdownProps['dropdownPlacement'];
-  dropdownOffset?: DropdownProps['dropdownOffset'];
+  clickableComponent?: ReactElement;
+  dropdownPlacement?: DropdownMenuProps['dropdownPlacement'];
+  dropdownOffset?: DropdownMenuProps['dropdownOffset'];
   shouldRegisterOptionsHotkey?: boolean;
   onOpen?: () => void;
   children: ReactNode;
@@ -60,8 +54,6 @@ const OptionsDropdownMenuHotkeyEffect = ({
 
 export const OptionsDropdownMenu = ({
   dropdownId: dropdownIdFromProps,
-  selectableListId,
-  selectableItemIdArray = [],
   clickableComponent,
   dropdownPlacement = 'top-end',
   dropdownOffset = DEFAULT_OPTIONS_DROPDOWN_OFFSET,
@@ -73,22 +65,12 @@ export const OptionsDropdownMenu = ({
   const dropdownId = dropdownIdFromProps ?? generatedDropdownId;
   const { t } = useLingui();
 
-  const listId = selectableListId ?? dropdownId;
-  const { setSelectedItemId } = useSelectableList(listId);
-
-  const handleOpen = () => {
-    if (selectableItemIdArray.length > 0) {
-      setSelectedItemId(selectableItemIdArray[0]);
-    }
-    onOpen?.();
-  };
-
   return (
     <>
       {shouldRegisterOptionsHotkey ? (
         <OptionsDropdownMenuHotkeyEffect dropdownId={dropdownId} />
       ) : null}
-      <Dropdown
+      <DropdownMenu
         dropdownId={dropdownId}
         data-select-disable
         clickableComponent={
@@ -104,18 +86,10 @@ export const OptionsDropdownMenu = ({
           enableGlobalHotkeysWithModifiers: true,
           enableGlobalHotkeysConflictingWithKeyboard: false,
         }}
-        onOpen={handleOpen}
+        onOpen={onOpen}
         dropdownComponents={
           <DropdownContent>
-            <DropdownMenuItemsContainer>
-              <SelectableList
-                selectableListInstanceId={listId}
-                focusId={dropdownId}
-                selectableItemIdArray={selectableItemIdArray}
-              >
-                {children}
-              </SelectableList>
-            </DropdownMenuItemsContainer>
+            <Menu.Group>{children}</Menu.Group>
           </DropdownContent>
         }
       />

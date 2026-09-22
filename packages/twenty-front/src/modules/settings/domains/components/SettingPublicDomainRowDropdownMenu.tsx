@@ -1,8 +1,6 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -14,6 +12,7 @@ import {
   DeletePublicDomainDocument,
   FindManyPublicDomainsDocument,
 } from '~/generated-metadata/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 export const SettingPublicDomainRowDropdownMenu = ({
   publicDomain,
@@ -48,7 +47,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
       clickableComponent={
@@ -58,8 +57,8 @@ export const SettingPublicDomainRowDropdownMenu = ({
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               color="danger"
               startIcon={<IconTrash />}
               onClick={async () => {
@@ -67,8 +66,8 @@ export const SettingPublicDomainRowDropdownMenu = ({
                 closeDropdown(dropdownId);
                 await refetchPublicDomains();
               }}
-            >{t`Delete`}</ListItem>
-          </DropdownMenuItemsContainer>
+            >{t`Delete`}</Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
     />

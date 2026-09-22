@@ -11,7 +11,6 @@ import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUr
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -45,6 +44,8 @@ import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -115,7 +116,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           />
         }
         EndComponent={
-          <Dropdown
+          <DropdownMenu
             clickableComponent={
               <LightIconButton
                 size="sm"
@@ -128,18 +129,18 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             dropdownId="multi-workspace-dropdown-context-menu"
             dropdownComponents={
               <DropdownContent>
-                <DropdownMenuItemsContainer>
+                <Menu.Group>
                   {isMultiWorkspaceEnabled && (
-                    <ListItem
+                    <Menu.Item
                       startIcon={<IconPlus />}
                       onClick={createWorkspace}
-                    >{t`Create Workspace`}</ListItem>
+                    >{t`Create Workspace`}</Menu.Item>
                   )}
-                  <ListItem
+                  <Menu.Item
                     startIcon={<IconLogout />}
                     onClick={signOut}
-                  >{t`Log out`}</ListItem>
-                </DropdownMenuItemsContainer>
+                  >{t`Log out`}</Menu.Item>
+                </Menu.Group>
               </DropdownContent>
             }
           />

@@ -1,12 +1,12 @@
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { Link } from 'react-router-dom';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;
@@ -33,7 +33,7 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       clickableComponent={
         <IconButton
@@ -47,23 +47,26 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent>
           {isEditable && (
-            <DropdownMenuItemsContainer>
-              <UndecoratedLink
-                fullWidth
-                to={objectPermissionDetailUrl}
+            <Menu.Group>
+              <Menu.Item
+                render={
+                  <Link
+                    to={objectPermissionDetailUrl}
+                    style={{ textDecoration: 'none' }}
+                  />
+                }
                 onClick={() => closeDropdown(dropdownId)}
-              >
-                <ListItem startIcon={<IconPencil />}>{t`Edit`}</ListItem>
-              </UndecoratedLink>
-            </DropdownMenuItemsContainer>
+                startIcon={<IconPencil />}
+              >{t`Edit`}</Menu.Item>
+            </Menu.Group>
           )}
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               onClick={handleRemove}
               startIcon={<IconTrash />}
               color="danger"
-            >{t`Remove rule`}</ListItem>
-          </DropdownMenuItemsContainer>
+            >{t`Remove rule`}</Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
       dropdownPlacement="bottom-end"

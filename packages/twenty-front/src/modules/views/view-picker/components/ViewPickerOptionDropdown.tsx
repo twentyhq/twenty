@@ -1,10 +1,8 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -27,6 +25,7 @@ import {
   PermissionFlagType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
@@ -132,32 +131,32 @@ export const ViewPickerOptionDropdown = ({
         selected={isCurrentView}
         dropdownContent={
           <DropdownContent>
-            <DropdownMenuItemsContainer>
-              <ListItem
+            <Menu.Group>
+              <Menu.Item
                 startIcon={isFavorite ? <IconHeartOff /> : <IconHeart />}
                 onClick={handleToggleFavorite}
               >
                 {isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
-              </ListItem>
+              </Menu.Item>
               {!isIndexView && canEditView && (
                 <>
-                  <ListItem
+                  <Menu.Item
                     startIcon={<IconPencil />}
                     onClick={(event) => {
                       onEdit(event, view.id);
                       closeDropdown(dropdownId);
                     }}
-                  >{t`Edit`}</ListItem>
+                  >{t`Edit`}</Menu.Item>
                   {!isLastView && (
-                    <ListItem
+                    <Menu.Item
                       startIcon={<IconTrash />}
                       onClick={handleDelete}
                       color="danger"
-                    >{t`Delete`}</ListItem>
+                    >{t`Delete`}</Menu.Item>
                   )}
                 </>
               )}
-            </DropdownMenuItemsContainer>
+            </Menu.Group>
           </DropdownContent>
         }
       />

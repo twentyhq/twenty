@@ -1,10 +1,8 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -27,6 +25,7 @@ import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -116,7 +115,7 @@ export const UpdateViewButtonGroup = () => {
             onClick={handleUpdateViewClick}
             disabled={!canPersistChanges}
           >{t`Update view`}</Button>
-          <Dropdown
+          <DropdownMenu
             dropdownId={updateViewButtonDropdownId}
             clickableComponent={
               <IconButton aria-label={t`View update options`}>
@@ -125,12 +124,12 @@ export const UpdateViewButtonGroup = () => {
             }
             dropdownComponents={
               <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <ListItem
+                <Menu.Group>
+                  <Menu.Item
                     onClick={handleCreateViewClick}
                     startIcon={<IconPlus />}
-                  >{t`Create view`}</ListItem>
-                </DropdownMenuItemsContainer>
+                  >{t`Create view`}</Menu.Item>
+                </Menu.Group>
               </DropdownContent>
             }
           />

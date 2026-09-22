@@ -1,4 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -14,6 +13,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useContext, useMemo } from 'react';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 export const RecordPageSidePanelCommandMenuDropdown = () => {
   const { commandMenuItems } = useContext(CommandMenuContext);
@@ -80,22 +80,10 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
           item.isPinned !== true ||
           pinnedOverflowCommandMenuItemIds.has(item.id),
       );
-
-  const selectableItemIdArray = [
-    ...dropdownWidgetCommandMenuItems.map(
-      (commandMenuItem) => commandMenuItem.id,
-    ),
-    ...listedCommandMenuItems.map((item) => item.id),
-  ];
-
   return (
-    <OptionsDropdownMenu
-      dropdownId={dropdownId}
-      selectableListId={commandMenuId}
-      selectableItemIdArray={selectableItemIdArray}
-    >
+    <OptionsDropdownMenu dropdownId={dropdownId}>
       {dropdownWidgetCommandMenuItems.map((commandMenuItem) => (
-        <ListItem
+        <Menu.Item
           key={commandMenuItem.id}
           startIcon={<SelectOptionIcon Icon={commandMenuItem.Icon} />}
           onClick={() => {
@@ -104,7 +92,7 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
           }}
         >
           {commandMenuItem.label}
-        </ListItem>
+        </Menu.Item>
       ))}
       {dropdownWidgetCommandMenuItems.length > 0 &&
         listedCommandMenuItems.length > 0 && <HorizontalSeparator noMargin />}

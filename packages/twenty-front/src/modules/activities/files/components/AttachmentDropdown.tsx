@@ -1,7 +1,5 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
@@ -12,6 +10,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type AttachmentDropdownProps = {
   onDownload: () => void;
@@ -49,7 +48,7 @@ export const AttachmentDropdown = ({
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       clickableComponent={
         <LightIconButton emphasis="subtle" aria-label={t`More options`}>
@@ -58,23 +57,23 @@ export const AttachmentDropdown = ({
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
-          <DropdownMenuItemsContainer>
+          <Menu.Group>
             {hasDownloadPermission && (
-              <ListItem
+              <Menu.Item
                 startIcon={<IconDownload />}
                 onClick={handleDownload}
-              >{t`Download`}</ListItem>
+              >{t`Download`}</Menu.Item>
             )}
-            <ListItem
+            <Menu.Item
               startIcon={<IconPencil />}
               onClick={handleRename}
-            >{t`Rename`}</ListItem>
-            <ListItem
+            >{t`Rename`}</Menu.Item>
+            <Menu.Item
               color="danger"
               startIcon={<IconTrash />}
               onClick={handleDelete}
-            >{t`Delete`}</ListItem>
-          </DropdownMenuItemsContainer>
+            >{t`Delete`}</Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
     />

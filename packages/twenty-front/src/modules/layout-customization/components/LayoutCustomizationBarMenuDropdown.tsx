@@ -1,4 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
@@ -8,22 +7,20 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { LAYOUT_CUSTOMIZATION_BAR_DROPDOWN_ID } from '@/layout-customization/constants/LayoutCustomizationBarDropdownId';
 import { RESET_RECORD_PAGE_LAYOUT_MODAL_ID } from '@/layout-customization/constants/ResetRecordPageLayoutModalId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
-const StyledInvertedIconButtonWrapper = styled.span`
+const StyledInvertedIconButton = styled.button`
   align-items: center;
+  color: ${GRAY_SCALE_LIGHT.gray1};
+
   display: flex;
 
-  button {
-    color: ${GRAY_SCALE_LIGHT.gray1};
-  }
-
-  button:hover {
+  &:hover {
     background: ${themeCssVariables.background.transparent.light};
   }
 `;
@@ -39,27 +36,26 @@ export const LayoutCustomizationBarMenuDropdown = () => {
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={LAYOUT_CUSTOMIZATION_BAR_DROPDOWN_ID}
       dropdownPlacement="bottom-start"
       clickableComponent={
-        <StyledInvertedIconButtonWrapper>
-          <LightIconButton
-            emphasis="subtle"
-            aria-label={t`Layout customization menu`}
-          >
-            <IconDotsVertical />
-          </LightIconButton>
-        </StyledInvertedIconButtonWrapper>
+        <LightIconButton
+          render={<StyledInvertedIconButton />}
+          emphasis="subtle"
+          aria-label={t`Layout customization menu`}
+        >
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               startIcon={<IconReload />}
               onClick={handleResetClick}
-            >{t`Reset record page layout`}</ListItem>
-          </DropdownMenuItemsContainer>
+            >{t`Reset record page layout`}</Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
     />

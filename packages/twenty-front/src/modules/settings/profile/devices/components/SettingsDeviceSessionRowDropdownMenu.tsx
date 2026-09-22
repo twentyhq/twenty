@@ -1,10 +1,8 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconDotsVertical, IconLogout } from 'twenty-ui/icon';
@@ -13,6 +11,7 @@ import {
   CurrentUserSessionsDocument,
   RevokeUserSessionDocument,
 } from '~/generated-metadata/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type SettingsDeviceSessionRowDropdownMenuProps = {
   userSessionId: string;
@@ -45,7 +44,7 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       dropdownPlacement="bottom-end"
       clickableComponent={
@@ -55,13 +54,13 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               color="danger"
               startIcon={<IconLogout />}
               onClick={handleRevokeSession}
-            >{t`Log out`}</ListItem>
-          </DropdownMenuItemsContainer>
+            >{t`Log out`}</Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
     />

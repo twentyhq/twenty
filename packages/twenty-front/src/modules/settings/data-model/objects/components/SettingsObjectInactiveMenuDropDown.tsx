@@ -1,7 +1,5 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
@@ -13,6 +11,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type SettingsObjectInactiveMenuDropDownProps = {
   isCustomObject: boolean;
@@ -53,7 +52,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
   const isEditable = isCustomObject && !isReadOnly;
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       clickableComponent={
         <LightIconButton
@@ -65,27 +64,27 @@ export const SettingsObjectInactiveMenuDropDown = ({
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               startIcon={isEditable ? <IconPencil /> : <IconEye />}
               onClick={handleEdit}
             >
               {isEditable ? t`Edit` : t`View`}
-            </ListItem>
+            </Menu.Item>
             {!isReadOnly && (
-              <ListItem
+              <Menu.Item
                 startIcon={<IconArchiveOff />}
                 onClick={handleActivate}
-              >{t`Activate`}</ListItem>
+              >{t`Activate`}</Menu.Item>
             )}
             {isCustomObject && !isReadOnly && (
-              <ListItem
+              <Menu.Item
                 startIcon={<IconTrash />}
                 color="danger"
                 onClick={handleDelete}
-              >{t`Delete`}</ListItem>
+              >{t`Delete`}</Menu.Item>
             )}
-          </DropdownMenuItemsContainer>
+          </Menu.Group>
         </DropdownContent>
       }
     />

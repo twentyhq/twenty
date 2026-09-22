@@ -23,7 +23,7 @@ import { useIsRecordTableWidgetAggregateNonInteractive } from '@/object-record/r
 import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -233,7 +233,9 @@ export const RecordBoardColumnHeader = () => {
                     />
                   </StyledTagContainer>
                 ) : (
-                  <Dropdown
+                  <DropdownMenu
+                    nativeButton={false}
+                    openOnClick
                     dropdownId={dropdownId}
                     dropdownPlacement="bottom-start"
                     dropdownOffset={{

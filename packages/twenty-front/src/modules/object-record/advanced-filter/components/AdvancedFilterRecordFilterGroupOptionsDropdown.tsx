@@ -1,16 +1,15 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-filter-group/hooks/useRemoveRootRecordFilterGroupIfEmpty';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type AdvancedFilterRecordFilterGroupOptionsDropdownProps = {
   recordFilterGroupId: string;
@@ -45,7 +44,7 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       clickableComponent={
         <IconButton aria-label={t`Filter group rule options`} variant="ghost">
@@ -54,13 +53,13 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               onClick={handleRemove}
               startIcon={<IconTrash />}
               color="danger"
-            >{t`Remove rule group`}</ListItem>
-          </DropdownMenuItemsContainer>
+            >{t`Remove rule group`}</Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
       dropdownOffset={{ y: 2, x: 0 }}

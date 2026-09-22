@@ -1,8 +1,6 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
@@ -15,6 +13,7 @@ import {
   type ApprovedAccessDomain,
   DeleteApprovedAccessDomainDocument,
 } from '~/generated-metadata/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type SettingsSecurityApprovedAccessDomainRowDropdownMenuProps = {
   approvedAccessDomain: Omit<ApprovedAccessDomain, '__typename'>;
@@ -60,7 +59,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
       clickableComponent={
@@ -70,8 +69,8 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               color="danger"
               startIcon={<IconTrash />}
               onClick={() => {
@@ -80,8 +79,8 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
               }}
             >
               {'Delete'}
-            </ListItem>
-          </DropdownMenuItemsContainer>
+            </Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
     />

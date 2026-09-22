@@ -1,16 +1,13 @@
+import { Menu } from 'twenty-ui/primitives/surfaces';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems';
-import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
 
 const DROPDOWN_ID = 'dropdown-menu-rows-story';
 
@@ -25,10 +22,6 @@ const DropdownMenuRows = ({
 }: DropdownMenuRowsProps) => {
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const { closeDropdown } = useCloseDropdown();
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    DROPDOWN_ID,
-  );
 
   const handleDuplicate = () => {
     onAction('duplicate');
@@ -43,39 +36,23 @@ const DropdownMenuRows = ({
           shouldRegisterOptionsHotkey={false}
           clickableComponent={<Button>Open actions</Button>}
           onOpen={() => setIsSubmenuOpen(false)}
-          selectableItemIdArray={
-            isSubmenuOpen
-              ? ['disabled', 'destination']
-              : [
-                  WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode,
-                  WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode,
-                ]
-          }
         >
           {isSubmenuOpen ? (
             <>
-              <NavigationMenuItemSelectableItem
-                item={{
-                  id: 'disabled',
-                  label: 'Unavailable destination',
-                  isDisabled: true,
-                  onClick: () => onAction('disabled'),
+              <Menu.Item disabled onClick={() => onAction('disabled')}>
+                Unavailable destination
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => {
+                  onAction('destination');
+                  closeDropdown(DROPDOWN_ID);
                 }}
-              />
-              <NavigationMenuItemSelectableItem
-                item={{
-                  id: 'destination',
-                  label: 'Choose destination',
-                  onClick: () => {
-                    onAction('destination');
-                    closeDropdown(DROPDOWN_ID);
-                  },
-                }}
-              />
+              >
+                Choose destination
+              </Menu.Item>
             </>
           ) : (
             <WorkflowStepOptionsMenuItems
-              selectedItemId={selectedItemId}
               changeNodeText="Change node"
               onChangeNode={() => setIsSubmenuOpen(true)}
               onDuplicateNode={handleDuplicate}
@@ -119,16 +96,18 @@ export const KeyboardNavigationAndReopening: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByText('Open actions'));
-    await canvas.findByText('Change node');
+    canvas.getByRole('button', { name: 'Open actions' }).focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await canvas.findByRole('menuitem', { name: 'Change node' });
     await userEvent.keyboard('{ArrowDown}{Enter}');
 
     expect(args.onAction).toHaveBeenCalledTimes(1);
     expect(args.onAction).toHaveBeenCalledWith('duplicate');
     expect(canvas.queryByText('Duplicate node')).not.toBeInTheDocument();
 
-    await userEvent.click(canvas.getByText('Open actions'));
-    await canvas.findByText('Change node');
+    canvas.getByRole('button', { name: 'Open actions' }).focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await canvas.findByRole('menuitem', { name: 'Change node' });
     await userEvent.keyboard('{Enter}');
 
     expect(await canvas.findByText('Choose destination')).toBeVisible();
@@ -143,12 +122,12 @@ export const SubmenuAndDisabledActions: Story = {
     await userEvent.click(canvas.getByText('Open actions'));
     await userEvent.click(await canvas.findByText('Change node'));
     await userEvent.click(await canvas.findByText('Unavailable destination'));
-    await userEvent.keyboard('{Enter}');
 
     expect(args.onAction).not.toHaveBeenCalled();
     expect(canvas.getByText('Choose destination')).toBeVisible();
 
-    await userEvent.keyboard('{ArrowDown}{Enter}');
+    canvas.getByRole('menuitem', { name: 'Choose destination' }).focus();
+    await userEvent.keyboard('{Enter}');
 
     expect(args.onAction).toHaveBeenCalledTimes(1);
     expect(args.onAction).toHaveBeenCalledWith('destination');

@@ -1,5 +1,5 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useCallback } from 'react';
 import { RecordTableColumnHead } from './RecordTableColumnHead';
@@ -28,11 +28,17 @@ export const RecordTableColumnHeadWithDropdown = ({
   }, [toggleScrollXWrapper, toggleScrollYWrapper]);
 
   return (
-    <Dropdown
+    <DropdownMenu
+      nativeButton={false}
+      openOnClick
       onOpen={handleDropdownOpen}
       onClose={handleDropdownClose}
       dropdownId={recordField.fieldMetadataItemId + '-header'}
-      clickableComponent={<RecordTableColumnHead recordField={recordField} />}
+      clickableComponent={
+        <div>
+          <RecordTableColumnHead recordField={recordField} />
+        </div>
+      }
       dropdownComponents={
         <RecordTableColumnHeadDropdownMenu
           recordField={recordField}

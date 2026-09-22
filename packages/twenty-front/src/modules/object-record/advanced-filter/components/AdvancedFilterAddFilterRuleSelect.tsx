@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
@@ -11,9 +11,8 @@ import { type RecordFilterGroup } from '@/object-record/record-filter-group/type
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
@@ -22,6 +21,7 @@ import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
   recordFilterGroup: RecordFilterGroup;
@@ -156,32 +156,29 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   }
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       clickableComponent={
-        <CommandMenuButton
-          command={{
-            Icon: IconPlus,
-            label: t`Add filter rule`,
-            shortLabel: t`Add filter rule`,
-            key: 'add-filter-rule',
-          }}
-        />
+        <Button
+          startIcon={<IconPlus />}
+          size="sm"
+          variant="outline"
+        >{t`Add filter rule`}</Button>
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               startIcon={<IconPlus />}
               onClick={handleAddFilter}
-            >{t`Add rule`}</ListItem>
+            >{t`Add rule`}</Menu.Item>
             {isFilterRuleGroupOptionVisible && (
-              <ListItem
+              <Menu.Item
                 startIcon={<IconLibraryPlus />}
                 onClick={handleAddFilterGroup}
-              >{t`Add rule group`}</ListItem>
+              >{t`Add rule group`}</Menu.Item>
             )}
-          </DropdownMenuItemsContainer>
+          </Menu.Group>
         </DropdownContent>
       }
       dropdownOffset={{ y: 8, x: 0 }}

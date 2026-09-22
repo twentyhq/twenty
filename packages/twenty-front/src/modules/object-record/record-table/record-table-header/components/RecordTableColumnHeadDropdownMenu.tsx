@@ -1,7 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
 import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
@@ -24,6 +20,7 @@ import {
   IconEyeOff,
   IconFilter,
 } from 'twenty-ui/icon';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   recordField: RecordField;
@@ -133,39 +130,41 @@ export const RecordTableColumnHeadDropdownMenu = ({
   return (
     <DropdownContent>
       <StyledDropdownMenuItemsContainerWrapper>
-        <DropdownMenuItemsContainer>
+        <Menu.Group>
           {isFilterable && (
-            <ListItem
+            <Menu.Item
               startIcon={<IconFilter />}
               onClick={handleFilterClick}
-            >{t`Filter`}</ListItem>
+            >{t`Filter`}</Menu.Item>
           )}
           {isSortable && (
-            <ListItem
+            <Menu.Item
               startIcon={<IconArrowsSort />}
               onClick={handleSortClick}
-            >{t`Sort`}</ListItem>
+            >{t`Sort`}</Menu.Item>
           )}
-          {showSeparator && <DropdownMenuSeparator />}
+          {showSeparator && <Menu.Separator />}
           {canMoveLeft && (
-            <ListItem
+            <Menu.Item
               startIcon={<IconArrowLeft />}
+              closeOnClick={false}
               onClick={handleColumnMoveLeft}
-            >{t`Move left`}</ListItem>
+            >{t`Move left`}</Menu.Item>
           )}
           {canMoveRight && (
-            <ListItem
+            <Menu.Item
               startIcon={<IconArrowRight />}
+              closeOnClick={false}
               onClick={handleColumnMoveRight}
-            >{t`Move right`}</ListItem>
+            >{t`Move right`}</Menu.Item>
           )}
           {canHide && (
-            <ListItem
+            <Menu.Item
               startIcon={<IconEyeOff />}
               onClick={handleColumnVisibility}
-            >{t`Hide`}</ListItem>
+            >{t`Hide`}</Menu.Item>
           )}
-        </DropdownMenuItemsContainer>
+        </Menu.Group>
       </StyledDropdownMenuItemsContainerWrapper>
     </DropdownContent>
   );

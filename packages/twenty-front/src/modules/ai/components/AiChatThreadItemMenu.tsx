@@ -1,6 +1,5 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
+import { type ReactElement } from 'react';
 import {
   IconArchive,
   IconArchiveOff,
@@ -15,12 +14,12 @@ import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActi
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteFamilyState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type AiChatThreadItemMenuProps = {
   threadId: string;
@@ -28,7 +27,7 @@ type AiChatThreadItemMenuProps = {
   isArchived: boolean;
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
-  clickableComponent?: ReactNode;
+  clickableComponent?: ReactElement;
 };
 
 export const AiChatThreadItemMenu = ({
@@ -74,7 +73,7 @@ export const AiChatThreadItemMenu = ({
   };
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       dropdownPlacement="bottom-end"
       clickableComponent={
@@ -86,23 +85,23 @@ export const AiChatThreadItemMenu = ({
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               startIcon={<IconPencil />}
               onClick={handleRename}
-            >{t`Rename`}</ListItem>
-            <ListItem
+            >{t`Rename`}</Menu.Item>
+            <Menu.Item
               startIcon={isArchived ? <IconArchiveOff /> : <IconArchive />}
               onClick={handleArchive}
             >
               {isArchived ? t`Unarchive` : t`Archive`}
-            </ListItem>
-            <ListItem
+            </Menu.Item>
+            <Menu.Item
               color="danger"
               startIcon={<IconTrash />}
               onClick={handleDelete}
-            >{t`Delete`}</ListItem>
-          </DropdownMenuItemsContainer>
+            >{t`Delete`}</Menu.Item>
+          </Menu.Group>
         </DropdownContent>
       }
     />

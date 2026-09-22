@@ -1,4 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
@@ -20,9 +19,8 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
@@ -46,6 +44,7 @@ import {
 import { LightIconButton } from 'twenty-ui/components';
 import { AnimatedEaseInOut } from 'twenty-ui/primitives/layout';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 const StyledClickableZone = styled.div`
   align-items: center;
@@ -231,7 +230,7 @@ export const RecordDetailRelationRecordsListItem = ({
           </LightIconButton>
         </StyledClickableZone>
         {!parentIsRecordFieldReadOnly && (
-          <Dropdown
+          <DropdownMenu
             dropdownId={dropdownInstanceId}
             dropdownPlacement="right-start"
             clickableComponent={
@@ -245,20 +244,20 @@ export const RecordDetailRelationRecordsListItem = ({
             }
             dropdownComponents={
               <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <ListItem
+                <Menu.Group>
+                  <Menu.Item
                     startIcon={<IconUnlink />}
                     onClick={handleDetach}
-                  >{t`Detach`}</ListItem>
+                  >{t`Detach`}</Menu.Item>
                   {!isAccountOwnerRelation &&
                     relationObjectPermissions.canSoftDeleteObjectRecords && (
-                      <ListItem
+                      <Menu.Item
                         startIcon={<IconTrash />}
                         color="danger"
                         onClick={handleDelete}
-                      >{t`Delete`}</ListItem>
+                      >{t`Delete`}</Menu.Item>
                     )}
-                </DropdownMenuItemsContainer>
+                </Menu.Group>
               </DropdownContent>
             }
           />

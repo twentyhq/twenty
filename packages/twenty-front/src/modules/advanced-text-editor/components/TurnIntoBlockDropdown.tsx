@@ -1,16 +1,14 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnIntoBlockOptions';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
 import { useContext, useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 const StyledMenuItem = styled.button`
   align-items: center;
@@ -47,7 +45,6 @@ export const TurnIntoBlockDropdown = ({
   const { theme } = useContext(ThemeContext);
   const instanceId = useId();
   const dropdownId = `turn-into-block-dropdown-${instanceId}`;
-  const { toggleDropdown } = useToggleDropdown();
 
   const options = useTurnIntoBlockOptions(editor);
   const activeItem = options.find((option) => option.isActive());
@@ -55,25 +52,21 @@ export const TurnIntoBlockDropdown = ({
     activeItem ?? {};
 
   return (
-    <Dropdown
+    <DropdownMenu
+      finalFocus={() => editor.view.dom}
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
+          <Menu.Group>
             {options.map(({ id, title, icon, onClick }) => (
-              <ListItem
+              <Menu.Item
                 key={id}
                 startIcon={<SelectOptionIcon Icon={icon} />}
-                onClick={() => {
-                  onClick();
-                  toggleDropdown({
-                    dropdownComponentInstanceIdFromProps: dropdownId,
-                  });
-                }}
+                onClick={onClick}
               >
                 {title}
-              </ListItem>
+              </Menu.Item>
             ))}
-          </DropdownMenuItemsContainer>
+          </Menu.Group>
         </DropdownContent>
       }
       dropdownId={dropdownId}

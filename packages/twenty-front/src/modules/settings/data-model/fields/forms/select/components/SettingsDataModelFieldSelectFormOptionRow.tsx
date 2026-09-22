@@ -22,6 +22,8 @@ import { ListItem, type ColorLabels } from 'twenty-ui/primitives/navigation';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 const useColorLabels = (): ColorLabels => ({
   gray: t`Gray`,
@@ -210,11 +212,11 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           autoSelectOnMount={isNewRow}
         />
       </StyledOptionInputContainer>
-      <Dropdown
-        dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
-        dropdownPlacement="right-start"
-        clickableComponent={
-          <StyledLightIconButtonContainer>
+      <StyledLightIconButtonContainer>
+        <DropdownMenu
+          dropdownId={SELECT_ACTIONS_DROPDOWN_ID}
+          dropdownPlacement="right-start"
+          clickableComponent={
             <LightIconButton
               emphasis="subtle"
               disabled={shouldForbidRemoveAsDefault}
@@ -222,44 +224,44 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
             >
               <IconDotsVertical />
             </LightIconButton>
-          </StyledLightIconButtonContainer>
-        }
-        dropdownComponents={
-          shouldForbidRemoveAsDefault ? null : (
-            <DropdownContent>
-              <DropdownMenuItemsContainer>
-                {isDefault ? (
-                  <ListItem
-                    startIcon={<IconX />}
-                    onClick={() => {
-                      onRemoveAsDefault?.();
-                      closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                    }}
-                  >{t`Remove as default`}</ListItem>
-                ) : (
-                  <ListItem
-                    startIcon={<IconCheck />}
-                    onClick={() => {
-                      onSetAsDefault?.();
-                      closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                    }}
-                  >{t`Set as default`}</ListItem>
-                )}
-                {!!onRemove && !isDefault && (
-                  <ListItem
-                    color="danger"
-                    startIcon={<IconTrash />}
-                    onClick={() => {
-                      onRemove();
-                      closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
-                    }}
-                  >{t`Remove option`}</ListItem>
-                )}
-              </DropdownMenuItemsContainer>
-            </DropdownContent>
-          )
-        }
-      />
+          }
+          dropdownComponents={
+            shouldForbidRemoveAsDefault ? null : (
+              <DropdownContent>
+                <Menu.Group>
+                  {isDefault ? (
+                    <Menu.Item
+                      startIcon={<IconX />}
+                      onClick={() => {
+                        onRemoveAsDefault?.();
+                        closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
+                      }}
+                    >{t`Remove as default`}</Menu.Item>
+                  ) : (
+                    <Menu.Item
+                      startIcon={<IconCheck />}
+                      onClick={() => {
+                        onSetAsDefault?.();
+                        closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
+                      }}
+                    >{t`Set as default`}</Menu.Item>
+                  )}
+                  {!!onRemove && !isDefault && (
+                    <Menu.Item
+                      color="danger"
+                      startIcon={<IconTrash />}
+                      onClick={() => {
+                        onRemove();
+                        closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
+                      }}
+                    >{t`Remove option`}</Menu.Item>
+                  )}
+                </Menu.Group>
+              </DropdownContent>
+            )
+          }
+        />
+      </StyledLightIconButtonContainer>
     </StyledRow>
   );
 };

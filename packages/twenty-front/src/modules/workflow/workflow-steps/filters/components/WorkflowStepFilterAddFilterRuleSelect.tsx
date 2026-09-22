@@ -1,9 +1,8 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks/useAddStepFilterToGroup';
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
@@ -14,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type WorkflowStepFilterAddFilterRuleSelectProps = {
   stepFilterGroup: StepFilterGroup;
@@ -86,32 +86,29 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
   }
 
   return (
-    <Dropdown
+    <DropdownMenu
       dropdownId={dropdownId}
       clickableComponent={
-        <CommandMenuButton
-          command={{
-            Icon: IconPlus,
-            label: t`Add filter rule`,
-            shortLabel: t`Add filter rule`,
-            key: 'add-filter-rule',
-          }}
-        />
+        <Button
+          startIcon={<IconPlus />}
+          size="sm"
+          variant="outline"
+        >{t`Add filter rule`}</Button>
       }
       dropdownComponents={
         <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
+          <Menu.Group>
+            <Menu.Item
               startIcon={<IconPlus />}
               onClick={handleAddFilter}
-            >{t`Add rule`}</ListItem>
+            >{t`Add rule`}</Menu.Item>
             {isFilterRuleGroupOptionVisible && (
-              <ListItem
+              <Menu.Item
                 startIcon={<IconLibraryPlus />}
                 onClick={handleAddFilterGroup}
-              >{t`Add rule group`}</ListItem>
+              >{t`Add rule group`}</Menu.Item>
             )}
-          </DropdownMenuItemsContainer>
+          </Menu.Group>
         </DropdownContent>
       }
       dropdownPlacement="bottom-start"
