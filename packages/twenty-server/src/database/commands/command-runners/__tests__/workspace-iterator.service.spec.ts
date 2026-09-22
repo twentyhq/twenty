@@ -90,6 +90,9 @@ describe('WorkspaceIteratorService', () => {
     ]);
     expect(
       workspaceCacheService.evictWorkspaceFromLocalCache,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      workspaceCacheService.evictWorkspaceFromLocalCache,
     ).toHaveBeenCalledWith('workspace-1');
   });
 });
