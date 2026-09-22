@@ -1,7 +1,6 @@
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getRecordNavigationMenuItemComputedLink = (
@@ -20,13 +19,6 @@ export const getRecordNavigationMenuItemComputedLink = (
   ) {
     return '';
   }
-
-  if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow) {
-    return getAppPath(AppPath.WorkflowCoreShowPage, {
-      coreWorkflowId: item.targetRecordIdentifier.id,
-    });
-  }
-
   const objectRecordIdentifier = recordIdentifierToObjectRecordIdentifier({
     recordIdentifier: item.targetRecordIdentifier,
     objectMetadataItem,

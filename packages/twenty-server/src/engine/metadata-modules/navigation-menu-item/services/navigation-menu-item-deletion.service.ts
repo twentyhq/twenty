@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { CoreWorkflowFavoriteTargetService } from 'src/engine/core-modules/workflow/services/core-workflow-favorite-target.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { fromDeleteNavigationMenuItemInputToFlatNavigationMenuItemOrThrow } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-delete-navigation-menu-item-input-to-flat-navigation-menu-item-or-throw.util';
@@ -29,7 +28,6 @@ export class NavigationMenuItemDeletionService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
-    private readonly coreWorkflowFavoriteTargetService: CoreWorkflowFavoriteTargetService,
   ) {}
 
   async deleteNavigationMenuItemsForDeletedRecords(
@@ -49,15 +47,7 @@ export class NavigationMenuItemDeletionService {
         },
       );
 
-    const mirroredCoreWorkflowIds =
-      await this.coreWorkflowFavoriteTargetService.findCoreWorkflowIdsByWorkspaceWorkflowIds(
-        { workspaceId, workspaceWorkflowIds: deletedRecordIds },
-      );
-
-    const deletedRecordIdsSet = new Set([
-      ...deletedRecordIds,
-      ...mirroredCoreWorkflowIds,
-    ]);
+    const deletedRecordIdsSet = new Set(deletedRecordIds);
 
     const navigationMenuItemsToDelete = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,

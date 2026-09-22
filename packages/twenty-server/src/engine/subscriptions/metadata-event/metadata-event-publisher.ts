@@ -139,9 +139,6 @@ export class MetadataEventPublisher {
               targetRecordId,
               targetObjectMetadataId,
               workspaceId: metadataEventBatch.workspaceId,
-              userWorkspaceId:
-                (after.userWorkspaceId as string | null | undefined) ??
-                undefined,
             },
           );
 

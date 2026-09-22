@@ -344,9 +344,9 @@ export const useNavigationMenuItemAddOptions = ({
               addItem({
                 type: NavigationMenuItemType.RECORD,
                 targetObjectMetadataId: object.id,
-                targetRecordId: record.targetRecordId,
+                targetRecordId: record.recordId,
                 targetRecordIdentifier: {
-                  id: record.targetRecordId,
+                  id: record.recordId,
                   labelIdentifier: record.label,
                   imageIdentifier: record.imageUrl ?? null,
                 },

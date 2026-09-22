@@ -225,8 +225,6 @@ export class NavigationMenuItemResolver {
   async targetRecordIdentifier(
     @Parent() navigationMenuItem: NavigationMenuItemDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<RecordIdentifierDTO | null> {
     if (
       !isDefined(navigationMenuItem.targetRecordId) ||
@@ -241,7 +239,6 @@ export class NavigationMenuItemResolver {
       targetRecordId: navigationMenuItem.targetRecordId,
       targetObjectMetadataId: navigationMenuItem.targetObjectMetadataId,
       workspaceId: workspace.id,
-      userWorkspaceId: navigationMenuItem.userWorkspaceId ?? userWorkspaceId,
       authContext,
     });
   }

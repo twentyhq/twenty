@@ -9,8 +9,6 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { findNavigationMenuItemForRecord } from '@/navigation-menu-item/common/utils/findNavigationMenuItemForRecord';
-import { getNavigationMenuItemTargetRecordId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTargetRecordId';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -65,33 +63,21 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
       ? contextStoreTargetedRecordsRule.selectedRecordIds
       : undefined;
 
+  const favoriteRecordIds =
+    !isNonEmptyArray(recordIds) || !isDefined(objectMetadataItem)
+      ? []
+      : recordIds.filter((recordId) =>
+          navigationMenuItems?.some(
+            (item) =>
+              item.targetRecordId === recordId &&
+              item.targetObjectMetadataId === objectMetadataItem.id,
+          ),
+        );
+
   const selectedRecords = useAtomFamilySelectorValue(
     recordStoreRecordsSelector,
     { recordIds: recordIds ?? [] },
   );
-
-  const favoriteRecordIds =
-    !isNonEmptyArray(recordIds) || !isDefined(objectMetadataItem)
-      ? []
-      : recordIds.filter((recordId) => {
-          const selectedRecord = selectedRecords.find(
-            (record) => record.id === recordId,
-          );
-
-          return isDefined(
-            findNavigationMenuItemForRecord({
-              navigationMenuItems: navigationMenuItems ?? [],
-              recordId,
-              targetRecordId: isDefined(selectedRecord)
-                ? getNavigationMenuItemTargetRecordId({
-                    objectNameSingular: objectMetadataItem.nameSingular,
-                    record: selectedRecord,
-                  })
-                : undefined,
-              objectMetadataId: objectMetadataItem.id,
-            }),
-          );
-        });
 
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
 
