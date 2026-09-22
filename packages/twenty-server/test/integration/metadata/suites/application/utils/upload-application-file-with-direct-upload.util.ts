@@ -100,8 +100,6 @@ const runDirectUpload = async ({
   return { data: { uploadApplicationFile: { id, path } }, errors: undefined };
 };
 
-// Uploads a single application file the way the CLI does: reserve an upload
-// target, PUT the bytes to it, then confirm the upload.
 export const uploadApplicationFileWithDirectUpload = async ({
   applicationUniversalIdentifier,
   fileFolder,

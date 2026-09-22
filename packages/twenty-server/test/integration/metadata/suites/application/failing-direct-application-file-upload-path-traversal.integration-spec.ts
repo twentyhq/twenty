@@ -11,9 +11,6 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const UNKNOWN_APP_ID = uuidv4();
 
-// The batch reservation reports a bad file as a per-file error and keeps the
-// request alive; only a request-level problem (unknown or missing application)
-// fails the whole mutation.
 type FailureLevel = 'request' | 'file';
 
 type TestContext = {
