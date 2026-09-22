@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
 import { CORE_WORKFLOW_APP_OPERATIONS_SDL_APPENDER } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/core-workflow-app-operations-sdl.constants';
 import { type CoreWorkflowAppOperationsSdlAppender } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/core-workflow-app-operations-sdl-appender.type';
+import { computeSchemaScopeApplicationIds } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/compute-schema-scope-application-ids.util';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { WorkspaceGraphQLSchemaGenerator } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -92,9 +93,13 @@ export class WorkspaceGraphqlSchemaSDLService {
           TWENTY_STANDARD_APPLICATION.universalIdentifier
         ];
 
-      const applicationIds = isDefined(twentyStandardApplicationId)
-        ? [twentyStandardApplicationId, applicationId]
-        : [applicationId];
+      const applicationIds = computeSchemaScopeApplicationIds({
+        initialApplicationIds: isDefined(twentyStandardApplicationId)
+          ? [twentyStandardApplicationId, applicationId]
+          : [applicationId],
+        flatObjectMetadataMaps: allFlatObjectMetadataMaps,
+        flatFieldMetadataMaps: allFlatFieldMetadataMaps,
+      });
 
       flatObjectMetadataMaps = this.filterFlatEntityMapsByApplicationIds(
         allFlatObjectMetadataMaps,
