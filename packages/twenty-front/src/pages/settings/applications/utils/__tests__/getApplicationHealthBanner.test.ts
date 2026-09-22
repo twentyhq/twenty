@@ -58,6 +58,17 @@ describe('getApplicationHealthBanner', () => {
     ).toBe('/settings/applications/app-id#variables');
   });
 
+  it('should keep a hash-only location, which moves to a tab on the current page', () => {
+    expect(
+      getApplicationHealthBanner({
+        healthCheckResult: buildResult({
+          action: { label: 'Configure', location: '#variables' },
+        }),
+        fallbackLocation: FALLBACK_LOCATION,
+      })?.action,
+    ).toEqual({ label: 'Configure', to: '#variables' });
+  });
+
   it("should fall back to the app's configuration tab when it reports no location", () => {
     expect(
       getApplicationHealthBanner({

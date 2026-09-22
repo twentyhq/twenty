@@ -36,6 +36,7 @@ export type CalloutProps = {
   variant: CalloutVariant;
   title: string;
   description?: string;
+  fullWidth?: boolean;
   Icon?: IconComponent;
   action?: {
     label: string;
@@ -49,6 +50,7 @@ export const Callout = ({
   variant,
   title,
   description,
+  fullWidth = false,
   Icon = IconHelp,
   action,
   isClosable = false,
@@ -74,6 +76,7 @@ export const Callout = ({
       className={clsx(
         styles.container,
         CALLOUT_CONTAINER_VARIANT_CLASS_NAMES[variant],
+        fullWidth && styles.containerFullWidth,
       )}
     >
       <div className={styles.header}>

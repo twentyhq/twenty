@@ -26,6 +26,7 @@ export const SettingsApplicationHealthBanner = ({
       Icon={appearance.Icon}
       title={healthMessage}
       action={action}
+      fullWidth
     />
   );
 };
