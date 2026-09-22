@@ -1,3 +1,4 @@
+import { buildTeamsActivityPath } from 'src/logic-functions/utils/build-teams-activity-path';
 import { requestTeamsConnector } from 'src/logic-functions/utils/request-teams-connector';
 
 export const deleteTeamsActivity = async ({
@@ -13,7 +14,7 @@ export const deleteTeamsActivity = async ({
 }): Promise<void> => {
   await requestTeamsConnector({
     serviceUrl,
-    path: `/v3/conversations/${encodeURIComponent(conversationId)}/activities/${encodeURIComponent(activityId)}`,
+    path: buildTeamsActivityPath({ conversationId, activityId }),
     method: 'DELETE',
     accessToken,
   });

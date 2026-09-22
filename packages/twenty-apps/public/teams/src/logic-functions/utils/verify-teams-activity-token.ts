@@ -33,20 +33,8 @@ const extractBearerToken = (
   return token;
 };
 
-const readServiceUrlClaim = (
-  payload: Record<string, unknown>,
-): string | null => {
-  const wireSpellingClaim = payload.serviceurl;
-  const documentedSpellingClaim = payload.serviceUrl;
-
-  if (isNonEmptyString(wireSpellingClaim)) {
-    return wireSpellingClaim;
-  }
-
-  return isNonEmptyString(documentedSpellingClaim)
-    ? documentedSpellingClaim
-    : null;
-};
+const readServiceUrlClaim = (payload: Record<string, unknown>): string | null =>
+  [payload.serviceurl, payload.serviceUrl].find(isNonEmptyString) ?? null;
 
 export const verifyTeamsActivityTokenOrThrow = async ({
   authorizationHeader,

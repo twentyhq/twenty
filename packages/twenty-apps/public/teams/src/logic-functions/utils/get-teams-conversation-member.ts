@@ -1,6 +1,5 @@
 import { type TeamsConversationMember } from 'src/logic-functions/types/teams-conversation-member.type';
-import { parseTeamsConnectorResponseOrThrow } from 'src/logic-functions/utils/parse-teams-connector-response-or-throw';
-import { requestTeamsConnector } from 'src/logic-functions/utils/request-teams-connector';
+import { requestTeamsConnectorJson } from 'src/logic-functions/utils/request-teams-connector-json';
 
 export const getTeamsConversationMember = async ({
   serviceUrl,
@@ -12,19 +11,10 @@ export const getTeamsConversationMember = async ({
   conversationId: string;
   memberId: string;
   accessToken: string;
-}): Promise<TeamsConversationMember> => {
-  const path = `/v3/conversations/${encodeURIComponent(conversationId)}/members/${encodeURIComponent(memberId)}`;
-
-  const responseBody = await requestTeamsConnector({
+}): Promise<TeamsConversationMember> =>
+  requestTeamsConnectorJson<TeamsConversationMember>({
     serviceUrl,
-    path,
+    path: `/v3/conversations/${encodeURIComponent(conversationId)}/members/${encodeURIComponent(memberId)}`,
     method: 'GET',
     accessToken,
   });
-
-  return parseTeamsConnectorResponseOrThrow<TeamsConversationMember>({
-    responseBody,
-    method: 'GET',
-    path,
-  });
-};

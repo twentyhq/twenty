@@ -2,12 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TEAMS_CONNECTOR_TOKEN_KV_KEY } from 'src/logic-functions/constants/teams-connector-token-kv-key';
 import { getTeamsConnectorToken } from 'src/logic-functions/utils/get-teams-connector-token';
-
-const CREDENTIALS = {
-  appId: 'bbbbbbbb-1111-2222-3333-444444444444',
-  appPassword: 'client-secret',
-  tenantId: 'cccccccc-1111-2222-3333-444444444444',
-};
+import { TEAMS_TEST_BOT_CREDENTIALS } from 'src/__tests__/constants/teams-test-bot-credentials.constant';
 
 const { kvGetMock, kvSetMock, mintMock } = vi.hoisted(() => ({
   kvGetMock: vi.fn(),
@@ -44,14 +39,18 @@ describe('getTeamsConnectorToken', () => {
       expiresAtMs: Date.now() + 30 * 60 * 1000,
     });
 
-    expect(await getTeamsConnectorToken(CREDENTIALS)).toBe('cached');
+    expect(await getTeamsConnectorToken(TEAMS_TEST_BOT_CREDENTIALS)).toBe(
+      'cached',
+    );
     expect(mintMock).not.toHaveBeenCalled();
   });
 
   it('should mint and cache at workspace scope when nothing is stored', async () => {
     kvGetMock.mockResolvedValue(null);
 
-    expect(await getTeamsConnectorToken(CREDENTIALS)).toBe('minted');
+    expect(await getTeamsConnectorToken(TEAMS_TEST_BOT_CREDENTIALS)).toBe(
+      'minted',
+    );
     expect(kvGetMock).toHaveBeenCalledWith(TEAMS_CONNECTOR_TOKEN_KV_KEY);
     expect(kvSetMock).toHaveBeenCalledWith(TEAMS_CONNECTOR_TOKEN_KV_KEY, {
       accessToken: 'minted',
@@ -65,7 +64,9 @@ describe('getTeamsConnectorToken', () => {
       expiresAtMs: Date.now() + 60 * 1000,
     });
 
-    expect(await getTeamsConnectorToken(CREDENTIALS)).toBe('minted');
-    expect(mintMock).toHaveBeenCalledWith(CREDENTIALS);
+    expect(await getTeamsConnectorToken(TEAMS_TEST_BOT_CREDENTIALS)).toBe(
+      'minted',
+    );
+    expect(mintMock).toHaveBeenCalledWith(TEAMS_TEST_BOT_CREDENTIALS);
   });
 });

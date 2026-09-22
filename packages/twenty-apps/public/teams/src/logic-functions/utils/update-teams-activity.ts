@@ -1,6 +1,6 @@
 import { type TeamsActivity } from 'src/logic-functions/types/teams-activity.type';
-import { parseTeamsConnectorResponseOrThrow } from 'src/logic-functions/utils/parse-teams-connector-response-or-throw';
-import { requestTeamsConnector } from 'src/logic-functions/utils/request-teams-connector';
+import { buildTeamsActivityPath } from 'src/logic-functions/utils/build-teams-activity-path';
+import { requestTeamsConnectorJson } from 'src/logic-functions/utils/request-teams-connector-json';
 
 export const updateTeamsActivity = async ({
   serviceUrl,
@@ -14,20 +14,11 @@ export const updateTeamsActivity = async ({
   activityId: string;
   accessToken: string;
   activity: TeamsActivity;
-}): Promise<{ id: string }> => {
-  const path = `/v3/conversations/${encodeURIComponent(conversationId)}/activities/${encodeURIComponent(activityId)}`;
-
-  const responseBody = await requestTeamsConnector({
+}): Promise<{ id: string }> =>
+  requestTeamsConnectorJson<{ id: string }>({
     serviceUrl,
-    path,
+    path: buildTeamsActivityPath({ conversationId, activityId }),
     method: 'PUT',
     accessToken,
     body: activity,
   });
-
-  return parseTeamsConnectorResponseOrThrow<{ id: string }>({
-    responseBody,
-    method: 'PUT',
-    path,
-  });
-};
