@@ -1,6 +1,6 @@
 import { I18nProvider } from '@lingui/react';
 import { i18n } from '@lingui/core';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -165,4 +165,17 @@ it('restores focus after Escape without reopening the menu', async () => {
   expect(screen.queryByText('Option B')).not.toBeInTheDocument();
   await user.tab();
   expect(screen.getByRole('textbox', { name: 'Next field' })).toHaveFocus();
+});
+
+it('keeps Space on the focused trigger of an open select from scrolling the page', async () => {
+  const user = userEvent.setup();
+  renderSelect(SIDE_PANEL_SURFACE);
+  await user.tab();
+  await user.keyboard('{Enter}');
+  expect(await screen.findByText('Option B')).toBeInTheDocument();
+  const trigger = screen.getByRole('button', { name: 'Option A' });
+  expect(trigger).toHaveFocus();
+
+  expect(fireEvent.keyDown(trigger, { key: ' ' })).toBe(false);
+  expect(screen.getByText('Option B')).toBeInTheDocument();
 });

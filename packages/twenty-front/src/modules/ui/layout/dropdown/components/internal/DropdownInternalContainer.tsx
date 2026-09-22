@@ -82,7 +82,7 @@ export const DropdownInternalContainer = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  // Restore focus before the portal disappears, unless the user has already moved outside it.
+  // Layout cleanup runs before the portal is removed, while focus is still inside it
   useLayoutEffect(() => {
     const floatingElement = floatingContext.elements.floating;
     const triggerElement = floatingUiRefs.domReference.current;

@@ -217,6 +217,26 @@ export const Dropdown = ({
     ],
   );
 
+  const handleClickableComponentKeyDown = (event: KeyboardEvent) => {
+    if (
+      !isDefined(clickableComponentTabIndex) ||
+      event.target !== event.currentTarget ||
+      (event.key !== 'Enter' && event.key !== ' ')
+    ) {
+      return;
+    }
+
+    if (isDropdownOpen) {
+      if (event.key === ' ') {
+        event.preventDefault();
+      }
+
+      return;
+    }
+
+    handleClickableComponentClick(event);
+  };
+
   return (
     <DropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}
@@ -226,16 +246,7 @@ export const Dropdown = ({
           ref={refs.setReference}
           onClick={handleClickableComponentClick}
           tabIndex={clickableComponentTabIndex}
-          onKeyDown={(event) => {
-            if (
-              !isDropdownOpen &&
-              isDefined(clickableComponentTabIndex) &&
-              event.target === event.currentTarget &&
-              (event.key === 'Enter' || event.key === ' ')
-            ) {
-              handleClickableComponentClick(event);
-            }
-          }}
+          onKeyDown={handleClickableComponentKeyDown}
           aria-controls={`${dropdownId}-options`}
           aria-expanded={isDropdownOpen}
           aria-haspopup={true}
