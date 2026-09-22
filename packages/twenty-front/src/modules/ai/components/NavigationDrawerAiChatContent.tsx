@@ -79,11 +79,7 @@ export const NavigationDrawerAiChatContent = () => {
   const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
   const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
 
-  const filterDropdown = (
-    <AiChatThreadFilterDropdown
-      surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-    />
-  );
+  const filterDropdown = <AiChatThreadFilterDropdown />;
 
   return (
     <StyledContainer>

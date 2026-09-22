@@ -1,0 +1,109 @@
+.positioner {
+  z-index: var(--t-last-layer-z-index);
+}
+
+.content {
+  backdrop-filter: var(--t-blur-medium);
+  background: var(--t-background-transparent-primary);
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-md);
+  box-shadow: var(--t-box-shadow-strong);
+  box-sizing: border-box;
+  color: var(--t-font-color-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-block-size: var(--available-height);
+  max-inline-size: var(--available-width);
+  outline: none;
+  overflow-y: auto;
+  padding: 0;
+  transition: opacity duration(fast) ease-out;
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+
+  [data-dropdown-item]:focus-visible {
+    background: var(--t-background-transparent-light);
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-between-siblings-gap);
+  padding: var(--t-spacing-1);
+}
+
+.sectionLabel {
+  align-items: center;
+  background: var(--t-background-transparent-lighter);
+  color: var(--t-font-color-tertiary);
+  display: flex;
+  font-size: var(--t-font-size-xxs);
+  margin-inline: calc(-1 * var(--t-spacing-1));
+  min-block-size: 20px;
+  padding-inline: var(--t-spacing-2);
+  user-select: none;
+}
+
+.separator {
+  background: var(--t-border-color-light);
+  block-size: 1px;
+  flex: none;
+}
+
+.section > .separator {
+  margin-inline: calc(-1 * var(--t-spacing-1));
+}
+
+.back {
+  border-bottom: 1px solid var(--t-border-color-light);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  color: var(--t-font-color-primary);
+  flex: none;
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-medium);
+  min-block-size: 33px;
+  padding-inline: var(--t-spacing-2);
+
+  &:dir(rtl) svg {
+    transform: rotate(180deg);
+  }
+}
+
+.searchContainer {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  min-block-size: 36px;
+  padding-block: var(--t-spacing-2);
+}
+
+.search {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--t-font-color-primary);
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-sm);
+  min-inline-size: 0;
+  outline: none;
+  padding: 0 var(--t-spacing-2);
+  width: 100%;
+
+  &::placeholder {
+    color: var(--t-font-color-light);
+    font-weight: var(--t-font-weight-medium);
+  }
+}
+
+.status {
+  color: var(--t-font-color-secondary);
+  font-size: var(--t-font-size-sm);
+  padding: var(--t-spacing-2);
+}

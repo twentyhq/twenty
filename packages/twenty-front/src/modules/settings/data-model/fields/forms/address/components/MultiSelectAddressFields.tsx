@@ -1,139 +1,129 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { Tag } from 'twenty-ui/primitives/data-display';
-import { type SelectValue } from '@/ui/input/components/internal/select/types';
-import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { type SelectSizeVariant } from '@/ui/input/components/Select';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { type SelectValue } from '@/ui/input/components/internal/select/types';
+import { DropdownFocusEffect } from '@/ui/utilities/focus/components/DropdownFocusEffect';
 import { t } from '@lingui/core/macro';
-import { type MouseEvent, useMemo, useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type MouseEvent, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
 type CallToActionButton = {
   text: string;
-  onClick: (event: MouseEvent<HTMLDivElement>) => void;
+  onClick: (event: MouseEvent<HTMLElement>) => void;
   Icon?: IconComponent;
 };
 
-export type MultiSelectAddressFieldsProps<Value extends SelectValue> = {
+type MultiSelectAddressFieldsProps<TValue extends SelectValue> = {
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
-  dropdownId: string;
   dropdownWidth?: number;
-  onChange?: (values: Value[]) => void;
-  options: SelectOption<Value>[];
-  values: Value[];
+  onChange?: (values: TValue[]) => void;
+  options: SelectOption<TValue>[];
+  values: TValue[];
   callToActionButton?: CallToActionButton;
 };
 
-export const MultiSelectAddressFields = <Value extends SelectValue>({
-  className: _className,
+export const MultiSelectAddressFields = <TValue extends SelectValue>({
+  className,
+  disabled = false,
   selectSizeVariant,
-  dropdownId,
-  dropdownWidth = GenericDropdownContentWidth.Medium,
+  dropdownWidth,
   onChange,
   options,
   values,
   callToActionButton,
-}: MultiSelectAddressFieldsProps<Value>) => {
+}: MultiSelectAddressFieldsProps<TValue>) => {
   const [searchInputValue, setSearchInputValue] = useState('');
-  const filteredOptions = useMemo(
-    () =>
-      searchInputValue
-        ? options.filter(({ label }) =>
-            label.toLowerCase().includes(searchInputValue.toLowerCase()),
-          )
-        : options,
-    [options, searchInputValue],
-  );
-  const onOptionSelected = (value: Value, values: Value[]) => {
-    if (!values.includes(value)) {
-      return [...values, value];
-    } else {
-      return values.filter((val) => val !== value);
-    }
+  const filteredOptions = isNonEmptyString(searchInputValue)
+    ? options.filter(({ label }) =>
+        label.toLowerCase().includes(searchInputValue.toLowerCase()),
+      )
+    : options;
+
+  const handleOptionSelected = (value: TValue) => {
+    const nextValues = values.includes(value)
+      ? values.filter((selectedValue) => selectedValue !== value)
+      : [...values, value];
+
+    onChange?.(nextValues);
   };
-  const selectableItemIdArray = filteredOptions.map((option) => option.label);
-  const onCloseDropdown = () => {
-    setSearchInputValue('');
-  };
+
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      onClose={onCloseDropdown}
-      clickableComponent={
+    <Dropdown.Root
+      kind="picker"
+      multiple
+      onOpenChange={(open) => {
+        if (!open) {
+          setSearchInputValue('');
+        }
+      }}
+    >
+      <Dropdown.Trigger
+        className={className}
+        render={<div />}
+        nativeButton={false}
+        disabled={disabled}
+        aria-label={t`Select address fields`}
+      >
         <SelectControl
           selectedOption={{
             label:
-              values?.length === options.length
+              values.length === options.length
                 ? t`Default`
-                : values?.length.toString(),
-            value: values?.length,
+                : values.length.toString(),
+            value: values.length,
           }}
           selectSizeVariant={selectSizeVariant}
+          isDisabled={disabled}
         />
-      }
-      dropdownComponents={
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          selectableItemIdArray={selectableItemIdArray}
-          focusId={dropdownId}
-        >
-          <DropdownContent selectDisabled widthInPixels={dropdownWidth}>
-            <DropdownMenuSearchInput
-              value={searchInputValue}
-              onChange={(event) => setSearchInputValue(event.target.value)}
-              autoFocus
-            />
-            <DropdownMenuSeparator />
-            <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
-              {filteredOptions?.map((option) => {
-                return (
-                  <SelectableListItem
-                    key={`${option.value}`}
-                    itemId={`${option.value}`}
-                    onEnter={() => {
-                      onChange?.(onOptionSelected(option.value, values));
-                    }}
-                  >
-                    <ListItem
-                      key={`${option.value}`}
-                      onClick={() =>
-                        onChange?.(onOptionSelected(option.value, values))
-                      }
-                      role="option"
-                      aria-selected={values?.includes(option?.value) || false}
-                      selected={values?.includes(option?.value) || false}
-                      indicator="checkbox"
-                    >
-                      <Tag color={'transparent'}>{option.label}</Tag>
-                    </ListItem>
-                  </SelectableListItem>
-                );
-              })}
-            </DropdownMenuItemsContainer>
-          </DropdownContent>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-            <ListItem
-              onClick={callToActionButton?.onClick}
-              startIcon={<SelectOptionIcon Icon={callToActionButton?.Icon} />}
-              disabled={values.length === options.length}
+      </Dropdown.Trigger>
+      <Dropdown.Content
+        width={dropdownWidth}
+        sideOffset={0}
+        align="end"
+        aria-label={t`Select address fields`}
+      >
+        <DropdownFocusEffect />
+        <Dropdown.Search
+          value={searchInputValue}
+          onValueChange={setSearchInputValue}
+          aria-label={t`Search address fields`}
+          placeholder={t`Search`}
+        />
+        <Dropdown.Separator />
+        <Dropdown.Section>
+          {filteredOptions.map((option) => (
+            <Dropdown.OptionItem
+              key={`${option.value}`}
+              selected={values.includes(option.value)}
+              onSelect={() => handleOptionSelected(option.value)}
+              disabled={option.disabled}
             >
-              {callToActionButton?.text}
-            </ListItem>
-          </DropdownMenuItemsContainer>
-        </SelectableList>
-      }
-    />
+              <Tag color="transparent">{option.label}</Tag>
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.Section>
+        {isDefined(callToActionButton) && (
+          <>
+            <Dropdown.Separator />
+            <Dropdown.Section>
+              <Dropdown.ActionItem
+                onClick={callToActionButton.onClick}
+                startIcon={<SelectOptionIcon Icon={callToActionButton.Icon} />}
+                disabled={values.length === options.length}
+              >
+                {callToActionButton.text}
+              </Dropdown.ActionItem>
+            </Dropdown.Section>
+          </>
+        )}
+      </Dropdown.Content>
+    </Dropdown.Root>
   );
 };

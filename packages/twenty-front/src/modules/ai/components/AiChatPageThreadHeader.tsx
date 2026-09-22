@@ -145,7 +145,7 @@ export const AiChatPageThreadHeader = ({
           isArchived={Boolean(thread.deletedAt)}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
           onRenameRequested={startRename}
-          clickableComponent={
+          trigger={
             <IconButton
               size="sm"
               variant="outline"

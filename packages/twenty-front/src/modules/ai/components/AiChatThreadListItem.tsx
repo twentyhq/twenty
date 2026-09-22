@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconArchive, IconSparkles } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -9,10 +9,7 @@ import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadItem = styled.div`
@@ -100,15 +97,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
   const isArchived = Boolean(thread.deletedAt);
   const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
-    thread.id,
-    AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
-  );
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    itemMenuDropdownId,
-  );
-
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   return (
     <StyledThreadItem
       onClick={() => {
@@ -159,6 +148,8 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
           isArchived={isArchived}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
           onRenameRequested={startRename}
+          open={isDropdownOpen}
+          onOpenChange={setIsDropdownOpen}
         />
       </StyledMenuTrigger>
     </StyledThreadItem>

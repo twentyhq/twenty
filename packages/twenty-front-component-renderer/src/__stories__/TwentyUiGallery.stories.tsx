@@ -4,6 +4,7 @@ import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/picke
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
+import { dropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSandboxFailureTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -302,6 +303,18 @@ export const MenuPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-menu',
   runtime: 'preact',
   play: menuTest,
+});
+
+export const DropdownReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'react',
+  play: dropdownSandboxFailureTest,
+});
+
+export const DropdownPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'preact',
+  play: dropdownSandboxFailureTest,
 });
 
 export const SelectReact: Story = createGalleryStory({

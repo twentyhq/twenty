@@ -1,52 +1,34 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconFilter } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
 
 import { AiChatThreadFilterDropdownContent } from '@/ai/components/AiChatThreadFilterDropdownContent';
 import { AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE } from '@/ai/constants/AiChatThreadFilterDropdownPage';
-import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
-import { type AiChatThreadFilterDropdownPage } from '@/ai/types/AiChatThreadFilterDropdownPage';
-import { getAiChatThreadFilterDropdownId } from '@/ai/utils/getAiChatThreadFilterDropdownId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownFocusEffect } from '@/ui/utilities/focus/components/DropdownFocusEffect';
 
-type AiChatThreadFilterDropdownProps = {
-  surface: AiChatThreadActionsSurface;
-};
-
-export const AiChatThreadFilterDropdown = ({
-  surface,
-}: AiChatThreadFilterDropdownProps) => {
+export const AiChatThreadFilterDropdown = () => {
   const { t } = useLingui();
-  const dropdownId = getAiChatThreadFilterDropdownId(surface);
-  const [page, setPage] = useState<AiChatThreadFilterDropdownPage>(
-    AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.ROOT,
-  );
-
-  const goToRoot = () => setPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.ROOT);
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="bottom-end"
-      onClose={goToRoot}
-      clickableComponent={
-        <LightIconButton
-          aria-label={t`Filter chats`}
-          emphasis="subtle"
-          size="sm"
-        >
-          <IconFilter />
-        </LightIconButton>
-      }
-      dropdownComponents={
-        <AiChatThreadFilterDropdownContent
-          page={page}
-          dropdownId={dropdownId}
-          onSelectPage={setPage}
-          onBack={goToRoot}
-        />
-      }
-    />
+    <Dropdown.Root
+      kind="menu"
+      defaultPage={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.ROOT}
+    >
+      <Dropdown.Trigger
+        render={
+          <LightIconButton
+            aria-label={t`Filter chats`}
+            emphasis="subtle"
+            size="sm"
+          >
+            <IconFilter />
+          </LightIconButton>
+        }
+      />
+      <Dropdown.Content align="end" aria-label={t`Filter chats`}>
+        <DropdownFocusEffect />
+        <AiChatThreadFilterDropdownContent />
+      </Dropdown.Content>
+    </Dropdown.Root>
   );
 };
