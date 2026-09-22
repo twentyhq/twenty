@@ -17,7 +17,9 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
+      - name: Fetch custom Github Actions
+        uses: actions/checkout@v4.3.1
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Run knip
-        run: npx nx knip twenty -- --no-exit-code
+        run: npx nx run-many -t knip -- --no-exit-code --reporter markdown | tee -a "$GITHUB_STEP_SUMMARY"

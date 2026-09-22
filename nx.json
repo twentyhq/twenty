@@ -99,6 +99,13 @@
       },
       "dependsOn": ["^build"]
     },
+    "knip": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "command": "knip --workspace {projectRoot}"
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "cache": true,
