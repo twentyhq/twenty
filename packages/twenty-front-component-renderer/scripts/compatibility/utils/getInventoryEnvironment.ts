@@ -9,6 +9,8 @@ import { chromium, type Browser, type Page } from 'playwright';
 import { type z } from 'zod';
 
 import { inventoryEnvironmentSchema } from '../schemas/inventoryEnvironmentSchema';
+import { playwrightBrowserRegistrySchema } from '../schemas/playwrightBrowserRegistrySchema';
+import { playwrightPackageSchema } from '../schemas/playwrightPackageSchema';
 
 const require = createRequire(import.meta.url);
 
@@ -29,20 +31,23 @@ export const getInventoryEnvironment = async ({
   launch: InventoryEnvironment['launch'];
   context: InventoryEnvironment['context'];
 }) => {
-  const browserRegistry = JSON.parse(
-    await readFile(
-      resolve(
-        dirname(require.resolve('playwright-core/package.json')),
-        'browsers.json',
+  const browserRegistry = playwrightBrowserRegistrySchema.parse(
+    JSON.parse(
+      await readFile(
+        resolve(
+          dirname(require.resolve('playwright-core/package.json')),
+          'browsers.json',
+        ),
+        'utf8',
       ),
-      'utf8',
     ),
-  ) as { browsers: { name: string; revision: string }[] };
+  );
+  const playwrightPackage = playwrightPackageSchema.parse(
+    require('playwright/package.json'),
+  );
   return inventoryEnvironmentSchema.parse({
     collectedAt: new Date().toISOString(),
-    playwrightVersion: (
-      require('playwright/package.json') as { version: string }
-    ).version,
+    playwrightVersion: playwrightPackage.version,
     chromiumVersion: browser.version(),
     chromiumRevision: browserRegistry.browsers.find(
       (entry) => entry.name === 'chromium',
