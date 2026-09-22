@@ -11,6 +11,15 @@ import { MICROSOFT_GRAPH_BASE_URL } from 'src/constants/teams.constant';
 const DEFAULT_ACCESS_TOKEN = 'graph-delegated-test-token';
 const DEFAULT_PAGE_SIZE = 50;
 
+type GraphApiMockState = {
+  calendarEvents: FakeTeamsCalendarEvent[];
+  meetings: FakeTeamsMeeting[];
+  calls: GraphApiCall[];
+  calendarPageSize: number;
+  transcriptPageSize: number;
+  pendingFailure: FakeGraphFailure | undefined;
+};
+
 const graphError = ({
   status,
   code,
@@ -59,10 +68,13 @@ const paginate = <TItem>({
   });
 };
 
-const toGraphCalendarEvent = (
-  event: FakeTeamsCalendarEvent,
-  selectedFields: string[],
-) => ({
+const toGraphCalendarEvent = ({
+  event,
+  selectedFields,
+}: {
+  event: FakeTeamsCalendarEvent;
+  selectedFields: string[];
+}) => ({
   isOrganizer: event.isOrganizer ?? true,
   isCancelled: event.isCancelled ?? false,
   ...(selectedFields.includes('isOnlineMeeting')
@@ -88,13 +100,13 @@ const readJoinWebUrlFilter = (requestUrl: string): string | undefined => {
 export const createGraphApiMock = ({
   accessToken = DEFAULT_ACCESS_TOKEN,
 }: { accessToken?: string } = {}): GraphApiMock => {
-  const buildInitialState = () => ({
-    calendarEvents: [] as FakeTeamsCalendarEvent[],
-    meetings: [] as FakeTeamsMeeting[],
-    calls: [] as GraphApiCall[],
+  const buildInitialState = (): GraphApiMockState => ({
+    calendarEvents: [],
+    meetings: [],
+    calls: [],
     calendarPageSize: DEFAULT_PAGE_SIZE,
     transcriptPageSize: DEFAULT_PAGE_SIZE,
-    pendingFailure: undefined as FakeGraphFailure | undefined,
+    pendingFailure: undefined,
   });
   const state = buildInitialState();
 
@@ -129,7 +141,10 @@ export const createGraphApiMock = ({
     http.get(`${MICROSOFT_GRAPH_BASE_URL}/me/calendarView`, ({ request }) =>
       paginate({
         items: state.calendarEvents.map((event) =>
-          toGraphCalendarEvent(event, readSelectedFields(request.url)),
+          toGraphCalendarEvent({
+            event,
+            selectedFields: readSelectedFields(request.url),
+          }),
         ),
         requestUrl: request.url,
         pageSize: state.calendarPageSize,
