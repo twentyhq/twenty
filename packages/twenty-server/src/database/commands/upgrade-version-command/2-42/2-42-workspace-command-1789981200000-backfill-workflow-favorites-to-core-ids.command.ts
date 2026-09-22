@@ -84,7 +84,6 @@ export class BackfillWorkflowFavoritesToCoreIdsCommand extends ProvisionedWorksp
         ).filter(isDefined),
         workflowObjectMetadataId: workflowObjectMetadata.id,
         coreWorkflowIdByWorkspaceWorkflowId,
-        now: new Date().toISOString(),
       });
 
     if (navigationMenuItemsToUpdate.length === 0) {
