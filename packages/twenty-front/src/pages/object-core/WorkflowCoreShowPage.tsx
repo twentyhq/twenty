@@ -5,7 +5,7 @@ import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCo
 import { useValidateCoreWorkflowVersion } from '@/object-core/workflows/hooks/useValidateCoreWorkflowVersion';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -51,13 +51,21 @@ const CoreWorkflowShowContent = ({
 }) => {
   const client = useApolloCoreClient();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { record, coreWorkflow, loading, error } =
+  const { record, coreWorkflow, loading, error, refetch } =
     useCoreWorkflowShowPageResource({
       coreWorkflowId,
     });
   const versions = useCoreWorkflowVersions(coreWorkflowId);
 
-  useListenToCoreWorkflowEvents({ coreWorkflowId });
+  const refetchCoreWorkflowAndVersions = useCallback(() => {
+    void refetch();
+    void versions.refetchCoreWorkflowVersions();
+  }, [refetch, versions]);
+
+  useListenToCoreWorkflowEvents({
+    coreWorkflowId,
+    refetch: refetchCoreWorkflowAndVersions,
+  });
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [editedName, setEditedName] = useState<string>();
