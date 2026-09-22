@@ -29,7 +29,7 @@ import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
 import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
 import { WorkspaceMigrationTimelineActivityTypeActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/workspace-migration-timeline-activity-type-actions-builder.service';
-import { WorkspaceMigrationSettingPageActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/setting-page/workspace-migration-setting-page-actions-builder.service';
+import { WorkspaceMigrationSettingsMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/workspace-migration-settings-menu-item-actions-builder.service';
 import { WorkspaceMigrationFieldPermissionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-permission/workspace-migration-field-permission-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
 import { WorkspaceMigrationFrontComponentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/workspace-migration-front-component-actions-builder.service';
@@ -162,7 +162,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationConnectionProviderActionsBuilderService: WorkspaceMigrationConnectionProviderActionsBuilderService,
     workspaceMigrationTimelineActivityTypeActionsBuilderService: WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
     workspaceMigrationSearchFieldMetadataActionsBuilderService: WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
-    workspaceMigrationSettingPageActionsBuilderService: WorkspaceMigrationSettingPageActionsBuilderService,
+    workspaceMigrationSettingsMenuItemActionsBuilderService: WorkspaceMigrationSettingsMenuItemActionsBuilderService,
   ) {
     // The order of this array defines the execution order of the per-entity
     // builders. Each builder may mutate `optimisticAllFlatEntityMaps`, so
@@ -300,8 +300,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
         workspaceMigrationTimelineActivityTypeActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
-        ALL_METADATA_NAME.settingPage,
-        workspaceMigrationSettingPageActionsBuilderService,
+        ALL_METADATA_NAME.settingsMenuItem,
+        workspaceMigrationSettingsMenuItemActionsBuilderService,
       ),
     ];
   }

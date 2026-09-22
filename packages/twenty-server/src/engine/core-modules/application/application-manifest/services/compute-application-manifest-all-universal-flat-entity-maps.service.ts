@@ -33,8 +33,8 @@ import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPerm
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType } from 'src/engine/core-modules/application/application-manifest/converters/from-timeline-activity-type-manifest-to-universal-flat-timeline-activity-type.util';
-import { fromSettingPageManifestToUniversalFlatSettingPage } from 'src/engine/core-modules/application/application-manifest/converters/from-setting-page-manifest-to-universal-flat-setting-page.util';
-import { getLegacySettingPageManifests } from 'src/engine/core-modules/application/application-manifest/utils/get-legacy-setting-page-manifests.util';
+import { fromSettingsMenuItemManifestToUniversalFlatSettingsMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-settings-menu-item-manifest-to-universal-flat-settings-menu-item.util';
+import { getLegacySettingsMenuItemManifests } from 'src/engine/core-modules/application/application-manifest/utils/get-legacy-settings-menu-item-manifests.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-manifest-to-universal-flat-view-field.util';
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
@@ -670,20 +670,21 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    const settingPageManifests = [
-      ...(manifest.settingPages ?? []),
-      ...getLegacySettingPageManifests(manifest),
+    const settingsMenuItemManifests = [
+      ...(manifest.settingsMenuItems ?? []),
+      ...getLegacySettingsMenuItemManifests(manifest),
     ];
 
-    for (const settingPageManifest of settingPageManifests) {
+    for (const settingsMenuItemManifest of settingsMenuItemManifests) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: fromSettingPageManifestToUniversalFlatSettingPage({
-          settingPageManifest,
-          applicationUniversalIdentifier,
-          now,
-        }),
+        universalFlatEntity:
+          fromSettingsMenuItemManifestToUniversalFlatSettingsMenuItem({
+            settingsMenuItemManifest,
+            applicationUniversalIdentifier,
+            now,
+          }),
         universalFlatEntityMapsToMutate:
-          allUniversalFlatEntityMaps.flatSettingPageMaps,
+          allUniversalFlatEntityMaps.flatSettingsMenuItemMaps,
       });
     }
 

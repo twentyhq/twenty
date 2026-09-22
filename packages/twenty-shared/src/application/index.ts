@@ -60,7 +60,7 @@ export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
 export { DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME } from './constants/DefaultAppApplicationAccessTokenName';
 export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName';
-export { DEFAULT_SETTING_PAGE_POSITION } from './constants/DefaultSettingPagePosition';
+export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
@@ -83,7 +83,7 @@ export { getFieldUniversalIdentifier } from './deterministic-identifier/get-fiel
 export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
 export { getIndexFieldUniversalIdentifier } from './deterministic-identifier/get-index-field-universal-identifier.util';
 export { getIndexUniversalIdentifier } from './deterministic-identifier/get-index-universal-identifier.util';
-export { getLegacySettingPageUniversalIdentifier } from './deterministic-identifier/get-legacy-setting-page-universal-identifier.util';
+export { getLegacySettingsMenuItemUniversalIdentifier } from './deterministic-identifier/get-legacy-settings-menu-item-universal-identifier.util';
 export { getLogicFunctionUniversalIdentifier } from './deterministic-identifier/get-logic-function-universal-identifier.util';
 export {
   getFolderNavigationMenuItemUniversalIdentifier,
@@ -190,15 +190,15 @@ export type {
 export type { ServerVariables } from './server-variables.type';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
-export type {
-  SettingPageScope,
-  SettingPageManifest,
-} from './settingPageManifestType';
-export {
-  SETTING_PAGE_SCOPES,
-  DEFAULT_SETTING_PAGE_SCOPE,
-} from './settingPageManifestType';
 export type { SettingsFrontComponentApplicationManifest } from './settingsFrontComponentApplicationType';
+export type {
+  SettingsMenuItemScope,
+  SettingsMenuItemManifest,
+} from './settingsMenuItemManifestType';
+export {
+  SETTINGS_MENU_ITEM_SCOPES,
+  DEFAULT_SETTINGS_MENU_ITEM_SCOPE,
+} from './settingsMenuItemManifestType';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
@@ -219,10 +219,10 @@ export {
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
 export {
-  RESERVED_SETTING_PAGE_TITLES,
-  isReservedSettingPageTitle,
-} from './utils/isReservedSettingPageTitle';
-export { sortSettingPages } from './utils/sortSettingPages';
+  RESERVED_SETTINGS_MENU_ITEM_TITLES,
+  isReservedSettingsMenuItemTitle,
+} from './utils/isReservedSettingsMenuItemTitle';
+export { sortSettingsMenuItems } from './utils/sortSettingsMenuItems';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

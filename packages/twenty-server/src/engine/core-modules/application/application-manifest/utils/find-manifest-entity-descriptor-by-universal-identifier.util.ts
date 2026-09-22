@@ -92,10 +92,13 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
         (timelineActivityType) => timelineActivityType.label,
       ),
   },
-  settingPage: {
-    entityKind: 'setting page',
+  settingsMenuItem: {
+    entityKind: 'settings menu item',
     getCandidates: (manifest) =>
-      toCandidates(manifest.settingPages, (settingPage) => settingPage.title),
+      toCandidates(
+        manifest.settingsMenuItems,
+        (settingsMenuItem) => settingsMenuItem.title,
+      ),
   },
   view: {
     entityKind: 'view',

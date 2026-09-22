@@ -69,7 +69,7 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
     case 'applicationVariable':
     case 'connectionProvider':
     case 'timelineActivityType':
-    case 'settingPage':
+    case 'settingsMenuItem':
     case 'searchFieldMetadata': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,

@@ -199,8 +199,8 @@ import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/co
 import { AddWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789893300000-add-workflow-visibility';
 import { AddAiEvaluationModelToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789918648347-add-ai-evaluation-model-to-workspace';
 import { AddIsRequiredToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789920900000-add-is-required-to-application-variables';
-import { AddSettingPageFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790001681692-add-setting-page';
-import { BackfillSettingPageSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1790001790920-backfill-setting-page';
+import { AddSettingsMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790001681692-add-settings-menu-item';
+import { BackfillSettingsMenuItemSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1790001790920-backfill-settings-menu-item';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -402,6 +402,6 @@ export const INSTANCE_COMMANDS = [
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
   AddAiEvaluationModelToWorkspaceFastInstanceCommand,
   AddIsRequiredToApplicationVariablesFastInstanceCommand,
-  AddSettingPageFastInstanceCommand,
-  BackfillSettingPageSlowInstanceCommand,
+  AddSettingsMenuItemFastInstanceCommand,
+  BackfillSettingsMenuItemSlowInstanceCommand,
 ];

@@ -62,7 +62,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [],
   "searchFieldMetadata": [],
-  "settingPage": [],
+  "settingsMenuItem": [],
   "skill": [],
   "timelineActivityType": [
     "label",
@@ -137,7 +137,7 @@ exports[`registry-derived override property maps derives the translatable proper
   "pageLayoutWidget": [
     "title",
   ],
-  "settingPage": [
+  "settingsMenuItem": [
     "title",
   ],
   "timelineActivityType": [

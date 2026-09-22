@@ -1,6 +1,6 @@
 # Layout
 
-Use this reference for Twenty app views, navigation, page layouts, page layout tabs, front component registration, and setting pages. Use `standalone-pages.md` when a page layout is meant to host a full-page custom UI.
+Use this reference for Twenty app views, navigation, page layouts, page layout tabs, front component registration, and settings menu items. Use `standalone-pages.md` when a page layout is meant to host a full-page custom UI.
 
 ## Views And Navigation
 
@@ -43,26 +43,26 @@ When adding an app-defined front component to a record page layout, use the comp
 
 Use `frontComponentUniversalIdentifier` for app-defined front components. A `frontComponentId` is not the same value and will not link the widget to the app component correctly.
 
-## Setting Pages
+## Settings Menu Items
 
-To add a page to an app's settings, declare it with `defineSettingPage` and point it at the front component that renders it:
+To add an entry to an app's settings menu, declare it with `defineSettingsMenuItem` and point it at the front component that renders it:
 
 ```ts
 {
-  universalIdentifier: '<setting-page-uuid>',
+  universalIdentifier: '<settings-menu-item-uuid>',
   frontComponentUniversalIdentifier: '<front-component-uuid>',
-  title: '<Page title>',
+  title: '<Item title>',
   icon: '<IconName>',
   position: 1,
   scope: 'WORKSPACE',
 }
 ```
 
-The page points at the component, not the reverse, so one component can back several pages. Declare as many pages as the app needs.
+The menu item points at the component, not the reverse, so one component can back several items. Declare as many as the app needs.
 
-`scope` is `WORKSPACE` (configured once for the whole workspace, the default) or `USER` (configured by each member for themselves). Note that application variables are workspace-wide, so a `USER` page storing something per person must persist it through the app's own objects.
+`scope` is `WORKSPACE` (configured once for the whole workspace, the default) or `USER` (configured by each member for themselves). Note that application variables are workspace-wide, so a `USER` item storing something per person must persist it through the app's own objects.
 
-Pages sort by ascending `position`, which is a decimal so a page can be slotted between two existing ones. Two pages of one app cannot share a position in the same scope, and `General` is reserved for the built-in page.
+Items sort by ascending `position`, which is a decimal so an item can be slotted between two existing ones. Two items of one app cannot share a position in the same scope, and `General` is reserved for the built-in item.
 
 ## Verification
 

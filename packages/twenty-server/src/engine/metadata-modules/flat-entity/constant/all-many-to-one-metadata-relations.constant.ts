@@ -556,7 +556,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
-  settingPage: {
+  settingsMenuItem: {
     workspace: null,
     application: null,
     frontComponent: {

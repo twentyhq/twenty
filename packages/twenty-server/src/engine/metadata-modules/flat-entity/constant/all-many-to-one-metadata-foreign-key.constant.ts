@@ -316,7 +316,7 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
-  settingPage: {
+  settingsMenuItem: {
     workspace: null,
     application: null,
     frontComponent: {

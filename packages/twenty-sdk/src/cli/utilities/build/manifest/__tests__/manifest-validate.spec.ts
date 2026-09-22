@@ -34,7 +34,7 @@ const validField: FieldManifest = {
 const validManifest: Manifest = {
   commandMenuItems: [],
   timelineActivityTypes: [],
-  settingPages: [],
+  settingsMenuItems: [],
   application: validApplication,
   objects: [],
   frontComponents: [],

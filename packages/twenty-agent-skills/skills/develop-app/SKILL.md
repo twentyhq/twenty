@@ -98,7 +98,7 @@ Use the official Twenty docs or local SDK source when exact entity fields, impor
 Read the smallest reference that matches the requested entity work:
 
 - Objects, fields, relations, roles, and permissions: `../../references/develop-app/data-model.md`
-- Views, navigation, page layouts, page layout tabs, front component registration, and setting pages: `../../references/develop-app/layout.md`
+- Views, navigation, page layouts, page layout tabs, front component registration, and settings menu items: `../../references/develop-app/layout.md`
 - Full-page custom UI and standalone page patterns: `../../references/develop-app/standalone-pages.md`
 - Front component source, Twenty UI imports, data hooks, runtime imports, and browser verification: `../../references/develop-app/front-components.md`
 - Logic functions, skills, agents, post-install hooks, and connection providers: `../../references/develop-app/logic.md`

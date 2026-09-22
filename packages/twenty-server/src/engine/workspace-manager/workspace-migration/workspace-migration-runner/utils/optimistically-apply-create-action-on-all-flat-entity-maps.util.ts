@@ -88,7 +88,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'applicationVariable':
     case 'connectionProvider':
     case 'timelineActivityType':
-    case 'settingPage': {
+    case 'settingsMenuItem': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatAction.flatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,

@@ -87,9 +87,9 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
 
-    ...aggregatedOrchestratorActionsReport.settingPage.delete,
-    ...aggregatedOrchestratorActionsReport.settingPage.create,
-    ...aggregatedOrchestratorActionsReport.settingPage.update,
+    ...aggregatedOrchestratorActionsReport.settingsMenuItem.delete,
+    ...aggregatedOrchestratorActionsReport.settingsMenuItem.create,
+    ...aggregatedOrchestratorActionsReport.settingsMenuItem.update,
 
     ...aggregatedOrchestratorActionsReport.pageLayout.delete,
     ...aggregatedOrchestratorActionsReport.pageLayout.create,

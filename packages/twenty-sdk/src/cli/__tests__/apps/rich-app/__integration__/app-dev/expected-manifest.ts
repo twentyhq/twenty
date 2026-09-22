@@ -104,7 +104,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
   skills: [],
-  settingPages: [],
+  settingsMenuItems: [],
   agents: [],
   application: {
     applicationVariables: {

@@ -20,7 +20,7 @@ import {
 } from './pageLayoutManifestType';
 import { type PermissionFlagManifest } from './permissionFlagManifestType';
 import { type RoleManifest } from './roleManifestType';
-import { type SettingPageManifest } from './settingPageManifestType';
+import { type SettingsMenuItemManifest } from './settingsMenuItemManifestType';
 import { type SkillManifest } from './skillManifestType';
 import { type TimelineActivityTypeManifest } from './timelineActivityTypeManifestType';
 import {
@@ -53,6 +53,6 @@ export type Manifest = {
   pageLayoutWidgets: StandalonePageLayoutWidgetManifest[];
   commandMenuItems: CommandMenuItemManifest[];
   timelineActivityTypes: TimelineActivityTypeManifest[];
-  settingPages: SettingPageManifest[];
+  settingsMenuItems: SettingsMenuItemManifest[];
   translations?: TranslationsManifest;
 };

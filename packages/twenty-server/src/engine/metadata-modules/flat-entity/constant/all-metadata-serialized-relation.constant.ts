@@ -55,7 +55,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   connectionProvider: {},
   timelineActivityType: {},
   searchFieldMetadata: {},
-  settingPage: {},
+  settingsMenuItem: {},
 } as const satisfies MetadataSerializedRelationProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

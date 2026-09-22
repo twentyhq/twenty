@@ -41,6 +41,6 @@ export const buildBaseManifest = ({
   pageLayoutWidgets: [],
   commandMenuItems: [],
   timelineActivityTypes: [],
-  settingPages: [],
+  settingsMenuItems: [],
   ...overrides,
 });
