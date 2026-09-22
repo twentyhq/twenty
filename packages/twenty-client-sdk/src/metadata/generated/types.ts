@@ -8566,6 +8566,24 @@ export default {
                     ]
                 }
             ],
+            "uploadWorkspaceLogo": [
+                159,
+                {
+                    "file": [
+                        432,
+                        "Upload!"
+                    ]
+                }
+            ],
+            "uploadWorkspaceMemberProfilePicture": [
+                159,
+                {
+                    "file": [
+                        432,
+                        "Upload!"
+                    ]
+                }
+            ],
             "createWorkspaceLogoUpload": [
                 160,
                 {

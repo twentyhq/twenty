@@ -255,6 +255,35 @@ export class FileCorePictureService {
     return this.createCorePictureUpload({ workspaceId, filename, size });
   }
 
+  // The workspace attached to the request comes from the core entity cache,
+  // so the logo it carries may predate a previous upload: the current one is
+  // read from the database before it is replaced.
+  private async bindWorkspaceLogo({
+    workspaceId,
+    fileId,
+  }: {
+    workspaceId: string;
+    fileId: string;
+  }): Promise<void> {
+    const workspace = await this.workspaceRepository.findOneOrFail({
+      where: { id: workspaceId },
+      select: ['id', 'logoFileId'],
+    });
+
+    await this.workspaceRepository.update(workspaceId, { logoFileId: fileId });
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    if (isDefined(workspace.logoFileId) && workspace.logoFileId !== fileId) {
+      await this.deleteCorePicture({
+        fileId: workspace.logoFileId,
+        workspaceId,
+      });
+    }
+  }
+
   async completeWorkspaceLogoUpload({
     workspaceId,
     fileId,
@@ -264,27 +293,7 @@ export class FileCorePictureService {
   }): Promise<FileWithSignedUrlDTO> {
     const file = await this.completeCorePictureUpload({ workspaceId, fileId });
 
-    // The workspace attached to the request comes from the core entity cache,
-    // so the logo it carries may predate a previous upload.
-    const workspace = await this.workspaceRepository.findOneOrFail({
-      where: { id: workspaceId },
-      select: ['id', 'logoFileId'],
-    });
-
-    await this.workspaceRepository.update(workspaceId, {
-      logoFileId: file.id,
-    });
-    await this.coreEntityCacheService.invalidate(
-      'workspaceEntity',
-      workspaceId,
-    );
-
-    if (isDefined(workspace.logoFileId) && workspace.logoFileId !== file.id) {
-      await this.deleteCorePicture({
-        fileId: workspace.logoFileId,
-        workspaceId,
-      });
-    }
+    await this.bindWorkspaceLogo({ workspaceId, fileId: file.id });
 
     return this.toFileWithSignedUrl({ file, workspaceId });
   }
@@ -311,6 +320,32 @@ export class FileCorePictureService {
     const file = await this.completeCorePictureUpload({ workspaceId, fileId });
 
     return this.toFileWithSignedUrl({ file, workspaceId });
+  }
+
+  async uploadWorkspacePicture({
+    file,
+    filename,
+    workspace,
+  }: {
+    file: Buffer;
+    filename: string;
+    workspace: WorkspaceEntity;
+  }): Promise<FileWithSignedUrlDTO> {
+    const savedFile = await this.uploadCorePicture({
+      file,
+      filename,
+      workspaceId: workspace.id,
+    });
+
+    await this.bindWorkspaceLogo({
+      workspaceId: workspace.id,
+      fileId: savedFile.id,
+    });
+
+    return this.toFileWithSignedUrl({
+      file: savedFile,
+      workspaceId: workspace.id,
+    });
   }
 
   async getPendingWorkspaceForLogoUploadOrThrow({

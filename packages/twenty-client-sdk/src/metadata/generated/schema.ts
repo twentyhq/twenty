@@ -3392,6 +3392,10 @@ export interface Mutation {
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
     setEnterpriseKey: EnterpriseLicenseInfoDTO
+    /** @deprecated Use createWorkspaceLogoUpload and completeWorkspaceLogoUpload, which send the logo straight to file storage. */
+    uploadWorkspaceLogo: FileWithSignedUrl
+    /** @deprecated Use createWorkspaceMemberProfilePictureUpload and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage. */
+    uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
     createWorkspaceLogoUpload: FileUploadTarget
     completeWorkspaceLogoUpload: FileWithSignedUrl
     createWorkspaceMemberProfilePictureUpload: FileUploadTarget
@@ -7237,6 +7241,10 @@ export interface MutationGenqlSelection{
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
+    /** @deprecated Use createWorkspaceLogoUpload and completeWorkspaceLogoUpload, which send the logo straight to file storage. */
+    uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
+    /** @deprecated Use createWorkspaceMemberProfilePictureUpload and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage. */
+    uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     createWorkspaceLogoUpload?: (FileUploadTargetGenqlSelection & { __args: {filename: Scalars['String'], size: Scalars['Float']} })
     completeWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     createWorkspaceMemberProfilePictureUpload?: (FileUploadTargetGenqlSelection & { __args: {filename: Scalars['String'], size: Scalars['Float']} })

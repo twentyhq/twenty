@@ -3975,6 +3975,8 @@ type Mutation {
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
+  uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl! @deprecated(reason: "Use createWorkspaceLogoUpload and completeWorkspaceLogoUpload, which send the logo straight to file storage.")
+  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl! @deprecated(reason: "Use createWorkspaceMemberProfilePictureUpload and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.")
   createWorkspaceLogoUpload(filename: String!, size: Float!): FileUploadTarget!
   completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
   createWorkspaceMemberProfilePictureUpload(filename: String!, size: Float!): FileUploadTarget!
