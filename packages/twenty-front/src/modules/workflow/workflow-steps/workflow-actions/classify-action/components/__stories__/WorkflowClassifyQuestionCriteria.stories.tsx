@@ -94,9 +94,25 @@ export const DeletesAnOption: Story = {
   },
 };
 
-export const ReadOnly: Story = { args: { readonly: true } };
+export const ReadOnly: Story = {
+  args: { readonly: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Option 3 name')).toBeVisible();
+    await expect(canvas.queryByText('Option 4 name')).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByRole('button', { name: 'Delete option' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
 export const AtLevelLimit: Story = {
   args: { variant: 'levels', maxCriteria: 3 },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Level 3 name')).toBeVisible();
+    await expect(canvas.queryByText('Level 4 name')).not.toBeInTheDocument();
+  },
 };
 
 export const AddsTrailingOption: Story = {
