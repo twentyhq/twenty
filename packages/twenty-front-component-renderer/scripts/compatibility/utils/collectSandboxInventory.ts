@@ -1,6 +1,8 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type BrowserContext } from 'playwright';
 
+import { INVENTORY_FIXTURE_PROTOCOL } from '../constants/INVENTORY_FIXTURE_PROTOCOL';
+
 export const collectSandboxInventory = async ({
   context,
   origin,
@@ -22,30 +24,35 @@ export const collectSandboxInventory = async ({
       `${origin}/iframe.html?id=frontcomponent-worker-platform-apis--compatibility-inventory-${runtime}&viewMode=story`,
       { timeout },
     );
-    const collectButton = page.getByTestId('compatibility-collect');
+    const collectButton = page.getByTestId(
+      INVENTORY_FIXTURE_PROTOCOL.testIds.collect,
+    );
     await collectButton.waitFor();
     const deadline = Date.now() + timeout;
     while (Date.now() < deadline) {
       const previousAttempt = await page
-        .getByTestId('compatibility-attempt')
+        .getByTestId(INVENTORY_FIXTURE_PROTOCOL.testIds.attempt)
         .textContent();
       await collectButton.click({
         timeout: Math.max(1, deadline - Date.now()),
       });
       await page.waitForFunction(
-        (previous) => {
+        ({ previousAttempt, attemptTestId }) => {
           const attempt = document.querySelector(
-            '[data-testid="compatibility-attempt"]',
+            `[data-testid="${attemptTestId}"]`,
           )?.textContent;
-          return attempt !== previous;
+          return attempt !== previousAttempt;
         },
-        previousAttempt,
+        {
+          previousAttempt,
+          attemptTestId: INVENTORY_FIXTURE_PROTOCOL.testIds.attempt,
+        },
         { timeout: Math.max(1, deadline - Date.now()) },
       );
       const error = await page
-        .getByTestId('compatibility-fixture-error')
+        .getByTestId(INVENTORY_FIXTURE_PROTOCOL.testIds.failure)
         .textContent();
-      if (error === 'waiting-for-initialization') {
+      if (error === INVENTORY_FIXTURE_PROTOCOL.waitingForInitialization) {
         continue;
       }
       if (isNonEmptyString(error) || isNonEmptyArray(errors)) {
@@ -54,7 +61,7 @@ export const collectSandboxInventory = async ({
         );
       }
       const output = await page
-        .getByTestId('compatibility-output')
+        .getByTestId(INVENTORY_FIXTURE_PROTOCOL.testIds.output)
         .textContent();
       return JSON.parse(output ?? 'null');
     }

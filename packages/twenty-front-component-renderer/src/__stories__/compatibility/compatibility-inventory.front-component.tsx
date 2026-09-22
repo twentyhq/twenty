@@ -9,6 +9,7 @@ import {
 import { collectInventory } from '../../../scripts/compatibility/utils/collectInventory';
 import { createInventoryFactories } from '../../../scripts/compatibility/utils/createInventoryFactories';
 import { inventoryCatalogSchema } from '../../../scripts/compatibility/schemas/inventoryCatalogSchema';
+import { INVENTORY_FIXTURE_PROTOCOL } from '../../../scripts/compatibility/constants/INVENTORY_FIXTURE_PROTOCOL';
 
 const CompatibilityInventory = () => {
   const divRef = useRef<HTMLDivElement>(null);
@@ -36,7 +37,7 @@ const CompatibilityInventory = () => {
         localStorage.getItem('ready') === 'seeded' &&
         sessionStorage.getItem('ready') === 'seeded';
       if (!ready) {
-        setFailure('waiting-for-initialization');
+        setFailure(INVENTORY_FIXTURE_PROTOCOL.waitingForInitialization);
         return;
       }
       const runtime = getApplicationVariable('COMPATIBILITY_RUNTIME');
@@ -77,12 +78,21 @@ const CompatibilityInventory = () => {
         width="120"
         height="40"
       />
-      <button data-testid="compatibility-collect" onClick={collect}>
+      <button
+        data-testid={INVENTORY_FIXTURE_PROTOCOL.testIds.collect}
+        onClick={collect}
+      >
         Collect inventory
       </button>
-      <span data-testid="compatibility-attempt">{attempt}</span>
-      <pre data-testid="compatibility-fixture-error">{failure}</pre>
-      <pre data-testid="compatibility-output">{output}</pre>
+      <span data-testid={INVENTORY_FIXTURE_PROTOCOL.testIds.attempt}>
+        {attempt}
+      </span>
+      <pre data-testid={INVENTORY_FIXTURE_PROTOCOL.testIds.failure}>
+        {failure}
+      </pre>
+      <pre data-testid={INVENTORY_FIXTURE_PROTOCOL.testIds.output}>
+        {output}
+      </pre>
     </div>
   );
 };
