@@ -61,6 +61,19 @@ describe('WorkspaceProviderEffect', () => {
     );
   });
 
+  it('sends a plain visit back to the last workspace after an earlier visit asked to stay', () => {
+    sessionStorage.setItem('stayOnDefaultDomain', 'true');
+    window.history.replaceState(null, '', '/welcome');
+
+    render(<WorkspaceProviderEffect />);
+
+    expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledWith(
+      'https://apple.twenty.com',
+      '/welcome',
+      {},
+    );
+  });
+
   it('stays on the default domain when the visit asked to stay', () => {
     window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
 

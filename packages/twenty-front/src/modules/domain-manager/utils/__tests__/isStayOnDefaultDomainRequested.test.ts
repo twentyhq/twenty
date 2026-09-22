@@ -1,6 +1,6 @@
 import { forgetStayOnDefaultDomainRequest } from '@/domain-manager/utils/forgetStayOnDefaultDomainRequest';
 import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
-import { rememberStayOnDefaultDomainRequest } from '@/domain-manager/utils/rememberStayOnDefaultDomainRequest';
+import { syncStayOnDefaultDomainRequest } from '@/domain-manager/utils/syncStayOnDefaultDomainRequest';
 
 describe('isStayOnDefaultDomainRequested', () => {
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('isStayOnDefaultDomainRequested', () => {
 
   it('stays true once remembered, after social SSO drops the url marker', () => {
     window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
-    rememberStayOnDefaultDomainRequest();
+    syncStayOnDefaultDomainRequest();
 
     window.history.replaceState(null, '', '/welcome');
 
@@ -32,14 +32,54 @@ describe('isStayOnDefaultDomainRequested', () => {
   });
 
   it('remembers nothing when the url carries no marker', () => {
-    rememberStayOnDefaultDomainRequest();
+    syncStayOnDefaultDomainRequest();
 
     expect(isStayOnDefaultDomainRequested()).toBe(false);
   });
 
+  it('forgets the remembered request on a later plain page load', () => {
+    window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
+    syncStayOnDefaultDomainRequest();
+
+    window.history.replaceState(null, '', '/welcome');
+    syncStayOnDefaultDomainRequest();
+
+    expect(isStayOnDefaultDomainRequested()).toBe(false);
+  });
+
+  it('keeps the remembered request when social SSO comes back', () => {
+    window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
+    syncStayOnDefaultDomainRequest();
+
+    window.history.replaceState(
+      null,
+      '',
+      '/welcome#ssoExchangeToken=sso-exchange-token',
+    );
+    syncStayOnDefaultDomainRequest();
+
+    expect(isStayOnDefaultDomainRequested()).toBe(true);
+  });
+
+  it('keeps the remembered request across a reload', () => {
+    window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
+    syncStayOnDefaultDomainRequest();
+
+    // jsdom has no navigation timing entries
+    Object.defineProperty(window.performance, 'getEntriesByType', {
+      configurable: true,
+      value: () => [{ type: 'reload' }],
+    });
+    window.history.replaceState(null, '', '/welcome');
+    syncStayOnDefaultDomainRequest();
+    Reflect.deleteProperty(window.performance, 'getEntriesByType');
+
+    expect(isStayOnDefaultDomainRequested()).toBe(true);
+  });
+
   it('is false again once the visit ends on a workspace', () => {
     window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
-    rememberStayOnDefaultDomainRequest();
+    syncStayOnDefaultDomainRequest();
 
     forgetStayOnDefaultDomainRequest();
     window.history.replaceState(null, '', '/welcome');
@@ -66,7 +106,7 @@ describe('isStayOnDefaultDomainRequested', () => {
 
     window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
 
-    expect(() => rememberStayOnDefaultDomainRequest()).not.toThrow();
+    expect(() => syncStayOnDefaultDomainRequest()).not.toThrow();
     expect(isStayOnDefaultDomainRequested()).toBe(true);
   });
 });

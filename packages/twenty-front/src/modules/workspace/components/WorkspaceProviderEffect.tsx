@@ -9,7 +9,7 @@ import { useInitializeQueryParamState } from '@/app/hooks/useInitializeQueryPara
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
-import { rememberStayOnDefaultDomainRequest } from '@/domain-manager/utils/rememberStayOnDefaultDomainRequest';
+import { syncStayOnDefaultDomainRequest } from '@/domain-manager/utils/syncStayOnDefaultDomainRequest';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceUrls } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
@@ -43,8 +43,10 @@ export const WorkspaceProviderEffect = () => {
     [currentLocationHostname],
   );
 
+  // Mounted ahead of the routes, so this reads the social SSO return hash
+  // before SignInUpSsoExchangeTokenEffect strips it
   useEffect(() => {
-    rememberStayOnDefaultDomainRequest();
+    syncStayOnDefaultDomainRequest();
   }, []);
 
   useEffect(() => {

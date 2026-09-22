@@ -10,7 +10,7 @@ import { ThemeProvider } from 'twenty-ui/theme';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
 import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
-import { rememberStayOnDefaultDomainRequest } from '@/domain-manager/utils/rememberStayOnDefaultDomainRequest';
+import { syncStayOnDefaultDomainRequest } from '@/domain-manager/utils/syncStayOnDefaultDomainRequest';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -120,7 +120,7 @@ describe('SignInUpGlobalScopeForm', () => {
   });
   it('forgets the stay-on-default-domain request when a workspace is picked', () => {
     window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
-    rememberStayOnDefaultDomainRequest();
+    syncStayOnDefaultDomainRequest();
     window.history.replaceState(null, '', '/welcome');
 
     buildWorkspaceUrlMock.mockReturnValue('https://apple.twenty.com/verify');

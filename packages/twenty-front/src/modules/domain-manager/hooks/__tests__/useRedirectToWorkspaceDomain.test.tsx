@@ -5,7 +5,7 @@ import { getDefaultStore } from 'jotai';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
-import { rememberStayOnDefaultDomainRequest } from '@/domain-manager/utils/rememberStayOnDefaultDomainRequest';
+import { syncStayOnDefaultDomainRequest } from '@/domain-manager/utils/syncStayOnDefaultDomainRequest';
 
 const redirectSpy = jest.fn();
 
@@ -21,7 +21,7 @@ describe('useRedirectToWorkspaceDomain', () => {
     sessionStorage.clear();
     getDefaultStore().set(isMultiWorkspaceEnabledState.atom, true);
     window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
-    rememberStayOnDefaultDomainRequest();
+    syncStayOnDefaultDomainRequest();
     window.history.replaceState(null, '', '/welcome');
   });
 
