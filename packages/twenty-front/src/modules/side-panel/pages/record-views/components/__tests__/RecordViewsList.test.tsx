@@ -5,7 +5,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { RecordViewsList } from '@/side-panel/pages/record-views/components/SidePanelRecordViewsPage';
+import { RecordViewsList } from '@/side-panel/pages/record-views/components/RecordViewsList';
 import { useRecordViews } from '@/side-panel/pages/record-views/hooks/useRecordViews';
 import { type View } from '@/views/types/View';
 import { ViewType, ViewVisibility } from '~/generated-metadata/graphql';
