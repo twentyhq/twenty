@@ -241,7 +241,7 @@ export class NavigationMenuItemResolver {
       targetRecordId: navigationMenuItem.targetRecordId,
       targetObjectMetadataId: navigationMenuItem.targetObjectMetadataId,
       workspaceId: workspace.id,
-      userWorkspaceId,
+      userWorkspaceId: navigationMenuItem.userWorkspaceId ?? userWorkspaceId,
       authContext,
     });
   }

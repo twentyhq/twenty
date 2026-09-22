@@ -2,6 +2,11 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { isDefined } from 'twenty-shared/utils';
 
+export type WorkflowFavoriteCoreIdBackfillUpdate = {
+  id: string;
+  targetRecordId: string;
+};
+
 type WorkflowFlatNavigationMenuItem = FlatNavigationMenuItem & {
   targetRecordId: string;
 };
@@ -18,15 +23,15 @@ export const buildWorkflowFavoriteCoreIdBackfillUpdates = ({
   flatNavigationMenuItems,
   workflowObjectMetadataId,
   coreWorkflowIdByWorkspaceWorkflowId,
-  now,
 }: {
   flatNavigationMenuItems: FlatNavigationMenuItem[];
   workflowObjectMetadataId: string;
   coreWorkflowIdByWorkspaceWorkflowId: Map<string, string>;
-  now: string;
-}): FlatNavigationMenuItem[] => {
+}): WorkflowFavoriteCoreIdBackfillUpdate[] => {
   const workflowNavigationMenuItems = flatNavigationMenuItems.filter(
-    (flatNavigationMenuItem): flatNavigationMenuItem is WorkflowFlatNavigationMenuItem =>
+    (
+      flatNavigationMenuItem,
+    ): flatNavigationMenuItem is WorkflowFlatNavigationMenuItem =>
       flatNavigationMenuItem.type === NavigationMenuItemType.RECORD &&
       flatNavigationMenuItem.targetObjectMetadataId ===
         workflowObjectMetadataId &&
@@ -61,12 +66,6 @@ export const buildWorkflowFavoriteCoreIdBackfillUpdates = ({
 
     takenKeys.add(targetKey);
 
-    return [
-      {
-        ...flatNavigationMenuItem,
-        targetRecordId: coreWorkflowId,
-        updatedAt: now,
-      },
-    ];
+    return [{ id: flatNavigationMenuItem.id, targetRecordId: coreWorkflowId }];
   });
 };

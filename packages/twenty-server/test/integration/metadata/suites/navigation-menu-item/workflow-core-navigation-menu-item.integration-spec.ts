@@ -25,7 +25,10 @@ const NAVIGATION_MENU_ITEM_GQL_FIELDS = `
   }
 `;
 
-const createCoreWorkflow = async (name: string) => {
+const createCoreWorkflow = async (
+  name: string,
+  visibility?: 'PRIVATE' | 'WORKSPACE',
+) => {
   const response = await makeGraphqlAPIRequest({
     query: gql`
       mutation CreateCoreWorkflow($input: CreateCoreWorkflowInput!) {
@@ -36,7 +39,7 @@ const createCoreWorkflow = async (name: string) => {
         }
       }
     `,
-    variables: { input: { name } },
+    variables: { input: { name, ...(visibility ? { visibility } : {}) } },
   });
 
   expect(response.body.errors).toBeUndefined();
@@ -68,7 +71,9 @@ describe('workflow navigation menu items resolve and clean up on core ids', () =
   let companyObjectMetadataId: string;
   let companyRecordId: string;
   let currentUserWorkspaceId: string;
+  let memberUserWorkspaceId: string;
   const createdNavigationMenuItemIds: string[] = [];
+  const createdMemberNavigationMenuItemIds: string[] = [];
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -139,6 +144,14 @@ describe('workflow navigation menu items resolve and clean up on core ids', () =
       await deleteNavigationMenuItem({
         expectToFail: false,
         input: { id: navigationMenuItemId },
+      });
+    }
+
+    for (const navigationMenuItemId of createdMemberNavigationMenuItemIds) {
+      await deleteNavigationMenuItem({
+        expectToFail: null,
+        input: { id: navigationMenuItemId },
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
       });
     }
   });
@@ -242,6 +255,32 @@ describe('workflow navigation menu items resolve and clean up on core ids', () =
     expect(await findFavoriteById(coreIdFavorite.id)).toBeUndefined();
     expect(await findFavoriteById(legacyIdFavorite.id)).toBeUndefined();
     expect(isDefined(await findFavoriteById(companyFavorite.id))).toBe(true);
+  }, 120_000);
+
+  it('does not resolve a workflow kept private by another member', async () => {
+    const privateCoreWorkflow = await createCoreWorkflow(
+      'Private core workflow',
+      'PRIVATE',
+    );
+
+    const { data } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        type: NavigationMenuItemType.RECORD,
+        targetObjectMetadataId: workflowObjectMetadataId,
+        targetRecordId: privateCoreWorkflow.id,
+        userWorkspaceId: memberUserWorkspaceId,
+      },
+      gqlFields: NAVIGATION_MENU_ITEM_GQL_FIELDS,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    jestExpectToBeDefined(data?.createNavigationMenuItem);
+    createdMemberNavigationMenuItemIds.push(data.createNavigationMenuItem.id);
+
+    expect(data.createNavigationMenuItem.targetRecordIdentifier).toBeNull();
+
+    await deleteCoreWorkflows([privateCoreWorkflow.id]);
   }, 120_000);
 
   it('does not resolve or delete an id no workflow in this workspace holds', async () => {

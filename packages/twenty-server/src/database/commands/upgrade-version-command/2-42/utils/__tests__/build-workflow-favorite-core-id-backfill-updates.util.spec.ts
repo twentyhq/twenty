@@ -3,7 +3,6 @@ import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-na
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 
 const WORKFLOW_OBJECT_METADATA_ID = 'workflow-object-metadata-id';
-const NOW = '2026-09-21T00:00:00.000Z';
 
 const buildFlatNavigationMenuItem = (
   overrides: Partial<FlatNavigationMenuItem>,
@@ -29,32 +28,23 @@ describe('buildWorkflowFavoriteCoreIdBackfillUpdates', () => {
       coreWorkflowIdByWorkspaceWorkflowId: new Map([
         ['workspace-workflow-id', 'core-workflow-id'],
       ]),
-      now: NOW,
     });
 
-    expect(updates).toHaveLength(1);
-    expect(updates[0].targetRecordId).toBe('core-workflow-id');
-    expect(updates[0].updatedAt).toBe(NOW);
+    expect(updates).toEqual([
+      { id: 'navigation-menu-item-id', targetRecordId: 'core-workflow-id' },
+    ]);
   });
 
-  it('preserves every unrelated navigation menu item field', () => {
+  it('names only the row and its new target so no other column is written', () => {
     const [update] = buildWorkflowFavoriteCoreIdBackfillUpdates({
       flatNavigationMenuItems: [buildFlatNavigationMenuItem({})],
       workflowObjectMetadataId: WORKFLOW_OBJECT_METADATA_ID,
       coreWorkflowIdByWorkspaceWorkflowId: new Map([
         ['workspace-workflow-id', 'core-workflow-id'],
       ]),
-      now: NOW,
     });
 
-    expect(update).toMatchObject({
-      id: 'navigation-menu-item-id',
-      userWorkspaceId: 'user-workspace-id',
-      folderId: 'folder-id',
-      position: 3,
-      color: 'blue',
-      targetObjectMetadataId: WORKFLOW_OBJECT_METADATA_ID,
-    });
+    expect(Object.keys(update).sort()).toEqual(['id', 'targetRecordId']);
   });
 
   it('leaves favorites of other objects untouched', () => {
@@ -69,7 +59,6 @@ describe('buildWorkflowFavoriteCoreIdBackfillUpdates', () => {
         coreWorkflowIdByWorkspaceWorkflowId: new Map([
           ['workspace-workflow-id', 'core-workflow-id'],
         ]),
-        now: NOW,
       }),
     ).toEqual([]);
   });
@@ -87,7 +76,6 @@ describe('buildWorkflowFavoriteCoreIdBackfillUpdates', () => {
         coreWorkflowIdByWorkspaceWorkflowId: new Map([
           ['workspace-workflow-id', 'core-workflow-id'],
         ]),
-        now: NOW,
       }),
     ).toEqual([]);
   });
@@ -102,7 +90,6 @@ describe('buildWorkflowFavoriteCoreIdBackfillUpdates', () => {
         coreWorkflowIdByWorkspaceWorkflowId: new Map([
           ['workspace-workflow-id', 'core-workflow-id'],
         ]),
-        now: NOW,
       }),
     ).toEqual([]);
   });
@@ -121,7 +108,6 @@ describe('buildWorkflowFavoriteCoreIdBackfillUpdates', () => {
         coreWorkflowIdByWorkspaceWorkflowId: new Map([
           ['workspace-workflow-id', 'core-workflow-id'],
         ]),
-        now: NOW,
       }),
     ).toEqual([]);
   });
@@ -140,7 +126,6 @@ describe('buildWorkflowFavoriteCoreIdBackfillUpdates', () => {
       coreWorkflowIdByWorkspaceWorkflowId: new Map([
         ['workspace-workflow-id', 'core-workflow-id'],
       ]),
-      now: NOW,
     });
 
     expect(updates).toHaveLength(1);
@@ -153,7 +138,6 @@ describe('buildWorkflowFavoriteCoreIdBackfillUpdates', () => {
         flatNavigationMenuItems: [buildFlatNavigationMenuItem({})],
         workflowObjectMetadataId: WORKFLOW_OBJECT_METADATA_ID,
         coreWorkflowIdByWorkspaceWorkflowId: new Map(),
-        now: NOW,
       }),
     ).toEqual([]);
   });

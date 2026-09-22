@@ -6,13 +6,10 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildWorkflowFavoriteCoreIdBackfillUpdates } from 'src/database/commands/upgrade-version-command/2-42/utils/build-workflow-favorite-core-id-backfill-updates.util';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @RegisteredWorkspaceCommand('2.42.0', 1789981200000)
 @Command({
@@ -24,8 +21,6 @@ export class BackfillWorkflowFavoritesToCoreIdsCommand extends ProvisionedWorksp
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly applicationService: ApplicationService,
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceIteratorService);
   }
@@ -59,32 +54,38 @@ export class BackfillWorkflowFavoritesToCoreIdsCommand extends ProvisionedWorksp
       return;
     }
 
-    const coreWorkflowRows: { id: string; workspaceWorkflowId: string | null }[] =
-      await dataSource.query(
-        `SELECT "id", "workspaceWorkflowId" FROM core."workflow" WHERE "workspaceId" = $1 AND "workspaceWorkflowId" IS NOT NULL`,
-        [workspaceId],
-      );
-
-    const coreWorkflowIdByWorkspaceWorkflowId = new Map(
-      coreWorkflowRows.flatMap(({ id, workspaceWorkflowId }) =>
-        isDefined(workspaceWorkflowId) ? [[workspaceWorkflowId, id] as const] : [],
-      ),
+    const coreWorkflowRows: {
+      id: string;
+      workspaceWorkflowId: string;
+    }[] = await dataSource.query(
+      `SELECT "id", "workspaceWorkflowId"
+       FROM core."workflow"
+       WHERE "workspaceId" = $1 AND "workspaceWorkflowId" IS NOT NULL
+       ORDER BY "createdAt" ASC, "id" ASC`,
+      [workspaceId],
     );
+
+    const coreWorkflowIdByWorkspaceWorkflowId = new Map<string, string>();
+
+    for (const { id, workspaceWorkflowId } of coreWorkflowRows) {
+      if (!coreWorkflowIdByWorkspaceWorkflowId.has(workspaceWorkflowId)) {
+        coreWorkflowIdByWorkspaceWorkflowId.set(workspaceWorkflowId, id);
+      }
+    }
 
     if (coreWorkflowIdByWorkspaceWorkflowId.size === 0) {
       return;
     }
 
-    const navigationMenuItemsToUpdate = buildWorkflowFavoriteCoreIdBackfillUpdates(
-      {
+    const navigationMenuItemsToUpdate =
+      buildWorkflowFavoriteCoreIdBackfillUpdates({
         flatNavigationMenuItems: Object.values(
           flatNavigationMenuItemMaps.byUniversalIdentifier,
         ).filter(isDefined),
         workflowObjectMetadataId: workflowObjectMetadata.id,
         coreWorkflowIdByWorkspaceWorkflowId,
         now: new Date().toISOString(),
-      },
-    );
+      });
 
     if (navigationMenuItemsToUpdate.length === 0) {
       return;
@@ -98,34 +99,18 @@ export class BackfillWorkflowFavoritesToCoreIdsCommand extends ProvisionedWorksp
       return;
     }
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            navigationMenuItem: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: navigationMenuItemsToUpdate,
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while backfilling workflow favorites to core ids',
+    for (const { id, targetRecordId } of navigationMenuItemsToUpdate) {
+      await dataSource.query(
+        `UPDATE core."navigationMenuItem"
+         SET "targetRecordId" = $1, "updatedAt" = now()
+         WHERE "id" = $2 AND "workspaceId" = $3`,
+        [targetRecordId, id, workspaceId],
       );
     }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatNavigationMenuItemMaps',
+    ]);
 
     this.logger.log(
       `Repointed ${navigationMenuItemsToUpdate.length} workflow favorite(s) to core ids for workspace ${workspaceId}`,

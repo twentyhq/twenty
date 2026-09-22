@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
@@ -57,5 +58,24 @@ export class CoreWorkflowFavoriteTargetService {
       name: coreWorkflow.name,
       workspaceWorkflowId: coreWorkflow.workspaceWorkflowId,
     };
+  }
+
+  async findCoreWorkflowIdsByWorkspaceWorkflowIds({
+    workspaceId,
+    workspaceWorkflowIds,
+  }: {
+    workspaceId: string;
+    workspaceWorkflowIds: string[];
+  }): Promise<string[]> {
+    if (workspaceWorkflowIds.length === 0) {
+      return [];
+    }
+
+    const coreWorkflows = await this.coreWorkflowRepository.find(workspaceId, {
+      where: { workspaceWorkflowId: In(workspaceWorkflowIds) },
+      select: { id: true },
+    });
+
+    return coreWorkflows.map(({ id }) => id);
   }
 }
