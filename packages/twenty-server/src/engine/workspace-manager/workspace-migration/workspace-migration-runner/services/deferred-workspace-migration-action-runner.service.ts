@@ -138,10 +138,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
 
       await this.workspaceMigrationRunnerActionHandlerRegistry.executeDeferredActionHandler(
         {
-          deferredAction: {
-            actionHandlerKey: pendingAction.actionHandlerKey,
-            payload: pendingAction.payload,
-          } as DeferredWorkspaceMigrationAction,
+          deferredAction: pendingAction,
           workspaceId,
           applicationUniversalIdentifier:
             pendingAction.applicationUniversalIdentifier,

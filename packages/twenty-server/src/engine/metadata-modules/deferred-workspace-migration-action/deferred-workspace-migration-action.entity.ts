@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { type WorkspaceMigrationActionHandlerKey } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type PersistedDeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type DeferredWorkspaceMigrationActionStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-status.type';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
@@ -24,10 +24,10 @@ export class DeferredWorkspaceMigrationActionEntity extends WorkspaceRelatedEnti
   applicationUniversalIdentifier: string;
 
   @Column({ type: 'varchar' })
-  actionHandlerKey: WorkspaceMigrationActionHandlerKey;
+  actionHandlerKey: PersistedDeferredWorkspaceMigrationAction['actionHandlerKey'];
 
   @Column({ type: 'jsonb' })
-  payload: object;
+  payload: PersistedDeferredWorkspaceMigrationAction['payload'];
 
   @Column({ type: 'varchar', default: 'PENDING' })
   status: DeferredWorkspaceMigrationActionStatus;

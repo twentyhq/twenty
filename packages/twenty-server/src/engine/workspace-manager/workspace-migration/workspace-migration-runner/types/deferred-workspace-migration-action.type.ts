@@ -16,6 +16,11 @@ export type DeferredWorkspaceMigrationActionPayload<
   ? DeferredWorkspaceMigrationActionPayloadByHandlerKey[TActionHandlerKey]
   : never;
 
+export type PersistedDeferredWorkspaceMigrationAction = {
+  actionHandlerKey: DeferrableWorkspaceMigrationActionHandlerKey;
+  payload: DeferredWorkspaceMigrationActionPayloadByHandlerKey[DeferrableWorkspaceMigrationActionHandlerKey];
+};
+
 export type DeferredWorkspaceMigrationAction = {
   [TActionHandlerKey in DeferrableWorkspaceMigrationActionHandlerKey]: {
     actionHandlerKey: TActionHandlerKey;

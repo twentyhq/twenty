@@ -20,7 +20,7 @@ import {
   DeferredWorkspaceMigrationActionException,
   DeferredWorkspaceMigrationActionExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
-import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
+import { type PersistedDeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -110,7 +110,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService implements OnM
     attempt,
     queryRunner,
   }: {
-    deferredAction: DeferredWorkspaceMigrationAction;
+    deferredAction: PersistedDeferredWorkspaceMigrationAction;
     workspaceId: string;
     applicationUniversalIdentifier: string;
     attempt: number;

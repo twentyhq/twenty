@@ -202,7 +202,6 @@ export class WorkspaceMigrationRunnerService {
   run = async (args: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
-    deferWorkspaceMigrationActions?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -238,11 +237,9 @@ export class WorkspaceMigrationRunnerService {
   private executeRun = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-    deferWorkspaceMigrationActions,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
-    deferWorkspaceMigrationActions?: boolean;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -357,11 +354,10 @@ export class WorkspaceMigrationRunnerService {
       buildPreallocatedIdByUniversalIdentifierFromActions(actions);
 
     const shouldDeferWorkspaceMigrationActions =
-      deferWorkspaceMigrationActions ??
-      (await this.featureFlagService.isFeatureEnabled(
+      await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED,
         workspaceId,
-      ));
+      );
 
     this.logger.perfTime('Runner', 'Transaction execution');
 
@@ -610,7 +606,7 @@ export class WorkspaceMigrationRunnerService {
 
     await queryRunner.manager
       .getRepository(DeferredWorkspaceMigrationActionEntity)
-      .insert(
+      .save(
         deferredActions.map(({ actionHandlerKey, payload }) => ({
           workspaceId,
           applicationUniversalIdentifier,
