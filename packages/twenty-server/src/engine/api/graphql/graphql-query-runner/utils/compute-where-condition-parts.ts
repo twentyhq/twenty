@@ -1,6 +1,5 @@
 import { randomBytes } from 'crypto';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
@@ -11,8 +10,8 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { normalizeExactEmailsFilterValue } from 'src/engine/api/graphql/graphql-query-runner/utils/normalize-exact-emails-filter-value.util';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
-import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 
 type WhereConditionParts = {
   sql: string;
@@ -46,18 +45,11 @@ export const computeWhereConditionParts = ({
     : `"${objectNameSingular}"."${key}"`;
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
-  const isPrimaryEmail =
-    fieldMetadataType === FieldMetadataType.EMAILS &&
-    subFieldKey === 'primaryEmail';
-  const exactValue = isPrimaryEmail
-    ? operator === 'in' && Array.isArray(value)
-      ? value.map((email) =>
-          isNonEmptyString(email) ? normalizeEmailAddress(email) : email,
-        )
-      : isNonEmptyString(value)
-        ? normalizeEmailAddress(value)
-        : value
-    : value;
+  const exactValue = normalizeExactEmailsFilterValue({
+    fieldMetadataType,
+    subFieldKey,
+    value,
+  });
 
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(

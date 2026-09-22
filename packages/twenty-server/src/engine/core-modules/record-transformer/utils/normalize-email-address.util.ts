@@ -16,35 +16,9 @@ export const normalizeEmailAddress = (email: string): string => {
     .replace(/\.+$/u, '')
     .toLowerCase();
   const unicodeDomain = domainToUnicode(domain);
+  const normalizedDomain = isNonEmptyString(unicodeDomain)
+    ? unicodeDomain
+    : domain;
 
-  return `${localPart}@${isNonEmptyString(unicodeDomain) ? unicodeDomain : domain}`;
-};
-
-export const normalizeEmailsSubfieldValue = (
-  subFieldName: string | undefined,
-  value: unknown,
-): unknown => {
-  if (subFieldName === 'primaryEmail' && isNonEmptyString(value)) {
-    return normalizeEmailAddress(value);
-  }
-
-  if (subFieldName === 'additionalEmails') {
-    let emails = value;
-
-    if (isNonEmptyString(emails)) {
-      try {
-        emails = JSON.parse(emails);
-      } catch {
-        return value;
-      }
-    }
-
-    if (Array.isArray(emails)) {
-      return emails.map((email) =>
-        isNonEmptyString(email) ? normalizeEmailAddress(email) : email,
-      );
-    }
-  }
-
-  return value;
+  return `${localPart}@${normalizedDomain}`;
 };

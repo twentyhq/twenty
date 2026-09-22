@@ -1,7 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { normalizeEmailsSubfieldValue } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 import { type WorkspaceColumnShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 const isJsonbFieldMetadataType = (
@@ -23,12 +22,7 @@ export const serializeJsonbWriteValue = (
     return value;
   }
 
-  const normalizedValue =
-    columnShape.compositeParentFieldType === FieldMetadataType.EMAILS
-      ? normalizeEmailsSubfieldValue(columnShape.compositeSubFieldName, value)
-      : value;
-
   return isJsonbFieldMetadataType(columnShape.fieldMetadataType)
-    ? JSON.stringify(normalizedValue)
-    : normalizedValue;
+    ? JSON.stringify(value)
+    : value;
 };
