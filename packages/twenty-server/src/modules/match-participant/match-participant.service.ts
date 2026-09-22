@@ -4,6 +4,7 @@ import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
 
+import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -157,10 +158,16 @@ export class MatchParticipantService<
       const uniqueParticipantsHandles = [
         ...new Set(participants.map((participant) => participant.handle)),
       ].filter(isDefined);
+      const canonicalEmailByHandle = new Map(
+        uniqueParticipantsHandles.map((handle) => [
+          handle,
+          normalizeEmailAddress(handle),
+        ] as const),
+      );
 
       const queryBuilder = addPersonEmailFiltersToQueryBuilder({
         queryBuilder: personRepository.createQueryBuilder('person'),
-        emails: uniqueParticipantsHandles,
+        emails: [...new Set(canonicalEmailByHandle.values())],
       });
 
       const people = await queryBuilder
@@ -181,7 +188,9 @@ export class MatchParticipantService<
         .map((participant) => {
           const person = findPersonByPrimaryOrAdditionalEmail({
             people,
-            email: participant.handle,
+            email:
+              canonicalEmailByHandle.get(participant.handle) ??
+              participant.handle,
           });
 
           const workspaceMember = workspaceMembers.find(

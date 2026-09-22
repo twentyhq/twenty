@@ -16,12 +16,13 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   if (!isDefined(connectedAccount.handle)) {
     throw new Error('Connected account handle is missing');
   }
+  const canonicalAccountHandle = normalizeEmailAddress(connectedAccount.handle);
   const selfDomainName = getDomainNameFromHandle(
-    connectedAccount.handle,
+    canonicalAccountHandle,
   ).toLowerCase();
 
   const allHandles = [
-    normalizeEmailAddress(connectedAccount.handle),
+    canonicalAccountHandle,
     ...(connectedAccount.handleAliases || []).map((handle) =>
       normalizeEmailAddress(handle),
     ),
@@ -46,7 +47,7 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
         !isWorkDomain(selfDomainName) ||
         isInternalMessagesImportEnabled) &&
       // @ts-expect-error legacy noImplicitAny
-      !workspaceMembersMap[normalizeEmailAddress(contact.handle)] &&
-      !allHandles.includes(normalizeEmailAddress(contact.handle)),
+      !workspaceMembersMap[contact.handle] &&
+      !allHandles.includes(contact.handle),
   );
 }

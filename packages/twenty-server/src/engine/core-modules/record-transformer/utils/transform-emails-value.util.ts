@@ -1,9 +1,6 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
-import { normalizeEmailsSubfieldValue } from 'src/engine/core-modules/record-transformer/utils/normalize-emails-subfield-value.util';
-
 export const transformEmailsValue = (
   // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
@@ -15,7 +12,7 @@ export const transformEmailsValue = (
 
   let additionalEmails: string | null = value?.additionalEmails;
   const primaryEmail = isNonEmptyString(value?.primaryEmail)
-    ? normalizeEmailAddress(value.primaryEmail)
+    ? value.primaryEmail.toLowerCase()
     : null;
 
   if (additionalEmails) {
@@ -26,13 +23,8 @@ export const transformEmailsValue = (
           : additionalEmails
       ) as string[];
 
-      const normalizedEmails = normalizeEmailsSubfieldValue(
-        'additionalEmails',
-        emailArray,
-      );
-
-      additionalEmails = isNonEmptyArray(normalizedEmails)
-        ? JSON.stringify(normalizedEmails)
+      additionalEmails = isNonEmptyArray(emailArray)
+        ? JSON.stringify(emailArray.map((email) => email.toLowerCase()))
         : null;
     } catch {
       /* empty */
