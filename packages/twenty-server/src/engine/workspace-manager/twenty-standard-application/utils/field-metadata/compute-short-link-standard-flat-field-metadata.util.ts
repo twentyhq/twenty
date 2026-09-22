@@ -157,19 +157,62 @@ export const buildShortLinkStandardFlatFieldMetadatas = (
       isSystem: true,
       isNullable: true,
     }),
-    destinationUrl: createField({
-      fieldName: 'destinationUrl',
+    authoredTemplateUrl: createField({
+      fieldName: 'authoredTemplateUrl',
       type: FieldMetadataType.TEXT,
       label: i18nLabel(
-        msg({ message: `Destination URL`, context: 'fieldMetadata.label' }),
+        msg({
+          message: `Authored template URL`,
+          context: 'fieldMetadata.label',
+        }),
       ),
       description: i18nLabel(
         msg({
-          message: `URL to open after the tracked link is clicked`,
+          message: `URL as authored in the campaign, including variables`,
           context: 'fieldMetadata.description',
         }),
       ),
       icon: 'IconLink',
+      isSystem: true,
+      isNullable: false,
+      isUIEditable: false,
+    }),
+    resolvedDestinationUrl: createField({
+      fieldName: 'resolvedDestinationUrl',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({
+          message: `Resolved destination URL`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Destination URL after recipient variables are replaced`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconLink',
+      isSystem: true,
+      isNullable: false,
+      isUIEditable: false,
+    }),
+    templateAndResolvedUrlHash: createField({
+      fieldName: 'templateAndResolvedUrlHash',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({
+          message: `Template and resolved URL hash`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Hash of the authored template and resolved destination URLs`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'Icon123',
       isSystem: true,
       isNullable: false,
       isUIEditable: false,
