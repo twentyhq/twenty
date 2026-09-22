@@ -143,7 +143,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
 
 // The Load limit row only renders on a grouped view, and seeding 25 rather than
 // the default 8 keeps the checked-option assertion from passing by accident.
-const GroupedViewWithLoadLimitDecorator: Decorator = (Story) => {
+const GroupedViewWithLoadLimitSetterEffect = () => {
   const groupByFieldMetadataItem = getTestEnrichedObjectMetadataItemsMock()
     .find((item) => item.nameSingular === 'company')!
     .fields.find((field) => field.name === 'idealCustomerProfile');
@@ -167,8 +167,15 @@ const GroupedViewWithLoadLimitDecorator: Decorator = (Story) => {
     setRecordIndexGroupLoadLimit,
   ]);
 
-  return <Story />;
+  return null;
 };
+
+const GroupedViewWithLoadLimitDecorator: Decorator = (Story) => (
+  <>
+    <GroupedViewWithLoadLimitSetterEffect />
+    <Story />
+  </>
+);
 
 export const Default = createStory(null);
 
