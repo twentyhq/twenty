@@ -20,11 +20,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME = 'agentChatThreadTarget';
 
-// The ranked thread query pages the result, but the target scan feeding it is
-// unbounded in the schema, so one record with a pathological number of links
-// cannot be allowed to load them all.
-const MAX_TARGETS_READ_PER_RECORD = 1000;
-
 const throwHistoryNotMigrated = (): never => {
   throw new AiException(
     'AI history has not been migrated to this workspace yet',
@@ -135,15 +130,14 @@ export class AgentChatThreadTargetService {
     );
   }
 
-  async findThreadIdsAttachedToRecord({
+  // Resolving the record is the whole of the list path here: the attachment
+  // predicate itself lives in the ranked thread query, so paging applies to the
+  // ranked conversations rather than to an arbitrary prefix of the links.
+  async resolveAuthorizedRecordOrThrow({
     workspaceId,
-    userWorkspaceId,
     objectNameSingular,
     recordId,
-  }: RecordReference & {
-    workspaceId: string;
-    userWorkspaceId: string;
-  }): Promise<string[]> {
+  }: RecordReference & { workspaceId: string }): Promise<string> {
     const objectMetadataId = await this.resolveObjectMetadataIdOrThrow({
       workspaceId,
       objectNameSingular,
@@ -151,46 +145,7 @@ export class AgentChatThreadTargetService {
 
     await this.assertRecordIsReadableOrThrow({ objectNameSingular, recordId });
 
-    const targets = await this.withTargetRepository(workspaceId, (repository) =>
-      repository.find({
-        where: { objectMetadataId, recordId },
-        take: MAX_TARGETS_READ_PER_RECORD,
-      }),
-    );
-
-    const attachedThreadIds = targets.map(({ threadId }) => threadId);
-
-    if (!isNonEmptyArray(attachedThreadIds)) {
-      return [];
-    }
-
-    return this.filterToReadableThreadIds({
-      workspaceId,
-      userWorkspaceId,
-      threadIds: attachedThreadIds,
-    });
-  }
-
-  // Ownership is the whole of thread access control today. The owner-managed
-  // record grants being added on agentChatThread widen what a member may read,
-  // and this pair of methods is the only place that has to learn about them.
-  private async filterToReadableThreadIds({
-    workspaceId,
-    userWorkspaceId,
-    threadIds,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    threadIds: string[];
-  }): Promise<string[]> {
-    const readableThreads = await this.threadRepository.find(workspaceId, {
-      where: { id: In(threadIds), userWorkspaceId },
-    });
-
-    const readableThreadIds = new Set(readableThreads.map(({ id }) => id));
-
-    // Preserve the order the targets came back in rather than the thread query's.
-    return threadIds.filter((threadId) => readableThreadIds.has(threadId));
+    return objectMetadataId;
   }
 
   private async assertThreadIsReadableOrThrow({

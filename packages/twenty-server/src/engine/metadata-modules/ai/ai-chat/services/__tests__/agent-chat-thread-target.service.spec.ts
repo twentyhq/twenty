@@ -2,8 +2,6 @@ import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const THREAD_ID = '20202020-0000-4000-8000-000000000002';
-const OTHER_THREAD_ID = '20202020-0000-4000-8000-000000000003';
-const UNATTACHED_THREAD_ID = '20202020-0000-4000-8000-000000000006';
 const RECORD_ID = '20202020-0000-4000-8000-000000000004';
 const COMPANY_OBJECT_METADATA_ID = '20202020-0000-4000-8000-000000000005';
 const TARGET_OBJECT_METADATA_ID = '20202020-0000-4000-8000-000000000007';
@@ -22,9 +20,6 @@ const args = {
 const buildService = () => {
   const threads = [
     { id: THREAD_ID, userWorkspaceId: OWNER_ID },
-    // Owned by the reader but attached to no record, so it must never surface
-    // through a record lookup.
-    { id: UNATTACHED_THREAD_ID, userWorkspaceId: OWNER_ID },
   ];
 
   const threadRepository = {
@@ -191,74 +186,43 @@ describe('Attaching a conversation to a record', () => {
   });
 });
 
-describe('Listing the conversations attached to a record', () => {
-  it('returns nothing when the record carries no link', async () => {
-    const { service, targetRepository } = buildService();
+describe('Resolving the record a conversation list is scoped to', () => {
+  it('returns the object metadata id once the record is readable', async () => {
+    const { service } = buildService();
 
     await expect(
-      service.findThreadIdsAttachedToRecord({
+      service.resolveAuthorizedRecordOrThrow({
         workspaceId: WORKSPACE_ID,
-        userWorkspaceId: OWNER_ID,
         objectNameSingular: 'company',
         recordId: RECORD_ID,
       }),
-    ).resolves.toEqual([]);
+    ).resolves.toBe(COMPANY_OBJECT_METADATA_ID);
+  });
 
-    expect(targetRepository.find).toHaveBeenCalledWith({
-      take: 1000,
-      where: {
-        objectMetadataId: COMPANY_OBJECT_METADATA_ID,
+  it('rejects an unknown object', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.resolveAuthorizedRecordOrThrow({
+        workspaceId: WORKSPACE_ID,
+        objectNameSingular: 'unknownObject',
         recordId: RECORD_ID,
-      },
+      }),
+    ).rejects.toMatchObject({ code: 'INVALID_AGENT_INPUT' });
+  });
+
+  // Reading every link and filtering afterwards would page an arbitrary prefix
+  // of the links, which one member could fill with their own attachments.
+  it('never reads the link rows itself', async () => {
+    const { service, targetRepository } = buildService();
+
+    await service.resolveAuthorizedRecordOrThrow({
+      workspaceId: WORKSPACE_ID,
+      objectNameSingular: 'company',
+      recordId: RECORD_ID,
     });
-  });
 
-  it('hides a linked conversation the member cannot read', async () => {
-    const { service, targetRepository } = buildService();
-
-    targetRepository.find.mockResolvedValue([
-      { threadId: THREAD_ID },
-      { threadId: OTHER_THREAD_ID },
-    ]);
-
-    await expect(
-      service.findThreadIdsAttachedToRecord({
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: OWNER_ID,
-        objectNameSingular: 'company',
-        recordId: RECORD_ID,
-      }),
-    ).resolves.toEqual([THREAD_ID]);
-  });
-
-  it('leaves out a readable conversation that is not attached to the record', async () => {
-    const { service, targetRepository } = buildService();
-
-    targetRepository.find.mockResolvedValue([{ threadId: THREAD_ID }]);
-
-    await expect(
-      service.findThreadIdsAttachedToRecord({
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: OWNER_ID,
-        objectNameSingular: 'company',
-        recordId: RECORD_ID,
-      }),
-    ).resolves.toEqual([THREAD_ID]);
-  });
-
-  it('hides every linked conversation from a member who owns none', async () => {
-    const { service, targetRepository } = buildService();
-
-    targetRepository.find.mockResolvedValue([{ threadId: THREAD_ID }]);
-
-    await expect(
-      service.findThreadIdsAttachedToRecord({
-        workspaceId: WORKSPACE_ID,
-        userWorkspaceId: OTHER_MEMBER_ID,
-        objectNameSingular: 'company',
-        recordId: RECORD_ID,
-      }),
-    ).resolves.toEqual([]);
+    expect(targetRepository.find).not.toHaveBeenCalled();
   });
 });
 
@@ -289,19 +253,16 @@ describe('Authorizing the record a conversation is attached to', () => {
     expect(targetRepository.delete).not.toHaveBeenCalled();
   });
 
-  it('refuses to list the conversations on a record the member cannot read', async () => {
-    const { service, targetRepository } = buildService();
+  it('refuses to resolve a record the member cannot read', async () => {
+    const { service } = buildService();
 
     await expect(
-      service.findThreadIdsAttachedToRecord({
+      service.resolveAuthorizedRecordOrThrow({
         workspaceId: WORKSPACE_ID,
-        userWorkspaceId: OWNER_ID,
         objectNameSingular: 'company',
         recordId: UNREADABLE_RECORD_ID,
       }),
     ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
-
-    expect(targetRepository.find).not.toHaveBeenCalled();
   });
 
   it('reads the record through the caller permissions, not the system context', async () => {

@@ -172,16 +172,16 @@ export class AgentChatResolver {
   ) {
     assertValidChatThreadsForRecordPagination({ limit, offset });
 
-    const threadIds =
-      await this.agentChatThreadTargetService.findThreadIdsAttachedToRecord({
+    const objectMetadataId =
+      await this.agentChatThreadTargetService.resolveAuthorizedRecordOrThrow({
         objectNameSingular,
         recordId,
-        userWorkspaceId,
         workspaceId,
       });
 
-    return this.agentChatService.getThreadsByIds({
-      threadIds,
+    return this.agentChatService.getThreadsAttachedToRecord({
+      objectMetadataId,
+      recordId,
       userWorkspaceId,
       workspaceId,
       limit,
