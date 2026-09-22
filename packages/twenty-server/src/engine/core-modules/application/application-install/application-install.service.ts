@@ -313,8 +313,7 @@ export class ApplicationInstallService {
       resolvedPackage.manifest.application.requestedCapabilities,
     ).filter((capability) => approvedCapabilities.includes(capability));
     const shouldApplyApprovedCapabilities =
-      params.hasUserApprovedCapabilities === true &&
-      isDefined(appRegistration.manifest);
+      params.hasUserApprovedCapabilities && isDefined(appRegistration.manifest);
 
     const application = await this.ensureApplicationExists({
       existingApplication,
