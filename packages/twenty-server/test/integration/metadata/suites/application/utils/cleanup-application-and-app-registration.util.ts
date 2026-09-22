@@ -50,6 +50,21 @@ export const cleanupApplicationAndAppRegistration = async ({
     [applicationUniversalIdentifier],
   );
 
+  // Role rows an app installs (e.g. "App A Role") aren't cascade-cleaned by
+  // this raw-SQL fallback path either - if uninstallApplication rejects or
+  // times out (e.g. a transient DB read timeout) before the mutation's own
+  // cleanup runs, the role row outlives the application row deleted below,
+  // and its unique (label, workspaceId) constraint then collides with the
+  // next run's attempt to install a role with the same label. All of role's
+  // own FK children (objectPermission, fieldPermission, roleTarget, etc.)
+  // are ON DELETE CASCADE, so deleting the role row alone is sufficient.
+  await globalThis.testDataSource.query(
+    `DELETE FROM core."role" WHERE "applicationId" IN (
+      SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+    )`,
+    [applicationUniversalIdentifier],
+  );
+
   // FieldMetadata rows are deliberately not deleted here: unlike View/
   // ViewField, a FieldMetadata row backs an actual column on the workspace's
   // physical data schema, so raw-deleting it without a companion
