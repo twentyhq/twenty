@@ -11409,9 +11409,6 @@ export default {
             "kanbanColumnWidth": [
                 28
             ],
-            "groupLoadLimit": [
-                28
-            ],
             "calendarLayout": [
                 67
             ],

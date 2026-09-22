@@ -102,7 +102,6 @@ export const useCreatePendingRecordTableWidgetViews = () => {
               kanbanAggregateOperationFieldMetadataId:
                 view.kanbanAggregateOperationFieldMetadataId ?? undefined,
               kanbanColumnWidth: view.kanbanColumnWidth ?? undefined,
-              groupLoadLimit: view.groupLoadLimit,
               calendarLayout: view.calendarLayout ?? undefined,
               calendarFieldMetadataId:
                 view.calendarFieldMetadataId ?? undefined,

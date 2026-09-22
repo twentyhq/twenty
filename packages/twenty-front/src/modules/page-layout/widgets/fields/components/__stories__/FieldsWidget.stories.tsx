@@ -24,7 +24,6 @@ import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingCon
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
-import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
@@ -205,7 +204,6 @@ const createView = (
   icon: 'IconListDetails',
   key: null,
   shouldHideEmptyGroups: false,
-  groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   position: 0,
   isCompact: false,
   viewFields: [],

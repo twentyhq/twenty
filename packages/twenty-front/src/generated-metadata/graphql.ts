@@ -6819,7 +6819,6 @@ export type UpsertViewWidgetViewSettingsInput = {
   calendarEndFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   calendarFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   calendarLayout?: InputMaybe<ViewCalendarLayout>;
-  groupLoadLimit?: InputMaybe<Scalars['Int']['input']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;

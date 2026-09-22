@@ -11,7 +11,6 @@ export const buildUpsertViewWidgetViewSettingsInput = (
   kanbanAggregateOperationFieldMetadataId:
     view.kanbanAggregateOperationFieldMetadataId ?? null,
   kanbanColumnWidth: view.kanbanColumnWidth ?? null,
-  groupLoadLimit: view.groupLoadLimit,
   calendarLayout: view.calendarLayout ?? null,
   calendarFieldMetadataId: view.calendarFieldMetadataId ?? null,
   calendarEndFieldMetadataId: view.calendarEndFieldMetadataId ?? null,

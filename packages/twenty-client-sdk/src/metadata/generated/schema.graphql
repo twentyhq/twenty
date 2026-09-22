@@ -4399,7 +4399,6 @@ input UpsertViewWidgetViewSettingsInput {
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
-  groupLoadLimit: Int
   calendarLayout: ViewCalendarLayout
   calendarFieldMetadataId: UUID
   calendarEndFieldMetadataId: UUID

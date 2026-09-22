@@ -28,7 +28,6 @@ const VIEW_SETTINGS_GQL_FIELDS = `
   type
   mainGroupByFieldMetadataId
   shouldHideEmptyGroups
-  groupLoadLimit
   kanbanAggregateOperation
   kanbanAggregateOperationFieldMetadataId
   calendarLayout
@@ -346,44 +345,6 @@ describe('upsertViewWidget view settings', () => {
     });
 
     expect(data.upsertViewWidget.type).toBe(ViewType.TABLE_WIDGET);
-  });
-
-  it('should persist the group load limit on the widget view', async () => {
-    const { data } = await upsertViewWidget({
-      expectToFail: false,
-      input: {
-        widgetId,
-        view: {
-          type: ViewType.KANBAN_WIDGET,
-          mainGroupByFieldMetadataId: selectFieldMetadataId,
-          groupLoadLimit: 50,
-        },
-      },
-      gqlFields: VIEW_SETTINGS_GQL_FIELDS,
-    });
-
-    expect(data.upsertViewWidget.groupLoadLimit).toBe(50);
-  });
-
-  // upsertViewWidget is the only view mutation running ResolverValidationPipe,
-  // so it is the only one where the input decorators are actually enforced.
-  it('should reject a group load limit outside the allowed options', async () => {
-    const { errors } = await upsertViewWidget({
-      expectToFail: true,
-      input: {
-        widgetId,
-        view: {
-          type: ViewType.KANBAN_WIDGET,
-          mainGroupByFieldMetadataId: selectFieldMetadataId,
-          groupLoadLimit: 17,
-        },
-      },
-      gqlFields: VIEW_SETTINGS_GQL_FIELDS,
-    });
-
-    expect(JSON.stringify(errors)).toContain(
-      'groupLoadLimit must be one of the following values: 8, 25, 50, 100',
-    );
   });
 
   it('should update view settings and view fields in a single call', async () => {
