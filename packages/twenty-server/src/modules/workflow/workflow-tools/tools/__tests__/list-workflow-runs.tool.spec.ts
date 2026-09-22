@@ -47,8 +47,8 @@ describe('list_workflow_runs tool', () => {
         state: {},
         startedAt: '2025-01-01T00:00:00Z',
         endedAt: '2025-01-01T00:01:00Z',
-        workflowId: 'wf-1',
-        workflowVersionId: 'wfv-1',
+        coreWorkflowId: 'core-wf-1',
+        coreWorkflowVersionId: 'core-wfv-1',
       },
       {
         id: 'run-2',
@@ -57,8 +57,8 @@ describe('list_workflow_runs tool', () => {
         state: { workflowRunError: 'Timeout' },
         startedAt: '2025-01-02T00:00:00Z',
         endedAt: '2025-01-02T00:01:00Z',
-        workflowId: 'wf-1',
-        workflowVersionId: 'wfv-1',
+        coreWorkflowId: 'core-wf-1',
+        coreWorkflowVersionId: 'core-wfv-1',
       },
     ];
 
@@ -80,6 +80,8 @@ describe('list_workflow_runs tool', () => {
 
     expect(result.workflowRuns).toHaveLength(2);
     expect(result.workflowRuns[0].id).toBe('run-1');
+    expect(result.workflowRuns[0].coreWorkflowId).toBe('core-wf-1');
+    expect(result.workflowRuns[0].coreWorkflowVersionId).toBe('core-wfv-1');
     expect(result.workflowRuns[1].error).toBe('Timeout');
   });
 
@@ -101,13 +103,13 @@ describe('list_workflow_runs tool', () => {
     );
 
     await tool.execute({
-      workflowId: 'wf-1',
+      coreWorkflowId: 'core-wf-1',
       status: WorkflowRunStatus.FAILED,
       limit: 5,
     });
 
     expect(findMock).toHaveBeenCalledWith({
-      where: { workflowId: 'wf-1', status: WorkflowRunStatus.FAILED },
+      where: { coreWorkflowId: 'core-wf-1', status: WorkflowRunStatus.FAILED },
       order: { createdAt: 'DESC' },
       take: 5,
     });

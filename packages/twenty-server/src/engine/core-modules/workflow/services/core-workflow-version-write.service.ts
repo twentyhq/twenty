@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import isEqual from 'lodash.isequal';
+import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
@@ -54,6 +56,8 @@ export class CoreWorkflowVersionPostCommitError extends Error {
 @Injectable()
 export class CoreWorkflowVersionWriteService {
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
@@ -70,15 +74,20 @@ export class CoreWorkflowVersionWriteService {
     workspaceId,
     failureMessage,
     operations,
+    applicationUniversalIdentifier,
   }: {
     workspaceId: string;
     failureMessage: string;
     operations: AllFlatEntityOperationByMetadataName;
+    applicationUniversalIdentifier?: string;
   }): Promise<void> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
+    const universalIdentifier =
+      applicationUniversalIdentifier ??
+      (
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        )
+      ).workspaceCustomFlatApplication.universalIdentifier;
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -86,8 +95,7 @@ export class CoreWorkflowVersionWriteService {
           allFlatEntityOperationByMetadataName: operations,
           workspaceId,
           isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
+          applicationUniversalIdentifier: universalIdentifier,
         },
       );
 
@@ -168,78 +176,89 @@ export class CoreWorkflowVersionWriteService {
       steps,
     });
 
-    // main added a compare-and-set on the previous content to catch two people
-    // editing the same draft. The runner cannot express that, so the check moves
-    // ahead of it and nothing is written when the row has already moved.
-    const persistedVersion = await this.coreWorkflowVersionRepository.findOne(
-      workspaceId,
-      {
-        where: { id: coreWorkflowVersionId },
-        select: { id: true, triggers: true, steps: true, status: true },
-      },
-    );
-
-    if (
-      !isDefined(persistedVersion) ||
-      persistedVersion.status !== CoreWorkflowVersionStatus.DRAFT ||
-      !isEqual(persistedVersion.triggers ?? null, expectedVersion.triggers ?? null) ||
-      !isEqual(persistedVersion.steps ?? null, expectedVersion.steps ?? null)
-    ) {
-      throw new WorkflowQueryValidationException(
-        `Core workflow version '${coreWorkflowVersionId}' changed during this edit`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
-        },
-      );
-    }
-
-    const { flatWorkflowVersionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
-      );
-
-    const flatWorkflowVersion = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: coreWorkflowVersionId,
-      flatEntityMaps: flatWorkflowVersionMaps,
-    });
-
-    await this.runCoreWorkflowMigration({
-      workspaceId,
-      failureMessage:
-        'Multiple validation errors occurred while writing workflow version content',
-      operations: {
-        workflowVersion: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: [],
-          flatEntityToUpdate: [
-            {
-              ...flatWorkflowVersion,
-              triggers: isDefined(trigger) ? [trigger] : null,
-              steps,
-            },
-          ],
-        },
-      },
-    });
-
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.workspaceOrmManager.runInWorkspaceTransaction(
-        async (transactionScope) => {
-          const mirrorUpdateResult = await transactionScope
-            .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
-              shouldBypassPermissionChecks: true,
-            })
-            .update({ coreWorkflowVersionId }, { trigger, steps });
-
-          assertExactlyOneMirrorRowWasWritten({
-            affected: mirrorUpdateResult.affected,
-            coreWorkflowVersionId,
+    // main compared the previous content inside the UPDATE itself to catch two
+    // people editing the same draft. The runner cannot express that condition,
+    // so the comparison and the write it guards are serialized on this lock.
+    await this.withCoreWorkflowVersionEditLock(
+      coreWorkflowVersionId,
+      async () => {
+        const persistedVersion =
+          await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+            where: { id: coreWorkflowVersionId },
+            select: { id: true, triggers: true, steps: true, status: true },
           });
 
-        },
-      );
-    }, buildSystemAuthContext(workspaceId));
+        if (
+          !isDefined(persistedVersion) ||
+          persistedVersion.status !== CoreWorkflowVersionStatus.DRAFT ||
+          !isEqual(
+            persistedVersion.triggers ?? null,
+            expectedVersion.triggers ?? null,
+          ) ||
+          !isEqual(
+            persistedVersion.steps ?? null,
+            expectedVersion.steps ?? null,
+          )
+        ) {
+          throw new WorkflowQueryValidationException(
+            `Core workflow version '${coreWorkflowVersionId}' changed during this edit`,
+            WorkflowQueryValidationExceptionCode.FORBIDDEN,
+            {
+              userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
+            },
+          );
+        }
+
+        const { flatWorkflowVersionMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
+          );
+
+        const flatWorkflowVersion = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: coreWorkflowVersionId,
+          flatEntityMaps: flatWorkflowVersionMaps,
+        });
+
+        await this.runCoreWorkflowMigration({
+          workspaceId,
+          failureMessage:
+            'Multiple validation errors occurred while writing workflow version content',
+          operations: {
+            workflowVersion: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [
+                {
+                  ...flatWorkflowVersion,
+                  triggers: isDefined(trigger) ? [trigger] : null,
+                  steps,
+                },
+              ],
+            },
+          },
+        });
+
+        await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          await this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
+              const mirrorUpdateResult = await transactionScope
+                .getRepository<WorkflowVersionWorkspaceEntity>(
+                  'workflowVersion',
+                  {
+                    shouldBypassPermissionChecks: true,
+                  },
+                )
+                .update({ coreWorkflowVersionId }, { trigger, steps });
+
+              assertExactlyOneMirrorRowWasWritten({
+                affected: mirrorUpdateResult.affected,
+                coreWorkflowVersionId,
+              });
+            },
+          );
+        }, buildSystemAuthContext(workspaceId));
+      },
+    );
 
     try {
       await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
@@ -247,6 +266,48 @@ export class CoreWorkflowVersionWriteService {
       );
     } catch (error) {
       throw new CoreWorkflowVersionPostCommitError(error);
+    }
+  }
+
+  private async withCoreWorkflowVersionEditLock<T>(
+    coreWorkflowVersionId: string,
+    run: () => Promise<T>,
+  ): Promise<T> {
+    const lockKey = `core-workflow-version-edit-${coreWorkflowVersionId}`;
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    try {
+      await queryRunner.connect();
+      // Transaction scoped, so the lock is released by the commit below and by
+      // any failure that rolls back, including a connection that dies holding it.
+      await queryRunner.startTransaction();
+
+      const [lockResult] = (await queryRunner.query(
+        'SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS acquired',
+        [lockKey],
+      )) as { acquired: boolean }[];
+
+      if (!lockResult?.acquired) {
+        throw new WorkflowQueryValidationException(
+          `Core workflow version '${coreWorkflowVersionId}' is being edited concurrently`,
+          WorkflowQueryValidationExceptionCode.FORBIDDEN,
+          {
+            userFriendlyMessage: msg`Workflow version changed, please reload and retry`,
+          },
+        );
+      }
+
+      const result = await run();
+
+      await queryRunner.commitTransaction();
+
+      return result;
+    } finally {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+
+      await queryRunner.release();
     }
   }
 
@@ -296,6 +357,8 @@ export class CoreWorkflowVersionWriteService {
 
     await this.runCoreWorkflowMigration({
       workspaceId,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
       failureMessage:
         'Multiple validation errors occurred while creating workflow version draft',
       operations: {

@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
@@ -101,9 +100,7 @@ export const SidePanelObjectFilterDropdownContent = ({
               selected={selectedObjectNameSingular === null}
               indicator="check"
               startIcon={<TintedIconTile Icon={IconCube} />}
-            >
-              <OverflowingTextWithTooltip text={t`All objects`} />
-            </ListItem>
+            >{t`All objects`}</ListItem>
           </SelectableListItem>
           {displayedObjects.map((objectMetadataItem) => {
             return (
@@ -131,9 +128,7 @@ export const SidePanelObjectFilterDropdownContent = ({
                     />
                   }
                 >
-                  <OverflowingTextWithTooltip
-                    text={objectMetadataItem.labelPlural}
-                  />
+                  {objectMetadataItem.labelPlural}
                 </ListItem>
               </SelectableListItem>
             );

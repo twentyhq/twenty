@@ -45,6 +45,7 @@ export interface ApplicationVariable {
     label: Scalars['String']
     isSecret: Scalars['Boolean']
     isDeprecated: Scalars['Boolean']
+    isRequired: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
     __typename: 'ApplicationVariable'
@@ -1235,9 +1236,9 @@ export interface UsageQuotaDefinition {
     __typename: 'UsageQuotaDefinition'
 }
 
-export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK'
+export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK' | 'RECORD'
 
-export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'SUBSCRIPTION'
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
 
 export interface UsageQuotaDefinitions {
     definitions: UsageQuotaDefinition[]
@@ -1610,7 +1611,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED'
+export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3184,7 +3185,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'workflow' | 'workflowVersion'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -3669,6 +3670,7 @@ export interface ApplicationVariableGenqlSelection{
     label?: boolean | number
     isSecret?: boolean | number
     isDeprecated?: boolean | number
+    isRequired?: boolean | number
     type?: boolean | number
     options?: boolean | number
     __typename?: boolean | number
@@ -10772,7 +10774,8 @@ export const enumUsageResourceType = {
    API: 'API' as const,
    LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
    EMAIL: 'EMAIL' as const,
-   WEBHOOK: 'WEBHOOK' as const
+   WEBHOOK: 'WEBHOOK' as const,
+   RECORD: 'RECORD' as const
 }
 
 export const enumUsageOperationType = {
@@ -10784,9 +10787,11 @@ export const enumUsageOperationType = {
    WEB_SEARCH: 'WEB_SEARCH' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
    EMAIL_SEND: 'EMAIL_SEND' as const,
+   MESSAGE_CAMPAIGN_SEND: 'MESSAGE_CAMPAIGN_SEND' as const,
    API_REQUEST: 'API_REQUEST' as const,
    WEBHOOK_CALL: 'WEBHOOK_CALL' as const,
    STORAGE_FILE: 'STORAGE_FILE' as const,
+   RECORD_WRITE: 'RECORD_WRITE' as const,
    SUBSCRIPTION: 'SUBSCRIPTION' as const
 }
 
@@ -10841,7 +10846,6 @@ export const enumFeatureFlagKey = {
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
    IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
    IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED: 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' as const,
-   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED: 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' as const,
    IS_RECORD_SHARING_ENABLED: 'IS_RECORD_SHARING_ENABLED' as const,
    IS_INITIAL_OBJECT_VIEW_ENABLED: 'IS_INITIAL_OBJECT_VIEW_ENABLED' as const,
    IS_WEBHOOK_RATE_LIMIT_ENABLED: 'IS_WEBHOOK_RATE_LIMIT_ENABLED' as const
@@ -11131,7 +11135,9 @@ export const enumAllMetadataName = {
    applicationVariable: 'applicationVariable' as const,
    connectionProvider: 'connectionProvider' as const,
    searchFieldMetadata: 'searchFieldMetadata' as const,
-   timelineActivityType: 'timelineActivityType' as const
+   timelineActivityType: 'timelineActivityType' as const,
+   workflow: 'workflow' as const,
+   workflowVersion: 'workflowVersion' as const
 }
 
 export const enumEventLogTable = {

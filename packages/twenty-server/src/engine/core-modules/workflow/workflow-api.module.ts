@@ -1,9 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
-
 import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -21,21 +17,14 @@ import { WorkflowVersionResolver } from 'src/engine/core-modules/workflow/resolv
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
-import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
-import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
-import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
-import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
-import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
-import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
+import { CoreWorkflowServicesModule } from 'src/engine/core-modules/workflow/core-workflow-services.module';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
-import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
@@ -50,10 +39,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 
 @Module({
   imports: [
-    ApplicationModule,
-    WorkspaceMigrationModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
     RecordPositionModule,
     AutomatedTriggerModule,
@@ -73,10 +58,10 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     ToolModule,
     LogicFunctionModule,
     CodeStepBuildModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ConnectedAccountMetadataModule,
     WorkflowVersionCoreModule,
     WorkflowVersionValidationModule,
+    CoreWorkflowServicesModule,
   ],
   controllers: [WorkflowTriggerController],
   providers: [
@@ -87,13 +72,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowVersionResolver,
     CoreWorkflowResolver,
     CoreWorkflowVersionMutationResolver,
-    CoreWorkflowIdResolutionService,
-    CoreWorkflowLifecycleWorkspaceService,
-    CoreWorkflowListService,
-    CoreWorkflowMutationWorkspaceService,
-    CoreWorkflowVersionMutationWorkspaceService,
-    CoreWorkflowVersionWriteService,
-    CoreWorkflowVersionListService,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
     provideWorkspaceScopedRepository(WorkflowEntity),
   ],

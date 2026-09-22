@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -12,7 +13,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
@@ -70,25 +70,24 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              text={isCustomField && !readonly ? t`Edit` : t`View`}
-              LeftIcon={isCustomField ? IconPencil : IconEye}
+            <ListItem
+              startIcon={isCustomField ? <IconPencil /> : <IconEye />}
               onClick={handleEdit}
-            />
+            >
+              {isCustomField && !readonly ? t`Edit` : t`View`}
+            </ListItem>
             {!readonly && (
-              <MenuItem
-                text={t`Activate`}
-                LeftIcon={IconArchiveOff}
+              <ListItem
+                startIcon={<IconArchiveOff />}
                 onClick={handleActivate}
-              />
+              >{t`Activate`}</ListItem>
             )}
             {isDeletable && !readonly && (
-              <MenuItem
-                text={t`Delete`}
-                accent="danger"
-                LeftIcon={IconTrash}
+              <ListItem
+                color="danger"
+                startIcon={<IconTrash />}
                 onClick={handleDelete}
-              />
+              >{t`Delete`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

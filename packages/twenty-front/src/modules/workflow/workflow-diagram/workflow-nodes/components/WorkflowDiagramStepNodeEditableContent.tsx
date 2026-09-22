@@ -2,7 +2,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 import { EMPTY_NODE_ID } from '@/workflow/workflow-diagram/constants/EmptyNodeId';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
-import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
@@ -27,16 +26,13 @@ import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledAddStepButtonContainer = styled.div<{
-  shouldDisplay: boolean;
-}>`
+const StyledAddStepButtonContainer = styled.div`
   align-items: center;
   bottom: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   left: 50%;
-  opacity: ${({ shouldDisplay }) => (shouldDisplay ? 1 : 0)};
   position: absolute;
   transform: translateX(-50%) translateY(100%);
 `;
@@ -69,8 +65,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
-
-  const { isNodeCreationStarted } = useStartNodeCreation();
 
   const workflowInsertStepIds = useAtomComponentStateValue(
     workflowInsertStepIdsComponentState,
@@ -149,12 +143,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         !isConnectionInProgress &&
         !isCreatingEmptyNodeFromThisNode && (
           <StyledAddStepButtonContainer
-            shouldDisplay={
-              data.nodeType === 'trigger' ||
-              isHovered ||
-              selected ||
-              isNodeCreationStarted({ parentStepId: data.stepId })
-            }
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onClick={handleAddStepButtonContainerClick}

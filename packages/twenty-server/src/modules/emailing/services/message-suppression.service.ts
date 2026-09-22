@@ -332,12 +332,6 @@ export class MessageSuppressionService {
       keptTopicIds.filter((topicId) => visibleTopicIds.has(topicId)),
     );
 
-    if (keptTopicIdSet.size === 0) {
-      await this.unsubscribeFromEverything({ workspaceId, emailAddress });
-
-      return;
-    }
-
     await this.suppressTopicsNotKept({
       workspaceId,
       emailAddress,
@@ -345,7 +339,7 @@ export class MessageSuppressionService {
       keptTopicIdSet,
     });
 
-    if (!canResubscribe) {
+    if (!canResubscribe || keptTopicIdSet.size === 0) {
       return;
     }
 

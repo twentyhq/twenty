@@ -137,7 +137,9 @@ Each entity goes to the file that already defines it, so a second pull rewrites 
 - **Workspace runtime state** — member and API-key role assignments, webhooks, per-user navigation and navigation items pinned to a record, all excluded by design.
 - **Owned by another application** — reported, never pulled.
 
-The report at the end of a pull lists all of it, grouped by reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `yarn twenty apply --no-delete` until the missing kinds are covered. A pruning `yarn twenty apply` would delete them, and `yarn twenty plan` lists exactly which.
+The report at the end of a pull lists all of it, grouped by kind and reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `yarn twenty apply --no-delete` until the missing kinds are covered. A pruning `yarn twenty apply` would delete them, and `yarn twenty plan` lists exactly which.
+
+**Workspace-local state.** An entity deactivated in the workspace is written as an active definition, and the overrides the workspace made on an entity, such as a renamed label, are not written. The report lists those rows under "Written without their workspace-local state". Applying the tree back to the same workspace leaves that state untouched; another workspace gets the entity active and without the overrides.
 
 **The base file.** Pull records what it pulled in `.twenty/pull-base.json`, which is gitignored and per checkout. That file is what a later pull compares against to leave untouched the files whose entity did not change, and to delete the file of an entity that is gone from the workspace. A checkout without it simply writes everything and deletes nothing.
 

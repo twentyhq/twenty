@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -42,6 +43,23 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240 } },
   args: { startIcon: START_ICON },
+};
+
+export const OverflowingLabel: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 160 } },
+  args: { children: 'A workspace preference with a long label' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const label = canvas.getByText('A workspace preference with a long label');
+
+    await userEvent.hover(label);
+
+    expect(await page.findByRole('tooltip')).toHaveTextContent(
+      'A workspace preference with a long label',
+    );
+  },
 };
 
 export const WithDescription: Story = {

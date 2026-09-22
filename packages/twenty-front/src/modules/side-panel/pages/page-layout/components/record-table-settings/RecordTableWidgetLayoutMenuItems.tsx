@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { type RecordTableWidgetLayoutPickerOption } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -47,7 +46,7 @@ export const RecordTableWidgetLayoutMenuItems = ({
               descriptionPlacement={'end'}
               startIcon={<SelectOptionIcon Icon={Icon} />}
             >
-              <OverflowingTextWithTooltip text={t(label)} />
+              {t(label)}
             </ListItem>
           </SelectableListItem>
         ),

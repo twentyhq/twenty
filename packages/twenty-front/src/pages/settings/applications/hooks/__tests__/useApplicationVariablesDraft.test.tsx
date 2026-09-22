@@ -37,6 +37,7 @@ const buildApplicationVariable = (value: string): ApplicationVariable => ({
   label: '',
   isSecret: false,
   isDeprecated: false,
+  isRequired: false,
   type: 'TEXT',
 });
 

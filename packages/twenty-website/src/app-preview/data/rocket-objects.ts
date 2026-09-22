@@ -10,7 +10,13 @@ const ROCKET_PAGE: TablePageDefinition = {
     count: 6,
   },
   columns: [
-    { id: 'name', label: 'Name', width: 200, isFirstColumn: true },
+    {
+      id: 'name',
+      label: 'Name',
+      width: 200,
+      icon: 'rocket',
+      isFirstColumn: true,
+    },
     { id: 'serialNumber', label: 'Serial Number', width: 130 },
     { id: 'manufacturer', label: 'Manufacturer', width: 180 },
     { id: 'status', label: 'Status', width: 130 },
@@ -158,7 +164,13 @@ const LAUNCH_PAGE: TablePageDefinition = {
   type: 'table',
   header: { title: 'Launches', count: 5 },
   columns: [
-    { id: 'name', label: 'Name', width: 200, isFirstColumn: true },
+    {
+      id: 'name',
+      label: 'Name',
+      width: 200,
+      icon: 'calendarEvent',
+      isFirstColumn: true,
+    },
     { id: 'missionCode', label: 'Mission Code', width: 140 },
     { id: 'status', label: 'Status', width: 130 },
     { id: 'missionType', label: 'Mission Type', width: 140 },
@@ -285,7 +297,13 @@ const PAYLOAD_PAGE: TablePageDefinition = {
   type: 'table',
   header: { title: 'Payloads', count: 5 },
   columns: [
-    { id: 'name', label: 'Name', width: 200, isFirstColumn: true },
+    {
+      id: 'name',
+      label: 'Name',
+      width: 200,
+      icon: 'planet',
+      isFirstColumn: true,
+    },
     { id: 'payloadType', label: 'Payload Type', width: 150 },
     { id: 'status', label: 'Status', width: 130 },
     { id: 'customer', label: 'Customer', width: 170 },
@@ -416,7 +434,13 @@ const LAUNCH_SITE_PAGE: TablePageDefinition = {
   type: 'table',
   header: { title: 'Launch sites', count: 5 },
   columns: [
-    { id: 'name', label: 'Name', width: 220, isFirstColumn: true },
+    {
+      id: 'name',
+      label: 'Name',
+      width: 220,
+      icon: 'mapPin',
+      isFirstColumn: true,
+    },
     { id: 'siteCode', label: 'Site Code', width: 140 },
     { id: 'padName', label: 'Pad Name', width: 180 },
     { id: 'country', label: 'Country', width: 140 },

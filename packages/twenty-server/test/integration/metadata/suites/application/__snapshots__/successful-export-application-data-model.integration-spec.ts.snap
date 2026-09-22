@@ -987,10 +987,6 @@ exports[`Application export - data model exports the whole application as a stab
             "configurationType": "NOTES",
           },
           "objectUniversalIdentifier": "<TICKET_OBJECT>",
-          "position": {
-            "index": 0,
-            "layoutMode": "VERTICAL_LIST",
-          },
           "title": "Notes",
           "type": "NOTES",
           "universalIdentifier": "<TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET>",
@@ -1041,10 +1037,6 @@ exports[`Application export - data model exports the whole application as a stab
                 "viewUniversalIdentifier": "<OPEN_TICKETS_VIEW>",
               },
               "objectUniversalIdentifier": "<TICKET_OBJECT>",
-              "position": {
-                "index": 0,
-                "layoutMode": "VERTICAL_LIST",
-              },
               "title": "Fields",
               "type": "FIELDS",
               "universalIdentifier": "<TICKET_PAGE_FIELDS_WIDGET>",

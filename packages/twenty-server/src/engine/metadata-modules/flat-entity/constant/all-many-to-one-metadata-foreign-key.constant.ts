@@ -331,6 +331,7 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
   },
   workflow: {
     workspace: null,
+    createdBy: null,
     application: null,
   },
   workflowVersion: {

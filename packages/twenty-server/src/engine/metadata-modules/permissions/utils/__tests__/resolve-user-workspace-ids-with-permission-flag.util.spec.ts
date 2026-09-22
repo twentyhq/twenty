@@ -3,6 +3,9 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 
+import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
+import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { resolveUserWorkspaceIdsWithPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/resolve-user-workspace-ids-with-permission-flag.util';
 
 const buildInput = ({
@@ -44,10 +47,13 @@ const buildInput = ({
             rolePermissionFlagIds: role.grantedPermissionFlag
               ? [`role-permission-flag-${role.id}`]
               : [],
+            roleTargetIds: roleTargets.flatMap((roleTarget, index) =>
+              roleTarget.roleId === role.id ? [`role-target-${index}`] : [],
+            ),
           },
         ]),
       ),
-    },
+    } as unknown as FlatRoleMaps,
     flatRolePermissionFlagMaps: {
       byUniversalIdentifier: Object.fromEntries(
         rolePermissionFlagMaps.map((entry) => [
@@ -64,7 +70,7 @@ const buildInput = ({
           entry.rolePermissionFlagId,
         ]),
       ),
-    },
+    } as unknown as FlatRolePermissionFlagMaps,
     flatRoleTargetMaps: {
       byUniversalIdentifier: Object.fromEntries(
         roleTargets.map((roleTarget, index) => [
@@ -72,10 +78,14 @@ const buildInput = ({
           roleTarget,
         ]),
       ),
-    },
-  } as unknown as Parameters<
-    typeof resolveUserWorkspaceIdsWithPermissionFlag
-  >[0];
+      universalIdentifierById: Object.fromEntries(
+        roleTargets.map((_, index) => [
+          `role-target-${index}`,
+          `role-target-${index}`,
+        ]),
+      ),
+    } as unknown as FlatRoleTargetMaps,
+  };
 };
 
 describe('resolveUserWorkspaceIdsWithPermissionFlag', () => {

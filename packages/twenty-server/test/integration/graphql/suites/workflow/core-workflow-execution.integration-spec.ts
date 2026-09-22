@@ -538,7 +538,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       global.workflowTestServices;
     const hiddenColumns = jest
       .spyOn(upgradeState, 'getHiddenColumnPropertyNames')
-      .mockReturnValueOnce(new Set(['workspaceWorkflowVersionId']));
+      .mockReturnValue(new Set(['workspaceWorkflowVersionId']));
 
     await workspaceCache.invalidateAndRecompute(workspaceId, [
       'workflowAutomatedTriggerMaps',

@@ -51,6 +51,8 @@ export class AppPullCommand {
       unreadableRelativePaths: result.data.unreadableRelativePaths,
       compiledTranslationEntryCountByLocale:
         result.data.compiledTranslationEntryCountByLocale,
+      entityLabelByUniversalIdentifier:
+        result.data.entityLabelByUniversalIdentifier,
       verbose: options.verbose,
     });
 

@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
 import { useSortSubFieldChoicesForField } from '@/object-metadata/hooks/useSortSubFieldChoicesForField';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
@@ -107,9 +106,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
               selected={recordSort.direction === ViewSortDirection.ASC}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconArrowUp} />}
-            >
-              <OverflowingTextWithTooltip text={t`Ascending`} />
-            </ListItem>
+            >{t`Ascending`}</ListItem>
             <ListItem
               onClick={() => handleDirectionSelect(ViewSortDirection.DESC)}
               role="option"
@@ -117,9 +114,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
               selected={recordSort.direction === ViewSortDirection.DESC}
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconArrowDown} />}
-            >
-              <OverflowingTextWithTooltip text={t`Descending`} />
-            </ListItem>
+            >{t`Descending`}</ListItem>
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
@@ -132,7 +127,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
                 selected={option.value === subFieldChoices.selectedValue}
                 indicator="check"
               >
-                <OverflowingTextWithTooltip text={option.label} />
+                {option.label}
               </ListItem>
             ))}
           </DropdownMenuItemsContainer>

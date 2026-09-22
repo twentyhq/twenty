@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -60,9 +59,7 @@ export const AiChatThreadFilterDropdownLastActivityMenu = ({
             selected={agentChatThreadLastActivityFilter === option}
             indicator="check"
           >
-            <OverflowingTextWithTooltip
-              text={t(AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[option])}
-            />
+            {t(AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[option])}
           </ListItem>
         ))}
       </DropdownMenuItemsContainer>

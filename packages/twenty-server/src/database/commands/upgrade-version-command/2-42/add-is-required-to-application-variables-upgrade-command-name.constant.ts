@@ -1,0 +1,2 @@
+export const ADD_IS_REQUIRED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME =
+  '2.42.0_AddIsRequiredToApplicationVariablesFastInstanceCommand_1789920900000';

@@ -19,4 +19,4 @@ export const buildStockDefaultCounterKey = ({
   meter: StockMeter;
   limitValue: number;
 }): string =>
-  `${buildStockCounterKey({ workspaceId, resourceType, operationType, spenderType, meter })}:default:${limitValue}`;
+  `${buildStockCounterKey({ workspaceId, resourceType, operationType, spenderType, meter, limitValue })}:default`;

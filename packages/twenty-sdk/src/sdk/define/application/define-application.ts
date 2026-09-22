@@ -42,6 +42,12 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
         `Application variable "${variableName}" of type ${variable.type} must define non-empty options`,
       );
     }
+
+    if (variable.isRequired && variable.isDeprecated) {
+      warnings.push(
+        `Application variable "${variableName}" is both required and deprecated. \`isDeprecated\` wins: the variable is excluded from the application configuration check.`,
+      );
+    }
   }
 
   const billableOperations = config.billing?.operations ?? {};
