@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -14,9 +16,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
-import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
-import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -28,8 +27,10 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
+import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
+import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
 @Injectable()
@@ -44,6 +45,8 @@ export class WorkspaceMigrationRunnerService {
     private readonly metricsService: MetricsService,
     private readonly logger: LoggerService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
   ) {}
 
   private getLegacyCacheInvalidation(
@@ -260,12 +263,7 @@ export class WorkspaceMigrationRunnerService {
 
     const actionsMetadataAndRelatedMetadataNames: AllMetadataName[] = [
       ...new Set([
-        ...actionMetadataNames,
-        ...actionMetadataNames.flatMap(getMetadataRelatedMetadataNames),
-        ...actionMetadataNames.flatMap(getMetadataSerializedRelationNames),
-        ...actionMetadataNames.flatMap(
-          getMetadataRelatedMetadataNamesForValidation,
-        ),
+        ...getMetadataNamesToLoadForWorkspaceMigration(actionMetadataNames),
         ...searchVectorRebuildMetadataNames,
       ]),
     ];
@@ -337,13 +335,21 @@ export class WorkspaceMigrationRunnerService {
     const preallocatedIdByUniversalIdentifierByMetadataName =
       buildPreallocatedIdByUniversalIdentifierFromActions(actions);
 
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+    const shouldPersistDeferredActions =
+      featureFlagsMap[
+        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
+      ];
+
     this.logger.perfTime('Runner', 'Transaction execution');
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     const allMetadataEvents: MetadataEvent[] = [];
-    const allAfterCommitSideEffects: AfterCommitSideEffect[] = [];
+    const allDeferredActions: DeferredWorkspaceMigrationAction[] = [];
 
     const transactionStart = performance.now();
     let slowestActionMs = 0;
@@ -360,11 +366,7 @@ export class WorkspaceMigrationRunnerService {
 
       for (const action of actions) {
         const actionStart = performance.now();
-        const {
-          partialOptimisticCache,
-          metadataEvents,
-          afterCommitSideEffects,
-        } =
+        const { partialOptimisticCache, metadataEvents, deferredActions } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
               action,
@@ -377,6 +379,7 @@ export class WorkspaceMigrationRunnerService {
                 preallocatedIdByUniversalIdentifierByMetadataName,
                 getSearchFieldMetadatasByTsVectorFieldId:
                   searchFieldMetadatasByTsVectorFieldIdAccessor.get,
+                featureFlagsMap,
               },
             },
           );
@@ -407,7 +410,16 @@ export class WorkspaceMigrationRunnerService {
         }
 
         allMetadataEvents.push(...metadataEvents);
-        allAfterCommitSideEffects.push(...afterCommitSideEffects);
+        allDeferredActions.push(...deferredActions);
+      }
+
+      if (shouldPersistDeferredActions) {
+        await this.deferredWorkspaceMigrationActionRunnerService.persist({
+          deferredActions: allDeferredActions,
+          workspaceId,
+          applicationUniversalIdentifier,
+          queryRunner,
+        });
       }
 
       const commitStart = performance.now();
@@ -541,24 +553,15 @@ export class WorkspaceMigrationRunnerService {
       'Runner',
     );
 
-    const sideEffectResults = await Promise.allSettled(
-      allAfterCommitSideEffects.map((sideEffect) =>
-        Promise.resolve().then(() => sideEffect.run()),
-      ),
+    await this.deferredWorkspaceMigrationActionRunnerService.dispatchAfterCommit(
+      {
+        deferredActions: allDeferredActions,
+        hasPersistedDeferredActions: shouldPersistDeferredActions,
+        workspaceId,
+        applicationUniversalIdentifier,
+        allFlatEntityMaps,
+      },
     );
-
-    sideEffectResults.forEach((result, index) => {
-      if (result.status === 'rejected') {
-        this.logger.warn(
-          `After-commit side effect failed (${allAfterCommitSideEffects[index].description}): ${
-            result.reason instanceof Error
-              ? result.reason.message
-              : String(result.reason)
-          }`,
-          'Runner',
-        );
-      }
-    });
 
     const hasSchemaMetadataChanged =
       allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
