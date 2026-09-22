@@ -27,7 +27,7 @@ const convertInlineContent = (
       []
     );
   }
-  if (content === undefined) {
+  if (!isDefined(content)) {
     return [];
   }
   if (!Array.isArray(content)) {
@@ -83,11 +83,11 @@ export const convertBlockNoteToTipTap = (
       }
       const props = isPlainObject(block.props) ? block.props : {};
       if (
-        (props.textColor !== undefined && props.textColor !== 'default') ||
-        (props.backgroundColor !== undefined &&
+        (isDefined(props.textColor) && props.textColor !== 'default') ||
+        (isDefined(props.backgroundColor) &&
           props.backgroundColor !== 'default') ||
         (block.type !== 'image' &&
-          props.textAlignment !== undefined &&
+          isDefined(props.textAlignment) &&
           props.textAlignment !== 'left')
       ) {
         return throwUnsupportedRecordRichTextContent();
