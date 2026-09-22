@@ -32,10 +32,8 @@ import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/searc
 import { type ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
 import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { type SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record.dto';
-import {
-  getWorkflowCorePointerColumns,
-  readWorkflowCorePointer,
-} from 'src/engine/core-modules/search/utils/get-workflow-core-pointer-columns.util';
+import { getWorkflowCorePointerColumns } from 'src/engine/core-modules/search/utils/get-workflow-core-pointer-columns.util';
+import { readWorkflowCorePointer } from 'src/engine/core-modules/search/utils/read-workflow-core-pointer.util';
 import { type SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
 import { type SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import {

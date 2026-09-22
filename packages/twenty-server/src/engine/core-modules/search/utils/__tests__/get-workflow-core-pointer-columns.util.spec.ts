@@ -2,10 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {
-  getWorkflowCorePointerColumns,
-  readWorkflowCorePointer,
-} from 'src/engine/core-modules/search/utils/get-workflow-core-pointer-columns.util';
+import { getWorkflowCorePointerColumns } from 'src/engine/core-modules/search/utils/get-workflow-core-pointer-columns.util';
 
 const CORE_POINTER_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.workflow.fields.coreWorkflowId.universalIdentifier;
@@ -52,34 +49,5 @@ describe('getWorkflowCorePointerColumns', () => {
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([]),
       }),
     ).toEqual([]);
-  });
-});
-
-describe('readWorkflowCorePointer', () => {
-  it('reads the core workflow id from a workflow record', () => {
-    expect(
-      readWorkflowCorePointer({
-        record: { id: 'workspace-id', coreWorkflowId: 'core-id' },
-        flatObjectMetadata: { nameSingular: 'workflow' },
-      }),
-    ).toBe('core-id');
-  });
-
-  it('returns null when the workflow row has no core pointer', () => {
-    expect(
-      readWorkflowCorePointer({
-        record: { id: 'workspace-id', coreWorkflowId: null },
-        flatObjectMetadata: { nameSingular: 'workflow' },
-      }),
-    ).toBeNull();
-  });
-
-  it('returns null for any other object even when a column collides', () => {
-    expect(
-      readWorkflowCorePointer({
-        record: { id: 'company-id', coreWorkflowId: 'core-id' },
-        flatObjectMetadata: { nameSingular: 'company' },
-      }),
-    ).toBeNull();
   });
 });

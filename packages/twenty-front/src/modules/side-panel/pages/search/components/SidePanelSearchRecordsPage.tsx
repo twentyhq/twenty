@@ -66,6 +66,8 @@ export const SidePanelSearchRecordsPage = () => {
                 CoreObjectNameSingular.Note,
               ].includes(item.objectNameSingular as CoreObjectNameSingular);
 
+              const isUnavailable = !isDefined(item.showPagePath);
+
               const handleClick = () => {
                 if (isTaskOrNote) {
                   openRecordInSidePanel({
@@ -73,10 +75,16 @@ export const SidePanelSearchRecordsPage = () => {
                     objectNameSingular:
                       item.objectNameSingular as CoreObjectNameSingular,
                   });
-                } else {
-                  closeCommandMenu();
-                  navigate(item.showPagePath);
+
+                  return;
                 }
+
+                if (!isDefined(item.showPagePath)) {
+                  return;
+                }
+
+                closeCommandMenu();
+                navigate(item.showPagePath);
               };
 
               return (
@@ -95,7 +103,10 @@ export const SidePanelSearchRecordsPage = () => {
                     <CommandMenuItem
                       id={item.id}
                       label={item.label}
-                      description={item.objectLabel}
+                      description={
+                        isUnavailable ? t`Unavailable` : item.objectLabel
+                      }
+                      disabled={isUnavailable}
                       onClick={handleClick}
                       LeftComponent={
                         <Avatar

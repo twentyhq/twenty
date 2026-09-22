@@ -9,7 +9,6 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 export const useSidePanelSearchRecords = () => {
@@ -32,37 +31,27 @@ export const useSidePanelSearchRecords = () => {
   });
 
   const searchResultItems: SearchResultItem[] = useMemo(() => {
-    return searchRecords.flatMap((searchRecord) => {
-      const showPagePath = getSearchResultItemShowPagePath({
+    return searchRecords.map((searchRecord) => ({
+      id: searchRecord.recordId,
+      label: searchRecord.label,
+      objectNameSingular: searchRecord.objectNameSingular,
+      recordId: searchRecord.recordId,
+      imageUrl: searchRecord.imageUrl,
+      objectLabel:
+        readableObjectMetadataItems.find(
+          (item) => item.nameSingular === searchRecord.objectNameSingular,
+        )?.labelSingular ?? searchRecord.objectNameSingular,
+      avatarShape:
+        searchRecord.objectNameSingular === CoreObjectNameSingular.Company
+          ? ('square' as const)
+          : ('circle' as const),
+      showPagePath: getSearchResultItemShowPagePath({
         objectNameSingular: searchRecord.objectNameSingular,
         recordId: searchRecord.recordId,
         coreWorkflowId: searchRecord.coreWorkflowId,
         isWorkflowCoreEnabled,
-      });
-
-      if (!isDefined(showPagePath)) {
-        return [];
-      }
-
-      return [
-        {
-          id: searchRecord.recordId,
-          label: searchRecord.label,
-          objectNameSingular: searchRecord.objectNameSingular,
-          recordId: searchRecord.recordId,
-          imageUrl: searchRecord.imageUrl,
-          objectLabel:
-            readableObjectMetadataItems.find(
-              (item) => item.nameSingular === searchRecord.objectNameSingular,
-            )?.labelSingular ?? searchRecord.objectNameSingular,
-          avatarShape:
-            searchRecord.objectNameSingular === CoreObjectNameSingular.Company
-              ? ('square' as const)
-              : ('circle' as const),
-          showPagePath,
-        },
-      ];
-    });
+      }),
+    }));
   }, [searchRecords, readableObjectMetadataItems, isWorkflowCoreEnabled]);
 
   return {
