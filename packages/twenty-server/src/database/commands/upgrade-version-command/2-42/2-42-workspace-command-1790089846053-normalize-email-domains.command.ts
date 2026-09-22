@@ -113,7 +113,7 @@ WHERE attrelid = to_regclass($1)
               tableReference,
               primaryColumn: escapeIdentifier(primaryColumn),
               additionalColumn: escapeIdentifier(additionalColumn),
-              isUnique: emailField.isUnique,
+              isUnique: emailField.isUnique === true,
               dryRun: options.dryRun ?? false,
             });
 
