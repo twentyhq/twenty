@@ -66,9 +66,11 @@ const buildMaps = ({
 }) => ({
   flatObjectMetadataMaps: objects
     .map((object) => buildObject({ ...object, fields }))
-    .reduce<
-      FlatEntityMaps<FlatObjectMetadata>
-    >((flatEntityMaps, flatEntity) => addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }), createEmptyFlatEntityMaps()),
+    .reduce<FlatEntityMaps<FlatObjectMetadata>>(
+      (flatEntityMaps, flatEntity) =>
+        addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
+      createEmptyFlatEntityMaps(),
+    ),
   flatFieldMetadataMaps: fields.reduce<FlatEntityMaps<FlatFieldMetadata>>(
     (flatEntityMaps, flatEntity) =>
       addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
