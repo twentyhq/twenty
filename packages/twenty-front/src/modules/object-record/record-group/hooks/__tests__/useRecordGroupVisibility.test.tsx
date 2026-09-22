@@ -1,3 +1,5 @@
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
@@ -21,16 +23,21 @@ jest.mock('@/views/hooks/useSaveCurrentViewGroups', () => ({
 }));
 
 const INSTANCE_ID = 'view-instance-id';
+const CONTEXT_STORE_INSTANCE_ID = 'context-store-instance-id';
 
 const getWrapper =
   (store: ReturnType<typeof createStore>) =>
   ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={store}>
-      <ViewComponentInstanceContext.Provider
-        value={{ instanceId: INSTANCE_ID }}
+      <ContextStoreComponentInstanceContext.Provider
+        value={{ instanceId: CONTEXT_STORE_INSTANCE_ID }}
       >
-        {children}
-      </ViewComponentInstanceContext.Provider>
+        <ViewComponentInstanceContext.Provider
+          value={{ instanceId: INSTANCE_ID }}
+        >
+          {children}
+        </ViewComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
     </JotaiProvider>
   );
 
@@ -42,6 +49,10 @@ const shouldHideEmptyGroupsAtom =
   recordIndexShouldHideEmptyRecordGroupsComponentState.atomFamily({
     instanceId: INSTANCE_ID,
   });
+
+const currentViewIdAtom = contextStoreCurrentViewIdComponentState.atomFamily({
+  instanceId: CONTEXT_STORE_INSTANCE_ID,
+});
 
 const createDeferredViewUpdate = () => {
   let resolveViewUpdate!: () => void;
@@ -55,13 +66,21 @@ const createDeferredViewUpdate = () => {
   return { promise, resolveViewUpdate, rejectViewUpdate };
 };
 
+const createStoreWithCurrentView = () => {
+  const store = createStore();
+
+  store.set(currentViewIdAtom, 'view-id');
+
+  return store;
+};
+
 describe('useRecordGroupVisibility', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should keep the new group load limit when the view update succeeds', async () => {
-    const store = createStore();
+    const store = createStoreWithCurrentView();
     store.set(groupLoadLimitAtom, 8);
     updateCurrentViewMock.mockResolvedValue(undefined);
 
@@ -80,7 +99,7 @@ describe('useRecordGroupVisibility', () => {
   });
 
   it('should restore the previous group load limit when the view update fails', async () => {
-    const store = createStore();
+    const store = createStoreWithCurrentView();
     store.set(groupLoadLimitAtom, 8);
     updateCurrentViewMock.mockRejectedValue(new Error('Network error'));
 
@@ -97,47 +116,86 @@ describe('useRecordGroupVisibility', () => {
     expect(store.get(groupLoadLimitAtom)).toBe(8);
   });
 
-  it('should keep the newest group load limit when an older request fails afterwards', async () => {
-    const store = createStore();
+  it('should save the last group load limit after the in-flight save when choices are made quickly', async () => {
+    const store = createStoreWithCurrentView();
     store.set(groupLoadLimitAtom, 8);
 
-    const olderViewUpdate = createDeferredViewUpdate();
-    const newerViewUpdate = createDeferredViewUpdate();
+    const firstViewUpdate = createDeferredViewUpdate();
 
     updateCurrentViewMock
-      .mockImplementationOnce(() => olderViewUpdate.promise)
-      .mockImplementationOnce(() => newerViewUpdate.promise);
+      .mockImplementationOnce(() => firstViewUpdate.promise)
+      .mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useRecordGroupVisibility(), {
       wrapper: getWrapper(store),
     });
 
-    let olderCall!: Promise<void>;
-    let newerCall!: Promise<void>;
+    let choices!: Promise<void>[];
 
     act(() => {
-      olderCall = result.current.handleGroupLoadLimitChange(25);
-      newerCall = result.current.handleGroupLoadLimitChange(50);
+      choices = [25, 50, 8, 25].map((limit) =>
+        result.current.handleGroupLoadLimitChange(limit),
+      );
     });
 
-    const olderCallAssertion =
-      expect(olderCall).rejects.toThrow('Network error');
+    expect(updateCurrentViewMock.mock.calls).toEqual([
+      [{ groupLoadLimit: 25 }],
+    ]);
+    expect(store.get(groupLoadLimitAtom)).toBe(25);
 
     await act(async () => {
-      newerViewUpdate.resolveViewUpdate();
-      await newerCall;
+      firstViewUpdate.resolveViewUpdate();
+      await Promise.all(choices);
     });
 
-    await act(async () => {
-      olderViewUpdate.rejectViewUpdate(new Error('Network error'));
-      await olderCallAssertion;
-    });
-
-    expect(store.get(groupLoadLimitAtom)).toBe(50);
+    expect(updateCurrentViewMock.mock.calls).toEqual([
+      [{ groupLoadLimit: 25 }],
+      [{ groupLoadLimit: 25 }],
+    ]);
+    expect(store.get(groupLoadLimitAtom)).toBe(25);
   });
 
-  it('should keep the newest group load limit when an older request fails while the newer one is still in flight', async () => {
-    const store = createStore();
+  it('should restore the last saved group load limit when the latest save fails', async () => {
+    const store = createStoreWithCurrentView();
+    store.set(groupLoadLimitAtom, 8);
+
+    const firstViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => firstViewUpdate.promise)
+      .mockRejectedValueOnce(new Error('Network error'));
+
+    const { result } = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let firstCall!: Promise<void>;
+    let secondCall!: Promise<void>;
+    let latestCall!: Promise<void>;
+
+    act(() => {
+      firstCall = result.current.handleGroupLoadLimitChange(25);
+      secondCall = result.current.handleGroupLoadLimitChange(50);
+      latestCall = result.current.handleGroupLoadLimitChange(100);
+    });
+
+    const latestCallAssertion =
+      expect(latestCall).rejects.toThrow('Network error');
+
+    await act(async () => {
+      firstViewUpdate.resolveViewUpdate();
+      await Promise.all([firstCall, secondCall, latestCallAssertion]);
+    });
+
+    expect(updateCurrentViewMock.mock.calls).toEqual([
+      [{ groupLoadLimit: 25 }],
+      [{ groupLoadLimit: 100 }],
+    ]);
+    expect(store.get(groupLoadLimitAtom)).toBe(25);
+  });
+
+  it('should keep the newest group load limit when an older request fails while the newer one is queued', async () => {
+    const store = createStoreWithCurrentView();
     store.set(groupLoadLimitAtom, 8);
 
     const olderViewUpdate = createDeferredViewUpdate();
@@ -168,6 +226,9 @@ describe('useRecordGroupVisibility', () => {
     });
 
     expect(store.get(groupLoadLimitAtom)).toBe(50);
+    expect(updateCurrentViewMock).toHaveBeenLastCalledWith({
+      groupLoadLimit: 50,
+    });
 
     await act(async () => {
       newerViewUpdate.resolveViewUpdate();
@@ -178,7 +239,7 @@ describe('useRecordGroupVisibility', () => {
   });
 
   it('should keep the newest group load limit when a request from an unmounted menu fails afterwards', async () => {
-    const store = createStore();
+    const store = createStoreWithCurrentView();
     store.set(groupLoadLimitAtom, 8);
 
     const olderViewUpdate = createDeferredViewUpdate();
@@ -208,28 +269,98 @@ describe('useRecordGroupVisibility', () => {
       { wrapper: getWrapper(store) },
     );
 
-    await act(async () => {
-      await secondMenu.current.handleGroupLoadLimitChange(50);
+    let newerCall!: Promise<void>;
+
+    act(() => {
+      newerCall = secondMenu.current.handleGroupLoadLimitChange(50);
     });
 
     await act(async () => {
       olderViewUpdate.rejectViewUpdate(new Error('Network error'));
-      await olderCallAssertion;
+      await Promise.all([olderCallAssertion, newerCall]);
     });
 
+    expect(updateCurrentViewMock).toHaveBeenLastCalledWith({
+      groupLoadLimit: 50,
+    });
     expect(store.get(groupLoadLimitAtom)).toBe(50);
   });
 
-  it('should keep the newest hide-empty-groups state when a request from an unmounted menu fails afterwards', async () => {
-    const store = createStore();
+  it('should not save a queued group load limit on a view the user switched to', async () => {
+    const store = createStoreWithCurrentView();
+    store.set(groupLoadLimitAtom, 8);
+
+    const firstViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock.mockImplementationOnce(() => firstViewUpdate.promise);
+
+    const { result } = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let choices!: Promise<void>[];
+
+    act(() => {
+      choices = [25, 50].map((limit) =>
+        result.current.handleGroupLoadLimitChange(limit),
+      );
+    });
+
+    store.set(currentViewIdAtom, 'other-view-id');
+
+    await act(async () => {
+      firstViewUpdate.resolveViewUpdate();
+      await Promise.all(choices);
+    });
+
+    expect(updateCurrentViewMock.mock.calls).toEqual([
+      [{ groupLoadLimit: 25 }],
+    ]);
+  });
+
+  it('should save the last hide-empty-groups state after the in-flight save when toggled quickly', async () => {
+    const store = createStoreWithCurrentView();
     store.set(shouldHideEmptyGroupsAtom, false);
 
     const firstViewUpdate = createDeferredViewUpdate();
 
     updateCurrentViewMock
       .mockImplementationOnce(() => firstViewUpdate.promise)
-      .mockResolvedValueOnce(undefined)
-      .mockResolvedValueOnce(undefined);
+      .mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let toggles!: Promise<void>[];
+
+    act(() => {
+      toggles = [1, 2, 3, 4, 5].map(() =>
+        result.current.handleHideEmptyRecordGroupChange(),
+      );
+    });
+
+    await act(async () => {
+      firstViewUpdate.resolveViewUpdate();
+      await Promise.all(toggles);
+    });
+
+    expect(updateCurrentViewMock.mock.calls).toEqual([
+      [{ shouldHideEmptyGroups: true }],
+      [{ shouldHideEmptyGroups: true }],
+    ]);
+    expect(store.get(shouldHideEmptyGroupsAtom)).toBe(true);
+  });
+
+  it('should keep the newest hide-empty-groups state when a request from an unmounted menu fails afterwards', async () => {
+    const store = createStoreWithCurrentView();
+    store.set(shouldHideEmptyGroupsAtom, false);
+
+    const firstViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => firstViewUpdate.promise)
+      .mockResolvedValue(undefined);
 
     const { result: firstMenu, unmount: unmountFirstMenu } = renderHook(
       () => useRecordGroupVisibility(),
@@ -252,66 +383,28 @@ describe('useRecordGroupVisibility', () => {
       { wrapper: getWrapper(store) },
     );
 
-    await act(async () => {
-      await secondMenu.current.handleHideEmptyRecordGroupChange();
-      await secondMenu.current.handleHideEmptyRecordGroupChange();
-    });
-
-    await act(async () => {
-      firstViewUpdate.rejectViewUpdate(new Error('Network error'));
-      await firstCallAssertion;
-    });
-
-    expect(store.get(shouldHideEmptyGroupsAtom)).toBe(true);
-  });
-
-  it('should keep the newest hide-empty-groups state when an older request fails afterwards', async () => {
-    const store = createStore();
-    store.set(shouldHideEmptyGroupsAtom, false);
-
-    const firstViewUpdate = createDeferredViewUpdate();
-    const secondViewUpdate = createDeferredViewUpdate();
-    const thirdViewUpdate = createDeferredViewUpdate();
-
-    updateCurrentViewMock
-      .mockImplementationOnce(() => firstViewUpdate.promise)
-      .mockImplementationOnce(() => secondViewUpdate.promise)
-      .mockImplementationOnce(() => thirdViewUpdate.promise);
-
-    const { result } = renderHook(() => useRecordGroupVisibility(), {
-      wrapper: getWrapper(store),
-    });
-
-    let firstCall!: Promise<void>;
-    let secondCall!: Promise<void>;
-    let thirdCall!: Promise<void>;
+    let newerCalls!: Promise<void>[];
 
     act(() => {
-      firstCall = result.current.handleHideEmptyRecordGroupChange();
-      secondCall = result.current.handleHideEmptyRecordGroupChange();
-      thirdCall = result.current.handleHideEmptyRecordGroupChange();
-    });
-
-    const firstCallAssertion =
-      expect(firstCall).rejects.toThrow('Network error');
-
-    await act(async () => {
-      thirdViewUpdate.resolveViewUpdate();
-      secondViewUpdate.resolveViewUpdate();
-
-      await Promise.all([thirdCall, secondCall]);
+      newerCalls = [
+        secondMenu.current.handleHideEmptyRecordGroupChange(),
+        secondMenu.current.handleHideEmptyRecordGroupChange(),
+      ];
     });
 
     await act(async () => {
       firstViewUpdate.rejectViewUpdate(new Error('Network error'));
-      await firstCallAssertion;
+      await Promise.all([firstCallAssertion, ...newerCalls]);
     });
 
+    expect(updateCurrentViewMock).toHaveBeenLastCalledWith({
+      shouldHideEmptyGroups: true,
+    });
     expect(store.get(shouldHideEmptyGroupsAtom)).toBe(true);
   });
 
   it('should restore the previous hide-empty-groups state when the view update fails', async () => {
-    const store = createStore();
+    const store = createStoreWithCurrentView();
     store.set(shouldHideEmptyGroupsAtom, false);
     updateCurrentViewMock.mockRejectedValue(new Error('Network error'));
 
