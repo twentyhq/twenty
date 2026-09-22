@@ -238,7 +238,11 @@ describe('provider-options.util', () => {
                 bedrock: { cachePoint: { type: 'default' }, guardrail: 'on' },
               },
             },
-            { role: 'user', content: 'last' },
+            {
+              role: 'user',
+              content: 'last',
+              providerOptions: { bedrock: { guardrail: 'off' } },
+            },
           ],
           AI_SDK_BEDROCK,
         ),
@@ -251,7 +255,9 @@ describe('provider-options.util', () => {
         {
           role: 'user',
           content: 'last',
-          providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+          providerOptions: {
+            bedrock: { guardrail: 'off', cachePoint: { type: 'default' } },
+          },
         },
       ]);
     });

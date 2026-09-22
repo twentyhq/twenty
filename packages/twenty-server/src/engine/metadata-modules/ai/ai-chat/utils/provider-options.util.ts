@@ -1,6 +1,7 @@
 import { type ProviderOptions } from '@ai-sdk/provider-utils';
 import { type ModelMessage } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AI_SDK_ANTHROPIC,
@@ -60,7 +61,7 @@ const omitCacheProviderOptions = (
   providerOptions: ProviderOptions | undefined,
   cacheOptions: ProviderOptions,
 ): ProviderOptions | undefined => {
-  if (!providerOptions) return undefined;
+  if (!isDefined(providerOptions)) return undefined;
 
   const remainingProviderOptions = Object.entries(
     providerOptions,
@@ -102,10 +103,13 @@ export const injectCacheBreakpoint = (
 
     return {
       ...message,
-      providerOptions: {
-        ...(providerOptions ?? {}),
-        ...cacheOptions,
-      },
+      providerOptions: Object.entries(cacheOptions).reduce<ProviderOptions>(
+        (accumulator, [namespace, options]) => ({
+          ...accumulator,
+          [namespace]: { ...(accumulator[namespace] ?? {}), ...options },
+        }),
+        providerOptions ?? {},
+      ),
     };
   });
 };
