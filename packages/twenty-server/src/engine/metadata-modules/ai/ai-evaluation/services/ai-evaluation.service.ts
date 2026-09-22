@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
+import { JEV_MODEL_ID } from 'twenty-shared/ai';
+
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { NativeEvaluationRunner } from 'src/engine/metadata-modules/ai/ai-evaluation/services/native-evaluation.runner';
@@ -11,7 +14,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { JEV_MODEL_ID } from 'twenty-shared/ai';
 
 @Injectable()
 export class AiEvaluationService {

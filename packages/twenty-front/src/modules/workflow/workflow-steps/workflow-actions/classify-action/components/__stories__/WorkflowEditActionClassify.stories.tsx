@@ -41,7 +41,12 @@ const meta = {
       <WorkflowEditActionClassify
         {...args}
         action={action}
-        actionOptions={{ onActionUpdate: setAction }}
+        actionOptions={{
+          onActionUpdate: (updated) => {
+            args.actionOptions.onActionUpdate?.(updated);
+            setAction(updated);
+          },
+        }}
       />
     );
   },
