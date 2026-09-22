@@ -67,6 +67,8 @@ function(options?: ClientOptions): Client {
       }
     
 // MetadataApiClient (auto-injected by twenty-client-sdk)
+
+// MetadataApiClient (auto-injected by twenty-client-sdk)
 import type { TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
 
 // Ambient type stubs for the genql-generated code this template gets
@@ -264,78 +266,10 @@ export class MetadataApiClient {
   async uploadFile(
     fileBuffer: Buffer,
     filename: string,
+    // Kept for signature compatibility: the server detects the type from the bytes at completion.
     contentType: string = 'application/octet-stream',
     fieldMetadataUniversalIdentifier: string,
   ): Promise<FilesFieldUploadedFile> {
-    try {
-      return await this.directUploadFileToStorage({
-        fileBuffer,
-        filename,
-        fieldMetadataUniversalIdentifier,
-      });
-    } catch {
-      return this.deprecatedUploadFile(
-        fileBuffer,
-        filename,
-        contentType,
-        fieldMetadataUniversalIdentifier,
-      );
-    }
-  }
-
-  async deprecatedUploadFile(
-    fileBuffer: Buffer,
-    filename: string,
-    contentType: string = 'application/octet-stream',
-    fieldMetadataUniversalIdentifier: string,
-  ): Promise<FilesFieldUploadedFile> {
-    const form = new FormData();
-
-    form.append(
-      'operations',
-      JSON.stringify({
-        query: `mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
-        uploadFilesFieldFileByUniversalIdentifier(file: $file, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { id path size createdAt url }
-      }`,
-        variables: {
-          file: null,
-          fieldMetadataUniversalIdentifier,
-        },
-      }),
-    );
-    form.append('map', JSON.stringify({ '0': ['variables.file'] }));
-    form.append(
-      '0',
-      new Blob([fileBuffer as BlobPart], { type: contentType }),
-      filename,
-    );
-
-    const result = await this.executeGraphqlRequestWithOptionalRefresh({
-      operation: form,
-      headers: {},
-      requestInit: {
-        method: 'POST',
-      },
-    });
-
-    if (result.errors) {
-      throw new GenqlError(result.errors, result.data);
-    }
-
-    const data = result.data as Record<string, unknown>;
-
-    return data.uploadFilesFieldFileByUniversalIdentifier as FilesFieldUploadedFile;
-  }
-
-  private async directUploadFileToStorage({
-    fileBuffer,
-    filename,
-    fieldMetadataUniversalIdentifier,
-  }: {
-    fileBuffer: Buffer;
-    filename: string;
-    fieldMetadataUniversalIdentifier: string;
-  }): Promise<FilesFieldUploadedFile> {
     const { createFileUpload: uploadTarget } =
       await this.executeMutationOrThrow<{
         createFileUpload: FilesFieldUploadTarget;

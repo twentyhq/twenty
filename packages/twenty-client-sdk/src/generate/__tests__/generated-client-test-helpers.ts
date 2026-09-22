@@ -32,12 +32,6 @@ export type GeneratedClientClass = new (options?: {
     contentType: string,
     fieldMetadataUniversalIdentifier: string,
   ) => Promise<GeneratedUploadedFile>;
-  deprecatedUploadFile: (
-    fileBuffer: Buffer,
-    filename: string,
-    contentType: string,
-    fieldMetadataUniversalIdentifier: string,
-  ) => Promise<GeneratedUploadedFile>;
 };
 
 const stubGeneratedIndexSource = `

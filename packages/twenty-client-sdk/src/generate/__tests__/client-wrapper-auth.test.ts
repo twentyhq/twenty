@@ -289,22 +289,8 @@ describe('Generated client wrapper auth behavior', () => {
 
     const fetchMock = vi.fn(
       async (_url: string | URL | Request, requestInit?: RequestInit) => {
-        if (
-          typeof requestInit?.body === 'string' &&
-          requestInit.body.includes('createFileUpload')
-        ) {
-          return createJsonResponse({
-            body: {
-              errors: [
-                {
-                  message:
-                    'Cannot query field "createFileUpload" on type "Mutation".',
-                },
-              ],
-            },
-            status: 400,
-            statusText: 'Bad Request',
-          });
+        if (requestInit?.method === 'PUT') {
+          return new Response(null, { status: 200 });
         }
 
         const authorizationHeaderValue =
@@ -318,10 +304,25 @@ describe('Generated client wrapper auth behavior', () => {
           });
         }
 
+        if (String(requestInit?.body).includes('createFileUpload')) {
+          return createJsonResponse({
+            body: {
+              data: {
+                createFileUpload: {
+                  fileId: 'uploaded-file-id',
+                  uploadUrl:
+                    'https://storage.example.com/pending/uploaded-file-id',
+                  contentType: 'application/octet-stream',
+                },
+              },
+            },
+          });
+        }
+
         return createJsonResponse({
           body: {
             data: {
-              uploadFilesFieldFileByUniversalIdentifier: {
+              completeFileUpload: {
                 id: 'uploaded-file-id',
                 path: 'test/path.txt',
                 size: 10,
@@ -348,7 +349,9 @@ describe('Generated client wrapper auth behavior', () => {
 
     expect(uploadResult.id).toBe('uploaded-file-id');
     expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(
+      fetchMock.mock.calls.map(([, requestInit]) => requestInit?.method),
+    ).toEqual(['POST', 'POST', 'PUT', 'POST']);
   });
 
   it('bubbles auth error when refresh callback throws', async () => {

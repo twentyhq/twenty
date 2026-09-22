@@ -32,11 +32,6 @@ const uploadedFile = {
   url: 'https://example.com/file/files-field/file-id?token=xyz',
 };
 
-const uploadedThroughApiFile = {
-  ...uploadedFile,
-  id: 'api-file-id',
-};
-
 type CapturedRequest = {
   url: string;
   requestInit: RequestInit | undefined;
@@ -48,35 +43,18 @@ const parseGraphqlBody = (requestInit: RequestInit | undefined) =>
     variables: Record<string, unknown>;
   };
 
-const readMultipartBody = async (requestInit: RequestInit | undefined) => {
-  const form = requestInit?.body as FormData;
-
-  return {
-    operations: JSON.parse(String(form.get('operations'))) as {
-      query: string;
-      variables: Record<string, unknown>;
-    },
-    map: JSON.parse(String(form.get('map'))) as Record<string, string[]>,
-    sentFile: form.get('0') as File,
-  };
-};
-
 const createFetchMock = ({
   putResponse = () => new Response(null, { status: 200 }),
   createFileUploadResponse = () =>
     createJsonResponse({ body: { data: { createFileUpload: uploadTarget } } }),
-  multipartResponse = () =>
+  completeFileUploadResponse = () =>
     createJsonResponse({
-      body: {
-        data: {
-          uploadFilesFieldFileByUniversalIdentifier: uploadedThroughApiFile,
-        },
-      },
+      body: { data: { completeFileUpload: uploadedFile } },
     }),
 }: {
   putResponse?: () => Response;
   createFileUploadResponse?: () => Response;
-  multipartResponse?: () => Response;
+  completeFileUploadResponse?: () => Response;
 } = {}) => {
   const capturedRequests: CapturedRequest[] = [];
 
@@ -89,7 +67,7 @@ const createFetchMock = ({
       }
 
       if (requestInit?.body instanceof FormData) {
-        return multipartResponse();
+        throw new Error('Unexpected multipart request');
       }
 
       const { query } = parseGraphqlBody(requestInit);
@@ -99,9 +77,7 @@ const createFetchMock = ({
       }
 
       if (query.includes('completeFileUpload')) {
-        return createJsonResponse({
-          body: { data: { completeFileUpload: uploadedFile } },
-        });
+        return completeFileUploadResponse();
       }
 
       throw new Error(`Unexpected GraphQL operation: ${query}`);
@@ -111,12 +87,10 @@ const createFetchMock = ({
   return { fetchMock, capturedRequests };
 };
 
-const refusedUploadTargetResponse = () =>
+const refusedMutationResponse = (message: string) => () =>
   createJsonResponse({
     body: {
-      errors: [
-        { message: 'The file is empty or exceeds the maximum allowed size.' },
-      ],
+      errors: [{ message }],
       data: null,
     },
   });
@@ -199,43 +173,21 @@ describe('Generated client wrapper uploadFile', () => {
     });
   });
 
-  it('falls back to the upload through the API when the upload target is refused', async () => {
+  it('sends nothing to storage when the upload target is refused', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
-      createFileUploadResponse: refusedUploadTargetResponse,
+      createFileUploadResponse: refusedMutationResponse(
+        'The file is empty or exceeds the maximum allowed size.',
+      ),
     });
-    const fileBuffer = Buffer.from('content');
 
-    const result = await uploadInvoice(createClient(fetchMock), fileBuffer);
-
-    expect(result).toEqual(uploadedThroughApiFile);
-    expect(capturedRequests).toHaveLength(2);
-
-    const [, multipartRequest] = capturedRequests;
-
-    expect(multipartRequest.url).toBe(CLIENT_URL);
-    expect(multipartRequest.requestInit?.method).toBe('POST');
-    expect(getAuthorizationHeaderValue(multipartRequest.requestInit)).toBe(
-      'Bearer application-token',
+    await expect(uploadInvoice(createClient(fetchMock))).rejects.toThrow(
+      'GenqlError',
     );
 
-    const { operations, map, sentFile } = await readMultipartBody(
-      multipartRequest.requestInit,
-    );
-
-    expect(operations.query).toContain(
-      'uploadFilesFieldFileByUniversalIdentifier',
-    );
-    expect(operations.variables).toEqual({
-      file: null,
-      fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
-    });
-    expect(map).toEqual({ '0': ['variables.file'] });
-    expect(sentFile.name).toBe('invoice.pdf');
-    expect(sentFile.type).toBe('application/pdf');
-    expect(Buffer.from(await sentFile.arrayBuffer())).toEqual(fileBuffer);
+    expect(capturedRequests).toHaveLength(1);
   });
 
-  it('falls back to the upload through the API when storage refuses the bytes', async () => {
+  it('does not complete the upload when storage refuses the bytes', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
       putResponse: () =>
         new Response('<Error>SignatureDoesNotMatch</Error>', {
@@ -244,54 +196,28 @@ describe('Generated client wrapper uploadFile', () => {
         }),
     });
 
-    const result = await uploadInvoice(createClient(fetchMock));
+    await expect(uploadInvoice(createClient(fetchMock))).rejects.toThrow(
+      'File upload failed (403 Forbidden): <Error>SignatureDoesNotMatch</Error>',
+    );
 
-    expect(result).toEqual(uploadedThroughApiFile);
     expect(
       capturedRequests.map(({ requestInit }) => requestInit?.method),
-    ).toEqual(['POST', 'PUT', 'POST']);
-    expect(capturedRequests[2].requestInit?.body).toBeInstanceOf(FormData);
+    ).toEqual(['POST', 'PUT']);
   });
 
-  it('surfaces the API upload error when both uploads fail', async () => {
+  it('surfaces the completion error', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
-      createFileUploadResponse: refusedUploadTargetResponse,
-      multipartResponse: () =>
-        createJsonResponse({
-          body: {
-            errors: [{ message: 'Upload through the API refused' }],
-            data: null,
-          },
-        }),
+      completeFileUploadResponse: refusedMutationResponse(
+        'MIME type text/plain is not allowed in file folder FilesField',
+      ),
     });
 
     await expect(uploadInvoice(createClient(fetchMock))).rejects.toThrow(
       'GenqlError',
     );
 
-    expect(capturedRequests).toHaveLength(2);
-  });
-
-  it('uploads through the API only when deprecatedUploadFile is called', async () => {
-    const { fetchMock, capturedRequests } = createFetchMock();
-    const fileBuffer = Buffer.from('content');
-
-    const result = await createClient(fetchMock).deprecatedUploadFile(
-      fileBuffer,
-      'invoice.pdf',
-      'application/pdf',
-      FIELD_METADATA_UNIVERSAL_IDENTIFIER,
-    );
-
-    expect(result).toEqual(uploadedThroughApiFile);
-    expect(capturedRequests).toHaveLength(1);
-
-    const { sentFile } = await readMultipartBody(
-      capturedRequests[0].requestInit,
-    );
-
-    expect(sentFile.name).toBe('invoice.pdf');
-    expect(sentFile.type).toBe('application/pdf');
-    expect(Buffer.from(await sentFile.arrayBuffer())).toEqual(fileBuffer);
+    expect(
+      capturedRequests.map(({ requestInit }) => requestInit?.method),
+    ).toEqual(['POST', 'PUT', 'POST']);
   });
 });
