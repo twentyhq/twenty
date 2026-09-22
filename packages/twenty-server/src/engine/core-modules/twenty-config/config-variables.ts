@@ -1454,6 +1454,17 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'Key prefix for BullMQ queue keys. Wrap it in curly braces (e.g. "{twenty}") so all keys of a queue share one hash slot when Redis is clustered (Redis Cluster, Redis Enterprise / Azure Managed Redis), otherwise multi-key Lua scripts fail with CROSSSLOT. Changing it orphans jobs stored under the previous prefix.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsString()
+  REDIS_QUEUE_PREFIX: string = 'bull';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       'Comma-separated list of queues this worker processes (e.g. workspace-queue). Empty means all queues. Used to dedicate worker pods to specific queues.',
     isEnvOnly: true,
     type: ConfigVariableType.ARRAY,
