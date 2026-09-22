@@ -24,8 +24,6 @@
         "src/database/clickhouse/seeds/run-seeds.ts",
         "scripts/**/*.ts",
         "test/integration/**/*.integration-spec.ts",
-        "test/integration/utils/setup-test.ts",
-        "test/integration/utils/teardown-test.ts",
         "test/integration/graphql/codegen/index.ts",
         "src/database/typeorm/core/legacy-typeorm-migrations-do-not-add/**/*.ts"
       ],

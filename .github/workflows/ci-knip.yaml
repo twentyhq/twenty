@@ -1,0 +1,27 @@
+name: CI Knip
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  knip:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Run knip
+        run: npx nx knip twenty -- --no-exit-code
