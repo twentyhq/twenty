@@ -226,11 +226,11 @@ export const Dropdown = ({
       return;
     }
 
-    if (isDropdownOpen) {
-      if (event.key === ' ') {
-        event.preventDefault();
-      }
+    if (isDropdownOpen && event.key === ' ') {
+      event.preventDefault();
+    }
 
+    if (isDropdownOpen) {
       return;
     }
 
