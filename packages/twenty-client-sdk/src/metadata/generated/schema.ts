@@ -7113,7 +7113,7 @@ export interface QueryGenqlSelection{
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    chatThreadsForRecord?: (AgentChatThreadGenqlSelection & { __args: {objectNameSingular: Scalars['String'], recordId: Scalars['UUID']} })
+    chatThreadsForRecord?: (AgentChatThreadGenqlSelection & { __args: {objectNameSingular: Scalars['String'], recordId: Scalars['UUID'], limit: Scalars['Int'], offset: Scalars['Int']} })
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })

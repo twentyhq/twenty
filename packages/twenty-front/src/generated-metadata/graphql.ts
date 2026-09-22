@@ -5276,7 +5276,9 @@ export type QueryChatThreadArgs = {
 
 
 export type QueryChatThreadsForRecordArgs = {
+  limit?: Scalars['Int']['input'];
   objectNameSingular: Scalars['String']['input'];
+  offset?: Scalars['Int']['input'];
   recordId: Scalars['UUID']['input'];
 };
 

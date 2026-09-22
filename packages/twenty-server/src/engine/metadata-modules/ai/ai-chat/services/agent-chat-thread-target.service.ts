@@ -20,6 +20,18 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME = 'agentChatThreadTarget';
 
+// The ranked thread query pages the result, but the target scan feeding it is
+// unbounded in the schema, so one record with a pathological number of links
+// cannot be allowed to load them all.
+const MAX_TARGETS_READ_PER_RECORD = 1000;
+
+const throwHistoryNotMigrated = (): never => {
+  throw new AiException(
+    'AI history has not been migrated to this workspace yet',
+    AiExceptionCode.INVALID_AGENT_INPUT,
+  );
+};
+
 type RecordReference = {
   objectNameSingular: string;
   recordId: string;
@@ -45,6 +57,7 @@ export class AgentChatThreadTargetService {
     const objectMetadataId = await this.resolveObjectMetadataIdOrThrow(args);
 
     await this.assertThreadIsReadableOrThrow(args);
+    await this.assertRecordIsReadableOrThrow(args);
 
     await this.withTargetRepository(args.workspaceId, (repository) =>
       repository.insert(
@@ -62,6 +75,7 @@ export class AgentChatThreadTargetService {
     const objectMetadataId = await this.resolveObjectMetadataIdOrThrow(args);
 
     await this.assertThreadIsReadableOrThrow(args);
+    await this.assertRecordIsReadableOrThrow(args);
 
     await this.withTargetRepository(args.workspaceId, (repository) =>
       repository.delete({
@@ -69,6 +83,55 @@ export class AgentChatThreadTargetService {
         objectMetadataId,
         recordId: args.recordId,
       }),
+    );
+  }
+
+  // A destroyed record leaves its links behind: the (objectMetadataId, recordId)
+  // pair carries no foreign key, so nothing cascades. Without this a record
+  // recreated with the same id would inherit the old record's conversations.
+  async deleteTargetsForDestroyedRecords({
+    workspaceId,
+    objectNameSingular,
+    recordIds,
+  }: {
+    workspaceId: string;
+    objectNameSingular: string;
+    recordIds: string[];
+  }): Promise<void> {
+    if (!isNonEmptyArray(recordIds)) {
+      return;
+    }
+
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    const objectMetadataId = getObjectMetadataIdByName({
+      flatObjectMetadataMaps,
+      objectName: objectNameSingular,
+    });
+
+    // The target object is provisioned per workspace by an upgrade command, so
+    // a workspace can destroy records before it has the table at all.
+    const isTargetObjectProvisioned = isDefined(
+      getObjectMetadataIdByName({
+        flatObjectMetadataMaps,
+        objectName: AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
+      }),
+    );
+
+    if (!isDefined(objectMetadataId) || !isTargetObjectProvisioned) {
+      return;
+    }
+
+    await this.withTargetRepository<void>(
+      workspaceId,
+      async (repository) => {
+        await repository.delete({ objectMetadataId, recordId: In(recordIds) });
+      },
+      // Nothing to clean up in a workspace whose history never left core.
+      () => undefined,
     );
   }
 
@@ -86,8 +149,13 @@ export class AgentChatThreadTargetService {
       objectNameSingular,
     });
 
+    await this.assertRecordIsReadableOrThrow({ objectNameSingular, recordId });
+
     const targets = await this.withTargetRepository(workspaceId, (repository) =>
-      repository.find({ where: { objectMetadataId, recordId } }),
+      repository.find({
+        where: { objectMetadataId, recordId },
+        take: MAX_TARGETS_READ_PER_RECORD,
+      }),
     );
 
     const attachedThreadIds = targets.map(({ threadId }) => threadId);
@@ -148,6 +216,31 @@ export class AgentChatThreadTargetService {
     }
   }
 
+  // Targets are written in system context because the object is SYSTEM-writable,
+  // so this lookup is the only point where the caller's own record grants are
+  // consulted. It runs before the storage fence, which reserves a core pool
+  // connection for the duration of the write.
+  private async assertRecordIsReadableOrThrow({
+    objectNameSingular,
+    recordId,
+  }: RecordReference): Promise<void> {
+    const record = await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepository(objectNameSingular)
+          .findOne({ where: { id: recordId }, select: { id: true } }),
+    );
+
+    // Not-found rather than forbidden, so a member cannot probe for records
+    // outside their grants.
+    if (!isDefined(record)) {
+      throw new AiException(
+        'Record not found',
+        AiExceptionCode.RECORD_NOT_FOUND,
+      );
+    }
+  }
+
   private async resolveObjectMetadataIdOrThrow({
     workspaceId,
     objectNameSingular,
@@ -187,6 +280,7 @@ export class AgentChatThreadTargetService {
     work: (
       repository: WorkspaceRepository<AgentChatThreadTarget>,
     ) => Promise<TResult>,
+    onStorageIsCore: () => TResult = throwHistoryNotMigrated,
   ): Promise<TResult> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -195,10 +289,7 @@ export class AgentChatThreadTargetService {
         // to. Holding the storage fence keeps the route from flipping mid-write.
         this.agentHistoryStorageService.run(workspaceId, (context) => {
           if (context.storage !== 'workspace') {
-            throw new AiException(
-              'AI history has not been migrated to this workspace yet',
-              AiExceptionCode.INVALID_AGENT_INPUT,
-            );
+            return Promise.resolve(onStorageIsCore());
           }
 
           return work(

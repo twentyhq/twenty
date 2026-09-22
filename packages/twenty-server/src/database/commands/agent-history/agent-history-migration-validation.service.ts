@@ -13,6 +13,38 @@ type Storage = AgentHistoryStorageState['storage'];
 
 @Injectable()
 export class AgentHistoryMigrationValidationService {
+  // agentChatThreadTarget rows point at the workspace-schema thread table. A
+  // rollback clears that store, so the links would be cascaded away with no way
+  // to rebuild them from core. Refuse instead of losing them silently.
+  async assertNoThreadTargets({
+    runner,
+    workspaceId,
+  }: {
+    runner: QueryRunner;
+    workspaceId: string;
+  }): Promise<void> {
+    const table = `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThreadTarget"`;
+
+    const [{ exists }]: { exists: boolean }[] = await runner.query(
+      'SELECT to_regclass($1) IS NOT NULL AS exists',
+      [table],
+    );
+
+    if (!exists) {
+      return;
+    }
+
+    const rows: { id: string }[] = await runner.query(
+      `SELECT id FROM ${table} WHERE "deletedAt" IS NULL LIMIT 1`,
+    );
+
+    if (rows.length > 0) {
+      throw new Error(
+        'Records are still linked to chat threads in this workspace. Detach them before rolling agent history back to core.',
+      );
+    }
+  }
+
   async assertNoCoreIdCollisions({
     runner,
     workspaceId,

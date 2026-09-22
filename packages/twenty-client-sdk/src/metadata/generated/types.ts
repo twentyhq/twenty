@@ -7965,6 +7965,14 @@ export default {
                     "recordId": [
                         3,
                         "UUID!"
+                    ],
+                    "limit": [
+                        28,
+                        "Int!"
+                    ],
+                    "offset": [
+                        28,
+                        "Int!"
                     ]
                 }
             ],
