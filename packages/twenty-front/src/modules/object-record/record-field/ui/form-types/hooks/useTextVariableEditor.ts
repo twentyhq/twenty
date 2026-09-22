@@ -145,13 +145,14 @@ export const useTextVariableEditor = ({
     // document comparison to preserve selection when their content is equal.
     if (
       parseEditorContent(editor.getJSON()) === (defaultValue ?? '') ||
-      editor.state.doc.eq(editor.schema.nodeFromJSON(incomingContent))
+      (multiline === true &&
+        editor.state.doc.eq(editor.schema.nodeFromJSON(incomingContent)))
     ) {
       return;
     }
 
     editor.commands.setContent(incomingContent, { emitUpdate: false });
-  }, [editor, defaultValue]);
+  }, [editor, defaultValue, multiline]);
 
   useEffect(() => {
     editor?.setEditable(!readonly, false);
