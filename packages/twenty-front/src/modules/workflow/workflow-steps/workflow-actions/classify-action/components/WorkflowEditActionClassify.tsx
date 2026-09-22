@@ -8,17 +8,16 @@ import { type WorkflowClassifyAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowClassifyQuestionCriteria } from '@/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria';
+import { useClassifyForm } from '@/workflow/workflow-steps/workflow-actions/classify-action/hooks/useClassifyForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
 import {
   type AiEvaluationQuestionType,
   AI_EVALUATION_QUESTION_TYPES,
   JEV_MODEL_ID,
 } from 'twenty-shared/ai';
 import { type WorkflowClassifyQuestion } from 'twenty-shared/workflow';
-import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 import {
   IconListCheck,
@@ -48,8 +47,6 @@ const StyledNameRow = styled.div`
   }
 `;
 
-type WorkflowClassifyInput = WorkflowClassifyAction['settings']['input'];
-
 type WorkflowEditActionClassifyProps = {
   action: WorkflowClassifyAction;
   actionOptions:
@@ -75,30 +72,15 @@ export const WorkflowEditActionClassify = ({
   const { t } = useLingui();
 
   const readonly = actionOptions.readonly === true;
-  const [input, setInput] = useState<WorkflowClassifyInput>(
-    action.settings.input,
-  );
+  const { input, updateInput } = useClassifyForm({
+    action,
+    onActionUpdate:
+      actionOptions.readonly === true
+        ? undefined
+        : actionOptions.onActionUpdate,
+    readonly,
+  });
   const questions = input.questions;
-
-  const saveAction = useDebouncedCallback(
-    (updatedInput: WorkflowClassifyInput) => {
-      if (actionOptions.readonly === true) {
-        return;
-      }
-
-      actionOptions.onActionUpdate({
-        ...action,
-        settings: { ...action.settings, input: updatedInput },
-      });
-    },
-    500,
-  );
-
-  useEffect(() => {
-    return () => {
-      saveAction.flush();
-    };
-  }, [saveAction]);
 
   const questionTypeLabels: Record<AiEvaluationQuestionType, string> = {
     choice: t`Pick one option`,
@@ -135,17 +117,6 @@ export const WorkflowEditActionClassify = ({
       Icon: questionTypeIcons[questionType],
     }),
   );
-
-  const updateInput = (update: Partial<WorkflowClassifyInput>) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-
-    const updatedInput = { ...input, ...update };
-
-    setInput(updatedInput);
-    saveAction(updatedInput);
-  };
 
   const updateQuestion = (
     questionId: string,
