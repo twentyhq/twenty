@@ -1,3 +1,4 @@
+import { useFocusFirstRecordFormInput } from '@/object-record/record-form/hooks/useFocusFirstRecordFormInput';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -76,6 +77,7 @@ const SidePanelRecordCreationForm = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { formFieldsRef } = useFocusFirstRecordFormInput(requestId);
   const { theme } = useContext(ThemeContext);
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
@@ -147,7 +149,7 @@ const SidePanelRecordCreationForm = ({
           />
         }
       />
-      <StyledContent>
+      <StyledContent ref={formFieldsRef}>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={recordFormFieldMetadataItems}
