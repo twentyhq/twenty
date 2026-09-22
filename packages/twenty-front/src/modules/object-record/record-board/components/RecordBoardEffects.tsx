@@ -1,11 +1,13 @@
 import { RecordBoardClickOutsideEffect } from '@/object-record/record-board/components/RecordBoardClickOutsideEffect';
 import { RecordBoardDataChangedEffect } from '@/object-record/record-board/components/RecordBoardDataChangedEffect';
 import { RecordBoardQueryEffect } from '@/object-record/record-board/components/RecordBoardQueryEffect';
+import { RecordBoardRevealRecordEffect } from '@/object-record/record-board/components/RecordBoardRevealRecordEffect';
 import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-board/components/RecordBoardScrollToFocusedCardEffect';
 import { RecordBoardSelectRecordsEffect } from '@/object-record/record-board/components/RecordBoardSelectRecordsEffect';
 import { RecordBoardSSESubscribeEffect } from '@/object-record/record-board/components/RecordBoardSSESubscribeEffect';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
+import { RecordIndexRecordToRevealEffect } from '@/object-record/record-index/components/RecordIndexRecordToRevealEffect';
 
 export const RecordBoardEffects = () => {
   return (
@@ -16,6 +18,8 @@ export const RecordBoardEffects = () => {
       <RecordBoardSSESubscribeEffect />
       <RecordBoardDataChangedEffect />
       <RecordBoardQueryEffect />
+      <RecordIndexRecordToRevealEffect />
+      <RecordBoardRevealRecordEffect />
       <RecordBoardSelectRecordsEffect />
       <RecordBoardClickOutsideEffect />
     </>
