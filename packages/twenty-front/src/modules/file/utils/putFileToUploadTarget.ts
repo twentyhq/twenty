@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { type FileUploadTarget } from '~/generated-metadata/graphql';
 
 type PutFileToUploadTargetArgs = {
@@ -20,6 +21,6 @@ export const putFileToUploadTarget = async ({
   });
 
   if (!putResponse.ok) {
-    throw new Error(`File upload failed with status ${putResponse.status}`);
+    throw new Error(t`File upload failed (${putResponse.status}).`);
   }
 };
