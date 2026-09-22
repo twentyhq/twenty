@@ -77,3 +77,53 @@ describe('allowUnreleasedFieldRemovals', () => {
     );
   });
 });
+
+describe('interface fields', () => {
+  const introspectInterface = (fields: string) =>
+    introspectionFromSchema(
+      buildSchema(`
+      interface Item { ${fields} }
+      type Product implements Item { ${fields} }
+      type Query { item: Item }
+    `),
+    );
+
+  it('allows removing unreleased fields from an interface and its implementation', () => {
+    const released = introspectInterface('name: String');
+    const main = introspectInterface('name: String, model: String');
+    const baseline = allowUnreleasedFieldRemovals({
+      main,
+      current: released,
+      released,
+    });
+    expect(
+      findBreakingChanges(
+        buildClientSchema(baseline),
+        buildClientSchema(released),
+      ),
+    ).toEqual([]);
+  });
+
+  it('still rejects removing released interface fields', () => {
+    const released = introspectInterface('name: String, model: String');
+    const current = introspectInterface('name: String');
+    const baseline = allowUnreleasedFieldRemovals({
+      main: released,
+      current,
+      released,
+    });
+    expect(
+      findBreakingChanges(
+        buildClientSchema(baseline),
+        buildClientSchema(current),
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: 'FIELD_REMOVED',
+          description: expect.stringContaining('Item.model'),
+        }),
+      ]),
+    );
+  });
+});
