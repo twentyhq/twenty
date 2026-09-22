@@ -100,6 +100,8 @@ type FrontComponent {
   applicationTokenPair: ApplicationTokenPair
   applicationVariables: JSON
   frontComponentSharedDependenciesChecksum: String
+  applicationName: String
+  applicationGrantedCapabilities: [String!]
 }
 
 type CommandMenuItem {
@@ -2448,6 +2450,7 @@ type MarketplaceAppDetail {
   installCount: Int!
   defaultRoleUniversalIdentifier: String
   roles: [MarketplaceAppRole!]
+  requestedCapabilities: [String!]!
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
 }
 
@@ -2457,6 +2460,11 @@ type TriggerInstallApplicationJobResult {
 
 type TriggerUninstallApplicationJobResult {
   jobId: String!
+}
+
+type ApplicationCapabilityGrant {
+  id: UUID!
+  grantedCapabilities: [String!]!
 }
 
 type WorkspaceCompanyEnrichmentResult {
@@ -4080,6 +4088,7 @@ type Mutation {
   uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
+  grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
   triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
@@ -4990,6 +4999,11 @@ input UpdateApplicationRegistrationVariablePayload {
   value: String
   resetValue: Boolean
   description: String
+}
+
+input GrantApplicationCapabilitiesInput {
+  applicationId: UUID!
+  capabilities: [String!]!
 }
 
 input TriggerInstallApplicationJobInput {

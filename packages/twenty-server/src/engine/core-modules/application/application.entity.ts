@@ -1,6 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { type ApplicationBilling } from 'twenty-shared/application';
+import {
+  type ApplicationBilling,
+  type ApplicationCapability,
+} from 'twenty-shared/application';
 import {
   Column,
   CreateDateColumn,
@@ -127,6 +130,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
       '2.38.0_AddBillingToApplicationFastInstanceCommand_1788340843000',
   })
   billing: ApplicationBilling;
+
+  @Column({ type: 'varchar', array: true, nullable: false, default: '{}' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.42.0_AddApplicationGrantedCapabilitiesFastInstanceCommand_1790088525621',
+  })
+  grantedCapabilities: ApplicationCapability[];
 
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;
