@@ -28,14 +28,15 @@ default application role has no CRM data access.
 `false`. A disabled feature is shown as unavailable in settings, retaining any
 saved workspace preference.
 
-The frontend and future handlers share `isChatEnabled(settingValue)` and
-`isTranscriptsEnabled(settingValue)`. These require both the development flag
-and the serialized workspace setting to be enabled. In a logic function, pass
-`process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` or
-`process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY]`; the settings page
-initializes from `getApplicationVariable` and updates its local value after a
-successful save. Changes made by another client require a page refresh. Live
-updates need shared host/SDK support for application-variable change events.
+The frontend and future handlers share
+`isFeatureEnabled({ isAvailable, settingValue })`. Pass the feature's development
+flag as `isAvailable`; the serialized workspace setting must also be `'true'`.
+In a logic function, use `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` or
+`process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY]` as `settingValue`.
+The settings page initializes from `getApplicationVariable` and updates its
+local value after a successful save. Changes made by another client require a
+page refresh. Live updates need shared host/SDK support for application-variable
+change events.
 
 New routes, connection hooks that start work, workflow actions, schedulers, and
 queued workers must check feature availability before starting work and then
