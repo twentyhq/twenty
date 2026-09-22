@@ -5,11 +5,11 @@ import { type MouseEvent } from 'react';
 
 import { IconCheck, IconChevronRight } from '@ui/icon';
 import { MenuItemHotKeys } from '@ui/primitives/navigation/MenuItemHotKeys/MenuItemHotKeys';
+import { OverflowingTextWithTooltip } from '@ui/primitives/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { isRenderableSlot } from './internal/isRenderableSlot';
 import { ListItemCheckboxIndicator } from './internal/ListItemCheckboxIndicator';
-import { ListItemText } from './internal/ListItemText';
 import styles from './ListItem.module.scss';
 import { type ListItemProps } from './types/ListItemProps';
 
@@ -68,7 +68,11 @@ export const ListItem = ({
           )}
           <span className={styles.label}>
             <span className={styles.text}>
-              {isString(children) ? <ListItemText text={children} /> : children}
+              {isString(children) ? (
+                <OverflowingTextWithTooltip text={children} />
+              ) : (
+                children
+              )}
             </span>
             {hasDescription && descriptionPlacement === 'inline' && (
               <span
