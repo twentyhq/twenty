@@ -1,4 +1,3 @@
-import { UpdateRecordCreationCommandLabelsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790115314731-update-record-creation-command-labels.command';
 import { Module } from '@nestjs/common';
 
 import { MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
@@ -23,6 +22,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { GateWorkflowFavoritesByCoreIndexFlagCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789981200000-gate-workflow-favorites-by-core-index-flag.command';
+import { UpdateRecordCreationCommandLabelsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790115314731-update-record-creation-command-labels.command';
 
 @Module({
   imports: [
