@@ -122,6 +122,7 @@ describe('workflow navigation menu items resolve and clean up on core ids', () =
 
   afterAll(async () => {
     const { data } = await findNavigationMenuItems({
+      input: undefined,
       expectToFail: false,
       gqlFields: NAVIGATION_MENU_ITEM_GQL_FIELDS,
     });
@@ -169,6 +170,7 @@ describe('workflow navigation menu items resolve and clean up on core ids', () =
 
   const findFavoriteById = async (navigationMenuItemId: string) => {
     const { data } = await findNavigationMenuItems({
+      input: undefined,
       expectToFail: false,
       gqlFields: NAVIGATION_MENU_ITEM_GQL_FIELDS,
     });
