@@ -1,3 +1,6 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -15,7 +18,7 @@ import { recordCreationFormRequestComponentState } from '@/side-panel/pages/reco
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -23,7 +26,7 @@ import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
@@ -73,6 +76,7 @@ const SidePanelRecordCreationForm = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { theme } = useContext(ThemeContext);
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
   const { goBackFromSidePanel } = useSidePanelHistory();
@@ -129,6 +133,20 @@ const SidePanelRecordCreationForm = ({
 
   return (
     <StyledContainer ref={containerRef}>
+      <PageCardHeader
+        title={
+          <HeaderIdentifier
+            icon={
+              <ObjectMetadataIcon
+                objectMetadataItem={objectMetadataItem}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
+            title={t`Create ${objectMetadataItem.labelSingular}`}
+          />
+        }
+      />
       <StyledContent>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
