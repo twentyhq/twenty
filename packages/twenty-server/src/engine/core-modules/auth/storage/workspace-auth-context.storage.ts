@@ -5,8 +5,12 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 export const workspaceAuthContextStorage =
   new AsyncLocalStorage<WorkspaceAuthContext>();
 
+export const getWorkspaceAuthContextOrUndefined = ():
+  | WorkspaceAuthContext
+  | undefined => workspaceAuthContextStorage.getStore();
+
 export const getWorkspaceAuthContext = (): WorkspaceAuthContext => {
-  const context = workspaceAuthContextStorage.getStore();
+  const context = getWorkspaceAuthContextOrUndefined();
 
   if (!context) {
     throw new Error(
