@@ -478,6 +478,7 @@ export class ApplicationService {
         universalIdentifier: applicationId,
         workspaceId,
         id: applicationId,
+        sourceType: applicationRegistration.sourceType,
         applicationRegistrationId: applicationRegistration.id,
         logicFunctionLayerId: null,
         canBeUninstalled: false,

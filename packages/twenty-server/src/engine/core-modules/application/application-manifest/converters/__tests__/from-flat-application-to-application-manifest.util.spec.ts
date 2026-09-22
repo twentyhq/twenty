@@ -13,6 +13,7 @@ const buildFlatApplication = (
   description: 'Tickets for support',
   logo: null,
   billing: {},
+  grantedCapabilities: [],
   packageJsonChecksum: 'package-json-checksum',
   yarnLockChecksum: 'yarn-lock-checksum',
   ...overrides,
@@ -47,6 +48,17 @@ describe('fromFlatApplicationToApplicationManifest', () => {
         defaultRoleUniversalIdentifier: ROLE_UID,
       }),
     ).toMatchObject({ logo: 'https://example.com/logo.png', billing });
+  });
+
+  it('should emit declared application capabilities', () => {
+    expect(
+      fromFlatApplicationToApplicationManifest({
+        flatApplication: buildFlatApplication({
+          grantedCapabilities: ['microphone', 'camera'],
+        }),
+        defaultRoleUniversalIdentifier: ROLE_UID,
+      }),
+    ).toMatchObject({ requestedCapabilities: ['microphone', 'camera'] });
   });
 
   it('should default a missing description to an empty string', () => {
