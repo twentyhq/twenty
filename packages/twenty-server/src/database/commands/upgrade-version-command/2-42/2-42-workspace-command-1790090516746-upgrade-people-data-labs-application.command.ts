@@ -97,12 +97,11 @@ export class UpgradePeopleDataLabsApplicationToCoreWorkflowsCommand extends Prov
         `Upgraded people-data-labs from ${application.version} to ${PEOPLE_DATA_LABS_TARGET_VERSION} for workspace ${workspaceId}`,
       );
     } catch (error) {
-      // Non-fatal: the previously seeded workflow keeps running; only a
-      // re-seed on the stale version would fail, and the upgrade can be
-      // retried from the UI.
       this.logger.error(
         `Failed to upgrade people-data-labs for workspace ${workspaceId}: ${error}`,
       );
+
+      throw error;
     }
   }
 }

@@ -3,8 +3,15 @@ import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 import { PDL_LOGIC_FUNCTION_CONSTANTS } from 'src/constants/universal-identifiers';
 
 import { postInstallCore } from 'src/logic-functions/handlers/post-install';
+import { assertAllWorkflowsSeeded } from 'src/logic-functions/utils/assert-all-workflows-seeded';
 
-const handler = () => postInstallCore();
+const handler = async () => {
+  const result = await postInstallCore();
+
+  assertAllWorkflowsSeeded(result);
+
+  return result;
+};
 
 export default definePostInstallLogicFunction({
   universalIdentifier:
