@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconDotsVertical,
@@ -6,7 +7,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -42,30 +42,25 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
       renderMenu={({ onClose, onAdd }) => (
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconEdit}
+            <ListItem
+              startIcon={<IconEdit />}
               onClick={() => {
                 onClose();
                 onEdit();
               }}
-              accent="default"
-              text={t`Edit`}
-            />
-            <MenuItem
-              LeftIcon={IconPlus}
+            >{t`Edit`}</ListItem>
+            <ListItem
+              startIcon={<IconPlus />}
               onClick={() => onAdd({ folderId, position: itemCount })}
-              accent="default"
-              text={t`Add menu item`}
-            />
-            <MenuItem
-              LeftIcon={IconTrash}
+            >{t`Add menu item`}</ListItem>
+            <ListItem
+              startIcon={<IconTrash />}
               onClick={() => {
                 onClose();
                 onDelete();
               }}
-              accent="danger"
-              text={t`Remove from sidebar`}
-            />
+              color="danger"
+            >{t`Remove from sidebar`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       )}

@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useEffect } from 'react';
 
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
@@ -108,7 +107,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconHandMove} />}
             >
-              <OverflowingTextWithTooltip text={RecordGroupSort.Manual} />
+              {RecordGroupSort.Manual}
             </ListItem>
           </SelectableListItem>
           {!isRelationGroupBy && (
@@ -134,9 +133,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                   indicator="check"
                   startIcon={<SelectOptionIcon Icon={IconSortAZ} />}
                 >
-                  <OverflowingTextWithTooltip
-                    text={RecordGroupSort.Alphabetical}
-                  />
+                  {RecordGroupSort.Alphabetical}
                 </ListItem>
               </SelectableListItem>
               <SelectableListItem
@@ -168,9 +165,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                   indicator="check"
                   startIcon={<SelectOptionIcon Icon={IconSortZA} />}
                 >
-                  <OverflowingTextWithTooltip
-                    text={RecordGroupSort.ReverseAlphabetical}
-                  />
+                  {RecordGroupSort.ReverseAlphabetical}
                 </ListItem>
               </SelectableListItem>
             </>

@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constants/EditableProfileFields.constants';
@@ -142,7 +141,7 @@ export const SettingsSecurityEditableProfileFields = () => {
                   onClick={() => toggleField(option.value)}
                   startIcon={<SelectOptionIcon Icon={option.Icon} />}
                 >
-                  <OverflowingTextWithTooltip text={option.label} />
+                  {option.label}
                 </ListItem>
               ))}
             </DropdownMenuItemsContainer>

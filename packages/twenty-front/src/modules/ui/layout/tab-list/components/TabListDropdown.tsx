@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -65,7 +64,7 @@ export const TabListDropdown = ({
                   indicator="check"
                   startIcon={<TabAvatar tab={tab} />}
                 >
-                  <OverflowingTextWithTooltip text={tab.title} />
+                  {tab.title}
                 </ListItem>
               );
             })}

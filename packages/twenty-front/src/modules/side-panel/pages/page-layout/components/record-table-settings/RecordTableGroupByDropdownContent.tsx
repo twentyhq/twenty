@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
@@ -109,9 +108,7 @@ export const RecordTableGroupByDropdownContent = ({
                 aria-selected={!isDefined(currentMainGroupByFieldMetadataId)}
                 selected={!isDefined(currentMainGroupByFieldMetadataId)}
                 indicator="check"
-              >
-                <OverflowingTextWithTooltip text={t`None`} />
-              </ListItem>
+              >{t`None`}</ListItem>
             </SelectableListItem>
           )}
           {filteredFields.map((fieldMetadataItem) => (
@@ -141,7 +138,7 @@ export const RecordTableGroupByDropdownContent = ({
                   <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
                 }
               >
-                <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+                {fieldMetadataItem.label}
               </ListItem>
             </SelectableListItem>
           ))}

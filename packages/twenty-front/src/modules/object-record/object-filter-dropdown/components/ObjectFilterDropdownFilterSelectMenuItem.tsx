@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
@@ -5,7 +7,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   fieldMetadataItemToSelect: FieldMetadataItem;
@@ -38,12 +39,13 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   };
 
   return (
-    <MenuItem
+    <ListItem
       focused={isSelectedItemId}
       onClick={handleClick}
-      LeftIcon={Icon}
-      text={fieldMetadataItemToSelect.label}
-      hasSubMenu={shouldShowSubMenu}
-    />
+      startIcon={<SelectOptionIcon Icon={Icon} />}
+      hasSubmenu={shouldShowSubMenu}
+    >
+      {fieldMetadataItemToSelect.label}
+    </ListItem>
   );
 };

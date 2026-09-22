@@ -43,6 +43,14 @@ const getFlatEntities = ({
 const isSoftDeleted = (flatEntity: ApplicationFlatEntity): boolean =>
   'deletedAt' in flatEntity && isDefined(flatEntity.deletedAt);
 
+const isWorkflowTriggerCommandMenuItem = (
+  flatEntity: ApplicationFlatEntity,
+): boolean =>
+  ('workflowVersionId' in flatEntity &&
+    isDefined(flatEntity.workflowVersionId)) ||
+  ('coreWorkflowVersionId' in flatEntity &&
+    isDefined(flatEntity.coreWorkflowVersionId));
+
 const classifyFlatEntity = ({
   metadataName,
   flatEntity,
@@ -79,10 +87,7 @@ const classifyFlatEntity = ({
           }
         : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'commandMenuItem':
-      if (
-        'workflowVersionId' in flatEntity &&
-        isDefined(flatEntity.workflowVersionId)
-      ) {
+      if (isWorkflowTriggerCommandMenuItem(flatEntity)) {
         return {
           status: ApplicationExportCoverageStatus.EXCLUDED,
           reason: 'workflow trigger command',
