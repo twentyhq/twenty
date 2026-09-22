@@ -36,7 +36,10 @@ export const invalidateCoreWorkflowQueries = async (
       GetCoreWorkflowDocument,
       GET_WORKFLOW_VERSION_CONTENT,
       ...(shouldInvalidateWorkflowList
-        ? [GetCoreWorkflowsDocument, GetCoreWorkflowsWithCurrentVersionsDocument]
+        ? [
+            GetCoreWorkflowsDocument,
+            GetCoreWorkflowsWithCurrentVersionsDocument,
+          ]
         : []),
     ],
     onQueryUpdated: (query) => query.options.fetchPolicy !== 'standby',
