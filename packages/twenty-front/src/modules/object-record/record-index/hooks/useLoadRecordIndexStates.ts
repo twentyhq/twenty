@@ -364,7 +364,7 @@ export const useLoadRecordIndexStates = () => {
             ),
           );
 
-          // Mocked and app-manifest views can reach here without the field
+          // Mocks and views cached before this column existed have no groupLoadLimit
           batchSet(
             recordIndexGroupLoadLimitAtom,
             view.groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
