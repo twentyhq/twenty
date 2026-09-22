@@ -26,8 +26,13 @@ export type GeneratedClientClass = new (options?: {
   fetch?: typeof globalThis.fetch;
 }) => {
   query: (request: Record<string, unknown>) => Promise<unknown>;
-  uploadFile: (
-    fileBuffer: Buffer,
+  uploadFile: (input: {
+    file: Blob | ArrayBuffer | ArrayBufferView;
+    filename: string;
+    fieldMetadataUniversalIdentifier: string;
+  }) => Promise<GeneratedUploadedFile>;
+  deprecatedUploadFile: (
+    file: Blob | ArrayBuffer | ArrayBufferView,
     filename: string,
     contentType: string,
     fieldMetadataUniversalIdentifier: string,

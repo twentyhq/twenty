@@ -339,12 +339,11 @@ describe('Generated client wrapper auth behavior', () => {
       fetch: fetchMock as unknown as typeof globalThis.fetch,
     });
 
-    const uploadResult = await twentyClient.uploadFile(
-      Buffer.from('content'),
-      'test.txt',
-      'text/plain',
-      'field-uuid',
-    );
+    const uploadResult = await twentyClient.uploadFile({
+      file: Buffer.from('content'),
+      filename: 'test.txt',
+      fieldMetadataUniversalIdentifier: 'field-uuid',
+    });
 
     expect(uploadResult.id).toBe('uploaded-file-id');
     expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);

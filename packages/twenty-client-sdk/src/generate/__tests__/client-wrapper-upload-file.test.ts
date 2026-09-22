@@ -32,6 +32,11 @@ const uploadedFile = {
   url: 'https://example.com/file/files-field/file-id?token=xyz',
 };
 
+const uploadedThroughApiFile = {
+  ...uploadedFile,
+  id: 'api-file-id',
+};
+
 type CapturedRequest = {
   url: string;
   requestInit: RequestInit | undefined;
@@ -43,26 +48,35 @@ const parseGraphqlBody = (requestInit: RequestInit | undefined) =>
     variables: Record<string, unknown>;
   };
 
-const missingDirectUploadMutationResponse = () =>
-  createJsonResponse({
-    body: {
-      errors: [
-        {
-          message: 'Cannot query field "createFileUpload" on type "Mutation".',
-        },
-      ],
+const readMultipartBody = async (requestInit: RequestInit | undefined) => {
+  const form = requestInit?.body as FormData;
+
+  return {
+    operations: JSON.parse(String(form.get('operations'))) as {
+      query: string;
+      variables: Record<string, unknown>;
     },
-    status: 400,
-    statusText: 'Bad Request',
-  });
+    map: JSON.parse(String(form.get('map'))) as Record<string, string[]>,
+    sentFile: form.get('0') as File,
+  };
+};
 
 const createFetchMock = ({
   putResponse = () => new Response(null, { status: 200 }),
   createFileUploadResponse = () =>
     createJsonResponse({ body: { data: { createFileUpload: uploadTarget } } }),
+  multipartResponse = () =>
+    createJsonResponse({
+      body: {
+        data: {
+          uploadFilesFieldFileByUniversalIdentifier: uploadedThroughApiFile,
+        },
+      },
+    }),
 }: {
   putResponse?: () => Response;
   createFileUploadResponse?: () => Response;
+  multipartResponse?: () => Response;
 } = {}) => {
   const capturedRequests: CapturedRequest[] = [];
 
@@ -75,11 +89,7 @@ const createFetchMock = ({
       }
 
       if (requestInit?.body instanceof FormData) {
-        return createJsonResponse({
-          body: {
-            data: { uploadFilesFieldFileByUniversalIdentifier: uploadedFile },
-          },
-        });
+        return multipartResponse();
       }
 
       const { query } = parseGraphqlBody(requestInit);
@@ -101,20 +111,35 @@ const createFetchMock = ({
   return { fetchMock, capturedRequests };
 };
 
+const refusedUploadTargetResponse = () =>
+  createJsonResponse({
+    body: {
+      errors: [
+        { message: 'The file is empty or exceeds the maximum allowed size.' },
+      ],
+      data: null,
+    },
+  });
+
 describe('Generated client wrapper uploadFile', () => {
   let TwentyClass: GeneratedClientClass;
   let cleanup: () => Promise<void>;
 
+  const createClient = (fetchMock: ReturnType<typeof vi.fn>) =>
+    new TwentyClass({
+      url: CLIENT_URL,
+      fetch: fetchMock as unknown as typeof globalThis.fetch,
+    });
+
   const uploadInvoice = (
     twentyClient: InstanceType<GeneratedClientClass>,
-    fileBuffer = Buffer.from('content'),
+    file: Blob | ArrayBuffer | ArrayBufferView = Buffer.from('content'),
   ) =>
-    twentyClient.uploadFile(
-      fileBuffer,
-      'invoice.pdf',
-      'application/pdf',
-      FIELD_METADATA_UNIVERSAL_IDENTIFIER,
-    );
+    twentyClient.uploadFile({
+      file,
+      filename: 'invoice.pdf',
+      fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
+    });
 
   beforeAll(async () => {
     ({ GeneratedClientClass: TwentyClass, cleanup } =
@@ -137,12 +162,7 @@ describe('Generated client wrapper uploadFile', () => {
     const { fetchMock, capturedRequests } = createFetchMock();
     const fileBuffer = Buffer.from('content');
 
-    const twentyClient = new TwentyClass({
-      url: CLIENT_URL,
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
-    });
-
-    const result = await uploadInvoice(twentyClient, fileBuffer);
+    const result = await uploadInvoice(createClient(fetchMock), fileBuffer);
 
     expect(result).toEqual(uploadedFile);
     expect(capturedRequests).toHaveLength(3);
@@ -178,20 +198,29 @@ describe('Generated client wrapper uploadFile', () => {
     });
   });
 
-  it('falls back to the upload through the API when the server has no direct upload mutation', async () => {
+  it('declares the size of a Blob and sends it as is', async () => {
+    const { fetchMock, capturedRequests } = createFetchMock();
+    const blob = new Blob(['blob content'], { type: 'text/plain' });
+
+    await uploadInvoice(createClient(fetchMock), blob);
+
+    const [createRequest, putRequest] = capturedRequests;
+
+    expect(parseGraphqlBody(createRequest.requestInit).variables.size).toBe(
+      blob.size,
+    );
+    expect(putRequest.requestInit?.body).toBe(blob);
+  });
+
+  it('falls back to the upload through the API when the upload target is refused', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
-      createFileUploadResponse: missingDirectUploadMutationResponse,
+      createFileUploadResponse: refusedUploadTargetResponse,
     });
     const fileBuffer = Buffer.from('content');
 
-    const twentyClient = new TwentyClass({
-      url: CLIENT_URL,
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
-    });
+    const result = await uploadInvoice(createClient(fetchMock), fileBuffer);
 
-    const result = await uploadInvoice(twentyClient, fileBuffer);
-
-    expect(result).toEqual(uploadedFile);
+    expect(result).toEqual(uploadedThroughApiFile);
     expect(capturedRequests).toHaveLength(2);
 
     const [, multipartRequest] = capturedRequests;
@@ -202,8 +231,9 @@ describe('Generated client wrapper uploadFile', () => {
       'Bearer application-token',
     );
 
-    const form = multipartRequest.requestInit?.body as FormData;
-    const operations = JSON.parse(String(form.get('operations')));
+    const { operations, map, sentFile } = await readMultipartBody(
+      multipartRequest.requestInit,
+    );
 
     expect(operations.query).toContain(
       'uploadFilesFieldFileByUniversalIdentifier',
@@ -212,35 +242,13 @@ describe('Generated client wrapper uploadFile', () => {
       file: null,
       fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
     });
-    expect(JSON.parse(String(form.get('map')))).toEqual({
-      '0': ['variables.file'],
-    });
-
-    const sentFile = form.get('0') as File;
-
+    expect(map).toEqual({ '0': ['variables.file'] });
     expect(sentFile.name).toBe('invoice.pdf');
-    expect(sentFile.type).toBe('application/pdf');
+    expect(sentFile.type).toBe('application/octet-stream');
     expect(Buffer.from(await sentFile.arrayBuffer())).toEqual(fileBuffer);
   });
 
-  it('keeps uploading through the API once the server turned out to have no direct upload mutation', async () => {
-    const { fetchMock, capturedRequests } = createFetchMock({
-      createFileUploadResponse: missingDirectUploadMutationResponse,
-    });
-
-    const twentyClient = new TwentyClass({
-      url: CLIENT_URL,
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
-    });
-
-    await uploadInvoice(twentyClient);
-    await uploadInvoice(twentyClient);
-
-    expect(capturedRequests).toHaveLength(3);
-    expect(capturedRequests[2].requestInit?.body).toBeInstanceOf(FormData);
-  });
-
-  it('does not complete the upload nor fall back when storage refuses the bytes', async () => {
+  it('falls back to the upload through the API with the type of a refused Blob', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
       putResponse: () =>
         new Response('<Error>SignatureDoesNotMatch</Error>', {
@@ -248,42 +256,63 @@ describe('Generated client wrapper uploadFile', () => {
           statusText: 'Forbidden',
         }),
     });
+    const blob = new Blob(['blob content'], { type: 'text/plain' });
 
-    const twentyClient = new TwentyClass({
-      url: CLIENT_URL,
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
-    });
+    const result = await uploadInvoice(createClient(fetchMock), blob);
 
-    await expect(uploadInvoice(twentyClient)).rejects.toThrow('403 Forbidden');
+    expect(result).toEqual(uploadedThroughApiFile);
+    expect(
+      capturedRequests.map(({ requestInit }) => requestInit?.method),
+    ).toEqual(['POST', 'PUT', 'POST']);
 
-    expect(capturedRequests).toHaveLength(2);
-    expect(capturedRequests[1].requestInit?.method).toBe('PUT');
+    const { sentFile } = await readMultipartBody(
+      capturedRequests[2].requestInit,
+    );
+
+    expect(sentFile.type).toBe('text/plain');
+    expect(await sentFile.text()).toBe('blob content');
   });
 
-  it('does not send any bytes nor fall back when the upload target is refused for another reason', async () => {
+  it('surfaces the API upload error when both uploads fail', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
-      createFileUploadResponse: () =>
+      createFileUploadResponse: refusedUploadTargetResponse,
+      multipartResponse: () =>
         createJsonResponse({
           body: {
-            errors: [
-              {
-                message:
-                  'The file is empty or exceeds the maximum allowed size.',
-              },
-            ],
+            errors: [{ message: 'Upload through the API refused' }],
             data: null,
           },
         }),
     });
 
-    const twentyClient = new TwentyClass({
-      url: CLIENT_URL,
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
-    });
+    await expect(uploadInvoice(createClient(fetchMock))).rejects.toThrow(
+      'GenqlError',
+    );
 
-    await expect(uploadInvoice(twentyClient)).rejects.toThrow();
+    expect(capturedRequests).toHaveLength(2);
+  });
 
+  it('uploads through the API with the given content type when deprecatedUploadFile is called', async () => {
+    const { fetchMock, capturedRequests } = createFetchMock();
+    const fileBuffer = Buffer.from('content');
+
+    const result = await createClient(fetchMock).deprecatedUploadFile(
+      fileBuffer,
+      'invoice.pdf',
+      'application/pdf',
+      FIELD_METADATA_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(result).toEqual(uploadedThroughApiFile);
     expect(capturedRequests).toHaveLength(1);
+
+    const { sentFile } = await readMultipartBody(
+      capturedRequests[0].requestInit,
+    );
+
+    expect(sentFile.name).toBe('invoice.pdf');
+    expect(sentFile.type).toBe('application/pdf');
+    expect(Buffer.from(await sentFile.arrayBuffer())).toEqual(fileBuffer);
   });
 
   it('refreshes the token and retries when creating the upload target is unauthenticated', async () => {
@@ -312,12 +341,7 @@ describe('Generated client wrapper uploadFile', () => {
       },
     );
 
-    const twentyClient = new TwentyClass({
-      url: CLIENT_URL,
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
-    });
-
-    const result = await uploadInvoice(twentyClient);
+    const result = await uploadInvoice(createClient(fetchMock));
 
     expect(result).toEqual(uploadedFile);
     expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
