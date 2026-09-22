@@ -12,7 +12,6 @@ export enum BillingExceptionCode {
   BILLING_PLAN_NOT_FOUND = 'BILLING_PLAN_NOT_FOUND',
   BILLING_PRODUCT_NOT_FOUND = 'BILLING_PRODUCT_NOT_FOUND',
   BILLING_PRICE_NOT_FOUND = 'BILLING_PRICE_NOT_FOUND',
-  BILLING_METER_NOT_FOUND = 'BILLING_METER_NOT_FOUND',
   BILLING_SUBSCRIPTION_NOT_FOUND = 'BILLING_SUBSCRIPTION_NOT_FOUND',
   BILLING_SUBSCRIPTION_ITEM_NOT_FOUND = 'BILLING_SUBSCRIPTION_ITEM_NOT_FOUND',
   BILLING_SUBSCRIPTION_INVALID = 'BILLING_SUBSCRIPTION_INVALID',
@@ -20,7 +19,6 @@ export enum BillingExceptionCode {
   BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND',
   BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND',
   BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND = 'BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND',
-  BILLING_METER_EVENT_FAILED = 'BILLING_METER_EVENT_FAILED',
   BILLING_MISSING_REQUEST_BODY = 'BILLING_MISSING_REQUEST_BODY',
   BILLING_UNHANDLED_ERROR = 'BILLING_UNHANDLED_ERROR',
   BILLING_STRIPE_ERROR = 'BILLING_STRIPE_ERROR',
@@ -54,8 +52,6 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Billing product not found.`;
     case BillingExceptionCode.BILLING_PRICE_NOT_FOUND:
       return msg`Billing price not found.`;
-    case BillingExceptionCode.BILLING_METER_NOT_FOUND:
-      return msg`Billing meter not found.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND:
       return msg`Subscription not found.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND:
@@ -70,8 +66,6 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Workspace not found for customer event.`;
     case BillingExceptionCode.BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND:
       return msg`No active subscription found.`;
-    case BillingExceptionCode.BILLING_METER_EVENT_FAILED:
-      return msg`Failed to record billing event.`;
     case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:
       return msg`Missing request body.`;
     case BillingExceptionCode.BILLING_UNHANDLED_ERROR:
