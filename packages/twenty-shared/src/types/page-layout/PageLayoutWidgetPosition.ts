@@ -1,5 +1,5 @@
-import type { PageLayoutTabLayoutMode } from './PageLayoutTabLayoutMode';
-import type { PageLayoutWidgetVerticalListHeightBehavior } from './PageLayoutWidgetVerticalListHeightBehavior';
+import type { PageLayoutTabLayoutMode } from '@/types';
+import type { PageLayoutWidgetVerticalListHeightBehavior } from '@/types';
 
 export type PageLayoutWidgetGridPosition = {
   layoutMode: PageLayoutTabLayoutMode.GRID;
