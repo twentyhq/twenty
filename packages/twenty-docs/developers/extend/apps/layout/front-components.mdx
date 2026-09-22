@@ -89,6 +89,10 @@ Beyond commands, you can embed a front component directly into a record page by 
 
 An app can add its own entries to the settings menu, each rendering a front component. Declare one with `defineSettingsMenuItem()` in its own file, pointing at the component that renders it:
 
+<Note>
+Declaring and syncing menu items works today, and the rows they create are what the rendering builds on. The settings menu itself does not display app-declared items yet — it still shows the single tab from the deprecated `defineSettingsFrontComponent()`. Until that follow-up lands, an item you declare is persisted but not visible.
+</Note>
+
 ```tsx src/settings-menu-items/sync-settings.ts
 import { defineSettingsMenuItem } from 'twenty-sdk/define';
 
