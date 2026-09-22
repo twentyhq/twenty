@@ -3,6 +3,7 @@ import {
   listConnections,
   type LogicFunctionExecutionContext,
 } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_PROVIDER_NAME } from 'src/constants/teams.constant';
 
@@ -14,7 +15,7 @@ export const getTeamsConnectionForRequest = async (
     context,
   );
 
-  if (!connection) {
+  if (!isDefined(connection)) {
     throw new Error(
       'Microsoft Teams is not connected. Open Teams Transcripts app settings and add a connection first.',
     );

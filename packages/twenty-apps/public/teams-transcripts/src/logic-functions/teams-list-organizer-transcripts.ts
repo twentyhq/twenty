@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-sdk/utils';
 import {
   type InputJsonSchema,
   type LogicFunctionExecutionContext,
@@ -81,7 +82,7 @@ export const teamsListOrganizerTranscriptsHandler = async (
         joinWebUrl,
       });
 
-      if (!meeting) {
+      if (!isDefined(meeting)) {
         continue;
       }
 
