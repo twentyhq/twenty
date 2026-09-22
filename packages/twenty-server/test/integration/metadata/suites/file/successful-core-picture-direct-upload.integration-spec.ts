@@ -2,8 +2,8 @@ import gql from 'graphql-tag';
 import {
   completeWorkspaceLogoUploadMutation,
   uploadWorkspaceLogoWithDirectUpload,
-  uploadWorkspaceMemberProfilePictureWithDirectUpload,
 } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
+import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
@@ -134,12 +134,12 @@ describe('Core picture direct upload should succeed', () => {
   it('should upload a workspace member profile picture without touching the workspace logo', async () => {
     const logoFileIdBefore = await findWorkspaceLogoFileId();
 
-    const uploadedPicture =
-      await uploadWorkspaceMemberProfilePictureWithDirectUpload({
-        filename: 'avatar.png',
-        content: ONE_BY_ONE_TRANSPARENT_PNG,
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      });
+    const uploadedPicture = await uploadFileWithDirectUpload({
+      filename: 'avatar.png',
+      content: ONE_BY_ONE_TRANSPARENT_PNG,
+      fileFolder: 'CorePicture',
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     uploadedFileIds.push(uploadedPicture.id);
 

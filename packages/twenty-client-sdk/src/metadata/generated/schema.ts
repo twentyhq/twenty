@@ -3392,14 +3392,11 @@ export interface Mutation {
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
     setEnterpriseKey: EnterpriseLicenseInfoDTO
-    /** @deprecated Use createWorkspaceLogoUpload and completeWorkspaceLogoUpload, which send the logo straight to file storage. */
+    /** @deprecated Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage. */
     uploadWorkspaceLogo: FileWithSignedUrl
-    /** @deprecated Use createWorkspaceMemberProfilePictureUpload and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage. */
+    /** @deprecated Use createFileUpload with the CorePicture folder and completeFileUpload, which send the picture straight to file storage. */
     uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
-    createWorkspaceLogoUpload: FileUploadTarget
     completeWorkspaceLogoUpload: FileWithSignedUrl
-    createWorkspaceMemberProfilePictureUpload: FileUploadTarget
-    completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl
     uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl
     createUsageLimit: UsageLimit
     updateUsageLimit: UsageLimit
@@ -7243,14 +7240,11 @@ export interface MutationGenqlSelection{
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
-    /** @deprecated Use createWorkspaceLogoUpload and completeWorkspaceLogoUpload, which send the logo straight to file storage. */
+    /** @deprecated Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage. */
     uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    /** @deprecated Use createWorkspaceMemberProfilePictureUpload and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage. */
+    /** @deprecated Use createFileUpload with the CorePicture folder and completeFileUpload, which send the picture straight to file storage. */
     uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    createWorkspaceLogoUpload?: (FileUploadTargetGenqlSelection & { __args: {filename: Scalars['String'], size: Scalars['Float']} })
     completeWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
-    createWorkspaceMemberProfilePictureUpload?: (FileUploadTargetGenqlSelection & { __args: {filename: Scalars['String'], size: Scalars['Float']} })
-    completeWorkspaceMemberProfilePictureUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     uploadFilesFieldFileByUniversalIdentifier?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataUniversalIdentifier: Scalars['String']} })
     createUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: CreateUsageLimitInput} })
     updateUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: UpdateUsageLimitInput} })

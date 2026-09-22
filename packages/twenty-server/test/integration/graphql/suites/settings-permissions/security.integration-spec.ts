@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 import request from 'supertest';
 import {
-  createWorkspaceLogoUploadMutation,
+  completeWorkspaceLogoUploadMutation,
   uploadWorkspaceLogoWithDirectUpload,
 } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
 import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
@@ -642,8 +642,8 @@ describe('Security permissions', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         const response = await makeMetadataAPIRequest(
           {
-            query: createWorkspaceLogoUploadMutation,
-            variables: { filename: 'test-logo.png', size: 67 },
+            query: completeWorkspaceLogoUploadMutation,
+            variables: { fileId: '20202020-0000-4000-8000-000000000000' },
           },
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );

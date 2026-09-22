@@ -1,18 +1,10 @@
-import { type DocumentNode } from 'graphql';
 import gql from 'graphql-tag';
-import request from 'supertest';
+import {
+  createFileUploadAndPutFile,
+  createFileUploadMutation,
+  type DirectUploadTarget,
+} from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-
-export const createWorkspaceLogoUploadMutation = gql`
-  mutation CreateWorkspaceLogoUpload($filename: String!, $size: Float!) {
-    createWorkspaceLogoUpload(filename: $filename, size: $size) {
-      fileId
-      uploadUrl
-      contentType
-      expiresAt
-    }
-  }
-`;
 
 export const completeWorkspaceLogoUploadMutation = gql`
   mutation CompleteWorkspaceLogoUpload($fileId: String!) {
@@ -26,42 +18,6 @@ export const completeWorkspaceLogoUploadMutation = gql`
   }
 `;
 
-export const createWorkspaceMemberProfilePictureUploadMutation = gql`
-  mutation CreateWorkspaceMemberProfilePictureUpload(
-    $filename: String!
-    $size: Float!
-  ) {
-    createWorkspaceMemberProfilePictureUpload(
-      filename: $filename
-      size: $size
-    ) {
-      fileId
-      uploadUrl
-      contentType
-      expiresAt
-    }
-  }
-`;
-
-export const completeWorkspaceMemberProfilePictureUploadMutation = gql`
-  mutation CompleteWorkspaceMemberProfilePictureUpload($fileId: String!) {
-    completeWorkspaceMemberProfilePictureUpload(fileId: $fileId) {
-      id
-      path
-      size
-      createdAt
-      url
-    }
-  }
-`;
-
-export type CorePictureUploadTarget = {
-  fileId: string;
-  uploadUrl: string;
-  contentType: string;
-  expiresAt: string;
-};
-
 export type UploadedCorePicture = {
   id: string;
   path: string;
@@ -70,94 +26,53 @@ export type UploadedCorePicture = {
   url: string;
 };
 
-export const putCorePictureToUploadTarget = async ({
-  uploadTarget,
-  content,
-}: {
-  uploadTarget: CorePictureUploadTarget;
-  content: Buffer;
-}) => {
-  // Integration tests run on the local storage driver, so the upload url
-  // targets the server's streaming endpoint: replay it against the test app.
-  const { pathname, search } = new URL(uploadTarget.uploadUrl);
-
-  return request(global.app.getHttpServer())
-    .put(`${pathname}${search}`)
-    .set('Content-Type', uploadTarget.contentType)
-    .send(content);
-};
-
-type UploadCorePictureWithDirectUploadArgs = {
-  filename: string;
-  content: Buffer;
-  token?: string;
-};
-
-const uploadCorePictureWithDirectUpload = async ({
-  createMutation,
-  createMutationName,
-  completeMutation,
-  completeMutationName,
+export const createCorePictureUpload = async ({
   filename,
-  content,
+  size,
   token,
-}: UploadCorePictureWithDirectUploadArgs & {
-  createMutation: DocumentNode;
-  createMutationName: string;
-  completeMutation: DocumentNode;
-  completeMutationName: string;
-}): Promise<UploadedCorePicture> => {
-  const createResponse = await makeMetadataAPIRequest(
+}: {
+  filename: string;
+  size: number;
+  token?: string;
+}): Promise<DirectUploadTarget> => {
+  const response = await makeMetadataAPIRequest(
     {
-      query: createMutation,
-      variables: { filename, size: content.length },
+      query: createFileUploadMutation,
+      variables: { filename, size, fileFolder: 'CorePicture' },
     },
     token,
   );
 
-  expect(createResponse.body.errors).toBeUndefined();
+  expect(response.body.errors).toBeUndefined();
 
-  const uploadTarget: CorePictureUploadTarget =
-    createResponse.body.data[createMutationName];
+  return response.body.data.createFileUpload;
+};
 
-  const putResponse = await putCorePictureToUploadTarget({
-    uploadTarget,
+export const uploadWorkspaceLogoWithDirectUpload = async ({
+  filename,
+  content,
+  token,
+}: {
+  filename: string;
+  content: Buffer;
+  token?: string;
+}): Promise<UploadedCorePicture> => {
+  const { fileId } = await createFileUploadAndPutFile({
+    filename,
     content,
+    fileFolder: 'CorePicture',
+    token,
   });
-
-  expect(putResponse.status).toBe(204);
 
   const completeResponse = await makeMetadataAPIRequest(
     {
-      query: completeMutation,
-      variables: { fileId: uploadTarget.fileId },
+      query: completeWorkspaceLogoUploadMutation,
+      variables: { fileId },
     },
     token,
   );
 
   expect(completeResponse.body.errors).toBeUndefined();
 
-  return completeResponse.body.data[completeMutationName];
+  return completeResponse.body.data.completeWorkspaceLogoUpload;
 };
-
-export const uploadWorkspaceLogoWithDirectUpload = (
-  args: UploadCorePictureWithDirectUploadArgs,
-): Promise<UploadedCorePicture> =>
-  uploadCorePictureWithDirectUpload({
-    ...args,
-    createMutation: createWorkspaceLogoUploadMutation,
-    createMutationName: 'createWorkspaceLogoUpload',
-    completeMutation: completeWorkspaceLogoUploadMutation,
-    completeMutationName: 'completeWorkspaceLogoUpload',
-  });
-
-export const uploadWorkspaceMemberProfilePictureWithDirectUpload = (
-  args: UploadCorePictureWithDirectUploadArgs,
-): Promise<UploadedCorePicture> =>
-  uploadCorePictureWithDirectUpload({
-    ...args,
-    createMutation: createWorkspaceMemberProfilePictureUploadMutation,
-    createMutationName: 'createWorkspaceMemberProfilePictureUpload',
-    completeMutation: completeWorkspaceMemberProfilePictureUploadMutation,
-    completeMutationName: 'completeWorkspaceMemberProfilePictureUpload',
-  });

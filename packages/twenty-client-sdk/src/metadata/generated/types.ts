@@ -8584,42 +8584,7 @@ export default {
                     ]
                 }
             ],
-            "createWorkspaceLogoUpload": [
-                160,
-                {
-                    "filename": [
-                        1,
-                        "String!"
-                    ],
-                    "size": [
-                        15,
-                        "Float!"
-                    ]
-                }
-            ],
             "completeWorkspaceLogoUpload": [
-                159,
-                {
-                    "fileId": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "createWorkspaceMemberProfilePictureUpload": [
-                160,
-                {
-                    "filename": [
-                        1,
-                        "String!"
-                    ],
-                    "size": [
-                        15,
-                        "Float!"
-                    ]
-                }
-            ],
-            "completeWorkspaceMemberProfilePictureUpload": [
                 159,
                 {
                     "fileId": [

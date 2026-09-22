@@ -3,7 +3,7 @@ import request from 'supertest';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FileFolder } from 'twenty-shared/types';
 
-const createFileUploadMutation = gql`
+export const createFileUploadMutation = gql`
   mutation CreateFileUpload(
     $filename: String!
     $size: Float!
@@ -23,7 +23,7 @@ const createFileUploadMutation = gql`
   }
 `;
 
-const completeFileUploadMutation = gql`
+export const completeFileUploadMutation = gql`
   mutation CompleteFileUpload($fileId: String!) {
     completeFileUpload(fileId: $fileId) {
       id
@@ -35,11 +35,18 @@ const completeFileUploadMutation = gql`
   }
 `;
 
+export type DirectUploadTarget = {
+  fileId: string;
+  uploadUrl: string;
+  contentType: string;
+};
+
 type UploadFileWithDirectUploadArgs = {
   filename: string;
   content: Buffer;
   fileFolder: keyof typeof FileFolder;
   fieldMetadataId?: string;
+  token?: string;
 };
 
 type DirectUploadedFile = {
@@ -50,42 +57,67 @@ type DirectUploadedFile = {
   url: string;
 };
 
-export const uploadFileWithDirectUpload = async ({
+// Integration tests run on the local storage driver, so the upload url
+// targets the server's streaming endpoint: replay it against the test app.
+export const putFileToUploadTarget = async ({
+  uploadTarget,
+  content,
+}: {
+  uploadTarget: DirectUploadTarget;
+  content: Buffer;
+}) => {
+  const { pathname, search } = new URL(uploadTarget.uploadUrl);
+
+  return request(global.app.getHttpServer())
+    .put(`${pathname}${search}`)
+    .set('Content-Type', uploadTarget.contentType)
+    .send(content);
+};
+
+export const createFileUploadAndPutFile = async ({
   filename,
   content,
   fileFolder,
   fieldMetadataId,
-}: UploadFileWithDirectUploadArgs): Promise<DirectUploadedFile> => {
-  const createResponse = await makeMetadataAPIRequest({
-    query: createFileUploadMutation,
-    variables: {
-      filename,
-      size: content.length,
-      fileFolder,
-      fieldMetadataId,
+  token,
+}: UploadFileWithDirectUploadArgs): Promise<DirectUploadTarget> => {
+  const createResponse = await makeMetadataAPIRequest(
+    {
+      query: createFileUploadMutation,
+      variables: {
+        filename,
+        size: content.length,
+        fileFolder,
+        fieldMetadataId,
+      },
     },
-  });
+    token,
+  );
 
   expect(createResponse.body.errors).toBeUndefined();
 
-  const { fileId, uploadUrl, contentType } =
+  const uploadTarget: DirectUploadTarget =
     createResponse.body.data.createFileUpload;
 
-  // Integration tests run on the local storage driver, so the upload url
-  // targets the server's streaming endpoint: replay it against the test app.
-  const { pathname, search } = new URL(uploadUrl);
-
-  const putResponse = await request(global.app.getHttpServer())
-    .put(`${pathname}${search}`)
-    .set('Content-Type', contentType)
-    .send(content);
+  const putResponse = await putFileToUploadTarget({ uploadTarget, content });
 
   expect(putResponse.status).toBe(204);
 
-  const completeResponse = await makeMetadataAPIRequest({
-    query: completeFileUploadMutation,
-    variables: { fileId },
-  });
+  return uploadTarget;
+};
+
+export const uploadFileWithDirectUpload = async (
+  args: UploadFileWithDirectUploadArgs,
+): Promise<DirectUploadedFile> => {
+  const { fileId } = await createFileUploadAndPutFile(args);
+
+  const completeResponse = await makeMetadataAPIRequest(
+    {
+      query: completeFileUploadMutation,
+      variables: { fileId },
+    },
+    args.token,
+  );
 
   expect(completeResponse.body.errors).toBeUndefined();
 

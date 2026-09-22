@@ -5,7 +5,6 @@ import { buffer as streamToBuffer } from 'node:stream/consumers';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import bytes from 'bytes';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -20,21 +19,16 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { settings } from 'src/engine/constants/settings';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import {
   FileUploadException,
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
-import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
-import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
-import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -43,8 +37,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { fetchImageWithTypeFromUrl } from 'src/utils/image';
-
-const DIRECT_UPLOAD_CONTENT_TYPE = 'application/octet-stream';
 
 @Injectable()
 export class FileCorePictureService {
@@ -60,8 +52,7 @@ export class FileCorePictureService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
     private readonly secureHttpClientService: SecureHttpClientService,
-    private readonly fileUploadTargetService: FileUploadTargetService,
-    private readonly fileUploadCompletionService: FileUploadCompletionService,
+    private readonly fileUploadService: FileUploadService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
@@ -123,64 +114,24 @@ export class FileCorePictureService {
     return savedFile;
   }
 
-  private assertValidCorePictureUploadSize(size: number): void {
-    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
-
-    if (!Number.isInteger(size) || size <= 0 || size > maxFileSize) {
-      throw new FileUploadException(
-        `Invalid file size ${size} (max ${maxFileSize} bytes)`,
-        FileUploadExceptionCode.FILE_TOO_LARGE,
-        {
-          userFriendlyMessage: msg`The file is empty or exceeds the maximum allowed size.`,
-        },
-      );
-    }
-  }
-
-  private async createCorePictureUpload({
+  private async toFileWithSignedUrl({
+    file,
     workspaceId,
-    filename,
-    size,
   }: {
+    file: FileEntity;
     workspaceId: string;
-    filename: string;
-    size: number;
-  }): Promise<FileUploadTargetDTO> {
-    this.assertValidCorePictureUploadSize(size);
-
-    const { ext } = buildFileInfo(filename);
-    const fileId = v4();
-    const resourcePath = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
-
-    const applicationUniversalIdentifier =
-      await this.findCustomApplicationUniversalIdentifier(workspaceId);
-
-    await this.fileStorageService.createPendingFile({
-      fileFolder: FileFolder.CorePicture,
-      applicationUniversalIdentifier,
-      workspaceId,
-      resourcePath,
-      fileId,
-      size,
-      mimeType: DIRECT_UPLOAD_CONTENT_TYPE,
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
-
-    return this.fileUploadTargetService.buildUploadTarget({
-      workspaceId,
-      fileId,
-      fileFolder: FileFolder.CorePicture,
-      applicationUniversalIdentifier,
-      resourcePath,
-      contentType: DIRECT_UPLOAD_CONTENT_TYPE,
-      size,
-    });
+  }): Promise<FileWithSignedUrlDTO> {
+    return {
+      ...file,
+      url: await this.fileUrlService.signFileByIdUrl({
+        fileId: file.id,
+        fileFolder: FileFolder.CorePicture,
+        workspaceId,
+      }),
+    };
   }
 
-  private async completeCorePictureUpload({
+  private async findCorePictureFileOrThrow({
     workspaceId,
     fileId,
   }: {
@@ -202,85 +153,45 @@ export class FileCorePictureService {
       );
     }
 
-    // A completion retried after a lost response finds the promoted file and
-    // only has the binding left to do.
-    if (file.status === FILE_STATUS.UPLOADED) {
-      return file;
-    }
-
-    const applicationUniversalIdentifier =
-      await this.findCustomApplicationUniversalIdentifier(workspaceId);
-
-    const completedFile =
-      await this.fileUploadCompletionService.completeUploadedFile({
-        workspaceId,
-        file,
-        storageLocation: {
-          fileFolder: FileFolder.CorePicture,
-          applicationUniversalIdentifier,
-          workspaceId,
-          resourcePath: removeFileFolderFromFileEntityPath(file.path),
-        },
-      });
-
-    return { ...file, ...completedFile, status: FILE_STATUS.UPLOADED };
-  }
-
-  private async toFileWithSignedUrl({
-    file,
-    workspaceId,
-  }: {
-    file: FileEntity;
-    workspaceId: string;
-  }): Promise<FileWithSignedUrlDTO> {
-    return {
-      ...file,
-      url: await this.fileUrlService.signFileByIdUrl({
-        fileId: file.id,
-        fileFolder: FileFolder.CorePicture,
-        workspaceId,
-      }),
-    };
-  }
-
-  async createWorkspaceLogoUpload({
-    workspaceId,
-    filename,
-    size,
-  }: {
-    workspaceId: string;
-    filename: string;
-    size: number;
-  }): Promise<FileUploadTargetDTO> {
-    return this.createCorePictureUpload({ workspaceId, filename, size });
+    return file;
   }
 
   // The workspace attached to the request comes from the core entity cache,
   // so the logo it carries may predate a previous upload: the current one is
   // read from the database before it is replaced.
-  private async bindWorkspaceLogo({
-    workspaceId,
-    fileId,
-  }: {
-    workspaceId: string;
-    fileId: string;
-  }): Promise<void> {
+  private async findCurrentLogoFileId(
+    workspaceId: string,
+  ): Promise<string | null> {
     const workspace = await this.workspaceRepository.findOneOrFail({
       where: { id: workspaceId },
       select: ['id', 'logoFileId'],
     });
 
+    return workspace.logoFileId;
+  }
+
+  private async bindWorkspaceLogo({
+    workspaceId,
+    fileId,
+    currentLogoFileId,
+  }: {
+    workspaceId: string;
+    fileId: string;
+    currentLogoFileId: string | null;
+  }): Promise<void> {
     await this.workspaceRepository.update(workspaceId, { logoFileId: fileId });
+    await this.fileRepository.update(
+      workspaceId,
+      { id: fileId },
+      { settings: { isTemporaryFile: false, toDelete: false } },
+    );
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',
       workspaceId,
     );
 
-    if (isDefined(workspace.logoFileId) && workspace.logoFileId !== fileId) {
-      await this.deleteCorePicture({
-        fileId: workspace.logoFileId,
-        workspaceId,
-      });
+    if (isDefined(currentLogoFileId) && currentLogoFileId !== fileId) {
+      await this.deleteCorePicture({ fileId: currentLogoFileId, workspaceId });
     }
   }
 
@@ -291,35 +202,21 @@ export class FileCorePictureService {
     workspaceId: string;
     fileId: string;
   }): Promise<FileWithSignedUrlDTO> {
-    const file = await this.completeCorePictureUpload({ workspaceId, fileId });
+    const file = await this.findCorePictureFileOrThrow({ workspaceId, fileId });
+    const currentLogoFileId = await this.findCurrentLogoFileId(workspaceId);
 
-    await this.bindWorkspaceLogo({ workspaceId, fileId: file.id });
+    if (currentLogoFileId === file.id) {
+      return this.toFileWithSignedUrl({ file, workspaceId });
+    }
 
-    return this.toFileWithSignedUrl({ file, workspaceId });
-  }
+    const completedFile = await this.fileUploadService.completeFileUpload({
+      workspaceId,
+      fileId,
+    });
 
-  async createWorkspaceMemberProfilePictureUpload({
-    workspaceId,
-    filename,
-    size,
-  }: {
-    workspaceId: string;
-    filename: string;
-    size: number;
-  }): Promise<FileUploadTargetDTO> {
-    return this.createCorePictureUpload({ workspaceId, filename, size });
-  }
+    await this.bindWorkspaceLogo({ workspaceId, fileId, currentLogoFileId });
 
-  async completeWorkspaceMemberProfilePictureUpload({
-    workspaceId,
-    fileId,
-  }: {
-    workspaceId: string;
-    fileId: string;
-  }): Promise<FileWithSignedUrlDTO> {
-    const file = await this.completeCorePictureUpload({ workspaceId, fileId });
-
-    return this.toFileWithSignedUrl({ file, workspaceId });
+    return completedFile;
   }
 
   async uploadWorkspacePicture({
@@ -331,6 +228,8 @@ export class FileCorePictureService {
     filename: string;
     workspace: WorkspaceEntity;
   }): Promise<FileWithSignedUrlDTO> {
+    const currentLogoFileId = await this.findCurrentLogoFileId(workspace.id);
+
     const savedFile = await this.uploadCorePicture({
       file,
       filename,
@@ -340,6 +239,7 @@ export class FileCorePictureService {
     await this.bindWorkspaceLogo({
       workspaceId: workspace.id,
       fileId: savedFile.id,
+      currentLogoFileId,
     });
 
     return this.toFileWithSignedUrl({
