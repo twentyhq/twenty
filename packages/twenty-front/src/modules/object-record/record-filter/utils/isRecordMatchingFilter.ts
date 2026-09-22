@@ -537,13 +537,13 @@ export const isRecordMatchingFilter = ({
         return isMatchingStringFilter({
           stringFilter: {
             ...primaryEmailFilter,
-            ...(primaryEmailFilter.eq !== undefined && {
+            ...(isDefined(primaryEmailFilter.eq) && {
               eq: getEmailIdentityKey(primaryEmailFilter.eq),
             }),
-            ...(primaryEmailFilter.neq !== undefined && {
+            ...(isDefined(primaryEmailFilter.neq) && {
               neq: getEmailIdentityKey(primaryEmailFilter.neq),
             }),
-            ...(primaryEmailFilter.in !== undefined && {
+            ...(isDefined(primaryEmailFilter.in) && {
               in: primaryEmailFilter.in.map(getEmailIdentityKey),
             }),
           },
