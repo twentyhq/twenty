@@ -1,6 +1,10 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
 import { gql } from '@apollo/client';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { createStore, Provider } from 'jotai';
+import { RecordViewsLoadEffect } from '@/side-panel/pages/record-views/components/RecordViewsLoadEffect';
 import { useRecordViews } from '@/side-panel/pages/record-views/hooks/useRecordViews';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { type View } from '@/views/types/View';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { ViewType, ViewVisibility } from '~/generated-metadata/graphql';
@@ -65,14 +69,42 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
 const response = (recordId?: string) => ({
   data: { companies: { edges: recordId ? [{ node: { id: recordId } }] : [] } },
 });
-const renderViews = () =>
-  renderHook(
-    ({ recordId }) =>
-      useRecordViews({ objectNameSingular: 'company', recordId }),
-    { initialProps: { recordId: 'record-1' } },
+
+const RecordViewsProbe = () => {
+  const { views, loading, error, retry } = useRecordViews();
+
+  return (
+    <>
+      <output aria-label="Matching views">
+        {views.map((view) => view.id).join(',')}
+      </output>
+      <output aria-label="Loading">{String(loading)}</output>
+      <output aria-label="Error">{String(error)}</output>
+      <button onClick={retry}>Retry</button>
+    </>
+  );
+};
+
+const renderEffect = (recordId = 'record-1') =>
+  render(
+    <Provider store={createStore()}>
+      <SidePanelPageComponentInstanceContext.Provider
+        value={{ instanceId: 'record-views-page' }}
+      >
+        <RecordViewsLoadEffect
+          objectNameSingular="company"
+          recordId={recordId}
+        />
+        <RecordViewsProbe />
+      </SidePanelPageComponentInstanceContext.Provider>
+    </Provider>,
   );
 
-describe('useRecordViews', () => {
+const matchingViews = () => screen.getByLabelText('Matching views').textContent;
+const isLoading = () => screen.getByLabelText('Loading').textContent;
+const hasError = () => screen.getByLabelText('Error').textContent;
+
+describe('RecordViewsLoadEffect', () => {
   beforeEach(() => {
     mockQuery.mockReset();
     mockCanRead = true;
@@ -83,9 +115,11 @@ describe('useRecordViews', () => {
     mockQuery
       .mockResolvedValueOnce(response('record-1'))
       .mockResolvedValueOnce(response());
-    const { result } = renderViews();
-    await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current.views.map((view) => view.id)).toEqual(['all']);
+
+    renderEffect();
+
+    await waitFor(() => expect(isLoading()).toBe('false'));
+    expect(matchingViews()).toBe('all');
     expect(mockQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         fetchPolicy: 'no-cache',
@@ -96,9 +130,11 @@ describe('useRecordViews', () => {
 
   it('does not query without read permission', async () => {
     mockCanRead = false;
-    const { result } = renderViews();
-    await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current.views).toEqual([]);
+
+    renderEffect();
+
+    await waitFor(() => expect(isLoading()).toBe('false'));
+    expect(matchingViews()).toBe('');
     expect(mockQuery).not.toHaveBeenCalled();
   });
 
@@ -120,23 +156,28 @@ describe('useRecordViews', () => {
     ];
     mockQuery.mockResolvedValue(response('record-1'));
 
-    const { result } = renderViews();
+    renderEffect();
 
-    await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current.views.map((view) => view.id)).toEqual(['all']);
-    expect(result.current.error).toBe(false);
+    await waitFor(() => expect(isLoading()).toBe('false'));
+    expect(matchingViews()).toBe('all');
+    expect(hasError()).toBe('false');
     expect(mockQuery).toHaveBeenCalledTimes(1);
   });
 
   it('shows errors separately from an empty result and supports retry', async () => {
+    const user = userEvent.setup();
     mockQuery.mockRejectedValue(new Error('Network unavailable'));
-    const { result } = renderViews();
-    await waitFor(() => expect(result.current.error).toBe(true));
-    expect(result.current.views).toEqual([]);
+
+    renderEffect();
+
+    await waitFor(() => expect(hasError()).toBe('true'));
+    expect(matchingViews()).toBe('');
+
     mockQuery.mockResolvedValue(response('record-1'));
-    act(() => result.current.retry());
-    await waitFor(() => expect(result.current.views).toHaveLength(2));
-    expect(result.current.error).toBe(false);
+    await user.click(screen.getByRole('button', { name: 'Retry' }));
+
+    await waitFor(() => expect(matchingViews()).toBe('all,filtered'));
+    expect(hasError()).toBe('false');
   });
 
   it('ignores stale responses after the target record changes', async () => {
@@ -147,14 +188,30 @@ describe('useRecordViews', () => {
       resolveOldRequest = resolve;
     });
     mockQuery.mockReturnValue(oldRequest);
-    const { result, rerender } = renderViews();
+
+    const { rerender } = renderEffect();
+
     mockQuery.mockResolvedValue(response());
-    rerender({ recordId: 'record-2' });
-    await waitFor(() => expect(result.current.loading).toBe(false));
+    rerender(
+      <Provider store={createStore()}>
+        <SidePanelPageComponentInstanceContext.Provider
+          value={{ instanceId: 'record-views-page' }}
+        >
+          <RecordViewsLoadEffect
+            objectNameSingular="company"
+            recordId="record-2"
+          />
+          <RecordViewsProbe />
+        </SidePanelPageComponentInstanceContext.Provider>
+      </Provider>,
+    );
+
+    await waitFor(() => expect(isLoading()).toBe('false'));
     await act(async () => {
       resolveOldRequest(response('record-1'));
     });
-    expect(result.current.views).toEqual([]);
+
+    expect(matchingViews()).toBe('');
   });
 
   it('limits simultaneous checks for many views', async () => {
@@ -167,12 +224,18 @@ describe('useRecordViews', () => {
       release = resolve;
     });
     mockQuery.mockReturnValue(pending);
-    const { result } = renderViews();
+
+    renderEffect();
+
     expect(mockQuery).toHaveBeenCalledTimes(5);
+
     mockQuery.mockResolvedValue(response('record-1'));
     await act(async () => {
       release(response('record-1'));
     });
-    await waitFor(() => expect(result.current.views).toHaveLength(12));
+
+    await waitFor(() =>
+      expect(matchingViews()?.split(',')).toHaveLength(12),
+    );
   });
 });

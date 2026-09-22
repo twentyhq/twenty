@@ -22,6 +22,9 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: mockClose }),
 }));
 jest.mock('@/side-panel/pages/record-views/hooks/useRecordViews');
+jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
+  useObjectMetadataItem: () => ({ objectMetadataItem }),
+}));
 
 const objectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const view: View = {
@@ -45,7 +48,6 @@ const mockResult = {
   loading: false,
   error: false,
   retry: mockRetry,
-  objectMetadataItem,
 };
 const renderList = () => {
   const store = createStore();
@@ -65,7 +67,7 @@ const renderList = () => {
   return render(
     <Provider store={store}>
       <MemoryRouter>
-        <RecordViewsList objectNameSingular="company" recordId="record-1" />
+        <RecordViewsList objectNameSingular="company" />
       </MemoryRouter>
     </Provider>,
   );

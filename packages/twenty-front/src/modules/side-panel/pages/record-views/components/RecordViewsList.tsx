@@ -1,10 +1,10 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/components/RecordPickerLoadingSkeletonList';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useRecordViews } from '@/side-panel/pages/record-views/hooks/useRecordViews';
-import { type RecordViewsTarget } from '@/side-panel/pages/record-views/types/RecordViewsTarget';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
@@ -15,16 +15,15 @@ import { IconRefresh } from 'twenty-ui/icon';
 
 const RETRY_ITEM_ID = 'retry-record-views';
 
-type RecordViewsListProps = RecordViewsTarget;
+type RecordViewsListProps = {
+  objectNameSingular: string;
+};
 
 export const RecordViewsList = ({
   objectNameSingular,
-  recordId,
 }: RecordViewsListProps) => {
-  const { views, loading, error, retry, objectMetadataItem } = useRecordViews({
-    objectNameSingular,
-    recordId,
-  });
+  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { views, loading, error, retry } = useRecordViews();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const navigate = useNavigate();
 
