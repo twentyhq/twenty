@@ -14,7 +14,7 @@ export const defineSettingsMenuItem: DefineEntity<SettingsMenuItemConfig> = (
 ) => {
   const errors: string[] = [];
 
-  if (!config.universalIdentifier) {
+  if (!isNonEmptyString(config.universalIdentifier)) {
     errors.push('SettingsMenuItem must have a universalIdentifier');
   }
 
@@ -31,9 +31,9 @@ export const defineSettingsMenuItem: DefineEntity<SettingsMenuItemConfig> = (
     );
   }
 
-  if (!config.frontComponentUniversalIdentifier) {
+  if (!isNonEmptyString(config.frontComponentUniversalIdentifier)) {
     errors.push(
-      'SettingsMenuItem must have a frontComponentUniversalIdentifier (the universalIdentifier of the front component this page renders)',
+      'SettingsMenuItem must have a frontComponentUniversalIdentifier (the universalIdentifier of the front component this item renders)',
     );
   }
 
