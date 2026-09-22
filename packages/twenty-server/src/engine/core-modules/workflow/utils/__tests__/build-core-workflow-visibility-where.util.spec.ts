@@ -3,6 +3,8 @@ import { IsNull } from 'typeorm';
 
 import { buildCoreWorkflowVisibilitySqlPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-sql-predicate.util';
 import { buildCoreWorkflowVisibilityWhere } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
+import { assertPrivateCoreWorkflowHasOwner } from 'src/engine/core-modules/workflow/utils/assert-private-core-workflow-has-owner.util';
+import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { canChangeCoreWorkflowVisibilitySelectExpression } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility-select-expression.util';
 
@@ -96,5 +98,43 @@ describe('canChangeCoreWorkflowVisibilitySelectExpression', () => {
     ).toBe(
       `coalesce((c."createdByUserWorkspaceId" IS NULL OR c."createdByUserWorkspaceId" = $2::uuid), false)`,
     );
+  });
+});
+
+describe('assertPrivateCoreWorkflowHasOwner', () => {
+  it('throws Forbidden exception when application creates a private workflow', () => {
+    expect(() => {
+      assertPrivateCoreWorkflowHasOwner({
+        visibility: WorkflowVisibility.PRIVATE,
+        userWorkspaceId: undefined,
+      });
+    }).toThrow(WorkflowQueryValidationException);
+  });
+
+  it('allows user workspace member to create private workflow', () => {
+    expect(() => {
+      assertPrivateCoreWorkflowHasOwner({
+        visibility: WorkflowVisibility.PRIVATE,
+        userWorkspaceId: 'user-ws-id',
+      });
+    }).not.toThrow();
+  });
+
+  it('allows application to create workspace-visible workflow', () => {
+    expect(() => {
+      assertPrivateCoreWorkflowHasOwner({
+        visibility: WorkflowVisibility.WORKSPACE,
+        userWorkspaceId: undefined,
+      });
+    }).not.toThrow();
+  });
+
+  it('allows application to create workflow with default unspecified visibility', () => {
+    expect(() => {
+      assertPrivateCoreWorkflowHasOwner({
+        visibility: undefined,
+        userWorkspaceId: undefined,
+      });
+    }).not.toThrow();
   });
 });
