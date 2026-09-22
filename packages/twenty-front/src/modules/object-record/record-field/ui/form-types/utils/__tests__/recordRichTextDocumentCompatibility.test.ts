@@ -1,3 +1,4 @@
+import { resolveRichTextVariables } from 'twenty-shared/utils';
 import { convertTipTapDocumentToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertTipTapDocumentToBlockNote';
 import { parseLegacyRecordRichTextDocument } from '@/object-record/record-field/ui/form-types/utils/parseLegacyRecordRichTextDocument';
 
@@ -237,4 +238,32 @@ it('preserves literal mustache text when variables are disabled', () => {
   ).toMatchObject({
     content: [{ content: [{ type: 'text', text: 'Use {{name}} here' }] }],
   });
+});
+
+it('keeps workflow variables resolvable without resolving literal mustache text', () => {
+  const content = [
+    {
+      type: 'paragraph',
+      content: [
+        { type: 'text', text: 'Literal {{step.name}} ' },
+        { type: 'variableTag', attrs: { variable: '{{step.name}}' } },
+      ],
+    },
+  ];
+  const stored = convertTipTapDocumentToBlockNote(
+    JSON.stringify({ type: 'doc', content }),
+    true,
+  );
+  expect(JSON.parse(stored)).toEqual(content);
+  expect(
+    JSON.parse(resolveRichTextVariables(stored, { step: { name: 'Alice' } })),
+  ).toEqual([
+    {
+      type: 'paragraph',
+      content: [
+        { type: 'text', text: 'Literal {{step.name}} ' },
+        { type: 'text', text: 'Alice' },
+      ],
+    },
+  ]);
 });

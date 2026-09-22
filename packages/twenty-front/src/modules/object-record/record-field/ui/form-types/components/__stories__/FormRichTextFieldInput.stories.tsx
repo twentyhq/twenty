@@ -44,6 +44,7 @@ export const WithLabel: Story = {
 
 export const WithVariable: Story = {
   args: {
+    enableVariables: true,
     label: 'Rich Text',
     placeholder: 'Rich Text field...',
     defaultValue: { blocknote: null, markdown: '## Title\nVariable: ' },
@@ -89,7 +90,7 @@ export const WithVariable: Story = {
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith({
         blocknote:
-          '[{"type":"paragraph","props":{},"content":[{"type":"text","text":"## Title","styles":{}},{"type":"text","text":"\\n","styles":{}},{"type":"text","text":"Variable: ","styles":{}},{"type":"text","text":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}","styles":{}}],"children":[]}]',
+          '[{"type":"paragraph","content":[{"type":"text","text":"## Title"},{"type":"hardBreak"},{"type":"text","text":"Variable: "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
         markdown: null,
       });
     });
@@ -99,6 +100,7 @@ export const WithVariable: Story = {
 
 export const WithDeletableVariable: Story = {
   args: {
+    enableVariables: true,
     label: 'Text',
     placeholder: 'Text field...',
     defaultValue: {
@@ -136,7 +138,7 @@ export const WithDeletableVariable: Story = {
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith({
         blocknote:
-          '[{"type":"paragraph","props":{},"content":[{"type":"text","text":"test  test","styles":{}}],"children":[]}]',
+          '[{"type":"paragraph","content":[{"type":"text","text":"test  test"}]}]',
         markdown: null,
       });
     });
@@ -185,6 +187,7 @@ export const Disabled: Story = {
 
 export const DisabledWithVariable: Story = {
   args: {
+    enableVariables: true,
     label: 'Text',
     defaultValue: {
       blocknote: null,
@@ -214,6 +217,7 @@ export const DisabledWithVariable: Story = {
 
 export const HasHistory: Story = {
   args: {
+    enableVariables: true,
     label: 'Text',
     placeholder: 'Text field...',
     VariablePicker: ({ onVariableSelect }) => {
@@ -254,7 +258,7 @@ export const HasHistory: Story = {
 
     expect(args.onChange).toHaveBeenLastCalledWith({
       blocknote:
-        '[{"type":"paragraph","props":{},"content":[{"type":"text","text":"Hello World ","styles":{}},{"type":"text","text":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}","styles":{}}],"children":[]}]',
+        '[{"type":"paragraph","content":[{"type":"text","text":"Hello World "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
       markdown: null,
     });
 
@@ -262,7 +266,7 @@ export const HasHistory: Story = {
 
     expect(editor).toHaveTextContent('');
     expect(args.onChange).toHaveBeenLastCalledWith({
-      blocknote: '[{"type":"paragraph","props":{},"content":[],"children":[]}]',
+      blocknote: '[{"type":"paragraph"}]',
       markdown: null,
     });
 
@@ -274,7 +278,7 @@ export const HasHistory: Story = {
     expect(editor).toHaveTextContent(`Hello World Name`);
     expect(args.onChange).toHaveBeenLastCalledWith({
       blocknote:
-        '[{"type":"paragraph","props":{},"content":[{"type":"text","text":"Hello World ","styles":{}},{"type":"text","text":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}","styles":{}}],"children":[]}]',
+        '[{"type":"paragraph","content":[{"type":"text","text":"Hello World "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
       markdown: null,
     });
   },

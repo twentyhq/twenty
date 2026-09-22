@@ -31,7 +31,7 @@ export const FormRichTextFieldInput = ({
   onChange,
   readonly,
   VariablePicker,
-  enableVariables = true,
+  enableVariables = false,
 }: FormRichTextFieldInputProps) => {
   const profile = useMemo(
     () => ({
@@ -51,12 +51,15 @@ export const FormRichTextFieldInput = ({
         serializedDocument: storedValue,
         parseLegacyDocument: profile.parseLegacyDocument,
       });
-      convertTipTapDocumentToBlockNote(JSON.stringify(document));
+      convertTipTapDocumentToBlockNote(
+        JSON.stringify(document),
+        enableVariables,
+      );
       return false;
     } catch {
       return true;
     }
-  }, [storedValue, profile]);
+  }, [storedValue, profile, enableVariables]);
 
   if (hasUnsupportedContent) {
     return (
@@ -71,8 +74,8 @@ export const FormRichTextFieldInput = ({
 
   const handleChange = (value: string) => {
     onChange({
-      // Record pages still read BlockNote, so convert at the field boundary.
-      blocknote: convertTipTapDocumentToBlockNote(value),
+      // Workflow resolution requires semantic tags; record pages require BlockNote.
+      blocknote: convertTipTapDocumentToBlockNote(value, enableVariables),
       markdown: null,
     });
   };
