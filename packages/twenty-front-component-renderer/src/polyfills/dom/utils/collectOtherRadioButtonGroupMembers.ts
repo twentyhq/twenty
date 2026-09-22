@@ -1,11 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { resolveRadioButtonGroupScopeRoot } from '@/polyfills/dom/utils/resolveRadioButtonGroupScopeRoot';
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 import { collectMatchingDescendants } from '@/polyfills/selectors/utils/collectMatchingDescendants';
 import { readElementAttributeIgnoringCase } from '@/polyfills/selectors/utils/readElementAttributeIgnoringCase';
+import { resolveFormOwnerElement } from '@/polyfills/selectors/utils/resolveFormOwnerElement';
 import { resolveHtmlTagNameOfElement } from '@/polyfills/selectors/utils/resolveHtmlTagNameOfElement';
 import { resolveInputTypeOfElement } from '@/polyfills/selectors/utils/resolveInputTypeOfElement';
+import { resolveNodeTreeRoot } from '@/polyfills/selectors/utils/resolveNodeTreeRoot';
 
 const isRadioButtonNamed = (
   element: SelectorElementLike,
@@ -15,7 +16,7 @@ const isRadioButtonNamed = (
   resolveInputTypeOfElement(element) === 'radio' &&
   readElementAttributeIgnoringCase(element, 'name') === name;
 
-export const collectRadioButtonsSharingName = (
+export const collectOtherRadioButtonGroupMembers = (
   radioButton: SelectorElementLike,
 ): SelectorElementLike[] => {
   const name = readElementAttributeIgnoringCase(radioButton, 'name');
@@ -24,9 +25,14 @@ export const collectRadioButtonsSharingName = (
     return [];
   }
 
+  const treeRoot = resolveNodeTreeRoot(radioButton);
+  const formOwner = resolveFormOwnerElement({ element: radioButton, treeRoot });
+
   return collectMatchingDescendants({
-    nodes: [resolveRadioButtonGroupScopeRoot(radioButton)],
+    nodes: [treeRoot],
     isElementMatching: (candidate) =>
-      candidate !== radioButton && isRadioButtonNamed(candidate, name),
+      candidate !== radioButton &&
+      isRadioButtonNamed(candidate, name) &&
+      resolveFormOwnerElement({ element: candidate, treeRoot }) === formOwner,
   });
 };
