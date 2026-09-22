@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { WORKSPACE_DESTROY_JOB_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-destroy-job-duration-ms-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -44,11 +45,43 @@ export class DestroySoftDeletedWorkspaceJob {
 
     this.logger.log(`Destroying workspace ${workspaceId}`);
 
-    await this.workspaceService.deleteWorkspace(workspaceId);
+    const destructionStart = performance.now();
+
+    try {
+      await this.workspaceService.deleteWorkspace(workspaceId);
+    } catch (error) {
+      this.recordDurationMetric({
+        status: 'fail',
+        durationMs: performance.now() - destructionStart,
+      });
+
+      throw error;
+    }
+
+    this.recordDurationMetric({
+      status: 'success',
+      durationMs: performance.now() - destructionStart,
+    });
 
     void this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.CronJobDeletedWorkspace,
       shouldStoreInCache: false,
+    });
+  }
+
+  private recordDurationMetric({
+    status,
+    durationMs,
+  }: {
+    status: 'success' | 'fail';
+    durationMs: number;
+  }): void {
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.WorkspaceDestroyJobDurationMs,
+      value: durationMs,
+      unit: 'ms',
+      attributes: { status },
+      bucketBoundaries: WORKSPACE_DESTROY_JOB_DURATION_MS_BUCKET_BOUNDARIES,
     });
   }
 }

@@ -55,6 +55,7 @@ export enum MetricsKeys {
   AppRegistrationCreated = 'app-registration/created',
   AppRegistrationVersionPublished = 'app-registration/version-published',
   CronJobDeletedWorkspace = 'cron-job/deleted-workspace',
+  WorkspaceDestroyJobDurationMs = 'workspace-destroy-job/duration-ms',
   JobWebhookCallCompleted = 'job/webhook-call-completed',
   JobWebhookCallThrottled = 'job/webhook-call-throttled',
   SignUpSuccess = 'sign-up/success',
