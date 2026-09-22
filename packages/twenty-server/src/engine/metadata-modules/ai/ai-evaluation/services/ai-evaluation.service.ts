@@ -24,7 +24,7 @@ export class AiEvaluationService {
     state,
     questions,
     abortSignal,
-  }: Omit<AiEvaluationRequest, 'modelId'>): Promise<AiEvaluationResult> {
+  }: AiEvaluationRequest): Promise<AiEvaluationResult> {
     assertEvaluationQuestionsAreWellFormed(questions);
 
     const modelId = resolveJevEvaluationModelIdOrThrow({

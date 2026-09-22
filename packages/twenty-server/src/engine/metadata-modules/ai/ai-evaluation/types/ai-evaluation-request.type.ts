@@ -8,7 +8,6 @@ export type AiEvaluationRequest = {
   // Attributes the spend to the member who triggered the run, and is the
   // spender the quota check is made against.
   userWorkspaceId?: string | null;
-  modelId?: string;
   state: AiEvaluationModelInput;
   questions: Record<string, AiEvaluationModelQuestion>;
   abortSignal?: AbortSignal;

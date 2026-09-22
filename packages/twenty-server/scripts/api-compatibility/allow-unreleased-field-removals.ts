@@ -1,10 +1,14 @@
 import { type IntrospectionQuery, buildClientSchema } from 'graphql';
 
-export const allowUnreleasedFieldRemovals = (
-  main: IntrospectionQuery,
-  current: IntrospectionQuery,
-  released: IntrospectionQuery,
-): IntrospectionQuery => {
+export const allowUnreleasedFieldRemovals = ({
+  main,
+  current,
+  released,
+}: {
+  main: IntrospectionQuery;
+  current: IntrospectionQuery;
+  released: IntrospectionQuery;
+}): IntrospectionQuery => {
   // Invalid baselines must fail closed instead of silently allowing removals.
   buildClientSchema(main);
   buildClientSchema(current);

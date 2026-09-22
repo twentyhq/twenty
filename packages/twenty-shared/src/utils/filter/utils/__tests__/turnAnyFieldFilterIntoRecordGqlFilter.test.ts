@@ -43,6 +43,13 @@ const arrayFieldMetadataItem: PartialFieldMetadataItem = {
   name: 'arrayField',
 };
 
+const actorFieldMetadataItem: PartialFieldMetadataItem = {
+  ...baseFieldMetadataItem,
+  id: 'actor-field-id',
+  type: FieldMetadataType.ACTOR,
+  name: 'actorField',
+};
+
 const emailsFieldMetadataItem: PartialFieldMetadataItem = {
   ...baseFieldMetadataItem,
   id: 'emails-field-id',
@@ -144,6 +151,7 @@ const mockObjectMetadataItemWithAllFields = {
     linksFieldMetadataItem,
     fullNameFieldMetadataItem,
     arrayFieldMetadataItem,
+    actorFieldMetadataItem,
     emailsFieldMetadataItem,
     phonesFieldMetadataItem,
     numberFieldMetadataItem,
@@ -288,6 +296,57 @@ describe('turnAnyFieldFilterIntoRecordGqlFilter', () => {
             [fullNameFieldMetadataItem.name]: {
               lastName: {
                 ilike: `%${filterValue}%`,
+              },
+            },
+          },
+        ],
+      });
+    });
+  });
+
+  describe('ACTOR field type', () => {
+    it('should generate correct filter for actor field', () => {
+      const filterValue = 'test';
+
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
+        filterValue,
+        fields: [actorFieldMetadataItem],
+      });
+
+      expect(result.recordGqlOperationFilter.or).toContainEqual({
+        or: [
+          {
+            [actorFieldMetadataItem.name]: {
+              name: {
+                ilike: `%${filterValue}%`,
+              },
+            },
+          },
+        ],
+      });
+    });
+
+    it('should also match on actor source when filter value corresponds to a source', () => {
+      const filterValue = 'manual';
+
+      const result = turnAnyFieldFilterIntoRecordGqlFilter({
+        filterValue,
+        fields: [actorFieldMetadataItem],
+      });
+
+      expect(result.recordGqlOperationFilter.or).toContainEqual({
+        or: [
+          {
+            [actorFieldMetadataItem.name]: {
+              name: {
+                ilike: `%${filterValue}%`,
+              },
+            },
+          },
+          {
+            [actorFieldMetadataItem.name]: {
+              source: {
+                in: ['MANUAL'],
               },
             },
           },

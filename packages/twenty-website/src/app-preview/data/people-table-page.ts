@@ -11,7 +11,13 @@ export const PEOPLE_TABLE_PAGE: TablePageDefinition = {
     count: 5,
   },
   columns: [
-    { id: 'name', label: 'Name', width: 180, isFirstColumn: true },
+    {
+      id: 'name',
+      label: 'Name',
+      width: 180,
+      icon: 'user',
+      isFirstColumn: true,
+    },
     { id: 'company', label: 'Company', width: 160 },
     { id: 'email', label: 'Email', width: 200 },
     { id: 'phone', label: 'Phone', width: 160 },

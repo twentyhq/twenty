@@ -25,6 +25,10 @@ const released = introspectionFromSchema(
 writeFileSync(
   outputPath,
   JSON.stringify({
-    data: allowUnreleasedFieldRemovals(main.data, current.data, released),
+    data: allowUnreleasedFieldRemovals({
+      main: main.data,
+      current: current.data,
+      released,
+    }),
   }),
 );

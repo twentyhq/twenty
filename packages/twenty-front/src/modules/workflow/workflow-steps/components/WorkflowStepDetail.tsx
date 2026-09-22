@@ -42,7 +42,7 @@ type WorkflowStepDetailProps = {
       stepId: string;
       readonly?: false;
       onTriggerUpdate: (trigger: WorkflowTrigger) => void;
-      onActionUpdate: (action: WorkflowAction) => void;
+      onActionUpdate: (action: WorkflowAction) => Promise<unknown>;
     }
 );
 
