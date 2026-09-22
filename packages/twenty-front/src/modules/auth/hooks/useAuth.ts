@@ -138,6 +138,7 @@ export const useAuth = () => {
     async (
       availableWorkspaces: Parameters<typeof countAvailableWorkspaces>[0],
       email: string,
+      options?: { isResumingSession?: boolean },
     ) => {
       const availableWorkspacesCount =
         countAvailableWorkspaces(availableWorkspaces);
@@ -157,7 +158,10 @@ export const useAuth = () => {
         return;
       }
 
-      if (availableWorkspacesCount === 1 && !isStayOnDefaultDomainRequested()) {
+      const shouldLetUserPickWorkspace =
+        options?.isResumingSession === true && isStayOnDefaultDomainRequested();
+
+      if (availableWorkspacesCount === 1 && !shouldLetUserPickWorkspace) {
         const targetWorkspace =
           getFirstAvailableWorkspaces(availableWorkspaces);
 

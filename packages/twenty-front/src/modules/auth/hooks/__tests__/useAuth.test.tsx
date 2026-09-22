@@ -270,7 +270,30 @@ describe('useAuth', () => {
       );
     });
 
-    it('should let the user choose when they asked to stay on the default domain', async () => {
+    it('should let the user choose when a resumed session asked to stay on the default domain', async () => {
+      window.history.replaceState(
+        null,
+        '',
+        '/welcome?stayOnDefaultDomain=true',
+      );
+
+      const { result } = renderHooks();
+
+      await act(async () => {
+        await result.current.navigateAfterMultiWorkspaceSignInUp(
+          availableWorkspaces,
+          email,
+          { isResumingSession: true },
+        );
+      });
+
+      expect(redirectToWorkspaceDomainSpy).not.toHaveBeenCalled();
+      expect(getDefaultStore().get(signInUpStepState.atom)).toBe(
+        SignInUpStep.WorkspaceSelection,
+      );
+    });
+
+    it('should still send a user who just signed in straight to their single workspace', async () => {
       window.history.replaceState(
         null,
         '',
@@ -286,9 +309,11 @@ describe('useAuth', () => {
         );
       });
 
-      expect(redirectToWorkspaceDomainSpy).not.toHaveBeenCalled();
-      expect(getDefaultStore().get(signInUpStepState.atom)).toBe(
-        SignInUpStep.WorkspaceSelection,
+      expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledTimes(1);
+      expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledWith(
+        'https://apple.twenty.com',
+        AppPath.Verify,
+        { loginToken: 'login-token', email },
       );
     });
   });
