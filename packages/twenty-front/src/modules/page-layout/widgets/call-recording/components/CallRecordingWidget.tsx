@@ -16,10 +16,7 @@ export const CallRecordingWidget = ({ kind }: CallRecordingWidgetProps) => {
   if (isDefined(unavailableReason)) {
     return (
       <StyledWidgetScrollContainer>
-        <CallRecordingWidgetUnavailableDisplay
-          kind={kind}
-          reason={unavailableReason}
-        />
+        <CallRecordingWidgetUnavailableDisplay reason={unavailableReason} />
       </StyledWidgetScrollContainer>
     );
   }
