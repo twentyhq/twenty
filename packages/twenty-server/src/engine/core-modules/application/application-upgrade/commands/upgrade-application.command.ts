@@ -182,9 +182,6 @@ export class UpgradeApplicationCommand extends CommandRunner {
       }
     }
 
-    // Targets the exact set shown at confirmation time, so installations
-    // created while the operator answered are excluded. Each job resolves the
-    // latest available version when it runs.
     const enqueuedJobIds =
       await this.applicationUpgradeService.enqueueWorkspaceApplicationUpgrades({
         applicationRegistrationId: registration.id,

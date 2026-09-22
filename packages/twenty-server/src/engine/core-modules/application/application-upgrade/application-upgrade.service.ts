@@ -193,9 +193,6 @@ export class ApplicationUpgradeService {
       return;
     }
 
-    // The target is resolved when the job runs, so a job enqueued before a
-    // newer publish, or retried after a partial failure, stops here instead
-    // of reinstalling
     if (application.version === targetVersion) {
       this.logger.log(
         `Skipping upgrade of ${appRegistration.universalIdentifier} on workspace ${workspaceId}: already on version ${targetVersion}`,

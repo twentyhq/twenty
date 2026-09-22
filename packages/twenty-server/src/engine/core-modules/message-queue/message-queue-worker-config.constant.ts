@@ -206,8 +206,6 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 6,
     workerOptions: {
       concurrency: 2,
-      // An upgrade downloads and extracts the package before syncing the
-      // manifest, so lock renewal needs margin over event-loop stalls
       lockDuration: 60_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
