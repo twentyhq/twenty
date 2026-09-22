@@ -1,6 +1,6 @@
 import { defineConnectionProvider } from 'twenty-sdk/define';
 
-import { TEAMS_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { TEAMS_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 
 export default defineConnectionProvider({
   universalIdentifier: TEAMS_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,

@@ -1,4 +1,4 @@
-# Setup
+# Microsoft Teams setup
 
 ## Microsoft application
 
@@ -8,29 +8,36 @@
 2. Add a **Web** redirect URI:
    `https://<your-twenty-host>/auth/apps/callback`.
 3. Create a client secret. Set `MICROSOFT_CLIENT_ID` and
-   `MICROSOFT_CLIENT_SECRET` in the Twenty application's server variables. Use
-   the secret **Value**, not its ID.
+   `MICROSOFT_CLIENT_SECRET` on the Microsoft Teams application registration in
+   Twenty. Use the secret **Value**, not its ID.
 4. Add the Microsoft Graph delegated permissions below and obtain administrator
    consent where required by your organization.
 
-| Permission | Purpose |
-| --- | --- |
-| `User.Read` | Identify the connected Microsoft account |
-| `Calendars.ReadBasic` | Discover scheduled meetings in the upcoming import flow |
-| `OnlineMeetings.Read` | Read meeting metadata in the upcoming import flow |
-| `OnlineMeetingTranscript.Read.All` | Read transcripts in the upcoming import flow |
+| Permission                         | Purpose                                                 |
+| ---------------------------------- | ------------------------------------------------------- |
+| `User.Read`                        | Identify the connected Microsoft account                |
+| `Calendars.ReadBasic`              | Discover scheduled meetings in the upcoming import flow |
+| `OnlineMeetings.Read`              | Read meeting metadata in the upcoming import flow       |
+| `OnlineMeetingTranscript.Read.All` | Read transcripts in the upcoming import flow            |
 
 The connection also requests `openid`, `profile`, `email`, and `offline_access`
 for account identity and refresh tokens. It uses the authorization code flow
 with PKCE through Twenty's connection provider.
 
+These OAuth credentials are separate from the `TEAMS_BOT_*` credentials used by
+the chat Bot Connector. They are optional at registration so Teams can be
+installed without transcript setup. Both must be configured before users can add
+a Microsoft connection. See [README.md](README.md#bot-server-variables) for the
+bot configuration.
+
 ## Connect
 
-Open **Settings > Applications > Teams Transcripts > Settings**, select
+Open **Settings > Applications > Microsoft Teams > Settings**, select
 **Add connection**, and sign in with your Microsoft work or school account.
 
 This version stores the connection; it does not import transcripts or register
-webhooks. Those capabilities are added in later changes.
+webhooks. The transcript release flag and workspace setting remain off. Connecting
+an account does not enable them.
 
 References: [Microsoft authorization code flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
 and [transcript permissions](https://learn.microsoft.com/en-us/graph/api/onlinemeeting-list-transcripts?view=graph-rest-1.0).
