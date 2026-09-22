@@ -3,6 +3,7 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useRecordViews } from '@/side-panel/pages/record-views/hooks/useRecordViews';
+import { type RecordViewsTarget } from '@/side-panel/pages/record-views/types/RecordViewsTarget';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
@@ -13,10 +14,7 @@ import { IconRefresh } from 'twenty-ui/icon';
 
 const RETRY_ITEM_ID = 'retry-record-views';
 
-type RecordViewsListProps = {
-  objectNameSingular: string;
-  recordId: string;
-};
+type RecordViewsListProps = RecordViewsTarget;
 
 export const RecordViewsList = ({
   objectNameSingular,

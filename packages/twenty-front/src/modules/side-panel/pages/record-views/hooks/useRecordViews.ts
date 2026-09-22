@@ -5,6 +5,7 @@ import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/t
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { type RecordViewsTarget } from '@/side-panel/pages/record-views/types/RecordViewsTarget';
 import { getRecordViewFilter } from '@/side-panel/pages/record-views/utils/getRecordViewFilter';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -25,10 +26,7 @@ type RecordViewsResult = {
 export const useRecordViews = ({
   objectNameSingular,
   recordId,
-}: {
-  objectNameSingular: string;
-  recordId: string;
-}) => {
+}: RecordViewsTarget) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const views = useAtomFamilySelectorValue(
     viewsFromObjectMetadataItemFamilySelector,
@@ -71,7 +69,9 @@ export const useRecordViews = ({
           offset < candidateViews.length;
           offset += VIEW_QUERY_CONCURRENCY
         ) {
-          if (cancelled) return;
+          if (cancelled) {
+            return;
+          }
 
           const matches = await Promise.all(
             candidateViews
@@ -105,10 +105,13 @@ export const useRecordViews = ({
           matchingViews.push(...matches.filter(isDefined));
         }
 
-        if (!cancelled)
+        if (!cancelled) {
           setResult({ views: matchingViews, loading: false, error: false });
+        }
       } catch {
-        if (!cancelled) setResult({ views: [], loading: false, error: true });
+        if (!cancelled) {
+          setResult({ views: [], loading: false, error: true });
+        }
       }
     };
 

@@ -1,5 +1,6 @@
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { recordViewsTargetComponentState } from '@/side-panel/pages/record-views/states/recordViewsTargetComponentState';
+import { type RecordViewsTarget } from '@/side-panel/pages/record-views/types/RecordViewsTarget';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -12,7 +13,7 @@ export const useOpenRecordViewsPageInSidePanel = () => {
   const { navigateSidePanel } = useNavigateSidePanel();
 
   const openRecordViewsPageInSidePanel = useCallback(
-    (targetRecord: { objectNameSingular: string; recordId: string }) => {
+    (targetRecord: RecordViewsTarget) => {
       const pageId = v4();
 
       store.set(
