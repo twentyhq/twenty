@@ -22,11 +22,17 @@
         "src/database/scripts/*.ts",
         "src/database/clickhouse/migrations/run-migrations.ts",
         "src/database/clickhouse/seeds/run-seeds.ts",
+        "src/instrument.ts",
+        "lingui.config.ts",
         "scripts/**/*.ts",
-        "test/integration/**/*.integration-spec.ts",
+        "**/*.spec.ts",
+        "**/*.integration-spec.ts",
         "test/integration/graphql/codegen/index.ts",
+        "test/integration/utils/setup-test.ts",
+        "test/integration/utils/teardown-test.ts",
         "src/database/typeorm/core/legacy-typeorm-migrations-do-not-add/**/*.ts"
       ],
+      "project": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.ts"],
       "jest": [
         "jest.config.mjs",
         "jest-integration.config.ts",
@@ -34,9 +40,11 @@
       ],
       "ignore": [
         "src/**/constants/seed-project/**",
-        "src/**/constants/yarn-engine/**",
-        "src/engine/core-modules/logic-function/logic-function-drivers/constants/**"
-      ]
+        "src/database/typeorm/core/migrations/**",
+        "**/*.workspace-entity.ts",
+        "src/engine/core-modules/logic-function/logic-function-resource/constants/**"
+      ],
+      "ignoreDependencies": ["@types/psl"]
     },
     "packages/twenty-front": {
       "entry": [
