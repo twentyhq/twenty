@@ -194,6 +194,7 @@ export class ApplicationInstallResolver {
       appRegistrationId: registration.id,
       version: params.version,
       workspaceId: params.workspaceId,
+      hasUserApprovedCapabilities: true,
     });
   }
 
