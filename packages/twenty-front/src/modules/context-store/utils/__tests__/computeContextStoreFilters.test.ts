@@ -81,6 +81,40 @@ describe('computeContextStoreFilters', () => {
     });
   });
 
+  it('should exclude non-readable fields from the any-field search filter', () => {
+    const contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule = {
+      mode: 'exclusion',
+      excludedRecordIds: [],
+    };
+
+    const linkedinLinkField = personObjectMetadataItem.fields.find(
+      (field) => field.name === 'linkedinLink',
+    )!;
+
+    const personObjectMetadataItemWithRestrictedLinkedinLink = {
+      ...personObjectMetadataItem,
+      readableFields: personObjectMetadataItem.readableFields.filter(
+        (field) => field.id !== linkedinLinkField.id,
+      ),
+    };
+
+    const filters = computeContextStoreFilters({
+      contextStoreTargetedRecordsRule,
+      contextStoreFilters: [],
+      contextStoreFilterGroups: [],
+      objectMetadataItem: personObjectMetadataItemWithRestrictedLinkedinLink,
+      fieldMetadataItems: personObjectMetadataItem.fields,
+      filterValueDependencies: mockFilterValueDependencies,
+      contextStoreAnyFieldFilterValue: 'Airtable',
+    });
+
+    const serializedFilters = JSON.stringify(filters);
+
+    expect(serializedFilters).not.toContain('linkedinLink');
+    // Other fields should still be searched.
+    expect(serializedFilters).toContain('name');
+  });
+
   it('should work for exclusion mode', () => {
     const contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule = {
       mode: 'exclusion',
