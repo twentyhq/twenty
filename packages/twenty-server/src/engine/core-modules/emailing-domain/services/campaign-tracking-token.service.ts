@@ -13,6 +13,7 @@ import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-enc
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type SigningKey = { keyId: Buffer; key: Buffer };
+const CLICK_PURPOSE_BYTE = 1;
 
 @Injectable()
 export class CampaignTrackingTokenService {
@@ -90,7 +91,11 @@ export class CampaignTrackingTokenService {
     payload: CampaignTrackingTokenPayload;
     keyId: Buffer;
   }): Buffer {
-    const header = Buffer.from([CAMPAIGN_TRACKING_TOKEN_VERSION, ...keyId, 1]);
+    const header = Buffer.from([
+      CAMPAIGN_TRACKING_TOKEN_VERSION,
+      ...keyId,
+      CLICK_PURPOSE_BYTE,
+    ]);
     const identifiers = Buffer.concat([
       this.encodeUuid(payload.deliveryId),
       this.encodeUuid(payload.shortLinkId),
@@ -106,7 +111,7 @@ export class CampaignTrackingTokenService {
       CAMPAIGN_TRACKING_TOKEN_LAYOUT.purpose,
     );
 
-    if (purposeByte !== 1) {
+    if (purposeByte !== CLICK_PURPOSE_BYTE) {
       return null;
     }
 
