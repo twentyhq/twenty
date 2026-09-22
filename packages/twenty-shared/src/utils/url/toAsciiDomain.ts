@@ -1,23 +1,27 @@
 const UNICODE_DOMAIN_DOT_REGEX = /[\u3002\uff0e\uff61]/g;
-const TRAILING_DOMAIN_DOTS_REGEX = /\.+$/;
 const INVALID_DOMAIN_URL_CHARACTERS_REGEX = /[/\\?#:@\s]/;
 
+const stripTrailingDots = (domain: string): string => {
+  let end = domain.length;
+
+  while (end > 0 && domain[end - 1] === '.') {
+    end--;
+  }
+
+  return domain.slice(0, end);
+};
+
 export const toAsciiDomain = (rawDomain: string): string => {
-  const domain = rawDomain
-    .trim()
-    .replace(UNICODE_DOMAIN_DOT_REGEX, '.')
-    .replace(TRAILING_DOMAIN_DOTS_REGEX, '')
-    .toLowerCase();
+  const domain = stripTrailingDots(
+    rawDomain.trim().replace(UNICODE_DOMAIN_DOT_REGEX, '.').toLowerCase(),
+  );
 
   if (INVALID_DOMAIN_URL_CHARACTERS_REGEX.test(domain)) {
     return domain;
   }
 
   try {
-    return new URL(`https://${domain}`).hostname.replace(
-      TRAILING_DOMAIN_DOTS_REGEX,
-      '',
-    );
+    return stripTrailingDots(new URL(`https://${domain}`).hostname);
   } catch {
     return domain;
   }
