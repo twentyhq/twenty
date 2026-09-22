@@ -193,6 +193,64 @@ describe('installInputClickActivationPolyfill', () => {
     otherForm.remove();
   });
 
+  it('should group radios through their form attribute in both directions', () => {
+    const form = document.createElement('html-form') as HTMLFormElement;
+    const sidebar = document.createElement('html-div') as HTMLElement;
+    const inForm = createInput({
+      type: 'radio',
+      name: 'frequency',
+      checked: true,
+    });
+    const outsideForm = createInput({ type: 'radio', name: 'frequency' });
+
+    form.id = 'digest';
+    outsideForm.setAttribute('form', 'digest');
+    form.append(inForm);
+    sidebar.append(outsideForm);
+    document.body.append(form, sidebar);
+
+    outsideForm.dispatchEvent(createClickEvent());
+
+    expect(outsideForm.checked).toBe(true);
+    expect(inForm.checked).toBe(false);
+
+    inForm.dispatchEvent(createClickEvent());
+
+    expect(inForm.checked).toBe(true);
+    expect(outsideForm.checked).toBe(false);
+
+    form.remove();
+    sidebar.remove();
+  });
+
+  it('should keep radios with different form owners in separate groups', () => {
+    const form = document.createElement('html-form') as HTMLFormElement;
+    const inForm = createInput({
+      type: 'radio',
+      name: 'frequency',
+      checked: true,
+    });
+    const disowned = createInput({ type: 'radio', name: 'frequency' });
+    const documentLevel = createInput({
+      type: 'radio',
+      name: 'frequency',
+      checked: true,
+    });
+
+    disowned.setAttribute('form', 'missing-form');
+    form.append(inForm, disowned);
+    document.body.append(form, documentLevel);
+
+    disowned.dispatchEvent(createClickEvent());
+
+    expect(disowned.checked).toBe(true);
+    expect(documentLevel.checked).toBe(false);
+    expect(inForm.checked).toBe(true);
+
+    form.remove();
+    documentLevel.remove();
+  });
+
   it('should scope unformed radios to their document', () => {
     const container = document.createElement('html-div') as HTMLElement;
     const first = createInput({ type: 'radio', name: 'stage', checked: true });
