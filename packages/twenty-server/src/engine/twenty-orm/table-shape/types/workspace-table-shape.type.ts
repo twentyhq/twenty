@@ -8,8 +8,6 @@ export type WorkspaceColumnShape = {
   fieldName: string;
   fieldMetadataType: FieldMetadataType;
   compositeParentFieldName?: string;
-  compositeParentFieldType?: FieldMetadataType;
-  compositeSubFieldName?: string;
 };
 
 export type WorkspaceRelationShape = {

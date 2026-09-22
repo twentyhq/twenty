@@ -18,7 +18,6 @@ import {
   type SetClause,
 } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
-import { normalizeWorkspaceMutationRecord } from 'src/engine/twenty-orm/utils/normalize-workspace-mutation-record.util';
 
 let mutationSetParameterSequence = 0;
 
@@ -73,7 +72,7 @@ export class WorkspaceMutationQueryBuilder {
   }
 
   set(record: Record<string, unknown>): this {
-    this.setRecord = normalizeWorkspaceMutationRecord(record, this.tableShape);
+    this.setRecord = record;
 
     return this;
   }

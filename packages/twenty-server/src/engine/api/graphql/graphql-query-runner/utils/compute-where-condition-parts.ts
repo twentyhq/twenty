@@ -10,8 +10,8 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { normalizeExactEmailsFilterValue } from 'src/engine/api/graphql/graphql-query-runner/utils/normalize-exact-emails-filter-value.util';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { normalizeExactEmailsFilterValue } from 'src/engine/core-modules/record-transformer/utils/normalize-exact-emails-filter-value.util';
 
 type WhereConditionParts = {
   sql: string;
