@@ -25,11 +25,10 @@ type SettingsEmailingDomainAiSetupProps = {
 
 const StyledContainer = styled.div`
   align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: flex-end;
-  min-width: 0;
-  width: 100%;
+  align-self: flex-end;
+  display: inline-flex;
+  max-width: 100%;
+  position: relative;
 `;
 
 const StyledPromptButton = styled.button`
@@ -88,12 +87,16 @@ const StyledDismissButton = styled.button`
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
-  flex: 0 0 ${themeCssVariables.spacing[6]};
   height: ${themeCssVariables.spacing[6]};
+  inset-inline-end: calc(-1 * ${themeCssVariables.spacing[7]});
   justify-content: center;
   opacity: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   transition: opacity ${themeCssVariables.animation.duration.normal}s ease;
   visibility: hidden;
+  width: ${themeCssVariables.spacing[6]};
 
   ${StyledContainer}:hover &,
   ${StyledContainer}:focus-within & {
