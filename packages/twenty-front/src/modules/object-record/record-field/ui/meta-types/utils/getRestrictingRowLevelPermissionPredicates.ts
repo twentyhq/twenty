@@ -39,7 +39,7 @@ const isPredicateInsideOrGroup = ({
   return false;
 };
 
-export const getUnconditionalRowLevelPermissionPredicates = ({
+export const getRestrictingRowLevelPermissionPredicates = ({
   predicates,
   predicateGroups,
 }: {

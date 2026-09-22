@@ -7,7 +7,7 @@ import {
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 
-import { getUnconditionalRowLevelPermissionPredicates } from '@/object-record/record-field/ui/meta-types/utils/getUnconditionalRowLevelPermissionPredicates';
+import { getRestrictingRowLevelPermissionPredicates } from '@/object-record/record-field/ui/meta-types/utils/getRestrictingRowLevelPermissionPredicates';
 
 const createPredicate = ({
   id,
@@ -45,12 +45,12 @@ const createGroup = ({
   roleId: 'role-id',
 });
 
-describe('getUnconditionalRowLevelPermissionPredicates', () => {
+describe('getRestrictingRowLevelPermissionPredicates', () => {
   it('keeps predicates that belong to no group', () => {
     const predicate = createPredicate({ id: 'predicate-id' });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicate],
         predicateGroups: [],
       }),
@@ -64,7 +64,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicate],
         predicateGroups: [
           createGroup({
@@ -83,7 +83,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicate],
         predicateGroups: [
           createGroup({
@@ -103,7 +103,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicate],
         predicateGroups: [
           createGroup({
@@ -128,7 +128,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicate],
         predicateGroups: [
           createGroup({
@@ -154,7 +154,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicate],
         predicateGroups: [],
       }),
@@ -168,7 +168,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicate],
         predicateGroups: [
           createGroup({
@@ -189,7 +189,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicate],
         predicateGroups: [
           createGroup({
@@ -216,7 +216,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicate],
         predicateGroups: [
           createGroup({
@@ -243,7 +243,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     const ungroupedPredicate = createPredicate({ id: 'ungrouped-predicate' });
 
     expect(
-      getUnconditionalRowLevelPermissionPredicates({
+      getRestrictingRowLevelPermissionPredicates({
         predicates: [predicateInOrGroup, ungroupedPredicate],
         predicateGroups: [
           createGroup({

@@ -2,7 +2,7 @@
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { getUnconditionalRowLevelPermissionPredicates } from '@/object-record/record-field/ui/meta-types/utils/getUnconditionalRowLevelPermissionPredicates';
+import { getRestrictingRowLevelPermissionPredicates } from '@/object-record/record-field/ui/meta-types/utils/getRestrictingRowLevelPermissionPredicates';
 import { useMemo } from 'react';
 import {
   type RowLevelPermissionPredicate,
@@ -128,22 +128,21 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
         (predicate) => predicate.fieldMetadataId === fieldMetadataId,
       );
 
-    const unconditionalPredicates =
-      getUnconditionalRowLevelPermissionPredicates({
-        predicates: selectPredicates,
-        predicateGroups: objectPermissions.rowLevelPermissionPredicateGroups,
-      });
+    const restrictingPredicates = getRestrictingRowLevelPermissionPredicates({
+      predicates: selectPredicates,
+      predicateGroups: objectPermissions.rowLevelPermissionPredicateGroups,
+    });
 
-    if (unconditionalPredicates.length === 0) {
+    if (restrictingPredicates.length === 0) {
       return { filteredOptions: options, canSelectEmpty: true };
     }
 
-    const hasIsEmptyPredicate = unconditionalPredicates.some(
+    const hasIsEmptyPredicate = restrictingPredicates.some(
       (predicate) =>
         predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY,
     );
 
-    const hasIsNotEmptyPredicate = unconditionalPredicates.some(
+    const hasIsNotEmptyPredicate = restrictingPredicates.some(
       (predicate) =>
         predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
     );
@@ -151,7 +150,7 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
     return {
       filteredOptions: filterOptionsByPredicates(
         options,
-        unconditionalPredicates,
+        restrictingPredicates,
       ),
       canSelectEmpty: hasIsEmptyPredicate && !hasIsNotEmptyPredicate,
     };
