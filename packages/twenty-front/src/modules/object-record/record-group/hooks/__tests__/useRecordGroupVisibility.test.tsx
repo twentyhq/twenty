@@ -8,12 +8,14 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-const updateCurrentViewMock = jest.fn();
+const updateViewMock = jest.fn();
 
-jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
-  useUpdateCurrentView: () => ({
-    updateCurrentView: updateCurrentViewMock,
-  }),
+jest.mock('@apollo/client/react', () => ({
+  useMutation: () => [updateViewMock],
+}));
+
+jest.mock('@/views/hooks/useCanPersistViewChanges', () => ({
+  useCanPersistViewChanges: () => ({ canPersistChanges: true }),
 }));
 
 jest.mock('@/views/hooks/useSaveCurrentViewGroups', () => ({
@@ -22,6 +24,7 @@ jest.mock('@/views/hooks/useSaveCurrentViewGroups', () => ({
   }),
 }));
 
+const VIEW_ID = 'view-id';
 const INSTANCE_ID = 'view-instance-id';
 const CONTEXT_STORE_INSTANCE_ID = 'context-store-instance-id';
 
@@ -66,10 +69,15 @@ const createDeferredViewUpdate = () => {
   return { promise, resolveViewUpdate, rejectViewUpdate };
 };
 
+const viewUpdateCall = (
+  input: { groupLoadLimit: number } | { shouldHideEmptyGroups: boolean },
+  viewId = VIEW_ID,
+) => [{ variables: { id: viewId, input } }];
+
 const createStoreWithCurrentView = () => {
   const store = createStore();
 
-  store.set(currentViewIdAtom, 'view-id');
+  store.set(currentViewIdAtom, VIEW_ID);
 
   return store;
 };
@@ -82,7 +90,7 @@ describe('useRecordGroupVisibility', () => {
   it('should keep the new group load limit when the view update succeeds', async () => {
     const store = createStoreWithCurrentView();
     store.set(groupLoadLimitAtom, 8);
-    updateCurrentViewMock.mockResolvedValue(undefined);
+    updateViewMock.mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useRecordGroupVisibility(), {
       wrapper: getWrapper(store),
@@ -92,16 +100,18 @@ describe('useRecordGroupVisibility', () => {
       await result.current.handleGroupLoadLimitChange(50);
     });
 
-    expect(updateCurrentViewMock).toHaveBeenCalledWith({
-      groupLoadLimit: 50,
-    });
+    expect(updateViewMock).toHaveBeenCalledWith(
+      ...viewUpdateCall({
+        groupLoadLimit: 50,
+      }),
+    );
     expect(store.get(groupLoadLimitAtom)).toBe(50);
   });
 
   it('should restore the previous group load limit when the view update fails', async () => {
     const store = createStoreWithCurrentView();
     store.set(groupLoadLimitAtom, 8);
-    updateCurrentViewMock.mockRejectedValue(new Error('Network error'));
+    updateViewMock.mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() => useRecordGroupVisibility(), {
       wrapper: getWrapper(store),
@@ -122,7 +132,7 @@ describe('useRecordGroupVisibility', () => {
 
     const firstViewUpdate = createDeferredViewUpdate();
 
-    updateCurrentViewMock
+    updateViewMock
       .mockImplementationOnce(() => firstViewUpdate.promise)
       .mockResolvedValue(undefined);
 
@@ -138,8 +148,8 @@ describe('useRecordGroupVisibility', () => {
       );
     });
 
-    expect(updateCurrentViewMock.mock.calls).toEqual([
-      [{ groupLoadLimit: 25 }],
+    expect(updateViewMock.mock.calls).toEqual([
+      viewUpdateCall({ groupLoadLimit: 25 }),
     ]);
     expect(store.get(groupLoadLimitAtom)).toBe(25);
 
@@ -148,9 +158,9 @@ describe('useRecordGroupVisibility', () => {
       await Promise.all(choices);
     });
 
-    expect(updateCurrentViewMock.mock.calls).toEqual([
-      [{ groupLoadLimit: 25 }],
-      [{ groupLoadLimit: 25 }],
+    expect(updateViewMock.mock.calls).toEqual([
+      viewUpdateCall({ groupLoadLimit: 25 }),
+      viewUpdateCall({ groupLoadLimit: 25 }),
     ]);
     expect(store.get(groupLoadLimitAtom)).toBe(25);
   });
@@ -161,7 +171,7 @@ describe('useRecordGroupVisibility', () => {
 
     const firstViewUpdate = createDeferredViewUpdate();
 
-    updateCurrentViewMock
+    updateViewMock
       .mockImplementationOnce(() => firstViewUpdate.promise)
       .mockRejectedValueOnce(new Error('Network error'));
 
@@ -187,9 +197,9 @@ describe('useRecordGroupVisibility', () => {
       await Promise.all([firstCall, secondCall, latestCallAssertion]);
     });
 
-    expect(updateCurrentViewMock.mock.calls).toEqual([
-      [{ groupLoadLimit: 25 }],
-      [{ groupLoadLimit: 100 }],
+    expect(updateViewMock.mock.calls).toEqual([
+      viewUpdateCall({ groupLoadLimit: 25 }),
+      viewUpdateCall({ groupLoadLimit: 100 }),
     ]);
     expect(store.get(groupLoadLimitAtom)).toBe(25);
   });
@@ -201,7 +211,7 @@ describe('useRecordGroupVisibility', () => {
     const olderViewUpdate = createDeferredViewUpdate();
     const newerViewUpdate = createDeferredViewUpdate();
 
-    updateCurrentViewMock
+    updateViewMock
       .mockImplementationOnce(() => olderViewUpdate.promise)
       .mockImplementationOnce(() => newerViewUpdate.promise);
 
@@ -226,9 +236,11 @@ describe('useRecordGroupVisibility', () => {
     });
 
     expect(store.get(groupLoadLimitAtom)).toBe(50);
-    expect(updateCurrentViewMock).toHaveBeenLastCalledWith({
-      groupLoadLimit: 50,
-    });
+    expect(updateViewMock).toHaveBeenLastCalledWith(
+      ...viewUpdateCall({
+        groupLoadLimit: 50,
+      }),
+    );
 
     await act(async () => {
       newerViewUpdate.resolveViewUpdate();
@@ -244,7 +256,7 @@ describe('useRecordGroupVisibility', () => {
 
     const olderViewUpdate = createDeferredViewUpdate();
 
-    updateCurrentViewMock
+    updateViewMock
       .mockImplementationOnce(() => olderViewUpdate.promise)
       .mockResolvedValueOnce(undefined);
 
@@ -280,19 +292,23 @@ describe('useRecordGroupVisibility', () => {
       await Promise.all([olderCallAssertion, newerCall]);
     });
 
-    expect(updateCurrentViewMock).toHaveBeenLastCalledWith({
-      groupLoadLimit: 50,
-    });
+    expect(updateViewMock).toHaveBeenLastCalledWith(
+      ...viewUpdateCall({
+        groupLoadLimit: 50,
+      }),
+    );
     expect(store.get(groupLoadLimitAtom)).toBe(50);
   });
 
-  it('should not save a queued group load limit on a view the user switched to', async () => {
+  it('should save a queued group load limit on the view it was chosen on after the user leaves that view', async () => {
     const store = createStoreWithCurrentView();
     store.set(groupLoadLimitAtom, 8);
 
     const firstViewUpdate = createDeferredViewUpdate();
 
-    updateCurrentViewMock.mockImplementationOnce(() => firstViewUpdate.promise);
+    updateViewMock
+      .mockImplementationOnce(() => firstViewUpdate.promise)
+      .mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useRecordGroupVisibility(), {
       wrapper: getWrapper(store),
@@ -313,8 +329,44 @@ describe('useRecordGroupVisibility', () => {
       await Promise.all(choices);
     });
 
-    expect(updateCurrentViewMock.mock.calls).toEqual([
-      [{ groupLoadLimit: 25 }],
+    expect(updateViewMock.mock.calls).toEqual([
+      viewUpdateCall({ groupLoadLimit: 25 }),
+      viewUpdateCall({ groupLoadLimit: 50 }),
+    ]);
+  });
+
+  it('should save a queued hide-empty-groups state on the view it was chosen on after the user leaves that view', async () => {
+    const store = createStoreWithCurrentView();
+    store.set(shouldHideEmptyGroupsAtom, false);
+
+    const firstViewUpdate = createDeferredViewUpdate();
+
+    updateViewMock
+      .mockImplementationOnce(() => firstViewUpdate.promise)
+      .mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let toggles!: Promise<void>[];
+
+    act(() => {
+      toggles = [1, 2].map(() =>
+        result.current.handleHideEmptyRecordGroupChange(),
+      );
+    });
+
+    store.set(currentViewIdAtom, 'other-view-id');
+
+    await act(async () => {
+      firstViewUpdate.resolveViewUpdate();
+      await Promise.all(toggles);
+    });
+
+    expect(updateViewMock.mock.calls).toEqual([
+      viewUpdateCall({ shouldHideEmptyGroups: true }),
+      viewUpdateCall({ shouldHideEmptyGroups: false }),
     ]);
   });
 
@@ -324,7 +376,7 @@ describe('useRecordGroupVisibility', () => {
 
     const firstViewUpdate = createDeferredViewUpdate();
 
-    updateCurrentViewMock
+    updateViewMock
       .mockImplementationOnce(() => firstViewUpdate.promise)
       .mockResolvedValue(undefined);
 
@@ -345,9 +397,9 @@ describe('useRecordGroupVisibility', () => {
       await Promise.all(toggles);
     });
 
-    expect(updateCurrentViewMock.mock.calls).toEqual([
-      [{ shouldHideEmptyGroups: true }],
-      [{ shouldHideEmptyGroups: true }],
+    expect(updateViewMock.mock.calls).toEqual([
+      viewUpdateCall({ shouldHideEmptyGroups: true }),
+      viewUpdateCall({ shouldHideEmptyGroups: true }),
     ]);
     expect(store.get(shouldHideEmptyGroupsAtom)).toBe(true);
   });
@@ -358,7 +410,7 @@ describe('useRecordGroupVisibility', () => {
 
     const firstViewUpdate = createDeferredViewUpdate();
 
-    updateCurrentViewMock
+    updateViewMock
       .mockImplementationOnce(() => firstViewUpdate.promise)
       .mockResolvedValue(undefined);
 
@@ -397,16 +449,18 @@ describe('useRecordGroupVisibility', () => {
       await Promise.all([firstCallAssertion, ...newerCalls]);
     });
 
-    expect(updateCurrentViewMock).toHaveBeenLastCalledWith({
-      shouldHideEmptyGroups: true,
-    });
+    expect(updateViewMock).toHaveBeenLastCalledWith(
+      ...viewUpdateCall({
+        shouldHideEmptyGroups: true,
+      }),
+    );
     expect(store.get(shouldHideEmptyGroupsAtom)).toBe(true);
   });
 
   it('should restore the previous hide-empty-groups state when the view update fails', async () => {
     const store = createStoreWithCurrentView();
     store.set(shouldHideEmptyGroupsAtom, false);
-    updateCurrentViewMock.mockRejectedValue(new Error('Network error'));
+    updateViewMock.mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() => useRecordGroupVisibility(), {
       wrapper: getWrapper(store),

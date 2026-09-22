@@ -4,11 +4,16 @@ import { type RecordGroupDefinition } from '@/object-record/record-group/types/R
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
-import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { convertUpdateViewInputToGql } from '@/views/utils/convertUpdateViewInputToGql';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
+import { useMutation } from '@apollo/client/react';
 import { type Atom, useStore, type WritableAtom } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { UpdateViewDocument } from '~/generated-metadata/graphql';
 
 type SettingSaveQueue = {
   latestRequestId: number;
@@ -111,7 +116,8 @@ export const useRecordGroupVisibility = () => {
   );
 
   const { saveViewGroup } = useSaveCurrentViewGroups();
-  const { updateCurrentView } = useUpdateCurrentView();
+  const { canPersistChanges } = useCanPersistViewChanges();
+  const [updateView] = useMutation(UpdateViewDocument);
 
   const handleVisibilityChange = useCallback(
     async (updatedRecordGroup: RecordGroupDefinition) => {
@@ -125,21 +131,26 @@ export const useRecordGroupVisibility = () => {
     [saveViewGroup, store],
   );
 
-  // updateCurrentView writes to whichever view is current when it runs, and a
-  // queued save runs later: it must not land on a view the user switched to.
+  // A queued save runs after the user may have left the view, so it targets the
+  // view the choice was made on instead of whichever view is current by then.
   const updateViewOfCurrentChoice = useCallback(
-    (viewUpdate: Parameters<typeof updateCurrentView>[0]) => {
+    (viewUpdate: Partial<GraphQLView>) => {
       const viewIdOfChoice = store.get(currentViewIdCallbackState);
 
       return async () => {
-        if (store.get(currentViewIdCallbackState) !== viewIdOfChoice) {
+        if (!canPersistChanges || !isDefined(viewIdOfChoice)) {
           return;
         }
 
-        await updateCurrentView(viewUpdate);
+        await updateView({
+          variables: {
+            id: viewIdOfChoice,
+            input: convertUpdateViewInputToGql(viewUpdate),
+          },
+        });
       };
     },
-    [store, currentViewIdCallbackState, updateCurrentView],
+    [store, currentViewIdCallbackState, canPersistChanges, updateView],
   );
 
   const handleHideEmptyRecordGroupChange = useCallback(async () => {
