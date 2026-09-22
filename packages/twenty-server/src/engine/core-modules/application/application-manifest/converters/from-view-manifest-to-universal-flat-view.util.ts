@@ -16,7 +16,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
-const getViewManifestGroupLoadLimit = (viewManifest: ViewManifest): number => {
+const getViewManifestGroupLoadLimitOrThrow = (viewManifest: ViewManifest): number => {
   const groupLoadLimit = viewManifest.groupLoadLimit;
 
   if (!isDefined(groupLoadLimit)) {
@@ -74,7 +74,7 @@ export const fromViewManifestToUniversalFlatView = ({
       viewManifest.mainGroupByFieldMetadataUniversalIdentifier ?? null,
     shouldHideEmptyGroups: viewManifest.shouldHideEmptyGroups ?? false,
     kanbanColumnWidth: viewManifest.kanbanColumnWidth ?? null,
-    groupLoadLimit: getViewManifestGroupLoadLimit(viewManifest),
+    groupLoadLimit: getViewManifestGroupLoadLimitOrThrow(viewManifest),
     anyFieldFilterValue: viewManifest.anyFieldFilterValue ?? null,
     createdByUserWorkspaceId: null,
     isActive: true,
