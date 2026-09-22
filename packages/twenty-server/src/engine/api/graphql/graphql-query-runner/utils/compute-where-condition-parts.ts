@@ -45,7 +45,7 @@ export const computeWhereConditionParts = ({
     : `"${objectNameSingular}"."${key}"`;
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
-  const exactValue = normalizeExactEmailsFilterValue({
+  const equalityFilterValue = normalizeExactEmailsFilterValue({
     operator,
     fieldMetadataType,
     subFieldKey,
@@ -77,7 +77,7 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
-        params: { [`${key}${paramSuffix}`]: exactValue },
+        params: { [`${key}${paramSuffix}`]: equalityFilterValue },
       };
     case 'neq':
       if (isDateTimeField) {
@@ -89,7 +89,7 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} != :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
-        params: { [`${key}${paramSuffix}`]: exactValue },
+        params: { [`${key}${paramSuffix}`]: equalityFilterValue },
       };
     case 'gt':
       if (isDateTimeField) {
@@ -128,7 +128,7 @@ export const computeWhereConditionParts = ({
     case 'in':
       return {
         sql: `${fieldReference} IN (:...${key}${paramSuffix})`,
-        params: { [`${key}${paramSuffix}`]: exactValue },
+        params: { [`${key}${paramSuffix}`]: equalityFilterValue },
       };
     case 'is':
       return {
