@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams.constant';
 
-export const getTeamsConnectionForRequest = async (
+export const getTeamsConnectionForRequestOrThrow = async (
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ) => {
   const connection = findConnectionForRequest(

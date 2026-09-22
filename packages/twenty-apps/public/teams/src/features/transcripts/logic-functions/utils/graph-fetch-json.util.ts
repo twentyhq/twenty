@@ -1,5 +1,5 @@
 import { fetchGraphWithRetry } from 'src/features/transcripts/logic-functions/utils/fetch-graph-with-retry.util';
-import { resolveGraphUrl } from 'src/features/transcripts/logic-functions/utils/resolve-graph-url.util';
+import { resolveGraphUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-graph-url-or-throw.util';
 
 export const graphFetchJson = async <TResponse>({
   accessToken,
@@ -10,7 +10,7 @@ export const graphFetchJson = async <TResponse>({
 }): Promise<TResponse> => {
   const response = await fetchGraphWithRetry({
     accessToken,
-    resolvedUrl: resolveGraphUrl(url),
+    resolvedUrl: resolveGraphUrlOrThrow(url),
     attempt: 0,
   });
 
