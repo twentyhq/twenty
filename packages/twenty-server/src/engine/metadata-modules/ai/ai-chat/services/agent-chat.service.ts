@@ -173,26 +173,40 @@ export class AgentChatService {
     threadIds,
     userWorkspaceId,
     workspaceId,
+    limit,
+    offset,
   }: {
     threadIds: string[];
     userWorkspaceId: string;
     workspaceId: string;
+    limit?: number;
+    offset?: number;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
     if (!isNonEmptyArray(threadIds)) {
       return [];
     }
 
-    return this.getRankedThreads({ threadIds, userWorkspaceId, workspaceId });
+    return this.getRankedThreads({
+      threadIds,
+      userWorkspaceId,
+      workspaceId,
+      limit,
+      offset,
+    });
   }
 
   private async getRankedThreads({
     threadIds,
     userWorkspaceId,
     workspaceId,
+    limit,
+    offset,
   }: {
     threadIds?: string[];
     userWorkspaceId: string;
     workspaceId: string;
+    limit?: number;
+    offset?: number;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
     const rankedThreads = await this.threadRepository.query(
       workspaceId,
@@ -210,12 +224,26 @@ export class AgentChatService {
           conditions.push(`thread."workspaceId" = $${parameters.length}`);
         }
 
+        // Paging is applied after the ordering so a page reflects the ranked
+        // order rather than the order the ids arrived in.
+        let pagination = '';
+
+        if (isDefined(limit)) {
+          parameters.push(limit);
+          pagination += ` LIMIT $${parameters.length}`;
+        }
+
+        if (isDefined(offset)) {
+          parameters.push(offset);
+          pagination += ` OFFSET $${parameters.length}`;
+        }
+
         return manager.query<{ id: string; last_message_at: Date | null }[]>(
           `SELECT thread.id, MAX(message."createdAt") AS last_message_at
        FROM ${table('agentChatThread')} thread
        LEFT JOIN ${table('agentMessage')} message ON message."threadId" = thread.id AND message."isHidden" = false
        WHERE ${conditions.join(' AND ')}
-       GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC`,
+       GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC${pagination}`,
           parameters,
         );
       },

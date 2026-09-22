@@ -6,6 +6,8 @@ const OTHER_THREAD_ID = '20202020-0000-4000-8000-000000000003';
 const UNATTACHED_THREAD_ID = '20202020-0000-4000-8000-000000000006';
 const RECORD_ID = '20202020-0000-4000-8000-000000000004';
 const COMPANY_OBJECT_METADATA_ID = '20202020-0000-4000-8000-000000000005';
+const TARGET_OBJECT_METADATA_ID = '20202020-0000-4000-8000-000000000007';
+const UNREADABLE_RECORD_ID = '20202020-0000-4000-8000-000000000008';
 const OWNER_ID = 'owner';
 const OTHER_MEMBER_ID = 'other-member';
 
@@ -53,6 +55,18 @@ const buildService = () => {
     find: jest.fn().mockResolvedValue([]),
   };
 
+  // Records the caller is allowed to read. A record outside their grants is
+  // indistinguishable from one that does not exist.
+  const readableRecordIds = new Set([RECORD_ID]);
+
+  const recordRepository = {
+    findOne: jest
+      .fn()
+      .mockImplementation(async ({ where }) =>
+        readableRecordIds.has(where.id) ? { id: where.id } : null,
+      ),
+  };
+
   const storage = { storage: 'workspace' as 'workspace' | 'core' };
 
   const agentHistoryStorageService = {
@@ -68,7 +82,13 @@ const buildService = () => {
     executeInWorkspaceContext: jest
       .fn()
       .mockImplementation((work: () => Promise<unknown>) => work()),
-    getRepository: jest.fn().mockReturnValue(targetRepository),
+    getRepository: jest
+      .fn()
+      .mockImplementation((objectMetadataName: string) =>
+        objectMetadataName === 'agentChatThreadTarget'
+          ? targetRepository
+          : recordRepository,
+      ),
   };
 
   const workspaceCacheService = {
@@ -79,6 +99,11 @@ const buildService = () => {
             id: COMPANY_OBJECT_METADATA_ID,
             nameSingular: 'company',
             namePlural: 'companies',
+          },
+          agentChatThreadTarget: {
+            id: TARGET_OBJECT_METADATA_ID,
+            nameSingular: 'agentChatThreadTarget',
+            namePlural: 'agentChatThreadTargets',
           },
         },
       },
@@ -94,6 +119,9 @@ const buildService = () => {
     ),
     targetRepository,
     threadRepository,
+    recordRepository,
+    readableRecordIds,
+    workspaceCacheService,
     storage,
     threads,
   };
@@ -177,6 +205,7 @@ describe('Listing the conversations attached to a record', () => {
     ).resolves.toEqual([]);
 
     expect(targetRepository.find).toHaveBeenCalledWith({
+      take: 1000,
       where: {
         objectMetadataId: COMPANY_OBJECT_METADATA_ID,
         recordId: RECORD_ID,
@@ -230,5 +259,129 @@ describe('Listing the conversations attached to a record', () => {
         recordId: RECORD_ID,
       }),
     ).resolves.toEqual([]);
+  });
+});
+
+describe('Authorizing the record a conversation is attached to', () => {
+  it('refuses to attach to a record the member cannot read', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.attachThreadToRecord({
+        ...args,
+        recordId: UNREADABLE_RECORD_ID,
+      }),
+    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
+
+    expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+
+  it('refuses to detach from a record the member cannot read', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.detachThreadFromRecord({
+        ...args,
+        recordId: UNREADABLE_RECORD_ID,
+      }),
+    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
+
+    expect(targetRepository.delete).not.toHaveBeenCalled();
+  });
+
+  it('refuses to list the conversations on a record the member cannot read', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.findThreadIdsAttachedToRecord({
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: OWNER_ID,
+        objectNameSingular: 'company',
+        recordId: UNREADABLE_RECORD_ID,
+      }),
+    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
+
+    expect(targetRepository.find).not.toHaveBeenCalled();
+  });
+
+  it('reads the record through the caller permissions, not the system context', async () => {
+    const { service, recordRepository } = buildService();
+
+    await service.attachThreadToRecord(args);
+
+    // A bypassing read would let a member link a conversation to a record they
+    // are not allowed to see.
+    expect(recordRepository.findOne).toHaveBeenCalledWith({
+      where: { id: RECORD_ID },
+      select: { id: true },
+    });
+  });
+});
+
+describe('Cleaning up the links of a destroyed record', () => {
+  const destroyArgs = {
+    workspaceId: WORKSPACE_ID,
+    objectNameSingular: 'company',
+    recordIds: [RECORD_ID],
+  };
+
+  it('deletes every link that pointed at the destroyed record', async () => {
+    const { service, targetRepository } = buildService();
+
+    await service.deleteTargetsForDestroyedRecords(destroyArgs);
+
+    expect(targetRepository.delete).toHaveBeenCalledTimes(1);
+
+    const [criteria] = targetRepository.delete.mock.calls[0];
+
+    expect(criteria.objectMetadataId).toBe(COMPANY_OBJECT_METADATA_ID);
+    expect(criteria.recordId._value).toEqual([RECORD_ID]);
+  });
+
+  it('does nothing when no record was destroyed', async () => {
+    const { service, targetRepository } = buildService();
+
+    await service.deleteTargetsForDestroyedRecords({
+      ...destroyArgs,
+      recordIds: [],
+    });
+
+    expect(targetRepository.delete).not.toHaveBeenCalled();
+  });
+
+  // Destroy fires in every workspace, including ones this feature never
+  // reached, and cleanup must stay silent there rather than throwing.
+  it('does nothing in a workspace whose history still routes to core', async () => {
+    const { service, targetRepository, storage } = buildService();
+
+    storage.storage = 'core';
+
+    await expect(
+      service.deleteTargetsForDestroyedRecords(destroyArgs),
+    ).resolves.toBeUndefined();
+
+    expect(targetRepository.delete).not.toHaveBeenCalled();
+  });
+
+  it('does nothing in a workspace that has no target object yet', async () => {
+    const { service, targetRepository, workspaceCacheService } = buildService();
+
+    workspaceCacheService.getOrRecompute.mockResolvedValue({
+      flatObjectMetadataMaps: {
+        byUniversalIdentifier: {
+          company: {
+            id: COMPANY_OBJECT_METADATA_ID,
+            nameSingular: 'company',
+            namePlural: 'companies',
+          },
+        },
+      },
+    });
+
+    await expect(
+      service.deleteTargetsForDestroyedRecords(destroyArgs),
+    ).resolves.toBeUndefined();
+
+    expect(targetRepository.delete).not.toHaveBeenCalled();
   });
 });

@@ -4,6 +4,7 @@ import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Float,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -28,6 +29,10 @@ import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatQuestionAnswerInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-question-answer.input';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
+import {
+  assertValidChatThreadsForRecordPagination,
+  DEFAULT_CHAT_THREADS_FOR_RECORD_LIMIT,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-valid-chat-threads-for-record-pagination.util';
 import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
@@ -156,9 +161,17 @@ export class AgentChatResolver {
     @Args('objectNameSingular', { type: () => String })
     objectNameSingular: string,
     @Args('recordId', { type: () => UUIDScalarType }) recordId: string,
+    @Args('limit', {
+      type: () => Int,
+      defaultValue: DEFAULT_CHAT_THREADS_FOR_RECORD_LIMIT,
+    })
+    limit: number,
+    @Args('offset', { type: () => Int, defaultValue: 0 }) offset: number,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
+    assertValidChatThreadsForRecordPagination({ limit, offset });
+
     const threadIds =
       await this.agentChatThreadTargetService.findThreadIdsAttachedToRecord({
         objectNameSingular,
@@ -171,6 +184,8 @@ export class AgentChatResolver {
       threadIds,
       userWorkspaceId,
       workspaceId,
+      limit,
+      offset,
     });
   }
 

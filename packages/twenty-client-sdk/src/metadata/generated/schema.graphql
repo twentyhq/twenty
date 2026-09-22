@@ -3783,7 +3783,7 @@ type Query {
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
-  chatThreadsForRecord(objectNameSingular: String!, recordId: UUID!): [AgentChatThread!]!
+  chatThreadsForRecord(objectNameSingular: String!, recordId: UUID!, limit: Int! = 20, offset: Int! = 0): [AgentChatThread!]!
   getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
