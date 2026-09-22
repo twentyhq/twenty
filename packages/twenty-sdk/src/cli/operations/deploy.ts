@@ -32,7 +32,7 @@ const buildDeployFailure = (
   },
 });
 
-const deployThroughApi = async ({
+const deployThroughMultipartUpload = async ({
   apiService,
   tarballPath,
 }: {
@@ -82,7 +82,7 @@ const innerAppDeploy = async (
         fieldNames: ['createAppTarballUpload'],
       })
     ) {
-      return deployThroughApi({ apiService, tarballPath });
+      return deployThroughMultipartUpload({ apiService, tarballPath });
     }
 
     return buildDeployFailure(`Upload failed: ${serializeError(error)}`);
