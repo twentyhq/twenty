@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
 import {
@@ -565,7 +566,7 @@ export class ConnectedAccountMetadataService {
   }: {
     connectedAccountIds: string[];
     workspaceId: string;
-    connectedAccountData: Partial<ConnectedAccountEntity>;
+    connectedAccountData: QueryDeepPartialEntity<ConnectedAccountEntity>;
   }): Promise<void> {
     await this.repository.manager.transaction(async (entityManager) => {
       if (Object.keys(connectedAccountData).length > 0) {
