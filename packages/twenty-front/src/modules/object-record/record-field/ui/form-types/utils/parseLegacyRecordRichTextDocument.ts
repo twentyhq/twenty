@@ -1,29 +1,11 @@
+import { convertBlockNoteToTipTap } from '@/object-record/record-field/ui/form-types/utils/convertRecordRichText';
 import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
 import { type Content } from '@tiptap/core';
-import { isTipTapNode, type TipTapNode } from 'twenty-shared/utils';
-
-const normalizeLegacyBlockContent = (value: unknown): unknown => {
-  if (Array.isArray(value)) {
-    return value.map(normalizeLegacyBlockContent);
-  }
-
-  if (typeof value !== 'object' || value === null || !('content' in value)) {
-    return value;
-  }
-
-  const content = value.content;
-
-  if (typeof content === 'string') {
-    return {
-      ...value,
-      content: [{ type: 'text', text: content }],
-    };
-  }
-
-  return Array.isArray(content)
-    ? { ...value, content: content.map(normalizeLegacyBlockContent) }
-    : value;
-};
+import {
+  isPlainObject,
+  isTipTapNode,
+  type TipTapNode,
+} from 'twenty-shared/utils';
 
 const isTipTapNodeArray = (value: unknown): value is TipTapNode[] =>
   Array.isArray(value) && value.every(isTipTapNode);
@@ -39,7 +21,27 @@ const tryParseJson = (value: string): unknown => {
 export const parseLegacyRecordRichTextDocument = (
   serializedDocument: string,
 ): Content => {
-  const blocks = normalizeLegacyBlockContent(tryParseJson(serializedDocument));
+  const blocks = tryParseJson(serializedDocument);
+
+  if (
+    Array.isArray(blocks) &&
+    blocks.some(
+      (block) =>
+        isPlainObject(block) &&
+        ('props' in block ||
+          'children' in block ||
+          'id' in block ||
+          typeof block.content === 'string' ||
+          (Array.isArray(block.content) &&
+            block.content.some(
+              (item) =>
+                isPlainObject(item) &&
+                ('styles' in item || item.type === 'link'),
+            ))),
+    )
+  ) {
+    return { type: 'doc', content: convertBlockNoteToTipTap(blocks) };
+  }
 
   if (isTipTapNodeArray(blocks)) {
     return { type: 'doc', content: blocks };

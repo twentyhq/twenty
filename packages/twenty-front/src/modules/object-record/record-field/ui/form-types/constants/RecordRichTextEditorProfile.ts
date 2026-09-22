@@ -5,7 +5,7 @@ import { WorkflowVariableTag } from '@/workflow/workflow-variables/extensions/Wo
 
 export const RECORD_RICH_TEXT_EDITOR_PROFILE = {
   chrome: 'field',
-  minHeight: 340,
+  minHeight: 120,
   enableFullScreen: true,
   parseLegacyDocument: parseLegacyRecordRichTextDocument,
   buildExtensions: (context) => [

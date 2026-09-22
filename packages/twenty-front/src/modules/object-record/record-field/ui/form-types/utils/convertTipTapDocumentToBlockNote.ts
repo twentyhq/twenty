@@ -1,3 +1,4 @@
+import { convertTipTapToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertRecordRichText';
 import { parseTipTapJsonDocument } from 'twenty-shared/utils';
 
 export const convertTipTapDocumentToBlockNote = (
@@ -7,5 +8,5 @@ export const convertTipTapDocumentToBlockNote = (
 
   return document === undefined
     ? serializedDocument
-    : JSON.stringify(document.content ?? []);
+    : JSON.stringify(convertTipTapToBlockNote(document.content ?? []));
 };
