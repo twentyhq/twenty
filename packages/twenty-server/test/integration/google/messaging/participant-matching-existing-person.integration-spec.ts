@@ -25,8 +25,10 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 
 const HANDLE = 'gmail-existing-person-matching@apple.dev';
 
-const KNOWN_SENDER = `known-sender-${randomUUID()}@acme.com`;
-const KNOWN_ATTENDEE = `known-attendee-${randomUUID()}@acme.com`;
+const KNOWN_SENDER_LOCAL_PART = `known-sender-${randomUUID()}`;
+const KNOWN_ATTENDEE_LOCAL_PART = `known-attendee-${randomUUID()}`;
+const KNOWN_SENDER = `${KNOWN_SENDER_LOCAL_PART}@xn--ls8h.la`;
+const KNOWN_ATTENDEE = `${KNOWN_ATTENDEE_LOCAL_PART}@xn--ls8h.la`;
 
 type ImportedParticipantLink<
   TLinkedRecordIdField extends 'messageId' | 'calendarEventId',
@@ -94,8 +96,8 @@ describe('Participant matching when the person already exists (integration)', ()
   let attendeePersonId: string;
 
   beforeAll(async () => {
-    senderPersonId = await createPerson(KNOWN_SENDER);
-    attendeePersonId = await createPerson(KNOWN_ATTENDEE);
+    senderPersonId = await createPerson(`${KNOWN_SENDER_LOCAL_PART}@💩.la`);
+    attendeePersonId = await createPerson(`${KNOWN_ATTENDEE_LOCAL_PART}@💩.la`);
 
     await waitForAllJobsToFinish();
 
