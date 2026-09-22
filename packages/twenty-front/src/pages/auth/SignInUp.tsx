@@ -69,8 +69,13 @@ export const SignInUp = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
-  const { loading: getPublicWorkspaceDataLoading } =
-    useGetPublicWorkspaceDataByDomain();
+  // data lands in the same render as loading flipping false, unlike the
+  // atom (set in a parent effect one render later) - the redirect effect
+  // must not see a loading=false frame without the matching SSO info.
+  const {
+    loading: getPublicWorkspaceDataLoading,
+    data: workspacePublicDataQueryResult,
+  } = useGetPublicWorkspaceDataByDomain();
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
@@ -209,7 +214,7 @@ export const SignInUp = () => {
       <SignInUpDosIdAutoRedirectEffect
         isWorkspacePublicDataLoading={getPublicWorkspaceDataLoading}
         hasWorkspaceSso={
-          (workspacePublicData?.authProviders?.sso?.length ?? 0) > 0
+          (workspacePublicDataQueryResult?.authProviders?.sso?.length ?? 0) > 0
         }
       />
       {signInUpStep === SignInUpStep.WorkspaceCreation ? (
