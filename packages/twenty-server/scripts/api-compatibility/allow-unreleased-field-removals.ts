@@ -30,13 +30,19 @@ export const allowUnreleasedFieldRemovals = ({
         const currentType = currentTypes.get(type.name);
 
         // Type removals and kind changes remain subject to the regular check.
-        if (type.kind === 'OBJECT' && currentType?.kind === 'OBJECT') {
+        if (
+          (type.kind === 'OBJECT' || type.kind === 'INTERFACE') &&
+          (currentType?.kind === 'OBJECT' ||
+            currentType?.kind === 'INTERFACE') &&
+          currentType.kind === type.kind
+        ) {
           return {
             ...type,
             fields: type.fields.filter(
               (field) =>
                 currentType.fields.some((item) => item.name === field.name) ||
-                (releasedType?.kind === 'OBJECT' &&
+                ((releasedType?.kind === 'OBJECT' ||
+                  releasedType?.kind === 'INTERFACE') &&
                   releasedType.fields.some((item) => item.name === field.name)),
             ),
           };
