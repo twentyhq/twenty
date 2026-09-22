@@ -6,12 +6,11 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useRecordViews } from '@/side-panel/pages/record-views/hooks/useRecordViews';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import { IconRefresh } from 'twenty-ui/icon';
+import { IconRefresh, useIcons } from 'twenty-ui/icon';
 
 const RETRY_ITEM_ID = 'retry-record-views';
 
@@ -23,12 +22,13 @@ export const RecordViewsList = ({
   objectNameSingular,
 }: RecordViewsListProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-  const { views, loading, error, retry } = useRecordViews();
+  const { views, loading, error, hasReadPermission, retry } = useRecordViews();
+  const { getIcon } = useIcons();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const navigate = useNavigate();
 
   const openView = (viewId: string) => {
-    closeSidePanelMenu();
+    void closeSidePanelMenu();
     navigate(
       getAppPath(
         AppPath.RecordIndexPage,
@@ -45,7 +45,11 @@ export const RecordViewsList = ({
       selectableItemIds={error ? [RETRY_ITEM_ID] : views.map((view) => view.id)}
       loading={loading}
       noResults={!error && views.length === 0}
-      noResultsText={t`No views contain this record`}
+      noResultsText={
+        hasReadPermission
+          ? t`No views contain this record`
+          : t`You cannot read these records`
+      }
     >
       {loading && <RecordPickerLoadingSkeletonList />}
       {error && (
@@ -71,7 +75,7 @@ export const RecordViewsList = ({
               <CommandMenuItem
                 id={view.id}
                 label={view.name}
-                Icon={viewTypeIconMapping(view.type)}
+                Icon={getIcon(view.icon)}
                 onClick={() => openView(view.id)}
               />
             </SelectableListItem>

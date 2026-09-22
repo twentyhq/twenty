@@ -11,6 +11,9 @@ import { ViewType, ViewVisibility } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const objectMetadataItem = getMockObjectMetadataItemOrThrow('company');
+const nameField = objectMetadataItem.fields.find(
+  (field) => field.name === 'name',
+)!;
 const mockQuery = jest.fn();
 const mockClient = { query: mockQuery };
 const mockDocument = gql`
@@ -36,6 +39,18 @@ const baseView: View = {
   visibility: ViewVisibility.WORKSPACE,
   isActive: true,
 };
+const filteredView = (id: string, value = 'Acme'): View => ({
+  ...baseView,
+  id,
+  viewFilters: [
+    {
+      id: `${id}-filter`,
+      fieldMetadataId: nameField.id,
+      operand: ViewFilterOperand.CONTAINS,
+      value,
+    },
+  ],
+});
 let mockViews: View[] = [];
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
@@ -71,7 +86,7 @@ const response = (recordId?: string) => ({
 });
 
 const RecordViewsProbe = () => {
-  const { views, loading, error, retry } = useRecordViews();
+  const { views, loading, error, hasReadPermission, retry } = useRecordViews();
 
   return (
     <>
@@ -80,35 +95,36 @@ const RecordViewsProbe = () => {
       </output>
       <output aria-label="Loading">{String(loading)}</output>
       <output aria-label="Error">{String(error)}</output>
+      <output aria-label="Read permission">{String(hasReadPermission)}</output>
       <button onClick={retry}>Retry</button>
     </>
   );
 };
 
-const renderEffect = (recordId = 'record-1') =>
-  render(
-    <Provider store={createStore()}>
-      <SidePanelPageComponentInstanceContext.Provider
-        value={{ instanceId: 'record-views-page' }}
-      >
-        <RecordViewsLoadEffect
-          objectNameSingular="company"
-          recordId={recordId}
-        />
-        <RecordViewsProbe />
-      </SidePanelPageComponentInstanceContext.Provider>
-    </Provider>,
-  );
+const effectTree = (recordId: string) => (
+  <Provider store={createStore()}>
+    <SidePanelPageComponentInstanceContext.Provider
+      value={{ instanceId: 'record-views-page' }}
+    >
+      <RecordViewsLoadEffect objectNameSingular="company" recordId={recordId} />
+      <RecordViewsProbe />
+    </SidePanelPageComponentInstanceContext.Provider>
+  </Provider>
+);
+
+const renderEffect = (recordId = 'record-1') => render(effectTree(recordId));
 
 const matchingViews = () => screen.getByLabelText('Matching views').textContent;
 const isLoading = () => screen.getByLabelText('Loading').textContent;
 const hasError = () => screen.getByLabelText('Error').textContent;
+const hasReadPermission = () =>
+  screen.getByLabelText('Read permission').textContent;
 
 describe('RecordViewsLoadEffect', () => {
   beforeEach(() => {
     mockQuery.mockReset();
     mockCanRead = true;
-    mockViews = [baseView, { ...baseView, id: 'filtered' }];
+    mockViews = [filteredView('all'), filteredView('filtered')];
   });
 
   it('returns only confirmed matches in view order', async () => {
@@ -123,24 +139,49 @@ describe('RecordViewsLoadEffect', () => {
     expect(mockQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         fetchPolicy: 'no-cache',
-        variables: { filter: { id: { eq: 'record-1' } }, limit: 1 },
+        variables: expect.objectContaining({ limit: 1 }),
       }),
     );
   });
 
-  it('does not query without read permission', async () => {
+  it('matches an unfiltered view without asking the server', async () => {
+    mockViews = [baseView];
+
+    renderEffect();
+
+    await waitFor(() => expect(isLoading()).toBe('false'));
+    expect(matchingViews()).toBe('all');
+    expect(mockQuery).not.toHaveBeenCalled();
+  });
+
+  it('leaves out calendar views, which only render the days in range', async () => {
+    mockViews = [
+      filteredView('table'),
+      { ...filteredView('calendar'), type: ViewType.CALENDAR },
+    ];
+    mockQuery.mockResolvedValue(response('record-1'));
+
+    renderEffect();
+
+    await waitFor(() => expect(isLoading()).toBe('false'));
+    expect(matchingViews()).toBe('table');
+    expect(mockQuery).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports missing read permission instead of an empty result', async () => {
     mockCanRead = false;
 
     renderEffect();
 
     await waitFor(() => expect(isLoading()).toBe('false'));
     expect(matchingViews()).toBe('');
+    expect(hasReadPermission()).toBe('false');
     expect(mockQuery).not.toHaveBeenCalled();
   });
 
   it('skips a view whose filters cannot be resolved without dropping the others', async () => {
     mockViews = [
-      baseView,
+      filteredView('all'),
       {
         ...baseView,
         id: 'unresolvable',
@@ -164,7 +205,19 @@ describe('RecordViewsLoadEffect', () => {
     expect(mockQuery).toHaveBeenCalledTimes(1);
   });
 
-  it('shows errors separately from an empty result and supports retry', async () => {
+  it('keeps the views that resolved when one view query fails', async () => {
+    mockQuery
+      .mockRejectedValueOnce(new Error('Relation not readable'))
+      .mockResolvedValueOnce(response('record-1'));
+
+    renderEffect();
+
+    await waitFor(() => expect(isLoading()).toBe('false'));
+    expect(matchingViews()).toBe('filtered');
+    expect(hasError()).toBe('false');
+  });
+
+  it('reports an error when every view query fails', async () => {
     const user = userEvent.setup();
     mockQuery.mockRejectedValue(new Error('Network unavailable'));
 
@@ -192,19 +245,7 @@ describe('RecordViewsLoadEffect', () => {
     const { rerender } = renderEffect();
 
     mockQuery.mockResolvedValue(response());
-    rerender(
-      <Provider store={createStore()}>
-        <SidePanelPageComponentInstanceContext.Provider
-          value={{ instanceId: 'record-views-page' }}
-        >
-          <RecordViewsLoadEffect
-            objectNameSingular="company"
-            recordId="record-2"
-          />
-          <RecordViewsProbe />
-        </SidePanelPageComponentInstanceContext.Provider>
-      </Provider>,
-    );
+    rerender(effectTree('record-2'));
 
     await waitFor(() => expect(isLoading()).toBe('false'));
     await act(async () => {
@@ -215,10 +256,9 @@ describe('RecordViewsLoadEffect', () => {
   });
 
   it('limits simultaneous checks for many views', async () => {
-    mockViews = Array.from({ length: 12 }, (_, index) => ({
-      ...baseView,
-      id: `view-${index}`,
-    }));
+    mockViews = Array.from({ length: 12 }, (_, index) =>
+      filteredView(`view-${index}`),
+    );
     let release: (value: ReturnType<typeof response>) => void = () => {};
     const pending = new Promise<ReturnType<typeof response>>((resolve) => {
       release = resolve;
@@ -234,8 +274,6 @@ describe('RecordViewsLoadEffect', () => {
       release(response('record-1'));
     });
 
-    await waitFor(() =>
-      expect(matchingViews()?.split(',')).toHaveLength(12),
-    );
+    await waitFor(() => expect(matchingViews()?.split(',')).toHaveLength(12));
   });
 });

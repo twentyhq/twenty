@@ -47,6 +47,7 @@ const mockResult = {
   views: [view],
   loading: false,
   error: false,
+  hasReadPermission: true,
   retry: mockRetry,
 };
 const renderList = () => {
@@ -106,6 +107,16 @@ describe('RecordViewsList', () => {
     expect(
       screen.queryByText('No views contain this record'),
     ).not.toBeInTheDocument();
+  });
+
+  it('says the records are unreadable rather than claiming no view matches', () => {
+    jest.mocked(useRecordViews).mockReturnValue({
+      ...mockResult,
+      views: [],
+      hasReadPermission: false,
+    });
+    renderList();
+    expect(screen.getByText('You cannot read these records')).toBeVisible();
   });
 
   it('shows an empty state when no view matches', () => {

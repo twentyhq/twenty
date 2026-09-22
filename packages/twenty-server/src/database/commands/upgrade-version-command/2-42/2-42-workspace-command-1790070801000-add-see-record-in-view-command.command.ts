@@ -1,15 +1,13 @@
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-39/utils/build-missing-standard-command-menu-items-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
-import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/create-standard-command-menu-item-flat-metadata.util';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @RegisteredWorkspaceCommand('2.42.0', 1790070801000)
@@ -20,7 +18,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 export class AddSeeRecordInViewCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
@@ -37,59 +34,47 @@ export class AddSeeRecordInViewCommand extends ProvisionedWorkspaceCommandRunner
         'flatObjectMetadataMaps',
       ]);
 
-    if (
-      isDefined(
-        flatCommandMenuItemMaps.byUniversalIdentifier[
-          STANDARD_COMMAND_MENU_ITEMS.seeRecordInView.universalIdentifier
-        ],
-      )
-    ) {
+    const commandMenuItemsToCreate =
+      buildMissingStandardCommandMenuItemsToCreate({
+        commandMenuItemNames: ['seeRecordInView'],
+        flatCommandMenuItemByUniversalIdentifier:
+          flatCommandMenuItemMaps.byUniversalIdentifier,
+        flatObjectMetadataMaps,
+        workspaceId,
+        now: new Date().toISOString(),
+      });
+
+    if (commandMenuItemsToCreate.length === 0) {
       return;
     }
 
-    if (options.dryRun ?? false) {
+    if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId}: add See in view command`,
+        `Would add the See in view command for workspace ${workspaceId}`,
       );
 
       return;
     }
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const commandMenuItem = createStandardCommandMenuItemFlatMetadata({
-      commandMenuItemName: 'seeRecordInView',
-      commandMenuItemId: v4(),
-      workspaceId,
-      twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      dependencyFlatEntityMaps: { flatObjectMetadataMaps },
-      now: new Date().toISOString(),
-    });
-
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          isSystemBuild: true,
-          workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
-              flatEntityToCreate: [commandMenuItem],
+              flatEntityToCreate: commandMenuItemsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
           },
+          workspaceId,
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       );
 
-    if (result.status === 'fail') {
-      throw new Error(
-        `Failed to add See in view command for workspace ${workspaceId}: ${JSON.stringify(result)}`,
-      );
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(validateAndBuildResult);
     }
   }
 }
