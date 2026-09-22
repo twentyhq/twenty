@@ -91,6 +91,26 @@ ruleTester.run(RULE_NAME, rule, {
       filename: front('modules/geo-map/types/placeApi.custom.ts'),
       options: [{ convention: 'PascalCase', allowedSuffixes: ['custom'] }],
     },
+    {
+      code: DUMMY_CODE,
+      filename: front('modules/ai/types/toolWidget.spec.ts'),
+      options: PASCAL_CASE,
+    },
+    {
+      code: DUMMY_CODE,
+      filename: front('modules/ai/types/toolWidget.test.tsx'),
+      options: PASCAL_CASE,
+    },
+    {
+      code: DUMMY_CODE,
+      filename: front('modules/ai/types/toolWidget.stories.tsx'),
+      options: PASCAL_CASE,
+    },
+    {
+      code: DUMMY_CODE,
+      filename: server('modules/workflow/types/workflow-action-input.spec.ts'),
+      options: KEBAB_CASE_TYPE_SUFFIX,
+    },
   ],
   invalid: [
     {
@@ -135,6 +155,12 @@ ruleTester.run(RULE_NAME, rule, {
       code: DUMMY_CODE,
       filename: front('modules/geo-map/types/placeApi.custom.ts'),
       options: PASCAL_CASE,
+      errors: [{ messageId: 'invalidPascalCaseFilename' }],
+    },
+    {
+      code: DUMMY_CODE,
+      filename: front('modules/geo-map/types/placeApiXbar.ts'),
+      options: [{ convention: 'PascalCase', allowedSuffixes: ['foo.bar'] }],
       errors: [{ messageId: 'invalidPascalCaseFilename' }],
     },
   ],

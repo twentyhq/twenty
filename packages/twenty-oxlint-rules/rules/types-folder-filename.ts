@@ -39,8 +39,11 @@ const CONVENTIONS = {
   },
 } as const;
 
+const escapeForRegex = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const buildAllowedSuffixRegex = (suffixes: string[]) =>
-  new RegExp(`\\.(?:${suffixes.join('|')})\\.tsx?$`);
+  new RegExp(`\\.(?:${suffixes.map(escapeForRegex).join('|')})\\.tsx?$`);
 
 const isInsideTypesFolder = (filename: string): boolean => {
   const segments = filename.split('/');
