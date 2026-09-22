@@ -1,12 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { useDebounce } from 'use-debounce';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -14,29 +5,35 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { styled } from '@linaria/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { useContext, useMemo, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import {
   AppPath,
   CoreObjectNameSingular,
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { SearchInput, Section } from 'twenty-ui/components';
 import {
   IconArrowUpRight,
   IconChevronRight,
   IconHierarchy,
   IconListDetails,
 } from 'twenty-ui/icon';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { SearchInput } from 'twenty-ui/components';
-
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useDebounce } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';

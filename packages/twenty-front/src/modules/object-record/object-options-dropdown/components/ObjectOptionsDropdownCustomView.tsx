@@ -29,7 +29,6 @@ import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDes
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
 import {
   IconCalendar,
   IconCalendarWeek,

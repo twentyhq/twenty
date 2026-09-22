@@ -1,8 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
-import { useCallback, useContext } from 'react';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -28,15 +23,18 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import { motion } from 'framer-motion';
+import { useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import {
   CustomError,
   computeMorphRelationGqlFieldName,
 } from 'twenty-shared/utils';
-import { LightIconButton, MenuItem } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   IconChevronDown,
   IconDotsVertical,
@@ -45,6 +43,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const StyledClickableZone = styled.div`

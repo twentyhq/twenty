@@ -16,7 +16,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { RelationType } from '~/generated-metadata/graphql';
 

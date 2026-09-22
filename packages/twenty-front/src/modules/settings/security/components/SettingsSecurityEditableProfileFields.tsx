@@ -1,8 +1,8 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constants/EditableProfileFields.constants';
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

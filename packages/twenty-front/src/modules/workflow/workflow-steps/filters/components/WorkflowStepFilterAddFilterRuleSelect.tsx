@@ -12,7 +12,6 @@ import { buildEmptyStepFilter } from '@/workflow/workflow-steps/filters/utils/bu
 import { t } from '@lingui/core/macro';
 import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 

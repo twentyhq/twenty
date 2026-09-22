@@ -1,4 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -6,9 +5,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { LightIconButton, useToast } from 'twenty-ui/components';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/components';
-import { LightIconButton } from 'twenty-ui/components';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type PublicDomain,
   DeletePublicDomainDocument,

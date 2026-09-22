@@ -1,6 +1,6 @@
 # Breaking module ownership migration
 
-This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 41 primitives and 36 shared React components, including the optional code editor.
+This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 41 primitives and 33 shared React components, including the optional code editor.
 
 ## Choosing a module
 
@@ -21,13 +21,13 @@ Source folders group shared components by `data-display`, `feedback`, `input`, `
 
 ### Shared components
 
-`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `SettingsRow`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `CardPicker`, `ColorPickerButton`, `ColorSchemePicker`, `FloatingButton`, `FloatingButtonGroup`, `LightIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemSuggestion`, `MenuPicker`, `NavigationBar`, `RoundedLink`, `OverflowingTextWithTooltip`.
+`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `SettingsRow`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `CardPicker`, `ColorSchemePicker`, `LightIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemSuggestion`, `MenuPicker`, `NavigationBar`, `RoundedLink`, `OverflowingTextWithTooltip`.
 
 ## Interface changes
 
 - `JsonTree` accepts either `value` or `entries: { id, label, value }[]`. Entry IDs determine highlighting paths; labels determine presentation. Its default expansion opens the first two levels. Use `shouldExpandNodeInitially` to override that policy. Node renderers, context, and traversal helpers are private.
 - Replace custom menu-row assemblies with `ListItem` slots and native role/selection props. `actionsVisibility` preserves either persistent or hover/focus actions. Styled menu fragments are private.
-- `Info` and `FloatingButton` accept `href` and `render` instead of `to`. Supply a router link through `render` when client-side navigation is required. React Router is an optional peer used only by testing decorators.
+- `Info` accepts `href` and `render` instead of `to`. Supply a router link through `render` when client-side navigation is required. React Router is an optional peer used only by testing decorators.
 - `AnimatedEaseInOut` is removed. Use `AnimatedExpandableContainer` with `isExpanded`, `duration`, and `containAnimation={false}` for its former frontend use cases.
 - Toasts, their provider, toaster, and public hooks move to `twenty-ui/components`. Application localization, stacking, and click-outside behavior stay in the frontend toast adapter.
 - Field displays, navigation links, application placeholders, and feature animation no longer have package exports. Frontend callers import their owning modules directly.
@@ -61,8 +61,6 @@ The table records every removed React export. Internal implementation files are 
 | `AnimatedPlaceholderErrorTitle`         | Frontend ErrorState.Title.                                                                    |
 | `AnimatedPlaceholderErrorSubTitle`      | Frontend ErrorState.Description.                                                              |
 | `SidePanelInformationBanner`            | Frontend side-panel/components/SidePanelInformationBanner.                                    |
-| `AnimatedLightIconButton`               | IconButton for icon actions; application-owned disclosure headers for expandable rows.        |
-| `AnimatedButton`                        | Button composed with AnimatedIconCrossfade.                                                   |
 | `ColorSchemeCard`                       | ColorSchemePicker/internal                                                                    |
 | `IconListViewGrip`                      | object-record/record-table internal asset                                                     |
 | `InputHint`                             | Field.Description or Field.Error for new forms; frontend input adapter for existing controls. |

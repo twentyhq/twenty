@@ -11,7 +11,6 @@ import {
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
 import { IconUserCircle, IconX, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

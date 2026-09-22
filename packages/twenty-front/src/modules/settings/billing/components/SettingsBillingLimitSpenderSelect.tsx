@@ -1,12 +1,3 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
 import { AVATAR_SPENDER_TYPES } from '@/settings/billing/constants/AvatarSpenderTypes';
@@ -19,6 +10,7 @@ import {
 } from '@/settings/billing/hooks/useUsageLimitSpenderOptions';
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
 import { getUsageLimitSpenderGroups } from '@/settings/billing/utils/getUsageLimitSpenderGroups';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -27,6 +19,12 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const SPENDER_DROPDOWN_ID = 'usage-limit-spender';

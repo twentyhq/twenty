@@ -24,6 +24,7 @@ export const ListItem = ({
   description,
   descriptionPlacement = 'inline',
   actions,
+  actionsVisibility = 'hover',
   hotkeys,
   hasSubmenu = false,
   className,
@@ -55,6 +56,7 @@ export const ListItem = ({
     state: { color, indicator, selected, highlighted: focused, disabled },
     props: {
       ...props,
+      'data-actions-visibility': actionsVisibility,
       className: clsx(styles.root, className),
       'aria-disabled': disabled || undefined,
       onClick: handleClick,

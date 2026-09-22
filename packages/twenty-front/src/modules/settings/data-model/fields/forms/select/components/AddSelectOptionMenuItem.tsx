@@ -1,10 +1,9 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type AddSelectOptionMenuItemProps = {
   name: string;

@@ -1,14 +1,12 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useToast } from 'twenty-ui/components';
+import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { LightIconButton, useToast } from 'twenty-ui/components';
 import { IconDotsVertical, IconLogout } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   CurrentUserSessionsDocument,
   RevokeUserSessionDocument,

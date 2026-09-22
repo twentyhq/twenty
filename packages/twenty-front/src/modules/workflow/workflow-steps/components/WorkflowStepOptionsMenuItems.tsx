@@ -4,7 +4,6 @@ import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/c
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
 import { IconCopyPlus, IconPencil, IconTrash } from 'twenty-ui/icon';
 
 type WorkflowStepOptionsMenuItemsProps = {

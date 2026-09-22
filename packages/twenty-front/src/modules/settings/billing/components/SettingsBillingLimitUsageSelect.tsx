@@ -1,22 +1,20 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
 import { USAGE_LIMIT_OPERATION_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitOperationTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitResourceTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitResourceTypeLabels';
 import { getUsageLimitOperationTypes } from '@/settings/billing/utils/getUsageLimitOperationTypes';
 import { USAGE_OPERATION_TYPE_LABELS } from '@/settings/usage/constants/UsageOperationTypeLabels';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type UsageOperationType,
   type UsageQuotaDefinitionsQuery,

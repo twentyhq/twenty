@@ -1,8 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AGENT_CHAT_THREAD_GROUP_BY_LABELS } from '@/ai/constants/AgentChatThreadGroupByLabels';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
@@ -12,6 +7,9 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useLingui } from '@lingui/react/macro';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 const AGENT_CHAT_THREAD_GROUP_BY_OPTIONS = [
   AGENT_CHAT_THREAD_GROUP_BY.DATE,

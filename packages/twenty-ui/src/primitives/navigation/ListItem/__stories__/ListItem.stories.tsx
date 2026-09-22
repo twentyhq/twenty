@@ -77,6 +77,17 @@ export const WithActions: Story = {
   args: { startIcon: START_ICON, actions: ACTIONS },
 };
 
+export const WithPersistentActions: Story = {
+  ...WithActions,
+  args: { ...WithActions.args, actionsVisibility: 'always' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.getByRole('button', { name: 'Edit' })).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Delete' })).toBeVisible();
+  },
+};
+
 export const WithCheckbox: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240 } },

@@ -1,6 +1,5 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 

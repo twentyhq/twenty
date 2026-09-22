@@ -1,16 +1,14 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { useMemo, useState } from 'react';
-
 import { type Country } from '@/ui/input/components/internal/types/Country';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
 import 'react-phone-number-input/style.css';
+import { OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.div`

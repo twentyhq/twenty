@@ -34,7 +34,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
 import { IconX, useIcons } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';

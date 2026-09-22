@@ -41,7 +41,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { Callout, MenuItem } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

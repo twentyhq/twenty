@@ -6,7 +6,6 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { MenuItem } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {

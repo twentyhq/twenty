@@ -1,26 +1,25 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { useCallback, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
+import { useCallback, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSettings, useIcons } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();

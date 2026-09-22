@@ -1,11 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { MenuItemAvatar } from 'twenty-ui/components';
-
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -13,7 +5,13 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useToast } from 'twenty-ui/components';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { MenuItemAvatar, useToast } from 'twenty-ui/components';
+import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

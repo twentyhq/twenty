@@ -7,7 +7,6 @@ import {
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';

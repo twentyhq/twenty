@@ -14,7 +14,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
 import { useLingui } from '@lingui/react/macro';
-import { MenuItem } from 'twenty-ui/components';
 import {
   IconCopy,
   IconLayout,

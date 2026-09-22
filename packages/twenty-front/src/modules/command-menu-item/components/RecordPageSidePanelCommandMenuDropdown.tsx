@@ -12,7 +12,6 @@ import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-pan
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
-import { MenuItem } from 'twenty-ui/components';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
