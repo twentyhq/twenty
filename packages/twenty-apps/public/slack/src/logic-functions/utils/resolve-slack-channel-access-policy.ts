@@ -2,6 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
+import { SLACK_CHANNEL_RULE_CAPABILITY } from 'src/logic-functions/constants/slack-channel-rule-capability';
 import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-channel-rule-mode';
 import { findSlackChannelRule } from 'src/logic-functions/data/find-slack-channel-rule';
 import { type SlackChannelAccessPolicy } from 'src/logic-functions/types/slack-channel-access-policy.type';
@@ -11,6 +12,7 @@ import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-m
 const resolveWorkspacePolicy = async (): Promise<SlackChannelAccessPolicy> => ({
   status: 'ANSWER',
   accessMode: await getSlackAccessMode(),
+  capability: SLACK_CHANNEL_RULE_CAPABILITY.FULL,
   isChannelRule: false,
 });
 
@@ -24,12 +26,14 @@ const toChannelRulePolicy = (
       return {
         status: 'ANSWER',
         accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+        capability: rule.capability,
         isChannelRule: true,
       };
     case SLACK_CHANNEL_RULE_MODE.OPEN:
       return {
         status: 'ANSWER',
         accessMode: SLACK_ACCESS_MODE.ANYONE,
+        capability: rule.capability,
         isChannelRule: true,
       };
   }

@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
 import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
 import { SLACK_CHANNEL_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-channel-access-denied-text';
@@ -22,6 +21,7 @@ import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-s
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
+import { getSlackAssistantAgentUniversalIdentifier } from 'src/logic-functions/utils/get-slack-assistant-agent-universal-identifier';
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
@@ -235,7 +235,9 @@ export const slackAssistantWorkerHandler = async (
     );
 
     const agentResult = await runSlackAssistantAgentWithDeadline({
-      agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+      agentUniversalIdentifier: getSlackAssistantAgentUniversalIdentifier(
+        channelAccessPolicy.capability,
+      ),
       runAsWorkspaceMemberId,
       messages: buildSlackAssistantMessages({
         requestText: resolvedMentions.requestText,
