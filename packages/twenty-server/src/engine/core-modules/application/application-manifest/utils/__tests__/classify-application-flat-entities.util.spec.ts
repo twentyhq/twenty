@@ -1,6 +1,11 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 import { classifyApplicationFlatEntities } from 'src/engine/core-modules/application/application-manifest/utils/classify-application-flat-entities.util';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -229,5 +234,92 @@ describe('classifyApplicationFlatEntities', () => {
     );
 
     expect(keys).toEqual([...keys].sort());
+  });
+});
+
+const COMMAND_MENU_ITEM_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+
+const buildWorkflowCommandMenuItem = ({
+  workflowVersionId,
+  coreWorkflowVersionId,
+}: {
+  workflowVersionId: string | null;
+  coreWorkflowVersionId: string | null;
+}): FlatCommandMenuItem =>
+  ({
+    id: 'command-menu-item-id',
+    universalIdentifier: COMMAND_MENU_ITEM_UID,
+    applicationId: APP_ID,
+    applicationUniversalIdentifier: APP_UID,
+    workflowVersionId,
+    coreWorkflowVersionId,
+    frontComponentId: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+    label: 'Run workflow',
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    isSystemSideEffect: false,
+    deletedAt: null,
+    createdAt: NOW,
+    updatedAt: NOW,
+  }) as unknown as FlatCommandMenuItem;
+
+const classifyCommandMenuItem = (flatCommandMenuItem: FlatCommandMenuItem) => {
+  const maps = createEmptyAllFlatEntityMaps();
+
+  maps.flatCommandMenuItemMaps = addFlatEntityToFlatEntityMapsOrThrow({
+    flatEntity: flatCommandMenuItem,
+    flatEntityMaps: maps.flatCommandMenuItemMaps,
+  });
+
+  return classifyApplicationFlatEntities({
+    flatApplication,
+    allFlatEntityMaps: maps,
+    applicationAllFlatEntityMaps: maps,
+    reconstructedCoverage: [],
+  }).find((entry) => entry.universalIdentifier === COMMAND_MENU_ITEM_UID);
+};
+
+describe('classifyApplicationFlatEntities workflow commands', () => {
+  it('should exclude a workflow command that carries both pointers', () => {
+    expect(
+      classifyCommandMenuItem(
+        buildWorkflowCommandMenuItem({
+          workflowVersionId: 'a-workflow-version-id',
+          coreWorkflowVersionId: 'a-core-workflow-version-id',
+        }),
+      ),
+    ).toMatchObject({
+      status: ApplicationExportCoverageStatus.EXCLUDED,
+      reason: 'workflow trigger command',
+    });
+  });
+
+  it('should exclude a workflow command that only carries its core pointer', () => {
+    expect(
+      classifyCommandMenuItem(
+        buildWorkflowCommandMenuItem({
+          workflowVersionId: null,
+          coreWorkflowVersionId: 'a-core-workflow-version-id',
+        }),
+      ),
+    ).toMatchObject({
+      status: ApplicationExportCoverageStatus.EXCLUDED,
+      reason: 'workflow trigger command',
+    });
+  });
+
+  it('should not treat a command without any workflow pointer as workflow-generated', () => {
+    expect(
+      classifyCommandMenuItem(
+        buildWorkflowCommandMenuItem({
+          workflowVersionId: null,
+          coreWorkflowVersionId: null,
+        }),
+      ),
+    ).toMatchObject({
+      status: ApplicationExportCoverageStatus.EXCLUDED,
+      reason: 'command without front component',
+    });
   });
 });

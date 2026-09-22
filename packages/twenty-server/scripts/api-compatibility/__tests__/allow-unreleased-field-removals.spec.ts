@@ -25,7 +25,9 @@ const main = introspect(
 
 const changes = (current: ReturnType<typeof introspect>) =>
   findBreakingChanges(
-    buildClientSchema(allowUnreleasedFieldRemovals(main, current, released)),
+    buildClientSchema(
+      allowUnreleasedFieldRemovals({ main, current, released }),
+    ),
     buildClientSchema(current),
   );
 
@@ -58,7 +60,7 @@ describe('allowUnreleasedFieldRemovals', () => {
   });
 
   it('does not mutate the main baseline', () => {
-    allowUnreleasedFieldRemovals(main, released, released);
+    allowUnreleasedFieldRemovals({ main, current: released, released });
     expect(
       findBreakingChanges(buildClientSchema(main), buildClientSchema(released)),
     ).toHaveLength(2);

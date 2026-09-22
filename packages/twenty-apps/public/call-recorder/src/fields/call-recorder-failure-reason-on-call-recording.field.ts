@@ -15,7 +15,7 @@ export default defineField({
   name: 'callRecorderFailureReason',
   label: 'Call Recorder Failure Reason',
   description:
-    'Provider-specific reason the call recorder could not produce a recording.',
+    'Why the call recorder could not produce a recording: a provider outcome or a workspace billing state.',
   icon: 'IconAlertTriangle',
   isNullable: true,
   isUIEditable: false,

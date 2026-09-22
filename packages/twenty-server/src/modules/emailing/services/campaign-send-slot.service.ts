@@ -29,7 +29,7 @@ export class CampaignSendSlotService {
     try {
       await this.usageLimitSpeedService.consumeOrThrow({
         resourceType: UsageResourceType.EMAIL,
-        operationType: UsageOperationType.EMAIL_SEND,
+        operationType: UsageOperationType.MESSAGE_CAMPAIGN_SEND,
         authContext: buildSystemAuthContext(workspaceId),
         cost: requestedSlotCount,
       });

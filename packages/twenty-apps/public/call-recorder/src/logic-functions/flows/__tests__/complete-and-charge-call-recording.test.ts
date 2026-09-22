@@ -44,10 +44,9 @@ describe('completeAndChargeCallRecording', () => {
     });
     expect(chargeCreditsMock).toHaveBeenCalledTimes(1);
     expect(chargeCreditsMock).toHaveBeenCalledWith({
+      operation: 'recordCall',
       creditsUsedMicro: 1_000_000,
       quantity: 60,
-      operationType: 'CALL_RECORDING',
-      resourceContext: 'recall',
     });
   });
 

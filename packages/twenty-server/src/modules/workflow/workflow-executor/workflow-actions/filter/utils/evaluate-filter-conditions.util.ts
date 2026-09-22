@@ -15,6 +15,8 @@ import {
 import {
   convertViewFilterOperandToCoreOperand as convertViewFilterOperandDeprecated,
   isDefined,
+  isMatchingMultiSelectFilter,
+  isMatchingSelectFilter,
   isSamePlainDate,
   parseToInstantOrThrow,
 } from 'twenty-shared/utils';
@@ -485,12 +487,68 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
   }
 }
 
+function parseSelectFilterOptions(rightOperand: unknown): string[] {
+  if (Array.isArray(rightOperand)) {
+    return rightOperand.filter(isString);
+  }
+
+  if (isString(rightOperand)) {
+    try {
+      const parsedRightOperand: unknown = JSON.parse(rightOperand);
+
+      if (Array.isArray(parsedRightOperand)) {
+        return parsedRightOperand.filter(isString);
+      }
+
+      return [rightOperand];
+    } catch {
+      return [rightOperand];
+    }
+  }
+
+  return [];
+}
+
+function isMatchingSelectedOption(
+  leftOperand: unknown,
+  options: string[],
+): boolean {
+  const nonEmptyOptions = options.filter((option) => option !== '');
+  const hasEmptyOption = nonEmptyOptions.length !== options.length;
+
+  if (Array.isArray(leftOperand)) {
+    return (
+      isMatchingMultiSelectFilter({
+        multiSelectFilter: { containsAny: nonEmptyOptions },
+        value: leftOperand,
+      }) ||
+      (hasEmptyOption && leftOperand.length === 0)
+    );
+  }
+
+  const value = isString(leftOperand) ? leftOperand : null;
+
+  return (
+    isMatchingSelectFilter({
+      selectFilter: { in: nonEmptyOptions },
+      value,
+    }) ||
+    (hasEmptyOption && value === null)
+  );
+}
+
 function evaluateSelectFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
     case ViewFilterOperand.IS:
-      return contains(filter.leftOperand, filter.rightOperand);
+      return isMatchingSelectedOption(
+        filter.leftOperand,
+        parseSelectFilterOptions(filter.rightOperand),
+      );
     case ViewFilterOperand.IS_NOT:
-      return !contains(filter.leftOperand, filter.rightOperand);
+      return !isMatchingSelectedOption(
+        filter.leftOperand,
+        parseSelectFilterOptions(filter.rightOperand),
+      );
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 

@@ -135,15 +135,22 @@ export const useTextVariableEditor = ({
   });
 
   useLayoutEffect(() => {
-    if (
-      isDefined(editor) &&
-      !editor.isDestroyed &&
-      parseEditorContent(editor.getJSON()) !== (defaultValue ?? '')
-    ) {
-      editor.commands.setContent(getInitialEditorContent(defaultValue ?? ''), {
-        emitUpdate: false,
-      });
+    if (!isDefined(editor) || editor.isDestroyed) {
+      return;
     }
+
+    const incomingContent = getInitialEditorContent(defaultValue ?? '');
+
+    // Serialized hard breaks include Markdown spaces; raw values need a
+    // document comparison to preserve selection when their content is equal.
+    if (
+      parseEditorContent(editor.getJSON()) === (defaultValue ?? '') ||
+      editor.state.doc.eq(editor.schema.nodeFromJSON(incomingContent))
+    ) {
+      return;
+    }
+
+    editor.commands.setContent(incomingContent, { emitUpdate: false });
   }, [editor, defaultValue]);
 
   useEffect(() => {

@@ -13,4 +13,17 @@ export default defineApplication({
   logo: 'public/logo.svg',
   author: 'Twenty',
   category: 'Productivity',
+  serverVariables: {
+    MICROSOFT_CLIENT_ID: {
+      description: 'OAuth client ID from the Microsoft Entra app registration.',
+      isSecret: false,
+      isRequired: true,
+    },
+    MICROSOFT_CLIENT_SECRET: {
+      description:
+        'OAuth client secret value from the Microsoft Entra app registration.',
+      isSecret: true,
+      isRequired: true,
+    },
+  },
 });

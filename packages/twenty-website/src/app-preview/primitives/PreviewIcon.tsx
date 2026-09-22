@@ -50,21 +50,12 @@ const TABLER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   versions: IconVersions,
 };
 
-const SidebarIconSurface = styled.div<{
-  $background: string;
-  $border: string;
-  $color: string;
-  $pulse?: boolean;
-}>`
+const SidebarIconSlot = styled.div<{ $pulse?: boolean }>`
   align-items: center;
   animation: ${({ $pulse }) =>
     $pulse
       ? `objectAppearIcon 1400ms ${APP_PREVIEW_MOTION.revealPopEase} both`
       : 'none'};
-  background: ${({ $background }) => $background};
-  border: 1px solid ${({ $border }) => $border};
-  border-radius: ${THEME_LIGHT.border.radius.sm};
-  color: ${({ $color }) => $color};
   display: flex;
   flex: 0 0 auto;
   height: 16px;
@@ -143,12 +134,7 @@ export function renderPreviewIcon(
 ): ReactNode {
   if (icon.kind === 'brand') {
     return (
-      <SidebarIconSurface
-        $background="transparent"
-        $border="transparent"
-        $color={THEME_LIGHT.font.color.secondary}
-        $pulse={pulse}
-      >
+      <SidebarIconSlot $pulse={pulse}>
         {icon.brand === 'twenty' ? (
           // The official mark is a component — never a raster copy.
           <TwentyLogo sizePx={14} />
@@ -161,7 +147,7 @@ export function renderPreviewIcon(
           />
         )}
         {icon.overlay === 'link' ? <LinkOverlay /> : null}
-      </SidebarIconSurface>
+      </SidebarIconSlot>
     );
   }
   if (icon.kind === 'avatar') {
@@ -181,21 +167,16 @@ export function renderPreviewIcon(
     APP_PREVIEW_TONES.sidebar[icon.tone] ?? APP_PREVIEW_TONES.sidebar.gray;
   const TablerIcon = TABLER_ICON_MAP[icon.name];
   return (
-    <SidebarIconSurface
-      $background={tone.background}
-      $border={tone.border}
-      $color={tone.color}
-      $pulse={pulse}
-    >
+    <SidebarIconSlot $pulse={pulse}>
       {TablerIcon ? (
         <TablerIcon
           aria-hidden
           color={tone.color}
-          size={14}
+          size={THEME_LIGHT.icon.size.md}
           stroke={THEME_LIGHT.icon.stroke.md}
         />
       ) : null}
       {icon.overlay === 'link' ? <LinkOverlay /> : null}
-    </SidebarIconSurface>
+    </SidebarIconSlot>
   );
 }
