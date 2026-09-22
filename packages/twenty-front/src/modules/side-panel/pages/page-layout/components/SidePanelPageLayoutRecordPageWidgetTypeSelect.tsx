@@ -3,14 +3,12 @@ import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/f
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
-import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/widgetCreationTargetTabIdComponentState';
 import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
-import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
@@ -32,11 +30,10 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
-  IconBlockquote,
   IconListDetails,
   IconListSearch,
   IconNotes,
@@ -69,11 +66,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
-    pageLayoutCurrentLayoutsComponentState,
-    pageLayoutId,
-  );
-
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useAtomComponentState(
       pageLayoutEditingWidgetIdComponentState,
@@ -98,10 +90,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetObjectNameSingular,
   });
-
-  const isTranscriptWidgetSupported =
-    targetObjectNameSingular === CoreObjectNameSingular.CalendarEvent ||
-    targetObjectNameSingular === CoreObjectNameSingular.CallRecording;
 
   const allFieldWidgetFields = useFieldWidgetEligibleFields(
     targetObjectNameSingular,
@@ -296,81 +284,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
   };
 
-  const handleCreateTranscriptWidget = () => {
-    const activeTab = store
-      .get(pageLayoutDraftState)
-      .tabs.find((tab) => tab.id === tabId);
-    const newWidget = buildDraftPageLayoutWidget({
-      id: uuidv4(),
-      pageLayoutTabId: tabId,
-      title: t`Transcript`,
-      type: WidgetType.CALL_RECORDING_TRANSCRIPT,
-      configuration: {
-        __typename: 'CallRecordingTranscriptConfiguration',
-        configurationType: WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
-      },
-      position: {
-        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-        index: activeTab?.widgets.length ?? 0,
-      },
-    });
-
-    if (isDefined(existingWidget)) {
-      store.set(pageLayoutDraftState, (previousDraft) => ({
-        ...previousDraft,
-        tabs: previousDraft.tabs.map((tab) => {
-          if (tab.id !== tabId) {
-            return tab;
-          }
-
-          return {
-            ...tab,
-            widgets: tab.widgets.map((widget) =>
-              widget.id === existingWidget.id
-                ? {
-                    ...newWidget,
-                    position: widget.position,
-                    gridPosition: widget.gridPosition,
-                  }
-                : widget,
-            ),
-          };
-        }),
-      }));
-
-      store.set(pageLayoutCurrentLayoutsState, (previousLayouts) => {
-        const tabLayouts = previousLayouts[tabId];
-
-        if (!isDefined(tabLayouts)) {
-          return previousLayouts;
-        }
-
-        return {
-          ...previousLayouts,
-          [tabId]: Object.fromEntries(
-            Object.entries(tabLayouts).map(([breakpoint, layouts]) => [
-              breakpoint,
-              layouts?.map((layout) =>
-                layout.i === existingWidget.id
-                  ? { ...layout, i: newWidget.id }
-                  : layout,
-              ),
-            ]),
-          ),
-        };
-      });
-    } else {
-      store.set(pageLayoutDraftState, (previousDraft) => ({
-        ...previousDraft,
-        tabs: addWidgetToTab(previousDraft.tabs, tabId, newWidget),
-      }));
-    }
-
-    setPageLayoutEditingWidgetId(newWidget.id);
-    insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
-    closeSidePanelMenu();
-  };
-
   const handleCreateFrontComponentWidget = useCallback(
     (frontComponent: FrontComponent) => {
       const replacePositionIndex = getExistingWidgetPositionIndex();
@@ -434,7 +347,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     'fields',
     'field',
     'note',
-    ...(isTranscriptWidgetSupported ? ['transcript'] : []),
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
   ];
 
@@ -466,20 +378,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
             onClick={handleCreateNoteWidget}
           />
         </SelectableListItem>
-        {isTranscriptWidgetSupported && (
-          <SelectableListItem
-            itemId="transcript"
-            onEnter={handleCreateTranscriptWidget}
-          >
-            <CommandMenuItem
-              Icon={IconBlockquote}
-              label={t`Transcript`}
-              description={t`Render Transcript`}
-              id="transcript"
-              onClick={handleCreateTranscriptWidget}
-            />
-          </SelectableListItem>
-        )}
       </SidePanelGroup>
 
       {frontComponentsWithSelectItemId.length > 0 && (

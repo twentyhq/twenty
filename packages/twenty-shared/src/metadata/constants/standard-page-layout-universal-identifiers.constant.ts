@@ -377,7 +377,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         },
       },
       callRecording: {
-        // This historical title seeds persisted tab and widget identifiers.
         title: 'Call Recording',
         widgets: {
           transcript: 'Transcript',
@@ -426,7 +425,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         },
       },
       callRecording: {
-        // This historical title seeds persisted tab and widget identifiers.
         title: 'Call Recording',
         widgets: {
           transcript: 'Transcript',
