@@ -10,7 +10,7 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'Microsoft Teams',
   description:
-    'Connect Microsoft Teams to Twenty for chat, messaging workflows, and meeting transcripts.',
+    'Your CRM, in the conversation. Mention the bot or message it directly to read, create, update and soft-delete records without leaving Teams, and post messages from your workflows. Connect your Microsoft account for meeting transcripts.',
   logo: 'public/teams.svg',
   author: 'Twenty',
   category: 'Communication',
