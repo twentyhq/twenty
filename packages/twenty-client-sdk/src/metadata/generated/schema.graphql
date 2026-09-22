@@ -3632,6 +3632,8 @@ enum AllMetadataName {
   connectionProvider
   searchFieldMetadata
   timelineActivityType
+  workflow
+  workflowVersion
 }
 
 type MinimalObjectMetadata {
