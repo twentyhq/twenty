@@ -1,17 +1,39 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { LightButton, MainButton } from 'twenty-ui/components';
+import {
+  IconButton,
+  LightIconButton,
+  LightButton,
+  MainButton,
+} from 'twenty-ui/components';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { IconPlus } from 'twenty-ui/icon';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/primitives/navigation';
+import { IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
+import { AnimatedIconCrossfade } from 'twenty-ui/primitives/layout';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import 'twenty-ui/style.css';
 
 const ButtonControls = () => {
   const [activations, setActivations] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const handleClick = () => setActivations((count) => count + 1);
   return (
     <ThemeProvider colorScheme="light">
+      <Button
+        size="sm"
+        aria-expanded={isEditing ? 'true' : 'false'}
+        onClick={() => setIsEditing(!isEditing)}
+        startIcon={
+          <AnimatedIconCrossfade
+            isActive={isEditing}
+            ActiveIcon={IconX}
+            InactiveIcon={IconPencil}
+          />
+        }
+      >
+        Edit actions
+      </Button>
       <Button
         color="accent"
         variant="solid"
@@ -36,6 +58,62 @@ const ButtonControls = () => {
         <Button onClick={handleClick}>First action</Button>
         <Button onClick={handleClick}>Second action</Button>
       </ButtonGroup>
+      <ButtonGroup framed attached={false} aria-label="Icon actions">
+        <LightIconButton size="xs" aria-label="Add item" onClick={handleClick}>
+          <IconPlus />
+        </LightIconButton>
+        <span>
+          <LightIconButton
+            size="xs"
+            aria-label="Unavailable item"
+            disabled
+            onClick={handleClick}
+          >
+            <IconPlus />
+          </LightIconButton>
+        </span>
+      </ButtonGroup>
+      <IconButton
+        aria-label="Send"
+        shape="round"
+        size="xs"
+        variant="solid"
+        color="accent"
+      >
+        <IconPlus />
+      </IconButton>
+      <MenuItem
+        text="Record"
+        isIconDisplayedOnHoverOnly={false}
+        iconButtons={
+          <ButtonGroup attached={false}>
+            <LightIconButton aria-label="Add to record" onClick={handleClick}>
+              <IconPlus />
+            </LightIconButton>
+            <span>
+              <LightIconButton
+                aria-label="Unavailable record button"
+                disabled
+                onClick={handleClick}
+              >
+                <IconPlus />
+              </LightIconButton>
+            </span>
+          </ButtonGroup>
+        }
+      />
+      <MenuItemDraggable
+        text="Draggable record"
+        isIconDisplayedOnHoverOnly={false}
+        iconButtons={
+          <LightIconButton
+            aria-label="Add to draggable record"
+            onClick={handleClick}
+          >
+            <IconPlus />
+          </LightIconButton>
+        }
+      />
       <output aria-label="Activations">{activations}</output>
     </ThemeProvider>
   );

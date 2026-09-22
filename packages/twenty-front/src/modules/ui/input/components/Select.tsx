@@ -1,3 +1,6 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useMemo, useRef, useState } from 'react';
 
@@ -22,11 +25,6 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import {
-  MenuItem,
-  MenuItemSelect,
-  MenuItemSelectTag,
-} from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -252,22 +250,34 @@ export const Select = <Value extends SelectValue>({
               )}
               {isDefined(pinnedOption) && (
                 <DropdownMenuItemsContainer scrollable={false}>
-                  <MenuItemSelect
-                    LeftIcon={pinnedOption.Icon}
-                    LeftComponent={pinnedOption.LeftComponent}
-                    leftIconColor={pinnedOption.iconThemeColor}
-                    text={pinnedOption.label}
-                    contextualText={pinnedOption.contextualText}
-                    selected={
-                      controlSelectedOption.value === pinnedOption.value
-                    }
-                    needIconCheck={needIconCheck}
+                  <ListItem
                     onClick={() => {
                       onChange?.(pinnedOption.value);
                       onBlur?.();
                       closeDropdown(dropdownId);
                     }}
-                  />
+                    role="option"
+                    aria-selected={
+                      controlSelectedOption.value === pinnedOption.value
+                    }
+                    selected={
+                      needIconCheck &&
+                      controlSelectedOption.value === pinnedOption.value
+                    }
+                    indicator={needIconCheck ? 'check' : 'none'}
+                    description={pinnedOption.contextualText}
+                    startIcon={
+                      <>
+                        <SelectOptionIcon
+                          Icon={pinnedOption.Icon}
+                          color={pinnedOption.iconThemeColor}
+                        />
+                        {pinnedOption.LeftComponent}
+                      </>
+                    }
+                  >
+                    {pinnedOption.label}
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
               {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
@@ -294,29 +304,52 @@ export const Select = <Value extends SelectValue>({
                           onEnter={handleSelectOption}
                         >
                           {renderAsTag && isDefined(option.color) ? (
-                            <MenuItemSelectTag
-                              text={option.label}
-                              color={option.color}
+                            <ListItem
+                              focused={selectedItemId === option.label}
+                              onClick={handleSelectOption}
+                              role="option"
+                              aria-selected={
+                                controlSelectedOption.value === option.value
+                              }
                               selected={
                                 controlSelectedOption.value === option.value
                               }
-                              focused={selectedItemId === option.label}
-                              onClick={handleSelectOption}
-                            />
+                              indicator="check"
+                            >
+                              <Tag
+                                color={option.color}
+                                borderStyle="dashed"
+                                variant={'soft'}
+                              >
+                                {option.label}
+                              </Tag>
+                            </ListItem>
                           ) : (
-                            <MenuItemSelect
-                              LeftIcon={option.Icon}
-                              LeftComponent={option.LeftComponent}
-                              leftIconColor={option.iconThemeColor}
-                              text={option.label}
-                              contextualText={option.contextualText}
-                              selected={
+                            <ListItem
+                              focused={selectedItemId === option.label}
+                              onClick={handleSelectOption}
+                              role="option"
+                              aria-selected={
                                 controlSelectedOption.value === option.value
                               }
-                              focused={selectedItemId === option.label}
-                              needIconCheck={needIconCheck}
-                              onClick={handleSelectOption}
-                            />
+                              selected={
+                                needIconCheck &&
+                                controlSelectedOption.value === option.value
+                              }
+                              indicator={needIconCheck ? 'check' : 'none'}
+                              description={option.contextualText}
+                              startIcon={
+                                <>
+                                  <SelectOptionIcon
+                                    Icon={option.Icon}
+                                    color={option.iconThemeColor}
+                                  />
+                                  {option.LeftComponent}
+                                </>
+                              }
+                            >
+                              {option.label}
+                            </ListItem>
                           )}
                         </SelectableListItem>
                       );
@@ -328,11 +361,14 @@ export const Select = <Value extends SelectValue>({
                 isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
               {isDefined(callToActionButton) && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <MenuItem
+                  <ListItem
                     onClick={callToActionButton.onClick}
-                    LeftIcon={callToActionButton.Icon}
-                    text={callToActionButton.text}
-                  />
+                    startIcon={
+                      <SelectOptionIcon Icon={callToActionButton.Icon} />
+                    }
+                  >
+                    {callToActionButton.text}
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
             </DropdownContent>

@@ -16,12 +16,12 @@
   returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="color" type="&quot;neutral&quot; | &quot;accent&quot; | &quot;danger&quot; | &quot;success&quot;">
+<ParamField body="color" type="&quot;accent&quot; | &quot;danger&quot; | &quot;neutral&quot; | &quot;success&quot;">
   Semantic color of the button.
 </ParamField>
 
 <ParamField body="elevated" type="boolean" default="true">
-  Adds a shadow to the button.
+  Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors.
 </ParamField>
 
 <ParamField body="endIcon" type="ReactNode">
@@ -48,7 +48,7 @@
   Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
 </ParamField>
 
-<ParamField body="size" type="&quot;sm&quot; | &quot;md&quot;">
+<ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;">
   Button height: `sm` (24px) or `md` (32px).
 </ParamField>
 
@@ -69,6 +69,6 @@
   returns a style object based on the component's state.
 </ParamField>
 
-<ParamField body="variant" type="&quot;solid&quot; | &quot;outline&quot; | &quot;ghost&quot; | &quot;soft&quot;" default="solid">
+<ParamField body="variant" type="&quot;ghost&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot;" default="solid">
   Visual treatment of the button surface.
 </ParamField>

@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
@@ -25,6 +27,7 @@ import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import {
   IconBaselineDensitySmall,
   IconCalendar,
@@ -34,11 +37,6 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import {
-  MenuItem,
-  MenuItemSelect,
-  MenuItemSwitch,
-} from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
@@ -159,17 +157,21 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 setAndPersistViewType(ViewType.TABLE);
               }}
             >
-              <MenuItemSelect
-                LeftIcon={IconTable}
-                text={t(getViewTypeLabel(ViewType.TABLE))}
-                selected={currentView?.type === ViewType.TABLE}
+              <ListItem
                 focused={selectedItemId === ViewType.TABLE}
                 onClick={async () => {
                   if (currentView?.type !== ViewType.TABLE) {
                     await setAndPersistViewType(ViewType.TABLE);
                   }
                 }}
-              />
+                role="option"
+                aria-selected={currentView?.type === ViewType.TABLE}
+                selected={currentView?.type === ViewType.TABLE}
+                indicator="check"
+                startIcon={<IconTable />}
+              >
+                {t(getViewTypeLabel(ViewType.TABLE))}
+              </ListItem>
             </SelectableListItem>
             <SelectableListItem
               itemId={ViewType.LIST}
@@ -177,17 +179,23 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 setAndPersistViewType(ViewType.LIST);
               }}
             >
-              <MenuItemSelect
-                LeftIcon={viewTypeIconMapping(ViewType.LIST)}
-                text={t(getViewTypeLabel(ViewType.LIST))}
-                selected={currentView?.type === ViewType.LIST}
+              <ListItem
                 focused={selectedItemId === ViewType.LIST}
                 onClick={async () => {
                   if (currentView?.type !== ViewType.LIST) {
                     await setAndPersistViewType(ViewType.LIST);
                   }
                 }}
-              />
+                role="option"
+                aria-selected={currentView?.type === ViewType.LIST}
+                selected={currentView?.type === ViewType.LIST}
+                indicator="check"
+                startIcon={
+                  <SelectOptionIcon Icon={viewTypeIconMapping(ViewType.LIST)} />
+                }
+              >
+                {t(getViewTypeLabel(ViewType.LIST))}
+              </ListItem>
             </SelectableListItem>
             <SelectableListItem
               itemId={ViewType.CALENDAR}
@@ -195,13 +203,21 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 setAndPersistViewType(ViewType.CALENDAR);
               }}
             >
-              <MenuItemSelect
-                LeftIcon={viewTypeIconMapping(ViewType.CALENDAR)}
-                text={t(getViewTypeLabel(ViewType.CALENDAR))}
-                selected={currentView?.type === ViewType.CALENDAR}
+              <ListItem
                 focused={selectedItemId === ViewType.CALENDAR}
                 onClick={handleSelectCalendarViewType}
-              />
+                role="option"
+                aria-selected={currentView?.type === ViewType.CALENDAR}
+                selected={currentView?.type === ViewType.CALENDAR}
+                indicator="check"
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={viewTypeIconMapping(ViewType.CALENDAR)}
+                  />
+                }
+              >
+                {t(getViewTypeLabel(ViewType.CALENDAR))}
+              </ListItem>
             </SelectableListItem>
             <SelectableListItem
               itemId={ViewType.KANBAN}
@@ -209,12 +225,15 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 setAndPersistViewType(ViewType.KANBAN);
               }}
             >
-              <MenuItemSelect
-                LeftIcon={viewTypeIconMapping(ViewType.KANBAN)}
-                text={t(getViewTypeLabel(ViewType.KANBAN))}
+              <ListItem
                 disabled={isDefaultView}
                 focused={selectedItemId === ViewType.KANBAN}
-                contextualText={
+                onClick={handleSelectKanbanViewType}
+                role="option"
+                aria-selected={currentView?.type === ViewType.KANBAN}
+                selected={currentView?.type === ViewType.KANBAN}
+                indicator="check"
+                description={
                   isDefaultView ? (
                     <>
                       {nbsp}·{nbsp}
@@ -226,10 +245,15 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     t`Create Select...`
                   ) : undefined
                 }
-                contextualTextPosition="right"
-                selected={currentView?.type === ViewType.KANBAN}
-                onClick={handleSelectKanbanViewType}
-              />
+                descriptionPlacement={'end'}
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={viewTypeIconMapping(ViewType.KANBAN)}
+                  />
+                }
+              >
+                {t(getViewTypeLabel(ViewType.KANBAN))}
+              </ListItem>
             </SelectableListItem>
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
@@ -240,35 +264,33 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   itemId="CalendarDateField"
                   onEnter={() => onContentChange('calendarFields')}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
-                    LeftIcon={IconCalendar}
-                    text={t`Date field`}
-                    contextualText={calendarFieldMetadata?.label}
-                    contextualTextPosition="right"
-                    hasSubMenu
-                  />
+                    startIcon={<IconCalendar />}
+                    description={calendarFieldMetadata?.label}
+                    descriptionPlacement="end"
+                    hasSubmenu
+                  >{t`Date field`}</ListItem>
                 </SelectableListItem>
                 <SelectableListItem
                   itemId="CalendarView"
                   onEnter={() => onContentChange('calendarView')}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === 'CalendarView'}
                     onClick={() => onContentChange('calendarView')}
-                    LeftIcon={IconCalendarWeek}
-                    text={t`Calendar view`}
-                    contextualText={
+                    startIcon={<IconCalendarWeek />}
+                    description={
                       recordIndexCalendarLayout === ViewCalendarLayout.MONTH
                         ? t`Month`
                         : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
                           ? t`Week`
                           : t`Day`
                     }
-                    contextualTextPosition="right"
-                    hasSubMenu
-                  />
+                    descriptionPlacement="end"
+                    hasSubmenu
+                  >{t`Calendar view`}</ListItem>
                 </SelectableListItem>
               </>
             )}
@@ -281,19 +303,18 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     : onContentChange('recordGroupFields');
                 }}
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'Group'}
                   onClick={() =>
                     isDefined(recordIndexGroupFieldMetadataItem)
                       ? onContentChange('recordGroups')
                       : onContentChange('recordGroupFields')
                   }
-                  LeftIcon={IconLayoutList}
-                  text={t`Group`}
-                  contextualText={recordIndexGroupFieldMetadataItem?.label}
-                  contextualTextPosition="right"
-                  hasSubMenu
-                />
+                  startIcon={<IconLayoutList />}
+                  description={recordIndexGroupFieldMetadataItem?.label}
+                  descriptionPlacement="end"
+                  hasSubmenu
+                >{t`Group`}</ListItem>
               </SelectableListItem>
             )}
             {currentView?.type !== ViewType.TABLE &&
@@ -307,9 +328,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     );
                   }}
                 >
-                  <MenuItemSwitch
+                  <SettingsRow
                     focused={selectedItemId === 'Compact view'}
-                    LeftIcon={IconBaselineDensitySmall}
+                    startIcon={<IconBaselineDensitySmall />}
                     onCheckedChange={() =>
                       setAndPersistIsCompactModeActive(
                         !isCompactModeActive,
@@ -317,9 +338,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                       )
                     }
                     checked={isCompactModeActive}
-                    text={t`Compact view`}
-                    size="sm"
-                  />
+                  >{t`Compact view`}</SettingsRow>
                 </SelectableListItem>
               )}
           </DropdownMenuItemsContainer>

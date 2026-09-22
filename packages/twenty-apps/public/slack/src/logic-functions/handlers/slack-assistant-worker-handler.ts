@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-sdk/utils';
 import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
 import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
+import { SLACK_CHANNEL_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-channel-access-denied-text';
+import { SLACK_CHANNEL_RULE_UNREADABLE_ERROR } from 'src/logic-functions/constants/slack-channel-rule-unreadable-error';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
@@ -22,9 +24,11 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
-import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { notifySilencedSlackChannel } from 'src/logic-functions/utils/notify-silenced-slack-channel';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
+import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
+import { resolveSlackChannelAccessPolicy } from 'src/logic-functions/utils/resolve-slack-channel-access-policy';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
@@ -87,7 +91,7 @@ export const slackAssistantWorkerHandler = async (
     const [
       {
         conversationMessages,
-        sharedFileNames,
+        sharedFiles,
         requesterName,
         requesterIdentity,
         requestMessage,
@@ -126,8 +130,42 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
+    const channelAccessPolicy = await resolveSlackChannelAccessPolicy({
+      client,
+      slackChannelId,
+      isDirectMessage,
+    });
+
+    if (channelAccessPolicy.status === 'UNREADABLE') {
+      await stopStatusUpdates();
+
+      return await finishSlackAssistantRequestWithFailure({
+        ...failureContext,
+        errorMessage: SLACK_CHANNEL_RULE_UNREADABLE_ERROR,
+      });
+    }
+
+    if (channelAccessPolicy.status === 'SILENT') {
+      await stopStatusUpdates();
+
+      if (isNonEmptyString(record.slackUserId)) {
+        await notifySilencedSlackChannel({
+          slackChannelId,
+          slackUserId: record.slackUserId,
+          parentMessageTimestamp,
+        });
+      }
+
+      await updateSlackAssistantRequest(client, {
+        id: record.id,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+      });
+
+      return { done: true, silenced: true };
+    }
+
     const accessDecision = await resolveSlackAccessDecision({
-      accessMode: await getSlackAccessMode(),
+      accessMode: channelAccessPolicy.accessMode,
       client,
       slackClient,
       identity: requesterIdentity,
@@ -146,9 +184,13 @@ export const slackAssistantWorkerHandler = async (
     if (accessDecision.status === 'DENIED') {
       await stopStatusUpdates();
 
+      const accessDeniedText = channelAccessPolicy.isChannelRule
+        ? SLACK_CHANNEL_ACCESS_DENIED_TEXT
+        : SLACK_ACCESS_DENIED_TEXT;
+
       const denialDelivery = await sendSlackMessage({
         slackChannelId,
-        messageText: SLACK_ACCESS_DENIED_TEXT,
+        messageText: accessDeniedText,
         parentMessageTimestamp,
         messageFormat: 'markdown',
         unfurlLinks: false,
@@ -165,11 +207,19 @@ export const slackAssistantWorkerHandler = async (
       await updateSlackAssistantRequest(client, {
         id: record.id,
         status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-        responseText: SLACK_ACCESS_DENIED_TEXT,
+        responseText: accessDeniedText,
       });
 
       return { done: true, declined: true };
     }
+
+    const { attachments, attachedFileNames, namesOnlyFileNames } =
+      await resolveSlackAssistantAttachments({
+        slackClient,
+        requestFiles: requestMessage?.files,
+        sharedFiles,
+        agentDeadlineAtMs,
+      });
 
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
@@ -195,7 +245,9 @@ export const slackAssistantWorkerHandler = async (
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
         hasMentionedUsers: resolvedMentions.hasMentionedUsers,
-        sharedFileNames,
+        attachments,
+        attachedFileNames,
+        namesOnlyFileNames,
       }),
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());

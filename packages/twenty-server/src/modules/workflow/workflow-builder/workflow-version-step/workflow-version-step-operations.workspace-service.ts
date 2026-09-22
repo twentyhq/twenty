@@ -41,7 +41,6 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
@@ -152,14 +151,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   async runStepCreationSideEffectsAndBuildStep({
     type,
     workspaceId,
-    workflowVersionId,
     position,
     id,
     defaultSettings,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
-    workflowVersionId: string;
     position?: WorkflowStepPositionInput;
     id?: string;
     defaultSettings?: Record<string, unknown>;
@@ -572,7 +569,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: 'AI Agent',
+            name: 'Agent',
             type: WorkflowActionType.AI_AGENT,
             settings: {
               ...BASE_STEP_DEFINITION,
@@ -584,11 +581,33 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.CLASSIFY: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Classify',
+            type: WorkflowActionType.CLASSIFY,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                state: '',
+                questions: [
+                  {
+                    id: v4(),
+                    name: 'category',
+                    type: 'choice',
+                    instructions: '',
+                    criteria: [],
+                  },
+                ],
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.ITERATOR: {
-        const emptyNodeStep = await this.createEmptyNodeForIteratorStep({
+        const emptyNodeStep = this.buildEmptyNodeForIteratorStep({
           iteratorStepId: baseStep.id,
-          workflowVersionId,
-          workspaceId,
           iteratorPosition: position,
         });
 
@@ -611,9 +630,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.IF_ELSE: {
         const { ifEmptyNode, elseEmptyNode, ifFilterGroupId, branches } =
-          await this.createEmptyNodesForIfElseStep({
-            workflowVersionId,
-            workspaceId,
+          this.buildEmptyNodesForIfElseStep({
             ifElsePosition: position,
           });
 
@@ -883,172 +900,92 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     };
   }
 
-  async createEmptyNodeForIteratorStep({
+  buildEmptyNodeForIteratorStep({
     iteratorStepId,
-    workflowVersionId,
-    workspaceId,
     iteratorPosition,
   }: {
     iteratorStepId: string;
-    workflowVersionId: string;
-    workspaceId: string;
     iteratorPosition?: WorkflowStepPositionInput;
-  }): Promise<WorkflowAction> {
-    const authContext = buildSystemAuthContext(workspaceId);
+  }): WorkflowAction {
+    const emptyNodeStep: WorkflowEmptyAction = {
+      id: v4(),
+      name: 'Add an Action',
+      type: WorkflowActionType.EMPTY,
+      valid: true,
+      nextStepIds: [iteratorStepId],
+      settings: {
+        ...BASE_STEP_DEFINITION,
+        input: {},
+      },
+      position: {
+        x: (iteratorPosition?.x ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.x,
+        y: (iteratorPosition?.y ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.y,
+      },
+    };
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const workflowVersion = await workflowVersionRepository.findOne({
-        where: {
-          id: workflowVersionId,
-        },
-      });
-
-      if (!isDefined(workflowVersion)) {
-        throw new WorkflowVersionStepException(
-          'WorkflowVersion not found',
-          WorkflowVersionStepExceptionCode.NOT_FOUND,
-        );
-      }
-
-      const existingSteps = workflowVersion.steps ?? [];
-
-      const emptyNodeStep: WorkflowEmptyAction = {
-        id: v4(),
-        name: 'Add an Action',
-        type: WorkflowActionType.EMPTY,
-        valid: true,
-        nextStepIds: [iteratorStepId],
-        settings: {
-          ...BASE_STEP_DEFINITION,
-          input: {},
-        },
-        position: {
-          x: (iteratorPosition?.x ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.x,
-          y: (iteratorPosition?.y ?? 0) + ITERATOR_EMPTY_STEP_POSITION_OFFSET.y,
-        },
-      };
-
-      await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
-        workspaceId,
-        async (scopedRepository) => {
-          await scopedRepository.update(workflowVersion.id, {
-            steps: [...existingSteps, emptyNodeStep],
-          });
-
-          return workflowVersion.id;
-        },
-      );
-
-      return emptyNodeStep;
-    }, authContext);
+    return emptyNodeStep;
   }
 
-  async createEmptyNodesForIfElseStep({
-    workflowVersionId,
-    workspaceId,
+  buildEmptyNodesForIfElseStep({
     ifElsePosition,
   }: {
-    workflowVersionId: string;
-    workspaceId: string;
     ifElsePosition?: WorkflowStepPositionInput;
-  }): Promise<{
+  }): {
     ifEmptyNode: WorkflowAction;
     elseEmptyNode: WorkflowAction;
     ifFilterGroupId: string;
     branches: StepIfElseBranch[];
-  }> {
-    const authContext = buildSystemAuthContext(workspaceId);
+  } {
+    const ifEmptyNode: WorkflowEmptyAction = {
+      id: v4(),
+      name: 'Add an Action',
+      type: WorkflowActionType.EMPTY,
+      valid: true,
+      settings: {
+        ...BASE_STEP_DEFINITION,
+        input: {},
+      },
+      position: {
+        x: (ifElsePosition?.x ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
+        y: (ifElsePosition?.y ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.y,
+      },
+    };
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+    const elseEmptyNode: WorkflowEmptyAction = {
+      id: v4(),
+      name: 'Add an Action',
+      type: WorkflowActionType.EMPTY,
+      valid: true,
+      settings: {
+        ...BASE_STEP_DEFINITION,
+        input: {},
+      },
+      position: {
+        x: (ifElsePosition?.x ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
+        y: (ifElsePosition?.y ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.y,
+      },
+    };
 
-      const workflowVersion = await workflowVersionRepository.findOne({
-        where: {
-          id: workflowVersionId,
-        },
-      });
+    const ifFilterGroupId = v4();
 
-      if (!isDefined(workflowVersion)) {
-        throw new WorkflowVersionStepException(
-          'WorkflowVersion not found',
-          WorkflowVersionStepExceptionCode.NOT_FOUND,
-        );
-      }
-
-      const existingSteps = workflowVersion.steps ?? [];
-
-      const ifEmptyNode: WorkflowEmptyAction = {
+    const branches: StepIfElseBranch[] = [
+      {
         id: v4(),
-        name: 'Add an Action',
-        type: WorkflowActionType.EMPTY,
-        valid: true,
-        settings: {
-          ...BASE_STEP_DEFINITION,
-          input: {},
-        },
-        position: {
-          x: (ifElsePosition?.x ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
-          y: (ifElsePosition?.y ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.y,
-        },
-      };
-
-      const elseEmptyNode: WorkflowEmptyAction = {
+        filterGroupId: ifFilterGroupId,
+        nextStepIds: [ifEmptyNode.id],
+      },
+      {
         id: v4(),
-        name: 'Add an Action',
-        type: WorkflowActionType.EMPTY,
-        valid: true,
-        settings: {
-          ...BASE_STEP_DEFINITION,
-          input: {},
-        },
-        position: {
-          x: (ifElsePosition?.x ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
-          y: (ifElsePosition?.y ?? 0) + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.y,
-        },
-      };
+        nextStepIds: [elseEmptyNode.id],
+      },
+    ];
 
-      await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
-        workspaceId,
-        async (scopedRepository) => {
-          await scopedRepository.update(workflowVersion.id, {
-            steps: [...existingSteps, ifEmptyNode, elseEmptyNode],
-          });
-
-          return workflowVersion.id;
-        },
-      );
-
-      const ifFilterGroupId = v4();
-
-      const branches: StepIfElseBranch[] = [
-        {
-          id: v4(),
-          filterGroupId: ifFilterGroupId,
-          nextStepIds: [ifEmptyNode.id],
-        },
-        {
-          id: v4(),
-          nextStepIds: [elseEmptyNode.id],
-        },
-      ];
-
-      return {
-        ifEmptyNode,
-        elseEmptyNode,
-        ifFilterGroupId,
-        branches,
-      };
-    }, authContext);
+    return {
+      ifEmptyNode,
+      elseEmptyNode,
+      ifFilterGroupId,
+      branches,
+    };
   }
 
   async createDraftStep({

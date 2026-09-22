@@ -11,6 +11,10 @@
   width: 100%;
 }
 
+.containerFullWidth {
+  max-width: none;
+}
+
 .containerInfo {
   background-color: var(--t-accent-accent1);
   border-color: var(--t-accent-accent6);
@@ -112,4 +116,8 @@
   align-self: stretch;
   display: flex;
   justify-content: flex-end;
+}
+
+.closeButton {
+  @include square-button;
 }

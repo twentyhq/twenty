@@ -14,9 +14,9 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 13,
-          "outputTokensPerSecond": 162.74,
+          "outputTokensPerSecond": 168.91,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -31,8 +31,8 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7.8,
-          "outputTokensPerSecond": 141.07,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 174.15,
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -47,8 +47,8 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7.3,
-          "outputTokensPerSecond": 64.06,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 128.34,
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -84,53 +84,53 @@
         "supportsReasoning": true,
         "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
-          "intelligenceIndex": 47.1,
-          "outputTokensPerSecond": 73.34,
+          "intelligenceIndex": 47,
+          "outputTokensPerSecond": 82.04,
           "costPerTask": 1.9885,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "none": {
             "intelligenceIndex": 28.3,
-            "outputTokensPerSecond": 67.83,
+            "outputTokensPerSecond": 63.63,
             "effort": "none",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "low": {
-            "intelligenceIndex": 33.8,
-            "outputTokensPerSecond": 64.51,
+            "intelligenceIndex": 33.5,
+            "outputTokensPerSecond": 67.07,
             "costPerTask": 0.2606,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 39.5,
-            "outputTokensPerSecond": 63.47,
+            "intelligenceIndex": 39.2,
+            "outputTokensPerSecond": 60.35,
             "costPerTask": 0.505,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 42.5,
-            "outputTokensPerSecond": 61.63,
+            "intelligenceIndex": 42.3,
+            "outputTokensPerSecond": 67.74,
             "costPerTask": 0.808,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
-            "intelligenceIndex": 44.1,
-            "outputTokensPerSecond": 68.35,
+            "intelligenceIndex": 44,
+            "outputTokensPerSecond": 69.55,
             "costPerTask": 1.1844,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
-            "intelligenceIndex": 47.1,
-            "outputTokensPerSecond": 73.34,
+            "intelligenceIndex": 47,
+            "outputTokensPerSecond": 82.04,
             "costPerTask": 1.9885,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -146,8 +146,8 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7.7,
-          "outputTokensPerSecond": 86.51,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 123.59,
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -171,47 +171,47 @@
         "supportsReasoning": true,
         "efforts": ["minimal", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
-          "intelligenceIndex": 52.8,
-          "outputTokensPerSecond": 52.62,
+          "intelligenceIndex": 52.7,
+          "outputTokensPerSecond": 65.28,
           "costPerTask": 3.2575,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "low": {
-            "intelligenceIndex": 46,
-            "outputTokensPerSecond": 50.94,
+            "intelligenceIndex": 45.8,
+            "outputTokensPerSecond": 53.32,
             "costPerTask": 0.8175,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 49.7,
-            "outputTokensPerSecond": 53.24,
+            "intelligenceIndex": 49.6,
+            "outputTokensPerSecond": 52.22,
             "costPerTask": 1.5406,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 51,
-            "outputTokensPerSecond": 51.95,
-            "costPerTask": 1.7214,
+            "intelligenceIndex": 50.9,
+            "outputTokensPerSecond": 54.44,
+            "costPerTask": 1.7253,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
-            "intelligenceIndex": 52.5,
-            "outputTokensPerSecond": 50.88,
+            "intelligenceIndex": 52.4,
+            "outputTokensPerSecond": 54.89,
             "costPerTask": 2.3088,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
-            "intelligenceIndex": 52.8,
-            "outputTokensPerSecond": 52.62,
+            "intelligenceIndex": 52.7,
+            "outputTokensPerSecond": 65.28,
             "costPerTask": 3.2575,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -250,8 +250,8 @@
         "modalities": ["image", "pdf"],
         "benchmark": {
           "intelligenceIndex": 10.2,
-          "outputTokensPerSecond": 118.86,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 150.35,
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -274,28 +274,28 @@
         "efforts": ["none", "low", "medium", "high", "xhigh"],
         "benchmark": {
           "intelligenceIndex": 39,
-          "outputTokensPerSecond": 136.32,
+          "outputTokensPerSecond": 143.24,
           "effort": "xhigh",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "none": {
             "intelligenceIndex": 18.2,
-            "outputTokensPerSecond": 98.44,
+            "outputTokensPerSecond": 99.37,
             "effort": "none",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "low": {
             "intelligenceIndex": 27.6,
-            "outputTokensPerSecond": 96.74,
+            "outputTokensPerSecond": 104.65,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
             "intelligenceIndex": 39,
-            "outputTokensPerSecond": 136.32,
+            "outputTokensPerSecond": 143.24,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -310,8 +310,8 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7,
-          "outputTokensPerSecond": 31.56,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 31.82,
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -328,9 +328,9 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 24.7,
-          "outputTokensPerSecond": 99.68,
+          "outputTokensPerSecond": 127.63,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -346,7 +346,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 15.2,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -362,7 +362,7 @@
         "modalities": ["image", "pdf"],
         "benchmark": {
           "intelligenceIndex": 9,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -386,54 +386,54 @@
         "supportsReasoning": true,
         "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
-          "intelligenceIndex": 37.5,
-          "outputTokensPerSecond": 120.04,
+          "intelligenceIndex": 37.3,
+          "outputTokensPerSecond": 158.73,
           "costPerTask": 0.1783,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "none": {
-            "intelligenceIndex": 16.1,
-            "outputTokensPerSecond": 103.64,
+            "intelligenceIndex": 15.5,
+            "outputTokensPerSecond": 151.96,
             "costPerTask": 0.0101,
             "effort": "none",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "low": {
-            "intelligenceIndex": 21.5,
-            "outputTokensPerSecond": 102.47,
+            "intelligenceIndex": 21,
+            "outputTokensPerSecond": 145.32,
             "costPerTask": 0.0098,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 25.5,
-            "outputTokensPerSecond": 109.69,
+            "intelligenceIndex": 25,
+            "outputTokensPerSecond": 151,
             "costPerTask": 0.0156,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 32.4,
-            "outputTokensPerSecond": 114.2,
+            "intelligenceIndex": 32.1,
+            "outputTokensPerSecond": 145.62,
             "costPerTask": 0.044,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
-            "intelligenceIndex": 34.8,
-            "outputTokensPerSecond": 118.97,
+            "intelligenceIndex": 34.6,
+            "outputTokensPerSecond": 161.97,
             "costPerTask": 0.0853,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
-            "intelligenceIndex": 37.5,
-            "outputTokensPerSecond": 120.04,
+            "intelligenceIndex": 37.3,
+            "outputTokensPerSecond": 158.73,
             "costPerTask": 0.1783,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -450,9 +450,9 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 32.5,
-          "outputTokensPerSecond": 135.41,
+          "outputTokensPerSecond": 170.43,
           "effort": "xhigh",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -467,8 +467,8 @@
         "modalities": ["image", "pdf"],
         "benchmark": {
           "intelligenceIndex": 6.7,
-          "outputTokensPerSecond": 147.2,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 135.09,
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -483,7 +483,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 12.4,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -499,8 +499,8 @@
         "modalities": ["image", "pdf"],
         "benchmark": {
           "intelligenceIndex": 12.7,
-          "outputTokensPerSecond": 135.01,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 189.32,
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -515,11 +515,11 @@
         "modalities": ["image"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 21.2,
-          "outputTokensPerSecond": 158.56,
+          "intelligenceIndex": 20.7,
+          "outputTokensPerSecond": 173.38,
           "costPerTask": 0.1831,
           "effort": "xhigh",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -550,11 +550,11 @@
         "modalities": ["image"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 24.6,
-          "outputTokensPerSecond": 213.07,
+          "intelligenceIndex": 24.1,
+          "outputTokensPerSecond": 232.32,
           "costPerTask": 0.4097,
           "effort": "xhigh",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -590,9 +590,9 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 20.6,
-          "outputTokensPerSecond": 66.51,
+          "outputTokensPerSecond": 102.92,
           "effort": "medium",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -632,54 +632,54 @@
         "supportsReasoning": true,
         "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
-          "intelligenceIndex": 42.3,
-          "outputTokensPerSecond": 90.76,
+          "intelligenceIndex": 42.1,
+          "outputTokensPerSecond": 105.46,
           "costPerTask": 1.3987,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "none": {
-            "intelligenceIndex": 21.2,
-            "outputTokensPerSecond": 90.37,
+            "intelligenceIndex": 20.8,
+            "outputTokensPerSecond": 84.31,
             "costPerTask": 0.1397,
             "effort": "none",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "low": {
-            "intelligenceIndex": 27.9,
-            "outputTokensPerSecond": 88.81,
+            "intelligenceIndex": 27.5,
+            "outputTokensPerSecond": 88,
             "costPerTask": 0.1445,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 30.4,
-            "outputTokensPerSecond": 84.64,
+            "intelligenceIndex": 30.1,
+            "outputTokensPerSecond": 90.26,
             "costPerTask": 0.1834,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 34.5,
-            "outputTokensPerSecond": 86.23,
+            "intelligenceIndex": 34.2,
+            "outputTokensPerSecond": 88.42,
             "costPerTask": 0.3379,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
-            "intelligenceIndex": 38.2,
-            "outputTokensPerSecond": 88.61,
+            "intelligenceIndex": 38,
+            "outputTokensPerSecond": 93.6,
             "costPerTask": 0.6318,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
-            "intelligenceIndex": 42.3,
-            "outputTokensPerSecond": 90.76,
+            "intelligenceIndex": 42.1,
+            "outputTokensPerSecond": 105.46,
             "costPerTask": 1.3987,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -693,7 +693,7 @@
         "maxOutputTokens": 8192,
         "benchmark": {
           "intelligenceIndex": 6.7,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -710,9 +710,9 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 30.4,
-          "outputTokensPerSecond": 71.66,
+          "outputTokensPerSecond": 82.24,
           "effort": "xhigh",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -728,9 +728,9 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 23,
-          "outputTokensPerSecond": 82.2,
+          "outputTokensPerSecond": 113.74,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -759,9 +759,9 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 16.7,
-          "outputTokensPerSecond": 139.49,
+          "outputTokensPerSecond": 152.87,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -789,8 +789,8 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 12.5,
-          "outputTokensPerSecond": 191.53,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 194.67,
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -807,8 +807,8 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 20.2,
-          "outputTokensPerSecond": 129.67,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 137.6,
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -823,7 +823,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 21.9,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -857,45 +857,45 @@
         "supportsReasoning": true,
         "efforts": ["none", "low", "medium", "high", "xhigh", "max"],
         "benchmark": {
-          "intelligenceIndex": 38.6,
-          "outputTokensPerSecond": 87.2,
+          "intelligenceIndex": 38.4,
+          "outputTokensPerSecond": 110.14,
           "costPerTask": 2.634,
           "effort": "xhigh",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "none": {
             "intelligenceIndex": 23.2,
-            "outputTokensPerSecond": 92.42,
+            "outputTokensPerSecond": 80.85,
             "effort": "none",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "low": {
             "intelligenceIndex": 30.7,
-            "outputTokensPerSecond": 98.6,
+            "outputTokensPerSecond": 87.19,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 34.2,
-            "outputTokensPerSecond": 88.09,
+            "intelligenceIndex": 33.8,
+            "outputTokensPerSecond": 95.23,
             "costPerTask": 0.9017,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 37.3,
-            "outputTokensPerSecond": 94.68,
+            "intelligenceIndex": 37,
+            "outputTokensPerSecond": 96.03,
             "costPerTask": 1.5413,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
-            "intelligenceIndex": 38.6,
-            "outputTokensPerSecond": 87.2,
+            "intelligenceIndex": 38.4,
+            "outputTokensPerSecond": 110.14,
             "costPerTask": 2.634,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -911,7 +911,7 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 9,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       }
     ]
@@ -932,31 +932,31 @@
         "supportsReasoning": true,
         "efforts": ["low", "medium", "high", "max"],
         "benchmark": {
-          "intelligenceIndex": 30.5,
-          "outputTokensPerSecond": 46.3,
+          "intelligenceIndex": 30.1,
+          "outputTokensPerSecond": 51.63,
           "costPerTask": 2.4859,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "low": {
             "intelligenceIndex": 23.3,
-            "outputTokensPerSecond": 42.03,
+            "outputTokensPerSecond": 42.53,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
             "intelligenceIndex": 24.7,
-            "outputTokensPerSecond": 42.4,
+            "outputTokensPerSecond": 43.34,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
-            "intelligenceIndex": 30.5,
-            "outputTokensPerSecond": 46.3,
+            "intelligenceIndex": 30.1,
+            "outputTokensPerSecond": 51.63,
             "costPerTask": 2.4859,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -974,47 +974,47 @@
         "supportsReasoning": true,
         "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
-          "intelligenceIndex": 50.7,
-          "outputTokensPerSecond": 53.26,
+          "intelligenceIndex": 50.8,
+          "outputTokensPerSecond": 56.45,
           "costPerTask": 5.8584,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "low": {
-            "intelligenceIndex": 39.8,
-            "outputTokensPerSecond": 50.05,
+            "intelligenceIndex": 39.4,
+            "outputTokensPerSecond": 59.92,
             "costPerTask": 1.0983,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 45.1,
-            "outputTokensPerSecond": 52.91,
+            "intelligenceIndex": 44.8,
+            "outputTokensPerSecond": 57.07,
             "costPerTask": 2.1895,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 48.2,
-            "outputTokensPerSecond": 53.69,
+            "intelligenceIndex": 48.1,
+            "outputTokensPerSecond": 56.54,
             "costPerTask": 3.6133,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
             "intelligenceIndex": 49.7,
-            "outputTokensPerSecond": 53.22,
+            "outputTokensPerSecond": 54.4,
             "costPerTask": 4.8778,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
-            "intelligenceIndex": 50.7,
-            "outputTokensPerSecond": 53.26,
+            "intelligenceIndex": 50.8,
+            "outputTokensPerSecond": 56.45,
             "costPerTask": 5.8584,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1033,8 +1033,8 @@
         "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 29.1,
-          "outputTokensPerSecond": 46.22,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 48.23,
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1052,46 +1052,46 @@
         "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 53.4,
-          "outputTokensPerSecond": 66.83,
+          "outputTokensPerSecond": 65.82,
           "costPerTask": 7.6297,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "low": {
-            "intelligenceIndex": 47,
-            "outputTokensPerSecond": 53.16,
+            "intelligenceIndex": 46.8,
+            "outputTokensPerSecond": 55.24,
             "costPerTask": 2.371,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 49.1,
-            "outputTokensPerSecond": 52.18,
+            "intelligenceIndex": 48.9,
+            "outputTokensPerSecond": 56.51,
             "costPerTask": 2.9826,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
             "intelligenceIndex": 51.2,
-            "outputTokensPerSecond": 58,
+            "outputTokensPerSecond": 55.77,
             "costPerTask": 3.9125,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
             "intelligenceIndex": 53.2,
-            "outputTokensPerSecond": 58.19,
+            "outputTokensPerSecond": 62.68,
             "costPerTask": 5.9783,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
             "intelligenceIndex": 53.4,
-            "outputTokensPerSecond": 66.83,
+            "outputTokensPerSecond": 65.82,
             "costPerTask": 7.6297,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1110,22 +1110,22 @@
         "efforts": ["low", "medium", "high", "max"],
         "benchmark": {
           "intelligenceIndex": 31.9,
-          "outputTokensPerSecond": 38.31,
+          "outputTokensPerSecond": 42.07,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "high": {
             "intelligenceIndex": 26.4,
-            "outputTokensPerSecond": 38.06,
+            "outputTokensPerSecond": 40.94,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
             "intelligenceIndex": 31.9,
-            "outputTokensPerSecond": 38.31,
+            "outputTokensPerSecond": 42.07,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1157,22 +1157,22 @@
         "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
           "intelligenceIndex": 40.7,
-          "outputTokensPerSecond": 52.23,
+          "outputTokensPerSecond": 50.25,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "high": {
             "intelligenceIndex": 30.9,
-            "outputTokensPerSecond": 45.43,
+            "outputTokensPerSecond": 44.13,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
             "intelligenceIndex": 40.7,
-            "outputTokensPerSecond": 52.23,
+            "outputTokensPerSecond": 50.25,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1203,19 +1203,19 @@
         "supportsReasoning": true,
         "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
-          "intelligenceIndex": 49.7,
-          "outputTokensPerSecond": 68.23,
+          "intelligenceIndex": 49.6,
+          "outputTokensPerSecond": 67.11,
           "costPerTask": 8.746,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "max": {
-            "intelligenceIndex": 49.7,
-            "outputTokensPerSecond": 68.23,
+            "intelligenceIndex": 49.6,
+            "outputTokensPerSecond": 67.11,
             "costPerTask": 8.746,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1259,19 +1259,19 @@
         "supportsReasoning": true,
         "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
-          "intelligenceIndex": 42,
-          "outputTokensPerSecond": 58.65,
+          "intelligenceIndex": 41.8,
+          "outputTokensPerSecond": 57.31,
           "costPerTask": 4.081,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "max": {
-            "intelligenceIndex": 42,
-            "outputTokensPerSecond": 58.65,
+            "intelligenceIndex": 41.8,
+            "outputTokensPerSecond": 57.31,
             "costPerTask": 4.081,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1289,47 +1289,47 @@
         "supportsReasoning": true,
         "efforts": ["low", "medium", "high", "xhigh", "max"],
         "benchmark": {
-          "intelligenceIndex": 38.4,
-          "outputTokensPerSecond": 71.65,
+          "intelligenceIndex": 38.2,
+          "outputTokensPerSecond": 77.33,
           "costPerTask": 5.0912,
           "effort": "max",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "low": {
-            "intelligenceIndex": 24.7,
-            "outputTokensPerSecond": 63.28,
+            "intelligenceIndex": 24.3,
+            "outputTokensPerSecond": 63.81,
             "costPerTask": 0.5088,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 28.4,
-            "outputTokensPerSecond": 65.72,
+            "intelligenceIndex": 28.1,
+            "outputTokensPerSecond": 67.05,
             "costPerTask": 0.9991,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 32,
-            "outputTokensPerSecond": 67.5,
+            "intelligenceIndex": 31.7,
+            "outputTokensPerSecond": 70.45,
             "costPerTask": 1.7925,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
-            "intelligenceIndex": 34.7,
-            "outputTokensPerSecond": 67,
+            "intelligenceIndex": 34.4,
+            "outputTokensPerSecond": 71.15,
             "costPerTask": 2.872,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "max": {
-            "intelligenceIndex": 38.4,
-            "outputTokensPerSecond": 71.65,
+            "intelligenceIndex": 38.2,
+            "outputTokensPerSecond": 77.33,
             "costPerTask": 5.0912,
             "effort": "max",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1348,8 +1348,8 @@
         "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 29.1,
-          "outputTokensPerSecond": 46.22,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 48.23,
+          "measuredAt": "2026-09-22"
         }
       }
     ]
@@ -1422,10 +1422,10 @@
         "supportsReasoning": true,
         "efforts": ["low", "medium", "high"],
         "benchmark": {
-          "intelligenceIndex": 30.4,
-          "outputTokensPerSecond": 122.38,
+          "intelligenceIndex": 29.7,
+          "outputTokensPerSecond": 115.03,
           "costPerTask": 0.6747,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1459,8 +1459,8 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 8.5,
-          "outputTokensPerSecond": 380.04,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 349.63,
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1492,19 +1492,19 @@
         "supportsReasoning": true,
         "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
-          "intelligenceIndex": 34.3,
-          "outputTokensPerSecond": 199.48,
+          "intelligenceIndex": 34,
+          "outputTokensPerSecond": 209.05,
           "costPerTask": 0.9288,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "high": {
-            "intelligenceIndex": 34.3,
-            "outputTokensPerSecond": 199.48,
+            "intelligenceIndex": 34,
+            "outputTokensPerSecond": 209.05,
             "costPerTask": 0.9288,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1520,10 +1520,10 @@
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 16,
-          "outputTokensPerSecond": 318.22,
+          "intelligenceIndex": 15.6,
+          "outputTokensPerSecond": 339.82,
           "costPerTask": 0.0394,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1551,29 +1551,29 @@
         "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 33.6,
-          "outputTokensPerSecond": 216.09,
+          "outputTokensPerSecond": 233.84,
           "effort": "medium",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "minimal": {
             "intelligenceIndex": 23.8,
-            "outputTokensPerSecond": 217.96,
+            "outputTokensPerSecond": 197.16,
             "effort": "minimal",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
             "intelligenceIndex": 33.6,
-            "outputTokensPerSecond": 216.09,
+            "outputTokensPerSecond": 233.84,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 33,
-            "outputTokensPerSecond": 221.81,
+            "intelligenceIndex": 32.6,
+            "outputTokensPerSecond": 226.87,
             "costPerTask": 1.5625,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1589,10 +1589,10 @@
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 16,
-          "outputTokensPerSecond": 318.22,
+          "intelligenceIndex": 15.6,
+          "outputTokensPerSecond": 339.82,
           "costPerTask": 0.0394,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -1609,10 +1609,10 @@
         "supportsReasoning": true,
         "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
-          "intelligenceIndex": 22.7,
-          "outputTokensPerSecond": 364.53,
+          "intelligenceIndex": 22.2,
+          "outputTokensPerSecond": 386.37,
           "costPerTask": 0.1235,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1627,10 +1627,10 @@
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 22.7,
-          "outputTokensPerSecond": 364.53,
+          "intelligenceIndex": 22.2,
+          "outputTokensPerSecond": 386.37,
           "costPerTask": 0.1235,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1647,8 +1647,8 @@
         "efforts": ["minimal", "low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 26.3,
-          "outputTokensPerSecond": 228.9,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 217.91,
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1664,30 +1664,30 @@
         "supportsReasoning": true,
         "efforts": ["low", "medium", "high"],
         "benchmark": {
-          "intelligenceIndex": 41.2,
-          "outputTokensPerSecond": 345.09,
+          "intelligenceIndex": 40.9,
+          "outputTokensPerSecond": 328.82,
           "costPerTask": 1.2428,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "low": {
-            "intelligenceIndex": 33.8,
+            "intelligenceIndex": 33.5,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 40,
+            "intelligenceIndex": 39.8,
             "costPerTask": 0.931,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 41.2,
-            "outputTokensPerSecond": 345.09,
+            "intelligenceIndex": 40.9,
+            "outputTokensPerSecond": 328.82,
             "costPerTask": 1.2428,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1705,29 +1705,29 @@
         "efforts": ["low", "medium", "high"],
         "benchmark": {
           "intelligenceIndex": 39.6,
-          "outputTokensPerSecond": 306.01,
+          "outputTokensPerSecond": 317.81,
           "effort": "medium",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "low": {
             "intelligenceIndex": 36.9,
-            "outputTokensPerSecond": 297.66,
+            "outputTokensPerSecond": 314.67,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
             "intelligenceIndex": 39.6,
-            "outputTokensPerSecond": 306.01,
+            "outputTokensPerSecond": 317.81,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 39.4,
-            "outputTokensPerSecond": 328.16,
+            "intelligenceIndex": 39.1,
+            "outputTokensPerSecond": 317.97,
             "costPerTask": 0.9253,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -1749,10 +1749,10 @@
         "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 16.7,
-          "outputTokensPerSecond": 126.94,
+          "intelligenceIndex": 16.1,
+          "outputTokensPerSecond": 141.07,
           "costPerTask": 0.2317,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1767,11 +1767,11 @@
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 41.2,
-          "outputTokensPerSecond": 345.09,
+          "intelligenceIndex": 40.9,
+          "outputTokensPerSecond": 328.82,
           "costPerTask": 1.2428,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1787,8 +1787,8 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 13.1,
-          "outputTokensPerSecond": 224.91,
-          "measuredAt": "2026-09-17"
+          "outputTokensPerSecond": 235.7,
+          "measuredAt": "2026-09-22"
         }
       }
     ]
@@ -1836,7 +1836,7 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 8.2,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -1859,7 +1859,7 @@
         "maxOutputTokens": 128000,
         "benchmark": {
           "intelligenceIndex": 8.7,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "isDeprecated": true
       },
@@ -1885,8 +1885,19 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 9.1,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
+      },
+      {
+        "name": "zai-glm-5-3",
+        "label": "GLM-5.3",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 1.4,
+        "outputCostPerMillionTokens": 4.4,
+        "cachedInputCostPerMillionTokens": 0.14,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 131072,
+        "supportsReasoning": true
       },
       {
         "name": "open-mixtral-8x22b",
@@ -2106,7 +2117,7 @@
         "modalities": ["image"],
         "benchmark": {
           "intelligenceIndex": 7.1,
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       }
     ]
@@ -2131,11 +2142,11 @@
         "modalities": ["image", "pdf"],
         "supportsReasoning": true,
         "benchmark": {
-          "intelligenceIndex": 25.4,
-          "outputTokensPerSecond": 125.5,
+          "intelligenceIndex": 24.9,
+          "outputTokensPerSecond": 107.97,
           "costPerTask": 0.1653,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -2175,19 +2186,19 @@
         "supportsReasoning": true,
         "efforts": ["low", "medium", "high"],
         "benchmark": {
-          "intelligenceIndex": 39.1,
-          "outputTokensPerSecond": 60.48,
+          "intelligenceIndex": 38.8,
+          "outputTokensPerSecond": 60.56,
           "costPerTask": 1.0365,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "high": {
-            "intelligenceIndex": 39.1,
-            "outputTokensPerSecond": 60.48,
+            "intelligenceIndex": 38.8,
+            "outputTokensPerSecond": 60.56,
             "costPerTask": 1.0365,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
         }
       },
@@ -2228,41 +2239,66 @@
         "supportsReasoning": true,
         "efforts": ["low", "medium", "high", "xhigh"],
         "benchmark": {
-          "intelligenceIndex": 44.4,
-          "outputTokensPerSecond": 64.46,
+          "intelligenceIndex": 44.3,
+          "outputTokensPerSecond": 60.41,
           "costPerTask": 1.8589,
           "effort": "high",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         },
         "benchmarkByEffort": {
           "low": {
-            "intelligenceIndex": 35.4,
-            "outputTokensPerSecond": 55.96,
+            "intelligenceIndex": 35.1,
+            "outputTokensPerSecond": 56.85,
             "costPerTask": 0.4753,
             "effort": "low",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "medium": {
-            "intelligenceIndex": 43,
-            "outputTokensPerSecond": 58.45,
+            "intelligenceIndex": 42.8,
+            "outputTokensPerSecond": 59.76,
             "costPerTask": 1.4963,
             "effort": "medium",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "high": {
-            "intelligenceIndex": 44.4,
-            "outputTokensPerSecond": 64.46,
+            "intelligenceIndex": 44.3,
+            "outputTokensPerSecond": 60.41,
             "costPerTask": 1.8589,
             "effort": "high",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           },
           "xhigh": {
-            "intelligenceIndex": 44.3,
-            "outputTokensPerSecond": 59.07,
+            "intelligenceIndex": 44.2,
+            "outputTokensPerSecond": 59.11,
             "costPerTask": 2.3237,
             "effort": "xhigh",
-            "measuredAt": "2026-09-17"
+            "measuredAt": "2026-09-22"
           }
+        }
+      },
+      {
+        "name": "grok-4.7",
+        "label": "Grok 4.7",
+        "modelFamily": "GROK",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 6,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 4,
+          "outputCostPerMillionTokens": 12,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 1
+        },
+        "contextWindowTokens": 500000,
+        "maxOutputTokens": 500000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 46.4,
+          "outputTokensPerSecond": 42.32,
+          "costPerTask": 3.7383,
+          "effort": "xhigh",
+          "measuredAt": "2026-09-22"
         }
       },
       {
@@ -2284,8 +2320,24 @@
         "benchmark": {
           "intelligenceIndex": 14.6,
           "effort": "none",
-          "measuredAt": "2026-09-17"
+          "measuredAt": "2026-09-22"
         }
+      }
+    ]
+  },
+  "typesafe-ai": {
+    "models": [
+      {
+        "name": "jev-latest",
+        "label": "Jev",
+        "kind": "evaluation",
+        "description": "Structured decisions in one round trip: classification, routing, scoring and verification. Returns calibrated probabilities instead of text.",
+        "inputCostPerMillionTokens": 0.042,
+        "outputCostPerMillionTokens": 0,
+        "supportedQuestionTypes": ["choice", "score", "boolean"],
+        "maxCriteriaPerQuestion": 255,
+        "maxScoreLevels": 10,
+        "medianLatencyMs": 200
       }
     ]
   }

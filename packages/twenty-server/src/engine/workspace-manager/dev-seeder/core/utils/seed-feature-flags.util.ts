@@ -4,13 +4,10 @@ import { type QueryRunner } from 'typeorm';
 const tableName = 'featureFlag';
 
 const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
-  [FeatureFlagKey.IS_APP_CLAIMING_ENABLED]: false,
   [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: false,
   [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: true,
   [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: true,
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: true,
-  [FeatureFlagKey.IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED]: false,
-  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: false,
   [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: false,
   [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: false,
 };

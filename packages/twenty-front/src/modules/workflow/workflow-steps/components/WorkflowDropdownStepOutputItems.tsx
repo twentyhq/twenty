@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -23,7 +24,7 @@ import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowDropdownStepOutputItemsProps = {
   stepFilter: StepFilter;
@@ -156,20 +157,28 @@ export const WorkflowDropdownStepOutputItems = ({
         ) : (
           <>
             {shouldDisplaySubStepObject && (
-              <MenuItemSelect
-                selected={false}
+              <ListItem
                 focused={false}
                 onClick={handleSelectObject}
-                text={subStepObjectDisplay?.label ?? ''}
-                hasSubMenu={false}
-                LeftIcon={
-                  isDefined(subStepObjectDisplay?.icon)
-                    ? getIcon(subStepObjectDisplay.icon)
-                    : undefined
+                role="option"
+                aria-selected={false}
+                selected={false}
+                indicator="check"
+                hasSubmenu={false}
+                description={t`Pick a ${subStepObjectDisplay?.label} record`}
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={
+                      isDefined(subStepObjectDisplay?.icon)
+                        ? getIcon(subStepObjectDisplay.icon)
+                        : undefined
+                    }
+                    color={subStepObjectDisplay?.iconColor}
+                  />
                 }
-                leftIconColor={subStepObjectDisplay?.iconColor}
-                contextualText={t`Pick a ${subStepObjectDisplay?.label} record`}
-              />
+              >
+                {subStepObjectDisplay?.label ?? ''}
+              </ListItem>
             )}
             {options.length > 0 && shouldDisplaySubStepObject && (
               <DropdownMenuSeparator />
@@ -180,26 +189,34 @@ export const WorkflowDropdownStepOutputItems = ({
               }
 
               return (
-                <MenuItemSelect
+                <ListItem
                   key={key}
-                  selected={false}
                   focused={false}
                   onClick={() => handleSelectField(key)}
-                  text={subStep.label || key}
-                  hasSubMenu={!subStep.isLeaf}
-                  LeftIcon={
-                    subStep.icon
-                      ? getIcon(subStep.icon)
-                      : getIcon(
-                          getStepItemIcon({
-                            itemType: subStep.type,
-                          }),
-                        )
-                  }
-                  contextualText={
+                  role="option"
+                  aria-selected={false}
+                  selected={false}
+                  indicator="check"
+                  hasSubmenu={!subStep.isLeaf}
+                  description={
                     subStep.isLeaf ? subStep.value?.toString() : undefined
                   }
-                />
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={
+                        subStep.icon
+                          ? getIcon(subStep.icon)
+                          : getIcon(
+                              getStepItemIcon({
+                                itemType: subStep.type,
+                              }),
+                            )
+                      }
+                    />
+                  }
+                >
+                  {subStep.label || key}
+                </ListItem>
               );
             })}
           </>

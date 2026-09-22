@@ -26,6 +26,7 @@
     "@ai-sdk/openai": "^4.0.60",
     "@ai-sdk/openai-compatible": "^3.0.44",
     "@ai-sdk/provider-utils": "^5.0.36",
+    "@ai-sdk/typesafe-ai": "^3.0.0",
     "@ai-sdk/xai": "^4.0.54",
     "@aws-sdk/client-lambda": "3.1001.0",
     "@aws-sdk/client-s3": "3.1001.0",
@@ -78,7 +79,7 @@
     "@sentry/profiling-node": "^10.73.0",
     "@sniptt/guards": "0.2.0",
     "addressparser": "1.0.1",
-    "ai": "7.0.93",
+    "ai": "7.0.103",
     "archiver": "7.0.1",
     "axios": "^1.16.0",
     "axios-retry": "^4.5.0",
@@ -233,6 +234,7 @@
     "ts-node": "10.9.1",
     "twenty-client-sdk": "workspace:*",
     "twenty-emails": "workspace:*",
+    "twenty-oxlint-rules": "workspace:*",
     "twenty-shared": "workspace:*"
   },
   "engines": {

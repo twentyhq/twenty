@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -19,7 +20,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const StyledDropdownMenuContainer = styled.div`
@@ -100,15 +100,14 @@ export const RecordIndexCommandMenuDropdown = () => {
                       openSidePanelMenu();
                     }}
                   >
-                    <MenuItem
-                      LeftIcon={IconLayoutSidebarRightExpand}
+                    <ListItem
+                      startIcon={<IconLayoutSidebarRightExpand />}
                       onClick={() => {
                         closeDropdown(dropdownId);
                         openSidePanelMenu();
                       }}
                       focused={selectedItemId === 'more-actions'}
-                      text={t`More actions`}
-                    />
+                    >{t`More actions`}</ListItem>
                   </SelectableListItem>
                 )}
               </SelectableList>

@@ -1,6 +1,9 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { type IconComponent } from 'twenty-ui/icon';
-import { LightIconButtonGroup } from 'twenty-ui/primitives/input';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedContainer } from 'twenty-ui/primitives/layout';
 
@@ -10,7 +13,7 @@ const StyledButtonContainer = styled.div`
      the box and clamp to a full squircle, and a scaled full squircle is not a
      uniform offset — the child corners would pull away from the frame. sm
      stays well below the clamp point so radius - inset holds in both modes. */
-  --light-icon-button-radius: calc(${themeCssVariables.border.radius.sm} - 1px);
+  --tw-button-radius: calc(${themeCssVariables.border.radius.sm} - 1px);
 
   border: 1px solid ${themeCssVariables.border.color.strong};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -24,7 +27,7 @@ const StyledButtonContainer = styled.div`
 type RecordTableCellButtonsProps = {
   onClick?: () => void;
   Icon: IconComponent;
-  ariaLabel?: string;
+  ariaLabel: string;
 }[];
 
 export const RecordTableCellButtons = ({
@@ -32,10 +35,23 @@ export const RecordTableCellButtons = ({
 }: {
   buttons: RecordTableCellButtonsProps;
 }) => {
+  const { t } = useLingui();
+
   return (
     <AnimatedContainer>
       <StyledButtonContainer>
-        <LightIconButtonGroup size="small" iconButtons={buttons} />
+        <ButtonGroup aria-label={t`Cell controls`} attached={false}>
+          {buttons.map(({ Icon, onClick, ariaLabel }, index) => (
+            <LightIconButton
+              key={index}
+              aria-label={ariaLabel}
+              onClick={onClick}
+              disabled={!isDefined(onClick)}
+            >
+              <Icon />
+            </LightIconButton>
+          ))}
+        </ButtonGroup>
       </StyledButtonContainer>
     </AnimatedContainer>
   );

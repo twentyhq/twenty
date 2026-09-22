@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
@@ -44,15 +44,19 @@ export const AiChatThreadFilterDropdownStatusMenu = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {AGENT_CHAT_THREAD_FILTER_STATUS_OPTIONS.map((option) => (
-          <MenuItemSelect
+          <ListItem
             key={option}
-            text={t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[option])}
-            selected={agentChatThreadFilterStatus === option}
             onClick={() => {
               setAgentChatThreadFilterStatus(option);
               closeDropdown();
             }}
-          />
+            role="option"
+            aria-selected={agentChatThreadFilterStatus === option}
+            selected={agentChatThreadFilterStatus === option}
+            indicator="check"
+          >
+            {t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[option])}
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

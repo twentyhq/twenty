@@ -19,11 +19,13 @@ import {
   createChildDecider,
   type FlatChild,
 } from 'src/engine/core-modules/application/application-manifest/utils/create-child-decider.util';
+import { getVerticalListFlatPageLayoutWidgetsInOrder } from 'src/engine/core-modules/application/application-manifest/utils/get-vertical-list-flat-page-layout-widgets-in-order.util';
 import { getUnsupportedPageLayoutReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-page-layout-reason.util';
 import { getUnsupportedPageLayoutWidgetReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-page-layout-widget-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
+import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 
 type FlatPageLayoutChild = FlatChild & {
@@ -149,9 +151,9 @@ export const reconstructPageLayoutsManifest = ({
     getParentUniversalIdentifier: ({ pageLayoutTabUniversalIdentifier }) =>
       pageLayoutTabUniversalIdentifier,
   });
-  const widgetsByPageLayoutTabUniversalIdentifier = new Map<
+  const nestedFlatPageLayoutWidgetsByPageLayoutTabUniversalIdentifier = new Map<
     string,
-    PageLayoutWidgetManifest[]
+    FlatPageLayoutWidget[]
   >();
   const pageLayoutWidgets: StandalonePageLayoutWidgetManifest[] = [];
 
@@ -179,19 +181,15 @@ export const reconstructPageLayoutsManifest = ({
     });
 
     if (decision === 'nested') {
-      const widgets =
-        widgetsByPageLayoutTabUniversalIdentifier.get(
+      const nestedFlatPageLayoutWidgets =
+        nestedFlatPageLayoutWidgetsByPageLayoutTabUniversalIdentifier.get(
           flatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
         ) ?? [];
 
-      widgets.push(
-        fromFlatPageLayoutWidgetToPageLayoutWidgetManifest({
-          flatPageLayoutWidget,
-        }),
-      );
-      widgetsByPageLayoutTabUniversalIdentifier.set(
+      nestedFlatPageLayoutWidgets.push(flatPageLayoutWidget);
+      nestedFlatPageLayoutWidgetsByPageLayoutTabUniversalIdentifier.set(
         flatPageLayoutWidget.pageLayoutTabUniversalIdentifier,
-        widgets,
+        nestedFlatPageLayoutWidgets,
       );
     } else if (
       decision === 'standalone' &&
@@ -204,6 +202,30 @@ export const reconstructPageLayoutsManifest = ({
         }),
       );
     }
+  }
+
+  const widgetsByPageLayoutTabUniversalIdentifier = new Map<
+    string,
+    PageLayoutWidgetManifest[]
+  >();
+
+  for (const [
+    pageLayoutTabUniversalIdentifier,
+    nestedFlatPageLayoutWidgets,
+  ] of nestedFlatPageLayoutWidgetsByPageLayoutTabUniversalIdentifier) {
+    const orderedFlatPageLayoutWidgets =
+      getVerticalListFlatPageLayoutWidgetsInOrder(nestedFlatPageLayoutWidgets);
+
+    widgetsByPageLayoutTabUniversalIdentifier.set(
+      pageLayoutTabUniversalIdentifier,
+      (orderedFlatPageLayoutWidgets ?? nestedFlatPageLayoutWidgets).map(
+        (flatPageLayoutWidget) =>
+          fromFlatPageLayoutWidgetToPageLayoutWidgetManifest({
+            flatPageLayoutWidget,
+            isPositionImpliedByOrder: isDefined(orderedFlatPageLayoutWidgets),
+          }),
+      ),
+    );
   }
 
   const tabsByPageLayoutUniversalIdentifier = new Map<

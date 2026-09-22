@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { getCommandMenuItemProgressLabel } from '@/command-menu-item/utils/getCommandMenuItemProgressLabel';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -17,7 +18,9 @@ const StyledProgressText = styled.span`
 export const CommandListItemLoader = ({ progress }: { progress: number }) => {
   return (
     <StyledContainer>
-      <StyledProgressText>{Math.round(progress)}%</StyledProgressText>
+      <StyledProgressText>
+        {getCommandMenuItemProgressLabel(progress)}
+      </StyledProgressText>
       <Loader />
     </StyledContainer>
   );

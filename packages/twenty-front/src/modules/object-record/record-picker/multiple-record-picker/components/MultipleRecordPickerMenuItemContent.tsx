@@ -14,7 +14,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemMultiSelectAvatar } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type SearchRecord } from '~/generated/graphql';
@@ -78,11 +78,19 @@ export const MultipleRecordPickerMenuItemContent = ({
       key={searchRecord.recordId}
       onEnter={() => handleSelectChange(!isRecordSelectedWithObjectItem)}
     >
-      <MenuItemMultiSelectAvatar
-        onSelectChange={(isSelected) => handleSelectChange(isSelected)}
-        isKeySelected={isSelectedItemId}
+      <ListItem
+        focused={isSelectedItemId}
+        role="option"
+        aria-selected={isRecordSelectedWithObjectItem}
         selected={isRecordSelectedWithObjectItem}
-        avatar={
+        indicator="checkbox"
+        description={
+          showObjectName
+            ? capitalize(objectMetadataItem.labelSingular)
+            : undefined
+        }
+        onClick={() => handleSelectChange(!isRecordSelectedWithObjectItem)}
+        startIcon={
           <Avatar
             src={getAbsoluteImageUrl(searchRecord.imageUrl)}
             colorSeed={searchRecord.recordId}
@@ -91,13 +99,9 @@ export const MultipleRecordPickerMenuItemContent = ({
             shape={getAvatarShape(objectMetadataItem)}
           />
         }
-        text={displayText}
-        contextualText={
-          showObjectName
-            ? capitalize(objectMetadataItem.labelSingular)
-            : undefined
-        }
-      />
+      >
+        {displayText}
+      </ListItem>
     </SelectableListItem>
   );
 };

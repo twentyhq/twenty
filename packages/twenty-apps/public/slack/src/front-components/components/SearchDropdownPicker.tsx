@@ -1,8 +1,13 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-sdk/utils';
 
+import { SlackDropdownBackdrop } from 'src/front-components/components/SlackDropdownBackdrop';
+import {
+  type SlackPickerOption,
+  SlackPickerDropdownPanel,
+} from 'src/front-components/components/SlackPickerDropdownPanel';
 import { SlackUserLinkTextInput } from 'src/front-components/components/SlackUserLinkTextInput';
 
 const StyledContainer = styled.div`
@@ -10,55 +15,9 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDropdown = styled.div`
-  background: ${() => themeCssVariables.background.primary};
-  border: 1px solid ${() => themeCssVariables.border.color.medium};
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  box-shadow: ${() => themeCssVariables.boxShadow.light};
-  box-sizing: border-box;
-  left: 0;
-  margin-top: ${() => themeCssVariables.spacing[1]};
-  max-height: 240px;
-  overflow-y: auto;
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: 1;
-`;
-
-const StyledOption = styled.button`
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[1]};
-  padding: ${() => themeCssVariables.spacing[2]};
-  text-align: left;
-  width: 100%;
-
-  &:hover {
-    background: ${() => themeCssVariables.background.secondary};
-  }
-`;
-
-const StyledOptionName = styled.span`
-  color: ${() => themeCssVariables.font.color.primary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-`;
-
-const StyledOptionMeta = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.xs};
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  padding: ${() => themeCssVariables.spacing[2]};
+const StyledInputWrapper = styled.div`
+  position: relative;
+  z-index: 2;
 `;
 
 type SearchDropdownPickerProps<TOption> = {
@@ -67,9 +26,7 @@ type SearchDropdownPickerProps<TOption> = {
   options: TOption[];
   isSearching: boolean;
   onSelect: (option: TOption) => void;
-  getOptionKey: (option: TOption) => string;
-  getOptionName: (option: TOption) => string;
-  getOptionMeta: (option: TOption) => string | undefined;
+  getOption: (option: TOption) => SlackPickerOption;
   searchLabel: string;
   emptyText: string;
   disabled?: boolean;
@@ -82,71 +39,76 @@ export const SearchDropdownPicker = <TOption,>({
   options,
   isSearching,
   onSelect,
-  getOptionKey,
-  getOptionName,
-  getOptionMeta,
+  getOption,
   searchLabel,
   emptyText,
   disabled,
   autoFocus,
 }: SearchDropdownPickerProps<TOption>) => {
-  const [isFocused, setIsFocused] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const hasSearchTerm = isNonEmptyString(searchTerm.trim());
-  const isDropdownOpen = isFocused && hasSearchTerm;
+  const isDropdownOpen = isOpen && hasSearchTerm;
 
   const handleSelect = (option: TOption) => {
+    setIsOpen(false);
     onSearchTermChange('');
     onSelect(option);
   };
 
   return (
     <StyledContainer>
-      <SlackUserLinkTextInput
-        value={searchTerm}
-        onChange={(event) => onSearchTermChange(event.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        onKeyDown={(event) => {
-          if (event.key !== 'Enter') {
-            return;
-          }
+      <StyledInputWrapper>
+        <SlackUserLinkTextInput
+          value={searchTerm}
+          onChange={(event) => {
+            setIsOpen(true);
+            onSearchTermChange(event.target.value);
+          }}
+          onFocus={() => setIsOpen(true)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              setIsOpen(false);
 
-          event.preventDefault();
+              return;
+            }
 
-          if (options.length > 0) {
-            handleSelect(options[0]);
-          }
-        }}
-        placeholder={searchLabel}
-        disabled={disabled}
-        autoFocus={autoFocus}
-        aria-label={searchLabel}
-      />
+            if (event.key !== 'Enter') {
+              return;
+            }
+
+            event.preventDefault();
+
+            if (options.length > 0) {
+              handleSelect(options[0]);
+            }
+          }}
+          placeholder={searchLabel}
+          disabled={disabled}
+          autoFocus={autoFocus}
+          aria-label={searchLabel}
+        />
+      </StyledInputWrapper>
       {isDropdownOpen && (
-        <StyledDropdown onMouseDown={(event) => event.preventDefault()}>
-          {options.map((option) => {
-            const meta = getOptionMeta(option);
+        <>
+          <SlackDropdownBackdrop onClose={() => setIsOpen(false)} />
+          <SlackPickerDropdownPanel
+            options={options.map(getOption)}
+            isSearching={isSearching}
+            emptyText={emptyText}
+            listLabel={searchLabel}
+            onSelect={(optionKey) => {
+              const selectedOption = options.find(
+                (option) => getOption(option).key === optionKey,
+              );
 
-            return (
-              <StyledOption
-                key={getOptionKey(option)}
-                type="button"
-                onMouseDown={() => handleSelect(option)}
-              >
-                <StyledOptionName>{getOptionName(option)}</StyledOptionName>
-                {isNonEmptyString(meta) && (
-                  <StyledOptionMeta>{meta}</StyledOptionMeta>
-                )}
-              </StyledOption>
-            );
-          })}
-          {options.length === 0 && (
-            <StyledEmptyState>
-              {isSearching ? 'Searching…' : emptyText}
-            </StyledEmptyState>
-          )}
-        </StyledDropdown>
+              if (isDefined(selectedOption)) {
+                handleSelect(selectedOption);
+              }
+            }}
+          />
+        </>
       )}
     </StyledContainer>
   );

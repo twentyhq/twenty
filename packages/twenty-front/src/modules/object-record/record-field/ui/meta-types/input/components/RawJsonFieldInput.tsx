@@ -10,7 +10,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconPencil } from 'twenty-ui/icon';
-import { CodeEditor, FloatingIconButton } from 'twenty-ui/primitives/input';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { IconButton } from 'twenty-ui/components';
 import {
   JsonTree,
   isTwoFirstDepths,
@@ -179,10 +180,14 @@ export const RawJsonFieldInput = () => {
         <>
           {showEditingButton && (
             <StyledSwitchModeButtonContainer>
-              <FloatingIconButton
-                Icon={IconPencil}
+              <IconButton
+                elevated
+                size="sm"
                 onClick={handleStartEditing}
-              />
+                aria-label={t`Edit JSON`}
+              >
+                <IconPencil />
+              </IconButton>
             </StyledSwitchModeButtonContainer>
           )}
 

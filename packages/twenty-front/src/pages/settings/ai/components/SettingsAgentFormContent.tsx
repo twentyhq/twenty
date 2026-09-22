@@ -188,6 +188,7 @@ export const SettingsAgentFormContent = ({
         links={getSettingsAiBreadcrumbLinks(title)}
         secondaryBar={
           <SettingsTabBar
+            aria-label={t`Agent settings`}
             tabs={tabs}
             componentInstanceId={tabListComponentId}
           />

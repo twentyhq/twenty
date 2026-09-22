@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -9,8 +10,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   type ApprovedAccessDomain,
   DeleteApprovedAccessDomainDocument,
@@ -64,20 +64,23 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
       clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text="Delete"
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={() => {
                 handleDeleteApprovedAccessDomain();
                 closeDropdown(dropdownId);
               }}
-            />
+            >
+              {'Delete'}
+            </ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

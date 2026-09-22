@@ -7,17 +7,15 @@ const requestOverHttpMock = vi.hoisted(() => vi.fn());
 const requestOverHttpsMock = vi.hoisted(() => vi.fn());
 
 vi.mock('node:http', async () => {
-  const actualHttp = await vi.importActual<typeof import('node:http')>(
-    'node:http',
-  );
+  const actualHttp =
+    await vi.importActual<typeof import('node:http')>('node:http');
 
   return { ...actualHttp, request: requestOverHttpMock };
 });
 
 vi.mock('node:https', async () => {
-  const actualHttps = await vi.importActual<typeof import('node:https')>(
-    'node:https',
-  );
+  const actualHttps =
+    await vi.importActual<typeof import('node:https')>('node:https');
 
   return { ...actualHttps, request: requestOverHttpsMock };
 });
@@ -98,13 +96,16 @@ const buildUploadRequest = ({
 const putDefaultMediaDownloadBodyToUploadTarget = ({
   mediaDownloadBody = buildMediaDownloadBody(),
   uploadUrl = HTTPS_UPLOAD_URL,
+  signal = new AbortController().signal,
 }: {
   mediaDownloadBody?: ReadableStream<Uint8Array>;
   uploadUrl?: string;
+  signal?: AbortSignal;
 } = {}) =>
   putMediaDownloadBodyToUploadTarget({
     fileName: 'video.mp4',
     mediaDownloadBody,
+    signal,
     sizeBytes: 4,
     uploadTarget: {
       uploadUrl,
@@ -131,7 +132,8 @@ describe('putMediaDownloadBodyToUploadTarget', () => {
 
     await putDefaultMediaDownloadBodyToUploadTarget();
 
-    const [uploadUrl, uploadRequestOptions] = requestOverHttpsMock.mock.calls[0];
+    const [uploadUrl, uploadRequestOptions] =
+      requestOverHttpsMock.mock.calls[0];
 
     expect(uploadUrl.href).toBe(HTTPS_UPLOAD_URL);
     expect(uploadRequestOptions).toMatchObject({
@@ -206,5 +208,31 @@ describe('putMediaDownloadBodyToUploadTarget', () => {
     ).rejects.toThrow('upload socket closed');
 
     expect(mediaDownloadBodyCancelMock).toHaveBeenCalledTimes(1);
+  });
+  it('aborts an in-flight upload and cancels the download when the work deadline expires', async () => {
+    const abortController = new AbortController();
+    const cancelDownload = vi.fn();
+    const { uploadRequest } = buildUploadRequest();
+    requestOverHttpsMock.mockReturnValue(uploadRequest);
+
+    const transfer = putDefaultMediaDownloadBodyToUploadTarget({
+      mediaDownloadBody: buildMediaDownloadBody({
+        chunks: [],
+        close: false,
+        cancel: cancelDownload,
+      }),
+      signal: abortController.signal,
+    });
+    const assertion = expect(transfer).rejects.toMatchObject({
+      name: 'AbortError',
+    });
+
+    abortController.abort(
+      new DOMException('Import work deadline', 'TimeoutError'),
+    );
+    await assertion;
+
+    expect(uploadRequest.destroyed).toBe(true);
+    expect(cancelDownload).toHaveBeenCalledTimes(1);
   });
 });

@@ -16,6 +16,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     encryptedValue,
     isSecret,
     isDeprecated,
+    isRequired,
     type,
     options,
     applicationUniversalIdentifier,
@@ -28,6 +29,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     encryptedValue: EncryptedString;
     isSecret?: boolean;
     isDeprecated?: boolean;
+    isRequired?: boolean;
     type?: ApplicationVariableType;
     options?: ApplicationVariableOption[];
     applicationUniversalIdentifier: string;
@@ -42,6 +44,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       label: label ?? '',
       isSecret: isSecret ?? false,
       isDeprecated: isDeprecated ?? false,
+      isRequired: (isDeprecated ?? false) ? false : (isRequired ?? false),
       type: type ?? FieldMetadataType.TEXT,
       options: options ?? null,
       createdAt: now,

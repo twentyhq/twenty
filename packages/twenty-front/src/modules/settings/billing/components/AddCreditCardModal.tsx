@@ -1,6 +1,6 @@
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AddPaymentMethodForm } from '@/settings/billing/components/AddPaymentMethodForm';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui/components';
@@ -28,43 +28,49 @@ export const AddCreditCardModal = ({
   onPaymentMethodAdded,
 }: AddCreditCardModalProps) => {
   const { t } = useLingui();
-  const { closeModal } = useModal();
+  const { closeDialog } = useDialog();
 
   // Close only after activation so the form keeps its loading state visible
   const handlePaymentMethodAdded = async () => {
     await onPaymentMethodAdded();
-    closeModal(modalInstanceId);
+    closeDialog(modalInstanceId);
   };
 
   return (
-    <ModalStatefulWrapper
-      modalInstanceId={modalInstanceId}
-      isClosable={true}
-      size="medium"
-      padding="large"
-      overlay="dark"
-      dataGloballyPreventClickOutside
+    <DialogInstance
+      dialogId={modalInstanceId}
+      dismissible={true}
       renderInDocumentBody
-      smallBorderRadius
-      autoHeight
     >
-      <Dialog.Title>{t`Add your credit card`}</Dialog.Title>
-      <StyledSectionContainer>
-        <Section.Root align="center" color="primary">
-          {t`Add your credit card below. Once added, your subscription will start automatically.`}
-        </Section.Root>
-      </StyledSectionContainer>
-      <AddPaymentMethodForm
-        finalRedirectPath={finalRedirectPath}
-        onPaymentMethodAdded={handlePaymentMethodAdded}
-      />
-      <StyledCancelButtonContainer>
-        <Button
-          onClick={() => closeModal(modalInstanceId)}
-          fullWidth
-          variant="outline"
-        >{t`Cancel`}</Button>
-      </StyledCancelButtonContainer>
-    </ModalStatefulWrapper>
+      {({ container, backdrop, viewportProps, onKeyDown }) => (
+        <Dialog.Popup
+          {...{ container, backdrop, viewportProps, onKeyDown }}
+          size="md"
+          data-globally-prevent-click-outside
+          style={{
+            padding: 'var(--t-spacing-6)',
+            borderRadius: 'var(--t-spacing-1)',
+          }}
+        >
+          <Dialog.Title>{t`Add your credit card`}</Dialog.Title>
+          <StyledSectionContainer>
+            <Section.Root align="center" color="primary">
+              {t`Add your credit card below. Once added, your subscription will start automatically.`}
+            </Section.Root>
+          </StyledSectionContainer>
+          <AddPaymentMethodForm
+            finalRedirectPath={finalRedirectPath}
+            onPaymentMethodAdded={handlePaymentMethodAdded}
+          />
+          <StyledCancelButtonContainer>
+            <Button
+              onClick={() => closeDialog(modalInstanceId)}
+              fullWidth
+              variant="outline"
+            >{t`Cancel`}</Button>
+          </StyledCancelButtonContainer>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
   );
 };

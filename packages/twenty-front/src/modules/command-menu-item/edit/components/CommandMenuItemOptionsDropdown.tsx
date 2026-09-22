@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useResetCommandMenuItemToDefault } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemToDefault';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -8,8 +9,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import { IconRefresh, IconTag } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type CommandMenuItemOptionsDropdownProps = Pick<
@@ -62,20 +63,16 @@ export const CommandMenuItemOptionsDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
           <DropdownMenuItemsContainer>
-            <MenuItemSwitch
-              LeftIcon={IconTag}
-              text={t`Hide label`}
+            <SettingsRow
+              startIcon={<IconTag />}
+              disabled={hasNoShortLabel}
               checked={isLabelHidden || hasNoShortLabel}
               onCheckedChange={handleHiddenLabelChange}
-              size="sm"
-              disabled={hasNoShortLabel}
-            />
-            <MenuItem
-              LeftIcon={IconRefresh}
+            >{t`Hide label`}</SettingsRow>
+            <ListItem
+              startIcon={<IconRefresh />}
               onClick={handleResetToDefault}
-              accent="default"
-              text={t`Reset to default`}
-            />
+            >{t`Reset to default`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

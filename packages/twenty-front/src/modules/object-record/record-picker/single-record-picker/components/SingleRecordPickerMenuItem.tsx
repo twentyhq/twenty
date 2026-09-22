@@ -15,7 +15,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SingleRecordPickerMenuItemProps = {
@@ -81,13 +81,20 @@ export const SingleRecordPickerMenuItem = ({
         onMorphItemSelected(morphItem);
       }}
     >
-      <MenuItemSelectAvatar
-        testId="menu-item"
+      <ListItem
         onClick={() => onMorphItemSelected(morphItem)}
-        text={searchRecordStore.label}
-        selected={isRecordSelected}
         focused={isSelectedItemId}
-        avatar={
+        role="option"
+        aria-selected={isRecordSelected}
+        selected={isRecordSelected}
+        indicator="check"
+        data-testid={'menu-item'}
+        description={
+          showObjectName
+            ? capitalize(searchRecordStore.objectLabelSingular)
+            : undefined
+        }
+        startIcon={
           <Avatar
             src={getAbsoluteImageUrl(searchRecordStore.imageUrl)}
             colorSeed={morphItem.recordId}
@@ -96,12 +103,9 @@ export const SingleRecordPickerMenuItem = ({
             shape={getAvatarShape(objectMetadataItem)}
           />
         }
-        contextualText={
-          showObjectName
-            ? capitalize(searchRecordStore.objectLabelSingular)
-            : undefined
-        }
-      />
+      >
+        {searchRecordStore.label}
+      </ListItem>
     </SelectableListItem>
   );
 };

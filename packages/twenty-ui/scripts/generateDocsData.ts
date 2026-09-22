@@ -21,6 +21,7 @@ import {
 } from '../docs/types';
 
 const HIDDEN_PROP_TAGS = ['ignore', 'internal'];
+const COMPONENT_PART_NAME_PATTERN = /^[A-Z]/;
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceRoot = resolve(packageRoot, 'src');
@@ -185,6 +186,7 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
       'partPropDescriptions' in component ? component.partPropDescriptions : {};
     const componentParts = type
       .getProperties()
+      .filter((part) => COMPONENT_PART_NAME_PATTERN.test(part.name))
       .filter((part) => partNames?.includes(part.name) ?? props.length === 0);
     const parts = componentParts.map((part) => {
       const declaration = part.valueDeclaration;

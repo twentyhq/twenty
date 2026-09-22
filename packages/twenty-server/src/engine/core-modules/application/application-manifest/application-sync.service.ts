@@ -1,8 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Manifest } from 'twenty-shared/application';
-import { Repository } from 'typeorm';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,6 +34,8 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -51,8 +51,8 @@ export class ApplicationSyncService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly applicationUninstallService: ApplicationUninstallService,
-    @InjectRepository(FrontComponentEntity)
-    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
+    @InjectWorkspaceScopedRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
@@ -179,6 +179,7 @@ export class ApplicationSyncService {
       defaultRole: null,
       settingsCustomTabFrontComponentId: null,
       uninstallLogicFunctionId: null,
+      healthCheckLogicFunctionId: null,
       uninstallHookCompletedForRequestedAt: null,
       canBeUninstalled: true,
       autoUpgrade: false,
@@ -257,12 +258,11 @@ export class ApplicationSyncService {
       ).toString('utf-8'),
     ) as PackageJson;
 
-    const application = await this.applicationService.findOneApplicationOrThrow(
-      {
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
-      },
-    );
+      });
 
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;
@@ -314,10 +314,10 @@ export class ApplicationSyncService {
     frontComponentSharedDependenciesChecksum: string | null;
   }): Promise<void> {
     try {
-      const frontComponents = await this.frontComponentRepository.find({
-        select: ['id'],
-        where: { applicationId, workspaceId },
-      });
+      const frontComponents = await this.frontComponentRepository.find(
+        workspaceId,
+        { select: ['id'], where: { applicationId } },
+      );
 
       await this.workspaceEventBroadcaster.broadcast({
         workspaceId,
@@ -351,9 +351,11 @@ export class ApplicationSyncService {
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook?: boolean;
   }): Promise<WorkspaceMigration> {
-    const application = await this.applicationService.findOneApplicationOrThrow(
-      { universalIdentifier: applicationUniversalIdentifier, workspaceId },
-    );
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      });
 
     if (!application.canBeUninstalled) {
       throw new ApplicationException(

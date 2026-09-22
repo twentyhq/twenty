@@ -24,6 +24,7 @@ import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limi
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
+import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/flat-quota-limit.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type LimitConsumption } from 'src/engine/core-modules/usage-limit/types/limit-consumption.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
@@ -44,6 +45,8 @@ import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
+import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
+import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
 import { fromConsumeResultsToRemainings } from 'src/engine/core-modules/usage-limit/utils/from-consume-results-to-remainings.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -174,7 +177,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
   async dropLimitCounter(usageLimit: UsageLimitCounterScope): Promise<void> {
     if (
       usageLimit.limitKind !== 'quota' ||
-      usageLimit.periodUnit === 'second'
+      !isAnchoredPeriodUnit(usageLimit.periodUnit)
     ) {
       return;
     }
@@ -289,7 +292,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
       { workspaceId, limits },
     );
 
-    const entries = limits.flatMap((limit) => {
+    const entries = limits.filter(isQuotaLimit).flatMap((limit) => {
       const period = periodByUnit[limit.periodUnit];
 
       return isDefined(period)
@@ -593,11 +596,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private async buildAllowanceCounter(
     workspaceId: string,
   ): Promise<AllowanceQuotaCounter | null> {
-    if (
-      !(await this.creditAllowanceProvider.isCreditAllowanceEnabled(
-        workspaceId,
-      ))
-    ) {
+    if (!(await this.creditAllowanceProvider.isCreditAllowanceEnabled())) {
       return null;
     }
 
@@ -628,14 +627,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-  }): Promise<FlatUsageLimit[]> {
+  }): Promise<FlatQuotaLimit[]> {
     const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['usageLimits'],
     );
 
     const quotaLimits = (usageLimits.byResourceType[resourceType] ?? []).filter(
-      (limit) => limit.limitKind === 'quota',
+      isQuotaLimit,
     );
 
     return this.usageLimitEntitlementService.findEnforceableLimits({
@@ -808,13 +807,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     counter: AllowanceQuotaCounter | undefined;
     now: number;
   }): Promise<{ key: string; value: number; ttl: number }[]> {
-    if (!isDefined(counter)) {
-      return [];
-    }
-
-    const ttl = counter.periodEnd.getTime() - now;
-
-    if (ttl <= 0) {
+    if (!isDefined(counter) || counter.periodEnd.getTime() <= now) {
       return [];
     }
 
@@ -825,6 +818,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
       !isDefined(allowance) ||
       allowance.periodStart.getTime() !== counter.periodStart.getTime()
     ) {
+      return [];
+    }
+
+    const ttl =
+      Math.min(counter.periodEnd.getTime(), allowance.validUntil.getTime()) -
+      now;
+
+    if (ttl <= 0) {
       return [];
     }
 

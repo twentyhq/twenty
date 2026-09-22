@@ -26,9 +26,11 @@ export class RunAgentAttachmentService {
   async buildModelMessagesOrThrow({
     messages,
     workspaceId,
+    modalities,
   }: {
     messages: RunAgentMessage[];
     workspaceId: string;
+    modalities: string[] | undefined;
   }): Promise<ModelMessage[]> {
     const fileIds = extractRunAgentAttachmentFileIdsOrThrow(messages);
 
@@ -37,7 +39,11 @@ export class RunAgentAttachmentService {
       : new Map<string, ResolvedRunAgentAttachment>();
 
     return messages.map((message) =>
-      buildRunAgentModelMessageOrThrow({ message, attachmentsByFileId }),
+      buildRunAgentModelMessageOrThrow({
+        message,
+        attachmentsByFileId,
+        modalities,
+      }),
     );
   }
 

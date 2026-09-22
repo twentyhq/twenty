@@ -2,10 +2,7 @@ import { type UsageLimitDefinitions } from 'src/engine/core-modules/usage-limit/
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-export const USAGE_LIMIT_DEFINITIONS: Record<
-  UsageResourceType,
-  UsageLimitDefinitions
-> = {
+export const USAGE_LIMIT_DEFINITIONS = {
   [UsageResourceType.API]: {
     speed: {
       allowedOperationTypes: [UsageOperationType.API_REQUEST],
@@ -53,11 +50,28 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
   },
   [UsageResourceType.WORKFLOW]: {},
   [UsageResourceType.APP]: {},
-  [UsageResourceType.STORAGE]: {},
+  [UsageResourceType.STORAGE]: {
+    stock: {
+      allowedOperationTypes: [UsageOperationType.STORAGE_FILE],
+      allowedSpenderTypes: ['workspace', 'application'],
+      allowedMeters: ['bytes', 'quantity'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          meter: 'bytes',
+          limitValueConfigVariable: 'WORKSPACE_STORAGE_LIMIT_BYTES',
+          isOverridable: true,
+        },
+      ],
+    },
+  },
   [UsageResourceType.LOGIC_FUNCTION]: {},
   [UsageResourceType.EMAIL]: {
     speed: {
-      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedOperationTypes: [
+        UsageOperationType.EMAIL_SEND,
+        UsageOperationType.MESSAGE_CAMPAIGN_SEND,
+      ],
       allowedSpenderTypes: ['workspace'],
       // Two buckets, and a send has to fit both. The workspace one keeps a
       // single tenant's campaign from spending the whole instance budget; the
@@ -98,4 +112,19 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
       ],
     },
   },
-};
+  [UsageResourceType.RECORD]: {
+    stock: {
+      allowedOperationTypes: [UsageOperationType.RECORD_WRITE],
+      allowedSpenderTypes: ['workspace'],
+      allowedMeters: ['quantity'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          meter: 'quantity',
+          limitValueConfigVariable: 'WORKSPACE_RECORD_LIMIT',
+          isOverridable: true,
+        },
+      ],
+    },
+  },
+} satisfies Record<UsageResourceType, UsageLimitDefinitions>;

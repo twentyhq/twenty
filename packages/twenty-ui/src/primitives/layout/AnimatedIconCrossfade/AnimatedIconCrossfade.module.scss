@@ -14,6 +14,10 @@
   transition:
     opacity duration(fast) ease-in-out,
     transform duration(fast) ease-in-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 .visible {

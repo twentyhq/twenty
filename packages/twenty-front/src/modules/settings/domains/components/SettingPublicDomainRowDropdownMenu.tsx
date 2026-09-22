@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -7,8 +8,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   type PublicDomain,
   DeletePublicDomainDocument,
@@ -52,25 +52,22 @@ export const SettingPublicDomainRowDropdownMenu = ({
       dropdownId={dropdownId}
       dropdownPlacement="right-start"
       clickableComponent={
-        <LightIconButton
-          Icon={IconDotsVertical}
-          accent="tertiary"
-          aria-label={t`More options`}
-        />
+        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Delete`}
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={async () => {
                 await handleDeletePublicDomain();
                 closeDropdown(dropdownId);
                 await refetchPublicDomains();
               }}
-            />
+            >{t`Delete`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

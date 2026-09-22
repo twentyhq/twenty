@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
@@ -39,7 +40,7 @@ import {
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
@@ -268,15 +269,21 @@ export const FieldWidgetLayoutDropdownContent = () => {
               handleSelectDisplayMode(displayMode);
             }}
           >
-            <MenuItemSelect
-              text={displayModeLabels[displayMode]}
-              selected={currentDisplayMode === displayMode}
+            <ListItem
               focused={selectedItemId === displayMode}
-              LeftIcon={DISPLAY_MODE_ICONS[displayMode]}
               onClick={() => {
                 handleSelectDisplayMode(displayMode);
               }}
-            />
+              role="option"
+              aria-selected={currentDisplayMode === displayMode}
+              selected={currentDisplayMode === displayMode}
+              indicator="check"
+              startIcon={
+                <SelectOptionIcon Icon={DISPLAY_MODE_ICONS[displayMode]} />
+              }
+            >
+              {displayModeLabels[displayMode]}
+            </ListItem>
           </SelectableListItem>
         ))}
         {hasEmbeddedViewLayouts && (

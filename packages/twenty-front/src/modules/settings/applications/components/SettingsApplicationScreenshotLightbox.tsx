@@ -1,10 +1,11 @@
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { IconChevronLeft, IconChevronRight, IconX } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsApplicationScreenshotLightboxProps = {
@@ -98,51 +99,66 @@ export const SettingsApplicationScreenshotLightbox = ({
   });
 
   return (
-    <ModalStatefulWrapper
-      modalInstanceId={modalInstanceId}
-      size="fullscreen"
-      padding="none"
-      overlay="transparent"
-      isClosable
+    <DialogInstance
+      dialogId={modalInstanceId}
+      dismissible
       onClose={onClose}
       renderInDocumentBody
     >
-      <StyledContainer>
-        <StyledCloseButton>
-          <FloatingIconButton
-            Icon={IconX}
-            ariaLabel={t`Close`}
-            onClick={onClose}
-          />
-        </StyledCloseButton>
-        {hasSeveralScreenshots && (
-          <StyledPreviousButton>
-            <FloatingIconButton
-              Icon={IconChevronLeft}
-              ariaLabel={t`Previous screenshot`}
-              onClick={showPrevious}
+      {({ container, backdrop, viewportProps, onKeyDown }) => (
+        <Dialog.Popup
+          aria-label={displayName}
+          {...{ container, backdrop, viewportProps, onKeyDown }}
+          size="fullscreen"
+          style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
+        >
+          <StyledContainer>
+            <StyledCloseButton>
+              <IconButton
+                elevated
+                size="sm"
+                aria-label={t`Close`}
+                onClick={onClose}
+              >
+                <IconX />
+              </IconButton>
+            </StyledCloseButton>
+            {hasSeveralScreenshots && (
+              <StyledPreviousButton>
+                <IconButton
+                  elevated
+                  size="sm"
+                  aria-label={t`Previous screenshot`}
+                  onClick={showPrevious}
+                >
+                  <IconChevronLeft />
+                </IconButton>
+              </StyledPreviousButton>
+            )}
+            <StyledImage
+              src={screenshots[selectedIndex]}
+              alt={`${displayName} screenshot ${selectedIndex + 1}`}
             />
-          </StyledPreviousButton>
-        )}
-        <StyledImage
-          src={screenshots[selectedIndex]}
-          alt={`${displayName} screenshot ${selectedIndex + 1}`}
-        />
-        {hasSeveralScreenshots && (
-          <>
-            <StyledNextButton>
-              <FloatingIconButton
-                Icon={IconChevronRight}
-                ariaLabel={t`Next screenshot`}
-                onClick={showNext}
-              />
-            </StyledNextButton>
-            <StyledCounter>
-              {selectedIndex + 1} / {screenshotCount}
-            </StyledCounter>
-          </>
-        )}
-      </StyledContainer>
-    </ModalStatefulWrapper>
+            {hasSeveralScreenshots && (
+              <>
+                <StyledNextButton>
+                  <IconButton
+                    elevated
+                    size="sm"
+                    aria-label={t`Next screenshot`}
+                    onClick={showNext}
+                  >
+                    <IconChevronRight />
+                  </IconButton>
+                </StyledNextButton>
+                <StyledCounter>
+                  {selectedIndex + 1} / {screenshotCount}
+                </StyledCounter>
+              </>
+            )}
+          </StyledContainer>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
   );
 };

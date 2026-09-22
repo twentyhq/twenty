@@ -12,10 +12,10 @@ export const useOpenCoreWorkflowVersionSidePanel = () => {
   const { navigateSidePanel } = useNavigateSidePanel();
 
   const openCoreWorkflowVersionSidePanel = ({
-    workspaceWorkflowVersionId,
+    coreWorkflowVersionId,
     pageTitle,
   }: {
-    workspaceWorkflowVersionId: string;
+    coreWorkflowVersionId: string;
     pageTitle: string;
   }) => {
     const pageId = v4();
@@ -24,7 +24,7 @@ export const useOpenCoreWorkflowVersionSidePanel = () => {
       sidePanelWorkflowVersionIdComponentState.atomFamily({
         instanceId: pageId,
       }),
-      workspaceWorkflowVersionId,
+      coreWorkflowVersionId,
     );
 
     navigateSidePanel({

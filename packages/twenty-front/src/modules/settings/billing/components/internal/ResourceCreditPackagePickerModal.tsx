@@ -1,6 +1,6 @@
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AnimatedFormattedNumber } from '@/settings/billing/components/internal/AnimatedFormattedNumber';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -172,10 +172,10 @@ const StyledModalActions = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[6]};
+`;
 
-  > div {
-    flex: 1;
-  }
+const StyledActionSlot = styled.div`
+  flex: 1;
 `;
 
 const PackageSummaryLabelText = ({ label }: { label: string }) => (
@@ -252,170 +252,180 @@ export const ResourceCreditPackagePickerModal = ({
   );
 
   return (
-    <ModalStatefulWrapper
-      modalInstanceId={BILLING_MODAL_IDS.creditPackagePicker}
-      isClosable={true}
-      size="medium"
-      padding="large"
-      overlay="dark"
-      width="360px"
-      dataGloballyPreventClickOutside
+    <DialogInstance
+      dialogId={BILLING_MODAL_IDS.creditPackagePicker}
+      dismissible={true}
       renderInDocumentBody
-      smallBorderRadius
-      autoHeight
     >
-      <StyledCenteredTitle>
-        <Dialog.Title>{t`Choose ${intervalAdjective} credits`}</Dialog.Title>
-      </StyledCenteredTitle>
-      <StyledSectionContainer>
-        <Section.Root align="center" color="primary">
-          {t`Select the credit package to add to your ${intervalAdjective} bill.`}
-        </Section.Root>
-      </StyledSectionContainer>
-      <StyledPackageCard>
-        <StyledPackageHeader>
-          <StyledPackageHeaderRow>
-            <StyledPackageHeaderTitle>
-              <IconCoins
-                size={theme.icon.size.md}
-                color={themeCssVariables.color.green9}
-              />
-              <StyledPackageCreditAmount>
-                <AnimatedFormattedNumber
-                  value={selectedCreditAmountValue}
-                  formatValue={formatAnimatedCreditAmount}
-                />{' '}
-                {t`credits`}
-              </StyledPackageCreditAmount>
-            </StyledPackageHeaderTitle>
-            <StyledPackagePrice>
-              $
-              <AnimatedFormattedNumber
-                value={selectedPriceAmountValue}
-                formatValue={formatAnimatedPriceAmount}
-              />
-              /{intervalLabel}
-            </StyledPackagePrice>
-          </StyledPackageHeaderRow>
-          <Slider.Root
-            min={0}
-            max={Math.max(1, priceCount - 1)}
-            step={1}
-            value={selectedPriceIndex}
-            onValueChange={onSliderValueChange}
-            disabled={isUpdating || priceCount < 2}
-            color="success"
-          >
-            <Slider.Control>
-              <Slider.Track>
-                <Slider.Indicator />
-                <Slider.Thumb aria-label={t`Credit package`} />
-              </Slider.Track>
-            </Slider.Control>
-          </Slider.Root>
-        </StyledPackageHeader>
-        <StyledPackageDetails>
-          <StyledPackageDivider />
-          <StyledPackageSummaryRows>
-            {renderPackageSummaryRow({
-              Icon: IconHistory,
-              label: t`Current`,
-              value: (
-                <>
-                  <StyledCurrentValueText
-                    data-strikethrough={isChanged || undefined}
-                  >
-                    {t`${currentCreditAmountDisplay} credits `}
-                  </StyledCurrentValueText>
-                  <StyledMutedText>
-                    <StyledCurrentValueText
-                      data-strikethrough={isChanged || undefined}
-                    >
-                      {t`($${currentCreditPriceDisplay}/${intervalLabel})`}
-                    </StyledCurrentValueText>
-                  </StyledMutedText>
-                </>
-              ),
-            })}
-            <AnimatePresence initial={false}>
-              {isChanged && (
-                <StyledAnimatedPackageSummaryRow
-                  key="new-credit-package-summary-row"
-                  initial={{
-                    height: 0,
-                    marginBottom: 0,
-                    opacity: 0,
-                    y: -2,
-                  }}
-                  animate={{
-                    height: PACKAGE_SUMMARY_ROW_HEIGHT,
-                    marginBottom: PACKAGE_SUMMARY_ROW_GAP,
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  exit={{
-                    height: 0,
-                    marginBottom: 0,
-                    opacity: 0,
-                    y: -2,
-                  }}
-                  transition={{
-                    duration: theme.animation.duration.fast,
-                    ease: 'easeInOut',
-                  }}
-                >
-                  <StyledPackageSummaryLabel>
-                    <IconSparkles
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                      color={themeCssVariables.font.color.tertiary}
-                    />
-                    <PackageSummaryLabelText label={t`New credit pack`} />
-                  </StyledPackageSummaryLabel>
-                  <StyledPackageSummaryValue>
-                    <span>
-                      $
-                      <AnimatedFormattedNumber
-                        value={selectedPriceAmountValue}
-                        formatValue={formatAnimatedPriceAmount}
-                      />
-                      {t` per ${intervalLabel}`}
-                    </span>
-                  </StyledPackageSummaryValue>
-                </StyledAnimatedPackageSummaryRow>
-              )}
-            </AnimatePresence>
-            {isDefined(newRolloverLimit) &&
-              renderPackageSummaryRow({
-                Icon: IconRefreshDot,
-                label: t`New rollover limit`,
-                value: (
-                  <StyledAmountWithUnit>
+      {({ container, backdrop, viewportProps, onKeyDown }) => (
+        <Dialog.Popup
+          {...{ container, backdrop, viewportProps, onKeyDown }}
+          size="md"
+          data-globally-prevent-click-outside
+          style={{
+            padding: 'var(--t-spacing-6)',
+            borderRadius: 'var(--t-spacing-1)',
+            width: '360px',
+          }}
+        >
+          <StyledCenteredTitle>
+            <Dialog.Title>{t`Choose ${intervalAdjective} credits`}</Dialog.Title>
+          </StyledCenteredTitle>
+          <StyledSectionContainer>
+            <Section.Root align="center" color="primary">
+              {t`Select the credit package to add to your ${intervalAdjective} bill.`}
+            </Section.Root>
+          </StyledSectionContainer>
+          <StyledPackageCard>
+            <StyledPackageHeader>
+              <StyledPackageHeaderRow>
+                <StyledPackageHeaderTitle>
+                  <IconCoins
+                    size={theme.icon.size.md}
+                    color={themeCssVariables.color.green9}
+                  />
+                  <StyledPackageCreditAmount>
                     <AnimatedFormattedNumber
-                      value={newRolloverLimitValue}
-                      formatValue={formatAnimatedRolloverLimit}
-                    />
-                    <span>{t`credits`}</span>
-                  </StyledAmountWithUnit>
-                ),
-              })}
-          </StyledPackageSummaryRows>
-        </StyledPackageDetails>
-      </StyledPackageCard>
-      <StyledModalActions>
-        <Button
-          onClick={onCancel}
-          fullWidth
-          variant="outline"
-        >{t`Cancel`}</Button>
-        <Button
-          onClick={onConfirm}
-          fullWidth
-          disabled={isConfirmDisabled}
-          variant="solid"
-          color="accent"
-        >{t`Confirm`}</Button>
-      </StyledModalActions>
-    </ModalStatefulWrapper>
+                      value={selectedCreditAmountValue}
+                      formatValue={formatAnimatedCreditAmount}
+                    />{' '}
+                    {t`credits`}
+                  </StyledPackageCreditAmount>
+                </StyledPackageHeaderTitle>
+                <StyledPackagePrice>
+                  $
+                  <AnimatedFormattedNumber
+                    value={selectedPriceAmountValue}
+                    formatValue={formatAnimatedPriceAmount}
+                  />
+                  /{intervalLabel}
+                </StyledPackagePrice>
+              </StyledPackageHeaderRow>
+              <Slider.Root
+                min={0}
+                max={Math.max(1, priceCount - 1)}
+                step={1}
+                value={selectedPriceIndex}
+                onValueChange={onSliderValueChange}
+                disabled={isUpdating || priceCount < 2}
+                color="success"
+              >
+                <Slider.Control>
+                  <Slider.Track>
+                    <Slider.Indicator />
+                    <Slider.Thumb aria-label={t`Credit package`} />
+                  </Slider.Track>
+                </Slider.Control>
+              </Slider.Root>
+            </StyledPackageHeader>
+            <StyledPackageDetails>
+              <StyledPackageDivider />
+              <StyledPackageSummaryRows>
+                {renderPackageSummaryRow({
+                  Icon: IconHistory,
+                  label: t`Current`,
+                  value: (
+                    <>
+                      <StyledCurrentValueText
+                        data-strikethrough={isChanged || undefined}
+                      >
+                        {t`${currentCreditAmountDisplay} credits `}
+                      </StyledCurrentValueText>
+                      <StyledMutedText>
+                        <StyledCurrentValueText
+                          data-strikethrough={isChanged || undefined}
+                        >
+                          {t`($${currentCreditPriceDisplay}/${intervalLabel})`}
+                        </StyledCurrentValueText>
+                      </StyledMutedText>
+                    </>
+                  ),
+                })}
+                <AnimatePresence initial={false}>
+                  {isChanged && (
+                    <StyledAnimatedPackageSummaryRow
+                      key="new-credit-package-summary-row"
+                      initial={{
+                        height: 0,
+                        marginBottom: 0,
+                        opacity: 0,
+                        y: -2,
+                      }}
+                      animate={{
+                        height: PACKAGE_SUMMARY_ROW_HEIGHT,
+                        marginBottom: PACKAGE_SUMMARY_ROW_GAP,
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      exit={{
+                        height: 0,
+                        marginBottom: 0,
+                        opacity: 0,
+                        y: -2,
+                      }}
+                      transition={{
+                        duration: theme.animation.duration.fast,
+                        ease: 'easeInOut',
+                      }}
+                    >
+                      <StyledPackageSummaryLabel>
+                        <IconSparkles
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                          color={themeCssVariables.font.color.tertiary}
+                        />
+                        <PackageSummaryLabelText label={t`New credit pack`} />
+                      </StyledPackageSummaryLabel>
+                      <StyledPackageSummaryValue>
+                        <span>
+                          $
+                          <AnimatedFormattedNumber
+                            value={selectedPriceAmountValue}
+                            formatValue={formatAnimatedPriceAmount}
+                          />
+                          {t` per ${intervalLabel}`}
+                        </span>
+                      </StyledPackageSummaryValue>
+                    </StyledAnimatedPackageSummaryRow>
+                  )}
+                </AnimatePresence>
+                {isDefined(newRolloverLimit) &&
+                  renderPackageSummaryRow({
+                    Icon: IconRefreshDot,
+                    label: t`New rollover limit`,
+                    value: (
+                      <StyledAmountWithUnit>
+                        <AnimatedFormattedNumber
+                          value={newRolloverLimitValue}
+                          formatValue={formatAnimatedRolloverLimit}
+                        />
+                        <span>{t`credits`}</span>
+                      </StyledAmountWithUnit>
+                    ),
+                  })}
+              </StyledPackageSummaryRows>
+            </StyledPackageDetails>
+          </StyledPackageCard>
+          <StyledModalActions>
+            <StyledActionSlot>
+              <Button
+                onClick={onCancel}
+                fullWidth
+                variant="outline"
+              >{t`Cancel`}</Button>
+            </StyledActionSlot>
+            <StyledActionSlot>
+              <Button
+                onClick={onConfirm}
+                fullWidth
+                disabled={isConfirmDisabled}
+                variant="solid"
+                color="accent"
+              >{t`Confirm`}</Button>
+            </StyledActionSlot>
+          </StyledModalActions>
+        </Dialog.Popup>
+      )}
+    </DialogInstance>
   );
 };

@@ -7,7 +7,7 @@ import {
   TIPTAP_NODE_TYPES,
 } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
@@ -182,12 +182,14 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
       <StyledBlockHeader>
         <StyledBlockTitle>{i18n._(blockDefinition.label)}</StyledBlockTitle>
         <LightIconButton
-          Icon={IconTrash}
-          size="small"
-          accent="tertiary"
+          size="sm"
+          emphasis="subtle"
           title={t`Remove block`}
           onClick={handleRemoveBlock}
-        />
+          aria-label={t`Remove block`}
+        >
+          <IconTrash />
+        </LightIconButton>
       </StyledBlockHeader>
       {fields.map((field) => {
         const key = `${target.nodeType}-${target.pos}-${field.property}`;

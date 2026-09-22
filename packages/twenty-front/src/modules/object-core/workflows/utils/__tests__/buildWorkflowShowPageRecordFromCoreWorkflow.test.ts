@@ -1,5 +1,5 @@
 import { buildWorkflowShowPageRecordFromCoreWorkflow } from '@/object-core/workflows/utils/buildWorkflowShowPageRecordFromCoreWorkflow';
-import { CoreWorkflowStatus } from '~/generated/graphql';
+import { CoreWorkflowStatus, WorkflowVisibility } from '~/generated/graphql';
 
 describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
   const coreWorkflow = {
@@ -7,18 +7,20 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
     id: 'core-workflow-id',
     name: 'My workflow',
     statuses: [CoreWorkflowStatus.ACTIVE],
-    lastPublishedVersionId: 'published-version-id',
+    lastPublishedCoreWorkflowVersionId: 'published-version-id',
     workspaceWorkflowId: 'workspace-workflow-id',
+    visibility: WorkflowVisibility.WORKSPACE,
+    canChangeVisibility: true,
     createdAt: '2026-09-01T00:00:00.000Z',
     updatedAt: '2026-09-14T00:00:00.000Z',
   };
 
-  it('maps the core workflow onto the workspace record shape', () => {
+  it('keeps core IDs in the command context resource', () => {
     const record = buildWorkflowShowPageRecordFromCoreWorkflow(coreWorkflow);
 
     expect(record).toEqual({
       __typename: 'Workflow',
-      id: 'workspace-workflow-id',
+      id: 'core-workflow-id',
       name: 'My workflow',
       statuses: [CoreWorkflowStatus.ACTIVE],
       lastPublishedVersionId: 'published-version-id',
@@ -35,13 +37,13 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
     ).toBeUndefined();
   });
 
-  it('returns undefined when the core row has no workspace pointer', () => {
+  it('supports a core row without a workspace pointer', () => {
     expect(
       buildWorkflowShowPageRecordFromCoreWorkflow({
         ...coreWorkflow,
         workspaceWorkflowId: null,
-      }),
-    ).toBeUndefined();
+      })?.id,
+    ).toBe('core-workflow-id');
   });
 
   it('defaults a null name to an empty string', () => {

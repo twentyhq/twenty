@@ -1,13 +1,13 @@
 ---
 title: IconButton
-description: Trigger actions with accessible square icon buttons.
+description: Trigger actions with accessible icon buttons.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import IconButtonReference from '/snippets/ui/generated/input/icon-button.mdx';
 
-`IconButton` composes [Button](/ui/primitives/input/button) with a square surface. Pass the icon as children and provide an `aria-label` describing the action. Icon content is decorative and hidden from assistive technology.
+`IconButton` composes [Button](/ui/primitives/input/button) with a square or round surface. Pass the icon as children and provide an `aria-label` describing the action. Icon content is decorative and hidden from assistive technology.
 
 ## Usage
 
@@ -27,7 +27,7 @@ export const CreateRecordButton = () => (
 );
 ```
 
-Sizes are `sm` (24px) and `md` (32px). The defaults are `md`, `outline`, and `neutral`. Variants and colors match Button.
+Sizes are `xs` (20px), `sm` (24px), and `md` (32px). The defaults are `md`, `outline`, and `neutral`. Variants and colors match Button. Use `shape="round"` for a circular button; the default shape is `square`.
 
 <StoryEmbed
   title="Icon button example"
@@ -52,7 +52,7 @@ export const SearchRecordsButton = () => (
 
 <StoryEmbed
   title="Icon button with tooltip"
-  storyId="ui-components-iconbutton--tooltip"
+  storyId="ui-components-iconbutton--tooltip-documentation"
   height={180}
 />
 
@@ -61,6 +61,41 @@ The tooltip defaults to the bottom, with a 1000ms delay and a 5px offset. Use `t
 ## State ownership
 
 Your application supplies `loading` and `disabled`. Both prevent activation. Loading preserves the square dimensions and accessible label. The button does not track a selected value or set loading automatically after a click. Native keyboard focus follows the browser; use `aria-pressed` when your application owns a toggle state.
+
+## Elevated actions
+
+Use `elevated` to add a shadow and backdrop blur. The default neutral outline button also gains a bordered surface with matching icon and interaction colors. Other variants and semantic colors keep their existing palette.
+
+`elevated` defaults to `false`. It does not change positioning, visibility, or size. The size remains `md` (32px) by default; set `size="sm"` for a 24px control.
+
+```tsx
+import { IconButton } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const AddWidgetButton = () => (
+  <IconButton elevated size="sm" aria-label="Add widget">
+    <IconPlus />
+  </IconButton>
+);
+```
+
+<StoryEmbed
+  title="Elevated icon action"
+  storyId="ui-components-iconbutton--elevated"
+  height={180}
+/>
+
+Omit `elevated` or set it to `false` to restore the standard appearance. Elevated buttons support the same tooltips, loading states, links, and keyboard interactions.
+
+<StoryEmbed
+  title="Elevated icon action with tooltip"
+  storyId="ui-components-iconbutton--elevated-tooltip"
+  height={180}
+/>
+
+Replace existing `FloatingIconButton` controls with `IconButton elevated`. Pass the icon as children, use native `aria-label`, and map `small` to `sm` and `medium` to `md`. Supply `size="sm"` when the previous control used its default size. Native focus and `aria-pressed` replace synthetic focus and active flags.
+
+`FloatingIconButtonGroup` is removed. Compose ButtonGroup with IconButton for grouped actions, and keep any shared floating surface in your layout.
 
 ## Grouped actions
 
@@ -92,3 +127,7 @@ Native attributes, event handlers, refs, and render composition pass through to 
 ## Props
 
 <IconButtonReference />
+
+## Compact and round controls
+
+Use `size="xs"` for a 20px control and `shape="round"` for circular corners. Existing `RoundedIconButton` controls become `IconButton` with `shape="round"`, `variant="solid"`, and `color="accent"`. Map their old `small` size to `xs` and `medium` size to `sm`. Supply icon children and an accessible name.

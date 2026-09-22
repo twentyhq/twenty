@@ -1,5 +1,7 @@
 declare const classNames: {
+  readonly closeButton: 'closeButton';
   readonly container: 'container';
+  readonly containerFullWidth: 'containerFullWidth';
   readonly containerInfo: 'containerInfo';
   readonly containerWarning: 'containerWarning';
   readonly containerSuccess: 'containerSuccess';

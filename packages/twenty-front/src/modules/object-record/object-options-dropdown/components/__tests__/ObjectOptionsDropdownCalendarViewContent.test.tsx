@@ -93,23 +93,22 @@ jest.mock('twenty-ui/primitives/data-display', () => ({
   Pill: ({ label }: { label: string }) => <span>{label}</span>,
 }));
 jest.mock('twenty-ui/primitives/navigation', () => ({
-  MenuItem: ({ text }: { text: string }) => <span>{text}</span>,
-  MenuItemSelect: ({
-    contextualText,
+  ListItem: ({
+    description,
     disabled,
     onClick,
     selected,
-    text,
+    children,
   }: {
-    contextualText?: React.ReactNode;
+    description?: React.ReactNode;
     disabled?: boolean;
     onClick?: () => void;
     selected: boolean;
-    text: string;
+    children: React.ReactNode;
   }) => (
     <button data-selected={selected} disabled={disabled} onClick={onClick}>
-      <span>{text}</span>
-      {contextualText}
+      <span>{children}</span>
+      {description}
     </button>
   ),
 }));

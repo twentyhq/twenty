@@ -27,6 +27,7 @@ import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/job
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MaterializeCampaignChunkJob } from 'src/modules/emailing/jobs/materialize-campaign-chunk.job';
 import { MaterializeCampaignJob } from 'src/modules/emailing/jobs/materialize-campaign.job';
@@ -56,6 +57,8 @@ import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WebhookJobModule } from 'src/engine/metadata-modules/webhook/jobs/webhook-job.module';
+import { RunDeferredWorkspaceMigrationActionsJob } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-migration-actions.job';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { CleanOnboardingWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-onboarding-workspaces.job';
 import { CleanSuspendedWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-suspended-workspaces.job';
@@ -78,6 +81,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
       BillingProductEntity,
     ]),
     ObjectMetadataModule,
+    RecordExportModule,
     TypeORMModule,
     UserModule,
     UserVarsModule,
@@ -115,6 +119,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     OnboardingModule,
     BillingReminderModule,
     ApplicationRecurringChargeModule,
+    WorkspaceMigrationRunnerModule,
   ],
   providers: [
     ApplicationRecurringChargeCronJob,
@@ -141,6 +146,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     TriggerInstallApplicationJob,
     TriggerUninstallApplicationJob,
     WarmUpApplicationLogicFunctionsJob,
+    RunDeferredWorkspaceMigrationActionsJob,
   ],
 })
 export class JobsModule {

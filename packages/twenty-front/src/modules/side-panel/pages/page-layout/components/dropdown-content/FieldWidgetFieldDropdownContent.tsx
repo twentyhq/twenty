@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -34,7 +35,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -327,24 +328,32 @@ export const FieldWidgetFieldDropdownContent = () => {
                 itemId={fieldMetadataItem.id}
                 onEnter={handleClick}
               >
-                <MenuItemSelect
-                  text={fieldMetadataItem.label}
-                  // Rows opening a submenu never show the checkmark: the
-                  // selected chain is only visible inside the submenu, like
-                  // the chart group by field selection.
+                <ListItem
+                  focused={selectedItemId === fieldMetadataItem.id}
+                  onClick={handleClick}
+                  role="option"
+                  aria-selected={
+                    !hasNestedFieldCandidates &&
+                    currentFieldMetadataId === fieldMetadataItem.id
+                  }
                   selected={
                     !hasNestedFieldCandidates &&
                     currentFieldMetadataId === fieldMetadataItem.id
                   }
-                  focused={selectedItemId === fieldMetadataItem.id}
-                  LeftIcon={getIcon(
-                    currentFieldMetadataId === fieldMetadataItem.id
-                      ? currentFieldMetadataItem?.icon
-                      : fieldMetadataItem.icon,
-                  )}
-                  hasSubMenu={hasNestedFieldCandidates}
-                  onClick={handleClick}
-                />
+                  indicator="check"
+                  hasSubmenu={hasNestedFieldCandidates}
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={getIcon(
+                        currentFieldMetadataId === fieldMetadataItem.id
+                          ? currentFieldMetadataItem?.icon
+                          : fieldMetadataItem.icon,
+                      )}
+                    />
+                  }
+                >
+                  {fieldMetadataItem.label}
+                </ListItem>
               </SelectableListItem>
             );
           })}

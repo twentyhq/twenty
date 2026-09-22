@@ -5,6 +5,8 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { canRescheduleCallRecordingWithoutRecallLookup } from 'src/logic-functions/domain/can-reschedule-call-recording-without-recall-lookup.util';
+import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
@@ -160,6 +162,14 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
         data: { externalBotId: existingExternalBotId },
       });
       result.attachedCallRecordingIds.push(callRecording.id);
+
+      if (!isUndefined(calendarEvent.startsAt)) {
+        await enqueuePreJoinCreditCheck({
+          callRecordingId: callRecording.id,
+          externalBotId: existingExternalBotId,
+          joinAt: computeRecallBotJoinAt(calendarEvent.startsAt),
+        });
+      }
       continue;
     }
 
@@ -185,15 +195,12 @@ const scheduleBotForResumableCallRecording = async ({
   calendarEvent: CalendarEventRecord;
   result: ScheduleRecallBotsForPendingCallRecordingsResult;
 }): Promise<void> => {
-  const didScheduleRecallBot = await scheduleRecallBotForCallRecording(
-    client,
-    {
-      callRecording,
-      calendarEvent,
-    },
-  );
+  const scheduleResult = await scheduleRecallBotForCallRecording(client, {
+    callRecording,
+    calendarEvent,
+  });
 
-  if (didScheduleRecallBot) {
+  if (scheduleResult.status === 'scheduled') {
     result.scheduledCallRecordingIds.push(callRecording.id);
   }
 };

@@ -1,5 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useEffect } from 'react';
-
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
@@ -25,6 +25,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import {
   IconArrowsSort,
   IconChevronLeft,
@@ -33,11 +34,6 @@ import {
   IconLayoutList,
   IconPlus,
 } from 'twenty-ui/icon';
-import {
-  MenuItem,
-  MenuItemNavigate,
-  MenuItemSwitch,
-} from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();
@@ -142,30 +138,28 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   onContentChange('recordGroupFields')
                 }
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'GroupBy'}
                   disabled={isGroupByFieldPickerDisabled}
                   onClick={() => onContentChange('recordGroupFields')}
-                  LeftIcon={IconLayoutList}
-                  text={t`Group by`}
-                  contextualText={recordIndexGroupFieldMetadataItem?.label}
-                  contextualTextPosition="right"
-                  hasSubMenu
-                />
+                  startIcon={<IconLayoutList />}
+                  description={recordIndexGroupFieldMetadataItem?.label}
+                  descriptionPlacement="end"
+                  hasSubmenu
+                >{t`Group by`}</ListItem>
               </SelectableListItem>
               <SelectableListItem
                 itemId="Sort"
                 onEnter={() => onContentChange('recordGroupSort')}
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'Sort'}
                   onClick={() => onContentChange('recordGroupSort')}
-                  LeftIcon={IconArrowsSort}
-                  text={t`Sort`}
-                  contextualText={recordIndexRecordGroupSort}
-                  contextualTextPosition="right"
-                  hasSubMenu
-                />
+                  startIcon={<IconArrowsSort />}
+                  description={recordIndexRecordGroupSort}
+                  descriptionPlacement="end"
+                  hasSubmenu
+                >{t`Sort`}</ListItem>
               </SelectableListItem>
             </>
           )}
@@ -173,14 +167,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             itemId="HideEmptyGroups"
             onEnter={() => handleHideEmptyRecordGroupChange()}
           >
-            <MenuItemSwitch
+            <SettingsRow
               focused={selectedItemId === 'HideEmptyGroups'}
-              LeftIcon={IconCircleOff}
+              startIcon={<IconCircleOff />}
               onCheckedChange={handleHideEmptyRecordGroupChange}
               checked={shouldHideEmptyGroups}
-              text={t`Hide empty groups`}
-              size="sm"
-            />
+            >{t`Hide empty groups`}</SettingsRow>
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>
@@ -201,11 +193,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
-            <MenuItem
+            <ListItem
               onClick={() => onContentChange('addRecordGroup')}
-              LeftIcon={IconPlus}
-              text={t`New group`}
-            />
+              startIcon={<IconPlus />}
+            >{t`New group`}</ListItem>
           </DropdownMenuItemsContainer>
         </>
       )}
@@ -222,11 +213,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 itemId="HiddenGroups"
                 onEnter={() => onContentChange('hiddenRecordGroups')}
               >
-                <MenuItemNavigate
+                <ListItem
                   onClick={() => onContentChange('hiddenRecordGroups')}
-                  LeftIcon={IconEyeOff}
-                  text={`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}
-                />
+                  startIcon={<IconEyeOff />}
+                  render={<button type="button" />}
+                  hasSubmenu
+                >{`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}</ListItem>
               </SelectableListItem>
             </SelectableList>
           </DropdownMenuItemsContainer>

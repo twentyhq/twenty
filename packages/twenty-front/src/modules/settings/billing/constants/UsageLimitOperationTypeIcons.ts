@@ -1,7 +1,9 @@
 import {
+  IconAddressBook,
   IconApi,
   IconCode,
   type IconComponent,
+  IconFiles,
   IconMail,
   IconMessageCircle,
   IconPhone,
@@ -9,6 +11,7 @@ import {
   IconRepeat,
   IconRobot,
   IconSearch,
+  IconSend,
   IconSettingsAutomation,
   IconWebhook,
 } from 'twenty-ui/icon';
@@ -27,7 +30,10 @@ export const USAGE_LIMIT_OPERATION_TYPE_ICONS: Record<
   [UsageOperationType.WEB_SEARCH]: IconSearch,
   [UsageOperationType.CALL_RECORDING]: IconPhone,
   [UsageOperationType.EMAIL_SEND]: IconMail,
+  [UsageOperationType.MESSAGE_CAMPAIGN_SEND]: IconSend,
   [UsageOperationType.API_REQUEST]: IconApi,
   [UsageOperationType.WEBHOOK_CALL]: IconWebhook,
+  [UsageOperationType.STORAGE_FILE]: IconFiles,
+  [UsageOperationType.RECORD_WRITE]: IconAddressBook,
   [UsageOperationType.SUBSCRIPTION]: IconRepeat,
 };

@@ -1,5 +1,5 @@
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { type SettingsUnsubscribersFilterOption } from '@/settings/unsubscribers/components/filter-dropdown/types/SettingsUnsubscribersFilterOption';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -44,12 +44,16 @@ export const SettingsUnsubscribersFilterOptionsContent = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {options.map((option) => (
-          <MenuItemSelect
+          <ListItem
             key={option.value}
-            text={option.label}
-            selected={selectedValue === option.value}
             onClick={() => handleSelect(option.value)}
-          />
+            role="option"
+            aria-selected={selectedValue === option.value}
+            selected={selectedValue === option.value}
+            indicator="check"
+          >
+            {option.label}
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

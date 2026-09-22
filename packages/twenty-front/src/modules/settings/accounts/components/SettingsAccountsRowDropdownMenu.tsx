@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
@@ -12,8 +13,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   IconAt,
@@ -24,8 +25,7 @@ import {
   IconRefresh,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { LightIconButton } from 'twenty-ui/components';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
 
@@ -41,7 +41,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   const accountHandle = account.handle;
 
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const navigate = useNavigateSettings();
   const { closeDropdown } = useCloseDropdown();
@@ -75,81 +75,73 @@ export const SettingsAccountsRowDropdownMenu = ({
         dropdownId={dropdownId}
         dropdownPlacement="right-start"
         clickableComponent={
-          <LightIconButton
-            Icon={IconDotsVertical}
-            accent="tertiary"
-            aria-label={t`More options`}
-          />
+          <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+            <IconDotsVertical />
+          </LightIconButton>
         }
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {hasPendingConfiguration && (
-                <MenuItem
-                  LeftIcon={IconPlayerPlay}
-                  text={t`Complete setup`}
+                <ListItem
+                  startIcon={<IconPlayerPlay />}
                   onClick={() => {
                     navigate(SettingsPath.AccountsConfiguration, {
                       connectedAccountId: account.id,
                     });
                     closeDropdown(dropdownId);
                   }}
-                />
+                >{t`Complete setup`}</ListItem>
               )}
               {account.provider ===
                 ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
-                <MenuItem
-                  text={t`Connection settings`}
-                  LeftIcon={IconAt}
+                <ListItem
+                  startIcon={<IconAt />}
                   onClick={() => {
                     navigate(SettingsPath.EditImapSmtpCaldavConnection, {
                       connectedAccountId: account.id,
                     });
                     closeDropdown(dropdownId);
                   }}
-                />
+                >{t`Connection settings`}</ListItem>
               )}
-              <MenuItem
-                LeftIcon={IconMail}
-                text={t`Emails settings`}
+              <ListItem
+                startIcon={<IconMail />}
                 onClick={() => {
                   navigate(SettingsPath.AccountsEmails);
                   closeDropdown(dropdownId);
                 }}
-              />
-              <MenuItem
-                LeftIcon={IconCalendarEvent}
-                text={t`Calendar settings`}
+              >{t`Emails settings`}</ListItem>
+              <ListItem
+                startIcon={<IconCalendarEvent />}
                 onClick={() => {
                   navigate(SettingsPath.AccountsCalendars);
                   closeDropdown(dropdownId);
                 }}
-              />
+              >{t`Calendar settings`}</ListItem>
               {account.authFailedAt && (
-                <MenuItem
-                  LeftIcon={IconRefresh}
-                  text={t`Reconnect`}
+                <ListItem
+                  startIcon={<IconRefresh />}
                   onClick={() => {
                     triggerProviderReconnect(account.provider, account.id);
                     closeDropdown(dropdownId);
                   }}
-                />
+                >{t`Reconnect`}</ListItem>
               )}
-              <MenuItem
-                accent="danger"
-                LeftIcon={IconTrash}
-                text={t`Remove account`}
+              <ListItem
+                color="danger"
+                startIcon={<IconTrash />}
                 onClick={() => {
                   closeDropdown(dropdownId);
-                  openModal(deleteAccountModalId);
+                  openDialog(deleteAccountModalId);
                 }}
-              />
+              >{t`Remove account`}</ListItem>
             </DropdownMenuItemsContainer>
           </DropdownContent>
         }
       />
-      <ConfirmationModal
-        modalInstanceId={deleteAccountModalId}
+      <ConfirmationDialog
+        dialogId={deleteAccountModalId}
         title={t`Data deletion`}
         subtitle={
           <Trans>

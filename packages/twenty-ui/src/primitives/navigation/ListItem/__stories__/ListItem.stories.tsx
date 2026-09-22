@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -9,7 +10,7 @@ import {
 } from '@ui/testing';
 
 import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
-import { LightIconButton } from '@ui/primitives/input/LightIconButton/LightIconButton';
+import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/ListItemColor';
 import { type ListItemIndicator } from '@ui/primitives/navigation/ListItem/types/ListItemIndicator';
@@ -29,16 +30,12 @@ const START_ICON = <IconBell />;
 
 const ACTIONS = (
   <>
-    <LightIconButton
-      Icon={IconEdit}
-      aria-label="Edit"
-      onClick={action('Edit')}
-    />
-    <LightIconButton
-      Icon={IconTrash}
-      aria-label="Delete"
-      onClick={action('Delete')}
-    />
+    <LightIconButton aria-label="Edit" onClick={action('Edit')}>
+      <IconEdit />
+    </LightIconButton>
+    <LightIconButton aria-label="Delete" onClick={action('Delete')}>
+      <IconTrash />
+    </LightIconButton>
   </>
 );
 
@@ -46,6 +43,23 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240 } },
   args: { startIcon: START_ICON },
+};
+
+export const OverflowingLabel: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 160 } },
+  args: { children: 'A workspace preference with a long label' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const label = canvas.getByText('A workspace preference with a long label');
+
+    await userEvent.hover(label);
+
+    expect(await page.findByRole('tooltip')).toHaveTextContent(
+      'A workspace preference with a long label',
+    );
+  },
 };
 
 export const WithDescription: Story = {

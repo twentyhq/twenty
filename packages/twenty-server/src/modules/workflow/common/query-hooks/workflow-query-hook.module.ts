@@ -1,3 +1,4 @@
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { Module } from '@nestjs/common';
 
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
@@ -47,6 +48,7 @@ import { WorkflowVersionQueryValidationWorkspaceService } from 'src/modules/work
 
 @Module({
   imports: [
+    WorkflowCoreModule,
     LogicFunctionModule,
     RecordPositionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

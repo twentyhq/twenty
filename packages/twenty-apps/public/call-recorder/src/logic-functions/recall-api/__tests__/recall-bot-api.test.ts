@@ -691,24 +691,20 @@ describe('recall bot api', () => {
     });
   });
 
-  it('does not retry async transcript creation failures', async () => {
+  it('sends the transcript creation with an idempotency key for the recording', async () => {
     fetchMock.mockResolvedValue({
-      ok: false,
-      status: 503,
-      json: async () => ({ detail: 'service unavailable' }),
+      ok: true,
+      status: 201,
+      json: async () => ({ id: 'recall-transcript-id' }),
     });
 
-    const result = await createAsyncRecallTranscript({
+    await createAsyncRecallTranscript({
       externalRecordingId: 'recall-recording-id',
     });
 
-    expect(result).toEqual({
-      ok: false,
-      status: 503,
-      errorMessage:
-        'Recall API responded with HTTP 503: {"detail":"service unavailable"}',
-    });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][1].headers['Idempotency-Key']).toBe(
+      'create-transcript:recall-recording-id',
+    );
   });
 
   it('fails when the transcript creation response has no id', async () => {
@@ -873,6 +869,30 @@ describe('recall bot api', () => {
 
       expect(fetchMock.mock.calls[3][1].headers['Idempotency-Key']).not.toBe(
         fetchMock.mock.calls[0][1].headers['Idempotency-Key'],
+      );
+    });
+
+    it('retries a lost transcript creation with the same idempotency key', async () => {
+      fetchMock.mockRejectedValueOnce(new Error('socket hang up'));
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 201,
+        json: async () => ({ id: 'recall-transcript-id' }),
+      });
+
+      const resultPromise = createAsyncRecallTranscript({
+        externalRecordingId: 'recall-recording-id',
+      });
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toEqual({
+        ok: true,
+        transcriptId: 'recall-transcript-id',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock.mock.calls[0][1].headers['Idempotency-Key']).toBe(
+        fetchMock.mock.calls[1][1].headers['Idempotency-Key'],
       );
     });
 

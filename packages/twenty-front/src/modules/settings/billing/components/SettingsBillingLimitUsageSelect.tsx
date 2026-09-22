@@ -1,8 +1,9 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
 import { USAGE_LIMIT_OPERATION_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitOperationTypeIcons';
@@ -97,16 +98,27 @@ export const SettingsBillingLimitUsageSelect = ({
             <DropdownMenuItemsContainer>
               {getUsageLimitOperationTypes(browsedDefinition).map(
                 (candidate) => (
-                  <MenuItemSelect
+                  <ListItem
                     key={candidate}
-                    LeftIcon={USAGE_LIMIT_OPERATION_TYPE_ICONS[candidate]}
-                    text={t(USAGE_OPERATION_TYPE_LABELS[candidate])}
+                    onClick={() => handleSelect(candidate)}
+                    role="option"
+                    aria-selected={
+                      resourceType === browsedResourceType &&
+                      operationType === candidate
+                    }
                     selected={
                       resourceType === browsedResourceType &&
                       operationType === candidate
                     }
-                    onClick={() => handleSelect(candidate)}
-                  />
+                    indicator="check"
+                    startIcon={
+                      <SelectOptionIcon
+                        Icon={USAGE_LIMIT_OPERATION_TYPE_ICONS[candidate]}
+                      />
+                    }
+                  >
+                    {t(USAGE_OPERATION_TYPE_LABELS[candidate])}
+                  </ListItem>
                 ),
               )}
             </DropdownMenuItemsContainer>
@@ -115,20 +127,26 @@ export const SettingsBillingLimitUsageSelect = ({
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {definitions.definitions.map((definition) => (
-                <MenuItemSelect
+                <ListItem
                   key={definition.resourceType}
-                  LeftIcon={
-                    USAGE_LIMIT_RESOURCE_TYPE_ICONS[definition.resourceType]
-                  }
-                  text={t(
-                    USAGE_LIMIT_RESOURCE_TYPE_LABELS[definition.resourceType],
-                  )}
-                  selected={false}
-                  hasSubMenu
                   onClick={() =>
                     setBrowsedResourceType(definition.resourceType)
                   }
-                />
+                  role="option"
+                  aria-selected={false}
+                  selected={false}
+                  indicator="check"
+                  hasSubmenu={true}
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={
+                        USAGE_LIMIT_RESOURCE_TYPE_ICONS[definition.resourceType]
+                      }
+                    />
+                  }
+                >
+                  {t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[definition.resourceType])}
+                </ListItem>
               ))}
             </DropdownMenuItemsContainer>
           </DropdownContent>

@@ -1,4 +1,4 @@
-import { Section } from 'twenty-ui/components';
+import { SettingsRow, Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -13,9 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconArchive, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
 import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -139,21 +137,17 @@ export const SettingsAgentSkillsTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemSwitch
-                      LeftIcon={IconArchive}
+                    <SettingsRow
+                      startIcon={<IconArchive />}
                       onCheckedChange={setShowDeactivated}
                       checked={showDeactivated}
-                      text={t`Deactivated`}
-                      size="sm"
-                    />
+                    >{t`Deactivated`}</SettingsRow>
                     {isAdvancedModeEnabled && (
-                      <MenuItemSwitch
-                        LeftIcon={IconSettings}
+                      <SettingsRow
+                        startIcon={<IconSettings />}
                         onCheckedChange={setShowSystemSkills}
                         checked={showSystemSkills}
-                        text={t`System skills`}
-                        size="sm"
-                      />
+                      >{t`System skills`}</SettingsRow>
                     )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

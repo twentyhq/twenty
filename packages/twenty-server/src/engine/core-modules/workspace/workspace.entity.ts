@@ -359,6 +359,13 @@ export class WorkspaceEntity {
   @Column({ type: 'jsonb', nullable: false, default: {} })
   aiModelIdByTier: Partial<Record<AiModelTier, string>>;
 
+  // Which evaluation model a Classify step lands on when it names none. Null
+  // means whichever the instance offers, so a workspace that never chooses
+  // still runs and picks up an evaluation provider the day one is configured.
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'text', nullable: true })
+  aiEvaluationModelId: string | null;
+
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
   aiAdditionalInstructions: string | null;

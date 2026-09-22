@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { CONFIG_VARIABLE_SOURCE_OPTIONS } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
 import { type ConfigVariableFilterCategory } from '@/settings/admin-panel/config-variables/types/ConfigVariableFilterCategory';
@@ -11,9 +13,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelectTag } from 'twenty-ui/primitives/navigation';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
 type ConfigVariableOptionsDropdownContentProps = {
   selectedCategory: ConfigVariableFilterCategory | null;
   onSelectCategory: (category: ConfigVariableFilterCategory | null) => void;
@@ -37,7 +36,6 @@ export const ConfigVariableOptionsDropdownContent = ({
   onGroupFilterChange,
   onShowHiddenChange,
 }: ConfigVariableOptionsDropdownContentProps) => {
-  const { theme } = useContext(ThemeContext);
   const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
@@ -50,40 +48,43 @@ export const ConfigVariableOptionsDropdownContent = ({
     return (
       <DropdownContent>
         <DropdownMenuItemsContainer>
-          <MenuItemSelectTag
-            text={t`Source`}
-            color="transparent"
+          <ListItem
             onClick={() => onSelectCategory('source')}
-          />
-          <MenuItemSelectTag
-            text={t`Group`}
-            color="transparent"
+            role="option"
+            aria-selected={false}
+            selected={false}
+            indicator="check"
+          >
+            <Tag
+              color={'transparent'}
+              borderStyle="dashed"
+              variant={'soft'}
+            >{t`Source`}</Tag>
+          </ListItem>
+          <ListItem
             onClick={() => onSelectCategory('group')}
-          />
+            role="option"
+            aria-selected={false}
+            selected={false}
+            indicator="check"
+          >
+            <Tag
+              color={'transparent'}
+              borderStyle="dashed"
+              variant={'soft'}
+            >{t`Group`}</Tag>
+          </ListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
-          <MenuItem
-            text={
-              showHiddenGroupVariables
-                ? t`Hide hidden groups`
-                : t`Show hidden groups`
-            }
-            LeftIcon={() =>
-              showHiddenGroupVariables ? (
-                <IconEyeOff
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              ) : (
-                <IconEye
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              )
-            }
+          <ListItem
+            startIcon={showHiddenGroupVariables ? <IconEyeOff /> : <IconEye />}
             onClick={() => onShowHiddenChange(!showHiddenGroupVariables)}
-          />
+          >
+            {showHiddenGroupVariables
+              ? t`Hide hidden groups`
+              : t`Show hidden groups`}
+          </ListItem>
         </DropdownMenuItemsContainer>
       </DropdownContent>
     );
@@ -106,32 +107,46 @@ export const ConfigVariableOptionsDropdownContent = ({
         {selectedCategory === 'source' && (
           <>
             {availableSourceOptions.map((option) => (
-              <MenuItemSelectTag
+              <ListItem
                 key={option.value}
-                text={option.label}
-                color={option.color}
-                selected={option.value === sourceFilter}
                 onClick={() => {
                   onSourceFilterChange(option.value);
                   onSelectCategory(null);
                 }}
-              />
+                role="option"
+                aria-selected={option.value === sourceFilter}
+                selected={option.value === sourceFilter}
+                indicator="check"
+              >
+                <Tag color={option.color} borderStyle="dashed" variant={'soft'}>
+                  {option.label}
+                </Tag>
+              </ListItem>
             ))}
           </>
         )}
         {selectedCategory === 'group' && (
           <>
             {groupOptions.map((option) => (
-              <MenuItemSelectTag
+              <ListItem
                 key={option.value}
-                text={option.label}
-                color="transparent"
-                selected={option.value === groupFilter}
                 onClick={() => {
                   onGroupFilterChange(option.value);
                   onSelectCategory(null);
                 }}
-              />
+                role="option"
+                aria-selected={option.value === groupFilter}
+                selected={option.value === groupFilter}
+                indicator="check"
+              >
+                <Tag
+                  color={'transparent'}
+                  borderStyle="dashed"
+                  variant={'soft'}
+                >
+                  {option.label}
+                </Tag>
+              </ListItem>
             ))}
           </>
         )}

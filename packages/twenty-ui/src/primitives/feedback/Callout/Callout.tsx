@@ -1,10 +1,11 @@
 import { clsx } from 'clsx';
 import { useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { IconHelp, IconX } from '@ui/icon/components/TablerIcons';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { LightIconButton, Button } from '@ui/primitives/input';
+import { Button } from '@ui/primitives/input';
 
 import styles from './Callout.module.scss';
 
@@ -34,7 +35,8 @@ const CALLOUT_ICON_VARIANT_CLASS_NAMES: Record<CalloutVariant, string> = {
 export type CalloutProps = {
   variant: CalloutVariant;
   title: string;
-  description: string;
+  description?: string;
+  fullWidth?: boolean;
   Icon?: IconComponent;
   action?: {
     label: string;
@@ -48,6 +50,7 @@ export const Callout = ({
   variant,
   title,
   description,
+  fullWidth = false,
   Icon = IconHelp,
   action,
   isClosable = false,
@@ -73,6 +76,7 @@ export const Callout = ({
       className={clsx(
         styles.container,
         CALLOUT_CONTAINER_VARIANT_CLASS_NAMES[variant],
+        fullWidth && styles.containerFullWidth,
       )}
     >
       <div className={styles.header}>
@@ -86,22 +90,26 @@ export const Callout = ({
         </div>
         <div className={styles.title}>{title}</div>
         {isClosable && (
-          <LightIconButton
-            Icon={IconX}
-            size="small"
+          <Button
+            startIcon={<IconX />}
+            className={styles.closeButton}
+            variant="ghost"
+            size="sm"
             aria-label="Close"
             onClick={handleClose}
           />
         )}
       </div>
-      <div
-        className={clsx(
-          styles.descriptionWrapper,
-          isDefined(action) && styles.descriptionWrapperWithAction,
-        )}
-      >
-        <div className={styles.description}>{description}</div>
-      </div>
+      {isNonEmptyString(description) && (
+        <div
+          className={clsx(
+            styles.descriptionWrapper,
+            isDefined(action) && styles.descriptionWrapperWithAction,
+          )}
+        >
+          <div className={styles.description}>{description}</div>
+        </div>
+      )}
       {isDefined(action) && (
         <div className={styles.footer}>
           <Button

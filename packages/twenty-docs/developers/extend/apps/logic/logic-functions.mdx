@@ -309,7 +309,7 @@ const handler = async (event: RoutePayload) => {
 `httpMethods` replaces the default rather than adding to it, so `['GET']` alone makes the route reject `POST`. Only `GET` and `POST` are supported. Leave it unset unless the provider needs the second verb: a route that declares `GET` will have its resolver executed by any unauthenticated caller, including the crawlers and link unfurlers that send `GET` unprompted. Anything the platform does not have a method for is answered `405` without the resolver ever running.
 
 <Note>
-**The application must be claimed and installed on its owner workspace.** Because the resolver runs in the **owner workspace** (the workspace that owns the application registration), a server route trigger only works once the application has been *claimed* — i.e. it has an owner workspace — **and** that application is **installed on the owner workspace**. Until both are true the resolver has nowhere to run, so the route cannot be dispatched. An application that exposes a `serverRouteTriggerSettings` logic function therefore cannot be listed in the marketplace until it is claimed and installed on its owner workspace.
+**The application must be claimed and installed on its owner workspace.** Follow [Claiming your app](/developers/extend/apps/operations/publishing#claiming-your-app) to assign an owner, then install the app in that workspace. Until both are true, the resolver has nowhere to run and the server route returns `404` (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed elsewhere. Marketplace search hides apps with server routes until this setup and all required server variables are complete. See [owner workspace costs and availability](/developers/extend/apps/operations/publishing#owner-workspace-costs-and-availability) for billing and operational details.
 </Note>
 
 **Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return either a `Response`, or `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of either). On the dispatch path, the `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`. A result that matches neither shape — including one whose identifiers are not UUIDs — is rejected with `502`.
@@ -668,6 +668,60 @@ export default defineLogicFunction({
 });
 ```
 
+##### Rendering a tool call with a front component
+
+By default a tool call shows up in the AI chat as a step row: the tool's name, and a spinner until it returns. Point `toolTriggerSettings.frontComponentUniversalIdentifier` at one of your [front components](/developers/extend/apps/layout/front-components) and the chat renders that component inline instead, for every call to this tool.
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  },
+});
+```
+
+The component reads the call it is rendering with `useToolCall()`:
+
+```tsx src/front-components/invoice-preview.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useToolCall } from 'twenty-sdk/front-component';
+
+const InvoicePreview = () => {
+  const toolCall = useToolCall();
+
+  if (toolCall === null) {
+    return null;
+  }
+
+  if (toolCall.status !== 'output-available') {
+    return <p>Generating the invoice...</p>;
+  }
+
+  const { invoiceUrl } = toolCall.output ?? {};
+
+  return typeof invoiceUrl === 'string' ? (
+    <a href={invoiceUrl}>Open the invoice</a>
+  ) : (
+    <p>The invoice could not be generated.</p>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'invoice-preview',
+  component: InvoicePreview,
+});
+```
+
+The component mounts as soon as the agent has finished streaming its arguments, so it owns the whole call, not just the result. `toolCall.status` walks through `input-available`, the approval states when the tool needs one, and then `output-available`, `output-denied` or `output-error`; `input` is what the agent proposed, `output` what your handler returned. Render each state you care about, since the step row is no longer there to cover them.
+
+Both `input` and `output` are typed `Record<string, unknown>`, so narrow each field before you use it rather than casting. That matters most for anything you hand to the DOM: a value you drop into an `href` without checking it is a string is a link the tool's output controls.
+
+<Note>
+If the identifier matches no front component in the app, the chat falls back to the default step row. Front components in the AI chat run under the same [role your app declares](/developers/extend/apps/config/roles), so a widget can only read and write what the app itself is allowed to.
+</Note>
+
 ##### A complete workflow action example
 
 `workflowActionTriggerSettings` accepts four fields:
@@ -763,6 +817,62 @@ const handler = async (params: { parentMessageId?: string }) => {
 <Note>
 **Install hooks** — pre-install, post-install, and uninstall handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and `defineUninstallLogicFunction`.
 </Note>
+
+## Health check
+
+Declare a health check with `defineHealthCheck` to report whether your app is actually able to run. It is for what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. What Twenty can see by itself — a required variable nobody filled in — is covered by [`isRequired`](/developers/extend/apps/config/application) and needs no code.
+
+It runs server-side, so it reads secret variables like any other logic function. The handler takes no arguments.
+
+```ts src/logic-functions/health-check.ts
+import { defineHealthCheck } from 'twenty-sdk/define';
+
+export default defineHealthCheck({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'health-check',
+  handler: async () => {
+    const response = await fetch('https://api.stripe.com/v1/account', {
+      headers: { Authorization: `Bearer ${process.env.API_KEY}` },
+    });
+
+    if (response.status === 401) {
+      return {
+        status: 'ERROR',
+        title: 'Your Stripe key was revoked',
+        description: 'Generate a new one from the Stripe dashboard.',
+        action: { label: 'Add a key', location: '/settings/billing' },
+      };
+    }
+
+    return { status: 'OK' };
+  },
+});
+```
+
+The result is a discriminated union, not a boolean:
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `status` | Yes | `OK` when there is nothing to report, otherwise `SUCCESS`, `INFO`, `WARNING`, `ERROR` or `NEUTRAL` |
+| `title` | For every status but `OK` | The banner's first line on the app's settings page |
+| `description` | No | A second line under the title, for what to do about it |
+| `action` | No | `{ label, location }` for the banner's button. `location` is where the button redirects to: a path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab, or a hash alone such as `#variables` to move to a tab of your own settings page; omit it to land on the app's configuration tab |
+
+`OK` shows no banner at all; every other status renders the title in a banner coloured after it, so pick the one that matches how much the person needs to act. The statuses are Twenty's own `ApplicationHealthStatus`, so the plain string and the enum member are interchangeable:
+
+```ts
+import { ApplicationHealthStatus } from 'twenty-sdk/define';
+
+return { status: ApplicationHealthStatus.WARNING, title: 'Quota almost reached' };
+```
+
+Twenty runs the check when the app's settings page opens and shows the result in a banner there. Nothing is stored, so what you report is always what the check just returned.
+
+A check that throws, times out or returns a shape Twenty cannot read is treated as **unknown**, never as an error, and no banner is shown. A third-party outage should not paint every installed app red — if it did, people would learn to ignore the signal.
+
+The location has to stay inside Twenty, so it starts with `/` or `#`: an external, protocol-relative or relative one loses its button rather than becoming a redirect somewhere else. The button is also dropped when the app reports no location and has no configuration tab to fall back to, so a check on an app with no variables and no custom settings tab shows its title without a dead button.
+
+Only one health check is allowed per app; declaring more than one fails the build.
 
 ## Create a timeline activity
 
@@ -905,6 +1015,8 @@ setCompany(result.company);
 <Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
 
 `MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads. It takes the same `runAs` option as `CoreApiClient` — see [Whose access a call uses](#whose-access-a-call-uses).
+
+It is also how an app reads and updates its own [application variables](/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime), in a logic function as in a front component. An application token only ever reaches its own application, in its own workspace.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
