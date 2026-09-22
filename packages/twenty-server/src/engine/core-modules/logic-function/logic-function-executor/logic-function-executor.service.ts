@@ -1,6 +1,7 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
   DEFAULT_API_KEY_NAME,
@@ -73,16 +74,18 @@ export class LogicFunctionExecutionException extends CustomException<LogicFuncti
   constructor(
     message: string,
     public readonly code: LogicFunctionExecutionExceptionCode,
+    {
+      userFriendlyMessage,
+      statusCode,
+    }: { userFriendlyMessage?: MessageDescriptor; statusCode?: number } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
-        code === LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED
-          ? msg`Rate limit reached. Please try again later.`
-          : msg`An error occurred.`,
-      statusCode:
-        code === LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED
-          ? HttpStatus.TOO_MANY_REQUESTS
-          : undefined,
+        userFriendlyMessage ??
+        (code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+          ? msg`Logic function not found.`
+          : msg`An error occurred.`),
+      statusCode,
     });
     this.name = 'LogicFunctionExecutionException';
   }
@@ -289,6 +292,10 @@ export class LogicFunctionExecutorService {
       throw new LogicFunctionExecutionException(
         'Logic function execution rate limit exceeded',
         LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
+        {
+          userFriendlyMessage: error.userFriendlyMessage,
+          statusCode: error.statusCode,
+        },
       );
     }
   }
