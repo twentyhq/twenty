@@ -148,11 +148,11 @@ export class UpgradeApplicationCommand extends CommandRunner {
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would upgrade "${registration.name}" (${registration.universalIdentifier}) to version ${targetVersion} on ${impactedWorkspaceIds.length} workspace(s)${
+        `[DRY RUN] Would enqueue an upgrade job for "${registration.name}" (${registration.universalIdentifier}) on ${impactedWorkspaceIds.length} workspace(s)${
           impactedWorkspaceIds.length > 0
             ? `: ${impactedWorkspaceIds.join(', ')}`
             : ''
-        }`,
+        }. Jobs install the latest available version when they run, currently ${targetVersion}`,
       );
 
       return;
@@ -172,7 +172,7 @@ export class UpgradeApplicationCommand extends CommandRunner {
         : `${impactedWorkspaceIds.length} workspace(s)`;
 
       const isConfirmed = await askCommandConfirmation(
-        `Confirm enqueuing the upgrade of application ${registration.universalIdentifier} to version ${targetVersion} on ${confirmationTarget}`,
+        `Confirm enqueuing upgrade jobs for application ${registration.universalIdentifier} on ${confirmationTarget}. Jobs install the latest available version when they run, currently ${targetVersion}`,
       );
 
       if (!isConfirmed) {
@@ -190,7 +190,7 @@ export class UpgradeApplicationCommand extends CommandRunner {
       });
 
     this.logger.log(
-      `Enqueued ${enqueuedJobIds.length} upgrade job(s) on ${MessageQueue.applicationUpgradeQueue}: workers will bring "${registration.name}" (${registration.universalIdentifier}) to version ${targetVersion} on ${impactedWorkspaceIds.length} workspace(s)`,
+      `Enqueued ${enqueuedJobIds.length} upgrade job(s) on ${MessageQueue.applicationUpgradeQueue} for "${registration.name}" (${registration.universalIdentifier}) on ${impactedWorkspaceIds.length} workspace(s). Jobs install the latest available version when they run, currently ${targetVersion}`,
     );
 
     this.logger.log(chalk.blue('Command completed!'));

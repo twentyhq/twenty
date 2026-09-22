@@ -47,7 +47,10 @@ const buildApplication = ({
 describe('ApplicationUpgradeService', () => {
   let service: ApplicationUpgradeService;
 
-  const appRegistrationRepository = { findOneOrFail: jest.fn() };
+  const appRegistrationRepository = {
+    findOne: jest.fn(),
+    findOneOrFail: jest.fn(),
+  };
   const applicationRepository = { find: jest.fn(), findOne: jest.fn() };
   const applicationInstallService = { installApplication: jest.fn() };
   const workspaceVersionService = { getProvisionedWorkspaceIds: jest.fn() };
@@ -56,6 +59,7 @@ describe('ApplicationUpgradeService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
+    appRegistrationRepository.findOne.mockResolvedValue(appRegistration);
     appRegistrationRepository.findOneOrFail.mockResolvedValue(appRegistration);
     workspaceVersionService.getProvisionedWorkspaceIds.mockResolvedValue([
       OUTDATED_WORKSPACE_ID,
@@ -310,8 +314,23 @@ describe('ApplicationUpgradeService', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('skips when the registration no longer exists', async () => {
+      appRegistrationRepository.findOne.mockResolvedValue(null);
+
+      await service.upgradeWorkspaceApplicationToLatestVersion({
+        applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+        workspaceId: OUTDATED_WORKSPACE_ID,
+        onlyAutoUpgrade: false,
+      });
+
+      expect(applicationRepository.findOne).not.toHaveBeenCalled();
+      expect(
+        applicationInstallService.installApplication,
+      ).not.toHaveBeenCalled();
+    });
+
     it('skips when the registration has no latest available version', async () => {
-      appRegistrationRepository.findOneOrFail.mockResolvedValue({
+      appRegistrationRepository.findOne.mockResolvedValue({
         ...appRegistration,
         latestAvailableVersion: null,
       });

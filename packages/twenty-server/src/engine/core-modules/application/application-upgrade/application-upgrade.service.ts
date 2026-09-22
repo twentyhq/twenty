@@ -172,7 +172,7 @@ export class ApplicationUpgradeService {
     });
 
     this.logger.log(
-      `Enqueued ${jobIds.length} upgrade job(s) to bring ${appRegistration.universalIdentifier} to version ${targetVersion}`,
+      `Enqueued ${jobIds.length} upgrade job(s) for ${appRegistration.universalIdentifier}, latest available version is ${targetVersion}`,
     );
 
     return jobIds;
@@ -187,9 +187,17 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     onlyAutoUpgrade: boolean;
   }): Promise<void> {
-    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+    const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: applicationRegistrationId },
     });
+
+    if (!isDefined(appRegistration)) {
+      this.logger.log(
+        `Skipping upgrade for application registration ${applicationRegistrationId} on workspace ${workspaceId}: registration no longer exists`,
+      );
+
+      return;
+    }
 
     const targetVersion = appRegistration.latestAvailableVersion;
 
