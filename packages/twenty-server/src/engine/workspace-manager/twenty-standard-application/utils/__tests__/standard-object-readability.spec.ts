@@ -89,6 +89,18 @@ describe('Standard object readability', () => {
     });
   });
 
+  // The exclusion above only proves it is not OPEN. Reads and writes go through
+  // the chat layer's own auth, so a later relaxation to INHERITED would hand the
+  // generic API a conversation link it must never expose.
+  it('declares agentChatThreadTarget SYSTEM for readability and writability', () => {
+    expect(
+      findStandardFlatObjectMetadata('agentChatThreadTarget'),
+    ).toMatchObject({
+      readability: MetadataReadability.SYSTEM,
+      writability: MetadataWritability.SYSTEM,
+    });
+  });
+
   it.each(inheritedObjectNames)(
     'declares %s INHERITED from its parent field',
     (objectName) => {
