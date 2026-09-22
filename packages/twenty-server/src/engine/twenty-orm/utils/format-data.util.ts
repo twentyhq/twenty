@@ -104,7 +104,10 @@ export function formatCompositeField(
 
       formattedCompositeField[fullFieldName] =
         fieldMetadata.type === FieldMetadataType.EMAILS
-          ? normalizeEmailsSubfieldValue(subFieldKey, formattedValue)
+          ? normalizeEmailsSubfieldValue({
+              subFieldName: subFieldKey,
+              value: formattedValue,
+            })
           : formattedValue;
     }
   }

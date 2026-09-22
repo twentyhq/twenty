@@ -1,7 +1,8 @@
 import { type QueryRunner } from 'typeorm';
 
+import { FIRST_EMAIL_RECORD_ID } from 'src/database/commands/upgrade-version-command/2-42/constants/first-email-record-id.constant';
+
 const UPDATE_BATCH_SIZE = 1000;
-const FIRST_RECORD_ID = '00000000-0000-0000-0000-000000000000';
 
 export const applyEmailFieldRewrites = async ({
   runner,
@@ -16,7 +17,7 @@ export const applyEmailFieldRewrites = async ({
   additionalColumn: string;
   candidateTable: string;
 }): Promise<void> => {
-  let afterId = FIRST_RECORD_ID;
+  let afterId = FIRST_EMAIL_RECORD_ID;
 
   for (;;) {
     const batch = await runner.manager.query<{ id: string }[]>(

@@ -1,11 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type QueryRunner } from 'typeorm';
 
+import { FIRST_EMAIL_RECORD_ID } from 'src/database/commands/upgrade-version-command/2-42/constants/first-email-record-id.constant';
 import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 import { normalizeEmailsSubfieldValue } from 'src/engine/core-modules/record-transformer/utils/normalize-emails-subfield-value.util';
 
 const BACKFILL_BATCH_SIZE = 5000;
-const FIRST_RECORD_ID = '00000000-0000-0000-0000-000000000000';
 
 type EmailRow = {
   id: string;
@@ -31,7 +31,7 @@ export const stageEmailFieldRewrites = async ({
   additionalColumn: string;
   candidateTable: string;
 }): Promise<void> => {
-  let afterId = FIRST_RECORD_ID;
+  let afterId = FIRST_EMAIL_RECORD_ID;
 
   for (;;) {
     const rows = await runner.manager.query<EmailRow[]>(
@@ -58,10 +58,10 @@ LIMIT $2
       const primaryEmail = isNonEmptyString(row.primaryEmail)
         ? normalizeEmailAddress(row.primaryEmail)
         : row.primaryEmail;
-      const additionalEmails = normalizeEmailsSubfieldValue(
-        'additionalEmails',
-        row.additionalEmails,
-      );
+      const additionalEmails = normalizeEmailsSubfieldValue({
+        subFieldName: 'additionalEmails',
+        value: row.additionalEmails,
+      });
       const primaryChanged = primaryEmail !== row.primaryEmail;
       const additionalChanged =
         JSON.stringify(additionalEmails) !== JSON.stringify(row.additionalEmails);
