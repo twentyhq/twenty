@@ -6,7 +6,6 @@ import { tmpdir } from 'os';
 import { isAbsolute, join, relative, resolve } from 'path';
 import { pipeline } from 'stream/promises';
 
-import { msg } from '@lingui/core/macro';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Like, Repository } from 'typeorm';
@@ -160,11 +159,13 @@ export class ApplicationTarballService {
       );
     }
 
-    if (file.status === FILE_STATUS.UPLOADED) {
-      return this.findRegistrationOfFinalizedTarballOrThrow({
-        file,
-        ownerWorkspaceId,
-      });
+    const attachedRegistration = await this.findRegistrationAttachedToFile({
+      fileId: file.id,
+      ownerWorkspaceId,
+    });
+
+    if (isDefined(attachedRegistration)) {
+      return attachedRegistration;
     }
 
     const applicationUniversalIdentifier =
@@ -179,11 +180,13 @@ export class ApplicationTarballService {
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
     };
 
-    await this.fileUploadCompletionService.completeUploadedFile({
-      workspaceId: ownerWorkspaceId,
-      file,
-      storageLocation,
-    });
+    if (file.status !== FILE_STATUS.UPLOADED) {
+      await this.fileUploadCompletionService.completeUploadedFile({
+        workspaceId: ownerWorkspaceId,
+        file,
+        storageLocation,
+      });
+    }
 
     try {
       return await this.withTempDir(async (tempDir) => {
@@ -206,7 +209,7 @@ export class ApplicationTarballService {
         });
       });
     } catch (error) {
-      await this.deleteTarballFileSilently({
+      await this.deleteTarballFileUnlessAttached({
         fileId: file.id,
         ownerWorkspaceId,
       });
@@ -215,28 +218,16 @@ export class ApplicationTarballService {
     }
   }
 
-  private async findRegistrationOfFinalizedTarballOrThrow({
-    file,
+  private async findRegistrationAttachedToFile({
+    fileId,
     ownerWorkspaceId,
   }: {
-    file: FileEntity;
+    fileId: string;
     ownerWorkspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.appRegistrationRepository.findOne({
-      where: { tarballFileId: file.id, ownerWorkspaceId },
+  }): Promise<ApplicationRegistrationEntity | null> {
+    return this.appRegistrationRepository.findOne({
+      where: { tarballFileId: fileId, ownerWorkspaceId },
     });
-
-    if (isDefined(registration)) {
-      return registration;
-    }
-
-    throw new ApplicationRegistrationException(
-      `Tarball file ${file.id} is finalized but attached to no registration`,
-      ApplicationRegistrationExceptionCode.INVALID_INPUT,
-      {
-        userFriendlyMessage: msg`This tarball upload has already been finalized.`,
-      },
-    );
   }
 
   private async registerExtractedTarball({
@@ -292,16 +283,6 @@ export class ApplicationTarballService {
       },
     });
 
-    if (
-      isDefined(previousTarballFileId) &&
-      previousTarballFileId !== savedFile.id
-    ) {
-      await this.deleteTarballFileSilently({
-        fileId: previousTarballFileId,
-        ownerWorkspaceId,
-      });
-    }
-
     await this.applicationRegistrationAssetService.storeRegistrationAssets({
       applicationRegistrationId: appRegistration.id,
       manifestApplication: manifest.application,
@@ -331,6 +312,16 @@ export class ApplicationTarballService {
           appRegistration.id,
         );
       }
+    }
+
+    if (
+      isDefined(previousTarballFileId) &&
+      previousTarballFileId !== savedFile.id
+    ) {
+      await this.deleteTarballFileSilently({
+        fileId: previousTarballFileId,
+        ownerWorkspaceId,
+      });
     }
 
     return this.appRegistrationRepository.findOneOrFail({
@@ -521,6 +512,25 @@ export class ApplicationTarballService {
         toDelete: false,
       },
     });
+  }
+
+  private async deleteTarballFileUnlessAttached({
+    fileId,
+    ownerWorkspaceId,
+  }: {
+    fileId: string;
+    ownerWorkspaceId: string;
+  }): Promise<void> {
+    const attachedRegistration = await this.findRegistrationAttachedToFile({
+      fileId,
+      ownerWorkspaceId,
+    });
+
+    if (isDefined(attachedRegistration)) {
+      return;
+    }
+
+    await this.deleteTarballFileSilently({ fileId, ownerWorkspaceId });
   }
 
   private async deleteTarballFileSilently({

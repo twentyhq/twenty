@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 
+import { type ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { completeAppTarballUpload } from 'test/integration/metadata/suites/application/utils/complete-app-tarball-upload.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import {
@@ -7,6 +8,7 @@ import {
   createAppTarballUpload,
 } from 'test/integration/metadata/suites/application/utils/create-app-tarball-upload.util';
 import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
 const buildManifest = (universalIdentifier: string) =>
@@ -248,6 +250,80 @@ describe('Direct app tarball upload', () => {
     );
 
     expect(registration.tarballFileId).toBe(first.uploadTarget.fileId);
+  });
+
+  it('registers a promoted upload whose registration was lost', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const { uploadTarget, completion } = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+    );
+
+    expect(completion.errors).toBeUndefined();
+
+    await ds.query(`DELETE FROM core."applicationRegistration" WHERE id = $1`, [
+      completion.data!.completeAppTarballUpload.id,
+    ]);
+
+    const { data, errors } = await completeAppTarballUpload({
+      fileId: uploadTarget.fileId,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data?.completeAppTarballUpload.universalIdentifier).toBe(
+      universalIdentifier,
+    );
+
+    createdRegistrationIds.push(data!.completeAppTarballUpload.id);
+
+    const registration = await findRegistrationRow(
+      data!.completeAppTarballUpload.id,
+    );
+
+    expect(registration.tarballFileId).toBe(uploadTarget.fileId);
+    expect((await findFileRow(uploadTarget.fileId)).status).toBe('UPLOADED');
+  });
+
+  it('keeps the registration on the new tarball when a step after attaching it fails', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const first = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+    );
+
+    expect(first.completion.errors).toBeUndefined();
+
+    const storeRegistrationAssetsSpy = jest
+      .spyOn(
+        getAppProviderByClassName<ApplicationRegistrationAssetService>(
+          'ApplicationRegistrationAssetService',
+        ),
+        'storeRegistrationAssets',
+      )
+      .mockRejectedValueOnce(new Error('Asset storage unavailable'));
+
+    try {
+      const second = await deployTarball(
+        await buildValidTarball({ universalIdentifier, version: '1.1.0' }),
+        { expectToFail: true },
+      );
+
+      expect(second.completion.errors).toBeDefined();
+
+      const registration = await findRegistrationRow(
+        first.completion.data!.completeAppTarballUpload.id,
+      );
+
+      expect(registration.tarballFileId).toBe(second.uploadTarget.fileId);
+      expect((await findFileRow(second.uploadTarget.fileId)).status).toBe(
+        'UPLOADED',
+      );
+      expect((await findFileRow(first.uploadTarget.fileId)).status).toBe(
+        'UPLOADED',
+      );
+    } finally {
+      storeRegistrationAssetsSpy.mockRestore();
+    }
   });
 
   it('rejects a tarball without a manifest and drops the promoted file', async () => {
