@@ -26,23 +26,26 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
     globalRecordCreationCommandMenuItems.some(
       (item) => item.creationTargetObjectMetadataId === contextObjectMetadataId,
     );
-  const pinnedCreationCommands = sortedCommandMenuItems.filter(
-    (item) =>
-      item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
-      item.isPinned &&
-      hasCurrentObjectCreationCommand,
+
+  const isPinnedContextualCreationCommand = (item: CommandMenuItemDefinition) =>
+    hasCurrentObjectCreationCommand &&
+    item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
+    item.isPinned;
+
+  const hasPinnedContextualCreationCommand = sortedCommandMenuItems.some(
+    isPinnedContextualCreationCommand,
   );
 
   return [
-    ...pinnedCreationCommands,
     ...sortedCommandMenuItems.filter(
       (item) =>
-        item.engineComponentKey !== EngineComponentKey.CREATE_NEW_RECORD &&
-        item.engineComponentKey !== EngineComponentKey.NAVIGATION,
+        isPinnedContextualCreationCommand(item) ||
+        (item.engineComponentKey !== EngineComponentKey.CREATE_NEW_RECORD &&
+          item.engineComponentKey !== EngineComponentKey.NAVIGATION),
     ),
     ...globalRecordCreationCommandMenuItems.filter(
       (item) =>
-        pinnedCreationCommands.length === 0 ||
+        !hasPinnedContextualCreationCommand ||
         item.creationTargetObjectMetadataId !== contextObjectMetadataId,
     ),
     ...sortedCommandMenuItems.filter(

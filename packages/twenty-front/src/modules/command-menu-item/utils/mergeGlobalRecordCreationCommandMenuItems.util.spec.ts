@@ -105,35 +105,71 @@ const taskCreationCommand = {
 };
 const globalCreationCommands = [companyCreationCommand, taskCreationCommand];
 
-it('pins contextual creation first and removes its duplicate from global creation', () => {
-  const askAiCommand = {
-    ...pageCommand,
-    id: 'ask-ai',
-    isPinned: true,
-    position: 0,
-  };
+const askAiCommand = {
+  ...pageCommand,
+  id: 'ask-ai',
+  isPinned: true,
+  position: 0,
+};
+const pinnedPageCommand = {
+  ...pageCommand,
+  id: 'pinned-page',
+  isPinned: true,
+  position: 5,
+};
+
+it('keeps pinned contextual creation at its position and removes its global duplicate', () => {
   const result = mergeGlobalRecordCreationCommandMenuItems({
-    commandMenuItems: [askAiCommand, pinnedCreationCommand],
+    commandMenuItems: [pinnedPageCommand, pinnedCreationCommand, askAiCommand],
     globalRecordCreationCommandMenuItems: globalCreationCommands,
     shouldDisplayGlobalRecordCreationCommands: true,
     contextObjectMetadataId: 'company',
   });
 
   expect(result).toEqual([
-    pinnedCreationCommand,
     askAiCommand,
+    pinnedCreationCommand,
+    pinnedPageCommand,
     taskCreationCommand,
   ]);
-  expect(result[0].creationTargetObjectMetadataId).toBeUndefined();
+  expect(result[1].creationTargetObjectMetadataId).toBeUndefined();
 });
 
-it('keeps all global creation commands when contextual creation is unavailable', () => {
+it('follows the configured order when contextual creation is moved below another pinned command', () => {
+  const movedCreationCommand = { ...pinnedCreationCommand, position: 7 };
+
   expect(
     mergeGlobalRecordCreationCommandMenuItems({
-      commandMenuItems: [pageCommand],
+      commandMenuItems: [movedCreationCommand, pinnedPageCommand],
       globalRecordCreationCommandMenuItems: globalCreationCommands,
       shouldDisplayGlobalRecordCreationCommands: true,
       contextObjectMetadataId: 'company',
+    }),
+  ).toEqual([pinnedPageCommand, movedCreationCommand, taskCreationCommand]);
+});
+
+it('preserves the option to hide the contextual command short label', () => {
+  const result = mergeGlobalRecordCreationCommandMenuItems({
+    commandMenuItems: [{ ...pinnedCreationCommand, shortLabel: null }],
+    globalRecordCreationCommandMenuItems: globalCreationCommands,
+    shouldDisplayGlobalRecordCreationCommands: true,
+    contextObjectMetadataId: 'company',
+  });
+
+  expect(result[0]).toMatchObject({
+    label: 'Create Company',
+    shortLabel: null,
+    icon: 'IconPlus',
+  });
+});
+
+it('does not pin creation for an object without a global creation command', () => {
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [pageCommand, pinnedCreationCommand],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: true,
+      contextObjectMetadataId: 'person',
     }),
   ).toEqual([pageCommand, ...globalCreationCommands]);
 });
@@ -149,27 +185,12 @@ it('keeps the current object in global creation when contextual creation is unpi
   ).toEqual(globalCreationCommands);
 });
 
-it('does not pin an arbitrary object outside an object context', () => {
+it('does not pin creation outside an object context', () => {
   expect(
     mergeGlobalRecordCreationCommandMenuItems({
-      commandMenuItems: [pageCommand],
+      commandMenuItems: [pageCommand, pinnedCreationCommand],
       globalRecordCreationCommandMenuItems: globalCreationCommands,
       shouldDisplayGlobalRecordCreationCommands: true,
     }),
   ).toEqual([pageCommand, ...globalCreationCommands]);
-});
-
-it('preserves the option to hide the contextual command short label', () => {
-  const result = mergeGlobalRecordCreationCommandMenuItems({
-    commandMenuItems: [{ ...pinnedCreationCommand, shortLabel: null }],
-    globalRecordCreationCommandMenuItems: globalCreationCommands,
-    shouldDisplayGlobalRecordCreationCommands: false,
-    contextObjectMetadataId: 'company',
-  });
-
-  expect(result[0]).toMatchObject({
-    label: 'Create Company',
-    shortLabel: null,
-    icon: 'IconPlus',
-  });
 });
