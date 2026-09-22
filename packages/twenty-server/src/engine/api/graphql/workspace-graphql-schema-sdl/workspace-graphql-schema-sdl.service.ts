@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
 import { CORE_WORKFLOW_APP_OPERATIONS_SDL_APPENDER } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/core-workflow-app-operations-sdl.constants';
 import { type CoreWorkflowAppOperationsSdlAppender } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/types/core-workflow-app-operations-sdl-appender.type';
-import { computeSchemaScopeApplicationIds } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/compute-schema-scope-application-ids.util';
+import { computeSchemaScopeFlatEntityIds } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/compute-schema-scope-flat-entity-ids.util';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { WorkspaceGraphQLSchemaGenerator } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -17,7 +17,8 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
+import { getSubFlatEntityByIdsMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-by-ids-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -93,35 +94,42 @@ export class WorkspaceGraphqlSchemaSDLService {
           TWENTY_STANDARD_APPLICATION.universalIdentifier
         ];
 
-      const applicationIds = computeSchemaScopeApplicationIds({
-        initialApplicationIds: isDefined(twentyStandardApplicationId)
-          ? [twentyStandardApplicationId, applicationId]
-          : [applicationId],
-        flatObjectMetadataMaps: allFlatObjectMetadataMaps,
-        flatFieldMetadataMaps: allFlatFieldMetadataMaps,
+      const applicationIds = isDefined(twentyStandardApplicationId)
+        ? [twentyStandardApplicationId, applicationId]
+        : [applicationId];
+
+      const { flatObjectMetadataIds, flatFieldMetadataIds } =
+        computeSchemaScopeFlatEntityIds({
+          applicationIds,
+          flatObjectMetadataMaps: allFlatObjectMetadataMaps,
+          flatFieldMetadataMaps: allFlatFieldMetadataMaps,
+        });
+
+      flatObjectMetadataMaps = getSubFlatEntityByIdsMapsOrThrow({
+        flatEntityIds: flatObjectMetadataIds,
+        flatEntityMaps: allFlatObjectMetadataMaps,
+      });
+      flatFieldMetadataMaps = getSubFlatEntityByIdsMapsOrThrow({
+        flatEntityIds: flatFieldMetadataIds,
+        flatEntityMaps: allFlatFieldMetadataMaps,
       });
 
-      flatObjectMetadataMaps = this.filterFlatEntityMapsByApplicationIds(
-        allFlatObjectMetadataMaps,
-        applicationIds,
-      );
-      flatFieldMetadataMaps = this.filterFlatEntityMapsByApplicationIds(
-        allFlatFieldMetadataMaps,
-        applicationIds,
-      );
+      if (isDefined(allFlatIndexMaps)) {
+        flatIndexMaps = getSubFlatEntityByIdsMapsOrThrow({
+          flatEntityIds: this.computeScopeFlatIndexIds({
+            flatObjectMetadataMaps,
+            flatIndexMaps: allFlatIndexMaps,
+            applicationIds,
+          }),
+          flatEntityMaps: allFlatIndexMaps,
+        });
+      }
 
       flatObjectMetadataMaps =
         this.reconcileObjectFieldIdsWithFilteredFieldMaps(
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         );
-
-      if (isDefined(allFlatIndexMaps)) {
-        flatIndexMaps = this.filterFlatEntityMapsByApplicationIds(
-          allFlatIndexMaps,
-          applicationIds,
-        );
-      }
     }
 
     const metadataCacheHash = combineCacheHashes(
@@ -234,15 +242,29 @@ export class WorkspaceGraphqlSchemaSDLService {
     };
   }
 
-  private filterFlatEntityMapsByApplicationIds<
-    T extends FlatObjectMetadata | FlatFieldMetadata | FlatIndexMetadata,
-  >(
-    flatEntityMaps: FlatEntityMaps<T>,
-    applicationIds: string[],
-  ): FlatEntityMaps<T> {
-    return getSubFlatEntityMapsByApplicationIdsOrThrow({
-      applicationIds,
-      flatEntityMaps,
-    });
+  private computeScopeFlatIndexIds({
+    flatObjectMetadataMaps,
+    flatIndexMaps,
+    applicationIds,
+  }: {
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
+    applicationIds: string[];
+  }): string[] {
+    return Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .flatMap((flatObjectMetadata) =>
+        findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatObjectMetadata.indexMetadataIds,
+          flatEntityMaps: flatIndexMaps,
+        })
+          .filter(
+            (flatIndexMetadata) =>
+              applicationIds.includes(flatIndexMetadata.applicationId) ||
+              flatIndexMetadata.applicationId ===
+                flatObjectMetadata.applicationId,
+          )
+          .map((flatIndexMetadata) => flatIndexMetadata.id),
+      );
   }
 }
