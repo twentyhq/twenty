@@ -115,7 +115,7 @@ Index on `(workspaceId, status)`. A row is deleted once its action succeeds. The
 
 ### Execution
 
-`RunDeferredWorkspaceMigrationActionsJob` runs on `workspaceQueue`, deduplicated per workspace, 3 attempts with exponential backoff. `DeferredWorkspaceMigrationActionRunnerService.runPendingActions`:
+`RunDeferredWorkspaceMigrationActionsJob` runs on `workspaceQueue`, deduplicated per workspace, 3 attempts retried immediately. `DeferredWorkspaceMigrationActionRunnerService.runPendingActions`:
 
 1. loads the workspace's `PENDING` rows once, ordered by creation then `position` (actions created later come with their own job);
 2. claims each row with a conditional update (`PENDING` to `IN_PROGRESS`, `attempts + 1`);
@@ -152,7 +152,7 @@ Tested in PR 1:
 
 - unit: the deferral decision (unique, partial, non-relation, one-to-many side, mixed columns, unresolved field);
 - integration, through the public APIs only: with the flag on, creating an object adds one join column index to each system relation object, records of the new object get timeline activities, and deleting a logic function succeeds; existing object, field, index and logic function suites pass;
-- manual, 3M `timelineActivity` rows: flag off logic function deletion removes files right after commit; flag on persists actions with the worker stopped and processes them once started (`timelineActivity` index built in 2.4s outside the transaction); an object deleted before the worker ran completes its actions as obsolete; a broken column fails three times with backoff then `FAILED` while the other indexes build immediately; restoring it before a retry drops and rebuilds the index.
+- manual, 3M `timelineActivity` rows: flag off logic function deletion removes files right after commit; flag on persists actions with the worker stopped and processes them once started (`timelineActivity` index built in 2.4s outside the transaction); an object deleted before the worker ran completes its actions as obsolete; a broken column fails three times then `FAILED` while the other indexes build immediately; restoring it before a retry drops and rebuilds the index.
 
 Known limitations until PRs 2 and 3: a worker crash leaves a row `IN_PROGRESS`; `FAILED` rows need a manual reset and no longer hold back the actions after them; metadata changes are not blocked while actions are pending, so a deletion racing an in-flight build can leave a physical index without metadata.
 

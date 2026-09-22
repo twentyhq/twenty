@@ -153,10 +153,6 @@ export class DeferredWorkspaceMigrationActionRunnerService {
         {
           id: `deferred-workspace-migration-actions.${workspaceId}`,
           retryLimit: DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS - 1,
-          backoff: {
-            strategy: 'exponential',
-            initialDelayMilliseconds: 30_000,
-          },
         },
       );
     } catch (error) {
