@@ -11,6 +11,10 @@
   width: 100%;
 }
 
+.containerFullWidth {
+  max-width: none;
+}
+
 .containerInfo {
   background-color: var(--t-accent-accent1);
   border-color: var(--t-accent-accent6);
