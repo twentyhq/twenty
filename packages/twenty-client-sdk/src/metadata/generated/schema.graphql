@@ -2005,6 +2005,7 @@ enum FeatureFlagKey {
   IS_RECORD_SHARING_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
+  IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3633,6 +3634,8 @@ enum AllMetadataName {
   connectionProvider
   searchFieldMetadata
   timelineActivityType
+  workflow
+  workflowVersion
 }
 
 type MinimalObjectMetadata {
