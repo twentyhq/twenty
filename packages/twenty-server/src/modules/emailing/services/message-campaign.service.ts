@@ -131,12 +131,14 @@ export class MessageCampaignService {
         unsubscribeTopicId: unsubscribeTopicId ?? undefined,
       });
 
-    const { hasCredits } =
-      await this.emailBillingService.getEmailCreditContext(workspaceId);
+    const sendRefusal = await this.emailBillingService.findEmailSendRefusal({
+      workspaceId,
+      spenders: { userWorkspaceId },
+    });
 
-    if (sendableRecipients.length > 0 && !hasCredits) {
+    if (sendableRecipients.length > 0 && isDefined(sendRefusal)) {
       throw new EmailingDomainException(
-        `Campaign ${campaignId} cannot be sent to ${sendableRecipients.length} recipient(s) because the workspace has no email credits left`,
+        `Campaign ${campaignId} cannot be sent to ${sendableRecipients.length} recipient(s): ${sendRefusal.kind}`,
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
       );
     }

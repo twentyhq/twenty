@@ -1,7 +1,6 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -15,10 +14,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/consume-quota-counters-script.constant';
-import {
-  UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
@@ -38,6 +34,7 @@ import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/uti
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
+import { buildQuotaExhaustedException } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
@@ -97,16 +94,24 @@ export class UsageLimitQuotaService implements OnModuleInit {
   }
 
   async assertQuotaNotExhausted(args: QuotaConsumeArgs): Promise<void> {
+    const exhaustedScope = await this.findExhaustedScope(args);
+
+    if (isDefined(exhaustedScope)) {
+      throw buildQuotaExhaustedException(exhaustedScope);
+    }
+  }
+
+  async findExhaustedScope(
+    args: QuotaConsumeArgs,
+  ): Promise<ExhaustedScope | null> {
     const exhaustedScopes =
       await this.findExhaustedScopesAdmittingOnFailure(args);
 
-    const exhaustedScope =
+    return (
       exhaustedScopes.find((scope) => scope.exhaustedKind === 'allowance') ??
-      exhaustedScopes[0];
-
-    if (isDefined(exhaustedScope)) {
-      this.throwQuotaExhausted(exhaustedScope);
-    }
+      exhaustedScopes[0] ??
+      null
+    );
   }
 
   async consumeQuota({
@@ -473,25 +478,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
         counter,
         allowance,
       }),
-    );
-  }
-
-  private throwQuotaExhausted(exhaustedScope: ExhaustedScope): never {
-    if (exhaustedScope.exhaustedKind === 'allowance') {
-      throw new UsageLimitException(
-        'Credit allowance exhausted for this billing period',
-        UsageLimitExceptionCode.QUOTA_EXHAUSTED,
-        {
-          userFriendlyMessage: msg`Credit allowance exhausted for this billing period.`,
-          exhaustedScope,
-        },
-      );
-    }
-
-    throw new UsageLimitException(
-      `Usage limit reached for ${exhaustedScope.spenderType}`,
-      UsageLimitExceptionCode.QUOTA_EXHAUSTED,
-      { exhaustedScope },
     );
   }
 

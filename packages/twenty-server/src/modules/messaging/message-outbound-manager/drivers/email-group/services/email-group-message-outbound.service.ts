@@ -46,9 +46,10 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       );
     }
 
-    await this.emailBillingService.validateEmailCreditsOrThrow(
-      connectedAccount.workspaceId,
-    );
+    await this.emailBillingService.validateEmailSendOrThrow({
+      workspaceId: connectedAccount.workspaceId,
+      spenders: {},
+    });
 
     const threadExternalId =
       sendMessageInput.threadExternalId ??
@@ -84,6 +85,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     await this.emailBillingService
       .billSentEmails({
         workspaceId: connectedAccount.workspaceId,
+        spenders: {},
         sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
       })
       .catch((error) => {
