@@ -9,7 +9,8 @@ type ApplicationHealthCheckResult = NonNullable<
 
 type ApplicationHealthBanner = {
   status: ApplicationHealthCheckResult['status'];
-  message: string;
+  title: string;
+  description?: string;
   action?: { label: string; to: string };
 };
 
@@ -24,14 +25,20 @@ export const getApplicationHealthBanner = ({
     return undefined;
   }
 
-  const { status, message, action } = healthCheckResult;
+  const { status, title, description, action } = healthCheckResult;
 
-  if (!isNonEmptyString(message)) {
+  if (!isNonEmptyString(title)) {
     return undefined;
   }
 
+  const banner = {
+    status,
+    title,
+    ...(isNonEmptyString(description) ? { description } : {}),
+  };
+
   if (!isDefined(action)) {
-    return { status, message };
+    return banner;
   }
 
   const to = isNonEmptyString(action.location)
@@ -41,8 +48,8 @@ export const getApplicationHealthBanner = ({
   // An app supplies this string, so anything that could leave the workspace
   // loses its button rather than becoming a redirect to somewhere else.
   if (!isDefined(to) || !isSafeInternalPath(to)) {
-    return { status, message };
+    return banner;
   }
 
-  return { status, message, action: { label: action.label, to } };
+  return { ...banner, action: { label: action.label, to } };
 };

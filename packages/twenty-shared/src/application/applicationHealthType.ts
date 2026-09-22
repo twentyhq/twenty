@@ -31,7 +31,8 @@ export type ApplicationHealthCheckResult =
   | { status: `${ApplicationHealthStatus.OK}` }
   | {
       status: ApplicationHealthCheckReportedBannerStatus;
-      message: string;
+      title: string;
+      description?: string;
       action?: ApplicationHealthCheckAction;
     };
 
@@ -48,7 +49,10 @@ export const isApplicationHealthCheckResult = (
     return false;
   }
 
-  const { status, message, action } = value as Record<string, unknown>;
+  const { status, title, description, action } = value as Record<
+    string,
+    unknown
+  >;
 
   if (status === ApplicationHealthStatus.OK) {
     return true;
@@ -58,7 +62,11 @@ export const isApplicationHealthCheckResult = (
     return false;
   }
 
-  if (!isNonEmptyString(message)) {
+  if (!isNonEmptyString(title)) {
+    return false;
+  }
+
+  if (description !== undefined && !isNonEmptyString(description)) {
     return false;
   }
 

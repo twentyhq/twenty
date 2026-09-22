@@ -346,7 +346,8 @@ export const SettingsApplicationDetails = () => {
           {isDefined(healthBanner) && (
             <SettingsApplicationHealthBanner
               healthStatus={healthBanner.status}
-              healthMessage={healthBanner.message}
+              title={healthBanner.title}
+              description={healthBanner.description}
               action={healthBannerButton}
             />
           )}

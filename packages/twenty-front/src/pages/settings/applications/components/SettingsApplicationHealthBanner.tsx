@@ -5,13 +5,15 @@ import { getApplicationHealthBannerAppearance } from '~/pages/settings/applicati
 
 type SettingsApplicationHealthBannerProps = {
   healthStatus: ApplicationHealthStatus;
-  healthMessage: string;
+  title: string;
+  description?: string;
   action?: { label: string; onClick: () => void };
 };
 
 export const SettingsApplicationHealthBanner = ({
   healthStatus,
-  healthMessage,
+  title,
+  description,
   action,
 }: SettingsApplicationHealthBannerProps) => {
   const appearance = getApplicationHealthBannerAppearance(healthStatus);
@@ -24,7 +26,8 @@ export const SettingsApplicationHealthBanner = ({
     <Callout
       variant={appearance.variant}
       Icon={appearance.Icon}
-      title={healthMessage}
+      title={title}
+      description={description}
       action={action}
       fullWidth
     />

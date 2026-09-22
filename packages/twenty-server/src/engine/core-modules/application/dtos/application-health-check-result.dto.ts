@@ -21,7 +21,10 @@ export class ApplicationHealthCheckResultDTO {
   status: ApplicationHealthStatus;
 
   @Field(() => String, { nullable: true })
-  message: string | null;
+  title: string | null;
+
+  @Field(() => String, { nullable: true })
+  description: string | null;
 
   @Field(() => ApplicationHealthCheckActionDTO, { nullable: true })
   action: ApplicationHealthCheckActionDTO | null;

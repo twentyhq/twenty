@@ -12,7 +12,8 @@ import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-func
 
 const UNKNOWN_HEALTH: ApplicationHealthCheckResultDTO = {
   status: ApplicationHealthStatus.UNKNOWN,
-  message: null,
+  title: null,
+  description: null,
   action: null,
 };
 
@@ -76,7 +77,8 @@ export class ApplicationHealthCheckService {
     if (data.status === ApplicationHealthStatus.OK) {
       return {
         status: ApplicationHealthStatus.OK,
-        message: null,
+        title: null,
+        description: null,
         action: null,
       };
     }
@@ -85,7 +87,8 @@ export class ApplicationHealthCheckService {
 
     return {
       status: ApplicationHealthStatus[data.status],
-      message: data.message,
+      title: data.title,
+      description: data.description ?? null,
       action: isDefined(action)
         ? { label: action.label, location: action.location ?? null }
         : null,

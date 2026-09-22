@@ -9,13 +9,15 @@ const SCRIPT_URL = ['java', 'script:alert(1)'].join('');
 const buildResult = (
   overrides: Partial<{
     status: ApplicationHealthStatus;
-    message: string | null;
+    title: string | null;
+    description: string | null;
     action: { label: string; location?: string | null } | null;
   }> = {},
 ) => ({
   __typename: 'ApplicationHealthCheckResult' as const,
   status: ApplicationHealthStatus.ERROR,
-  message: 'Your key was revoked',
+  title: 'Your key was revoked',
+  description: null,
   action: null,
   ...overrides,
 });
@@ -27,12 +29,28 @@ describe('getApplicationHealthBanner', () => {
     ).toBeUndefined();
   });
 
-  it('should return nothing when the result carries no message', () => {
+  it('should return nothing when the result carries no title', () => {
     expect(
       getApplicationHealthBanner({
-        healthCheckResult: buildResult({ message: null }),
+        healthCheckResult: buildResult({ title: null }),
       }),
     ).toBeUndefined();
+  });
+
+  it('should carry the description when the app reports one', () => {
+    expect(
+      getApplicationHealthBanner({
+        healthCheckResult: buildResult({
+          description: 'Generate a new one from the provider dashboard.',
+        }),
+      })?.description,
+    ).toBe('Generate a new one from the provider dashboard.');
+  });
+
+  it('should leave the description out when the app reports none', () => {
+    expect(
+      getApplicationHealthBanner({ healthCheckResult: buildResult() }),
+    ).not.toHaveProperty('description');
   });
 
   it('should send the action to the location reported by the app', () => {
@@ -91,7 +109,7 @@ describe('getApplicationHealthBanner', () => {
       fallbackLocation: FALLBACK_LOCATION,
     });
 
-    expect(banner?.message).toBe('Your key was revoked');
+    expect(banner?.title).toBe('Your key was revoked');
     expect(banner?.action).toBeUndefined();
   });
 

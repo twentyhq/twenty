@@ -16,7 +16,8 @@ const renderBanner = ({
     <I18nProvider i18n={i18n}>
       <SettingsApplicationHealthBanner
         healthStatus={healthStatus}
-        healthMessage="Your key was revoked"
+        title="Your key was revoked"
+        description="Generate a new one from the provider dashboard."
         action={
           hasAction ? { label: 'Reconnect', onClick: jest.fn() } : undefined
         }
@@ -33,10 +34,13 @@ describe('SettingsApplicationHealthBanner', () => {
     ).toBeInTheDocument();
   });
 
-  it('should render the message without a button when the app reports no action', () => {
+  it('should render the title without a button when the app reports no action', () => {
     renderBanner({ hasAction: false });
 
     expect(screen.getByText('Your key was revoked')).toBeInTheDocument();
+    expect(
+      screen.getByText('Generate a new one from the provider dashboard.'),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 

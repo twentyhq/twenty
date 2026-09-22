@@ -5,24 +5,31 @@ describe('isApplicationHealthCheckResult', () => {
   it.each([
     [{ status: 'OK' }],
     [{ status: ApplicationHealthStatus.OK }],
-    [{ status: 'SUCCESS', message: 'Connected as acme' }],
+    [{ status: 'SUCCESS', title: 'Connected as acme' }],
     [
       {
         status: ApplicationHealthStatus.WARNING,
-        message: 'Quota almost reached',
+        title: 'Quota almost reached',
       },
     ],
-    [{ status: 'INFO', message: 'Key expires soon' }],
-    [{ status: 'WARNING', message: 'Quota almost reached' }],
-    [{ status: 'NEUTRAL', message: 'Nothing synced yet' }],
+    [{ status: 'INFO', title: 'Key expires soon' }],
+    [{ status: 'WARNING', title: 'Quota almost reached' }],
+    [{ status: 'NEUTRAL', title: 'Nothing synced yet' }],
     [
       {
         status: 'ERROR',
-        message: 'Key revoked',
+        title: 'Key revoked',
         action: { label: 'Fix', location: '/settings/billing' },
       },
     ],
-    [{ status: 'ERROR', message: 'Key revoked', action: { label: 'Fix' } }],
+    [{ status: 'ERROR', title: 'Key revoked', action: { label: 'Fix' } }],
+    [
+      {
+        status: 'ERROR',
+        title: 'Key revoked',
+        description: 'Generate a new one from the provider dashboard.',
+      },
+    ],
   ])('should accept %p', (value) => {
     expect(isApplicationHealthCheckResult(value)).toBe(true);
   });
@@ -32,23 +39,25 @@ describe('isApplicationHealthCheckResult', () => {
     ['ok'],
     [{}],
     [{ status: 'UNKNOWN' }],
-    [{ status: 'error', message: 'Boom' }],
+    [{ status: 'error', title: 'Boom' }],
     [{ status: 'ERROR' }],
-    [{ status: 'ERROR', message: '' }],
-    [{ status: 'ERROR', message: 'Boom', action: {} }],
-    [{ status: 'ERROR', message: 'Boom', action: { label: 2 } }],
-    [{ status: 'ERROR', message: 'Boom', action: { label: '' } }],
+    [{ status: 'ERROR', title: '' }],
+    [{ status: 'ERROR', title: 'Boom', description: '' }],
+    [{ status: 'ERROR', title: 'Boom', description: 2 }],
+    [{ status: 'ERROR', title: 'Boom', action: {} }],
+    [{ status: 'ERROR', title: 'Boom', action: { label: 2 } }],
+    [{ status: 'ERROR', title: 'Boom', action: { label: '' } }],
     [
       {
         status: 'ERROR',
-        message: 'Boom',
+        title: 'Boom',
         action: { label: 'Fix', location: 2 },
       },
     ],
     [
       {
         status: 'ERROR',
-        message: 'Boom',
+        title: 'Boom',
         action: { label: 'Fix', location: '' },
       },
     ],
