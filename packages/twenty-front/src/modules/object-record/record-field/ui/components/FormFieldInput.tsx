@@ -72,6 +72,7 @@ type FormFieldInputProps = {
   error?: string;
   onError?: (error: string | undefined) => void;
   timeZone?: string;
+  formSubmitsOnModEnter?: boolean;
 };
 
 export const FormFieldInput = ({
@@ -85,6 +86,7 @@ export const FormFieldInput = ({
   error,
   onError,
   timeZone,
+  formSubmitsOnModEnter,
 }: FormFieldInputProps) => {
   return isFieldNumber(field) || field.type === FieldMetadataType.NUMERIC ? (
     <FormNumberFieldInput
@@ -231,6 +233,7 @@ export const FormFieldInput = ({
   ) : isFieldRichText(field) ? (
     <FormRichTextFieldInput
       enableVariables={isDefined(VariablePicker)}
+      formSubmitsOnModEnter={formSubmitsOnModEnter}
       label={field.label}
       defaultValue={defaultValue as FieldRichTextValue | undefined}
       onChange={onChange}

@@ -66,6 +66,7 @@ it('leaves the Mod+Enter submit shortcut to the form instead of inserting a line
         label="Body"
         defaultValue={undefined}
         onChange={onChange}
+        formSubmitsOnModEnter
       />
     </div>,
     { wrapper: Wrapper },
@@ -80,6 +81,32 @@ it('leaves the Mod+Enter submit shortcut to the form instead of inserting a line
       type: 'paragraph',
       props: {},
       content: [{ type: 'text', text: 'Hello', styles: {} }],
+      children: [],
+    },
+  ]);
+});
+
+it('inserts a line break on Mod+Enter when the form does not submit on it', async () => {
+  const onChange = jest.fn();
+  render(
+    <FormRichTextFieldInput
+      label="Body"
+      defaultValue={undefined}
+      onChange={onChange}
+    />,
+    { wrapper: Wrapper },
+  );
+  await userEvent.click(screen.getByRole('textbox'));
+  await userEvent.keyboard('Hello{Control>}{Enter}{/Control}World');
+  expect(JSON.parse(onChange.mock.calls.at(-1)?.[0].blocknote)).toEqual([
+    {
+      type: 'paragraph',
+      props: {},
+      content: [
+        { type: 'text', text: 'Hello', styles: {} },
+        { type: 'text', text: '\n', styles: {} },
+        { type: 'text', text: 'World', styles: {} },
+      ],
       children: [],
     },
   ]);

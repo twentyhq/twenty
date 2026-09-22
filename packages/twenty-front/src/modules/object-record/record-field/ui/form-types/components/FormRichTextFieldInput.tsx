@@ -5,7 +5,9 @@ import { Field } from 'twenty-ui/primitives/input';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { RECORD_RICH_TEXT_EDITOR_PROFILE } from '@/object-record/record-field/ui/form-types/constants/RecordRichTextEditorProfile';
+import { FormSubmitShortcut } from '@/object-record/record-field/ui/form-types/extensions/FormSubmitShortcut';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { convertTipTapDocumentToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertTipTapDocumentToBlockNote';
@@ -21,6 +23,7 @@ type FormRichTextFieldInputProps = {
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
   enableVariables?: boolean;
+  formSubmitsOnModEnter?: boolean;
 };
 
 export const FormRichTextFieldInput = ({
@@ -33,14 +36,19 @@ export const FormRichTextFieldInput = ({
   readonly,
   VariablePicker,
   enableVariables = false,
+  formSubmitsOnModEnter = false,
 }: FormRichTextFieldInputProps) => {
   const profile = useMemo(
-    () => ({
+    (): AdvancedTextEditorProfile => ({
       ...RECORD_RICH_TEXT_EDITOR_PROFILE,
+      buildExtensions: (context) => [
+        ...RECORD_RICH_TEXT_EDITOR_PROFILE.buildExtensions(context),
+        ...(formSubmitsOnModEnter ? [FormSubmitShortcut] : []),
+      ],
       parseLegacyDocument: (value: string) =>
         parseLegacyRecordRichTextDocument(value, enableVariables),
     }),
-    [enableVariables],
+    [enableVariables, formSubmitsOnModEnter],
   );
   const storedValue = defaultValue?.blocknote ?? defaultValue?.markdown;
   const hasUnsupportedContent = useMemo(() => {

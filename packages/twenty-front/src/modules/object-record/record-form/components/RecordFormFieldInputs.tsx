@@ -44,6 +44,7 @@ export const RecordFormFieldInputs = ({
           defaultValue={draftRecord[gqlFieldName]}
           onChange={(value) => onFieldValueChange(gqlFieldName, value)}
           onClear={() => onFieldValueClear(gqlFieldName)}
+          formSubmitsOnModEnter
         />
       );
     })}
