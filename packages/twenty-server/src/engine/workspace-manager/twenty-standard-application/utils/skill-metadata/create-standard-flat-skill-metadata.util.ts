@@ -66,18 +66,18 @@ LOGIC_FUNCTION steps execute logic functions provided by installed applications.
 
 1. Call \`list_logic_function_tools\` to discover available logic function tools with their IDs.
 2. Use \`create_workflow_version_step\` with stepType "LOGIC_FUNCTION" and pass the logicFunctionId in defaultSettings:
-   { "stepType": "LOGIC_FUNCTION", "workflowVersionId": "<version-id>", "defaultSettings": { "input": { "logicFunctionId": "<logic-function-id>" } } }
+   { "stepType": "LOGIC_FUNCTION", "coreWorkflowVersionId": "<core-version-id>", "defaultSettings": { "input": { "logicFunctionId": "<logic-function-id>" } } }
 3. Or when using \`create_complete_workflow\`, include a step with type "LOGIC_FUNCTION" and settings.input.logicFunctionId.
 
 ## Listing Workflows
 
-To discover existing workflows in the workspace, use \`list_workflows\`. Use this before modifying a workflow when the user refers to it by name rather than id — resolve the \`id\` here first, then call \`get_workflow_current_version\` with it.
+To discover existing workflows in the workspace, use \`list_workflows\`. Use this before modifying a workflow when the user refers to it by name rather than id — resolve the \`coreWorkflowId\` here first, then call \`get_workflow_current_version\` with it.
 
 ## Deleting Workflows
 
-To delete a workflow entirely, use \`delete_workflow\` with its \`workflowId\`. This also removes the workflow's versions, runs and automated triggers, and deactivates any active version — it is a destructive, irreversible operation.
+To delete a workflow entirely, use \`delete_workflow\` with its \`coreWorkflowId\`. This also removes the workflow's versions, runs and automated triggers, and deactivates any active version — it is a destructive, irreversible operation.
 
-- If the user refers to the workflow by name, resolve its \`workflowId\` with \`list_workflows\` first.
+- If the user refers to the workflow by name, resolve its \`coreWorkflowId\` with \`list_workflows\` first.
 - IMPORTANT : Always confirm with the user before deleting, and make sure you are deleting the correct workflow.
 - To simply stop a workflow from running without removing it, prefer \`deactivate_workflow_version\` instead of deleting.
 
@@ -85,19 +85,19 @@ To delete a workflow entirely, use \`delete_workflow\` with its \`workflowId\`. 
 
 When a user reports a failing or misbehaving workflow, diagnose it with two read-only tools:
 
-- \`list_workflow_runs\`: lists runs (optional \`workflowId\`, optional \`status\`, optional \`limit\`), most recent first. Each result carries \`id\`, \`name\`, \`status\`, run-level \`error\`, \`startedAt\`, \`endedAt\`, \`workflowId\`, and \`workflowVersionId\`.
+- \`list_workflow_runs\`: lists runs (optional \`coreWorkflowId\`, optional \`status\`, optional \`limit\`), most recent first. Each result carries the run \`id\`, \`name\`, \`status\`, run-level \`error\`, \`startedAt\`, \`endedAt\`, \`coreWorkflowId\`, and \`coreWorkflowVersionId\`.
 - \`get_workflow_run\`: returns full details for one run (\`workflowRunId\`) — overall status, run-level error, every step's status/error, and the execution logs of the steps that failed.
 
 ### Resolving the run when no id is given
 
-For requests like "fix my latest failed workflow" where no run or workflow id is provided, call \`list_workflow_runs\` with \`status\` "FAILED" and NO \`workflowId\` — this returns the most recent failed run across all workflows, and each result already carries \`workflowId\`, \`workflowVersionId\`, and a human-readable \`name\`, so you never need an id from the user. If the user names a specific workflow, resolve its \`workflowId\` first and pass it as a filter.
+For requests like "fix my latest failed workflow" where no run or workflow id is provided, call \`list_workflow_runs\` with \`status\` "FAILED" and NO \`coreWorkflowId\` — this returns the most recent failed run across all workflows, and each result already carries \`coreWorkflowId\`, \`coreWorkflowVersionId\`, and a human-readable \`name\`, so you never need an id from the user. If the user names a specific workflow, resolve its \`coreWorkflowId\` first and pass it as a filter.
 
 ### Flow
 
-1. Identify the run via \`list_workflow_runs\` (use \`limit\` 5 when no \`workflowId\` so you can detect multiple failing workflows).
-2. If results span multiple \`workflowId\`s, disambiguate by name with the user before editing anything.
+1. Identify the run via \`list_workflow_runs\` (use \`limit\` 5 when no \`coreWorkflowId\` so you can detect multiple failing workflows).
+2. If results span multiple \`coreWorkflowId\`s, disambiguate by name with the user before editing anything.
 3. Call \`get_workflow_run\` on the chosen run id to read the failed step(s) and their error/logs.
-4. Map back to the workflow definition via \`get_workflow_current_version(workflowId)\`, then propose or apply a fix.
+4. Map back to the workflow definition via \`get_workflow_current_version(coreWorkflowId)\`, then propose or apply a fix.
 ## PICK_RECORD Steps
 
 PICK_RECORD selects one record from a candidate pool (settings.input.recordIds) and outputs it for later steps to reference — useful for assignment workflows like picking an owner. Set settings.input.strategy to RANDOM, ROUND_ROBIN, or LOAD_BALANCED; LOAD_BALANCED also needs settings.input.loadBalance.{objectNameSingular, fieldName} to pick the candidate with the fewest related records.
