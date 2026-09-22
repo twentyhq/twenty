@@ -78,8 +78,6 @@ const toFailure = (
   errorMessage: error instanceof Error ? error.message : String(error),
 });
 
-// A listener that throws must not abort the host mid-start: an unregistered
-// capture leaves the device on with no session left to stop it.
 const notifyListener = (notify: () => void): void => {
   try {
     notify();

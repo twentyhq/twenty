@@ -303,9 +303,6 @@ export class ApplicationInstallService {
       );
     }
 
-    // The approval screen renders the registration manifest, so a grant may
-    // only cover what both it and the resolved package declare. With no stored
-    // manifest nothing was shown, and an existing grant is left untouched.
     const approvedCapabilities = toApplicationCapabilities(
       appRegistration.manifest?.application?.requestedCapabilities,
     );
