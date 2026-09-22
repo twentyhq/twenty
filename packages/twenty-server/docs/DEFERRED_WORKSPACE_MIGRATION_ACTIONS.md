@@ -33,7 +33,6 @@ Non-goals (this doc and PR 1):
 
 - Unique indexes, enum migrations, index updates (drop and rebuild), search vector rebuilds. Each can become a deferrable action later with the same contract.
 - Serializing concurrent metadata migrations, blocking changes while work is pending, and surfacing that state to users (PRs 3 and 4 below).
-- Recovery of stranded rows and retry of failed ones (PR 2).
 
 ## Design
 
@@ -115,7 +114,7 @@ Index on `(workspaceId, status)`. A row is deleted once its action succeeds. The
 
 ### Execution
 
-`RunDeferredWorkspaceMigrationActionsJob` runs on `workspaceQueue`, deduplicated per workspace, 3 attempts retried immediately. `DeferredWorkspaceMigrationActionRunnerService.runPendingActions`:
+`RunDeferredWorkspaceMigrationActionsJob` runs on `workspaceQueue` with 3 attempts and an exponential backoff starting at 30 seconds. It is deduplicated per workspace with BullMQ `deduplication` and `keepLastIfActive`: a job enqueued while another one runs for the same workspace waits for it, since two concurrent runs would each skip the rows the other claimed and break the ordering. `DeferredWorkspaceMigrationActionRunnerService.runPendingActions`:
 
 1. loads the workspace's `PENDING` rows once, ordered by creation then `position` (actions created later come with their own job);
 2. claims each row with a conditional update (`PENDING` to `IN_PROGRESS`, `attempts + 1`);
@@ -124,6 +123,17 @@ Index on `(workspaceId, status)`. A row is deleted once its action succeeds. The
 5. stops at the first failure and fails the job, so the queue retries it and the remaining actions keep running in order.
 
 `create_index` reads the index from the maps it receives and completes as obsolete if it is absent. The maps are fresh because the runner invalidates the cache after commit, before enqueueing the job. On a retry it runs `DROP INDEX CONCURRENTLY IF EXISTS` first, since a failed concurrent build leaves an invalid index behind.
+
+Each execution records `deferred-workspace-migration-action/duration-ms` with `actionHandlerKey` and `status`, and `twenty_deferred_workspace_migration_actions` gauges the rows by status across workspaces.
+
+### Recovery
+
+`DeferredWorkspaceMigrationActionRecoveryCronJob` runs every 10 minutes (`cron:deferred-workspace-migration-action-recovery`, registered by `cron:register:all`):
+
+1. an `IN_PROGRESS` row started more than the statement timeout plus 15 minutes ago belongs to a worker that died mid-run, since Postgres has cancelled its statement by then; it goes back to `PENDING`, or to `FAILED` if it used its last attempt;
+2. every workspace with `PENDING` rows is enqueued, which covers lost enqueues and the actions left behind a failure once the job ran out of attempts.
+
+`workspace:retry-failed-deferred-migration-actions [-w <workspaceId>]` resets `FAILED` rows to `PENDING` with no attempts, for one workspace or all of them, and enqueues them.
 
 ## Alternatives considered
 
@@ -140,9 +150,9 @@ Delivery, each PR merged on its own behind the flag:
 | PR | Scope |
 | --- | --- |
 | 1 | Table, `DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS`, handler contract, runner persistence, deferred action runner and job with retries and timeout; `create_index` and `delete_logicFunction`; `afterCommitSideEffects` removed. |
-| 2 | Recovery: sweeper cron resetting `IN_PROGRESS` rows past the timeout and re-enqueueing workspaces with `PENDING` rows; retry of `FAILED` rows (admin mutation, CLI); metrics on pending, failed and duration. |
+| 2 | Recovery: cron resetting `IN_PROGRESS` rows past the timeout and enqueueing workspaces with `PENDING` rows; CLI retry of `FAILED` rows; job deduplication per workspace and retry backoff; metrics on duration and on rows by status. |
 | 3 | Workspace migration lock: `schemaMigrationStatus` (`IDLE`, `MIGRATING`) and `schemaMigrationStartedAt` on `core.workspace`, taken with a conditional update before migrations touching objects, fields or indexes, released in `finally` with a takeover timeout. While taken, or while schema-affecting deferred actions are pending (`create_index`, not `delete_logicFunction`), such migrations fail with `SCHEMA_MIGRATION_IN_PROGRESS` or `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS`. `FAILED` rows do not block. |
-| 4 | Error surfacing: runner codes sent as `subCode` (today `extensions.code` is overwritten by the GraphQL error code), object and field exception handlers map the new codes to `ConflictError`, dedicated front message with the pending count, SDK CLI reads `subCode` and `userFriendlyMessage`. |
+| 4 | Error surfacing and admin retry of `FAILED` rows from the admin panel: runner codes sent as `subCode` (today `extensions.code` is overwritten by the GraphQL error code), object and field exception handlers map the new codes to `ConflictError`, dedicated front message with the pending count, SDK CLI reads `subCode` and `userFriendlyMessage`. |
 | 5 | Foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns created in the same action, plus a deferrable `create_fieldMetadata` action running `VALIDATE CONSTRAINT` with the constraint name in its payload. |
 | 6 | Enable the flag for the affected self-hosted workspace, then cloud, then default on and remove the flag. |
 
@@ -154,7 +164,9 @@ Tested in PR 1:
 - integration, through the public APIs only: with the flag on, creating an object adds one join column index to each system relation object, records of the new object get timeline activities, and deleting a logic function succeeds; existing object, field, index and logic function suites pass;
 - manual, 3M `timelineActivity` rows: flag off logic function deletion removes files right after commit; flag on persists actions with the worker stopped and processes them once started (`timelineActivity` index built in 2.4s outside the transaction); an object deleted before the worker ran completes its actions as obsolete; a broken column fails three times then `FAILED` while the other indexes build immediately; restoring it before a retry drops and rebuilds the index.
 
-Known limitations until PRs 2 and 3: a worker crash leaves a row `IN_PROGRESS`; `FAILED` rows need a manual reset and no longer hold back the actions after them; metadata changes are not blocked while actions are pending, so a deletion racing an in-flight build can leave a physical index without metadata.
+Tested in PR 2, manually on the same data: two object creations with the worker stopped queue a single job; with the enqueue removed and rows left `IN_PROGRESS` two hours ago, nothing runs until the cron resets them (one to `PENDING`, the one at its last attempt to `FAILED`) and enqueues the workspace; the retry command builds the `FAILED` index; a broken column is retried after 30 then 60 seconds, and the actions behind it run at the next cron once it is `FAILED`.
+
+Known limitation until PR 3: metadata changes are not blocked while actions are pending. A deletion racing an in-flight build can leave a physical index without metadata, and a migration altering a table while its index builds concurrently can deadlock with it; Postgres then cancels one of them (observed locally: the index build was cancelled and retried).
 
 ## Open questions
 
