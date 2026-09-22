@@ -3,6 +3,7 @@ import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/f
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/widgetCreationTargetTabIdComponentState';
@@ -65,6 +66,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
@@ -291,9 +297,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   };
 
   const handleCreateTranscriptWidget = () => {
-    const replacePositionIndex = getExistingWidgetPositionIndex();
-    removeExistingWidgetIfReplacing();
-
     const activeTab = store
       .get(pageLayoutDraftState)
       .tabs.find((tab) => tab.id === tabId);
@@ -308,14 +311,61 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       },
       position: {
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-        index: replacePositionIndex ?? activeTab?.widgets.length ?? 0,
+        index: activeTab?.widgets.length ?? 0,
       },
     });
 
-    store.set(pageLayoutDraftState, (previousDraft) => ({
-      ...previousDraft,
-      tabs: addWidgetToTab(previousDraft.tabs, tabId, newWidget),
-    }));
+    if (isDefined(existingWidget)) {
+      store.set(pageLayoutDraftState, (previousDraft) => ({
+        ...previousDraft,
+        tabs: previousDraft.tabs.map((tab) => {
+          if (tab.id !== tabId) {
+            return tab;
+          }
+
+          return {
+            ...tab,
+            widgets: tab.widgets.map((widget) =>
+              widget.id === existingWidget.id
+                ? {
+                    ...newWidget,
+                    position: widget.position,
+                    gridPosition: widget.gridPosition,
+                  }
+                : widget,
+            ),
+          };
+        }),
+      }));
+
+      store.set(pageLayoutCurrentLayoutsState, (previousLayouts) => {
+        const tabLayouts = previousLayouts[tabId];
+
+        if (!isDefined(tabLayouts)) {
+          return previousLayouts;
+        }
+
+        return {
+          ...previousLayouts,
+          [tabId]: Object.fromEntries(
+            Object.entries(tabLayouts).map(([breakpoint, layouts]) => [
+              breakpoint,
+              layouts?.map((layout) =>
+                layout.i === existingWidget.id
+                  ? { ...layout, i: newWidget.id }
+                  : layout,
+              ),
+            ]),
+          ),
+        };
+      });
+    } else {
+      store.set(pageLayoutDraftState, (previousDraft) => ({
+        ...previousDraft,
+        tabs: addWidgetToTab(previousDraft.tabs, tabId, newWidget),
+      }));
+    }
+
     setPageLayoutEditingWidgetId(newWidget.id);
     insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
     closeSidePanelMenu();
