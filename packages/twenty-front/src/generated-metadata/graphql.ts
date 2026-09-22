@@ -3269,6 +3269,8 @@ export type Mutation = {
   uploadAppTarball: ApplicationRegistration;
   uploadApplicationFile: File;
   uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl;
+  /** @deprecated Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage. */
+  uploadNewWorkspaceLogo: FileWithSignedUrl;
   /** @deprecated Use createWorkspaceLogoUpload and completeWorkspaceLogoUpload, which send the logo straight to file storage. */
   uploadWorkspaceLogo: FileWithSignedUrl;
   /** @deprecated Use createWorkspaceMemberProfilePictureUpload and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage. */
@@ -4538,6 +4540,12 @@ export type MutationUploadApplicationFileArgs = {
 export type MutationUploadFilesFieldFileByUniversalIdentifierArgs = {
   fieldMetadataUniversalIdentifier: Scalars['String']['input'];
   file: Scalars['Upload']['input'];
+};
+
+
+export type MutationUploadNewWorkspaceLogoArgs = {
+  file: Scalars['Upload']['input'];
+  workspaceId: Scalars['String']['input'];
 };
 
 
