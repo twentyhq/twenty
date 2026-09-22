@@ -162,7 +162,7 @@ export class ChatExecutionService {
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
-    const { sender } = await this.chatActorService.authorizeJob({
+    const { sender, authorization } = await this.chatActorService.authorizeJob({
       workspaceId: workspace.id,
       threadId,
       messageId,
@@ -197,11 +197,7 @@ export class ChatExecutionService {
       threadId,
       locale,
       onCodeExecutionUpdate,
-      ...(await this.chatActorService.authorize({
-        workspaceId: workspace.id,
-        threadId,
-        sender,
-      })),
+      ...authorization,
       resolveExecutionContext,
     };
 

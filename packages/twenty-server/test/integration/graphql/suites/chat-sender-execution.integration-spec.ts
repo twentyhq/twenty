@@ -1,3 +1,4 @@
+import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790087069782-add-chat-message-sender';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -167,5 +168,49 @@ describe('Persisted chat senders', () => {
         { id: explicit.id, senderUserWorkspaceId: otherUserWorkspaceId },
       ]),
     );
+  });
+  it('retains explicit core sender and application identities through rollback and re-upgrade', async () => {
+    const dataSource =
+      getCoreRepository<UserWorkspaceEntity>(UserWorkspaceEntity).manager
+        .connection;
+    const runner = dataSource.createQueryRunner();
+    await runner.connect();
+    await runner.startTransaction();
+    try {
+      const legacyThreadId = randomUUID();
+      const legacyMessageId = randomUUID();
+      const applicationId = randomUUID();
+      await runner.query(
+        'INSERT INTO core."agentChatThread" (id, "workspaceId", "userWorkspaceId") VALUES ($1, $2, $3)',
+        [legacyThreadId, workspaceId, userWorkspaceId],
+      );
+      await runner.query(
+        'INSERT INTO core."agentMessage" (id, "workspaceId", "threadId", role, "senderUserWorkspaceId", "senderApplicationId") VALUES ($1, $2, $3, $4, $5, $6)',
+        [
+          legacyMessageId,
+          workspaceId,
+          legacyThreadId,
+          'user',
+          otherUserWorkspaceId,
+          applicationId,
+        ],
+      );
+      const command = new AddChatMessageSenderFastInstanceCommand();
+      await command.down(runner);
+      await command.up(runner);
+      const rows = await runner.query(
+        'SELECT "senderUserWorkspaceId", "senderApplicationId" FROM core."agentMessage" WHERE id = $1',
+        [legacyMessageId],
+      );
+      expect(rows).toEqual([
+        {
+          senderUserWorkspaceId: otherUserWorkspaceId,
+          senderApplicationId: applicationId,
+        },
+      ]);
+    } finally {
+      await runner.rollbackTransaction();
+      await runner.release();
+    }
   });
 });

@@ -1,3 +1,4 @@
+import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
@@ -13,7 +14,10 @@ export const isEmptyUnprovisionedAgentHistoryWorkspace = async ({
   storage: AgentHistoryStorageService;
 }): Promise<boolean> => {
   if (!isDefined(dataSource)) {
-    throw new Error('Agent history upgrade requires a workspace data source');
+    throw new AgentHistoryStorageException(
+      'INVALID_STATE',
+      'Agent history upgrade requires a workspace data source',
+    );
   }
   const runner = dataSource.createQueryRunner('master');
   try {

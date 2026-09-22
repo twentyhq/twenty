@@ -193,7 +193,11 @@ export class AgentChatActorService {
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    await this.authorize({ workspaceId, threadId, sender });
-    return { message, sender };
+    const authorization = await this.authorize({
+      workspaceId,
+      threadId,
+      sender,
+    });
+    return { message, sender, authorization };
   }
 }

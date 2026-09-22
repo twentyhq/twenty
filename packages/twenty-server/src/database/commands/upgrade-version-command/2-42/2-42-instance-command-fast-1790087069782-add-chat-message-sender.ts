@@ -7,19 +7,15 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class AddChatMessageSenderFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."agentMessage" ADD "senderUserWorkspaceId" uuid',
+      'ALTER TABLE "core"."agentMessage" ADD COLUMN IF NOT EXISTS "senderUserWorkspaceId" uuid',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."agentMessage" ADD "senderApplicationId" uuid',
+      'ALTER TABLE "core"."agentMessage" ADD COLUMN IF NOT EXISTS "senderApplicationId" uuid',
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      'ALTER TABLE "core"."agentMessage" DROP COLUMN "senderApplicationId"',
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."agentMessage" DROP COLUMN "senderUserWorkspaceId"',
-    );
+  public async down(_queryRunner: QueryRunner): Promise<void> {
+    // Older servers ignore nullable columns. Keeping them preserves the sender
+    // and application identity if core history is rolled back and upgraded again.
   }
 }
