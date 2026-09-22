@@ -22,6 +22,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
+import { GateWorkflowFavoritesByCoreIndexFlagCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789981200000-gate-workflow-favorites-by-core-index-flag.command';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
   ],
   providers: [
     UpdateRecordCreationCommandLabelsCommand,
+    GateWorkflowFavoritesByCoreIndexFlagCommand,
     MigrateAgentHistoryToWorkspaceCommand,
     UnpinCreationCommandsOnRecordSelectionCommand,
     RelinkWorkflowVersionsToCoreWorkflowsCommand,
@@ -50,6 +52,9 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     SetMessageTextDisplayedMaxRowsCommand,
     PurgeSoftDeletedRowLevelPermissionPredicatesCommand,
   ],
-  exports: [RelinkWorkflowVersionsToCoreWorkflowsCommand],
+  exports: [
+    GateWorkflowFavoritesByCoreIndexFlagCommand,
+    RelinkWorkflowVersionsToCoreWorkflowsCommand,
+  ],
 })
 export class V2_42_UpgradeVersionCommandModule {}

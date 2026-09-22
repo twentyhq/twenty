@@ -30,7 +30,6 @@ import {
   type FieldArrayValue,
   type FieldEmailsValue,
   type FieldFullNameValue,
-  type FieldLinksValue,
   type FieldMetadata,
   type FieldMultiSelectValue,
   type FieldPhonesValue,
@@ -38,6 +37,7 @@ import {
   type FieldRelationValue,
   type FieldRichTextValue,
   type FormFieldCurrencyValue,
+  type FormFieldLinksValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
@@ -146,10 +146,11 @@ export const FormFieldInput = ({
   ) : isFieldLinks(field) ? (
     <FormLinksFieldInput
       label={field.label}
-      defaultValue={defaultValue as FieldLinksValue | undefined}
+      defaultValue={defaultValue as FormFieldLinksValue | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      maxNumberOfValues={field.metadata.settings?.maxNumberOfValues}
     />
   ) : isFieldEmails(field) ? (
     <FormEmailsFieldInput

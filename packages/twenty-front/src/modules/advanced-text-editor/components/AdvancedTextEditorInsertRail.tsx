@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
@@ -17,7 +19,6 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';
@@ -273,36 +274,39 @@ export const AdvancedTextEditorInsertRail = ({
       {openMenu === 'variables' && (
         <StyledPopover>
           {variables.map(({ label, value }) => (
-            <MenuItem
+            <ListItem
               key={value}
-              text={<StyledVariableLiteral>{value}</StyledVariableLiteral>}
-              contextualText={label}
+              description={label}
               onClick={() => insertVariable(value)}
-            />
+            >
+              <StyledVariableLiteral>{value}</StyledVariableLiteral>
+            </ListItem>
           ))}
         </StyledPopover>
       )}
       {openMenu === 'text' && (
         <StyledPopover>
           {textItems.map(({ Icon, label, content }) => (
-            <MenuItem
+            <ListItem
               key={label}
-              LeftIcon={Icon}
-              text={label}
+              startIcon={<SelectOptionIcon Icon={Icon} />}
               onClick={() => insertAtEnd(content)}
-            />
+            >
+              {label}
+            </ListItem>
           ))}
         </StyledPopover>
       )}
       {openMenu === 'blocks' && (
         <StyledPopover>
           {blockItems.map(({ Icon, id, label, content }) => (
-            <MenuItem
+            <ListItem
               key={id}
-              LeftIcon={Icon}
-              text={label}
+              startIcon={<SelectOptionIcon Icon={Icon} />}
               onClick={() => insertAtEnd(content)}
-            />
+            >
+              {label}
+            </ListItem>
           ))}
         </StyledPopover>
       )}

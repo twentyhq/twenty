@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { RUN_EVALUATION_INPUT } from '@/ai/graphql/mutations/runEvaluationInput';
 import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
@@ -26,7 +27,6 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
@@ -177,17 +177,15 @@ export const SettingsAgentEvalsTab = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItem
-                        LeftIcon={IconPlayerPlay}
-                        text={t`Run`}
+                      <ListItem
+                        startIcon={<IconPlayerPlay />}
                         onClick={() => handleRunInput(item.text, item.id)}
-                      />
-                      <MenuItem
-                        accent="danger"
-                        LeftIcon={IconTrash}
-                        text={t`Delete`}
+                      >{t`Run`}</ListItem>
+                      <ListItem
+                        color="danger"
+                        startIcon={<IconTrash />}
                         onClick={() => openDeleteModal(item.id)}
-                      />
+                      >{t`Delete`}</ListItem>
                     </DropdownMenuItemsContainer>
                   </DropdownContent>
                 }

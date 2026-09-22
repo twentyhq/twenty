@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,7 +12,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AttachmentDropdownProps = {
   onDownload: () => void;
@@ -60,23 +60,20 @@ export const AttachmentDropdown = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             {hasDownloadPermission && (
-              <MenuItem
-                text={t`Download`}
-                LeftIcon={IconDownload}
+              <ListItem
+                startIcon={<IconDownload />}
                 onClick={handleDownload}
-              />
+              >{t`Download`}</ListItem>
             )}
-            <MenuItem
-              text={t`Rename`}
-              LeftIcon={IconPencil}
+            <ListItem
+              startIcon={<IconPencil />}
               onClick={handleRename}
-            />
-            <MenuItem
-              text={t`Delete`}
-              accent="danger"
-              LeftIcon={IconTrash}
+            >{t`Rename`}</ListItem>
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={handleDelete}
-            />
+            >{t`Delete`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

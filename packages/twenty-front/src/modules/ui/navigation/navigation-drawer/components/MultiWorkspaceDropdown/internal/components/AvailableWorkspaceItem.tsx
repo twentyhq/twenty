@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { UndecoratedLink, ListItem } from 'twenty-ui/primitives/navigation';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
@@ -60,9 +59,7 @@ export const AvailableWorkspaceItem = ({
           />
         }
       >
-        <OverflowingTextWithTooltip
-          text={availableWorkspace.displayName ?? t`(No name)`}
-        />
+        {availableWorkspace.displayName ?? t`(No name)`}
       </ListItem>
     </UndecoratedLink>
   );

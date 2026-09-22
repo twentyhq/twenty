@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
@@ -36,7 +37,6 @@ import {
   IconTable,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
@@ -168,11 +168,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 aria-selected={currentView?.type === ViewType.TABLE}
                 selected={currentView?.type === ViewType.TABLE}
                 indicator="check"
-                startIcon={<SelectOptionIcon Icon={IconTable} />}
+                startIcon={<IconTable />}
               >
-                <OverflowingTextWithTooltip
-                  text={t(getViewTypeLabel(ViewType.TABLE))}
-                />
+                {t(getViewTypeLabel(ViewType.TABLE))}
               </ListItem>
             </SelectableListItem>
             <SelectableListItem
@@ -196,9 +194,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   <SelectOptionIcon Icon={viewTypeIconMapping(ViewType.LIST)} />
                 }
               >
-                <OverflowingTextWithTooltip
-                  text={t(getViewTypeLabel(ViewType.LIST))}
-                />
+                {t(getViewTypeLabel(ViewType.LIST))}
               </ListItem>
             </SelectableListItem>
             <SelectableListItem
@@ -220,9 +216,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   />
                 }
               >
-                <OverflowingTextWithTooltip
-                  text={t(getViewTypeLabel(ViewType.CALENDAR))}
-                />
+                {t(getViewTypeLabel(ViewType.CALENDAR))}
               </ListItem>
             </SelectableListItem>
             <SelectableListItem
@@ -258,9 +252,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   />
                 }
               >
-                <OverflowingTextWithTooltip
-                  text={t(getViewTypeLabel(ViewType.KANBAN))}
-                />
+                {t(getViewTypeLabel(ViewType.KANBAN))}
               </ListItem>
             </SelectableListItem>
           </DropdownMenuItemsContainer>
@@ -272,35 +264,33 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   itemId="CalendarDateField"
                   onEnter={() => onContentChange('calendarFields')}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
-                    LeftIcon={IconCalendar}
-                    text={t`Date field`}
-                    contextualText={calendarFieldMetadata?.label}
-                    contextualTextPosition="right"
-                    hasSubMenu
-                  />
+                    startIcon={<IconCalendar />}
+                    description={calendarFieldMetadata?.label}
+                    descriptionPlacement="end"
+                    hasSubmenu
+                  >{t`Date field`}</ListItem>
                 </SelectableListItem>
                 <SelectableListItem
                   itemId="CalendarView"
                   onEnter={() => onContentChange('calendarView')}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === 'CalendarView'}
                     onClick={() => onContentChange('calendarView')}
-                    LeftIcon={IconCalendarWeek}
-                    text={t`Calendar view`}
-                    contextualText={
+                    startIcon={<IconCalendarWeek />}
+                    description={
                       recordIndexCalendarLayout === ViewCalendarLayout.MONTH
                         ? t`Month`
                         : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
                           ? t`Week`
                           : t`Day`
                     }
-                    contextualTextPosition="right"
-                    hasSubMenu
-                  />
+                    descriptionPlacement="end"
+                    hasSubmenu
+                  >{t`Calendar view`}</ListItem>
                 </SelectableListItem>
               </>
             )}
@@ -313,19 +303,18 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     : onContentChange('recordGroupFields');
                 }}
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'Group'}
                   onClick={() =>
                     isDefined(recordIndexGroupFieldMetadataItem)
                       ? onContentChange('recordGroups')
                       : onContentChange('recordGroupFields')
                   }
-                  LeftIcon={IconLayoutList}
-                  text={t`Group`}
-                  contextualText={recordIndexGroupFieldMetadataItem?.label}
-                  contextualTextPosition="right"
-                  hasSubMenu
-                />
+                  startIcon={<IconLayoutList />}
+                  description={recordIndexGroupFieldMetadataItem?.label}
+                  descriptionPlacement="end"
+                  hasSubmenu
+                >{t`Group`}</ListItem>
               </SelectableListItem>
             )}
             {currentView?.type !== ViewType.TABLE &&

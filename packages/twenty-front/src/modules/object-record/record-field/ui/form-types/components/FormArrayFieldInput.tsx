@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -29,7 +30,6 @@ import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
 
 type FormArrayFieldInputProps = {
@@ -40,6 +40,7 @@ type FormArrayFieldInputProps = {
   readonly?: boolean;
   placeholder?: string;
   testId?: string;
+  maxItemCount?: number;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -90,6 +91,7 @@ export const FormArrayFieldInput = ({
   readonly,
   placeholder,
   testId,
+  maxItemCount,
 }: FormArrayFieldInputProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
@@ -142,6 +144,11 @@ export const FormArrayFieldInput = ({
   const preventContainerFocusStackUpdate =
     draftValue.type === 'static' && draftValue.value.length >= 1;
 
+  const isLimitReached =
+    isDefined(maxItemCount) &&
+    draftValue.type === 'static' &&
+    draftValue.value.length >= maxItemCount;
+
   const formFieldInputInstanceId = `form-array-field-container-${instanceId}`;
   const newItemInputInstanceId = `array-field-input-new-item-${instanceId}`;
 
@@ -150,6 +157,10 @@ export const FormArrayFieldInput = ({
   };
 
   const handleFirstItemInputEnter = () => {
+    if (isLimitReached) {
+      return;
+    }
+
     setDraftValue({
       type: 'static',
       value: [...draftValue.value, newItemDraftValue],
@@ -270,6 +281,10 @@ export const FormArrayFieldInput = ({
   };
 
   const handleAddItemButtonClick = () => {
+    if (isLimitReached) {
+      return;
+    }
+
     setItemToEditIndex(-1);
     setIsInputDisplayed(true);
   };
@@ -375,15 +390,14 @@ export const FormArrayFieldInput = ({
                         onEnter={handleNewItemInputSubmit}
                         hasItem
                       />
-                    ) : (
+                    ) : !isLimitReached ? (
                       <DropdownMenuItemsContainer>
-                        <MenuItem
+                        <ListItem
                           onClick={handleAddItemButtonClick}
-                          LeftIcon={IconPlus}
-                          text={t`Add item`}
-                        />
+                          startIcon={<IconPlus />}
+                        >{t`Add item`}</ListItem>
                       </DropdownMenuItemsContainer>
-                    )}
+                    ) : null}
                   </DropdownContent>
                 }
               />

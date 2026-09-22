@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -90,7 +89,7 @@ export const ChartAggregateOperationSelectableListItem = ({
         selected={isSelected}
         indicator="check"
       >
-        <OverflowingTextWithTooltip text={label} />
+        {label}
       </ListItem>
     </SelectableListItem>
   );

@@ -1,6 +1,6 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useMemo, useRef, useState } from 'react';
 
@@ -25,7 +25,6 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -277,7 +276,7 @@ export const Select = <Value extends SelectValue>({
                       </>
                     }
                   >
-                    <OverflowingTextWithTooltip text={pinnedOption.label} />
+                    {pinnedOption.label}
                   </ListItem>
                 </DropdownMenuItemsContainer>
               )}
@@ -349,7 +348,7 @@ export const Select = <Value extends SelectValue>({
                                 </>
                               }
                             >
-                              <OverflowingTextWithTooltip text={option.label} />
+                              {option.label}
                             </ListItem>
                           )}
                         </SelectableListItem>
@@ -362,11 +361,14 @@ export const Select = <Value extends SelectValue>({
                 isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
               {isDefined(callToActionButton) && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <MenuItem
+                  <ListItem
                     onClick={callToActionButton.onClick}
-                    LeftIcon={callToActionButton.Icon}
-                    text={callToActionButton.text}
-                  />
+                    startIcon={
+                      <SelectOptionIcon Icon={callToActionButton.Icon} />
+                    }
+                  >
+                    {callToActionButton.text}
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
             </DropdownContent>
