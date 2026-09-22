@@ -803,6 +803,7 @@ export class OAuthService {
       description: `OAuth application registered as "${applicationRegistration.name}"`,
       version: applicationRegistration.latestAvailableVersion ?? '1.0.0',
       sourcePath: 'oauth-install',
+      sourceType: applicationRegistration.sourceType,
       applicationRegistrationId: applicationRegistration.id,
       workspaceId,
     });

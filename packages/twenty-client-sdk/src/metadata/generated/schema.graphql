@@ -100,6 +100,8 @@ type FrontComponent {
   applicationTokenPair: ApplicationTokenPair
   applicationVariables: JSON
   frontComponentSharedDependenciesChecksum: String
+  applicationName: String
+  applicationGrantedCapabilities: [String!]
 }
 
 type CommandMenuItem {
@@ -548,6 +550,7 @@ type Application {
   autoUpgrade: Boolean!
   defaultRoleId: String
   settingsCustomTabFrontComponentId: UUID
+  healthCheckLogicFunctionId: UUID
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
@@ -2004,6 +2007,7 @@ enum FeatureFlagKey {
   IS_RECORD_SHARING_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
+  IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2356,6 +2360,28 @@ type DeletedWorkspaceMember {
   userWorkspaceId: UUID
 }
 
+type ApplicationHealthCheckAction {
+  label: String!
+  location: String
+}
+
+type ApplicationHealthCheckResult {
+  status: ApplicationHealthStatus!
+  title: String
+  description: String
+  action: ApplicationHealthCheckAction
+}
+
+enum ApplicationHealthStatus {
+  OK
+  SUCCESS
+  INFO
+  WARNING
+  ERROR
+  NEUTRAL
+  UNKNOWN
+}
+
 type MarketplaceApp {
   id: String!
   name: String!
@@ -2424,6 +2450,7 @@ type MarketplaceAppDetail {
   installCount: Int!
   defaultRoleUniversalIdentifier: String
   roles: [MarketplaceAppRole!]
+  requestedCapabilities: [String!]!
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
 }
 
@@ -2433,6 +2460,11 @@ type TriggerInstallApplicationJobResult {
 
 type TriggerUninstallApplicationJobResult {
   jobId: String!
+}
+
+type ApplicationCapabilityGrant {
+  id: UUID!
+  grantedCapabilities: [String!]!
 }
 
 type WorkspaceCompanyEnrichmentResult {
@@ -4054,6 +4086,7 @@ type Mutation {
   uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
+  grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
   triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
@@ -4061,6 +4094,7 @@ type Mutation {
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
+  runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
@@ -4962,6 +4996,11 @@ input UpdateApplicationRegistrationVariablePayload {
   value: String
   resetValue: Boolean
   description: String
+}
+
+input GrantApplicationCapabilitiesInput {
+  applicationId: UUID!
+  capabilities: [String!]!
 }
 
 input TriggerInstallApplicationJobInput {
