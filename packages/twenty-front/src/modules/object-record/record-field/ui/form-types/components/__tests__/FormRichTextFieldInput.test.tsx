@@ -71,9 +71,7 @@ it('protects unsupported stored blocks from being overwritten', () => {
     { wrapper: Wrapper },
   );
   expect(
-    screen.getByText(
-      'This content was saved in an older format and cannot be edited here',
-    ),
+    screen.getByText("This content uses formatting that can't be edited here"),
   ).toBeVisible();
   expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   expect(onChange).not.toHaveBeenCalled();

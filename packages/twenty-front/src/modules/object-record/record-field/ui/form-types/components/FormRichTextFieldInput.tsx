@@ -67,7 +67,7 @@ export const FormRichTextFieldInput = ({
         {label ? <Field.Label>{label}</Field.Label> : null}
         <Field.Error
           match
-        >{t`This content was saved in an older format and cannot be edited here`}</Field.Error>
+        >{t`This content uses formatting that can't be edited here`}</Field.Error>
       </FormFieldInputContainer>
     );
   }
