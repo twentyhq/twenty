@@ -1,6 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { ApplicationHealthStatus } from 'src/engine/core-modules/application/enums/application-health-status.enum';
+import { ApplicationHealthStatus } from 'twenty-shared/application';
+
+registerEnumType(ApplicationHealthStatus, {
+  name: 'ApplicationHealthStatus',
+});
 
 @ObjectType('ApplicationHealthCheckAction')
 export class ApplicationHealthCheckActionDTO {

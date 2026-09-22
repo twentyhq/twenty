@@ -120,8 +120,10 @@ The config takes `universalIdentifier` and `handler`. The handler takes no argum
 
 The handler returns `ApplicationHealthCheckResult`, a discriminated union:
 
-- `{ status: 'ok' }`
-- `{ status: 'success' | 'info' | 'warning' | 'error' | 'neutral'; message: string; action?: { label: string; location?: string } }`
+- `{ status: 'OK' }`
+- `{ status: 'SUCCESS' | 'INFO' | 'WARNING' | 'ERROR' | 'NEUTRAL'; message: string; action?: { label: string; location?: string } }`
+
+The statuses come from `ApplicationHealthStatus`, exported from `twenty-sdk/define`, so `ApplicationHealthStatus.WARNING` and `'WARNING'` are interchangeable. `UNKNOWN` belongs to Twenty and an app cannot report it.
 
 `message` is shown in a banner on the app's settings page. `action` renders a button labelled `label` that redirects to `location`, an absolute path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab; omitting it lands on the app's configuration tab. The button is omitted when the location leaves Twenty, and when there is no location and no configuration tab to fall back to.
 

@@ -1,25 +1,25 @@
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 
-export const APPLICATION_HEALTH_CHECK_REPORTED_STATUSES = [
-  'ok',
-  'success',
-  'info',
-  'warning',
-  'error',
-  'neutral',
-] as const;
+import { ApplicationHealthStatus } from './applicationHealthStatus';
 
-export type ApplicationHealthCheckReportedStatus =
-  (typeof APPLICATION_HEALTH_CHECK_REPORTED_STATUSES)[number];
+// The string form of the enum, so an app can write either 'WARNING' or
+// ApplicationHealthStatus.WARNING. UNKNOWN is Twenty's answer to a check it
+// could not read, never something an app reports.
+export type ApplicationHealthCheckReportedStatus = Exclude<
+  `${ApplicationHealthStatus}`,
+  `${ApplicationHealthStatus.UNKNOWN}`
+>;
 
 export type ApplicationHealthCheckReportedBannerStatus = Exclude<
   ApplicationHealthCheckReportedStatus,
-  'ok'
+  `${ApplicationHealthStatus.OK}`
 >;
 
 const APPLICATION_HEALTH_CHECK_REPORTED_BANNER_STATUSES: readonly string[] =
-  APPLICATION_HEALTH_CHECK_REPORTED_STATUSES.filter(
-    (status) => status !== 'ok',
+  Object.values(ApplicationHealthStatus).filter(
+    (status) =>
+      status !== ApplicationHealthStatus.OK &&
+      status !== ApplicationHealthStatus.UNKNOWN,
   );
 
 export type ApplicationHealthCheckAction = {
@@ -28,7 +28,7 @@ export type ApplicationHealthCheckAction = {
 };
 
 export type ApplicationHealthCheckResult =
-  | { status: 'ok' }
+  | { status: `${ApplicationHealthStatus.OK}` }
   | {
       status: ApplicationHealthCheckReportedBannerStatus;
       message: string;
@@ -50,7 +50,7 @@ export const isApplicationHealthCheckResult = (
 
   const { status, message, action } = value as Record<string, unknown>;
 
-  if (status === 'ok') {
+  if (status === ApplicationHealthStatus.OK) {
     return true;
   }
 

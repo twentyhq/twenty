@@ -6,6 +6,6 @@ export default defineHealthCheck({
   universalIdentifier: HEALTH_CHECK_UNIVERSAL_IDENTIFIER,
   name: 'health-check',
   handler: async () => {
-    return { status: 'ok' };
+    return { status: 'OK' };
   },
 });

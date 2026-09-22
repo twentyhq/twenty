@@ -1,21 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { isApplicationHealthCheckResult } from 'twenty-shared/application';
+import {
+  ApplicationHealthStatus,
+  isApplicationHealthCheckResult,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationHealthStatus } from 'src/engine/core-modules/application/enums/application-health-status.enum';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/application/dtos/application-health-check-result.dto';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-
-const REPORTED_STATUS_TO_HEALTH_STATUS = {
-  ok: ApplicationHealthStatus.OK,
-  success: ApplicationHealthStatus.SUCCESS,
-  info: ApplicationHealthStatus.INFO,
-  warning: ApplicationHealthStatus.WARNING,
-  error: ApplicationHealthStatus.ERROR,
-  neutral: ApplicationHealthStatus.NEUTRAL,
-} as const;
 
 const UNKNOWN_HEALTH: ApplicationHealthCheckResultDTO = {
   status: ApplicationHealthStatus.UNKNOWN,
@@ -80,7 +73,7 @@ export class ApplicationHealthCheckService {
       return UNKNOWN_HEALTH;
     }
 
-    if (data.status === 'ok') {
+    if (data.status === ApplicationHealthStatus.OK) {
       return {
         status: ApplicationHealthStatus.OK,
         message: null,
@@ -91,7 +84,7 @@ export class ApplicationHealthCheckService {
     const { action } = data;
 
     return {
-      status: REPORTED_STATUS_TO_HEALTH_STATUS[data.status],
+      status: ApplicationHealthStatus[data.status],
       message: data.message,
       action: isDefined(action)
         ? { label: action.label, location: action.location ?? null }

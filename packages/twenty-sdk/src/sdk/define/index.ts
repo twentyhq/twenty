@@ -107,6 +107,7 @@ export type {
   ApplicationHealthCheckAction,
   ApplicationHealthCheckResult,
 } from 'twenty-shared/application';
+export { ApplicationHealthStatus } from 'twenty-shared/application';
 export type {
   LogicFunctionConfig,
   LogicFunctionHandler,

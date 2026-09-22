@@ -81,7 +81,7 @@ Report to the user that the app was created successfully and is ready for develo
 
 The scaffolder generates a placeholder page at `src/front-components/main-page.tsx` plus its page layout and navigation menu item. In `develop-app`, delete all three before the first deploy unless the app actually needs UI. Do not stack additional pages on top of the placeholder.
 
-It also generates a health check at `src/logic-functions/health-check.ts` that reports `ok`. Customise that file when the app gains something worth reporting; do not add a second one, since an app may declare only one health check and a second fails the build.
+It also generates a health check at `src/logic-functions/health-check.ts` that reports `OK`. Customise that file when the app gains something worth reporting; do not add a second one, since an app may declare only one health check and a second fails the build.
 
 ## Docker Fallback Troubleshooting
 

@@ -1,5 +1,5 @@
 import { ApplicationHealthCheckService } from 'src/engine/core-modules/application/application-health/application-health-check.service';
-import { ApplicationHealthStatus } from 'src/engine/core-modules/application/enums/application-health-status.enum';
+import { ApplicationHealthStatus } from 'twenty-shared/application';
 
 const APPLICATION_ID = 'a7d3f1c2-1111-4222-8333-444455556666';
 const WORKSPACE_ID = 'b7d3f1c2-1111-4222-8333-444455556666';
@@ -43,7 +43,7 @@ describe('ApplicationHealthCheckService', () => {
 
   it('should report OK without a message when the app reports ok', async () => {
     const { service } = buildService({
-      execute: jest.fn().mockResolvedValue({ data: { status: 'ok' } }),
+      execute: jest.fn().mockResolvedValue({ data: { status: 'OK' } }),
     });
 
     expect(await run(service)).toEqual({
@@ -57,7 +57,7 @@ describe('ApplicationHealthCheckService', () => {
     const { service } = buildService({
       execute: jest.fn().mockResolvedValue({
         data: {
-          status: 'error',
+          status: 'ERROR',
           message: 'Your key was revoked',
           action: { label: 'Reconnect', location: 'variables' },
         },
@@ -72,12 +72,12 @@ describe('ApplicationHealthCheckService', () => {
   });
 
   it.each([
-    ['success', ApplicationHealthStatus.SUCCESS],
-    ['info', ApplicationHealthStatus.INFO],
-    ['warning', ApplicationHealthStatus.WARNING],
-    ['error', ApplicationHealthStatus.ERROR],
-    ['neutral', ApplicationHealthStatus.NEUTRAL],
-  ])('should map a reported %s to %s', async (reportedStatus, healthStatus) => {
+    [ApplicationHealthStatus.SUCCESS],
+    [ApplicationHealthStatus.INFO],
+    [ApplicationHealthStatus.WARNING],
+    [ApplicationHealthStatus.ERROR],
+    [ApplicationHealthStatus.NEUTRAL],
+  ])('should report a reported %s as is', async (reportedStatus) => {
     const { service } = buildService({
       execute: jest.fn().mockResolvedValue({
         data: { status: reportedStatus, message: 'Expiring' },
@@ -85,7 +85,7 @@ describe('ApplicationHealthCheckService', () => {
     });
 
     expect(await run(service)).toEqual({
-      status: healthStatus,
+      status: reportedStatus,
       message: 'Expiring',
       action: null,
     });
@@ -93,8 +93,8 @@ describe('ApplicationHealthCheckService', () => {
 
   it.each([
     ['the execution errored', { data: null, error: { errorMessage: 'boom' } }],
-    ['the result is unreadable', { data: { status: 'nope' } }],
-    ['the result has no message', { data: { status: 'error' } }],
+    ['the result is unreadable', { data: { status: 'NOPE' } }],
+    ['the result has no message', { data: { status: 'ERROR' } }],
   ])('should fall back to UNKNOWN when %s', async (_label, executionResult) => {
     const { service } = buildService({
       execute: jest.fn().mockResolvedValue(executionResult),

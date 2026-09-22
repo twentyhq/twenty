@@ -4,7 +4,7 @@ describe('defineHealthCheck', () => {
   const validConfig = {
     universalIdentifier: '7f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f',
     name: 'health-check',
-    handler: async () => ({ status: 'ok' as const }),
+    handler: async () => ({ status: 'OK' as const }),
   };
 
   it('should return successful validation result when valid', () => {
@@ -18,7 +18,7 @@ describe('defineHealthCheck', () => {
   it('should return error when universalIdentifier is missing', () => {
     const result = defineHealthCheck({
       name: 'health-check',
-      handler: async () => ({ status: 'ok' as const }),
+      handler: async () => ({ status: 'OK' as const }),
     } as any);
 
     expect(result.success).toBe(false);

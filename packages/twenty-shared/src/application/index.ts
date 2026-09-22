@@ -36,16 +36,14 @@ export {
   APPLICATION_CATEGORIES,
   isKnownApplicationCategory,
 } from './applicationCategoryType';
+export { ApplicationHealthStatus } from './applicationHealthStatus';
 export type {
   ApplicationHealthCheckReportedStatus,
   ApplicationHealthCheckReportedBannerStatus,
   ApplicationHealthCheckAction,
   ApplicationHealthCheckResult,
 } from './applicationHealthType';
-export {
-  APPLICATION_HEALTH_CHECK_REPORTED_STATUSES,
-  isApplicationHealthCheckResult,
-} from './applicationHealthType';
+export { isApplicationHealthCheckResult } from './applicationHealthType';
 export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
