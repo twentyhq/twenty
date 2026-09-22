@@ -73,6 +73,7 @@ describe('buildQuotaExhaustedScope', () => {
           periodStart: PERIOD_START,
           periodEnd: PERIOD_END,
           allowanceMicro: 2_000_000,
+          validUntil: PERIOD_END,
         },
       }),
     ).toEqual({

@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -21,7 +22,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { type ViewFilterOperand } from 'twenty-shared/types';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {
   recordFilterId: string;
@@ -104,13 +104,14 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
                     handleOperandChange(filterOperand);
                   }}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === filterOperand}
                     onClick={() => {
                       handleOperandChange(filterOperand);
                     }}
-                    text={getOperandLabel(filterOperand, timeZoneAbbreviation)}
-                  />
+                  >
+                    {getOperandLabel(filterOperand, timeZoneAbbreviation)}
+                  </ListItem>
                 </SelectableListItem>
               ))}
             </SelectableList>

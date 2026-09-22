@@ -16,7 +16,7 @@ const NAMED_WORKFLOW_NAVBAR_ACTIONS = [
   { icon: 'playerPause', label: 'Deactivate' },
   { icon: 'repeat', label: 'See Runs' },
   { icon: 'plus', label: 'Add a Node' },
-  { icon: 'dotsVertical', trailingLabel: '\u2318K' },
+  { icon: 'dotsVertical', variant: 'icon' },
 ] satisfies NavbarAction[];
 
 const PEOPLE_AVATAR_URLS = sharedAssetUrls.peopleAvatars;
@@ -32,6 +32,7 @@ const WORKFLOW_LIST_TABLE: TablePageDefinition = {
       id: 'name',
       label: 'Name',
       width: 240,
+      icon: 'settingsAutomation',
       isFirstColumn: true,
     },
     { id: 'status', label: 'Status', width: 140 },
@@ -74,7 +75,7 @@ const WORKFLOW_LIST_TABLE: TablePageDefinition = {
 const WORKFLOW_RUNS_TABLE: TablePageDefinition = {
   type: 'table',
   header: {
-    title: 'All Runs',
+    title: 'All Workflow Runs',
     count: 2,
   },
   columns: [
@@ -136,7 +137,7 @@ const WORKFLOW_RUNS_TABLE: TablePageDefinition = {
 const WORKFLOW_VERSIONS_TABLE: TablePageDefinition = {
   type: 'table',
   header: {
-    title: 'All Versions',
+    title: 'All Workflow Versions',
     count: 2,
   },
   columns: [
@@ -252,13 +253,13 @@ export const WORKFLOWS_FOLDER: SidebarFolderDef = {
     },
     {
       id: 'workflow-runs',
-      label: 'Workflows runs',
+      label: 'Workflow Runs',
       icon: { kind: 'tabler', name: 'playerPlay', tone: 'gray' },
       page: WORKFLOW_RUNS_TABLE,
     },
     {
       id: 'workflow-versions',
-      label: 'Workflows versions',
+      label: 'Workflow Versions',
       icon: { kind: 'tabler', name: 'versions', tone: 'gray' },
       page: WORKFLOW_VERSIONS_TABLE,
     },

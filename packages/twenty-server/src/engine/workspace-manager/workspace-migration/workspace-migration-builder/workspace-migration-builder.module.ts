@@ -1,3 +1,5 @@
+import { WorkspaceMigrationWorkflowVersionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow-version/workspace-migration-workflow-version-actions-builder.service';
+import { WorkspaceMigrationWorkflowActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow/workspace-migration-workflow-actions-builder.service';
 import { Module } from '@nestjs/common';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -44,6 +46,8 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     MetricsModule,
   ],
   providers: [
+    WorkspaceMigrationWorkflowActionsBuilderService,
+    WorkspaceMigrationWorkflowVersionActionsBuilderService,
     FlatFieldMetadataTypeValidatorService,
     WorkspaceMigrationObjectActionsBuilderService,
     WorkspaceMigrationViewActionsBuilderService,
@@ -79,6 +83,8 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
   ],
   exports: [
+    WorkspaceMigrationWorkflowActionsBuilderService,
+    WorkspaceMigrationWorkflowVersionActionsBuilderService,
     WorkspaceMigrationViewActionsBuilderService,
     WorkspaceMigrationIndexActionsBuilderService,
     WorkspaceMigrationObjectActionsBuilderService,

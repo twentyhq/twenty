@@ -23,6 +23,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { isLastSuccessfulSyncStale } from 'src/modules/connected-account/utils/is-last-successful-sync-stale.util';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
@@ -38,6 +39,7 @@ export class MessagingMessageListFetchCronJob {
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
   @Process(MessagingMessageListFetchCronJob.name)
@@ -99,25 +101,11 @@ export class MessagingMessageListFetchCronJob {
           (messageChannel) => messageChannel.id,
         );
 
-        const updateResult = await this.messageChannelRepository
-          .createQueryBuilder()
-          .update()
-          .set({
-            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-            syncStageStartedAt: new Date(),
-          })
-          .where({
-            id: In(messageChannelIdsToSchedule),
+        const updatedIds =
+          await this.messageChannelSyncStatusService.markAsMessagesListFetchScheduledIfPending(
+            messageChannelIdsToSchedule,
             workspaceId,
-            isSyncEnabled: true,
-            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          })
-          .returning('id')
-          .execute();
-
-        const updatedIds = updateResult.raw.map(
-          (row: { id: string }) => row.id,
-        );
+          );
 
         for (const messageChannelId of updatedIds) {
           await this.messageQueueService.add<MessagingMessageListFetchJobData>(

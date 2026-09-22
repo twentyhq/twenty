@@ -1,3 +1,25 @@
+import { type FlatWorkflowVersionMaps } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version-maps.type';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
+import { type FlatWorkflowMaps } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow-maps.type';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
+import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
+import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
+import {
+  type FlatCreateWorkflowVersionAction,
+  type FlatDeleteWorkflowVersionAction,
+  type FlatUpdateWorkflowVersionAction,
+  type UniversalCreateWorkflowVersionAction,
+  type UniversalDeleteWorkflowVersionAction,
+  type UniversalUpdateWorkflowVersionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow-version/types/workspace-migration-workflow-version-action.type';
+import {
+  type FlatCreateWorkflowAction,
+  type FlatDeleteWorkflowAction,
+  type FlatUpdateWorkflowAction,
+  type UniversalCreateWorkflowAction,
+  type UniversalDeleteWorkflowAction,
+  type UniversalUpdateWorkflowAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow/types/workspace-migration-workflow-action.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
@@ -869,5 +891,37 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatTimelineActivityType;
     universalFlatEntity: UniversalFlatTimelineActivityType;
     entity: MetadataEntity<'timelineActivityType'>;
+  };
+  workflow: {
+    flatEntityMaps: FlatWorkflowMaps;
+    universalActions: {
+      create: UniversalCreateWorkflowAction;
+      update: UniversalUpdateWorkflowAction;
+      delete: UniversalDeleteWorkflowAction;
+    };
+    flatActions: {
+      create: FlatCreateWorkflowAction;
+      update: FlatUpdateWorkflowAction;
+      delete: FlatDeleteWorkflowAction;
+    };
+    flatEntity: FlatWorkflow;
+    universalFlatEntity: UniversalFlatWorkflow;
+    entity: MetadataEntity<'workflow'>;
+  };
+  workflowVersion: {
+    flatEntityMaps: FlatWorkflowVersionMaps;
+    universalActions: {
+      create: UniversalCreateWorkflowVersionAction;
+      update: UniversalUpdateWorkflowVersionAction;
+      delete: UniversalDeleteWorkflowVersionAction;
+    };
+    flatActions: {
+      create: FlatCreateWorkflowVersionAction;
+      update: FlatUpdateWorkflowVersionAction;
+      delete: FlatDeleteWorkflowVersionAction;
+    };
+    flatEntity: FlatWorkflowVersion;
+    universalFlatEntity: UniversalFlatWorkflowVersion;
+    entity: MetadataEntity<'workflowVersion'>;
   };
 };

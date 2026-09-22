@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSortDropdownId } from '@/object-record/object-sort-dropdown/utils/getObjectSortDropdownId';
@@ -33,7 +35,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
@@ -230,17 +231,22 @@ export const ObjectSortDropdownButton = () => {
                         itemId={visibleFieldMetadataItem.id}
                         onEnter={() => handleAddSort(visibleFieldMetadataItem)}
                       >
-                        <MenuItem
+                        <ListItem
                           focused={
                             selectedItemId === visibleFieldMetadataItem.id
                           }
-                          testId={`visible-select-sort-${index}`}
+                          data-testid={`visible-select-sort-${index}`}
                           onClick={() =>
                             handleAddSort(visibleFieldMetadataItem)
                           }
-                          LeftIcon={getIcon(visibleFieldMetadataItem.icon)}
-                          text={visibleFieldMetadataItem.label}
-                        />
+                          startIcon={
+                            <SelectOptionIcon
+                              Icon={getIcon(visibleFieldMetadataItem.icon)}
+                            />
+                          }
+                        >
+                          {visibleFieldMetadataItem.label}
+                        </ListItem>
                       </SelectableListItem>
                     ),
                   )}
@@ -259,15 +265,20 @@ export const ObjectSortDropdownButton = () => {
                         itemId={hiddenFieldMetadataItem.id}
                         onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
                       >
-                        <MenuItem
+                        <ListItem
                           focused={
                             selectedItemId === hiddenFieldMetadataItem.id
                           }
-                          testId={`hidden-select-sort-${index}`}
+                          data-testid={`hidden-select-sort-${index}`}
                           onClick={() => handleAddSort(hiddenFieldMetadataItem)}
-                          LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
-                          text={hiddenFieldMetadataItem.label}
-                        />
+                          startIcon={
+                            <SelectOptionIcon
+                              Icon={getIcon(hiddenFieldMetadataItem.icon)}
+                            />
+                          }
+                        >
+                          {hiddenFieldMetadataItem.label}
+                        </ListItem>
                       </SelectableListItem>
                     ),
                   )}

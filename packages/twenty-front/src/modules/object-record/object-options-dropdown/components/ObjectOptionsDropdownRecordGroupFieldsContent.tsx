@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useEffect } from 'react';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -26,11 +25,7 @@ import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
-import {
-  MenuItem,
-  UndecoratedLink,
-  ListItem,
-} from 'twenty-ui/primitives/navigation';
+import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
@@ -136,9 +131,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             aria-selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             indicator="check"
-          >
-            <OverflowingTextWithTooltip text={t`None`} />
-          </ListItem>
+          >{t`None`}</ListItem>
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <ListItem
@@ -156,7 +149,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
               <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
             }
           >
-            <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+            {fieldMetadataItem.label}
           </ListItem>
         ))}
       </DropdownMenuItemsContainer>
@@ -169,7 +162,9 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             closeDropdown();
           }}
         >
-          <MenuItem LeftIcon={IconSettings} text={t`Create select field`} />
+          <ListItem
+            startIcon={<IconSettings />}
+          >{t`Create select field`}</ListItem>
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </DropdownContent>
