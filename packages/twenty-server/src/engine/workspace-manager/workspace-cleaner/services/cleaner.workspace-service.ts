@@ -402,20 +402,19 @@ export class CleanerWorkspaceService {
             );
 
             if (!dryRun) {
-              await this.messageQueueService.add<DestroySoftDeletedWorkspaceJobData>(
-                DestroySoftDeletedWorkspaceJob.name,
-                { workspaceId: workspace.id },
-                {
-                  deduplication: {
-                    id: `destroy-soft-deleted-workspace:${workspace.id}`,
-                  },
-                },
-              );
+              const jobId =
+                await this.messageQueueService.add<DestroySoftDeletedWorkspaceJobData>(
+                  DestroySoftDeletedWorkspaceJob.name,
+                  { workspaceId: workspace.id },
+                  { id: `destroy-soft-deleted-workspace-${workspace.id}` },
+                );
 
-              enqueuedWorkspacesCount++;
-              this.logger.log(
-                `Enqueued ${enqueuedWorkspacesCount} workspaces on ${this.maxNumberOfWorkspacesDeletedPerExecution} limit during this execution`,
-              );
+              if (isDefined(jobId)) {
+                enqueuedWorkspacesCount++;
+                this.logger.log(
+                  `Enqueued ${enqueuedWorkspacesCount} workspaces on ${this.maxNumberOfWorkspacesDeletedPerExecution} limit during this execution`,
+                );
+              }
             }
           }
           continue;
