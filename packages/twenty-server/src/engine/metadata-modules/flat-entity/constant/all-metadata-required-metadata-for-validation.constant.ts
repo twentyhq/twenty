@@ -130,7 +130,5 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     frontComponent: true,
   },
   workflow: {},
-  workflowVersion: {
-    workflow: true,
-  },
+  workflowVersion: {},
 } as const satisfies MetadataRequiredForValidation;
