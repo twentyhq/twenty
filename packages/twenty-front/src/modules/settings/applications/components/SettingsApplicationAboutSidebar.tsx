@@ -6,7 +6,7 @@ import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { isDefined, isSafeUrl } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   IconAlertTriangle,
   IconBrandNpm,

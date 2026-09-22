@@ -2,7 +2,7 @@ import { StyledHeaderIdentifierLabel } from '@/ui/layout/page/components/StyledH
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   AVATAR_PROPERTIES_BY_SIZE,
   Avatar,

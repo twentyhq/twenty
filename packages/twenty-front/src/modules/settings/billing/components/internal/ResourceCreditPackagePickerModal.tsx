@@ -6,7 +6,8 @@ import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type ElementType, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip, Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   IconCoins,
   IconHistory,

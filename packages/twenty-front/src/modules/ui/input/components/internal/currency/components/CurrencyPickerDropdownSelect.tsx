@@ -6,7 +6,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const CurrencyPickerDropdownSelect = ({

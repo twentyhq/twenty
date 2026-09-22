@@ -5,7 +5,7 @@ import { type MouseEvent } from 'react';
 
 import { IconCheck, IconChevronRight } from '@ui/icon';
 import { MenuItemHotKeys } from '@ui/primitives/navigation/ListItem/internal/MenuItemHotKeys/MenuItemHotKeys';
-import { OverflowingTextWithTooltip } from '@ui/primitives/typography/internal/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { isRenderableSlot } from './internal/isRenderableSlot';

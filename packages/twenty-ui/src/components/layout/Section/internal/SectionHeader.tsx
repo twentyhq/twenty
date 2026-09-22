@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { useId } from 'react';
 
 import { Heading } from '@ui/primitives/typography/Heading/Heading';
-import { OverflowingTextWithTooltip } from '@ui/primitives/typography/internal/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type SectionHeaderProps } from '../types/SectionHeaderProps';

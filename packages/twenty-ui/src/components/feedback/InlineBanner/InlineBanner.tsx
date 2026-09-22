@@ -5,7 +5,7 @@ import {
   type BannerColor,
 } from '@ui/primitives/feedback/Banner/Banner';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { OverflowingTextWithTooltip } from '@ui/primitives/typography/internal/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { useTheme } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';

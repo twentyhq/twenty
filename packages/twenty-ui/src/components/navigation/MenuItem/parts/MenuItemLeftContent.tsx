@@ -12,7 +12,7 @@ import {
   StyledRightMenuItemContextualText,
 } from '@ui/components/navigation/MenuItem/parts/StyledMenuItemBase';
 import { type MenuItemDraggableGripMode } from '@ui/components/navigation/MenuItem/types/MenuItemDraggableGripMode';
-import { OverflowingTextWithTooltip } from '@ui/components/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { IconGripVertical, type IconComponent } from '@ui/icon';
 import { type ThemeColor } from '@ui/theme';
 import { themeCssVariables, useTheme } from '@ui/theme-constants';

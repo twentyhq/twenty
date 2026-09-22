@@ -20,7 +20,7 @@ import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/comp
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 
 type EventRowGenericLinkedProps = EventRowNativeComponentProps;
 

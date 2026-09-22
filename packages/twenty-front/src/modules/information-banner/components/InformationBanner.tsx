@@ -6,7 +6,8 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import {
   Banner,

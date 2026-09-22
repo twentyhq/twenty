@@ -2,7 +2,7 @@ import { css } from '@linaria/core';
 import { isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
 
-import { OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 
 const styles = {
   container: css`

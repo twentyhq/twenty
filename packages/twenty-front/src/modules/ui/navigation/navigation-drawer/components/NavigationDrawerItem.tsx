@@ -16,10 +16,13 @@ import { t } from '@lingui/core/macro';
 import { type JSX, type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip, Pill } from 'twenty-ui/components';
+import { Pill } from 'twenty-ui/components';
 import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { Text } from 'twenty-ui/primitives/typography';
+import {
+  Text,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/primitives/typography';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,

@@ -21,10 +21,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import {
-  LightIconButton,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useDebounce } from 'use-debounce';

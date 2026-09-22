@@ -6,7 +6,8 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext } from 'react';
-import { IconButton, OverflowingTextWithTooltip } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconTrash } from 'twenty-ui/icon';
 
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';

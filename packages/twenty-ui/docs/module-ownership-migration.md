@@ -1,10 +1,10 @@
 # Breaking module ownership migration
 
-This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 41 primitives and 33 shared React components, including the optional code editor.
+This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 42 primitives and 32 shared React components, including the optional code editor.
 
 ## Choosing a module
 
-- A primitive owns one foundational interaction or presentation contract. Examples include Button, Field, ListItem, Dialog, Text, and Avatar.
+- A primitive owns one foundational interaction or presentation contract. It may compose other primitives to fulfill that contract. Examples include Button, Field, ListItem, Dialog, Text, and Avatar.
 - A shared component combines primitives into a reusable presentation or interaction. It receives data, translated labels, callbacks, and render props from its host. It does not own application routing, record metadata, or application state.
 - A frontend adapter owns product policy such as routing, field formatting, click-outside coordination, and empty-state illustrations. Feature-specific presentation stays with its feature.
 - An implementation part stays private to the module that uses it. Import the owner and use its public parts or slots.
@@ -13,17 +13,19 @@ This change removes the previous exports immediately. Release it as a breaking p
 
 Foundational controls keep their `twenty-ui/primitives/<family>` imports. Import shared components and their public types from `twenty-ui/components`. The code editor keeps `twenty-ui/components/code-editor`. The `twenty-ui/primitives/json-visualizer` entry point is removed. Root imports still expose the supported public interface.
 
-Source folders group shared components by `data-display`, `feedback`, `input`, `layout`, `navigation`, and `typography`, matching the primitive families. The optional `code-editor` folder remains separate. These folders organize the implementation; public imports use `twenty-ui/components` or `twenty-ui/components/code-editor`.
+Source folders group shared components by `data-display`, `feedback`, `input`, `layout`, and `navigation`, matching the primitive families. The optional `code-editor` folder remains separate. These folders organize the implementation; public imports use `twenty-ui/components` or `twenty-ui/components/code-editor`.
 
 ### Primitives
 
-`VisibilityHidden`, `Avatar`, `Chip`, `ColorSample`, `Status`, `Tag`, `Banner`, `CircularProgressBar`, `Loader`, `ProgressBar`, `Button`, `ButtonGroup`, `Checkbox`, `Field`, `Input`, `InputGroup`, `Radio`, `RadioGroup`, `SegmentedControl`, `Select`, `Slider`, `Switch`, `Textarea`, `AnimatedExpandableContainer`, `HorizontalSeparator`, `ResizeHandle`, `TextDirectionProvider`, `ClickToActionLink`, `ListItem`, `Tabs`, `AlertDialog`, `Card`, `CardContent`, `CardFooter`, `CardHeader`, `Dialog`, `Menu`, `Popover`, `Tooltip`, `Heading`, `Text`.
+`VisibilityHidden`, `Avatar`, `Chip`, `ColorSample`, `Status`, `Tag`, `Banner`, `CircularProgressBar`, `Loader`, `ProgressBar`, `Button`, `ButtonGroup`, `Checkbox`, `Field`, `Input`, `InputGroup`, `Radio`, `RadioGroup`, `SegmentedControl`, `Select`, `Slider`, `Switch`, `Textarea`, `AnimatedExpandableContainer`, `HorizontalSeparator`, `ResizeHandle`, `TextDirectionProvider`, `ClickToActionLink`, `ListItem`, `Tabs`, `AlertDialog`, `Card`, `CardContent`, `CardFooter`, `CardHeader`, `Dialog`, `Menu`, `Popover`, `Tooltip`, `Heading`, `OverflowingTextWithTooltip`, `Text`.
 
 ### Shared components
 
-`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `SettingsRow`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `CardPicker`, `ColorSchemePicker`, `LightIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemSuggestion`, `MenuPicker`, `NavigationBar`, `RoundedLink`, `OverflowingTextWithTooltip`.
+`CodeEditor`, `CodeEditorHeader`, `IconButton`, `LightButton`, `MainButton`, `Section`, `SettingsRow`, `TabButton`, `AvatarGroup`, `CommandBlock`, `NotificationCounter`, `Pill`, `TintedIconTile`, `Callout`, `Info`, `InlineBanner`, `Toast`, `ToastProvider`, `Toaster`, `CardPicker`, `ColorSchemePicker`, `LightIconButton`, `SearchInput`, `JsonTree`, `AnimatedIconCrossfade`, `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemSuggestion`, `MenuPicker`, `NavigationBar`, `RoundedLink`.
 
 ## Interface changes
+
+- `OverflowingTextWithTooltip` stays a typography primitive: it owns truncation and overflow disclosure. ListItem, Chip, and Tag use it directly, and its implementation and private linkification helper live beside it.
 
 - `JsonTree` accepts either `value` or `entries: { id, label, value }[]`. Entry IDs determine highlighting paths; labels determine presentation. Its default expansion opens the first two levels. Use `shouldExpandNodeInitially` to override that policy. Node renderers, context, and traversal helpers are private.
 - Replace custom menu-row assemblies with `ListItem` slots and native role/selection props. `actionsVisibility` preserves either persistent or hover/focus actions. Styled menu fragments are private.

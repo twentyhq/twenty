@@ -89,4 +89,3 @@ export { NavigationBar } from './navigation/NavigationBar/NavigationBar';
 export { RoundedLink } from './navigation/RoundedLink/RoundedLink';
 export { TabButton } from './navigation/TabButton/TabButton';
 export type { TabButtonProps } from './navigation/TabButton/types/TabButtonProps';
-export { OverflowingTextWithTooltip } from './typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';

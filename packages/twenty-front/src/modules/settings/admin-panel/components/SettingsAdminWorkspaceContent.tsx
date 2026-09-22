@@ -18,7 +18,8 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip, Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   IconCalendar,
   IconHome,

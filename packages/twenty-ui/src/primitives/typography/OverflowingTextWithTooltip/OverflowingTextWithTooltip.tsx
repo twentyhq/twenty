@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 import { type TooltipSide } from '@ui/primitives/surfaces/Tooltip/types/TooltipSide';
 import { Text } from '@ui/primitives/typography/Text/Text';
-import { LinkifiedText } from '@ui/primitives/typography/internal/LinkifiedText/LinkifiedText';
+import { LinkifiedText } from './internal/LinkifiedText/LinkifiedText';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';
 

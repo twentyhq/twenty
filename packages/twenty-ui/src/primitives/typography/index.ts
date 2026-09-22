@@ -9,4 +9,5 @@
 
 export { Heading } from './Heading/Heading';
 export type { HeadingProps } from './Heading/types/HeadingProps';
+export { OverflowingTextWithTooltip } from './OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 export { Text } from './Text/Text';

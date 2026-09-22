@@ -7,9 +7,9 @@ import {
   MenuItemSuggestion,
   MenuPicker,
   NavigationBar,
-  OverflowingTextWithTooltip,
   RoundedLink,
 } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconHome, IconUser } from 'twenty-ui/icon';
 import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';
 import { ClickToActionLink, ListItem } from 'twenty-ui/primitives/navigation';

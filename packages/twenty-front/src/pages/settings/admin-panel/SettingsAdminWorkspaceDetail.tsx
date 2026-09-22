@@ -38,11 +38,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  OverflowingTextWithTooltip,
-  Section,
-  useToast,
-} from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import {
   IconCreditCard,
   IconEyeShare,
@@ -55,7 +51,10 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button, Switch } from 'twenty-ui/primitives/input';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { Text } from 'twenty-ui/primitives/typography';
+import {
+  Text,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetUpgradeStatusDocument,
