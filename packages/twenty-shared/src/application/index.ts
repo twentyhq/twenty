@@ -236,7 +236,6 @@ export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
-export { sortSettingsMenuItems } from './utils/sortSettingsMenuItems';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,
