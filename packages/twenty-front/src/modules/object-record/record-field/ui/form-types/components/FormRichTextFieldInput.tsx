@@ -9,6 +9,7 @@ import { RECORD_RICH_TEXT_EDITOR_PROFILE } from '@/object-record/record-field/ui
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { convertTipTapDocumentToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertTipTapDocumentToBlockNote';
+import { serializeTipTapDocumentContent } from '@/object-record/record-field/ui/form-types/utils/serializeTipTapDocumentContent';
 
 type FormRichTextFieldInputProps = {
   label?: string;
@@ -51,10 +52,9 @@ export const FormRichTextFieldInput = ({
         serializedDocument: storedValue,
         parseLegacyDocument: profile.parseLegacyDocument,
       });
-      convertTipTapDocumentToBlockNote(
-        JSON.stringify(document),
-        enableVariables,
-      );
+      if (!enableVariables) {
+        convertTipTapDocumentToBlockNote(JSON.stringify(document));
+      }
       return false;
     } catch {
       return true;
@@ -75,7 +75,9 @@ export const FormRichTextFieldInput = ({
   const handleChange = (value: string) => {
     onChange({
       // Workflow resolution requires semantic tags; record pages require BlockNote.
-      blocknote: convertTipTapDocumentToBlockNote(value, enableVariables),
+      blocknote: enableVariables
+        ? serializeTipTapDocumentContent(value)
+        : convertTipTapDocumentToBlockNote(value),
       markdown: null,
     });
   };

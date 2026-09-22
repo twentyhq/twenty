@@ -20,7 +20,7 @@ const tryParseJson = (value: string): unknown => {
 
 export const parseLegacyRecordRichTextDocument = (
   serializedDocument: string,
-  enableVariables = true,
+  enableVariables: boolean,
 ): Content => {
   const blocks = tryParseJson(serializedDocument);
 

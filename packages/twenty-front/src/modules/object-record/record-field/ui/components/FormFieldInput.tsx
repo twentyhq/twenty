@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { FormAddressFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAddressFieldInput';
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
 import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
@@ -229,7 +230,7 @@ export const FormFieldInput = ({
     />
   ) : isFieldRichText(field) ? (
     <FormRichTextFieldInput
-      enableVariables={VariablePicker !== undefined}
+      enableVariables={isDefined(VariablePicker)}
       label={field.label}
       defaultValue={defaultValue as FieldRichTextValue | undefined}
       onChange={onChange}
