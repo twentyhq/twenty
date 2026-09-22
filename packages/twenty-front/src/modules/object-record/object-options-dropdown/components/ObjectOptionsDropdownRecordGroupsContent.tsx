@@ -117,8 +117,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
 
   const selectableItemIdArray = [
     ...(currentView?.key !== 'INDEX' ? ['GroupBy', 'Sort'] : []),
-    'HideEmptyGroups',
     ...(shouldShowGroupLoadLimit ? ['LoadLimit'] : []),
+    'HideEmptyGroups',
   ];
 
   const hiddenGroupsSelectableListId = `${dropdownId}-hidden-groups`;
@@ -175,17 +175,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               </SelectableListItem>
             </>
           )}
-          <SelectableListItem
-            itemId="HideEmptyGroups"
-            onEnter={() => handleHideEmptyRecordGroupChange()}
-          >
-            <SettingsRow
-              focused={selectedItemId === 'HideEmptyGroups'}
-              startIcon={<IconCircleOff />}
-              onCheckedChange={handleHideEmptyRecordGroupChange}
-              checked={shouldHideEmptyGroups}
-            >{t`Hide empty groups`}</SettingsRow>
-          </SelectableListItem>
           {shouldShowGroupLoadLimit && (
             <SelectableListItem
               itemId="LoadLimit"
@@ -201,6 +190,17 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               >{t`Load limit`}</ListItem>
             </SelectableListItem>
           )}
+          <SelectableListItem
+            itemId="HideEmptyGroups"
+            onEnter={() => handleHideEmptyRecordGroupChange()}
+          >
+            <SettingsRow
+              focused={selectedItemId === 'HideEmptyGroups'}
+              startIcon={<IconCircleOff />}
+              onCheckedChange={handleHideEmptyRecordGroupChange}
+              checked={shouldHideEmptyGroups}
+            >{t`Hide empty groups`}</SettingsRow>
+          </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>
       {visibleRecordGroupIds.length > 0 && (
