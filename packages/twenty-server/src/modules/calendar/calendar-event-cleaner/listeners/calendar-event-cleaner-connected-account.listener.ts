@@ -33,13 +33,15 @@ export class CalendarEventCleanerConnectedAccountListener {
 
     await Promise.all(
       batchEvent.events.map((event) =>
-        this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
-          DeleteConnectedAccountAssociatedCalendarDataJob.name,
-          {
-            workspaceId,
-            connectedAccountId: event.connectedAccountId,
-          },
-        ),
+        event.skipDataCleanup
+          ? undefined
+          : this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
+              DeleteConnectedAccountAssociatedCalendarDataJob.name,
+              {
+                workspaceId,
+                connectedAccountId: event.connectedAccountId,
+              },
+            ),
       ),
     );
   }

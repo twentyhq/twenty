@@ -33,13 +33,15 @@ export class CalendarEventCleanerCalendarChannelListener {
 
     await Promise.all(
       batchEvent.events.map((event) =>
-        this.calendarQueueService.add<CalendarChannelDeletionCleanupJobData>(
-          CalendarChannelDeletionCleanupJob.name,
-          {
-            workspaceId,
-            calendarChannelId: event.calendarChannelId,
-          },
-        ),
+        event.skipDataCleanup
+          ? undefined
+          : this.calendarQueueService.add<CalendarChannelDeletionCleanupJobData>(
+              CalendarChannelDeletionCleanupJob.name,
+              {
+                workspaceId,
+                calendarChannelId: event.calendarChannelId,
+              },
+            ),
       ),
     );
   }
