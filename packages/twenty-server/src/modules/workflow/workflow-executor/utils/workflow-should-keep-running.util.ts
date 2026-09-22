@@ -1,12 +1,8 @@
-import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { TERMINAL_STEP_STATUSES } from 'src/modules/workflow/workflow-executor/constants/terminal-step-statuses.constant';
-import { findChildStepIds } from 'src/modules/workflow/workflow-executor/utils/find-child-step-ids.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
-import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
-import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
+import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const workflowShouldKeepRunning = ({
@@ -22,38 +18,47 @@ export const workflowShouldKeepRunning = ({
     ),
   );
 
-  const terminalStepWithUnresolvedChildrenExists = steps.some((step) => {
+  const completedStepWithNotStartedExecutableChildren = steps.some((step) => {
     const status = stepInfos[step.id]?.status;
-
-    if (!isDefined(status) || !TERMINAL_STEP_STATUSES.includes(status)) {
+    if (
+      status !== StepStatus.SUCCESS &&
+      status !== StepStatus.FAILED_SAFELY &&
+      status !== StepStatus.SKIPPED
+    ) {
       return false;
     }
 
-    return findChildStepIds({ step }).some((childStepId) => {
-      if (stepInfos[childStepId]?.status !== StepStatus.NOT_STARTED) {
-        return false;
-      }
+    const candidateNextStepIds: string[] = [...(step.nextStepIds ?? [])];
+    if (isWorkflowIfElseAction(step)) {
+      step.settings.input.branches.forEach((branch) => {
+        if (branch.nextStepIds) {
+          candidateNextStepIds.push(...branch.nextStepIds);
+        }
+      });
+    }
 
-      const childStep = steps.find(
-        (candidateStep) => candidateStep.id === childStepId,
+    return candidateNextStepIds.some((nextStepId) => {
+      const nextStep = steps.find(
+        (candidateStep) => candidateStep.id === nextStepId,
       );
 
-      if (!isDefined(childStep)) {
+      if (!nextStep) {
         return false;
       }
 
       return (
+        stepInfos[nextStepId]?.status === StepStatus.NOT_STARTED &&
         shouldExecuteStep({
-          step: childStep,
+          step: nextStep,
           steps,
           stepInfos,
           workflowRunStatus: WorkflowRunStatus.RUNNING,
-        }) ||
-        shouldSkipStepExecution({ step: childStep, steps, stepInfos }) ||
-        shouldFailSafely({ step: childStep, steps, stepInfos })
+        })
       );
     });
   });
 
-  return runningOrPendingStepExists || terminalStepWithUnresolvedChildrenExists;
+  return (
+    runningOrPendingStepExists || completedStepWithNotStartedExecutableChildren
+  );
 };

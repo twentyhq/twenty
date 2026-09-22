@@ -1,13 +1,7 @@
-import { StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 
-import { createMockIfElseStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
-
-const ifElseStep = createMockIfElseStep('ifElse', [
-  { id: 'ifBranch', filterGroupId: 'fg', nextStepIds: ['ifChild'] },
-  { id: 'elseBranch', nextStepIds: ['elseChild'] },
-]);
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 describe('workflowShouldKeepRunning', () => {
   describe('should return true if', () => {
@@ -44,57 +38,59 @@ describe('workflowShouldKeepRunning', () => {
       expect(workflowShouldKeepRunning({ steps, stepInfos })).toBeTruthy();
     });
 
-    it('if/else step with a not started selected branch child exists', () => {
+    it('if-else step has not started executable children in taken branch', () => {
       const steps = [
-        ifElseStep,
-        { id: 'ifChild' } as WorkflowAction,
-        { id: 'elseChild' } as WorkflowAction,
+        {
+          id: 'step-if',
+          type: WorkflowActionType.IF_ELSE,
+          settings: {
+            input: {
+              branches: [
+                { id: 'branch-1', nextStepIds: ['step-child-1'] },
+                { id: 'branch-2', nextStepIds: ['step-child-2'] },
+              ],
+            },
+          },
+        } as unknown as WorkflowAction,
+        {
+          id: 'step-child-1',
+        } as WorkflowAction,
+        {
+          id: 'step-child-2',
+        } as WorkflowAction,
       ];
 
       const stepInfos = {
-        ifElse: {
+        'step-if': {
           status: StepStatus.SUCCESS,
-          result: { matchingBranchId: 'ifBranch' },
+          result: { matchingBranchId: 'branch-1' },
         },
-        ifChild: { status: StepStatus.NOT_STARTED },
-        elseChild: { status: StepStatus.NOT_STARTED },
+        'step-child-1': { status: StepStatus.NOT_STARTED },
+        'step-child-2': { status: StepStatus.NOT_STARTED },
       };
 
       expect(workflowShouldKeepRunning({ steps, stepInfos })).toBeTruthy();
     });
 
-    it('skipped step with a not started child left to skip exists', () => {
+    it('skipped step has not started executable children along convergence', () => {
       const steps = [
-        { id: 'step-1', nextStepIds: ['step-2'] } as WorkflowAction,
-        { id: 'step-2', nextStepIds: ['step-3'] } as WorkflowAction,
-        { id: 'step-3' } as WorkflowAction,
+        {
+          id: 'step-skipped',
+          nextStepIds: ['step-conv'],
+        } as WorkflowAction,
+        {
+          id: 'step-succ',
+          nextStepIds: ['step-conv'],
+        } as WorkflowAction,
+        {
+          id: 'step-conv',
+        } as WorkflowAction,
       ];
 
       const stepInfos = {
-        'step-1': { status: StepStatus.SKIPPED },
-        'step-2': { status: StepStatus.SKIPPED },
-        'step-3': { status: StepStatus.NOT_STARTED },
-      };
-
-      expect(workflowShouldKeepRunning({ steps, stepInfos })).toBeTruthy();
-    });
-
-    it('skipped branch still has to reach a merge step', () => {
-      const steps = [
-        ifElseStep,
-        { id: 'ifChild', nextStepIds: ['merge'] } as WorkflowAction,
-        { id: 'elseChild', nextStepIds: ['merge'] } as WorkflowAction,
-        { id: 'merge' } as WorkflowAction,
-      ];
-
-      const stepInfos = {
-        ifElse: {
-          status: StepStatus.SUCCESS,
-          result: { matchingBranchId: 'ifBranch' },
-        },
-        ifChild: { status: StepStatus.SUCCESS },
-        elseChild: { status: StepStatus.NOT_STARTED },
-        merge: { status: StepStatus.NOT_STARTED },
+        'step-skipped': { status: StepStatus.SKIPPED },
+        'step-succ': { status: StepStatus.SUCCESS },
+        'step-conv': { status: StepStatus.NOT_STARTED },
       };
 
       expect(workflowShouldKeepRunning({ steps, stepInfos })).toBeTruthy();
@@ -138,34 +134,35 @@ describe('workflowShouldKeepRunning', () => {
       expect(workflowShouldKeepRunning({ steps, stepInfos })).toBeFalsy();
     });
 
-    it('if/else step whose branch children are all resolved', () => {
+    it('if-else step has untaken branch child only', () => {
       const steps = [
-        ifElseStep,
-        { id: 'ifChild' } as WorkflowAction,
-        { id: 'elseChild' } as WorkflowAction,
+        {
+          id: 'step-if',
+          type: WorkflowActionType.IF_ELSE,
+          settings: {
+            input: {
+              branches: [
+                { id: 'branch-1', nextStepIds: ['step-child-1'] },
+                { id: 'branch-2', nextStepIds: ['step-child-2'] },
+              ],
+            },
+          },
+        } as unknown as WorkflowAction,
+        {
+          id: 'step-child-1',
+        } as WorkflowAction,
+        {
+          id: 'step-child-2',
+        } as WorkflowAction,
       ];
 
       const stepInfos = {
-        ifElse: {
+        'step-if': {
           status: StepStatus.SUCCESS,
-          result: { matchingBranchId: 'ifBranch' },
+          result: { matchingBranchId: 'branch-1' },
         },
-        ifChild: { status: StepStatus.SUCCESS },
-        elseChild: { status: StepStatus.SKIPPED },
-      };
-
-      expect(workflowShouldKeepRunning({ steps, stepInfos })).toBeFalsy();
-    });
-
-    it('skipped step whose children are already skipped', () => {
-      const steps = [
-        { id: 'step-1', nextStepIds: ['step-2'] } as WorkflowAction,
-        { id: 'step-2' } as WorkflowAction,
-      ];
-
-      const stepInfos = {
-        'step-1': { status: StepStatus.SKIPPED },
-        'step-2': { status: StepStatus.SKIPPED },
+        'step-child-1': { status: StepStatus.SUCCESS },
+        'step-child-2': { status: StepStatus.NOT_STARTED },
       };
 
       expect(workflowShouldKeepRunning({ steps, stepInfos })).toBeFalsy();
