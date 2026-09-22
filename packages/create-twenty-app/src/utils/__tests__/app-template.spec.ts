@@ -200,6 +200,37 @@ describe('copyBaseApplicationProject', () => {
     );
   });
 
+  it('should create an empty yarn.lock when the template does not ship one', async () => {
+    await copyBaseApplicationProject({
+      appName: 'my-test-app',
+      appDisplayName: 'My Test App',
+      appDescription: 'A test application',
+      appDirectory: testAppDirectory,
+    });
+
+    const lockfilePath = join(testAppDirectory, 'yarn.lock');
+
+    expect(await fs.pathExists(lockfilePath)).toBe(true);
+    expect(await fs.readFile(lockfilePath, 'utf8')).toBe('');
+  });
+
+  it('should keep the yarn.lock shipped with the template', async () => {
+    const shippedLockfile = '__metadata:\n  version: 8\n';
+
+    await fs.writeFile(join(testAppDirectory, 'yarn.lock'), shippedLockfile);
+
+    await copyBaseApplicationProject({
+      appName: 'my-test-app',
+      appDisplayName: 'My Test App',
+      appDescription: 'A test application',
+      appDirectory: testAppDirectory,
+    });
+
+    expect(await fs.readFile(join(testAppDirectory, 'yarn.lock'), 'utf8')).toBe(
+      shippedLockfile,
+    );
+  });
+
   it('should handle empty description', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',

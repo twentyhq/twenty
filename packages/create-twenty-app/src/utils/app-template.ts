@@ -31,6 +31,8 @@ export const copyBaseApplicationProject = async ({
 
   await addEmptyPublicDirectory({ appDirectory });
 
+  await ensureLockfile({ appDirectory });
+
   onProgress?.('Generating unique application identifiers');
   await generateUniversalIdentifiers({
     appDisplayName,
@@ -79,6 +81,18 @@ const addEmptyPublicDirectory = async ({
   appDirectory: string;
 }) => {
   await fs.ensureDir(join(appDirectory, 'public'));
+};
+
+// The template only carries a yarn.lock when one was generated at release time.
+// Without any lockfile, Yarn walks up to the nearest parent project, so scaffolding
+// inside a directory that has one (a monorepo, an existing repo) fails to install
+// and never writes a lockfile. An empty one marks the app as its own project root.
+const ensureLockfile = async ({ appDirectory }: { appDirectory: string }) => {
+  const lockfilePath = join(appDirectory, 'yarn.lock');
+
+  if (!(await fs.pathExists(lockfilePath))) {
+    await fs.writeFile(lockfilePath, '');
+  }
 };
 
 const generateUniversalIdentifiers = async ({
