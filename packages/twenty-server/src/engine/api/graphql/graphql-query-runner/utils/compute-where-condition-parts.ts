@@ -11,7 +11,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
-import { normalizeExactEmailsFilterValue } from 'src/engine/core-modules/record-transformer/utils/normalize-exact-emails-filter-value.util';
 
 type WhereConditionParts = {
   sql: string;
@@ -45,13 +44,6 @@ export const computeWhereConditionParts = ({
     : `"${objectNameSingular}"."${key}"`;
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
-  const equalityFilterValue = normalizeExactEmailsFilterValue({
-    operator,
-    fieldMetadataType,
-    subFieldKey,
-    value,
-  });
-
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(
     value,
@@ -77,7 +69,7 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
-        params: { [`${key}${paramSuffix}`]: equalityFilterValue },
+        params: { [`${key}${paramSuffix}`]: value },
       };
     case 'neq':
       if (isDateTimeField) {
@@ -89,7 +81,7 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} != :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
-        params: { [`${key}${paramSuffix}`]: equalityFilterValue },
+        params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gt':
       if (isDateTimeField) {
@@ -128,7 +120,7 @@ export const computeWhereConditionParts = ({
     case 'in':
       return {
         sql: `${fieldReference} IN (:...${key}${paramSuffix})`,
-        params: { [`${key}${paramSuffix}`]: equalityFilterValue },
+        params: { [`${key}${paramSuffix}`]: value },
       };
     case 'is':
       return {

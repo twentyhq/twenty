@@ -11,6 +11,7 @@ import { type ObjectLiteral } from 'typeorm';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
+import { normalizeExactEmailsFilterValue } from 'src/engine/core-modules/record-transformer/utils/normalize-exact-emails-filter-value.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -262,7 +263,12 @@ const renderCompositeFieldCondition = (
         objectNameSingular: context.tableAlias,
         key: `${fieldMetadata.name}${capitalize(subFieldName)}`,
         subFieldKey: subFieldName,
-        value: operatorValue,
+        value: normalizeExactEmailsFilterValue({
+          operator,
+          fieldMetadataType: fieldMetadata.type,
+          subFieldKey: subFieldName,
+          value: operatorValue,
+        }),
         fieldMetadataType: fieldMetadata.type,
       });
 
