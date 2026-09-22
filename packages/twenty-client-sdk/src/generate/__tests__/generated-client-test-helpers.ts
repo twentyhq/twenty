@@ -32,15 +32,8 @@ export type GeneratedClientClass = new (options?: {
     contentType: string,
     fieldMetadataUniversalIdentifier: string,
   ) => Promise<GeneratedUploadedFile>;
-  uploadFileToFilesField: (input: {
-    file: Blob | ArrayBuffer | ArrayBufferView;
-    filename: string;
-    fieldMetadataUniversalIdentifier: string;
-  }) => Promise<GeneratedUploadedFile>;
 };
 
-// Stands in for the genql output the wrapper gets appended to, so the
-// wrapper's own behavior can run without a generated schema.
 const stubGeneratedIndexSource = `
 export type QueryGenqlSelection = Record<string, unknown>
 export type MutationGenqlSelection = Record<string, unknown>

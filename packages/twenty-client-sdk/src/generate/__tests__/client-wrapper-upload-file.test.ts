@@ -43,6 +43,19 @@ const parseGraphqlBody = (requestInit: RequestInit | undefined) =>
     variables: Record<string, unknown>;
   };
 
+const missingDirectUploadMutationResponse = () =>
+  createJsonResponse({
+    body: {
+      errors: [
+        {
+          message: 'Cannot query field "createFileUpload" on type "Mutation".',
+        },
+      ],
+    },
+    status: 400,
+    statusText: 'Bad Request',
+  });
+
 const createFetchMock = ({
   putResponse = () => new Response(null, { status: 200 }),
   createFileUploadResponse = () =>
@@ -59,6 +72,14 @@ const createFetchMock = ({
 
       if (requestInit?.method === 'PUT') {
         return putResponse();
+      }
+
+      if (requestInit?.body instanceof FormData) {
+        return createJsonResponse({
+          body: {
+            data: { uploadFilesFieldFileByUniversalIdentifier: uploadedFile },
+          },
+        });
       }
 
       const { query } = parseGraphqlBody(requestInit);
@@ -80,9 +101,20 @@ const createFetchMock = ({
   return { fetchMock, capturedRequests };
 };
 
-describe('Generated client wrapper direct file upload', () => {
+describe('Generated client wrapper uploadFile', () => {
   let TwentyClass: GeneratedClientClass;
   let cleanup: () => Promise<void>;
+
+  const uploadInvoice = (
+    twentyClient: InstanceType<GeneratedClientClass>,
+    fileBuffer = Buffer.from('content'),
+  ) =>
+    twentyClient.uploadFile(
+      fileBuffer,
+      'invoice.pdf',
+      'application/pdf',
+      FIELD_METADATA_UNIVERSAL_IDENTIFIER,
+    );
 
   beforeAll(async () => {
     ({ GeneratedClientClass: TwentyClass, cleanup } =
@@ -110,11 +142,7 @@ describe('Generated client wrapper direct file upload', () => {
       fetch: fetchMock as unknown as typeof globalThis.fetch,
     });
 
-    const result = await twentyClient.uploadFileToFilesField({
-      file: fileBuffer,
-      filename: 'invoice.pdf',
-      fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
-    });
+    const result = await uploadInvoice(twentyClient, fileBuffer);
 
     expect(result).toEqual(uploadedFile);
     expect(capturedRequests).toHaveLength(3);
@@ -150,30 +178,69 @@ describe('Generated client wrapper direct file upload', () => {
     });
   });
 
-  it('declares the size of a Blob and sends it as is', async () => {
-    const { fetchMock, capturedRequests } = createFetchMock();
-    const blob = new Blob(['blob content'], { type: 'text/plain' });
+  it('falls back to the upload through the API when the server has no direct upload mutation', async () => {
+    const { fetchMock, capturedRequests } = createFetchMock({
+      createFileUploadResponse: missingDirectUploadMutationResponse,
+    });
+    const fileBuffer = Buffer.from('content');
 
     const twentyClient = new TwentyClass({
       url: CLIENT_URL,
       fetch: fetchMock as unknown as typeof globalThis.fetch,
     });
 
-    await twentyClient.uploadFileToFilesField({
-      file: blob,
-      filename: 'notes.txt',
+    const result = await uploadInvoice(twentyClient, fileBuffer);
+
+    expect(result).toEqual(uploadedFile);
+    expect(capturedRequests).toHaveLength(2);
+
+    const [, multipartRequest] = capturedRequests;
+
+    expect(multipartRequest.url).toBe(CLIENT_URL);
+    expect(multipartRequest.requestInit?.method).toBe('POST');
+    expect(getAuthorizationHeaderValue(multipartRequest.requestInit)).toBe(
+      'Bearer application-token',
+    );
+
+    const form = multipartRequest.requestInit?.body as FormData;
+    const operations = JSON.parse(String(form.get('operations')));
+
+    expect(operations.query).toContain(
+      'uploadFilesFieldFileByUniversalIdentifier',
+    );
+    expect(operations.variables).toEqual({
+      file: null,
       fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
     });
+    expect(JSON.parse(String(form.get('map')))).toEqual({
+      '0': ['variables.file'],
+    });
 
-    const [createRequest, putRequest] = capturedRequests;
+    const sentFile = form.get('0') as File;
 
-    expect(parseGraphqlBody(createRequest.requestInit).variables.size).toBe(
-      blob.size,
-    );
-    expect(putRequest.requestInit?.body).toBe(blob);
+    expect(sentFile.name).toBe('invoice.pdf');
+    expect(sentFile.type).toBe('application/pdf');
+    expect(Buffer.from(await sentFile.arrayBuffer())).toEqual(fileBuffer);
   });
 
-  it('does not complete the upload when storage refuses the bytes', async () => {
+  it('keeps uploading through the API once the server turned out to have no direct upload mutation', async () => {
+    const { fetchMock, capturedRequests } = createFetchMock({
+      createFileUploadResponse: missingDirectUploadMutationResponse,
+    });
+
+    const twentyClient = new TwentyClass({
+      url: CLIENT_URL,
+      fetch: fetchMock as unknown as typeof globalThis.fetch,
+    });
+
+    await uploadInvoice(twentyClient);
+    await uploadInvoice(twentyClient);
+
+    expect(capturedRequests).toHaveLength(3);
+    expect(capturedRequests[2].requestInit?.body).toBeInstanceOf(FormData);
+  });
+
+  it('does not complete the upload nor fall back when storage refuses the bytes', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
       putResponse: () =>
         new Response('<Error>SignatureDoesNotMatch</Error>', {
@@ -187,19 +254,13 @@ describe('Generated client wrapper direct file upload', () => {
       fetch: fetchMock as unknown as typeof globalThis.fetch,
     });
 
-    await expect(
-      twentyClient.uploadFileToFilesField({
-        file: Buffer.from('content'),
-        filename: 'invoice.pdf',
-        fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
-      }),
-    ).rejects.toThrow('403 Forbidden');
+    await expect(uploadInvoice(twentyClient)).rejects.toThrow('403 Forbidden');
 
     expect(capturedRequests).toHaveLength(2);
     expect(capturedRequests[1].requestInit?.method).toBe('PUT');
   });
 
-  it('does not send any bytes when the upload target cannot be created', async () => {
+  it('does not send any bytes nor fall back when the upload target is refused for another reason', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
       createFileUploadResponse: () =>
         createJsonResponse({
@@ -220,13 +281,7 @@ describe('Generated client wrapper direct file upload', () => {
       fetch: fetchMock as unknown as typeof globalThis.fetch,
     });
 
-    await expect(
-      twentyClient.uploadFileToFilesField({
-        file: Buffer.from('content'),
-        filename: 'invoice.pdf',
-        fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
-      }),
-    ).rejects.toThrow();
+    await expect(uploadInvoice(twentyClient)).rejects.toThrow();
 
     expect(capturedRequests).toHaveLength(1);
   });
@@ -243,12 +298,7 @@ describe('Generated client wrapper direct file upload', () => {
         requestAccessTokenRefresh,
       };
 
-    const { fetchMock, capturedRequests } = createFetchMock({
-      createFileUploadResponse: () =>
-        createJsonResponse({
-          body: { data: { createFileUpload: uploadTarget } },
-        }),
-    });
+    const { fetchMock, capturedRequests } = createFetchMock();
 
     fetchMock.mockImplementationOnce(
       async (url: string | URL | Request, requestInit?: RequestInit) => {
@@ -267,11 +317,7 @@ describe('Generated client wrapper direct file upload', () => {
       fetch: fetchMock as unknown as typeof globalThis.fetch,
     });
 
-    const result = await twentyClient.uploadFileToFilesField({
-      file: Buffer.from('content'),
-      filename: 'invoice.pdf',
-      fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
-    });
+    const result = await uploadInvoice(twentyClient);
 
     expect(result).toEqual(uploadedFile);
     expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);

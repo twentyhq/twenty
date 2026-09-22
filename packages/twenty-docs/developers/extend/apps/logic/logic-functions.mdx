@@ -989,7 +989,7 @@ const { objects } = await metadataClient.query({
 
 #### Uploading files
 
-`MetadataApiClient` includes an `uploadFileToFilesField` method for attaching files to file-type fields. The file goes straight to Twenty's file storage: the API issues an upload target, the client sends the bytes there, then the API confirms the upload.
+`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields:
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -997,11 +997,14 @@ import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
 
-const uploadedFile = await metadataClient.uploadFileToFilesField({
-  file: fs.readFileSync('./invoice.pdf'),
-  filename: 'invoice.pdf',
-  fieldMetadataUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-});
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
@@ -1009,18 +1012,14 @@ console.log(uploadedFile);
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `file` | `Blob \| ArrayBuffer \| ArrayBufferView` | The file contents, for example a `Buffer` |
+| `fileBuffer` | `Buffer` | The raw file contents |
 | `filename` | `string` | The name of the file (used for storage and display) |
+| `contentType` | `string` | MIME type (defaults to `application/octet-stream` if omitted) |
 | `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object |
 
 Key points:
 - Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
-- The MIME type is detected from the file contents once uploaded, so there is nothing to declare.
 - The returned `url` is a signed URL you can use to access the uploaded file.
-
-<Note>
-`uploadFile(fileBuffer, filename, contentType, fieldMetadataUniversalIdentifier)` still works but is deprecated: it streams the file through the API, which applies a lower size limit. New code should call `uploadFileToFilesField`.
-</Note>
 
 </Accordion>
 </AccordionGroup>

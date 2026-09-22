@@ -196,6 +196,15 @@ const defaultOptions: MetadataApiClientOptions = {
   },
 };
 
+const isMissingGraphqlFieldMessage = (
+  message: string,
+  fieldName: string,
+): boolean =>
+  message.includes(fieldName) &&
+  (message.includes('Cannot query field') ||
+    message.includes('Unknown field') ||
+    message.includes('Unknown type'));
+
 export class MetadataApiClient {
   private client: Client;
   private url: string;
@@ -261,58 +270,117 @@ export class MetadataApiClient {
   mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
     return this.client.mutation(request);
   }
-  // The file goes straight to storage: the API only hands out the upload
-  // target and confirms the bytes afterwards, so it is never buffered through
-  // the GraphQL server and the larger direct-upload size limit applies.
-  async uploadFileToFilesField({
-    file,
-    filename,
-    fieldMetadataUniversalIdentifier,
-  }: {
-    file: Blob | ArrayBuffer | ArrayBufferView;
-    filename: string;
-    fieldMetadataUniversalIdentifier: string;
-  }): Promise<FilesFieldUploadedFile> {
-    const size = file instanceof Blob ? file.size : file.byteLength;
+  private isDirectUploadUnavailable = false;
 
-    const { createFileUpload: uploadTarget } =
-      await this.executeMutationOrThrow<{
-        createFileUpload: FilesFieldUploadTarget;
-      }>({
-        query: `mutation CreateFilesFieldFileUpload($filename: String!, $size: Float!, $fieldMetadataUniversalIdentifier: String!) {
-        createFileUpload(filename: $filename, size: $size, fileFolder: FilesField, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { fileId uploadUrl contentType }
-      }`,
-        variables: { filename, size, fieldMetadataUniversalIdentifier },
-      });
-
-    await this.putFileToUploadTarget({ file, uploadTarget });
-
-    const { completeFileUpload: uploadedFile } =
-      await this.executeMutationOrThrow<{
-        completeFileUpload: FilesFieldUploadedFile;
-      }>({
-        query: `mutation CompleteFilesFieldFileUpload($fileId: String!) {
-        completeFileUpload(fileId: $fileId) { id path size createdAt url }
-      }`,
-        variables: { fileId: uploadTarget.fileId },
-      });
-
-    return uploadedFile;
-  }
-
-  /** @deprecated Use uploadFileToFilesField, which sends the file straight to storage instead of through the API. */
   async uploadFile(
     fileBuffer: Buffer,
     filename: string,
     contentType: string = 'application/octet-stream',
     fieldMetadataUniversalIdentifier: string,
-  ): Promise<{
-    id: string;
-    path: string;
+  ): Promise<FilesFieldUploadedFile> {
+    if (!this.isDirectUploadUnavailable) {
+      const uploadTarget = await this.createFilesFieldUploadTarget({
+        filename,
+        size: fileBuffer.byteLength,
+        fieldMetadataUniversalIdentifier,
+      });
+
+      if (uploadTarget !== null) {
+        await this.putFileToUploadTarget({ fileBuffer, uploadTarget });
+
+        return this.completeFilesFieldUpload(uploadTarget.fileId);
+      }
+
+      this.isDirectUploadUnavailable = true;
+    }
+
+    return this.uploadFileThroughApi({
+      fileBuffer,
+      filename,
+      contentType,
+      fieldMetadataUniversalIdentifier,
+    });
+  }
+
+  private async createFilesFieldUploadTarget({
+    filename,
+    size,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    filename: string;
     size: number;
-    createdAt: string;
-    url: string;
-  }> {
+    fieldMetadataUniversalIdentifier: string;
+  }): Promise<FilesFieldUploadTarget | null> {
+    let result: GraphqlResponsePayload;
+
+    try {
+      result = await this.executeGraphqlRequestWithOptionalRefresh({
+        operation: {
+          query: `mutation CreateFilesFieldFileUpload($filename: String!, $size: Float!, $fieldMetadataUniversalIdentifier: String!) {
+        createFileUpload(filename: $filename, size: $size, fileFolder: FilesField, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { fileId uploadUrl contentType }
+      }`,
+          variables: { filename, size, fieldMetadataUniversalIdentifier },
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        isMissingGraphqlFieldMessage(error.message, 'createFileUpload')
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
+
+    if (result.errors) {
+      if (
+        result.errors.some((graphqlError) =>
+          isMissingGraphqlFieldMessage(
+            graphqlError.message ?? '',
+            'createFileUpload',
+          ),
+        )
+      ) {
+        return null;
+      }
+
+      throw new GenqlError(result.errors, result.data);
+    }
+
+    if (!result.data) {
+      throw new Error('Empty GraphQL response');
+    }
+
+    return result.data.createFileUpload as FilesFieldUploadTarget;
+  }
+
+  private async completeFilesFieldUpload(
+    fileId: string,
+  ): Promise<FilesFieldUploadedFile> {
+    const { completeFileUpload } = await this.executeMutationOrThrow<{
+      completeFileUpload: FilesFieldUploadedFile;
+    }>({
+      query: `mutation CompleteFilesFieldFileUpload($fileId: String!) {
+        completeFileUpload(fileId: $fileId) { id path size createdAt url }
+      }`,
+      variables: { fileId },
+    });
+
+    return completeFileUpload;
+  }
+
+  private async uploadFileThroughApi({
+    fileBuffer,
+    filename,
+    contentType,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    fileBuffer: Buffer;
+    filename: string;
+    contentType: string;
+    fieldMetadataUniversalIdentifier: string;
+  }): Promise<FilesFieldUploadedFile> {
     const form = new FormData();
 
     form.append(
@@ -348,34 +416,25 @@ export class MetadataApiClient {
 
     const data = result.data as Record<string, unknown>;
 
-    return data.uploadFilesFieldFileByUniversalIdentifier as {
-      id: string;
-      path: string;
-      size: number;
-      createdAt: string;
-      url: string;
-    };
+    return data.uploadFilesFieldFileByUniversalIdentifier as FilesFieldUploadedFile;
   }
 
   private async putFileToUploadTarget({
-    file,
+    fileBuffer,
     uploadTarget,
   }: {
-    file: Blob | ArrayBuffer | ArrayBufferView;
+    fileBuffer: Buffer;
     uploadTarget: FilesFieldUploadTarget;
   }): Promise<void> {
     const fetchImplementation = this.getFetchImplementationOrThrow();
 
-    // The target is a presigned storage URL or a tokenized server route. It
-    // authenticates on its own, and a presigned URL rejects any header beyond
-    // the ones it was signed with, so none of the client's own headers go out.
     const response = await fetchImplementation.call(
       globalThis,
       uploadTarget.uploadUrl,
       {
         method: 'PUT',
         headers: { 'Content-Type': uploadTarget.contentType },
-        body: file as BodyInit,
+        body: fileBuffer as BodyInit,
         credentials: 'omit',
       },
     );

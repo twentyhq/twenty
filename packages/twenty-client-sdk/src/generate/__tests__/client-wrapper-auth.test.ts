@@ -289,6 +289,24 @@ describe('Generated client wrapper auth behavior', () => {
 
     const fetchMock = vi.fn(
       async (_url: string | URL | Request, requestInit?: RequestInit) => {
+        if (
+          typeof requestInit?.body === 'string' &&
+          requestInit.body.includes('createFileUpload')
+        ) {
+          return createJsonResponse({
+            body: {
+              errors: [
+                {
+                  message:
+                    'Cannot query field "createFileUpload" on type "Mutation".',
+                },
+              ],
+            },
+            status: 400,
+            statusText: 'Bad Request',
+          });
+        }
+
         const authorizationHeaderValue =
           getAuthorizationHeaderValue(requestInit);
 
@@ -330,7 +348,7 @@ describe('Generated client wrapper auth behavior', () => {
 
     expect(uploadResult.id).toBe('uploaded-file-id');
     expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
   it('bubbles auth error when refresh callback throws', async () => {
