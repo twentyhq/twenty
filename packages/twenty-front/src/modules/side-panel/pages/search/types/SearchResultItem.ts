@@ -6,5 +6,4 @@ export type SearchResultItem = {
   imageUrl?: string | null;
   objectLabel: string;
   avatarShape: 'square' | 'circle';
-  showPagePath: string | null;
 };

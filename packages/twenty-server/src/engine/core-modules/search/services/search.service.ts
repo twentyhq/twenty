@@ -32,8 +32,6 @@ import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/searc
 import { type ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
 import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { type SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record.dto';
-import { getWorkflowCorePointerColumns } from 'src/engine/core-modules/search/utils/get-workflow-core-pointer-columns.util';
-import { readWorkflowCorePointer } from 'src/engine/core-modules/search/utils/read-workflow-core-pointer.util';
 import { type SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
 import { type SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import {
@@ -317,10 +315,6 @@ export class SearchService {
         flatFieldMetadataMaps,
       ),
       ...imageIdentifierColumns,
-      ...getWorkflowCorePointerColumns({
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      }),
     ];
 
     const tsRankCDExpr = `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery('simple', public.unaccent_immutable(:searchTerms)))`;
@@ -452,10 +446,6 @@ export class SearchService {
               flatFieldMetadataMaps,
             ),
             ...imageIdentifierColumns,
-            ...getWorkflowCorePointerColumns({
-              flatObjectMetadata,
-              flatFieldMetadataMaps,
-            }),
           ];
 
           const [firstField, ...remainingFields] = fieldsToSelect;
@@ -857,10 +847,6 @@ export class SearchService {
               flatFieldMetadataMaps,
               workspaceId,
             ),
-            coreWorkflowId: readWorkflowCorePointer({
-              record,
-              flatObjectMetadata: objectMetadataItem,
-            }),
             tsRankCD: record.tsRankCD,
             tsRank: record.tsRank,
           };

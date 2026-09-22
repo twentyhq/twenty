@@ -1,12 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -34,11 +28,6 @@ export class SearchRecordDTO {
 
   @Field(() => String, { nullable: true })
   imageUrl: string;
-
-  @Field(() => UUIDScalarType, { nullable: true })
-  @IsUUID()
-  @IsOptional()
-  coreWorkflowId?: string | null;
 
   @Field(() => Number)
   @IsNumber()

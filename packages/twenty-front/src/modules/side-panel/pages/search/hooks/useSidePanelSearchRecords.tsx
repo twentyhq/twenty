@@ -1,6 +1,4 @@
 import { type SearchResultItem } from '@/side-panel/pages/search/types/SearchResultItem';
-import { getSearchResultItemShowPagePath } from '@/side-panel/pages/search/utils/getSearchResultItemShowPagePath';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
@@ -16,7 +14,6 @@ export const useSidePanelSearchRecords = () => {
   const sidePanelSearchObjectFilter = useAtomStateValue(
     sidePanelSearchObjectFilterState,
   );
-  const isWorkflowCoreEnabled = useIsWorkflowCoreEnabled();
   const trimmedSidePanelSearch = sidePanelSearch.trim();
 
   const [deferredSidePanelSearch] = useDebounce(trimmedSidePanelSearch, 300);
@@ -45,14 +42,8 @@ export const useSidePanelSearchRecords = () => {
         searchRecord.objectNameSingular === CoreObjectNameSingular.Company
           ? ('square' as const)
           : ('circle' as const),
-      showPagePath: getSearchResultItemShowPagePath({
-        objectNameSingular: searchRecord.objectNameSingular,
-        recordId: searchRecord.recordId,
-        coreWorkflowId: searchRecord.coreWorkflowId,
-        isWorkflowCoreEnabled,
-      }),
     }));
-  }, [searchRecords, readableObjectMetadataItems, isWorkflowCoreEnabled]);
+  }, [searchRecords, readableObjectMetadataItems]);
 
   return {
     error,

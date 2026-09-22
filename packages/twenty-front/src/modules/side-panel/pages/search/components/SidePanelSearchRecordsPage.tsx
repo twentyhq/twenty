@@ -14,8 +14,8 @@ import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -66,8 +66,6 @@ export const SidePanelSearchRecordsPage = () => {
                 CoreObjectNameSingular.Note,
               ].includes(item.objectNameSingular as CoreObjectNameSingular);
 
-              const isUnavailable = !isDefined(item.showPagePath);
-
               const handleClick = () => {
                 if (isTaskOrNote) {
                   openRecordInSidePanel({
@@ -75,16 +73,15 @@ export const SidePanelSearchRecordsPage = () => {
                     objectNameSingular:
                       item.objectNameSingular as CoreObjectNameSingular,
                   });
-
-                  return;
+                } else {
+                  closeCommandMenu();
+                  navigate(
+                    getAppPath(AppPath.RecordShowPage, {
+                      objectNameSingular: item.objectNameSingular,
+                      objectRecordId: item.recordId,
+                    }),
+                  );
                 }
-
-                if (!isDefined(item.showPagePath)) {
-                  return;
-                }
-
-                closeCommandMenu();
-                navigate(item.showPagePath);
               };
 
               return (
@@ -103,10 +100,7 @@ export const SidePanelSearchRecordsPage = () => {
                     <CommandMenuItem
                       id={item.id}
                       label={item.label}
-                      description={
-                        isUnavailable ? t`Unavailable` : item.objectLabel
-                      }
-                      disabled={isUnavailable}
+                      description={item.objectLabel}
                       onClick={handleClick}
                       LeftComponent={
                         <Avatar

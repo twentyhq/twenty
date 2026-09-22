@@ -1,11 +1,8 @@
-import { useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const DEFAULT_RECORD_SUGGESTION_LIMIT = 10;
@@ -39,21 +36,9 @@ export const useNavigationMenuItemSearchRecords = ({
     SEARCH_DEBOUNCE_DELAY,
   );
 
-  const searchableObjectNameSingulars = useSearchableObjectNameSingulars({
+  const includedObjectNameSingulars = useSearchableObjectNameSingulars({
     selectedObjectNameSingular,
   });
-  const isWorkflowCoreEnabled = useIsWorkflowCoreEnabled();
-
-  const includedObjectNameSingulars = useMemo(
-    () =>
-      isWorkflowCoreEnabled
-        ? searchableObjectNameSingulars.filter(
-            (objectNameSingular) =>
-              objectNameSingular !== CoreObjectNameSingular.Workflow,
-          )
-        : searchableObjectNameSingulars,
-    [searchableObjectNameSingulars, isWorkflowCoreEnabled],
-  );
 
   const { loading: recordSearchLoading, searchRecords } =
     useObjectRecordSearchRecords({
