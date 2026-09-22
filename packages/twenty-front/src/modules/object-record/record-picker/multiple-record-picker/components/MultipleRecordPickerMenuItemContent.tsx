@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { t } from '@lingui/core/macro';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -101,7 +100,7 @@ export const MultipleRecordPickerMenuItemContent = ({
           />
         }
       >
-        <OverflowingTextWithTooltip text={displayText} />
+        {displayText}
       </ListItem>
     </SelectableListItem>
   );

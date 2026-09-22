@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
@@ -144,3 +145,39 @@ export const RecordGroupFields = createStory('recordGroupFields');
 export const RecordGroupSort = createStory('recordGroupSort');
 
 export const HiddenRecordGroups = createStory('hiddenRecordGroups');
+
+export const FieldsSearchVisibilityAction: Story = {
+  ...createStory('fields'),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.type(
+      await canvas.findByPlaceholderText('Search fields'),
+      'address',
+    );
+
+    const row = await canvas.findByText('Address');
+    const toggle = await canvas.findByRole('button', {
+      name: /^(Show|Hide) field$/,
+    });
+    const initialLabel = toggle.getAttribute('aria-label');
+
+    await userEvent.click(row);
+
+    expect(
+      canvas.getByRole('button', { name: initialLabel as string }),
+    ).toBeInTheDocument();
+
+    await userEvent.hover(row);
+    await userEvent.click(toggle);
+
+    const toggledLabel =
+      initialLabel === 'Show field' ? 'Hide field' : 'Show field';
+
+    await waitFor(() => {
+      expect(
+        canvas.getByRole('button', { name: toggledLabel }),
+      ).toBeInTheDocument();
+    });
+  },
+};

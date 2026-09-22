@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -16,7 +16,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -128,7 +127,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               }}
               startIcon={item.AvatarIcon && <item.AvatarIcon size="16" />}
             >
-              <OverflowingTextWithTooltip text={item.name} />
+              {item.name}
             </ListItem>
           );
         })}
@@ -146,11 +145,11 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               }}
               startIcon={item.AvatarIcon && <item.AvatarIcon size="16" />}
             >
-              <OverflowingTextWithTooltip text={item.name} />
+              {item.name}
             </ListItem>
           );
         })}
-        {showNoResult && <MenuItem text={t`No results`} />}
+        {showNoResult && <ListItem disabled>{t`No results`}</ListItem>}
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

@@ -37,7 +37,7 @@ export const computeContextStoreFilters = ({
   const { recordGqlOperationFilter: recordGqlFilterForAnyFieldFilter } =
     turnAnyFieldFilterIntoRecordGqlFilter({
       filterValue: contextStoreAnyFieldFilterValue,
-      fields: objectMetadataItem.fields,
+      fields: objectMetadataItem.readableFields,
     });
 
   if (contextStoreTargetedRecordsRule.mode === 'exclusion') {

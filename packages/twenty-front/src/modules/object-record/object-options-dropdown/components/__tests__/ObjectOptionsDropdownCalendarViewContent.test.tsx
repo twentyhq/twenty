@@ -93,7 +93,6 @@ jest.mock('twenty-ui/primitives/data-display', () => ({
   Pill: ({ label }: { label: string }) => <span>{label}</span>,
 }));
 jest.mock('twenty-ui/primitives/navigation', () => ({
-  MenuItem: ({ text }: { text: string }) => <span>{text}</span>,
   ListItem: ({
     description,
     disabled,

@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/side-panel/pages/page-layout/constants/ChartSettingsPaletteColorGroupCount';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
@@ -79,7 +78,7 @@ export const ChartColorGradientOption = ({
         description={colorSamples}
         descriptionPlacement={'end'}
       >
-        <OverflowingTextWithTooltip text={colorOption.name} />
+        {colorOption.name}
       </ListItem>
     </SelectableListItem>
   );
