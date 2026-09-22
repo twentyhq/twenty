@@ -83,20 +83,21 @@ describe('validateOperationIsPermittedOrThrow - system objects permissions', () 
     });
   };
 
-  describe('when no explicit role permissions are defined for the system object', () => {
-    it('should allow insert, update, delete without throwing for backward compatibility', () => {
-      expect(() =>
-        executeValidation({ operationType: 'insert' }),
-      ).not.toThrow();
-      expect(() =>
-        executeValidation({ operationType: 'update' }),
-      ).not.toThrow();
-      expect(() =>
-        executeValidation({ operationType: 'delete' }),
-      ).not.toThrow();
-      expect(() =>
-        executeValidation({ operationType: 'soft-delete' }),
-      ).not.toThrow();
+  describe('when effective permissions are missing for the system object', () => {
+    it.each<OperationType>([
+      'select',
+      'insert',
+      'update',
+      'delete',
+      'soft-delete',
+      'restore',
+    ])('should deny %s', (operationType) => {
+      expect(() => executeValidation({ operationType })).toThrow(
+        new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        ),
+      );
     });
   });
 

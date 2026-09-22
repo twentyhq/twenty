@@ -18,7 +18,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { validateWritabilityOrThrow } from 'src/engine/twenty-orm/repository/validate-writability-or-throw.util';
-import { isExemptFromObjectPermissions } from 'src/engine/twenty-orm/utils/is-exempt-from-object-permissions.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
@@ -91,13 +90,6 @@ export const validateOperationIsPermittedOrThrow = ({
   });
 
   const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
-
-  if (
-    isExemptFromObjectPermissions(objectMetadata) &&
-    !isDefined(permissionsForEntity)
-  ) {
-    return;
-  }
 
   if (
     !isDefined(permissionsForEntity) ||
