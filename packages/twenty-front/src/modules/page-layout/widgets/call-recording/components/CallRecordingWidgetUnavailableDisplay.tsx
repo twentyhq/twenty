@@ -12,25 +12,27 @@ export const CallRecordingWidgetUnavailableDisplay = ({
   kind,
   reason,
 }: CallRecordingWidgetUnavailableDisplayProps) => {
-  if (kind === 'transcript') {
-    return (
-      <CallRecordingWidgetEmptyStateDisplay
-        animatedPlaceholderType="noWidgets"
-        title={t`Transcript Unavailable`}
-        subTitle={t`Transcripts are not available on this record.`}
-      />
-    );
-  }
+  const title =
+    kind === 'transcript'
+      ? t`Transcript Unavailable`
+      : t`Call Recording Unavailable`;
+
+  const subTitleByReason: Record<CallRecordingWidgetUnavailableReason, string> =
+    kind === 'transcript'
+      ? {
+          workspaceWithoutCallRecording: t`Transcripts are not available in this workspace.`,
+          recordWithoutCallRecording: t`Transcripts are not available on this record.`,
+        }
+      : {
+          workspaceWithoutCallRecording: t`Call recording is not available in this workspace.`,
+          recordWithoutCallRecording: t`Call recordings are not available on this record.`,
+        };
 
   return (
     <CallRecordingWidgetEmptyStateDisplay
       animatedPlaceholderType="noWidgets"
-      title={t`Call Recording Unavailable`}
-      subTitle={
-        reason === 'workspaceWithoutCallRecording'
-          ? t`Call recording is not available in this workspace.`
-          : t`Call recordings are not available on this record.`
-      }
+      title={title}
+      subTitle={subTitleByReason[reason]}
     />
   );
 };
