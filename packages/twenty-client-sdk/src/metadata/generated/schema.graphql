@@ -2364,7 +2364,8 @@ type ApplicationHealthCheckAction {
 
 type ApplicationHealthCheckResult {
   status: ApplicationHealthStatus!
-  message: String
+  title: String
+  description: String
   action: ApplicationHealthCheckAction
 }
 

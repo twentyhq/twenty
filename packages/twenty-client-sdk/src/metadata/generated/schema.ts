@@ -1991,7 +1991,8 @@ export interface ApplicationHealthCheckAction {
 
 export interface ApplicationHealthCheckResult {
     status: ApplicationHealthStatus
-    message?: Scalars['String']
+    title?: Scalars['String']
+    description?: Scalars['String']
     action?: ApplicationHealthCheckAction
     __typename: 'ApplicationHealthCheckResult'
 }
@@ -5711,7 +5712,8 @@ export interface ApplicationHealthCheckActionGenqlSelection{
 
 export interface ApplicationHealthCheckResultGenqlSelection{
     status?: boolean | number
-    message?: boolean | number
+    title?: boolean | number
+    description?: boolean | number
     action?: ApplicationHealthCheckActionGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number

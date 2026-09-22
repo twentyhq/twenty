@@ -4680,7 +4680,10 @@ export default {
             "status": [
                 243
             ],
-            "message": [
+            "title": [
+                1
+            ],
+            "description": [
                 1
             ],
             "action": [
