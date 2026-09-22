@@ -12,7 +12,7 @@ Read the [twenty-ui documentation](https://docs.twenty.com/ui/getting-started) f
 
 ## Upgrading
 
-The next release changes public module ownership and removes exports without a deprecation window. Read the [breaking release notes](./CHANGELOG.md#unreleased) and [migration guide](./docs/module-ownership-migration.md) before upgrading.
+The next release changes public module ownership and removes exports without a deprecation window. Read the [breaking release notes](./CHANGELOG.md#unreleased) before upgrading.
 
 # Installation
 
@@ -120,4 +120,4 @@ Primitives provide foundational interaction and presentation. Shared components 
 
 Routing adapters, record formatting, product illustrations, and feature-specific animation belong to `twenty-front`. Implementation parts live in `internal` or `parts` directories and are excluded from published barrels.
 
-See [the breaking migration guide](./docs/module-ownership-migration.md) for removed exports and new imports. Run `node --import tsx scripts/checkModuleOwnership.ts` from this package after changing the public interface. Update `docs/module-ownership.json` when intentionally adding or removing a public React component.
+Run `node --import tsx scripts/checkModuleOwnership.ts` from this package after changing the public interface. Update `docs/module-ownership.json` when intentionally adding or removing a public React component.
