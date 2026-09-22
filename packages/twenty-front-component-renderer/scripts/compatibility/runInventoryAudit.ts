@@ -91,7 +91,8 @@ const runInventoryAudit = async () => {
     ) {
       throw new Error('Malformed native collection envelope');
     }
-    partial.native = nativeResult;
+    partial.catalog = nativeResult.catalog;
+    partial.reference = nativeResult.collection;
     catalog = inventoryCatalogSchema.parse(nativeResult.catalog);
     const reference = validateInventoryCollection({
       catalog,
@@ -101,7 +102,6 @@ const runInventoryAudit = async () => {
     console.log(`Collected ${reference.targets.length} reference targets`);
     partial.reference = reference;
     partial.catalog = catalog;
-    delete partial.native;
     await referenceContext.close();
     const sandboxes = {} as Record<
       'react' | 'preact',
