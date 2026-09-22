@@ -35,7 +35,7 @@ export const workflowClassifyQuestionSchema = z.object({
     .string()
     .regex(
       CLASSIFY_ANSWER_NAME_PATTERN,
-      'Answer name is required, and must be 1 to 64 characters using only letters, digits, underscores and dashes',
+      'Answer name must be empty or contain 1 to 64 characters using only letters, digits, underscores and dashes',
     )
     .or(z.literal(''))
     .describe(
