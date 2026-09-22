@@ -24,52 +24,45 @@ export const computeInitialObjectViewDefaultUpdates = <
   };
   initialViewApplicationUniversalIdentifier: string;
 }): TFlatView[] =>
-  Object.entries(
-    INITIAL_OBJECT_VIEW_DEFAULT_BY_OBJECT_UNIVERSAL_IDENTIFIER,
-  ).reduce<TFlatView[]>(
-    (accumulator, [objectUniversalIdentifier, initialObjectViewDefault]) => {
-      if (!isDefined(initialObjectViewDefault)) {
-        return accumulator;
-      }
+  [...INITIAL_OBJECT_VIEW_DEFAULT_BY_OBJECT_UNIVERSAL_IDENTIFIER].reduce<
+    TFlatView[]
+  >((accumulator, [objectUniversalIdentifier, initialObjectViewDefault]) => {
+    const flatView =
+      flatViewMaps.byUniversalIdentifier[
+        getInitialObjectViewUniversalIdentifier({
+          viewApplicationUniversalIdentifier:
+            initialViewApplicationUniversalIdentifier,
+          objectUniversalIdentifier,
+        })
+      ];
 
-      const flatView =
-        flatViewMaps.byUniversalIdentifier[
-          getInitialObjectViewUniversalIdentifier({
-            viewApplicationUniversalIdentifier:
-              initialViewApplicationUniversalIdentifier,
-            objectUniversalIdentifier,
-          })
-        ];
-
-      if (!isDefined(flatView) || isDefined(flatView.deletedAt)) {
-        return accumulator;
-      }
-
-      const targetIcon = VIEW_TYPE_DEFAULT_ICONS[initialObjectViewDefault.type];
-
-      const isAlreadyAtTarget =
-        flatView.type === initialObjectViewDefault.type &&
-        flatView.position === initialObjectViewDefault.position &&
-        flatView.icon === targetIcon;
-
-      const holdsSeedDefaults =
-        flatView.type === INITIAL_OBJECT_VIEW_DEFAULT.type &&
-        flatView.position === INITIAL_OBJECT_VIEW_DEFAULT.position &&
-        flatView.icon ===
-          VIEW_TYPE_DEFAULT_ICONS[INITIAL_OBJECT_VIEW_DEFAULT.type];
-
-      if (isAlreadyAtTarget || !holdsSeedDefaults) {
-        return accumulator;
-      }
-
-      accumulator.push({
-        ...flatView,
-        type: initialObjectViewDefault.type,
-        position: initialObjectViewDefault.position,
-        icon: targetIcon,
-      });
-
+    if (!isDefined(flatView) || isDefined(flatView.deletedAt)) {
       return accumulator;
-    },
-    [],
-  );
+    }
+
+    const targetIcon = VIEW_TYPE_DEFAULT_ICONS[initialObjectViewDefault.type];
+
+    const isAlreadyAtTarget =
+      flatView.type === initialObjectViewDefault.type &&
+      flatView.position === initialObjectViewDefault.position &&
+      flatView.icon === targetIcon;
+
+    const holdsSeedDefaults =
+      flatView.type === INITIAL_OBJECT_VIEW_DEFAULT.type &&
+      flatView.position === INITIAL_OBJECT_VIEW_DEFAULT.position &&
+      flatView.icon ===
+        VIEW_TYPE_DEFAULT_ICONS[INITIAL_OBJECT_VIEW_DEFAULT.type];
+
+    if (isAlreadyAtTarget || !holdsSeedDefaults) {
+      return accumulator;
+    }
+
+    accumulator.push({
+      ...flatView,
+      type: initialObjectViewDefault.type,
+      position: initialObjectViewDefault.position,
+      icon: targetIcon,
+    });
+
+    return accumulator;
+  }, []);

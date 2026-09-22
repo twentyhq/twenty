@@ -7,6 +7,6 @@ import {
 export const getInitialObjectViewDefault = (
   objectUniversalIdentifier: string,
 ): InitialObjectViewDefault =>
-  INITIAL_OBJECT_VIEW_DEFAULT_BY_OBJECT_UNIVERSAL_IDENTIFIER[
-    objectUniversalIdentifier as keyof typeof INITIAL_OBJECT_VIEW_DEFAULT_BY_OBJECT_UNIVERSAL_IDENTIFIER
-  ] ?? INITIAL_OBJECT_VIEW_DEFAULT;
+  INITIAL_OBJECT_VIEW_DEFAULT_BY_OBJECT_UNIVERSAL_IDENTIFIER.get(
+    objectUniversalIdentifier,
+  ) ?? INITIAL_OBJECT_VIEW_DEFAULT;
