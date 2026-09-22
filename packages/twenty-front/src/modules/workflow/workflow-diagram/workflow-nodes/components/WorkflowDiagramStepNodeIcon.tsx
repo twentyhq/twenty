@@ -1,7 +1,10 @@
+import { isDefined } from 'twenty-shared/utils';
+import { getActionIconStrokeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconStrokeOrThrow';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { WorkflowDiagramStepNodeLogicFunctionIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeLogicFunctionIcon';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
+import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
@@ -15,66 +18,32 @@ export const WorkflowDiagramStepNodeIcon = ({
   const { getIcon } = useIcons();
   const Icon = getIcon(getWorkflowNodeIconKey(data));
 
-  switch (data.nodeType) {
-    case 'trigger': {
-      switch (data.triggerType) {
-        case 'DATABASE_EVENT': {
-          return <Icon size={theme.icon.size.md} color={theme.color.blue} />;
-        }
-        case 'MANUAL':
-        case 'CRON':
-        case 'WEBHOOK': {
-          return <Icon size={theme.icon.size.md} color={theme.color.purple} />;
-        }
-      }
-
-      return assertUnreachable(data.triggerType);
-    }
-    case 'action': {
-      switch (data.actionType) {
-        case 'CODE':
-        case 'HTTP_REQUEST':
-        case 'SEND_EMAIL':
-        case 'DRAFT_EMAIL':
-        case 'CREATE_CALENDAR_EVENT': {
-          return (
-            <Icon
-              size={theme.icon.size.md}
-              color={theme.color.red}
-              stroke={theme.icon.stroke.sm}
-            />
-          );
-        }
-        case 'LOGIC_FUNCTION': {
-          return (
-            <WorkflowDiagramStepNodeLogicFunctionIcon
-              logicFunctionId={data.logicFunctionId}
-            />
-          );
-        }
-        case 'FORM': {
-          return <Icon size={theme.icon.size.md} color={theme.color.orange} />;
-        }
-        case 'AI_AGENT':
-        case 'CLASSIFY': {
-          return <Icon size={theme.icon.size.md} color={theme.color.pink} />;
-        }
-        case 'EMPTY':
-          return null;
-        case 'DELAY':
-        case 'FILTER':
-        case 'ITERATOR':
-          return <Icon size={theme.icon.size.md} color={theme.color.green12} />;
-        default: {
-          return (
-            <Icon
-              size={theme.icon.size.md}
-              color={theme.font.color.tertiary}
-              stroke={theme.icon.stroke.sm}
-            />
-          );
-        }
-      }
-    }
+  if (data.nodeType === 'action' && data.actionType === 'EMPTY') {
+    return null;
   }
+
+  if (data.nodeType === 'action' && data.actionType === 'LOGIC_FUNCTION') {
+    return (
+      <WorkflowDiagramStepNodeLogicFunctionIcon
+        logicFunctionId={data.logicFunctionId}
+      />
+    );
+  }
+
+  const stroke =
+    data.nodeType === 'action'
+      ? getActionIconStrokeOrThrow(data.actionType)
+      : undefined;
+
+  return (
+    <Icon
+      size={theme.icon.size.md}
+      color={
+        data.nodeType === 'trigger'
+          ? getTriggerIconColor(data.triggerType)
+          : getActionIconColorOrThrow(data.actionType)
+      }
+      stroke={isDefined(stroke) ? theme.icon.stroke[stroke] : undefined}
+    />
+  );
 };
