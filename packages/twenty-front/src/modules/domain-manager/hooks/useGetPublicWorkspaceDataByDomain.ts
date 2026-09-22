@@ -70,7 +70,9 @@ export const useGetPublicWorkspaceDataByDomain = () => {
         );
 
         if (isWorkspaceNotFoundError) {
-          redirectToDefaultDomain();
+          // A stale or mistyped workspace url is not a choice to leave, so a
+          // resumed session still goes straight to its only workspace
+          redirectToDefaultDomain({ shouldStayOnDefaultDomain: false });
           return;
         }
       }

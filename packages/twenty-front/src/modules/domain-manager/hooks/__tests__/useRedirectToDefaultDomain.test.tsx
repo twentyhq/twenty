@@ -62,6 +62,20 @@ describe('useRedirectToDefaultDomain', () => {
     expect(url.searchParams.get('stayOnDefaultDomain')).toBe('true');
   });
 
+  it('leaves the default domain free to redirect when the caller opts out of staying', () => {
+    const { result } = renderHook(() => useRedirectToDefaultDomain());
+
+    result.current.redirectToDefaultDomain({
+      shouldStayOnDefaultDomain: false,
+    });
+
+    expect(setLastAuthenticateWorkspaceDomainSpy).toHaveBeenCalledWith(null);
+    expect(redirectSpy).toHaveBeenCalledTimes(1);
+    const url = getRedirectedUrl();
+    expect(url.hostname).toBe('app.twenty.com');
+    expect(url.searchParams.has('stayOnDefaultDomain')).toBe(false);
+  });
+
   it('does nothing when already on the default domain', () => {
     getDefaultStore().set(domainConfigurationState.atom, {
       frontDomain: 'localhost',
