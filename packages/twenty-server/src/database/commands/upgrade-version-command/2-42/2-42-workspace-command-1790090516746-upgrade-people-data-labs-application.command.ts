@@ -20,7 +20,7 @@ const PEOPLE_DATA_LABS_APPLICATION_UNIVERSAL_IDENTIFIER =
 // operations, which only exist from 2.42 on.
 const PEOPLE_DATA_LABS_TARGET_VERSION = '1.0.11';
 
-@RegisteredWorkspaceCommand('2.42.0', 1789980000000)
+@RegisteredWorkspaceCommand('2.42.0', 1790090516746)
 @Command({
   name: 'upgrade:2-42:upgrade-people-data-labs-application',
   description:

@@ -15,7 +15,7 @@ import { UnpinCreationCommandsOnRecordSelectionCommand } from 'src/database/comm
 import { BackfillMissingSystemRelationIndexesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789663454000-backfill-missing-system-relation-indexes.command';
 import { RelinkWorkflowVersionsToCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789645879295-relink-workflow-versions-to-core-workflows.command';
 import { SyncMessageRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789757500000-sync-message-record-page.command';
-import { UpgradePeopleDataLabsApplicationToCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789980000000-upgrade-people-data-labs-application.command';
+import { UpgradePeopleDataLabsApplicationToCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790090516746-upgrade-people-data-labs-application.command';
 import { SetMessageTextDisplayedMaxRowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789757500001-set-message-text-displayed-max-rows.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
