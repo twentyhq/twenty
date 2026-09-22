@@ -215,6 +215,24 @@ export const RecordGroupLoadLimitSelectionAction: Story = {
       'aria-selected',
       'false',
     );
+
+    await userEvent.click(canvas.getByRole('option', { name: '50' }));
+
+    await waitFor(() => {
+      expect(canvas.getByRole('option', { name: '50' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+    });
+    expect(canvas.getByRole('option', { name: '25' })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Go back' }));
+
+    expect(await canvas.findByText('Load limit')).toBeInTheDocument();
+    expect(canvas.getByText('50')).toBeInTheDocument();
   },
 };
 
