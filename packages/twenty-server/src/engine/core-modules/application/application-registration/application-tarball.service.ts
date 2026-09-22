@@ -47,8 +47,6 @@ import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
 
 const TARBALL_FILE_NAME = 'app.tar.gz';
 
-// A pending file row may only carry this MIME type; the real one is sniffed
-// from the bytes once the upload is completed.
 const PENDING_TARBALL_MIME_TYPE = 'application/octet-stream';
 
 type ExtractedTarball = {
@@ -221,9 +219,6 @@ export class ApplicationTarballService {
         });
       });
     } catch (error) {
-      // The bytes were promoted before they could be inspected, so a rejected
-      // tarball would otherwise linger as a finalized file no registration
-      // points at.
       await this.deleteTarballFileSilently({
         fileId: file.id,
         ownerWorkspaceId,
@@ -244,9 +239,6 @@ export class ApplicationTarballService {
       where: { tarballFileId: file.id, ownerWorkspaceId },
     });
 
-    // A completion that succeeded but whose response never reached the client
-    // is retried with the same file id; answering with the registration keeps
-    // that retry harmless.
     if (isDefined(registration)) {
       return registration;
     }
@@ -313,8 +305,6 @@ export class ApplicationTarballService {
       },
     });
 
-    // A multipart upload overwrites the previous tarball in place, while a
-    // direct upload always lands in a new file and leaves the old one behind.
     if (
       isDefined(previousTarballFileId) &&
       previousTarballFileId !== savedFile.id

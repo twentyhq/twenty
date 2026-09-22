@@ -32,8 +32,6 @@ const buildDeployFailure = (
   },
 });
 
-// Servers predating the direct upload mutations still take the tarball as a
-// multipart request through the API.
 const deployThroughApi = async ({
   apiService,
   tarballPath,

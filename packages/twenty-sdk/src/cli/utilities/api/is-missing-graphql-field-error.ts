@@ -1,7 +1,5 @@
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 
-// A server predating a mutation answers with a validation error naming the
-// unknown field or type, which is what tells a newer CLI to fall back.
 export const isMissingGraphqlFieldError = ({
   error,
   fieldNames,
