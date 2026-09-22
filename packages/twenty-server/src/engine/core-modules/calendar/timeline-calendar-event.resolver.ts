@@ -12,6 +12,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -71,7 +73,12 @@ class GetTimelineCalendarEventsFromOpportunityIdArgs {
   pageSize: number;
 }
 
-@UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  UserAuthGuard,
+  RequireUserSessionGuard,
+  CustomPermissionGuard,
+)
 @CoreResolver(() => TimelineCalendarEventsWithTotalDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class TimelineCalendarEventResolver {
