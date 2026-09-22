@@ -5,10 +5,19 @@ import { STAY_ON_DEFAULT_DOMAIN_SESSION_STORAGE_KEY } from '@/domain-manager/con
 // outlive the url that carried it here
 export const rememberStayOnDefaultDomainRequest = () => {
   if (
-    new URLSearchParams(window.location.search).has(
+    !new URLSearchParams(window.location.search).has(
       STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM,
     )
   ) {
-    sessionStorage.setItem(STAY_ON_DEFAULT_DOMAIN_SESSION_STORAGE_KEY, 'true');
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(
+      STAY_ON_DEFAULT_DOMAIN_SESSION_STORAGE_KEY,
+      'true',
+    );
+  } catch {
+    return;
   }
 };
