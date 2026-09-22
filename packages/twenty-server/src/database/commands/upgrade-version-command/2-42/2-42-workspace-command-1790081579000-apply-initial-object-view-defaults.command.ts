@@ -1,7 +1,6 @@
 import { Command } from 'nest-commander';
 
 import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
-import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -9,8 +8,10 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { INITIAL_OBJECT_VIEW_DEFAULT_BY_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/view/constants/initial-object-view-defaults.constant';
-import { INITIAL_OBJECT_VIEW_POSITION } from 'src/engine/metadata-modules/view/constants/initial-object-view-position.constant';
+import {
+  INITIAL_OBJECT_VIEW_DEFAULT,
+  INITIAL_OBJECT_VIEW_DEFAULT_BY_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/engine/metadata-modules/view/constants/initial-object-view-defaults.constant';
 import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -19,11 +20,11 @@ import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-m
 
 @RegisteredWorkspaceCommand('2.42.0', 1790081579000)
 @Command({
-  name: 'upgrade:2-42:retype-initial-object-views',
+  name: 'upgrade:2-42:apply-initial-object-view-defaults',
   description:
-    'Apply the per-object initial view defaults to the views the 2.41 backfill already seeded, leaving any view whose type, position or icon was changed since untouched.',
+    'Apply the per-object initial view type and position to the views the 2.41 backfill already seeded, leaving any view already at its target or changed since untouched.',
 })
-export class RetypeInitialObjectViewsCommand extends ProvisionedWorkspaceCommandRunner {
+export class ApplyInitialObjectViewDefaultsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -68,12 +69,19 @@ export class RetypeInitialObjectViewsCommand extends ProvisionedWorkspaceCommand
           return accumulator;
         }
 
-        const isUntouchedSince2_41 =
-          flatView.type === ViewType.TABLE &&
-          flatView.position === INITIAL_OBJECT_VIEW_POSITION &&
-          flatView.icon === VIEW_TYPE_DEFAULT_ICONS[ViewType.TABLE];
+        const targetIcon = VIEW_TYPE_DEFAULT_ICONS[initialObjectViewDefault.type];
 
-        if (!isUntouchedSince2_41) {
+        const isAlreadyAtTarget =
+          flatView.type === initialObjectViewDefault.type &&
+          flatView.position === initialObjectViewDefault.position &&
+          flatView.icon === targetIcon;
+
+        const holdsSeedDefaults =
+          flatView.type === INITIAL_OBJECT_VIEW_DEFAULT.type &&
+          flatView.position === INITIAL_OBJECT_VIEW_DEFAULT.position &&
+          flatView.icon === VIEW_TYPE_DEFAULT_ICONS[INITIAL_OBJECT_VIEW_DEFAULT.type];
+
+        if (isAlreadyAtTarget || !holdsSeedDefaults) {
           return accumulator;
         }
 
@@ -81,7 +89,7 @@ export class RetypeInitialObjectViewsCommand extends ProvisionedWorkspaceCommand
           ...flatView,
           type: initialObjectViewDefault.type,
           position: initialObjectViewDefault.position,
-          icon: VIEW_TYPE_DEFAULT_ICONS[initialObjectViewDefault.type],
+          icon: targetIcon,
         });
 
         return accumulator;
@@ -91,7 +99,7 @@ export class RetypeInitialObjectViewsCommand extends ProvisionedWorkspaceCommand
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would retype ${viewsToUpdate.length} initial object view(s) for workspace ${workspaceId}`,
+        `[DRY RUN] Would update ${viewsToUpdate.length} initial object view(s) for workspace ${workspaceId}`,
       );
 
       return;
@@ -99,7 +107,7 @@ export class RetypeInitialObjectViewsCommand extends ProvisionedWorkspaceCommand
 
     if (viewsToUpdate.length === 0) {
       this.logger.log(
-        `No initial object view to retype for workspace ${workspaceId}`,
+        `No initial object view to update for workspace ${workspaceId}`,
       );
 
       return;
@@ -125,12 +133,12 @@ export class RetypeInitialObjectViewsCommand extends ProvisionedWorkspaceCommand
     if (result.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         result,
-        `Multiple validation errors occurred while retyping initial object views for workspace ${workspaceId}`,
+        `Multiple validation errors occurred while applying initial object view defaults for workspace ${workspaceId}`,
       );
     }
 
     this.logger.log(
-      `Retyped ${viewsToUpdate.length} initial object view(s) for workspace ${workspaceId}`,
+      `Updated ${viewsToUpdate.length} initial object view(s) for workspace ${workspaceId}`,
     );
   }
 }
