@@ -275,6 +275,14 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'search field',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
+  workflow: {
+    entityKind: 'workflow',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  workflowVersion: {
+    entityKind: 'workflow version',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
 };
 
 const MANIFEST_ENTITY_REGISTRY_ENTRIES = Object.values(

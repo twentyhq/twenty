@@ -487,5 +487,26 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "operations",
     ],
   },
+  "workflow": {
+    "propertiesToCompare": [
+      "name",
+      "visibility",
+      "lastPublishedVersionId",
+      "lastPublishedCoreWorkflowVersionId",
+    ],
+    "propertiesToStringify": [],
+  },
+  "workflowVersion": {
+    "propertiesToCompare": [
+      "status",
+      "triggers",
+      "steps",
+      "coreWorkflowId",
+    ],
+    "propertiesToStringify": [
+      "triggers",
+      "steps",
+    ],
+  },
 }
 `;

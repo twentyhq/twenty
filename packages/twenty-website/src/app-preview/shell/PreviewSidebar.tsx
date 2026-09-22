@@ -7,33 +7,33 @@ import {
   IconSearch,
 } from '@tabler/icons-react';
 
-import { AppleRainbowMark } from '@/icons';
+import { AppleWorkspaceMark } from '@/icons';
 import { mediaUp } from '@/tokens';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 import { previewFontSize } from '@/app-preview/preview-font-size';
 import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 
-import { SidebarControls } from './SidebarControls';
 import { SidebarFolder } from './SidebarFolder';
 import { SidebarItem } from './SidebarItem';
+import { SidebarModeSwitcher } from './SidebarModeSwitcher';
 import { renderPreviewIcon } from '../primitives/PreviewIcon';
 import { isSidebarFolder } from './is-sidebar-folder';
 import { type SidebarEntry, type SidebarItemDef } from '../types';
 
+const DRAWER_PADDING_PX = APP_PREVIEW_CHROME.navigationDrawerPaddingPx;
+
 const SidebarPanel = styled.aside`
-  background: transparent;
+  background: ${THEME_LIGHT.grayScale.gray3};
+  border-right: 1px solid ${THEME_LIGHT.border.color.medium};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   min-height: 0;
-  padding: 8px 4px;
-  row-gap: 8px;
   width: 48px;
 
   ${mediaUp('md')} {
     &[data-desktop-mode='expanded'] {
-      padding: 12px 8px;
-      row-gap: 12px;
       width: ${APP_PREVIEW_CHROME.navigationDrawerWidthPx}px;
     }
   }
@@ -43,13 +43,17 @@ const Header = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  padding: ${DRAWER_PADDING_PX}px 4px;
   row-gap: 16px;
-  padding: 8px 4px;
 
   ${mediaUp('md')} {
     [data-desktop-mode='expanded'] & {
+      border-bottom: 1px solid ${THEME_LIGHT.border.color.medium};
+      box-sizing: border-box;
       flex-direction: row;
+      height: ${APP_PREVIEW_CHROME.appHeaderHeightPx}px;
       justify-content: space-between;
+      padding: 0 ${DRAWER_PADDING_PX}px;
       row-gap: 0;
     }
   }
@@ -63,8 +67,9 @@ const HeaderLeft = styled.div`
 
   ${mediaUp('md')} {
     [data-desktop-mode='expanded'] & {
-      column-gap: 8px;
+      column-gap: ${DRAWER_PADDING_PX}px;
       justify-content: flex-start;
+      padding: 0 4px;
       width: auto;
     }
   }
@@ -103,8 +108,31 @@ const HeaderRight = styled.div`
 
   ${mediaUp('md')} {
     [data-desktop-mode='expanded'] & {
-      column-gap: 8px;
+      column-gap: 2px;
       flex-direction: row;
+    }
+  }
+`;
+
+const HeaderButton = styled.span`
+  align-items: center;
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+`;
+
+const DrawerContent = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 4px ${DRAWER_PADDING_PX}px;
+  row-gap: ${DRAWER_PADDING_PX}px;
+
+  ${mediaUp('md')} {
+    [data-desktop-mode='expanded'] & {
+      padding: 0 ${DRAWER_PADDING_PX}px ${DRAWER_PADDING_PX * 2}px;
     }
   }
 `;
@@ -139,7 +167,7 @@ const RailOnly = styled.div`
   flex: 1 1 auto;
   flex-direction: column;
   min-height: 0;
-  row-gap: 8px;
+  row-gap: ${DRAWER_PADDING_PX}px;
 
   ${mediaUp('md')} {
     [data-desktop-mode='expanded'] & {
@@ -202,7 +230,7 @@ export function PreviewSidebar({
     <SidebarPanel aria-hidden data-desktop-mode={desktopMode}>
       <Header>
         <HeaderLeft>
-          <AppleRainbowMark sizePx={16} />
+          <AppleWorkspaceMark sizePx={16} />
           <WorkspaceName>Apple</WorkspaceName>
           <DesktopOnly>
             <IconChevronDown
@@ -214,67 +242,73 @@ export function PreviewSidebar({
         <HeaderRight>
           <IconSearch color={THEME_LIGHT.font.color.secondary} size={16} />
           <DesktopOnly>
-            <IconLayoutSidebarLeftCollapse
-              color={THEME_LIGHT.font.color.secondary}
-              size={16}
-            />
+            <HeaderButton>
+              <IconLayoutSidebarLeftCollapse
+                color={THEME_LIGHT.font.color.secondary}
+                size={16}
+              />
+            </HeaderButton>
           </DesktopOnly>
         </HeaderRight>
       </Header>
-      <SidebarControls />
-      <RailOnly>
-        {railItems.map((item) => (
-          <RailIconSlot data-rail-item-id={item.id} key={item.id}>
-            {renderPreviewIcon(item.icon)}
-          </RailIconSlot>
-        ))}
-      </RailOnly>
-      <DesktopContent>
-        <div>
-          <SectionLabelRow>
-            <SectionLabel>Favorites</SectionLabel>
-          </SectionLabelRow>
-          <SectionStack>
-            {favorites.map((item) => (
-              <SidebarItem
-                active={item.id === selectedItemId}
-                item={item}
-                key={item.id}
-                onSelect={onSelectPageItem}
-              />
-            ))}
-          </SectionStack>
-        </div>
-        <div>
-          <SectionLabelRow>
-            <SectionLabel>Workspace</SectionLabel>
-          </SectionLabelRow>
-          <SectionStack>
-            {visibleWorkspace.map((entry) =>
-              isSidebarFolder(entry) ? (
-                <SidebarFolder
-                  expanded={openFolderIds?.includes(entry.id) ?? false}
-                  folder={entry}
-                  key={entry.id}
-                  onSelectItem={onSelectPageItem}
-                  onToggleExpanded={
-                    onToggleFolder ? () => onToggleFolder(entry.id) : undefined
-                  }
-                  selectedItemId={selectedItemId}
-                />
-              ) : (
+      <DrawerContent>
+        <SidebarModeSwitcher />
+        <RailOnly>
+          {railItems.map((item) => (
+            <RailIconSlot data-rail-item-id={item.id} key={item.id}>
+              {renderPreviewIcon(item.icon)}
+            </RailIconSlot>
+          ))}
+        </RailOnly>
+        <DesktopContent>
+          <div>
+            <SectionLabelRow>
+              <SectionLabel>Favorites</SectionLabel>
+            </SectionLabelRow>
+            <SectionStack>
+              {favorites.map((item) => (
                 <SidebarItem
-                  active={entry.id === selectedItemId}
-                  highlighted={entry.id === highlightedItemId}
-                  item={entry}
-                  key={entry.id}
+                  active={item.id === selectedItemId}
+                  item={item}
+                  key={item.id}
                   onSelect={onSelectPageItem}
                 />
-              ),
-            )}
-          </SectionStack>
-        </div>
-      </DesktopContent>
+              ))}
+            </SectionStack>
+          </div>
+          <div>
+            <SectionLabelRow>
+              <SectionLabel>Workspace</SectionLabel>
+            </SectionLabelRow>
+            <SectionStack>
+              {visibleWorkspace.map((entry) =>
+                isSidebarFolder(entry) ? (
+                  <SidebarFolder
+                    expanded={openFolderIds?.includes(entry.id) ?? false}
+                    folder={entry}
+                    key={entry.id}
+                    onSelectItem={onSelectPageItem}
+                    onToggleExpanded={
+                      onToggleFolder
+                        ? () => onToggleFolder(entry.id)
+                        : undefined
+                    }
+                    selectedItemId={selectedItemId}
+                  />
+                ) : (
+                  <SidebarItem
+                    active={entry.id === selectedItemId}
+                    highlighted={entry.id === highlightedItemId}
+                    item={entry}
+                    key={entry.id}
+                    onSelect={onSelectPageItem}
+                  />
+                ),
+              )}
+            </SectionStack>
+          </div>
+        </DesktopContent>
+      </DrawerContent>
     </SidebarPanel>
   );
 }

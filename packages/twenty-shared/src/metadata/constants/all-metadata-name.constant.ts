@@ -32,4 +32,6 @@ export const ALL_METADATA_NAME = {
   searchFieldMetadata: 'searchFieldMetadata',
   timelineActivityType: 'timelineActivityType',
   settingsMenuItem: 'settingsMenuItem',
+  workflow: 'workflow',
+  workflowVersion: 'workflowVersion',
 } as const;

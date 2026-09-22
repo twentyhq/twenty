@@ -30,6 +30,8 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "viewFieldGroup",
   "viewFilterGroup",
   "webhook",
+  "workflow",
+  "workflowVersion",
   "permissionFlag",
   "view",
   "fieldMetadata",

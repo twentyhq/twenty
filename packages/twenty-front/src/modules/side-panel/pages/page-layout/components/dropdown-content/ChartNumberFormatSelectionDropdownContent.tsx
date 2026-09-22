@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -93,9 +92,7 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
               selected={currentNumberFormat === option}
               indicator="check"
             >
-              <OverflowingTextWithTooltip
-                text={getChartNumberFormatLabel(option)}
-              />
+              {getChartNumberFormatLabel(option)}
             </ListItem>
           </SelectableListItem>
         ))}

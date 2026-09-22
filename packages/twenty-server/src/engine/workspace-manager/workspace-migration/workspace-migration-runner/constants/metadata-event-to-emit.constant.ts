@@ -34,4 +34,6 @@ export const METADATA_EVENTS_TO_EMIT = {
   timelineActivityType: true,
   searchFieldMetadata: true,
   settingsMenuItem: true,
+  workflow: true,
+  workflowVersion: true,
 } as const satisfies { [P in AllMetadataName]: boolean };

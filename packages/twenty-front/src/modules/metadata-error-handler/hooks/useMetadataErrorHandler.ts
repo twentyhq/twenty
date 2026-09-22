@@ -54,7 +54,9 @@ export const useMetadataErrorHandler = () => {
     connectionProvider: t`connection provider`,
     searchFieldMetadata: t`search field metadata`,
     timelineActivityType: t`timeline activity type`,
-    settingsMenuItem: t`setting page`,
+    settingsMenuItem: t`settings menu item`,
+    workflow: t`workflow`,
+    workflowVersion: t`workflow version`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

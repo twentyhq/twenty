@@ -1,3 +1,5 @@
+import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 
@@ -69,4 +71,6 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   searchFieldMetadata: SearchFieldMetadataEntity,
   timelineActivityType: TimelineActivityTypeEntity,
   settingsMenuItem: SettingsMenuItemEntity,
+  workflow: WorkflowEntity,
+  workflowVersion: WorkflowVersionEntity,
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;

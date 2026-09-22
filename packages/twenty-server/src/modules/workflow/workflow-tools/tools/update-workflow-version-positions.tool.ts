@@ -1,16 +1,16 @@
 import { z } from 'zod';
 
-import type { UpdateWorkflowVersionPositionsInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-positions.input';
+import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update.input';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const updateWorkflowVersionPositionsSchema = z.object({
-  workflowVersionId: z
+  coreWorkflowVersionId: z
     .string()
     .uuid()
-    .describe('The UUID of the workflow version'),
+    .describe('The core workflow version UUID'),
   positions: z
     .array(
       z.object({
@@ -25,19 +25,23 @@ const updateWorkflowVersionPositionsSchema = z.object({
 });
 
 export const createUpdateWorkflowVersionPositionsTool = (
-  deps: Pick<WorkflowToolDependencies, 'workflowVersionService'>,
+  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
   context: WorkflowToolContext,
 ) => ({
   name: 'update_workflow_version_positions' as const,
   description:
     'Update the positions of multiple workflow steps. This is useful for reorganizing the workflow layout.',
   inputSchema: updateWorkflowVersionPositionsSchema,
-  execute: async (parameters: UpdateWorkflowVersionPositionsInput) => {
+  execute: async (parameters: {
+    coreWorkflowVersionId: string;
+    positions: WorkflowStepPositionUpdateInput[];
+  }) => {
     try {
-      return await deps.workflowVersionService.updateWorkflowVersionPositions({
-        workflowVersionId: parameters.workflowVersionId,
+      return await deps.coreWorkflowVersionMutationService.updatePositions({
+        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
         positions: parameters.positions,
         workspaceId: context.workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
       });
     } catch (error) {
       return {
