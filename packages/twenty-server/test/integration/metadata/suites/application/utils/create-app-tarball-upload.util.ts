@@ -12,17 +12,22 @@ export type AppTarballUploadTarget = {
 };
 
 export const createAppTarballUpload = async ({
+  filename = 'app.tar.gz',
   size,
   expectToFail = false,
   token,
 }: {
+  filename?: string;
   size: number;
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
-  createAppTarballUpload: AppTarballUploadTarget;
+  createFileUpload: AppTarballUploadTarget;
 }> => {
-  const graphqlOperation = createAppTarballUploadQueryFactory({ size });
+  const graphqlOperation = createAppTarballUploadQueryFactory({
+    filename,
+    size,
+  });
 
   const response = await makeMetadataAPIRequest(graphqlOperation, token);
 

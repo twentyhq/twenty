@@ -25,6 +25,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
+- **`twenty app deploy` sends the tarball straight to file storage.** The CLI reserves an upload with `createFileUpload`, PUTs the archive to storage and registers it with `completeAppTarballUpload`, so the tarball no longer transits through the API process. Deploying to a server that predates these mutations fails instead of falling back to the multipart `uploadAppTarball` mutation.
 - **`twenty-client-sdk` should now be a dev dependency too.** Although app code imports it (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), Twenty provides it at runtime — logic functions get it from a generated SDK layer and front components resolve it from server-served modules — so the installed copy is only needed for typechecking and the deploy-time build. Newly scaffolded apps now place it under `devDependencies`. Moving it is recommended (not required: the server already strips it from the deployed runtime), and keeps the installed app leaner:
 
   ```diff

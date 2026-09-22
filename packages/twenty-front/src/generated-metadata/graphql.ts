@@ -2996,7 +2996,6 @@ export type Mutation = {
   completeFileUpload: FileWithSignedUrl;
   createApiKey: ApiKey;
   createAppMessageChannel: MessageChannel;
-  createAppTarballUpload: FileUploadTarget;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -3218,7 +3217,7 @@ export type Mutation = {
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
-  /** @deprecated Use createAppTarballUpload and completeAppTarballUpload, which send the tarball straight to file storage. */
+  /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
   uploadAppTarball: ApplicationRegistration;
   uploadApplicationFile: File;
   uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl;
@@ -3342,11 +3341,6 @@ export type MutationCreateApiKeyArgs = {
 
 export type MutationCreateAppMessageChannelArgs = {
   input: CreateAppMessageChannelInput;
-};
-
-
-export type MutationCreateAppTarballUploadArgs = {
-  size: Scalars['Float']['input'];
 };
 
 

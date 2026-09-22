@@ -4,16 +4,14 @@ import { join } from 'node:path';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mockCreateAppTarballUpload = vi.fn();
+const mockCreateFileUpload = vi.fn();
 const mockCompleteAppTarballUpload = vi.fn();
-const mockUploadAppTarball = vi.fn();
 const mockPutFileToUploadUrl = vi.fn();
 
 vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
-    createAppTarballUpload = mockCreateAppTarballUpload;
+    createFileUpload = mockCreateFileUpload;
     completeAppTarballUpload = mockCompleteAppTarballUpload;
-    uploadAppTarball = mockUploadAppTarball;
   },
 }));
 
@@ -49,15 +47,11 @@ describe('appDeploy', () => {
     tarballPath = join(directory, 'app.tar.gz');
     await writeFile(tarballPath, TARBALL_CONTENT);
 
-    mockCreateAppTarballUpload.mockResolvedValue({
+    mockCreateFileUpload.mockResolvedValue({
       success: true,
       data: uploadTarget,
     });
     mockCompleteAppTarballUpload.mockResolvedValue({
-      success: true,
-      data: registration,
-    });
-    mockUploadAppTarball.mockResolvedValue({
       success: true,
       data: registration,
     });
@@ -74,8 +68,10 @@ describe('appDeploy', () => {
 
     expect(result).toEqual({ success: true, data: registration });
 
-    expect(mockCreateAppTarballUpload).toHaveBeenCalledWith({
+    expect(mockCreateFileUpload).toHaveBeenCalledWith({
+      filename: 'app.tar.gz',
       size: TARBALL_CONTENT.length,
+      fileFolder: 'app-tarball',
     });
     expect(mockPutFileToUploadUrl).toHaveBeenCalledWith({
       absolutePath: tarballPath,
@@ -85,32 +81,14 @@ describe('appDeploy', () => {
     expect(mockCompleteAppTarballUpload).toHaveBeenCalledWith({
       fileId: uploadTarget.fileId,
     });
-    expect(mockUploadAppTarball).not.toHaveBeenCalled();
     expect(progressMessages).toEqual([
       `Uploading ${tarballPath}...`,
       'Registering application...',
     ]);
   });
 
-  it('falls back to the multipart upload when the server has no direct upload', async () => {
-    mockCreateAppTarballUpload.mockResolvedValue({
-      success: false,
-      error: 'Cannot query field "createAppTarballUpload" on type "Mutation".',
-    });
-
-    const result = await appDeploy({ tarballPath });
-
-    expect(result).toEqual({ success: true, data: registration });
-    expect(mockUploadAppTarball).toHaveBeenCalledTimes(1);
-    expect(mockUploadAppTarball.mock.calls[0][0].tarballBuffer.toString()).toBe(
-      TARBALL_CONTENT,
-    );
-    expect(mockPutFileToUploadUrl).not.toHaveBeenCalled();
-    expect(mockCompleteAppTarballUpload).not.toHaveBeenCalled();
-  });
-
   it('reports a refused upload target without sending anything', async () => {
-    mockCreateAppTarballUpload.mockResolvedValue({
+    mockCreateFileUpload.mockResolvedValue({
       success: false,
       error: 'Invalid file size 0 (max 1073741824 bytes)',
     });
@@ -125,7 +103,7 @@ describe('appDeploy', () => {
       },
     });
     expect(mockPutFileToUploadUrl).not.toHaveBeenCalled();
-    expect(mockUploadAppTarball).not.toHaveBeenCalled();
+    expect(mockCompleteAppTarballUpload).not.toHaveBeenCalled();
   });
 
   it('does not register the tarball when storage refuses the bytes', async () => {

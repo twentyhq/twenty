@@ -43,6 +43,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.EmailAttachment,
   FileFolder.AgentChat,
   FileFolder.EmailImage,
+  FileFolder.AppTarball,
 ] as const;
 
 @Injectable()

@@ -1,12 +1,13 @@
 import fs from 'fs';
+import path from 'path';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { isMissingGraphqlFieldError } from '@/cli/utilities/api/is-missing-graphql-field-error';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import { FileFolder } from 'twenty-shared/types';
 
 export type AppDeployOptions = {
   tarballPath: string;
@@ -32,27 +33,6 @@ const buildDeployFailure = (
   },
 });
 
-const deployThroughMultipartUpload = async ({
-  apiService,
-  tarballPath,
-}: {
-  apiService: ApiService;
-  tarballPath: string;
-}): Promise<CommandResult<AppDeployResult>> => {
-  const uploadResult = await apiService.uploadAppTarball({
-    tarballBuffer: fs.readFileSync(tarballPath),
-  });
-
-  if (!uploadResult.success) {
-    return buildDeployFailure(`Upload failed: ${uploadResult.error}`);
-  }
-
-  return {
-    success: true,
-    data: uploadResult.data,
-  };
-};
-
 const innerAppDeploy = async (
   options: AppDeployOptions,
 ): Promise<CommandResult<AppDeployResult>> => {
@@ -71,21 +51,16 @@ const innerAppDeploy = async (
 
   const { size } = await fs.promises.stat(tarballPath);
 
-  const createResult = await apiService.createAppTarballUpload({ size });
+  const createResult = await apiService.createFileUpload({
+    filename: path.basename(tarballPath),
+    size,
+    fileFolder: FileFolder.AppTarball,
+  });
 
   if (!createResult.success) {
-    const error = createResult.error ?? createResult.message;
-
-    if (
-      isMissingGraphqlFieldError({
-        error,
-        fieldNames: ['createAppTarballUpload'],
-      })
-    ) {
-      return deployThroughMultipartUpload({ apiService, tarballPath });
-    }
-
-    return buildDeployFailure(`Upload failed: ${serializeError(error)}`);
+    return buildDeployFailure(
+      `Upload failed: ${serializeError(createResult.error ?? createResult.message)}`,
+    );
   }
 
   const { fileId, uploadUrl, contentType } = createResult.data;

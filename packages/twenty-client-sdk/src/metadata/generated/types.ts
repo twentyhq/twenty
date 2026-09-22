@@ -9493,15 +9493,6 @@ export default {
                     ]
                 }
             ],
-            "createAppTarballUpload": [
-                160,
-                {
-                    "size": [
-                        15,
-                        "Float!"
-                    ]
-                }
-            ],
             "completeAppTarballUpload": [
                 76,
                 {

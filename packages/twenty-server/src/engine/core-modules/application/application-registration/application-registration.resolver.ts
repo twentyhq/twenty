@@ -42,7 +42,6 @@ import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-m
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -260,21 +259,6 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
-  @Mutation(() => FileUploadTargetDTO)
-  async createAppTarballUpload(
-    @Args({ name: 'size', type: () => Number }) size: number,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<FileUploadTargetDTO> {
-    return this.applicationTarballService.createTarballUpload({
-      ownerWorkspaceId: workspaceId,
-      size,
-    });
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
-  )
   @Mutation(() => ApplicationRegistrationEntity)
   async completeAppTarballUpload(
     @Args({ name: 'fileId', type: () => UUIDScalarType }) fileId: string,
@@ -292,7 +276,7 @@ export class ApplicationRegistrationResolver {
   )
   @Mutation(() => ApplicationRegistrationEntity, {
     deprecationReason:
-      'Use createAppTarballUpload and completeAppTarballUpload, which send the tarball straight to file storage.',
+      'Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.',
   })
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })

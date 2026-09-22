@@ -85,7 +85,7 @@ export type CompleteApplicationFileUploadsResult = {
   errors: ApplicationFileCompletionError[];
 };
 
-export type AppTarballUploadTarget = {
+export type FileUploadTarget = {
   fileId: string;
   uploadUrl: string;
   contentType: string;
@@ -101,103 +101,26 @@ export type AppTarballRegistration = {
 export class FileApi {
   constructor(private readonly client: AxiosInstance) {}
 
-  // TODO: Migrate to MetadataClient once available
-  // (see https://github.com/twentyhq/core-team-issues/issues/2289)
-  async uploadAppTarball({
-    tarballBuffer,
-    universalIdentifier,
-  }: {
-    tarballBuffer: Buffer;
-    universalIdentifier?: string;
-  }): Promise<
-    ApiResponse<{
-      id: string;
-      universalIdentifier: string;
-      name: string;
-    }>
-  > {
-    try {
-      const mutation = `
-        mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {
-          uploadAppTarball(file: $file, universalIdentifier: $universalIdentifier) {
-            id
-            universalIdentifier
-            name
-          }
-        }
-      `;
-
-      const operations = JSON.stringify({
-        query: mutation,
-        variables: {
-          file: null,
-          universalIdentifier: universalIdentifier ?? null,
-        },
-      });
-
-      const map = JSON.stringify({
-        '0': ['variables.file'],
-      });
-
-      const formData = new FormData();
-
-      formData.append('operations', operations);
-      formData.append('map', map);
-      formData.append(
-        '0',
-        new Blob([new Uint8Array(tarballBuffer)], {
-          type: 'application/gzip',
-        }),
-        'app.tar.gz',
-      );
-
-      const response: AxiosResponse = await this.client.post(
-        '/metadata',
-        formData,
-      );
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error: response.data.errors[0]?.message || 'Failed to upload tarball',
-        };
-      }
-
-      return {
-        success: true,
-        data: response.data.data.uploadAppTarball,
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        if (error.response.status === 401) {
-          return {
-            success: false,
-            error: error.response.data?.errors?.[0]?.message || error.message,
-            isAuthError: true,
-          };
-        }
-
-        return {
-          success: false,
-          error: error.response.data?.errors?.[0]?.message || error.message,
-        };
-      }
-
-      return {
-        success: false,
-        error,
-      };
-    }
-  }
-
-  async createAppTarballUpload({
+  async createFileUpload({
+    filename,
     size,
+    fileFolder,
   }: {
+    filename: string;
     size: number;
-  }): Promise<ApiResponse<AppTarballUploadTarget>> {
+    fileFolder: FileFolder;
+  }): Promise<ApiResponse<FileUploadTarget>> {
     const mutation = `
-      mutation CreateAppTarballUpload($size: Float!) {
-        createAppTarballUpload(size: $size) {
+      mutation CreateFileUpload(
+        $filename: String!
+        $size: Float!
+        $fileFolder: FileFolder!
+      ) {
+        createFileUpload(
+          filename: $filename
+          size: $size
+          fileFolder: $fileFolder
+        ) {
           fileId
           uploadUrl
           contentType
@@ -206,11 +129,11 @@ export class FileApi {
       }
     `;
 
-    return this.runMetadataMutation<AppTarballUploadTarget>({
+    return this.runMetadataMutation<FileUploadTarget>({
       mutation,
-      variables: { size },
-      resultKey: 'createAppTarballUpload',
-      defaultErrorMessage: 'Failed to create tarball upload',
+      variables: { filename, size, fileFolder: pascalCase(fileFolder) },
+      resultKey: 'createFileUpload',
+      defaultErrorMessage: 'Failed to create file upload',
     });
   }
 

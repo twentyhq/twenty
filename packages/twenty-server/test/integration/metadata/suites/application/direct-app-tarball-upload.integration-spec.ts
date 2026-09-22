@@ -65,7 +65,7 @@ describe('Direct app tarball upload', () => {
 
     expect(errors).toBeUndefined();
 
-    const uploadTarget = data!.createAppTarballUpload;
+    const uploadTarget = data!.createFileUpload;
 
     createdFileIds.push(uploadTarget.fileId);
 
@@ -168,7 +168,7 @@ describe('Direct app tarball upload', () => {
 
     expect(file.status).toBe('UPLOADED');
     expect(file.mimeType).toBe('application/gzip');
-    expect(file.path).toBe(`app-tarball/${uploadTarget.fileId}/app.tar.gz`);
+    expect(file.path).toBe(`app-tarball/${uploadTarget.fileId}.gz`);
     expect(Number(file.size)).toBe(tarball.length);
   });
 
@@ -471,7 +471,7 @@ describe('Direct app tarball upload', () => {
     const body = Buffer.from('definitely not a tarball');
 
     const { data } = await createAppTarballUpload({ size: body.length });
-    const uploadTarget = data!.createAppTarballUpload;
+    const uploadTarget = data!.createFileUpload;
 
     createdFileIds.push(uploadTarget.fileId);
 
@@ -498,7 +498,7 @@ describe('Direct app tarball upload', () => {
     });
 
     const { data } = await createAppTarballUpload({ size: tarball.length });
-    const uploadTarget: AppTarballUploadTarget = data!.createAppTarballUpload;
+    const uploadTarget: AppTarballUploadTarget = data!.createFileUpload;
 
     createdFileIds.push(uploadTarget.fileId);
 

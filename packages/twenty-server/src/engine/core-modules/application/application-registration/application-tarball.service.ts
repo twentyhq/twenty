@@ -33,13 +33,10 @@ import { getTarballUploadCompletionLockName } from 'src/engine/core-modules/appl
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import {
   FileUploadCompletionService,
   type FileUploadStorageLocation,
 } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
-import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
-import { assertValidDirectUploadSize } from 'src/engine/core-modules/file/file-upload/utils/assert-valid-direct-upload-size.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -47,8 +44,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
 
 const TARBALL_FILE_NAME = 'app.tar.gz';
-
-const PENDING_TARBALL_MIME_TYPE = 'application/octet-stream';
 
 type ExtractedTarball = {
   contentDir: string;
@@ -66,7 +61,6 @@ export class ApplicationTarballService {
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileStorageService: FileStorageService,
-    private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly applicationService: ApplicationService,
@@ -99,48 +93,6 @@ export class ApplicationTarballService {
             ownerWorkspaceId: params.ownerWorkspaceId,
           }),
       });
-    });
-  }
-
-  async createTarballUpload({
-    ownerWorkspaceId,
-    size,
-  }: {
-    ownerWorkspaceId: string;
-    size: number;
-  }): Promise<FileUploadTargetDTO> {
-    assertValidDirectUploadSize(size);
-
-    const applicationUniversalIdentifier =
-      await this.findOwnerCustomApplicationUniversalIdentifier(
-        ownerWorkspaceId,
-      );
-
-    const fileId = v4();
-    const resourcePath = `${fileId}/${TARBALL_FILE_NAME}`;
-
-    const pendingFile = await this.fileStorageService.createPendingFile({
-      fileFolder: FileFolder.AppTarball,
-      applicationUniversalIdentifier,
-      workspaceId: ownerWorkspaceId,
-      resourcePath,
-      fileId,
-      size,
-      mimeType: PENDING_TARBALL_MIME_TYPE,
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
-
-    return this.fileUploadTargetService.buildUploadTarget({
-      workspaceId: ownerWorkspaceId,
-      fileId: pendingFile.id,
-      fileFolder: FileFolder.AppTarball,
-      applicationUniversalIdentifier,
-      resourcePath,
-      contentType: PENDING_TARBALL_MIME_TYPE,
-      size,
     });
   }
 
@@ -213,7 +165,7 @@ export class ApplicationTarballService {
     }
 
     try {
-      return await this.withTempDir(async (tempDir) => {
+      const registration = await this.withTempDir(async (tempDir) => {
         const tarballPath = join(tempDir, TARBALL_FILE_NAME);
 
         await pipeline(
@@ -239,6 +191,14 @@ export class ApplicationTarballService {
           storeTarballFile: async () => file,
         });
       });
+
+      await this.fileRepository.update(
+        ownerWorkspaceId,
+        { id: file.id },
+        { settings: { isTemporaryFile: false, toDelete: false } },
+      );
+
+      return registration;
     } catch (error) {
       await this.deleteTarballFileUnlessAttached({
         fileId: file.id,
