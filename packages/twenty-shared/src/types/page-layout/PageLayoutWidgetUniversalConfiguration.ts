@@ -1,6 +1,6 @@
-import { type FormatRecordSerializedRelationProperties } from '@/types';
+import { type FormatRecordSerializedRelationProperties } from '../FormatRecordSerializedRelationProperties';
 
-import { type PageLayoutWidgetConfiguration } from '@/types';
+import { type PageLayoutWidgetConfiguration } from './PageLayoutWidgetConfiguration';
 
 export type PageLayoutWidgetUniversalConfiguration =
   FormatRecordSerializedRelationProperties<PageLayoutWidgetConfiguration>;

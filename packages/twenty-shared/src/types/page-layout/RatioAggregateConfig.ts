@@ -1,4 +1,4 @@
-import { type SerializedRelation } from '@/types';
+import { type SerializedRelation } from '../SerializedRelation';
 
 export type RatioAggregateConfig = {
   fieldMetadataId: SerializedRelation;

@@ -1,9 +1,9 @@
-import { type AggregateOperations } from '@/types';
-import { type ObjectRecordGroupByDateGranularity } from '@/types';
-import { type SerializedRelation } from '@/types';
+import { type AggregateOperations } from '../AggregateOperations';
+import { type ObjectRecordGroupByDateGranularity } from '../ObjectRecordGroupByDateGranularity';
+import { type SerializedRelation } from '../SerializedRelation';
 
-import { type ChartFilter } from '@/types';
-import { type RatioAggregateConfig } from '@/types';
+import { type ChartFilter } from './ChartFilter';
+import { type RatioAggregateConfig } from './RatioAggregateConfig';
 
 type BaseChartConfiguration = {
   aggregateFieldMetadataId: SerializedRelation;
