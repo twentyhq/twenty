@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -165,7 +164,7 @@ export const SettingsBillingLimitSpenderSelect = ({
             />
           }
         >
-          <OverflowingTextWithTooltip text={option.label} />
+          {option.label}
         </ListItem>
       );
     }
@@ -182,7 +181,7 @@ export const SettingsBillingLimitSpenderSelect = ({
           <SelectOptionIcon Icon={USAGE_LIMIT_SPENDER_TYPE_ICONS[kind]} />
         }
       >
-        <OverflowingTextWithTooltip text={option.label} />
+        {option.label}
       </ListItem>
     );
   };
@@ -196,9 +195,7 @@ export const SettingsBillingLimitSpenderSelect = ({
         selected={spenderType === kind && spenderId === ''}
         indicator="check"
       >
-        <OverflowingTextWithTooltip
-          text={t(USAGE_LIMIT_SPENDER_TYPE_POOL_LABELS[kind])}
-        />
+        {t(USAGE_LIMIT_SPENDER_TYPE_POOL_LABELS[kind])}
       </ListItem>
       {loading ? (
         <ListItem
@@ -207,9 +204,7 @@ export const SettingsBillingLimitSpenderSelect = ({
           aria-selected={false}
           selected={false}
           indicator="check"
-        >
-          <OverflowingTextWithTooltip text={t`Loading…`} />
-        </ListItem>
+        >{t`Loading…`}</ListItem>
       ) : (
         listedSpenderOptions.map((option) => renderOption(kind, option))
       )}
@@ -263,7 +258,7 @@ export const SettingsBillingLimitSpenderSelect = ({
               />
             }
           >
-            <OverflowingTextWithTooltip text={workspaceName} />
+            {workspaceName}
           </ListItem>
         </DropdownMenuItemsContainer>
       )}
@@ -284,7 +279,7 @@ export const SettingsBillingLimitSpenderSelect = ({
                 hasSubmenu={true}
                 startIcon={<SelectOptionIcon Icon={group.Icon} />}
               >
-                <OverflowingTextWithTooltip text={t(group.label)} />
+                {t(group.label)}
               </ListItem>
             ) : (
               <ListItem
@@ -298,7 +293,7 @@ export const SettingsBillingLimitSpenderSelect = ({
                 descriptionPlacement={'end'}
                 startIcon={<SelectOptionIcon Icon={group.Icon} />}
               >
-                <OverflowingTextWithTooltip text={t(group.label)} />
+                {t(group.label)}
               </ListItem>
             ),
           )}

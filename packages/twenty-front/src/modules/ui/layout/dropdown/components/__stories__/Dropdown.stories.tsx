@@ -22,7 +22,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof Dropdown> = {
@@ -290,7 +290,7 @@ export const WithHeaders: Story = {
         <DropdownMenuItemsContainer hasMaxHeight>
           <>
             {optionsMock.slice(0, 3).map((item) => (
-              <MenuItem key={item.id} text={item.name} />
+              <ListItem key={item.id}>{item.name}</ListItem>
             ))}
           </>
         </DropdownMenuItemsContainer>
@@ -298,7 +298,7 @@ export const WithHeaders: Story = {
         <StyledDropdownMenuSubheader>Subheader 2</StyledDropdownMenuSubheader>
         <DropdownMenuItemsContainer>
           {optionsMock.slice(3).map((item) => (
-            <MenuItem key={item.id} text={item.name} />
+            <ListItem key={item.id}>{item.name}</ListItem>
           ))}
         </DropdownMenuItemsContainer>
       </DropdownContent>
@@ -352,7 +352,7 @@ export const WithInput: Story = {
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {optionsMock.map(({ name }) => (
-            <MenuItem key={name} text={name} />
+            <ListItem key={name}>{name}</ListItem>
           ))}
         </DropdownMenuItemsContainer>
       </DropdownContent>

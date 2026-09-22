@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
@@ -23,7 +25,6 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconUserCircle, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 const RELATION_RECORD_SELECTABLE_ITEM_ID = 'relation-record-select';
 
@@ -148,15 +149,16 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
                 itemId={RELATION_RECORD_SELECTABLE_ITEM_ID}
                 onEnter={handleSelectRelationRecord}
               >
-                <MenuItem
+                <ListItem
                   focused={
                     selectedItemId === RELATION_RECORD_SELECTABLE_ITEM_ID
                   }
-                  testId="select-filter-relation-record"
+                  data-testid={'select-filter-relation-record'}
                   onClick={handleSelectRelationRecord}
-                  text={workspaceMemberObjectMetadataItem.labelSingular}
-                  LeftIcon={IconUserCircle}
-                />
+                  startIcon={<IconUserCircle />}
+                >
+                  {workspaceMemberObjectMetadataItem.labelSingular}
+                </ListItem>
               </SelectableListItem>
               <DropdownMenuSeparator />
             </>
@@ -169,16 +171,19 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
                 handleSelectTargetField(targetField);
               }}
             >
-              <MenuItem
+              <ListItem
                 focused={selectedItemId === targetField.id}
                 key={`select-filter-relation-${index}`}
-                testId={`select-filter-relation-${index}`}
+                data-testid={`select-filter-relation-${index}`}
                 onClick={() => {
                   handleSelectTargetField(targetField);
                 }}
-                text={targetField.label}
-                LeftIcon={getIcon(targetField.icon)}
-              />
+                startIcon={
+                  <SelectOptionIcon Icon={getIcon(targetField.icon)} />
+                }
+              >
+                {targetField.label}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

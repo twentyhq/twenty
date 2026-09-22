@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -6,8 +8,7 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
-import { IconCheck, IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { IconChevronLeft } from 'twenty-ui/icon';
 
 export const MultiWorkspaceDropdownThemesComponents = () => {
   const { t } = useLingui();
@@ -32,19 +33,21 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {colorSchemeList.map((theme) => (
-          <MenuItem
+          <ListItem
             key={theme.id}
-            LeftIcon={theme.icon}
-            text={
-              theme.id === 'System'
-                ? t`System`
-                : theme.id === 'Dark'
-                  ? t`Dark`
-                  : t`Light`
-            }
+            startIcon={<SelectOptionIcon Icon={theme.icon} />}
             onClick={() => setColorScheme(theme.id)}
-            RightIcon={theme.id === colorScheme ? IconCheck : undefined}
-          />
+            role="option"
+            aria-selected={theme.id === colorScheme}
+            indicator="check"
+            selected={theme.id === colorScheme}
+          >
+            {theme.id === 'System'
+              ? t`System`
+              : theme.id === 'Dark'
+                ? t`Dark`
+                : t`Light`}
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>
