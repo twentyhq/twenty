@@ -1,22 +1,14 @@
 import { Command } from 'nest-commander';
 
-import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
-
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import {
-  INITIAL_OBJECT_VIEW_DEFAULT,
-  INITIAL_OBJECT_VIEW_DEFAULT_BY_OBJECT_UNIVERSAL_IDENTIFIER,
-} from 'src/engine/metadata-modules/view/constants/initial-object-view-defaults.constant';
-import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
+import { computeInitialObjectViewDefaultUpdates } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-default-updates.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 @RegisteredWorkspaceCommand('2.42.0', 1790081579000)
 @Command({
@@ -48,54 +40,11 @@ export class ApplyInitialObjectViewDefaultsCommand extends ProvisionedWorkspaceC
         { workspaceId },
       );
 
-    const viewsToUpdate = Object.entries(
-      INITIAL_OBJECT_VIEW_DEFAULT_BY_OBJECT_UNIVERSAL_IDENTIFIER,
-    ).reduce<UniversalFlatView[]>(
-      (accumulator, [objectUniversalIdentifier, initialObjectViewDefault]) => {
-        if (!isDefined(initialObjectViewDefault)) {
-          return accumulator;
-        }
-
-        const flatView =
-          flatViewMaps.byUniversalIdentifier[
-            getInitialObjectViewUniversalIdentifier({
-              viewApplicationUniversalIdentifier:
-                workspaceCustomFlatApplication.universalIdentifier,
-              objectUniversalIdentifier,
-            })
-          ];
-
-        if (!isDefined(flatView) || isDefined(flatView.deletedAt)) {
-          return accumulator;
-        }
-
-        const targetIcon = VIEW_TYPE_DEFAULT_ICONS[initialObjectViewDefault.type];
-
-        const isAlreadyAtTarget =
-          flatView.type === initialObjectViewDefault.type &&
-          flatView.position === initialObjectViewDefault.position &&
-          flatView.icon === targetIcon;
-
-        const holdsSeedDefaults =
-          flatView.type === INITIAL_OBJECT_VIEW_DEFAULT.type &&
-          flatView.position === INITIAL_OBJECT_VIEW_DEFAULT.position &&
-          flatView.icon === VIEW_TYPE_DEFAULT_ICONS[INITIAL_OBJECT_VIEW_DEFAULT.type];
-
-        if (isAlreadyAtTarget || !holdsSeedDefaults) {
-          return accumulator;
-        }
-
-        accumulator.push({
-          ...flatView,
-          type: initialObjectViewDefault.type,
-          position: initialObjectViewDefault.position,
-          icon: targetIcon,
-        });
-
-        return accumulator;
-      },
-      [],
-    );
+    const viewsToUpdate = computeInitialObjectViewDefaultUpdates({
+      flatViewMaps,
+      initialViewApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+    });
 
     if (options.dryRun ?? false) {
       this.logger.log(
