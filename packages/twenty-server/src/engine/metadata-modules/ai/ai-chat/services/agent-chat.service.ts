@@ -252,7 +252,9 @@ export class AgentChatService {
         }
 
         // Paging is applied after the ordering so a page reflects the ranked
-        // order rather than the order the ids arrived in.
+        // order rather than the order the ids arrived in. The id breaks ties on
+        // both timestamps, without which two equally ranked threads have no
+        // defined order and successive pages can repeat or skip one.
         let pagination = '';
 
         if (isDefined(limit)) {
@@ -270,7 +272,7 @@ export class AgentChatService {
        FROM ${table('agentChatThread')} thread
        LEFT JOIN ${table('agentMessage')} message ON message."threadId" = thread.id AND message."isHidden" = false
        WHERE ${conditions.join(' AND ')}
-       GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC${pagination}`,
+       GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC, thread.id DESC${pagination}`,
           parameters,
         );
       },

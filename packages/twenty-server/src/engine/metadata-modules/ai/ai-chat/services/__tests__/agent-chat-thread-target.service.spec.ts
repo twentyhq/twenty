@@ -18,9 +18,7 @@ const args = {
 };
 
 const buildService = () => {
-  const threads = [
-    { id: THREAD_ID, userWorkspaceId: OWNER_ID },
-  ];
+  const threads = [{ id: THREAD_ID, userWorkspaceId: OWNER_ID }];
 
   const threadRepository = {
     find: jest.fn().mockImplementation(async (_workspaceId, { where }) => {
