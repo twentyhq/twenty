@@ -45,6 +45,8 @@ Use `frontComponentUniversalIdentifier` for app-defined front components. A `fro
 
 ## Settings Menu Items
 
+Declared items are persisted but not yet displayed: the settings menu still renders the single tab from the deprecated `defineSettingsFrontComponent()` until the rendering follow-up lands. Say so when an app asks for a visible settings entry today, and reach for `defineSettingsFrontComponent()` when one is actually needed now.
+
 To add an entry to an app's settings menu, declare it with `defineSettingsMenuItem` and point it at the front component that renders it:
 
 ```ts
