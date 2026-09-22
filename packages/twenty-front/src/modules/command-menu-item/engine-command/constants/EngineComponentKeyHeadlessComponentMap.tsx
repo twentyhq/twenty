@@ -1,3 +1,4 @@
+import { SeeRecordInViewSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/SeeRecordInViewSingleRecordCommand';
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { HeadlessOpenAiChatHistoryTabEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenAiChatHistoryTabEngineCommand';
@@ -66,6 +67,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.DELETE_RECORDS]: <DeleteRecordsCommand />,
   [EngineComponentKey.RESTORE_RECORDS]: <RestoreRecordsCommand />,
   [EngineComponentKey.DESTROY_RECORDS]: <DestroyRecordsCommand />,
+  [EngineComponentKey.SEE_RECORD_IN_VIEW]: (
+    <SeeRecordInViewSingleRecordCommand />
+  ),
   [EngineComponentKey.ADD_TO_FAVORITES]: <AddToFavoritesSingleRecordCommand />,
   [EngineComponentKey.REMOVE_FROM_FAVORITES]: (
     <RemoveFromFavoritesSingleRecordCommand />

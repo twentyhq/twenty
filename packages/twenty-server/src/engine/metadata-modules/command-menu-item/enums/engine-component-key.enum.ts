@@ -1,6 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum EngineComponentKey {
+  SEE_RECORD_IN_VIEW = 'SEE_RECORD_IN_VIEW',
   NAVIGATE_TO_NEXT_RECORD = 'NAVIGATE_TO_NEXT_RECORD',
   NAVIGATE_TO_PREVIOUS_RECORD = 'NAVIGATE_TO_PREVIOUS_RECORD',
   CREATE_NEW_RECORD = 'CREATE_NEW_RECORD',

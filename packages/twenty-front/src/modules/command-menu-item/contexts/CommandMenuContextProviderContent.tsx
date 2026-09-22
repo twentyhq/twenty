@@ -30,6 +30,7 @@ import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
+  EngineComponentKey.SEE_RECORD_IN_VIEW,
   EngineComponentKey.ADD_TO_FAVORITES,
   EngineComponentKey.REMOVE_FROM_FAVORITES,
   EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT,

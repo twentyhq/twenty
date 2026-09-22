@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { AddSeeRecordInViewCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790070801000-add-see-record-in-view-command.command';
+
 import { MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
@@ -36,6 +38,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
   providers: [
+    AddSeeRecordInViewCommand,
     MigrateAgentHistoryToWorkspaceCommand,
     UnpinCreationCommandsOnRecordSelectionCommand,
     RelinkWorkflowVersionsToCoreWorkflowsCommand,

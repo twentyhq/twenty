@@ -3,6 +3,7 @@ import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMe
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 export const COMMAND_MENU_ITEM_SECTION_BY_ENGINE_COMPONENT_KEY = {
+  [EngineComponentKey.SEE_RECORD_IN_VIEW]: 'SELECTION',
   [EngineComponentKey.ADD_TO_FAVORITES]: 'SELECTION',
   [EngineComponentKey.REMOVE_FROM_FAVORITES]: 'SELECTION',
   [EngineComponentKey.DELETE_RECORDS]: 'SELECTION',

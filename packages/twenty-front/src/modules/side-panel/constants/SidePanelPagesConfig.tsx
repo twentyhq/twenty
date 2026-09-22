@@ -1,3 +1,4 @@
+import { SidePanelRecordViewsPage } from '@/side-panel/pages/record-views/components/SidePanelRecordViewsPage';
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/components/SidePanelCoreWorkflowFiltersPage';
@@ -42,6 +43,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   React.ReactNode
 >([
   [SidePanelPages.CommandMenuDisplay, <SidePanelCommandMenuItemDisplayPage />],
+  [SidePanelPages.RecordViews, <SidePanelRecordViewsPage />],
   [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
   [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
   [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],

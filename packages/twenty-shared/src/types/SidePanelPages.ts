@@ -1,4 +1,5 @@
 export enum SidePanelPages {
+  RecordViews = 'record-views',
   CommandMenuDisplay = 'command-menu-display',
   // Deprecated: use AppPath.RecordShowPage through the routed-page API.
   ViewRecord = 'view-record',

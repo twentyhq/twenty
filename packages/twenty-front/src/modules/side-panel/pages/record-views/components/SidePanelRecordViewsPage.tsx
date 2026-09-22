@@ -1,0 +1,107 @@
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useRecordViews } from '@/side-panel/pages/record-views/hooks/useRecordViews';
+import { recordViewsTargetComponentState } from '@/side-panel/pages/record-views/states/recordViewsTargetComponentState';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { viewTypeIconMapping } from '@/views/types/ViewType';
+import { t } from '@lingui/core/macro';
+import { useNavigate } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { IconRefresh } from 'twenty-ui/icon';
+
+const RETRY_ITEM_ID = 'retry-record-views';
+
+type RecordViewsListProps = {
+  objectNameSingular: string;
+  recordId: string;
+};
+
+export const RecordViewsList = ({
+  objectNameSingular,
+  recordId,
+}: RecordViewsListProps) => {
+  const { views, loading, error, retry, objectMetadataItem } = useRecordViews({
+    objectNameSingular,
+    recordId,
+  });
+  const { closeSidePanelMenu } = useSidePanelMenu();
+  const navigate = useNavigate();
+
+  const openView = (viewId: string) => {
+    closeSidePanelMenu();
+    navigate(
+      getAppPath(
+        AppPath.RecordIndexPage,
+        {
+          objectNamePlural: objectMetadataItem.namePlural,
+        },
+        { viewId },
+      ),
+    );
+  };
+
+  return (
+    <SidePanelList
+      selectableItemIds={error ? [RETRY_ITEM_ID] : views.map((view) => view.id)}
+      loading={loading}
+      noResults={!error && views.length === 0}
+      noResultsText={t`No views contain this record`}
+    >
+      {loading && (
+        <CommandMenuItem
+          id="loading-record-views"
+          label={t`Finding views…`}
+          disabled
+        />
+      )}
+      {error && (
+        <SidePanelGroup heading={t`Unable to load views`}>
+          <SelectableListItem itemId={RETRY_ITEM_ID} onEnter={retry}>
+            <CommandMenuItem
+              id={RETRY_ITEM_ID}
+              label={t`Try again`}
+              Icon={IconRefresh}
+              onClick={retry}
+            />
+          </SelectableListItem>
+        </SidePanelGroup>
+      )}
+      {views.length > 0 && (
+        <SidePanelGroup heading={t`Views containing this record`}>
+          {views.map((view) => (
+            <SelectableListItem
+              key={view.id}
+              itemId={view.id}
+              onEnter={() => openView(view.id)}
+            >
+              <CommandMenuItem
+                id={view.id}
+                label={view.name}
+                Icon={viewTypeIconMapping(view.type)}
+                onClick={() => openView(view.id)}
+              />
+            </SelectableListItem>
+          ))}
+        </SidePanelGroup>
+      )}
+    </SidePanelList>
+  );
+};
+
+export const SidePanelRecordViewsPage = () => {
+  const recordViewsTarget = useAtomComponentStateValue(
+    recordViewsTargetComponentState,
+  );
+
+  return isDefined(recordViewsTarget) ? (
+    <RecordViewsList
+      key={`${recordViewsTarget.objectNameSingular}:${recordViewsTarget.recordId}`}
+      objectNameSingular={recordViewsTarget.objectNameSingular}
+      recordId={recordViewsTarget.recordId}
+    />
+  ) : null;
+};
