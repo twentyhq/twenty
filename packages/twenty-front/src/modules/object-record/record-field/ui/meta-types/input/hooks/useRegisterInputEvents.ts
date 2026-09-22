@@ -59,6 +59,7 @@ export const useRegisterInputEvents = <T>({
     },
     focusId,
     dependencies: [onTab, inputValue],
+    options: { preventDefault: isDefined(onTab) },
   });
 
   useHotkeysOnFocusedElement({
@@ -68,5 +69,6 @@ export const useRegisterInputEvents = <T>({
     },
     focusId,
     dependencies: [onShiftTab, inputValue],
+    options: { preventDefault: isDefined(onShiftTab) },
   });
 };
