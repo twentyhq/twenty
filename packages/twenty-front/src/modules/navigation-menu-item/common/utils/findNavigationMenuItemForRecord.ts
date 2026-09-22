@@ -9,16 +9,22 @@ export const findNavigationMenuItemForRecord = <
 >({
   navigationMenuItems,
   recordId,
+  targetRecordId = recordId,
   objectMetadataId,
 }: {
   navigationMenuItems: TNavigationMenuItem[];
   recordId: string;
+  targetRecordId?: string;
   objectMetadataId: string;
-}): TNavigationMenuItem | undefined =>
-  navigationMenuItems.find(
+}): TNavigationMenuItem | undefined => {
+  const matchedIds = new Set([recordId, targetRecordId]);
+
+  return navigationMenuItems.find(
     (item) =>
       item.targetObjectMetadataId === objectMetadataId &&
-      (item.targetRecordId === recordId ||
+      ((isDefined(item.targetRecordId) &&
+        matchedIds.has(item.targetRecordId)) ||
         (isDefined(item.targetRecordIdentifier) &&
-          item.targetRecordIdentifier.id === recordId)),
+          matchedIds.has(item.targetRecordIdentifier.id))),
   );
+};

@@ -45,6 +45,17 @@ describe('findNavigationMenuItemForRecord', () => {
     ).toBeUndefined();
   });
 
+  it('finds a backfilled favorite from the legacy page through the core pointer', () => {
+    expect(
+      findNavigationMenuItemForRecord({
+        navigationMenuItems: [coreIdFavorite],
+        recordId: 'workspace-workflow-id',
+        targetRecordId: 'core-workflow-id',
+        objectMetadataId: WORKFLOW_OBJECT_METADATA_ID,
+      }),
+    ).toBe(coreIdFavorite);
+  });
+
   it('does not match an unrelated record', () => {
     expect(
       findNavigationMenuItemForRecord({

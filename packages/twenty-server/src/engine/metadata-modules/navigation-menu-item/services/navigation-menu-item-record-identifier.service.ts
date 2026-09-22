@@ -211,23 +211,26 @@ export class NavigationMenuItemRecordIdentifierService {
         targetRecordId,
       });
 
-    if (!isDefined(favoriteTarget)) {
+    if (
+      !isDefined(favoriteTarget) ||
+      !isDefined(favoriteTarget.workspaceWorkflowId)
+    ) {
       return null;
     }
 
-    if (isDefined(favoriteTarget.workspaceWorkflowId)) {
-      const readableMirror = await this.resolveWorkspaceRecordIdentifier({
+    const isWorkflowReadable = isDefined(
+      await this.resolveWorkspaceRecordIdentifier({
         targetRecordId: favoriteTarget.workspaceWorkflowId,
         workspaceId,
         objectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         authContext,
-      });
+      }),
+    );
 
-      if (!isDefined(readableMirror)) {
-        return null;
-      }
+    if (!isWorkflowReadable) {
+      return null;
     }
 
     return {

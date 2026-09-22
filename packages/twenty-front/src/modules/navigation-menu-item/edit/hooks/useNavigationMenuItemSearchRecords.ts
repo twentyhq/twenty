@@ -2,7 +2,7 @@ import { useDebounce } from 'use-debounce';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
-import { getNavigationMenuItemTargetRecordId } from '@/navigation-menu-item/edit/utils/getNavigationMenuItemTargetRecordId';
+import { getNavigationMenuItemTargetRecordId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTargetRecordId';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -71,8 +71,7 @@ export const useNavigationMenuItemSearchRecords = ({
     (record): NavigationMenuItemSearchRecord => {
       const targetRecordId = getNavigationMenuItemTargetRecordId({
         objectNameSingular: record.objectNameSingular,
-        recordId: record.recordId,
-        coreWorkflowId: record.coreWorkflowId,
+        record: { id: record.recordId, coreWorkflowId: record.coreWorkflowId },
       });
 
       return {

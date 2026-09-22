@@ -29,7 +29,7 @@ export const getWorkflowCorePointerColumns = ({
       universalIdentifier: WORKFLOW_CORE_POINTER_FIELD_UNIVERSAL_IDENTIFIER,
     });
 
-  return isDefined(corePointerField) ? [WORKFLOW_CORE_POINTER_COLUMN] : [];
+  return isDefined(corePointerField) ? [corePointerField.name] : [];
 };
 
 export const readWorkflowCorePointer = ({

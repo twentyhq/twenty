@@ -107,6 +107,46 @@ describe('buildWorkflowFavoriteCoreIdBackfillUpdates', () => {
     ).toEqual([]);
   });
 
+  it('skips a legacy favorite when the same owner already holds the core id', () => {
+    expect(
+      buildWorkflowFavoriteCoreIdBackfillUpdates({
+        flatNavigationMenuItems: [
+          buildFlatNavigationMenuItem({ id: 'legacy-item' }),
+          buildFlatNavigationMenuItem({
+            id: 'core-item',
+            targetRecordId: 'core-workflow-id',
+          }),
+        ],
+        workflowObjectMetadataId: WORKFLOW_OBJECT_METADATA_ID,
+        coreWorkflowIdByWorkspaceWorkflowId: new Map([
+          ['workspace-workflow-id', 'core-workflow-id'],
+        ]),
+        now: NOW,
+      }),
+    ).toEqual([]);
+  });
+
+  it('still backfills when another member holds the core id', () => {
+    const updates = buildWorkflowFavoriteCoreIdBackfillUpdates({
+      flatNavigationMenuItems: [
+        buildFlatNavigationMenuItem({ id: 'legacy-item' }),
+        buildFlatNavigationMenuItem({
+          id: 'core-item',
+          targetRecordId: 'core-workflow-id',
+          userWorkspaceId: 'another-user-workspace-id',
+        }),
+      ],
+      workflowObjectMetadataId: WORKFLOW_OBJECT_METADATA_ID,
+      coreWorkflowIdByWorkspaceWorkflowId: new Map([
+        ['workspace-workflow-id', 'core-workflow-id'],
+      ]),
+      now: NOW,
+    });
+
+    expect(updates).toHaveLength(1);
+    expect(updates[0].id).toBe('legacy-item');
+  });
+
   it('leaves a favorite whose workflow has no core counterpart untouched', () => {
     expect(
       buildWorkflowFavoriteCoreIdBackfillUpdates({

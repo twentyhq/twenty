@@ -1,12 +1,14 @@
-import { getNavigationMenuItemTargetRecordId } from '@/navigation-menu-item/edit/utils/getNavigationMenuItemTargetRecordId';
+import { getNavigationMenuItemTargetRecordId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTargetRecordId';
 
 describe('getNavigationMenuItemTargetRecordId', () => {
   it('stores the core workflow id for a workflow', () => {
     expect(
       getNavigationMenuItemTargetRecordId({
         objectNameSingular: 'workflow',
-        recordId: 'workspace-workflow-id',
-        coreWorkflowId: 'core-workflow-id',
+        record: {
+          id: 'workspace-workflow-id',
+          coreWorkflowId: 'core-workflow-id',
+        },
       }),
     ).toBe('core-workflow-id');
   });
@@ -15,8 +17,7 @@ describe('getNavigationMenuItemTargetRecordId', () => {
     expect(
       getNavigationMenuItemTargetRecordId({
         objectNameSingular: 'workflow',
-        recordId: 'workspace-workflow-id',
-        coreWorkflowId: null,
+        record: { id: 'workspace-workflow-id', coreWorkflowId: null },
       }),
     ).toBe('workspace-workflow-id');
   });
@@ -25,8 +26,7 @@ describe('getNavigationMenuItemTargetRecordId', () => {
     expect(
       getNavigationMenuItemTargetRecordId({
         objectNameSingular: 'company',
-        recordId: 'company-id',
-        coreWorkflowId: 'core-workflow-id',
+        record: { id: 'company-id', coreWorkflowId: 'core-workflow-id' },
       }),
     ).toBe('company-id');
   });

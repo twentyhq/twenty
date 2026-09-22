@@ -30,15 +30,12 @@ export class CoreWorkflowFavoriteTargetService {
     userWorkspaceId: string | undefined;
     targetRecordId: string;
   }): Promise<CoreWorkflowFavoriteTarget | null> {
-    const coreWorkflow =
-      (await this.coreWorkflowRepository.findOne(workspaceId, {
-        where: { id: targetRecordId },
-        select: { id: true, name: true, workspaceWorkflowId: true },
-      })) ??
-      (await this.coreWorkflowRepository.findOne(workspaceId, {
-        where: { workspaceWorkflowId: targetRecordId },
-        select: { id: true, name: true, workspaceWorkflowId: true },
-      }));
+    const [coreWorkflow] = await this.coreWorkflowRepository.find(workspaceId, {
+      where: [{ id: targetRecordId }, { workspaceWorkflowId: targetRecordId }],
+      select: { id: true, name: true, workspaceWorkflowId: true },
+      order: { createdAt: 'ASC', id: 'ASC' },
+      take: 1,
+    });
 
     if (!isDefined(coreWorkflow)) {
       return null;

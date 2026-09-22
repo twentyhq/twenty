@@ -242,17 +242,17 @@ describe('workflow navigation menu items resolve and clean up on core ids', () =
     expect(isDefined(await findFavoriteById(companyFavorite.id))).toBe(true);
   }, 120_000);
 
-  it('does not resolve or delete a workflow id outside the workspace', async () => {
-    const foreignCoreWorkflowId = uuidv4();
+  it('does not resolve or delete an id no workflow in this workspace holds', async () => {
+    const unknownCoreWorkflowId = uuidv4();
 
     const favorite = await createFavorite({
       targetObjectMetadataId: workflowObjectMetadataId,
-      targetRecordId: foreignCoreWorkflowId,
+      targetRecordId: unknownCoreWorkflowId,
     });
 
     expect(favorite.targetRecordIdentifier).toBeNull();
 
-    const deleteResponse = await deleteCoreWorkflows([foreignCoreWorkflowId]);
+    const deleteResponse = await deleteCoreWorkflows([unknownCoreWorkflowId]);
 
     expect(deleteResponse.body.data.deleteCoreWorkflows).toEqual([]);
 

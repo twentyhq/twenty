@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
+import { getNavigationMenuItemTargetRecordId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTargetRecordId';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 export const AddToFavoritesSingleRecordCommand = () => {
@@ -39,7 +40,10 @@ export const AddToFavoritesSingleRecordCommand = () => {
       {
         id: uuidv4(),
         type: NavigationMenuItemType.RECORD,
-        targetRecordId: selectedRecord.id,
+        targetRecordId: getNavigationMenuItemTargetRecordId({
+          objectNameSingular: objectMetadataItem.nameSingular,
+          record: selectedRecord,
+        }),
         targetObjectMetadataId: objectMetadataItem.id,
         userWorkspaceId: currentUserWorkspaceId,
         position: maxPosition + 1,

@@ -1,16 +1,14 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getNavigationMenuItemTargetRecordId = ({
   objectNameSingular,
-  recordId,
-  coreWorkflowId,
+  record,
 }: {
   objectNameSingular: string;
-  recordId: string;
-  coreWorkflowId?: string | null;
+  record: { id: string; coreWorkflowId?: unknown };
 }): string =>
   objectNameSingular === CoreObjectNameSingular.Workflow &&
-  isDefined(coreWorkflowId)
-    ? coreWorkflowId
-    : recordId;
+  isNonEmptyString(record.coreWorkflowId)
+    ? record.coreWorkflowId
+    : record.id;

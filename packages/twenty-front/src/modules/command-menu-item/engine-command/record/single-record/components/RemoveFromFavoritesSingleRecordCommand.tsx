@@ -4,15 +4,16 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { findNavigationMenuItemForRecord } from '@/navigation-menu-item/common/utils/findNavigationMenuItemForRecord';
+import { getNavigationMenuItemTargetRecordId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTargetRecordId';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 export const RemoveFromFavoritesSingleRecordCommand = () => {
   const { selectedRecords, objectMetadataItem } =
     useHeadlessCommandContextApi();
 
-  const recordId = selectedRecords[0]?.id;
+  const selectedRecord = selectedRecords[0];
 
-  if (!isDefined(recordId) || !isDefined(objectMetadataItem)) {
+  if (!isDefined(selectedRecord) || !isDefined(objectMetadataItem)) {
     throw new Error(
       'Record ID and object metadata are required to remove from favorites',
     );
@@ -28,7 +29,11 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
       ...navigationMenuItems,
       ...workspaceNavigationMenuItems,
     ],
-    recordId,
+    recordId: selectedRecord.id,
+    targetRecordId: getNavigationMenuItemTargetRecordId({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      record: selectedRecord,
+    }),
     objectMetadataId: objectMetadataItem.id,
   });
 
