@@ -23,15 +23,5 @@ export const useCoreWorkflowShowPageResource = ({
     [data?.coreWorkflow],
   );
 
-<<<<<<< HEAD
-  return {
-    record,
-    coreWorkflowId: data?.coreWorkflow?.id,
-    loading,
-    error,
-    refetch,
-  };
-=======
   return { record, coreWorkflow: data?.coreWorkflow, loading, error, refetch };
->>>>>>> tt-workflow-core-sse
 };

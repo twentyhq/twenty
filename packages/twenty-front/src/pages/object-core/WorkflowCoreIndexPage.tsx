@@ -66,29 +66,10 @@ export const WorkflowCoreIndexPage = () => {
   const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
     useCreateCoreWorkflow();
 
-<<<<<<< HEAD
-  const {
-    displayedCoreWorkflows,
-    selectedRowIds,
-    toggleRow,
-    selectRows,
-    forgetDeletedWorkspaceWorkflows,
-  } = useCoreWorkflowsSelection({ coreWorkflows });
-
-  useListenToCoreWorkflowEvents();
-
-  useListenToObjectRecordOperationBrowserEvent({
-    objectMetadataItemId: objectMetadataItem.id,
-    operationTypes: ['delete-one', 'delete-many'],
-    onObjectRecordOperationBrowserEvent: (detail) =>
-      forgetDeletedWorkspaceWorkflows(
-        getDeletedRecordIdsFromOperation(detail.operation),
-      ),
-  });
-=======
   const { displayedCoreWorkflows, selectedRowIds, toggleRow, selectRows } =
     useCoreWorkflowsSelection({ coreWorkflows });
->>>>>>> tt-workflow-core-sse
+
+  useListenToCoreWorkflowEvents();
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,

@@ -4,6 +4,7 @@ import { GET_WORKFLOW_VERSION_CONTENT } from '@/workflow/workflow-version/graphq
 import {
   GetCoreWorkflowDocument,
   GetCoreWorkflowsDocument,
+  GetCoreWorkflowsWithCurrentVersionsDocument,
   GetCoreWorkflowVersionDocument,
   GetCoreWorkflowVersionsDocument,
 } from '~/generated/graphql';
@@ -15,11 +16,13 @@ export const invalidateCoreWorkflowQueries = async (
   }: { shouldInvalidateWorkflowList?: boolean } = {},
 ) => {
   const fieldNames = [
-    'coreWorkflow',
-    'coreWorkflowVersion',
-    'coreWorkflowVersions',
+    'coreWorkflowById',
+    'coreWorkflowVersionById',
+    'coreWorkflowVersionsByCoreWorkflowId',
     'workflowVersionContent',
-    ...(shouldInvalidateWorkflowList ? ['coreWorkflows'] : []),
+    ...(shouldInvalidateWorkflowList
+      ? ['coreWorkflows', 'coreWorkflowsWithCurrentVersions']
+      : []),
   ];
 
   for (const fieldName of fieldNames) {
@@ -32,7 +35,9 @@ export const invalidateCoreWorkflowQueries = async (
       GetCoreWorkflowVersionDocument,
       GetCoreWorkflowDocument,
       GET_WORKFLOW_VERSION_CONTENT,
-      ...(shouldInvalidateWorkflowList ? [GetCoreWorkflowsDocument] : []),
+      ...(shouldInvalidateWorkflowList
+        ? [GetCoreWorkflowsDocument, GetCoreWorkflowsWithCurrentVersionsDocument]
+        : []),
     ],
     onQueryUpdated: (query) => query.options.fetchPolicy !== 'standby',
   });
