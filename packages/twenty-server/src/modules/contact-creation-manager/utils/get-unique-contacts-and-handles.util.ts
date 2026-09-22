@@ -1,6 +1,7 @@
 import uniq from 'lodash.uniq';
 import uniqBy from 'lodash.uniqby';
 
+import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 
 export function getUniqueContactsAndHandles(contacts: Contact[]): {
@@ -11,13 +12,13 @@ export function getUniqueContactsAndHandles(contacts: Contact[]): {
     return { uniqueContacts: [], uniqueHandles: [] };
   }
 
-  const uniqueHandles = uniq(
-    contacts.map((participant) => participant.handle.toLocaleLowerCase()),
-  );
+  const normalizedContacts = contacts.map((contact) => ({
+    ...contact,
+    handle: normalizeEmailAddress(contact.handle),
+  }));
+  const uniqueHandles = uniq(normalizedContacts.map((contact) => contact.handle));
 
-  const uniqueContacts = uniqBy(contacts, (contact) =>
-    contact.handle.toLocaleLowerCase(),
-  );
+  const uniqueContacts = uniqBy(normalizedContacts, (contact) => contact.handle);
 
   return { uniqueContacts, uniqueHandles };
 }

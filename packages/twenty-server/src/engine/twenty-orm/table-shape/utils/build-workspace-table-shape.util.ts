@@ -101,6 +101,8 @@ export const buildWorkspaceTableShape = ({
           fieldName: flatFieldMetadata.name,
           fieldMetadataType: compositeProperty.type,
           compositeParentFieldName: flatFieldMetadata.name,
+          compositeParentFieldType: flatFieldMetadata.type,
+          compositeSubFieldName: compositeProperty.name,
         };
       }
 

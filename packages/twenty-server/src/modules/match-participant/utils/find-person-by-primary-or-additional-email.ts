@@ -1,3 +1,4 @@
+import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export const findPersonByPrimaryOrAdditionalEmail = ({
@@ -7,10 +8,11 @@ export const findPersonByPrimaryOrAdditionalEmail = ({
   people: PersonWorkspaceEntity[];
   email: string;
 }): PersonWorkspaceEntity | undefined => {
-  const lowercaseEmail = email.toLowerCase();
+  const normalizedEmail = normalizeEmailAddress(email);
 
   const personWithPrimaryEmail = people.find(
-    (person) => person.emails?.primaryEmail?.toLowerCase() === lowercaseEmail,
+    (person) =>
+      person.emails?.primaryEmail === normalizedEmail,
   );
 
   if (personWithPrimaryEmail) {
@@ -25,7 +27,7 @@ export const findPersonByPrimaryOrAdditionalEmail = ({
     }
 
     return additionalEmails.some(
-      (additionalEmail) => additionalEmail.toLowerCase() === lowercaseEmail,
+      (additionalEmail) => additionalEmail === normalizedEmail,
     );
   });
 

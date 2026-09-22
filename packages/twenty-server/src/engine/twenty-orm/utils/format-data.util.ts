@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { normalizeEmailsSubfieldValue } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -96,10 +97,15 @@ export function formatCompositeField(
     const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
     if (value && value[subFieldKey] !== undefined) {
-      formattedCompositeField[fullFieldName] = formatFieldMetadataValue(
+      const formattedValue = formatFieldMetadataValue(
         value[subFieldKey],
         property as unknown as OrmFlatFieldMetadata,
       );
+
+      formattedCompositeField[fullFieldName] =
+        fieldMetadata.type === FieldMetadataType.EMAILS
+          ? normalizeEmailsSubfieldValue(subFieldKey, formattedValue)
+          : formattedValue;
     }
   }
 

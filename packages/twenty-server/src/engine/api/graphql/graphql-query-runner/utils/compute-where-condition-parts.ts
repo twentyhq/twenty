@@ -1,5 +1,6 @@
 import { randomBytes } from 'crypto';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
@@ -11,6 +12,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 
 type WhereConditionParts = {
   sql: string;
@@ -44,6 +46,18 @@ export const computeWhereConditionParts = ({
     : `"${objectNameSingular}"."${key}"`;
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
+  const isPrimaryEmail =
+    fieldMetadataType === FieldMetadataType.EMAILS &&
+    subFieldKey === 'primaryEmail';
+  const exactValue = isPrimaryEmail
+    ? operator === 'in' && Array.isArray(value)
+      ? value.map((email) =>
+          isNonEmptyString(email) ? normalizeEmailAddress(email) : email,
+        )
+      : isNonEmptyString(value)
+        ? normalizeEmailAddress(value)
+        : value
+    : value;
 
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(
@@ -70,7 +84,7 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
-        params: { [`${key}${paramSuffix}`]: value },
+        params: { [`${key}${paramSuffix}`]: exactValue },
       };
     case 'neq':
       if (isDateTimeField) {
@@ -82,7 +96,7 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} != :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
-        params: { [`${key}${paramSuffix}`]: value },
+        params: { [`${key}${paramSuffix}`]: exactValue },
       };
     case 'gt':
       if (isDateTimeField) {
@@ -121,7 +135,7 @@ export const computeWhereConditionParts = ({
     case 'in':
       return {
         sql: `${fieldReference} IN (:...${key}${paramSuffix})`,
-        params: { [`${key}${paramSuffix}`]: value },
+        params: { [`${key}${paramSuffix}`]: exactValue },
       };
     case 'is':
       return {
@@ -149,7 +163,7 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}`,
-        params: { [`${key}${paramSuffix}`]: value },
+        params: { [`${key}${paramSuffix}`]: exactValue },
       };
     case 'like':
       return {

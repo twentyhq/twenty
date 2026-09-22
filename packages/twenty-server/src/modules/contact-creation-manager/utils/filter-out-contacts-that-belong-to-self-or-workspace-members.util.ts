@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -20,16 +21,16 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   ).toLowerCase();
 
   const allHandles = [
-    connectedAccount.handle.toLowerCase(),
+    normalizeEmailAddress(connectedAccount.handle),
     ...(connectedAccount.handleAliases || []).map((handle) =>
-      handle.toLowerCase(),
+      normalizeEmailAddress(handle),
     ),
   ];
 
   const workspaceMembersMap = workspaceMembers.reduce(
     (map, workspaceMember) => {
       // @ts-expect-error legacy noImplicitAny
-      map[workspaceMember.userEmail.toLowerCase()] = true;
+      map[normalizeEmailAddress(workspaceMember.userEmail)] = true;
 
       return map;
     },
@@ -45,7 +46,7 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
         !isWorkDomain(selfDomainName) ||
         isInternalMessagesImportEnabled) &&
       // @ts-expect-error legacy noImplicitAny
-      !workspaceMembersMap[contact.handle.toLowerCase()] &&
-      !allHandles.includes(contact.handle.toLowerCase()),
+      !workspaceMembersMap[normalizeEmailAddress(contact.handle)] &&
+      !allHandles.includes(normalizeEmailAddress(contact.handle)),
   );
 }

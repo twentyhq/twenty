@@ -1,3 +1,4 @@
+import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export interface AddPersonEmailFiltersToQueryBuilderOptions {
@@ -12,10 +13,10 @@ export function addPersonEmailFiltersToQueryBuilder({
   emails,
   excludePersonIds = [],
 }: AddPersonEmailFiltersToQueryBuilderOptions): WorkspaceSelectQueryBuilder {
-  const normalizedEmails = emails.map((email) => email.toLowerCase());
+  const normalizedEmails = emails.map(normalizeEmailAddress);
 
   queryBuilder = queryBuilder
-    .where('LOWER("person"."emailsPrimaryEmail") IN (:...emails)', {
+    .where('"person"."emailsPrimaryEmail" IN (:...emails)', {
       emails: normalizedEmails,
     })
     .withDeleted();
