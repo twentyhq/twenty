@@ -159,7 +159,7 @@ export const useAuth = () => {
       }
 
       const shouldLetUserPickWorkspace =
-        options?.isResumingSession === true && isStayOnDefaultDomainRequested();
+        options?.isResumingSession && isStayOnDefaultDomainRequested();
 
       if (availableWorkspacesCount === 1 && !shouldLetUserPickWorkspace) {
         const targetWorkspace =
