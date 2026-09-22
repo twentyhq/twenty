@@ -47,8 +47,6 @@ export const ChatThreadsCardContent = ({
     return <SkeletonLoader />;
   }
 
-  // A failed query used to fall through to the empty state, which told the
-  // reader this record has no conversations when we simply could not tell.
   if (hasError && isThreadsEmpty) {
     return (
       <AnimatedPlaceholderErrorContainer>
