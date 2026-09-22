@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
+import { canonicalizeEmailsFilterValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/canonicalize-emails-filter-value.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
@@ -22,7 +23,7 @@ export const computeWhereConditionParts = ({
   objectNameSingular,
   key,
   subFieldKey,
-  value,
+  value: rawValue,
   fieldMetadataType,
   useDirectTableReference = false,
 }: {
@@ -44,6 +45,15 @@ export const computeWhereConditionParts = ({
     : `"${objectNameSingular}"."${key}"`;
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
+
+  const value =
+    fieldMetadataType === FieldMetadataType.EMAILS && subFieldKey
+      ? canonicalizeEmailsFilterValue({
+          value: rawValue,
+          operator,
+          subFieldKey,
+        })
+      : rawValue;
 
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(

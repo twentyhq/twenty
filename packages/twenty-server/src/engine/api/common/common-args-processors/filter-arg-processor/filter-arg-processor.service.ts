@@ -13,6 +13,7 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
+import { canonicalizeEmailsFilterValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/canonicalize-emails-filter-value.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -348,7 +349,7 @@ export class FilterArgProcessorService {
         );
       }
 
-      transformedFilter[subFieldKey] = validateAndTransformOperatorAndValue(
+      const transformedSubFieldFilter = validateAndTransformOperatorAndValue(
         `${fieldMetadata.name}.${subFieldKey}`,
         subFieldFilter as Record<string, unknown>,
         {
@@ -356,6 +357,20 @@ export class FilterArgProcessorService {
           type: subFieldMetadata.type as FieldMetadataType,
         },
       );
+
+      if (fieldMetadata.type === FieldMetadataType.EMAILS) {
+        const [[operator, value]] = Object.entries(transformedSubFieldFilter);
+
+        transformedFilter[subFieldKey] = {
+          [operator]: canonicalizeEmailsFilterValue({
+            value,
+            operator,
+            subFieldKey,
+          }),
+        };
+      } else {
+        transformedFilter[subFieldKey] = transformedSubFieldFilter;
+      }
     }
 
     return transformedFilter;

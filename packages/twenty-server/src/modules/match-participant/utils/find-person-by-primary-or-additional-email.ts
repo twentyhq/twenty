@@ -1,4 +1,5 @@
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { getEmailIdentityKey } from 'twenty-shared/utils';
 
 export const findPersonByPrimaryOrAdditionalEmail = ({
   people,
@@ -7,10 +8,12 @@ export const findPersonByPrimaryOrAdditionalEmail = ({
   people: PersonWorkspaceEntity[];
   email: string;
 }): PersonWorkspaceEntity | undefined => {
-  const lowercaseEmail = email.toLowerCase();
+  const canonicalEmail = getEmailIdentityKey(email);
 
   const personWithPrimaryEmail = people.find(
-    (person) => person.emails?.primaryEmail?.toLowerCase() === lowercaseEmail,
+    (person) =>
+      person.emails?.primaryEmail &&
+      getEmailIdentityKey(person.emails.primaryEmail) === canonicalEmail,
   );
 
   if (personWithPrimaryEmail) {
@@ -25,7 +28,8 @@ export const findPersonByPrimaryOrAdditionalEmail = ({
     }
 
     return additionalEmails.some(
-      (additionalEmail) => additionalEmail.toLowerCase() === lowercaseEmail,
+      (additionalEmail) =>
+        getEmailIdentityKey(additionalEmail) === canonicalEmail,
     );
   });
 

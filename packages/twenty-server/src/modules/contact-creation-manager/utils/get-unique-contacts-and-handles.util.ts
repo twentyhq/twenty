@@ -1,5 +1,6 @@
 import uniq from 'lodash.uniq';
 import uniqBy from 'lodash.uniqby';
+import { getEmailIdentityKey } from 'twenty-shared/utils';
 
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 
@@ -12,11 +13,11 @@ export function getUniqueContactsAndHandles(contacts: Contact[]): {
   }
 
   const uniqueHandles = uniq(
-    contacts.map((participant) => participant.handle.toLocaleLowerCase()),
+    contacts.map((participant) => getEmailIdentityKey(participant.handle)),
   );
 
   const uniqueContacts = uniqBy(contacts, (contact) =>
-    contact.handle.toLocaleLowerCase(),
+    getEmailIdentityKey(contact.handle),
   );
 
   return { uniqueContacts, uniqueHandles };

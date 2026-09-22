@@ -8,6 +8,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { normalizeEmailForStorage } from 'src/utils/normalize-email-for-storage.util';
 
 export const validateEmailsPrimaryEmailSubfieldOrThrow = (
   value: unknown,
@@ -25,7 +26,12 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
     );
   }
 
-  if (!emailSchema.safeParse(value).success && isNonEmptyString(value)) {
+  const canonicalEmail = normalizeEmailForStorage(value);
+
+  if (
+    !emailSchema.safeParse(canonicalEmail).success &&
+    isNonEmptyString(canonicalEmail)
+  ) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(
@@ -35,5 +41,5 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
     );
   }
 
-  return value;
+  return canonicalEmail;
 };

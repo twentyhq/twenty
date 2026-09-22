@@ -29,6 +29,7 @@ import {
   type UUIDFilter,
 } from 'twenty-shared/types';
 import {
+  getEmailIdentityKey,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
   isEmptyObject,
@@ -530,9 +531,26 @@ export const isRecordMatchingFilter = ({
           return false;
         }
 
+        const primaryEmailFilter = emailsFilter.primaryEmail;
+        const primaryEmail = record[filterKey]?.primaryEmail;
+
         return isMatchingStringFilter({
-          stringFilter: emailsFilter.primaryEmail,
-          value: record[filterKey]?.primaryEmail,
+          stringFilter: {
+            ...primaryEmailFilter,
+            ...(primaryEmailFilter.eq !== undefined && {
+              eq: getEmailIdentityKey(primaryEmailFilter.eq),
+            }),
+            ...(primaryEmailFilter.neq !== undefined && {
+              neq: getEmailIdentityKey(primaryEmailFilter.neq),
+            }),
+            ...(primaryEmailFilter.in !== undefined && {
+              in: primaryEmailFilter.in.map(getEmailIdentityKey),
+            }),
+          },
+          value:
+            typeof primaryEmail === 'string'
+              ? getEmailIdentityKey(primaryEmail)
+              : primaryEmail,
         });
       }
       case FieldMetadataType.PHONES: {
