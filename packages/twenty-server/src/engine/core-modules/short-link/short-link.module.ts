@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
-import { ShortLinkEntity } from 'src/engine/core-modules/short-link/short-link.entity';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { TwentyOrmModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ShortLinkEntity])],
-  providers: [
-    provideWorkspaceScopedRepository(ShortLinkEntity),
-    ShortLinkService,
-  ],
+  imports: [TwentyOrmModule],
+  providers: [ShortLinkService],
   exports: [ShortLinkService],
 })
 export class ShortLinkModule {}

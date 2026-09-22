@@ -1,59 +1,71 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
-import { ShortLinkEntity } from 'src/engine/core-modules/short-link/short-link.entity';
 import { hashShortLink } from 'src/engine/core-modules/short-link/utils/hash-short-link.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { ShortLinkWorkspaceEntity } from 'src/modules/emailing/standard-objects/short-link.workspace-entity';
 
 @Injectable()
 export class ShortLinkService {
-  constructor(
-    @InjectWorkspaceScopedRepository(ShortLinkEntity)
-    private readonly shortLinkRepository: WorkspaceScopedRepository<ShortLinkEntity>,
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(ShortLinkEntity)
-    private readonly globalShortLinkRepository: Repository<ShortLinkEntity>,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async registerLinks({
     workspaceId,
     links,
   }: {
     workspaceId: string;
-    links: { url: string; authoredUrl: string }[];
+    links: {
+      authoredTemplateUrl: string;
+      resolvedDestinationUrl: string;
+    }[];
   }): Promise<Map<string, string>> {
     const linkHashes = links.map(hashShortLink);
 
-    await this.shortLinkRepository
-      .createQueryBuilder()
-      .insert()
-      .into(ShortLinkEntity)
-      .values(
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = this.workspaceOrmManager.getRepository(
+        ShortLinkWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      );
+
+      await repository.insert(
         links.map((link, index) => ({
-          workspaceId,
-          url: link.url,
-          authoredUrl: link.authoredUrl,
-          urlHash: linkHashes[index],
+          ...link,
+          templateAndResolvedUrlHash: linkHashes[index],
         })),
-      )
-      .orIgnore()
-      .execute();
+        { onConflictDoNothing: true },
+      );
 
-    const persistedLinks = await this.shortLinkRepository.find(workspaceId, {
-      where: { urlHash: In(linkHashes) },
-    });
+      const persistedLinks = await repository.find({
+        where: { templateAndResolvedUrlHash: In(linkHashes) },
+      });
 
-    return new Map(persistedLinks.map((link) => [link.urlHash, link.id]));
+      return new Map(
+        persistedLinks.map((link) => [
+          link.templateAndResolvedUrlHash,
+          link.id,
+        ]),
+      );
+    }, buildSystemAuthContext(workspaceId));
   }
 
-  async findByIdAcrossWorkspaces(
-    shortLinkId: string,
-  ): Promise<ShortLinkEntity | null> {
-    return this.globalShortLinkRepository.findOne({
-      where: { id: shortLinkId },
-    });
+  async findById({
+    workspaceId,
+    shortLinkId,
+  }: {
+    workspaceId: string;
+    shortLinkId: string;
+  }): Promise<ShortLinkWorkspaceEntity | null> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepository(ShortLinkWorkspaceEntity, {
+            shouldBypassPermissionChecks: true,
+          })
+          .findOne({ where: { id: shortLinkId } }),
+      buildSystemAuthContext(workspaceId),
+    );
   }
 }

@@ -82,7 +82,11 @@ export class CampaignTrackingContentService {
 
     const html = template.html ?? '';
 
-    if (html.trim() === '') {
+    if (!isNonEmptyString(html.trim())) {
+      return untracked;
+    }
+
+    if (!isNonEmptyString(this.twentyConfigService.get('CLICKHOUSE_URL'))) {
       return untracked;
     }
 
@@ -151,9 +155,15 @@ export class CampaignTrackingContentService {
 
     return {
       ...template,
-      html: replaceTrackableLinkUrls(template.html ?? '', tagByUrl('HTML')),
+      html: replaceTrackableLinkUrls({
+        html: template.html ?? '',
+        trackedUrlByUrl: tagByUrl('HTML'),
+      }),
       text: toPlainText(
-        replaceTrackableLinkUrls(plainTextSourceHtml, tagByUrl('TEXT')),
+        replaceTrackableLinkUrls({
+          html: plainTextSourceHtml,
+          trackedUrlByUrl: tagByUrl('TEXT'),
+        }),
       ),
     };
   }
@@ -171,11 +181,14 @@ export class CampaignTrackingContentService {
   }): Promise<Map<string, string>> {
     const linkByIdentity = new Map<
       string,
-      { url: string; authoredUrl: string }
+      { authoredTemplateUrl: string; resolvedDestinationUrl: string }
     >();
 
     for (const urlTemplate of urlTemplates) {
-      const authoredUrl = this.restoreAuthoredUrl(urlTemplate, variableNames);
+      const authoredTemplateUrl = this.restoreAuthoredUrl({
+        urlTemplate,
+        variableNames,
+      });
 
       for (const recipient of recipients) {
         const { url, isTrackable } = this.resolveLinkUrl({
@@ -184,7 +197,10 @@ export class CampaignTrackingContentService {
         });
 
         if (isTrackable) {
-          const link = { url, authoredUrl };
+          const link = {
+            authoredTemplateUrl,
+            resolvedDestinationUrl: url,
+          };
 
           linkByIdentity.set(hashShortLink(link), link);
         }
@@ -217,13 +233,16 @@ export class CampaignTrackingContentService {
     const replacements: Record<string, string> = {};
 
     urlTemplates.forEach((urlTemplate, index) => {
-      const authoredUrl = this.restoreAuthoredUrl(urlTemplate, variableNames);
+      const authoredTemplateUrl = this.restoreAuthoredUrl({
+        urlTemplate,
+        variableNames,
+      });
       const { url } = this.resolveLinkUrl({
         urlTemplate,
         replacements: recipient.replacements,
       });
       const shortLinkId = shortLinkIdByIdentity.get(
-        hashShortLink({ url, authoredUrl }),
+        hashShortLink({ authoredTemplateUrl, resolvedDestinationUrl: url }),
       );
       const linkUrl = isDefined(shortLinkId)
         ? `${baseUrl}/${ApiPath.Emailing}/c/${this.campaignTrackingTokenService.sign(
@@ -264,10 +283,13 @@ export class CampaignTrackingContentService {
     };
   }
 
-  private restoreAuthoredUrl(
-    urlTemplate: string,
-    variableNames: string[],
-  ): string {
+  private restoreAuthoredUrl({
+    urlTemplate,
+    variableNames,
+  }: {
+    urlTemplate: string;
+    variableNames: string[];
+  }): string {
     return urlTemplate.replace(
       CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN,
       (tag: string, variableIndex: string) => {
@@ -316,8 +338,10 @@ export class CampaignTrackingContentService {
     );
     const unsubscribeHostname = emailingDomain?.unsubscribeHostname;
 
-    return isNonEmptyString(unsubscribeHostname)
-      ? `https://${unsubscribeHostname}`
-      : undefined;
+    if (!isNonEmptyString(unsubscribeHostname)) {
+      return undefined;
+    }
+
+    return `https://${unsubscribeHostname}`;
   }
 }

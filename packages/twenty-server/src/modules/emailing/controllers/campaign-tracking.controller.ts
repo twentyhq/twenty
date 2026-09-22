@@ -8,6 +8,9 @@ import {
   Redirect,
   UseGuards,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { ApiPath } from 'twenty-shared/types';
@@ -15,9 +18,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
+import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
+import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
 
 const FOUND_STATUS_CODE = 302;
 
@@ -29,6 +34,10 @@ export class CampaignTrackingController {
   constructor(
     private readonly campaignTrackingTokenService: CampaignTrackingTokenService,
     private readonly shortLinkService: ShortLinkService,
+    // The public token only provides a delivery ID; its workspace is resolved by this lookup.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
+    @InjectRepository(CampaignDeliveryEntity)
+    private readonly campaignDeliveryRepository: Repository<CampaignDeliveryEntity>,
   ) {}
 
   @Get('c/:token')
@@ -39,16 +48,34 @@ export class CampaignTrackingController {
     @Param('token') token: string,
   ): Promise<{ url: string; statusCode: number }> {
     const payload = this.verifyTokenOrThrow(token);
+    const delivery = await this.campaignDeliveryRepository.findOneBy({
+      id: payload.deliveryId,
+    });
 
-    const shortLink = await this.shortLinkService.findByIdAcrossWorkspaces(
-      payload.shortLinkId,
-    );
+    if (!isDefined(delivery)) {
+      throw new NotFoundException('Unknown campaign delivery');
+    }
+
+    const shortLink = await this.shortLinkService.findById({
+      workspaceId: delivery.workspaceId,
+      shortLinkId: payload.shortLinkId,
+    });
 
     if (!isDefined(shortLink)) {
       throw new NotFoundException('Unknown tracked link');
     }
 
-    return { url: shortLink.url, statusCode: FOUND_STATUS_CODE };
+    const destinationUrl = shortLink.resolvedDestinationUrl;
+
+    if (
+      /[\r\n]/.test(destinationUrl) ||
+      !TRACKABLE_URL_PATTERN.test(destinationUrl) ||
+      !URL.canParse(destinationUrl)
+    ) {
+      throw new NotFoundException('Invalid tracked link destination');
+    }
+
+    return { url: destinationUrl, statusCode: FOUND_STATUS_CODE };
   }
 
   private verifyTokenOrThrow(token: string): CampaignTrackingTokenPayload {

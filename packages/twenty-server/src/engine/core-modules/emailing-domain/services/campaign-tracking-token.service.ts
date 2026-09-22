@@ -22,11 +22,14 @@ export class CampaignTrackingTokenService {
 
   sign(payload: CampaignTrackingTokenPayload): string {
     const [primaryKey] = this.resolveSigningKeys();
-    const encodedPayload = this.encodePayload(payload, primaryKey.keyId);
+    const encodedPayload = this.encodePayload({
+      payload,
+      keyId: primaryKey.keyId,
+    });
 
     return Buffer.concat([
       encodedPayload,
-      this.computeSignature(encodedPayload, primaryKey.key),
+      this.computeSignature({ encodedPayload, key: primaryKey.key }),
     ]).toString('base64url');
   }
 
@@ -71,7 +74,7 @@ export class CampaignTrackingTokenService {
     if (
       !timingSafeEqual(
         signature,
-        this.computeSignature(encodedPayload, signingKey.key),
+        this.computeSignature({ encodedPayload, key: signingKey.key }),
       )
     ) {
       return null;
@@ -80,10 +83,13 @@ export class CampaignTrackingTokenService {
     return this.decodePayload(encodedPayload);
   }
 
-  private encodePayload(
-    payload: CampaignTrackingTokenPayload,
-    keyId: Buffer,
-  ): Buffer {
+  private encodePayload({
+    payload,
+    keyId,
+  }: {
+    payload: CampaignTrackingTokenPayload;
+    keyId: Buffer;
+  }): Buffer {
     const header = Buffer.from([CAMPAIGN_TRACKING_TOKEN_VERSION, ...keyId, 1]);
     const identifiers = Buffer.concat([
       this.encodeUuid(payload.deliveryId),
@@ -121,7 +127,13 @@ export class CampaignTrackingTokenService {
     };
   }
 
-  private computeSignature(encodedPayload: Buffer, key: Buffer): Buffer {
+  private computeSignature({
+    encodedPayload,
+    key,
+  }: {
+    encodedPayload: Buffer;
+    key: Buffer;
+  }): Buffer {
     return createHmac('sha256', key)
       .update(encodedPayload)
       .digest()

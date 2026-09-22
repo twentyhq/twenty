@@ -1,10 +1,12 @@
 import { createHash } from 'node:crypto';
 
 export const hashShortLink = ({
-  url,
-  authoredUrl,
+  authoredTemplateUrl,
+  resolvedDestinationUrl,
 }: {
-  url: string;
-  authoredUrl: string;
+  authoredTemplateUrl: string;
+  resolvedDestinationUrl: string;
 }): string =>
-  createHash('sha256').update(`${authoredUrl}\n${url}`).digest('hex');
+  createHash('sha256')
+    .update(`${authoredTemplateUrl}\n${resolvedDestinationUrl}`)
+    .digest('hex');

@@ -66,12 +66,12 @@ describe('replaceTrackableLinkUrls', () => {
   it('swaps a matched link for its tracked url and keeps the quote style', () => {
     const html = `<a href='https://acme.com/pricing'>Pricing</a>`;
 
-    const result = replaceTrackableLinkUrls(
+    const result = replaceTrackableLinkUrls({
       html,
-      new Map([
+      trackedUrlByUrl: new Map([
         ['https://acme.com/pricing', 'https://lnk.acme.com/emailing/c/t'],
       ]),
-    );
+    });
 
     expect(result).toBe(
       `<a href='https://lnk.acme.com/emailing/c/t'>Pricing</a>`,
@@ -81,17 +81,19 @@ describe('replaceTrackableLinkUrls', () => {
   it('leaves links that have no replacement untouched', () => {
     const html = `<a href="https://acme.com/a">A</a><a href="mailto:hi@acme.com">B</a>`;
 
-    expect(replaceTrackableLinkUrls(html, new Map())).toBe(html);
+    expect(replaceTrackableLinkUrls({ html, trackedUrlByUrl: new Map() })).toBe(
+      html,
+    );
   });
 
   it('matches the escaped href that collecting produced', () => {
     const html = `<a href="https://acme.com/?a=1&amp;b=2">Link</a>`;
     const [url] = collectTrackableLinkUrls(html);
 
-    const result = replaceTrackableLinkUrls(
+    const result = replaceTrackableLinkUrls({
       html,
-      new Map([[url, 'https://lnk.acme.com/emailing/c/t']]),
-    );
+      trackedUrlByUrl: new Map([[url, 'https://lnk.acme.com/emailing/c/t']]),
+    });
 
     expect(result).toBe(`<a href="https://lnk.acme.com/emailing/c/t">Link</a>`);
   });
@@ -99,10 +101,12 @@ describe('replaceTrackableLinkUrls', () => {
   it('leaves attributes that merely end with href untouched', () => {
     const html = `<img data-href="https://acme.com/a">`;
 
-    const result = replaceTrackableLinkUrls(
+    const result = replaceTrackableLinkUrls({
       html,
-      new Map([['https://acme.com/a', 'https://lnk.acme.com/emailing/c/t']]),
-    );
+      trackedUrlByUrl: new Map([
+        ['https://acme.com/a', 'https://lnk.acme.com/emailing/c/t'],
+      ]),
+    });
 
     expect(result).toBe(html);
   });
