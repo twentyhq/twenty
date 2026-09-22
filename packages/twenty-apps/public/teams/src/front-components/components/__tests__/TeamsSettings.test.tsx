@@ -30,7 +30,7 @@ const APPLICATION_QUERY = {
   },
 };
 
-vi.mock('src/feature-flags/feature-flags', () => ({
+vi.mock('src/constants/feature-flags', () => ({
   FEATURE_FLAGS: featureFlags,
 }));
 

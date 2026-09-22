@@ -19,7 +19,7 @@ default application role has no CRM data access.
   **Settings → Applications → Microsoft Teams → Settings**. Updates use the
   metadata API, which requires permission to manage applications.
 - **Feature flags** are developer-controlled release decisions, defined in
-  `src/feature-flags/feature-flags.ts`. They follow the server's
+  `src/constants/feature-flags.ts`. They follow the server's
   `IS_…_ENABLED` naming and are bundled with the app. Changing them requires a
   new build and deployment; a workspace setting cannot override them.
 

@@ -1,6 +1,6 @@
 import { useTranslate } from 'twenty-sdk/front-component';
 
-import { FEATURE_FLAGS } from 'src/feature-flags/feature-flags';
+import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { FeatureSettingsSection } from 'src/front-components/components/FeatureSettingsSection';
 import { useFeatureSetting } from 'src/front-components/hooks/use-feature-setting';
