@@ -1,4 +1,4 @@
-import { resolveRichTextVariables } from 'twenty-shared/utils';
+import { isDefined, resolveRichTextVariables } from 'twenty-shared/utils';
 import { convertTipTapDocumentToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertTipTapDocumentToBlockNote';
 import { parseLegacyRecordRichTextDocument } from '@/object-record/record-field/ui/form-types/utils/parseLegacyRecordRichTextDocument';
 
@@ -255,9 +255,13 @@ it('keeps workflow variables resolvable without resolving literal mustache text'
     true,
   );
   expect(JSON.parse(stored)).toEqual(content);
-  expect(
-    JSON.parse(resolveRichTextVariables(stored, { step: { name: 'Alice' } })),
-  ).toEqual([
+  const resolved = resolveRichTextVariables(stored, {
+    step: { name: 'Alice' },
+  });
+  if (!isDefined(resolved)) {
+    throw new Error('Expected resolved rich text');
+  }
+  expect(JSON.parse(resolved)).toEqual([
     {
       type: 'paragraph',
       content: [
