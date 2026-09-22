@@ -24,6 +24,14 @@ html {
   zoom: var(--t-zoom);
 }
 
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+}
+
 /* Phones get a slightly larger base, mirroring native apps. 1.0769… is 14/13,
    precomputed because media queries cannot read custom properties. */
 @media (max-width: 768px) {

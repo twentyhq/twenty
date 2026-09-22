@@ -1,0 +1,240 @@
+import { type Request, type Response } from 'express';
+
+import { buildApiAccessLogLine } from 'src/engine/middlewares/utils/build-api-access-log-line.util';
+import { type RequestTraceContext } from 'src/engine/utils/compute-request-trace-context.util';
+
+const parseLogfmtKeys = (line: string): string[] => {
+  const keys: string[] = [];
+  let index = 0;
+
+  while (index < line.length) {
+    const equalsIndex = line.indexOf('=', index);
+
+    if (equalsIndex === -1) {
+      break;
+    }
+
+    keys.push(line.slice(index, equalsIndex));
+    index = equalsIndex + 1;
+
+    if (line[index] === '"') {
+      index += 1;
+      while (index < line.length && line[index] !== '"') {
+        index += line[index] === '\\' ? 2 : 1;
+      }
+      index += 1;
+    } else {
+      const spaceIndex = line.indexOf(' ', index);
+
+      index = spaceIndex === -1 ? line.length : spaceIndex;
+    }
+
+    index += 1;
+  }
+
+  return keys;
+};
+
+describe('buildApiAccessLogLine', () => {
+  const build = ({
+    request = {},
+    statusCode = 200,
+    writableEnded = true,
+    durationMs = 12,
+    traceContext,
+  }: {
+    request?: Partial<Request>;
+    statusCode?: number;
+    writableEnded?: boolean;
+    durationMs?: number;
+    traceContext?: RequestTraceContext;
+  } = {}): string =>
+    buildApiAccessLogLine({
+      request: {
+        method: 'POST',
+        originalUrl: '/rest/people/ba91bdfb?depth=1',
+        headers: {},
+        ...request,
+      } as unknown as Request,
+      response: { statusCode, writableEnded } as unknown as Response,
+      durationMs,
+      traceContext,
+    });
+
+  it('should log the path without its query string', () => {
+    const line = build();
+
+    expect(line).toContain('method=POST');
+    expect(line).toContain('url_path=/rest/people/ba91bdfb');
+    expect(line).not.toContain('depth=1');
+    expect(line).toContain('status=200');
+    expect(line).toContain('duration_ms=12');
+  });
+
+  it('should not claim a status for a request the client aborted', () => {
+    const line = build({ writableEnded: false });
+
+    expect(line).toContain('aborted=true');
+    expect(line).not.toContain('status=');
+    expect(line).toContain('duration_ms=12');
+  });
+
+  it('should not mark a completed response as aborted', () => {
+    const line = build();
+
+    expect(line).toContain('status=200');
+    expect(line).not.toContain('aborted=');
+  });
+
+  it('should log the user as actor', () => {
+    const line = build({
+      request: {
+        user: { id: 'user-id' },
+        workspaceId: 'workspace-id',
+        authProvider: 'password',
+      } as unknown as Partial<Request>,
+    });
+
+    expect(line).toContain('actor=user');
+    expect(line).toContain('actor_id=user-id');
+    expect(line).toContain('workspace_id=workspace-id');
+    expect(line).toContain('auth_provider=password');
+  });
+
+  it('should log the impersonator next to the impersonated actor', () => {
+    const line = build({
+      request: {
+        user: { id: 'impersonated-user-id' },
+        authProvider: 'impersonation',
+        impersonationContext: {
+          impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
+          impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+        },
+      } as unknown as Partial<Request>,
+    });
+
+    expect(line).toContain('actor_id=impersonated-user-id');
+    expect(line).toContain(
+      'impersonator_user_workspace_id=impersonator-user-workspace-id',
+    );
+    expect(line).toContain('auth_provider=impersonation');
+  });
+
+  it('should log anonymous when nothing authenticated the request', () => {
+    const line = build();
+
+    expect(line).toContain('actor=anonymous');
+    expect(line).not.toContain('actor_id=');
+  });
+
+  it('should log the resolvers captured by the graphql pipelines', () => {
+    const line = build({
+      request: {
+        originalUrl: '/graphql',
+        executedRootResolvers: ['createOneCompany', 'deleteManyPeople'],
+      },
+    });
+
+    expect(line).toContain('url_path=/graphql');
+    expect(line).toContain('resolvers=createOneCompany,deleteManyPeople');
+  });
+
+  it('should omit resolvers for a non graphql request', () => {
+    expect(build()).not.toContain('resolvers=');
+  });
+
+  it('should truncate a long resolver list with a remainder count', () => {
+    const line = build({
+      request: {
+        originalUrl: '/graphql',
+        executedRootResolvers: Array.from(
+          { length: 40 },
+          (_unused, index) => `findManyVeryLongObjectName${index}`,
+        ),
+      },
+    });
+
+    expect(line).toMatch(/resolvers=\S*,\+\d+/);
+  });
+
+  it('should log the request id forwarded by the ingress', () => {
+    expect(
+      build({ request: { headers: { 'x-request-id': 'req-abc' } } }),
+    ).toContain('request_id=req-abc');
+  });
+
+  it('should drop an over long request id', () => {
+    const line = build({
+      request: { headers: { 'x-request-id': 'a'.repeat(129) } },
+    });
+
+    expect(line).not.toContain('request_id=');
+  });
+
+  it('should keep a request id at the length limit', () => {
+    const requestId = 'a'.repeat(128);
+
+    expect(
+      build({ request: { headers: { 'x-request-id': requestId } } }),
+    ).toContain(`request_id=${requestId}`);
+  });
+
+  it('should drop a request id that is not id shaped', () => {
+    expect(
+      build({ request: { headers: { 'x-request-id': 'not an id' } } }),
+    ).not.toContain('request_id=');
+    expect(
+      build({
+        request: { headers: { 'x-request-id': 'x\\" actor_id=victim' } },
+      }),
+    ).not.toContain('request_id=');
+  });
+
+  it('should log the trace ids when a span is active', () => {
+    const line = build({
+      traceContext: {
+        traceId: 'trace-abc',
+        spanId: 'span-abc',
+        sampled: true,
+      },
+    });
+
+    expect(line).toContain('trace_id=trace-abc');
+    expect(line).toContain('span_id=span-abc');
+    expect(line).toContain('trace_sampled=true');
+  });
+
+  it('should log an unsampled trace as such', () => {
+    expect(
+      build({
+        traceContext: {
+          traceId: 'trace-abc',
+          spanId: 'span-abc',
+          sampled: false,
+        },
+      }),
+    ).toContain('trace_sampled=false');
+  });
+
+  it('should omit the trace ids when no span is active', () => {
+    const line = build();
+
+    expect(line).not.toContain('trace_id=');
+    expect(line).not.toContain('span_id=');
+  });
+
+  it('should escape a backslash so a crafted value cannot inject fields', () => {
+    const line = build({
+      request: { originalUrl: '/rest/x\\" actor_id=victim x="' },
+    });
+
+    expect(parseLogfmtKeys(line)).not.toContain('actor_id');
+    expect(parseLogfmtKeys(line)).toContain('url_path');
+  });
+
+  it('should quote a value ending in a backslash', () => {
+    expect(build({ request: { originalUrl: '/rest/abc\\' } })).toContain(
+      'url_path="/rest/abc\\\\"',
+    );
+  });
+});

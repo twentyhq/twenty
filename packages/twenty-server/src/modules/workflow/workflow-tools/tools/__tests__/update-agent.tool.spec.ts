@@ -12,21 +12,20 @@ const buildAiAgentStep = (agentId: string, stepId = 'step-1') => ({
 });
 
 const buildTool = ({
-  draftVersions = [],
+  draftCoreVersions = [],
 }: {
-  draftVersions?: { id: string; status: string; steps: unknown[] | null }[];
+  draftCoreVersions?: { id: string; steps: unknown[] | null }[];
 } = {}) => {
   const agentService = {
     updateOneAgent: jest.fn().mockResolvedValue({ id: AGENT_ID }),
   };
-  const workflowVersionStepService = {
-    updateWorkflowVersionStep: jest.fn().mockResolvedValue(undefined),
+  const coreWorkflowVersionMutationService = {
+    updateStep: jest.fn().mockResolvedValue(undefined),
   };
-  const workflowVersionRepository = {
-    find: jest.fn().mockResolvedValue(draftVersions),
-  };
-  const workspaceOrmManager = {
-    getRepository: jest.fn().mockReturnValue(workflowVersionRepository),
+  const coreWorkflowVersionListService = {
+    findDraftCoreWorkflowVersions: jest
+      .fn()
+      .mockResolvedValue(draftCoreVersions),
   };
   const flatEntityMapsCacheService = {
     invalidateFlatEntityMaps: jest.fn().mockResolvedValue(undefined),
@@ -35,18 +34,21 @@ const buildTool = ({
   const tool = createUpdateAgentTool(
     {
       agentService,
-      workflowVersionStepService,
-      workspaceOrmManager,
+      coreWorkflowVersionMutationService,
+      coreWorkflowVersionListService,
       flatEntityMapsCacheService,
     } as never,
-    { workspaceId: WORKSPACE_ID },
+    {
+      workspaceId: WORKSPACE_ID,
+      rolePermissionConfig: { shouldBypassPermissionChecks: true },
+    },
   );
 
   return {
     tool,
     agentService,
-    workflowVersionStepService,
-    workspaceOrmManager,
+    coreWorkflowVersionMutationService,
+    coreWorkflowVersionListService,
     flatEntityMapsCacheService,
   };
 };
@@ -58,10 +60,13 @@ describe('createUpdateAgentTool', () => {
 
   it('should resync the linked AI_AGENT step output schema when responseFormat changes', async () => {
     const step = buildAiAgentStep(AGENT_ID);
-    const { tool, workflowVersionStepService, flatEntityMapsCacheService } =
-      buildTool({
-        draftVersions: [{ id: 'version-1', status: 'DRAFT', steps: [step] }],
-      });
+    const {
+      tool,
+      coreWorkflowVersionMutationService,
+      flatEntityMapsCacheService,
+    } = buildTool({
+      draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
+    });
 
     const result = (await tool.execute({
       agentId: AGENT_ID,
@@ -81,22 +86,22 @@ describe('createUpdateAgentTool', () => {
       workspaceId: WORKSPACE_ID,
       flatMapsKeys: ['flatAgentMaps'],
     });
-    expect(
-      workflowVersionStepService.updateWorkflowVersionStep,
-    ).toHaveBeenCalledWith({
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
-      workflowVersionId: 'version-1',
+      coreWorkflowVersionId: 'core-version-1',
       step,
     });
   });
 
   it('should not resync when responseFormat is not provided', async () => {
     const step = buildAiAgentStep(AGENT_ID);
-    const { tool, workflowVersionStepService, workspaceOrmManager } = buildTool(
-      {
-        draftVersions: [{ id: 'version-1', status: 'DRAFT', steps: [step] }],
-      },
-    );
+    const {
+      tool,
+      coreWorkflowVersionMutationService,
+      coreWorkflowVersionListService,
+    } = buildTool({
+      draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
+    });
 
     const result = (await tool.execute({
       agentId: AGENT_ID,
@@ -104,18 +109,19 @@ describe('createUpdateAgentTool', () => {
     } as never)) as Record<string, unknown>;
 
     expect(result.success).toBe(true);
-    expect(workspaceOrmManager.getRepository).not.toHaveBeenCalled();
     expect(
-      workflowVersionStepService.updateWorkflowVersionStep,
+      coreWorkflowVersionListService.findDraftCoreWorkflowVersions,
+    ).not.toHaveBeenCalled();
+    expect(
+      coreWorkflowVersionMutationService.updateStep,
     ).not.toHaveBeenCalled();
   });
 
   it('should skip steps referencing a different agent', async () => {
-    const { tool, workflowVersionStepService } = buildTool({
-      draftVersions: [
+    const { tool, coreWorkflowVersionMutationService } = buildTool({
+      draftCoreVersions: [
         {
-          id: 'version-1',
-          status: 'DRAFT',
+          id: 'core-version-1',
           steps: [buildAiAgentStep('another-agent-id')],
         },
       ],
@@ -127,17 +133,17 @@ describe('createUpdateAgentTool', () => {
     } as never);
 
     expect(
-      workflowVersionStepService.updateWorkflowVersionStep,
+      coreWorkflowVersionMutationService.updateStep,
     ).not.toHaveBeenCalled();
   });
 
   it('should still report agent update success when the resync fails', async () => {
     const step = buildAiAgentStep(AGENT_ID);
-    const { tool, workflowVersionStepService } = buildTool({
-      draftVersions: [{ id: 'version-1', status: 'DRAFT', steps: [step] }],
+    const { tool, coreWorkflowVersionMutationService } = buildTool({
+      draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
     });
 
-    workflowVersionStepService.updateWorkflowVersionStep.mockRejectedValue(
+    coreWorkflowVersionMutationService.updateStep.mockRejectedValue(
       new Error('boom'),
     );
 

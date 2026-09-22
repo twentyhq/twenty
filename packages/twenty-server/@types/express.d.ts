@@ -27,5 +27,6 @@ declare module 'express-serve-static-core' {
     impersonationContext?: RawAuthContext['impersonationContext'];
     tokenType?: JwtTokenTypeEnum;
     authenticatedAt?: Date;
+    executedRootResolvers?: string[];
   }
 }
