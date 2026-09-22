@@ -119,15 +119,42 @@ export const useCoreWorkflows = ({
   const loadedCount = connection?.edges.length ?? 0;
 
   // A plain refetch re-runs the first page and drops what fetchMore accumulated,
-  // so ask for as many rows as are currently displayed, within what the server takes.
-  const refetchLoadedCoreWorkflows = useCallback(() => {
-    const first = Math.min(
-      Math.max(loadedCount, CORE_WORKFLOWS_PAGE_SIZE),
-      CORE_WORKFLOWS_MAX_PAGE_SIZE,
-    );
+  // so ask for as many rows as are displayed and page back up to them when that
+  // is more than one request may return.
+  const refetchLoadedCoreWorkflows = useCallback(async () => {
+    const targetCount = Math.max(loadedCount, CORE_WORKFLOWS_PAGE_SIZE);
 
-    return refetch({ first });
-  }, [loadedCount, refetch]);
+    const refetched = await refetch({
+      first: Math.min(targetCount, CORE_WORKFLOWS_MAX_PAGE_SIZE),
+    });
+
+    let requestedCount = Math.min(targetCount, CORE_WORKFLOWS_MAX_PAGE_SIZE);
+    let pageInfo = refetched.data?.coreWorkflows.pageInfo;
+
+    while (requestedCount < targetCount && pageInfo?.hasNextPage === true) {
+      const nextPageSize = Math.min(
+        targetCount - requestedCount,
+        CORE_WORKFLOWS_MAX_PAGE_SIZE,
+      );
+
+      const nextPage = await fetchMore({
+        variables: { after: pageInfo.endCursor, first: nextPageSize },
+        updateQuery: (previousResult, { fetchMoreResult }) => ({
+          ...fetchMoreResult,
+          coreWorkflows: {
+            ...fetchMoreResult.coreWorkflows,
+            edges: [
+              ...previousResult.coreWorkflows.edges,
+              ...fetchMoreResult.coreWorkflows.edges,
+            ],
+          },
+        }),
+      });
+
+      requestedCount += nextPageSize;
+      pageInfo = nextPage.data?.coreWorkflows.pageInfo;
+    }
+  }, [fetchMore, loadedCount, refetch]);
 
   return {
     coreWorkflows: connection?.edges.map((edge) => edge.node) ?? [],
