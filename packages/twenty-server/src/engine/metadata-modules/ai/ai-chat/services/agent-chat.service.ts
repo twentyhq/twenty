@@ -1,3 +1,5 @@
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
@@ -169,25 +171,27 @@ export class AgentChatService {
     return this.getRankedThreads({ userWorkspaceId, workspaceId });
   }
 
-  async getThreadsByIds({
-    threadIds,
+  // Attachment, visibility, ranking and paging resolve in one query. Reading the
+  // links first and filtering afterwards would page an arbitrary prefix of the
+  // links rather than the ranked conversations, and would let one member's
+  // attachments crowd everyone else's out of that prefix.
+  async getThreadsAttachedToRecord({
+    objectMetadataId,
+    recordId,
     userWorkspaceId,
     workspaceId,
     limit,
     offset,
   }: {
-    threadIds: string[];
+    objectMetadataId: string;
+    recordId: string;
     userWorkspaceId: string;
     workspaceId: string;
     limit?: number;
     offset?: number;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
-    if (!isNonEmptyArray(threadIds)) {
-      return [];
-    }
-
     return this.getRankedThreads({
-      threadIds,
+      attachedToRecord: { objectMetadataId, recordId },
       userWorkspaceId,
       workspaceId,
       limit,
@@ -197,12 +201,14 @@ export class AgentChatService {
 
   private async getRankedThreads({
     threadIds,
+    attachedToRecord,
     userWorkspaceId,
     workspaceId,
     limit,
     offset,
   }: {
     threadIds?: string[];
+    attachedToRecord?: { objectMetadataId: string; recordId: string };
     userWorkspaceId: string;
     workspaceId: string;
     limit?: number;
@@ -210,7 +216,7 @@ export class AgentChatService {
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
     const rankedThreads = await this.threadRepository.query(
       workspaceId,
-      ({ manager, table, storage }) => {
+      async ({ manager, table, storage }) => {
         const parameters: unknown[] = [userWorkspaceId];
         const conditions = ['thread."userWorkspaceId" = $1'];
 
@@ -222,6 +228,27 @@ export class AgentChatService {
         if (storage === 'core') {
           parameters.push(workspaceId);
           conditions.push(`thread."workspaceId" = $${parameters.length}`);
+        }
+
+        if (isDefined(attachedToRecord)) {
+          // A target's foreign key points at the workspace-schema thread table,
+          // so a core-routed workspace holds no links to match.
+          if (storage === 'core') {
+            return [];
+          }
+
+          parameters.push(attachedToRecord.objectMetadataId);
+          const objectMetadataIdParameter = parameters.length;
+
+          parameters.push(attachedToRecord.recordId);
+
+          conditions.push(
+            `EXISTS (SELECT 1 FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThreadTarget" target
+             WHERE target."threadId" = thread.id
+               AND target."objectMetadataId" = $${objectMetadataIdParameter}
+               AND target."recordId" = $${parameters.length}
+               AND target."deletedAt" IS NULL)`,
+          );
         }
 
         // Paging is applied after the ordering so a page reflects the ranked
