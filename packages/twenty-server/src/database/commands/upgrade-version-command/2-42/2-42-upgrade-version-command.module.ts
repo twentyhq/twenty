@@ -1,4 +1,4 @@
-import { UpdateRecordCreationCommandLabelsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790067478302-update-record-creation-command-labels.command';
+import { UpdateRecordCreationCommandLabelsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790115314731-update-record-creation-command-labels.command';
 import { Module } from '@nestjs/common';
 
 import { MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';

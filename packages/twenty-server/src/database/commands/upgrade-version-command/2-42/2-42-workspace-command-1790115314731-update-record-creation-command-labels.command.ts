@@ -1,22 +1,16 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
+import { buildRecordCreationCommandLabelUpdates } from 'src/database/commands/upgrade-version-command/2-42/utils/build-record-creation-command-label-updates.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const OLD_LABEL = 'Create new {objectLabelSingular}';
-const OLD_SHORT_LABEL = 'New {objectLabelSingular}';
-const NEW_LABEL = 'Create {objectLabelSingular}';
-const NEW_SHORT_LABEL = 'Create';
-
-@RegisteredWorkspaceCommand('2.42.0', 1790067478302)
+@RegisteredWorkspaceCommand('2.42.0', 1790115314731)
 @Command({
   name: 'upgrade:2-42:update-record-creation-command-labels',
   description:
@@ -36,60 +30,33 @@ export class UpdateRecordCreationCommandLabelsCommand extends ProvisionedWorkspa
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.updateLabels(args, false);
+    await this.updateLabels({ ...args, direction: 'up' });
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.updateLabels(args, true);
+    await this.updateLabels({ ...args, direction: 'down' });
   }
 
-  private async updateLabels(
-    { workspaceId, options }: RunOnWorkspaceArgs,
-    revert: boolean,
-  ): Promise<void> {
+  private async updateLabels({
+    workspaceId,
+    options,
+    direction,
+  }: RunOnWorkspaceArgs & { direction: 'up' | 'down' }): Promise<void> {
     const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
       ]);
 
-    const existingCommand =
-      flatCommandMenuItemMaps.byUniversalIdentifier[
-        STANDARD_COMMAND_MENU_ITEMS.createNewRecord.universalIdentifier
-      ];
+    const commandMenuItemsToUpdate = buildRecordCreationCommandLabelUpdates({
+      flatCommandMenuItemByUniversalIdentifier:
+        flatCommandMenuItemMaps.byUniversalIdentifier,
+      direction,
+      now: new Date().toISOString(),
+    });
 
-    if (!isDefined(existingCommand)) {
+    if (commandMenuItemsToUpdate.length === 0) {
       return;
     }
-
-    const label =
-      existingCommand.label === (revert ? NEW_LABEL : OLD_LABEL)
-        ? revert
-          ? OLD_LABEL
-          : NEW_LABEL
-        : existingCommand.label;
-    const shortLabel =
-      existingCommand.shortLabel ===
-      (revert ? NEW_SHORT_LABEL : OLD_SHORT_LABEL)
-        ? revert
-          ? OLD_SHORT_LABEL
-          : NEW_SHORT_LABEL
-        : existingCommand.shortLabel;
-
-    if (
-      label === existingCommand.label &&
-      shortLabel === existingCommand.shortLabel
-    ) {
-      return;
-    }
-
-    const commandMenuItemsToUpdate = [
-      {
-        ...existingCommand,
-        label,
-        shortLabel,
-        updatedAt: new Date().toISOString(),
-      },
-    ];
 
     if (options.dryRun ?? false) {
       this.logger.log(
