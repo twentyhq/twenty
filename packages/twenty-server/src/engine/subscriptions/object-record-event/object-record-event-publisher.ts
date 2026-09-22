@@ -132,7 +132,7 @@ export class ObjectRecordEventPublisher {
         });
       } catch (error) {
         this.logger.warn(
-          `Failed to process ${eventBatch.name} subscription events for stream ${streamChannelId}, skipping this stream: ${
+          `Failed to process ${eventBatch.name} subscription events for workspace ${workspaceId} stream ${streamChannelId}, skipping this stream: ${
             error instanceof Error ? error.message : String(error)
           }`,
           error instanceof Error ? error.stack : undefined,
