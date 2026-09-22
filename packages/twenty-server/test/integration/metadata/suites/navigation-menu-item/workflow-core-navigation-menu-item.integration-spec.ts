@@ -71,7 +71,7 @@ describe('workflow navigation menu items resolve and clean up on core ids', () =
   let companyObjectMetadataId: string;
   let companyRecordId: string;
   let currentUserWorkspaceId: string;
-  let memberUserWorkspaceId: string;
+  let memberUserWorkspaceId: string | undefined;
   const createdNavigationMenuItemIds: string[] = [];
   const createdMemberNavigationMenuItemIds: string[] = [];
 
@@ -123,6 +123,15 @@ describe('workflow navigation menu items resolve and clean up on core ids', () =
 
     currentUserWorkspaceId =
       currentUserData.currentUser.currentUserWorkspace.id;
+
+    const { data: memberUserData } = await getCurrentUser({
+      accessToken: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    jestExpectToBeDefined(memberUserData?.currentUser?.currentUserWorkspace);
+
+    memberUserWorkspaceId = memberUserData.currentUser.currentUserWorkspace.id;
   });
 
   afterAll(async () => {
