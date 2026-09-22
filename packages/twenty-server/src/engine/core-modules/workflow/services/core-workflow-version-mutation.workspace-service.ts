@@ -35,6 +35,7 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { computeWorkflowStepPositions } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-step-positions.util';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import {
@@ -653,6 +654,31 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       expectedVersion: coreWorkflowVersion,
       trigger: updatedTrigger ?? trigger,
       steps: updatedSteps ?? steps,
+    });
+  }
+
+  async autoLayoutCoreWorkflowVersion({
+    workspaceId,
+    userWorkspaceId,
+    coreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    coreWorkflowVersionId: string;
+  }): Promise<void> {
+    const { trigger, steps } =
+      await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
+      );
+
+    await this.updatePositions({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowVersionId,
+      positions: computeWorkflowStepPositions({
+        trigger,
+        steps: steps ?? [],
+      }),
     });
   }
 

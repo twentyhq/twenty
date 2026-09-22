@@ -9,12 +9,10 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 import { Equal, In, IsNull, Or } from 'typeorm';
 import { msg } from '@lingui/core/macro';
-import { WorkflowVisibility } from 'twenty-shared/types';
+import { type ActorMetadata, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
 import { type DeletedCoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/deleted-core-workflow.dto';
@@ -51,7 +49,6 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { remapDuplicatedStepDestinations } from 'src/modules/workflow/workflow-builder/utils/remap-duplicated-step-destinations.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class CoreWorkflowMutationWorkspaceService {
@@ -119,14 +116,14 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async duplicateWorkflow({
     workspaceId,
+    createdBy,
     userWorkspaceId,
-    user,
     coreWorkflowIdToDuplicate,
     coreWorkflowVersionIdToCopy,
   }: {
     workspaceId: string;
+    createdBy: ActorMetadata;
     userWorkspaceId: string | undefined;
-    user: AuthContextUser;
     coreWorkflowIdToDuplicate: string;
     coreWorkflowVersionIdToCopy: string;
   }): Promise<CoreWorkflowDTO> {
@@ -178,8 +175,8 @@ export class CoreWorkflowMutationWorkspaceService {
 
     const duplicatedWorkflow = await this.createWorkflow({
       workspaceId,
+      createdBy,
       userWorkspaceId,
-      user,
       name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
       // duplicating a private workflow must not publish it to the workspace
       visibility: sourceCoreWorkflow.visibility,
@@ -415,14 +412,14 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async createWorkflow({
     workspaceId,
+    createdBy,
     userWorkspaceId,
-    user,
     name,
     visibility,
   }: {
     workspaceId: string;
+    createdBy: ActorMetadata;
     userWorkspaceId: string | undefined;
-    user: AuthContextUser;
     name?: string;
     visibility?: WorkflowVisibility;
   }): Promise<CoreWorkflowDTO> {
@@ -432,19 +429,6 @@ export class CoreWorkflowMutationWorkspaceService {
       );
 
     const authContext = buildSystemAuthContext(workspaceId);
-
-    const workspaceMember =
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        return workspaceMemberRepository.findOneOrFail({
-          where: { userId: user.id },
-        });
-      }, authContext);
 
     const workspaceWorkflowId = uuidv4();
 
@@ -511,13 +495,7 @@ export class CoreWorkflowMutationWorkspaceService {
           name: name ?? null,
           position,
           coreWorkflowId: coreWorkflow.id,
-          createdBy: buildCreatedByFromFullNameMetadata({
-            fullNameMetadata: {
-              firstName: workspaceMember.name.firstName,
-              lastName: workspaceMember.name.lastName,
-            },
-            workspaceMemberId: workspaceMember.id,
-          }),
+          createdBy,
         });
       }, authContext);
 

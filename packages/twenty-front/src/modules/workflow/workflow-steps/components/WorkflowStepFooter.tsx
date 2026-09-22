@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
@@ -19,7 +20,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { IconLego, IconSettings, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const WorkflowStepFooter = ({
@@ -131,35 +131,32 @@ export const WorkflowStepFooter = ({
             itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings}
             onEnter={handleNodeSettings}
           >
-            <MenuItem
+            <ListItem
               focused={
                 selectedItemId ===
                 WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings
               }
               onClick={handleNodeSettings}
-              text={t`Node settings`}
-              LeftIcon={IconSettings}
-            />
+              startIcon={<IconSettings />}
+            >{t`Node settings`}</ListItem>
           </SelectableListItem>
         ) : null}
         {hasViewAgentOption ? (
           <SelectableListItem itemId="view-agent" onEnter={handleViewAgent}>
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'view-agent'}
               onClick={handleViewAgent}
-              text={t`View Agent`}
-              LeftIcon={IconLego}
-            />
+              startIcon={<IconLego />}
+            >{t`View Agent`}</ListItem>
           </SelectableListItem>
         ) : null}
         {hasViewRoleOption ? (
           <SelectableListItem itemId="view-role" onEnter={handleViewRole}>
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'view-role'}
               onClick={handleViewRole}
-              text={t`View Role`}
-              LeftIcon={IconUsers}
-            />
+              startIcon={<IconUsers />}
+            >{t`View Role`}</ListItem>
           </SelectableListItem>
         ) : null}
       </WorkflowStepOptionsMenuItems>

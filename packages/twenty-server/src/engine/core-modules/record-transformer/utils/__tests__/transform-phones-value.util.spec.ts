@@ -24,7 +24,7 @@ describe('transformPhonesValue', () => {
     });
   });
 
-  it('should normalize empty number inside an additionalPhones entry to null', () => {
+  it('should drop an additionalPhones entry that has no number', () => {
     const result = transformPhonesValue({
       input: {
         primaryPhoneNumber: '',
@@ -32,7 +32,25 @@ describe('transformPhonesValue', () => {
       },
     });
 
-    expect(result?.additionalPhones).toBe(JSON.stringify([{ number: null }]));
+    expect(result?.additionalPhones).toBeNull();
+  });
+
+  it('should keep valid additionalPhones entries while dropping numberless ones', () => {
+    const result = transformPhonesValue({
+      input: {
+        primaryPhoneNumber: '',
+        additionalPhones: JSON.stringify([
+          { number: '' },
+          { number: '+442071838750', callingCode: '+44', countryCode: 'GB' },
+        ]),
+      },
+    });
+
+    expect(result?.additionalPhones).toBe(
+      JSON.stringify([
+        { countryCode: 'GB', callingCode: '+44', number: '2071838750' },
+      ]),
+    );
   });
 
   it('should parse a valid international phone number into its canonical parts', () => {

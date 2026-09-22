@@ -1238,7 +1238,7 @@ export interface UsageQuotaDefinition {
 
 export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK' | 'RECORD'
 
-export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
 
 export interface UsageQuotaDefinitions {
     definitions: UsageQuotaDefinition[]
@@ -10787,6 +10787,7 @@ export const enumUsageOperationType = {
    WEB_SEARCH: 'WEB_SEARCH' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
    EMAIL_SEND: 'EMAIL_SEND' as const,
+   MESSAGE_CAMPAIGN_SEND: 'MESSAGE_CAMPAIGN_SEND' as const,
    API_REQUEST: 'API_REQUEST' as const,
    WEBHOOK_CALL: 'WEBHOOK_CALL' as const,
    STORAGE_FILE: 'STORAGE_FILE' as const,
