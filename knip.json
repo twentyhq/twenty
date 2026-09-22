@@ -1,0 +1,64 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreWorkspaces": ["packages/twenty-docs", "packages/twenty-apps/**"],
+  "rules": {
+    "binaries": "warn",
+    "dependencies": "warn",
+    "devDependencies": "warn",
+    "duplicates": "warn",
+    "enumMembers": "warn",
+    "exports": "warn",
+    "optionalPeerDependencies": "warn",
+    "types": "warn",
+    "unlisted": "warn",
+    "unresolved": "warn"
+  },
+  "workspaces": {
+    "packages/twenty-server": {
+      "entry": [
+        "src/main.ts",
+        "src/command/command.ts",
+        "src/queue-worker/queue-worker.ts",
+        "src/database/scripts/*.ts",
+        "src/database/clickhouse/migrations/run-migrations.ts",
+        "src/database/clickhouse/seeds/run-seeds.ts",
+        "scripts/**/*.ts",
+        "test/integration/**/*.integration-spec.ts",
+        "test/integration/utils/setup-test.ts",
+        "test/integration/utils/teardown-test.ts",
+        "test/integration/graphql/codegen/index.ts",
+        "src/database/typeorm/core/legacy-typeorm-migrations-do-not-add/**/*.ts"
+      ],
+      "jest": [
+        "jest.config.mjs",
+        "jest-integration.config.ts",
+        "jest-integration-secure.config.ts"
+      ],
+      "ignore": [
+        "src/**/constants/seed-project/**",
+        "src/**/constants/yarn-engine/**",
+        "src/engine/core-modules/logic-function/logic-function-drivers/constants/**"
+      ]
+    },
+    "packages/twenty-front": {
+      "entry": [
+        "src/index.tsx",
+        "src/**/graphql/**/*.{ts,tsx}",
+        "src/modules/geo-map/graphql-query/*.{ts,tsx}",
+        "vitest.config.ts",
+        "lingui.config.ts",
+        "nyc.config.cjs",
+        "jest-failures-only-reporter.cjs"
+      ],
+      "graphql-codegen": [
+        "codegen.cjs",
+        "codegen-admin.cjs",
+        "codegen-metadata.cjs"
+      ],
+      "ignore": ["src/locales/generated/**"]
+    },
+    "packages/twenty-ui": {
+      "entry": ["scripts/**/*.ts", "docs/**/*.ts"]
+    }
+  }
+}
