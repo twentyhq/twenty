@@ -133,13 +133,14 @@ describe('Generated client wrapper uploadFile', () => {
 
   const uploadInvoice = (
     twentyClient: InstanceType<GeneratedClientClass>,
-    file: Blob | ArrayBuffer | ArrayBufferView = Buffer.from('content'),
+    fileBuffer = Buffer.from('content'),
   ) =>
-    twentyClient.uploadFile({
-      file,
-      filename: 'invoice.pdf',
-      fieldMetadataUniversalIdentifier: FIELD_METADATA_UNIVERSAL_IDENTIFIER,
-    });
+    twentyClient.uploadFile(
+      fileBuffer,
+      'invoice.pdf',
+      'application/pdf',
+      FIELD_METADATA_UNIVERSAL_IDENTIFIER,
+    );
 
   beforeAll(async () => {
     ({ GeneratedClientClass: TwentyClass, cleanup } =
@@ -198,20 +199,6 @@ describe('Generated client wrapper uploadFile', () => {
     });
   });
 
-  it('declares the size of a Blob and sends it as is', async () => {
-    const { fetchMock, capturedRequests } = createFetchMock();
-    const blob = new Blob(['blob content'], { type: 'text/plain' });
-
-    await uploadInvoice(createClient(fetchMock), blob);
-
-    const [createRequest, putRequest] = capturedRequests;
-
-    expect(parseGraphqlBody(createRequest.requestInit).variables.size).toBe(
-      blob.size,
-    );
-    expect(putRequest.requestInit?.body).toBe(blob);
-  });
-
   it('falls back to the upload through the API when the upload target is refused', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
       createFileUploadResponse: refusedUploadTargetResponse,
@@ -244,11 +231,11 @@ describe('Generated client wrapper uploadFile', () => {
     });
     expect(map).toEqual({ '0': ['variables.file'] });
     expect(sentFile.name).toBe('invoice.pdf');
-    expect(sentFile.type).toBe('application/octet-stream');
+    expect(sentFile.type).toBe('application/pdf');
     expect(Buffer.from(await sentFile.arrayBuffer())).toEqual(fileBuffer);
   });
 
-  it('falls back to the upload through the API with the type of a refused Blob', async () => {
+  it('falls back to the upload through the API when storage refuses the bytes', async () => {
     const { fetchMock, capturedRequests } = createFetchMock({
       putResponse: () =>
         new Response('<Error>SignatureDoesNotMatch</Error>', {
@@ -256,21 +243,14 @@ describe('Generated client wrapper uploadFile', () => {
           statusText: 'Forbidden',
         }),
     });
-    const blob = new Blob(['blob content'], { type: 'text/plain' });
 
-    const result = await uploadInvoice(createClient(fetchMock), blob);
+    const result = await uploadInvoice(createClient(fetchMock));
 
     expect(result).toEqual(uploadedThroughApiFile);
     expect(
       capturedRequests.map(({ requestInit }) => requestInit?.method),
     ).toEqual(['POST', 'PUT', 'POST']);
-
-    const { sentFile } = await readMultipartBody(
-      capturedRequests[2].requestInit,
-    );
-
-    expect(sentFile.type).toBe('text/plain');
-    expect(await sentFile.text()).toBe('blob content');
+    expect(capturedRequests[2].requestInit?.body).toBeInstanceOf(FormData);
   });
 
   it('surfaces the API upload error when both uploads fail', async () => {
@@ -292,7 +272,7 @@ describe('Generated client wrapper uploadFile', () => {
     expect(capturedRequests).toHaveLength(2);
   });
 
-  it('uploads through the API with the given content type when deprecatedUploadFile is called', async () => {
+  it('uploads through the API only when deprecatedUploadFile is called', async () => {
     const { fetchMock, capturedRequests } = createFetchMock();
     const fileBuffer = Buffer.from('content');
 

@@ -224,35 +224,30 @@ export class TwentyGeneratedClient {
   }
 
   // __UPLOAD_FILE_START__
-  async uploadFile({
-    file,
-    filename,
-    fieldMetadataUniversalIdentifier,
-  }: {
-    file: Blob | ArrayBuffer | ArrayBufferView;
-    filename: string;
-    fieldMetadataUniversalIdentifier: string;
-  }): Promise<FilesFieldUploadedFile> {
+  async uploadFile(
+    fileBuffer: Buffer,
+    filename: string,
+    contentType: string = 'application/octet-stream',
+    fieldMetadataUniversalIdentifier: string,
+  ): Promise<FilesFieldUploadedFile> {
     try {
-      return await this.uploadFileToStorage({
-        file,
+      return await this.directUploadFileToStorage({
+        fileBuffer,
         filename,
         fieldMetadataUniversalIdentifier,
       });
     } catch {
       return this.deprecatedUploadFile(
-        file,
+        fileBuffer,
         filename,
-        file instanceof Blob && file.type !== ''
-          ? file.type
-          : 'application/octet-stream',
+        contentType,
         fieldMetadataUniversalIdentifier,
       );
     }
   }
 
   async deprecatedUploadFile(
-    file: Blob | ArrayBuffer | ArrayBufferView,
+    fileBuffer: Buffer,
     filename: string,
     contentType: string = 'application/octet-stream',
     fieldMetadataUniversalIdentifier: string,
@@ -274,7 +269,7 @@ export class TwentyGeneratedClient {
     form.append('map', JSON.stringify({ '0': ['variables.file'] }));
     form.append(
       '0',
-      new Blob([file as BlobPart], { type: contentType }),
+      new Blob([fileBuffer as BlobPart], { type: contentType }),
       filename,
     );
 
@@ -295,17 +290,15 @@ export class TwentyGeneratedClient {
     return data.uploadFilesFieldFileByUniversalIdentifier as FilesFieldUploadedFile;
   }
 
-  private async uploadFileToStorage({
-    file,
+  private async directUploadFileToStorage({
+    fileBuffer,
     filename,
     fieldMetadataUniversalIdentifier,
   }: {
-    file: Blob | ArrayBuffer | ArrayBufferView;
+    fileBuffer: Buffer;
     filename: string;
     fieldMetadataUniversalIdentifier: string;
   }): Promise<FilesFieldUploadedFile> {
-    const size = file instanceof Blob ? file.size : file.byteLength;
-
     const { createFileUpload: uploadTarget } =
       await this.executeMutationOrThrow<{
         createFileUpload: FilesFieldUploadTarget;
@@ -313,10 +306,14 @@ export class TwentyGeneratedClient {
         query: `mutation CreateFilesFieldFileUpload($filename: String!, $size: Float!, $fieldMetadataUniversalIdentifier: String!) {
         createFileUpload(filename: $filename, size: $size, fileFolder: FilesField, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { fileId uploadUrl contentType }
       }`,
-        variables: { filename, size, fieldMetadataUniversalIdentifier },
+        variables: {
+          filename,
+          size: fileBuffer.byteLength,
+          fieldMetadataUniversalIdentifier,
+        },
       });
 
-    await this.putFileToUploadTarget({ file, uploadTarget });
+    await this.putFileToUploadTarget({ fileBuffer, uploadTarget });
 
     const { completeFileUpload: uploadedFile } =
       await this.executeMutationOrThrow<{
@@ -332,10 +329,10 @@ export class TwentyGeneratedClient {
   }
 
   private async putFileToUploadTarget({
-    file,
+    fileBuffer,
     uploadTarget,
   }: {
-    file: Blob | ArrayBuffer | ArrayBufferView;
+    fileBuffer: Buffer;
     uploadTarget: FilesFieldUploadTarget;
   }): Promise<void> {
     const fetchImplementation = this.getFetchImplementationOrThrow();
@@ -346,7 +343,7 @@ export class TwentyGeneratedClient {
       {
         method: 'PUT',
         headers: { 'Content-Type': uploadTarget.contentType },
-        body: file as BodyInit,
+        body: fileBuffer as BodyInit,
         credentials: 'omit',
       },
     );
