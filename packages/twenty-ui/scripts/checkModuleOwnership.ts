@@ -15,6 +15,13 @@ const PACKAGE_ROOT = path.resolve(
 const SOURCE_ROOT = path.join(PACKAGE_ROOT, 'src');
 const SHARED_COMPONENTS_ROOT = path.join(SOURCE_ROOT, 'components');
 const SOURCE_EXTENSIONS = ['.tsx', '.ts'];
+const PACKAGE_ENTRY_POINTS = new Set([
+  SOURCE_ROOT,
+  path.join(SOURCE_ROOT, 'index'),
+  ...SOURCE_EXTENSIONS.map((extension) =>
+    path.join(SOURCE_ROOT, `index${extension}`),
+  ),
+]);
 const IMPLEMENTATION_ONLY_PATTERN = /\/(internal|internals|parts)\//;
 const SUPPORT_DIRECTORY_PATTERN = /\/(contexts|hooks)\//;
 const TEST_DIRECTORY_PATTERN = /\/(testing|__tests__|__stories__|__mocks__)\//;
@@ -89,35 +96,24 @@ for (const layer of ['primitives', 'components'] as const) {
 
 for (const file of globSync('**/*.{ts,tsx}', { cwd: SOURCE_ROOT })) {
   const filePath = path.join(SOURCE_ROOT, file);
-  if (
+  const isTestOrDeclaration =
     TEST_DIRECTORY_PATTERN.test(filePath) ||
     TEST_FILE_PATTERN.test(filePath) ||
-    file.endsWith('.d.ts')
-  ) {
-    continue;
-  }
+    file.endsWith('.d.ts');
 
-  const source = ts.createSourceFile(
-    filePath,
+  const { importedFiles } = ts.preProcessFile(
     readFileSync(filePath, 'utf8'),
-    ts.ScriptTarget.Latest,
+    true,
     true,
   );
-  for (const statement of source.statements) {
+  for (const { fileName: moduleName } of importedFiles) {
     if (
-      !ts.isImportDeclaration(statement) ||
-      !ts.isStringLiteral(statement.moduleSpecifier)
-    ) {
-      continue;
-    }
-
-    const moduleName = statement.moduleSpecifier.text;
-    if (
-      moduleName === 'react-router-dom' ||
-      moduleName === 'react-router' ||
-      moduleName.startsWith('twenty-front') ||
-      moduleName.startsWith('@/') ||
-      moduleName.startsWith('~/')
+      !isTestOrDeclaration &&
+      (moduleName === 'react-router-dom' ||
+        moduleName === 'react-router' ||
+        moduleName.startsWith('twenty-front') ||
+        moduleName.startsWith('@/') ||
+        moduleName.startsWith('~/'))
     ) {
       errors.push(`${file} depends on application code: ${moduleName}`);
     }
@@ -129,7 +125,10 @@ for (const file of globSync('**/*.{ts,tsx}', { cwd: SOURCE_ROOT })) {
         : path.resolve(path.dirname(filePath), moduleName);
     if (
       file.startsWith('primitives/') &&
-      (target === SHARED_COMPONENTS_ROOT ||
+      (moduleName === 'twenty-ui' ||
+        moduleName === '@ui' ||
+        PACKAGE_ENTRY_POINTS.has(target) ||
+        target === SHARED_COMPONENTS_ROOT ||
         target.startsWith(SHARED_COMPONENTS_ROOT + path.sep))
     ) {
       errors.push(`${file} depends on a shared composition: ${moduleName}`);

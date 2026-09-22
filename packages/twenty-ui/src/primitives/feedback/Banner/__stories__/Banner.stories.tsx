@@ -8,7 +8,6 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { IconButton } from '@ui/components/input/IconButton/IconButton';
 import {
   Banner,
   type BannerColor,
@@ -28,23 +27,21 @@ const BannerCloseButton = ({
   variant?: BannerVariant;
 }) =>
   variant === 'primary' ? (
-    <IconButton
+    <Button
       className={styles.invertedIconButton}
       size="sm"
       variant="ghost"
       aria-label="Close"
-    >
-      <IconX />
-    </IconButton>
+      startIcon={<IconX />}
+    />
   ) : (
-    <IconButton
+    <Button
       size="sm"
       variant="ghost"
       color={getButtonColor(color)}
       aria-label="Close"
-    >
-      <IconX />
-    </IconButton>
+      startIcon={<IconX />}
+    />
   );
 
 const meta: Meta<typeof Banner> = {

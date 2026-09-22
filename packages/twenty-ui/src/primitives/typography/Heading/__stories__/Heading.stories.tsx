@@ -1,4 +1,3 @@
-import { Section } from '@ui/components/layout/Section/Section';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
@@ -44,9 +43,9 @@ const HEADING_COLORS = ['primary', 'secondary'] as const;
 export const Catalog: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <Section.Root>
+    <div>
       {HEADING_COLORS.map((color) => (
-        <Section.Root key={color}>
+        <div key={color}>
           {HEADING_SIZES.map((size) => (
             <Heading
               key={size}
@@ -57,9 +56,9 @@ export const Catalog: Story = {
               {size} {color} heading
             </Heading>
           ))}
-        </Section.Root>
+        </div>
       ))}
-    </Section.Root>
+    </div>
   ),
 };
 

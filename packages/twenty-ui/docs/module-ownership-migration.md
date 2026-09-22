@@ -102,4 +102,4 @@ Existing guides and examples use the new public imports. The Toast guide moves t
 
 The 12 existing story files for frontend-owned modules move beside their implementations. Their 37 stories remain available in the frontend Storybook.
 
-This migration does not add the missing guides from the coverage report. Documentation coverage remains separate work. The checked-in ownership manifest enumerates public React exports; `check:ownership` verifies the generated barrels and prevents primitives from importing shared compositions or application code.
+This migration does not add the missing guides from the coverage report. Documentation coverage remains separate work. The checked-in ownership manifest enumerates public React exports; `check:ownership` verifies the generated barrels and prevents primitives, including their stories and tests, from importing or re-exporting shared compositions. Production UI code cannot depend on application code.

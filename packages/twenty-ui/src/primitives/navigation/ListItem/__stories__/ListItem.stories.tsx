@@ -9,7 +9,7 @@ import {
   type CatalogStory,
 } from '@ui/testing';
 
-import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/ListItemColor';
@@ -30,12 +30,20 @@ const START_ICON = <IconBell />;
 
 const ACTIONS = (
   <>
-    <LightIconButton aria-label="Edit" onClick={action('Edit')}>
-      <IconEdit />
-    </LightIconButton>
-    <LightIconButton aria-label="Delete" onClick={action('Delete')}>
-      <IconTrash />
-    </LightIconButton>
+    <Button
+      aria-label="Edit"
+      onClick={action('Edit')}
+      variant="ghost"
+      size="sm"
+      startIcon={<IconEdit />}
+    />
+    <Button
+      aria-label="Delete"
+      onClick={action('Delete')}
+      variant="ghost"
+      size="sm"
+      startIcon={<IconTrash />}
+    />
   </>
 );
 
