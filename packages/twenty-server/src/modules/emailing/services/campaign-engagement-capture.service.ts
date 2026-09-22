@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { v4 } from 'uuid';
 
 import { RECORD_CAMPAIGN_ENGAGEMENT_JOB } from 'src/engine/core-modules/emailing-domain/constants/record-campaign-engagement-job.constant';
@@ -12,10 +11,9 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK } from 'src/modules/emailing/constants/campaign-engagement-capture-rate-limit-per-link.constant';
-import { CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER } from 'src/modules/emailing/constants/campaign-engagement-capture-rate-limit-per-requester.constant';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
+import { getCampaignEngagementThrottleLimits } from 'src/modules/emailing/utils/get-campaign-engagement-throttle-limits.util';
 
 const RESPONSE_RELEASE_BUDGET_MS = 100;
 
@@ -67,21 +65,17 @@ export class CampaignEngagementCaptureService {
     requesterIp: string | null;
   }): Promise<void> {
     try {
-      if (isNonEmptyString(requesterIp)) {
+      for (const limit of getCampaignEngagementThrottleLimits({
+        payload,
+        requesterIp,
+      })) {
         await this.throttlerService.tokenBucketThrottleOrThrow(
-          `campaign-engagement:requester:${requesterIp}`,
+          limit.key,
           1,
-          CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER.maxRequests,
-          CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER.windowMs,
+          limit.maxRequests,
+          limit.windowMs,
         );
       }
-
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `campaign-engagement:${payload.deliveryId}:${payload.shortLinkId}`,
-        1,
-        CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK.maxRequests,
-        CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK.windowMs,
-      );
 
       await this.messageQueueService.add<CampaignEngagementObservation>(
         RECORD_CAMPAIGN_ENGAGEMENT_JOB,

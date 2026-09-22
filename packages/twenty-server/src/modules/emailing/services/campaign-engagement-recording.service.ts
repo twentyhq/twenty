@@ -8,7 +8,7 @@ import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
-import { classifyEngagementUserAgent } from 'src/modules/emailing/utils/classify-engagement-user-agent.util';
+import { buildCampaignClickEvent } from 'src/modules/emailing/utils/build-campaign-click-event.util';
 
 @Injectable()
 export class CampaignEngagementRecordingService {
@@ -34,18 +34,16 @@ export class CampaignEngagementRecordingService {
       id: delivery.workspaceId,
     });
 
-    if (!workspace?.isCampaignClickTrackingEnabled) {
+    const clickEvent = buildCampaignClickEvent({
+      delivery,
+      workspace,
+      observation,
+    });
+
+    if (!isDefined(clickEvent)) {
       return;
     }
 
-    await this.campaignEngagementEventService.insertClickOrThrow({
-      workspaceId: delivery.workspaceId,
-      messageCampaignId: delivery.campaignId,
-      shortLinkId: observation.shortLinkId,
-      deliveryId: delivery.id,
-      eventId: observation.eventId,
-      occurredAt: observation.occurredAt,
-      activityClass: classifyEngagementUserAgent(observation.userAgent),
-    });
+    await this.campaignEngagementEventService.insertClickOrThrow(clickEvent);
   }
 }
