@@ -1,4 +1,4 @@
-import { isObject } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 import {
   FieldMetadataType,
@@ -547,10 +547,9 @@ export const isRecordMatchingFilter = ({
               in: primaryEmailFilter.in.map(getEmailIdentityKey),
             }),
           },
-          value:
-            typeof primaryEmail === 'string'
-              ? getEmailIdentityKey(primaryEmail)
-              : primaryEmail,
+          value: isNonEmptyString(primaryEmail)
+            ? getEmailIdentityKey(primaryEmail)
+            : primaryEmail,
         });
       }
       case FieldMetadataType.PHONES: {
