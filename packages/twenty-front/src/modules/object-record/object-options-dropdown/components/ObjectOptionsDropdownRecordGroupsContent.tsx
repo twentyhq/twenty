@@ -4,9 +4,11 @@ import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdow
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
+import { isGroupLoadLimitSupportedForViewType } from '@/object-record/record-group/utils/isGroupLoadLimitSupportedForViewType';
 import { isRecordGroupingOptionalForViewType } from '@/object-record/record-group/utils/isRecordGroupingOptionalForViewType';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -31,6 +33,7 @@ import {
   IconCircleOff,
   IconEyeOff,
   IconLayoutList,
+  IconListNumbers,
   IconPlus,
 } from 'twenty-ui/icon';
 import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
@@ -70,6 +73,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     currentView?.shouldHideEmptyGroups ??
     false;
 
+  const recordIndexGroupLoadLimit = useAtomComponentStateValue(
+    recordIndexGroupLoadLimitComponentState,
+  );
+
   const recordIndexRecordGroupSort = useAtomComponentStateValue(
     recordIndexRecordGroupSortComponentState,
   );
@@ -90,6 +97,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     isDefined(recordIndexGroupFieldMetadataItem) &&
     isManyToOneRelationField(recordIndexGroupFieldMetadataItem);
 
+  const shouldShowGroupLoadLimit =
+    isDefined(recordIndexGroupFieldMetadataItem) &&
+    isGroupLoadLimitSupportedForViewType(viewType);
+
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
@@ -107,6 +118,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const selectableItemIdArray = [
     ...(currentView?.key !== 'INDEX' ? ['GroupBy', 'Sort'] : []),
     'HideEmptyGroups',
+    ...(shouldShowGroupLoadLimit ? ['LoadLimit'] : []),
   ];
 
   const hiddenGroupsSelectableListId = `${dropdownId}-hidden-groups`;
@@ -176,6 +188,22 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               checked={shouldHideEmptyGroups}
             >{t`Hide empty groups`}</SettingsRow>
           </SelectableListItem>
+          {shouldShowGroupLoadLimit && (
+            <SelectableListItem
+              itemId="LoadLimit"
+              onEnter={() => onContentChange('recordGroupLoadLimit')}
+            >
+              <MenuItem
+                focused={selectedItemId === 'LoadLimit'}
+                onClick={() => onContentChange('recordGroupLoadLimit')}
+                LeftIcon={IconListNumbers}
+                text={t`Load limit`}
+                contextualText={String(recordIndexGroupLoadLimit)}
+                contextualTextPosition="right"
+                hasSubMenu
+              />
+            </SelectableListItem>
+          )}
         </SelectableList>
       </DropdownMenuItemsContainer>
       {visibleRecordGroupIds.length > 0 && (

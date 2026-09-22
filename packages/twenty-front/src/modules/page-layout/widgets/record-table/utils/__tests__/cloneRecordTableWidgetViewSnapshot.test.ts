@@ -1,5 +1,6 @@
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { cloneRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/cloneRecordTableWidgetViewSnapshot';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   ViewFilterGroupLogicalOperator,
@@ -23,6 +24,7 @@ const sourceSnapshot: RecordTableWidgetViewSnapshot = {
     position: 0,
     visibility: ViewVisibility.WORKSPACE,
     shouldHideEmptyGroups: false,
+    groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     isActive: true,
   },
   viewFields: [

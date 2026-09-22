@@ -3,12 +3,14 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsInt,
   IsOptional,
   IsUUID,
   Max,
   Min,
 } from 'class-validator';
+import { VIEW_GROUP_LOAD_LIMIT_OPTIONS } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   ViewCalendarLayout,
@@ -66,6 +68,11 @@ export class UpsertViewWidgetViewSettingsInput {
   @Max(KANBAN_COLUMN_MAX_WIDTH)
   @Field(() => Int, { nullable: true })
   kanbanColumnWidth?: number | null;
+
+  @IsOptional()
+  @IsIn(VIEW_GROUP_LOAD_LIMIT_OPTIONS)
+  @Field(() => Int, { nullable: true })
+  groupLoadLimit?: number;
 
   @IsOptional()
   @IsEnum(ViewCalendarLayout)

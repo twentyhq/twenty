@@ -143,4 +143,6 @@ export const RecordGroupFields = createStory('recordGroupFields');
 
 export const RecordGroupSort = createStory('recordGroupSort');
 
+export const RecordGroupLoadLimit = createStory('recordGroupLoadLimit');
+
 export const HiddenRecordGroups = createStory('hiddenRecordGroups');

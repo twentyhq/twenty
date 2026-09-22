@@ -1,4 +1,5 @@
 import { type ViewManifest } from 'twenty-shared/application';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   ViewOpenRecordIn,
   ViewType,
@@ -42,6 +43,8 @@ export const fromViewManifestToUniversalFlatView = ({
       viewManifest.mainGroupByFieldMetadataUniversalIdentifier ?? null,
     shouldHideEmptyGroups: viewManifest.shouldHideEmptyGroups ?? false,
     kanbanColumnWidth: viewManifest.kanbanColumnWidth ?? null,
+    groupLoadLimit:
+      viewManifest.groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     anyFieldFilterValue: viewManifest.anyFieldFilterValue ?? null,
     createdByUserWorkspaceId: null,
     isActive: true,

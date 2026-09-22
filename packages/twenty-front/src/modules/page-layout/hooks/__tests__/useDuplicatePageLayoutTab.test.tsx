@@ -8,6 +8,7 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
@@ -114,6 +115,7 @@ const sourceRecordTableViewSnapshot: RecordTableWidgetViewSnapshot = {
     position: 0,
     visibility: ViewVisibility.WORKSPACE,
     shouldHideEmptyGroups: false,
+    groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     isActive: true,
   },
   viewFields: [

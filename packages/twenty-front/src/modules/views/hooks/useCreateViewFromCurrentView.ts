@@ -127,6 +127,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             kanbanColumnWidth: shouldCopyFiltersAndSortsAndAggregate
               ? sourceView.kanbanColumnWidth
               : undefined,
+            // A load limit is meaningless without the group-by it paces, so it
+            // follows mainGroupByFieldMetadataId rather than being copied alone
+            groupLoadLimit: shouldCopyFiltersAndSortsAndAggregate
+              ? sourceView.groupLoadLimit
+              : undefined,
             mainGroupByFieldMetadataId: shouldCopyFiltersAndSortsAndAggregate
               ? sourceView.mainGroupByFieldMetadataId
               : mainGroupByFieldMetadataId,

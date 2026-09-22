@@ -5,6 +5,7 @@ import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record
 import { filterFieldsForRecordTableViewCreation } from '@/page-layout/widgets/record-table/utils/filterFieldsForRecordTableViewCreation';
 import { normalizeRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/utils/normalizeRecordTableWidgetViewFields';
 import { sortFieldsByRelevanceForRecordTableWidget } from '@/page-layout/widgets/record-table/utils/sortFieldsByRelevanceForRecordTableWidget';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
 import { ViewType, ViewVisibility } from '~/generated-metadata/graphql';
 
@@ -26,6 +27,7 @@ export const buildRecordTableWidgetViewSnapshot = (
     position: 0,
     visibility: ViewVisibility.WORKSPACE,
     shouldHideEmptyGroups: false,
+    groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     isActive: true,
   };
 

@@ -2,6 +2,7 @@ import { useStore } from 'jotai';
 
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
@@ -16,6 +17,10 @@ export const useRecordGroupVisibility = () => {
     useAtomComponentStateCallbackState(
       recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
+
+  const recordIndexGroupLoadLimit = useAtomComponentStateCallbackState(
+    recordIndexGroupLoadLimitComponentState,
+  );
 
   const { saveViewGroup } = useSaveCurrentViewGroups();
   const { updateCurrentView } = useUpdateCurrentView();
@@ -44,8 +49,20 @@ export const useRecordGroupVisibility = () => {
     });
   }, [store, recordIndexShouldHideEmptyRecordGroups, updateCurrentView]);
 
+  const handleGroupLoadLimitChange = useCallback(
+    async (limit: number) => {
+      store.set(recordIndexGroupLoadLimit, limit);
+
+      await updateCurrentView({
+        groupLoadLimit: limit,
+      });
+    },
+    [store, recordIndexGroupLoadLimit, updateCurrentView],
+  );
+
   return {
     handleVisibilityChange,
     handleHideEmptyRecordGroupChange,
+    handleGroupLoadLimitChange,
   };
 };

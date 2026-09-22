@@ -6,6 +6,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
+import { VIEW_GROUP_LOAD_LIMIT_OPTIONS } from 'twenty-shared/constants';
 import { ViewType } from 'twenty-shared/types';
 
 const TEST_NOT_EXISTING_VIEW_ID = '20202020-0000-4000-8000-000000000000';
@@ -112,6 +113,59 @@ describe('Update core view', () => {
       isCompact: true,
       kanbanColumnWidth: 250,
     });
+  });
+
+  it.each(VIEW_GROUP_LOAD_LIMIT_OPTIONS)(
+    'should update the group load limit to %s',
+    async (groupLoadLimit) => {
+      const {
+        data: { createView: view },
+      } = await createOneView({
+        input: {
+          icon: '123Icon',
+          name: 'Group Load Limit View',
+          type: ViewType.KANBAN,
+          mainGroupByFieldMetadataId: testSelectFieldMetadataId,
+          objectMetadataId: testObjectMetadataId,
+        },
+        expectToFail: false,
+      });
+
+      const { data, errors } = await updateOneView({
+        viewId: view.id,
+        input: { id: view.id, groupLoadLimit },
+        gqlFields: `${VIEW_GQL_FIELDS}
+    groupLoadLimit`,
+        expectToFail: false,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data.updateView).toMatchObject({ id: view.id, groupLoadLimit });
+    },
+  );
+
+  it('should throw error when updating with a group load limit outside the allowed options', async () => {
+    const {
+      data: { createView: view },
+    } = await createOneView({
+      input: {
+        icon: '123Icon',
+        name: 'Invalid Group Load Limit View',
+        type: ViewType.TABLE,
+        objectMetadataId: testObjectMetadataId,
+      },
+      expectToFail: false,
+    });
+
+    const { errors } = await updateOneView({
+      viewId: view.id,
+      input: { id: view.id, groupLoadLimit: 17 },
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      'groupLoadLimit must be one of the following values: 8, 25, 50, 100',
+    );
   });
 
   it('should throw error when updating non-existent view', async () => {

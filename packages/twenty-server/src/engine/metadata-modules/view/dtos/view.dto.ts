@@ -5,6 +5,7 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   ViewCalendarLayout,
@@ -90,6 +91,12 @@ export class ViewDTO {
 
   @Field(() => Int, { nullable: true })
   kanbanColumnWidth?: number | null;
+
+  @Field(() => Int, {
+    nullable: false,
+    defaultValue: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
+  })
+  groupLoadLimit: number;
 
   @Field(() => UUIDScalarType, { nullable: true })
   calendarFieldMetadataId?: string | null;

@@ -1,3 +1,4 @@
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   ViewCalendarLayout,
@@ -36,6 +37,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.position).toBe(0);
     expect(result.isCompact).toBe(false);
     expect(result.shouldHideEmptyGroups).toBe(false);
+    expect(result.groupLoadLimit).toBe(DEFAULT_VIEW_GROUP_LOAD_LIMIT);
     expect(result.isCustom).toBe(true);
     expect(result.visibility).toBe(ViewVisibility.WORKSPACE);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.SIDE_PANEL);
@@ -55,6 +57,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
         position: 3,
         isCompact: true,
         shouldHideEmptyGroups: true,
+        groupLoadLimit: 50,
         visibility: ViewVisibility.UNLISTED,
         openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
       },
@@ -67,6 +70,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.position).toBe(3);
     expect(result.isCompact).toBe(true);
     expect(result.shouldHideEmptyGroups).toBe(true);
+    expect(result.groupLoadLimit).toBe(50);
     expect(result.visibility).toBe(ViewVisibility.UNLISTED);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.RECORD_PAGE);
   });

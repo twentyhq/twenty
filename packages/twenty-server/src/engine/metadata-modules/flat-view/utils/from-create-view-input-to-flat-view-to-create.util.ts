@@ -1,3 +1,4 @@
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
@@ -80,6 +81,8 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     isCompact: createViewInput.isCompact ?? false,
     shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
     kanbanColumnWidth: createViewInput.kanbanColumnWidth ?? null,
+    groupLoadLimit:
+      createViewInput.groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     kanbanAggregateOperation: createViewInput.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
