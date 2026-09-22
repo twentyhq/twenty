@@ -4169,7 +4169,8 @@ type Mutation {
   signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
-  uploadNewWorkspaceLogo(workspaceId: String!, file: Upload!): FileWithSignedUrl!
+  createNewWorkspaceLogoUpload(workspaceId: String!, filename: String!, size: Float!): FileUploadTarget!
+  completeNewWorkspaceLogoUpload(workspaceId: String!, fileId: String!): FileWithSignedUrl!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   getAuthTokensFromSSOExchangeToken(ssoExchangeToken: String!): AuthTokens!

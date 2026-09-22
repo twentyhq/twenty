@@ -10535,16 +10535,33 @@ export default {
                     ]
                 }
             ],
-            "uploadNewWorkspaceLogo": [
+            "createNewWorkspaceLogoUpload": [
+                160,
+                {
+                    "workspaceId": [
+                        1,
+                        "String!"
+                    ],
+                    "filename": [
+                        1,
+                        "String!"
+                    ],
+                    "size": [
+                        15,
+                        "Float!"
+                    ]
+                }
+            ],
+            "completeNewWorkspaceLogoUpload": [
                 159,
                 {
                     "workspaceId": [
                         1,
                         "String!"
                     ],
-                    "file": [
-                        431,
-                        "Upload!"
+                    "fileId": [
+                        1,
+                        "String!"
                     ]
                 }
             ],

@@ -3587,7 +3587,8 @@ export interface Mutation {
     signUp: AvailableWorkspacesAndAccessTokens
     signUpInWorkspace: SignUp
     signUpInNewWorkspace: SignUp
-    uploadNewWorkspaceLogo: FileWithSignedUrl
+    createNewWorkspaceLogoUpload: FileUploadTarget
+    completeNewWorkspaceLogoUpload: FileWithSignedUrl
     generateTransientToken: TransientToken
     getAuthTokensFromLoginToken: AuthTokens
     getAuthTokensFromSSOExchangeToken: AuthTokens
@@ -7420,7 +7421,8 @@ export interface MutationGenqlSelection{
     signUp?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null), captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInNewWorkspace?: (SignUpGenqlSelection & { __args?: {input?: (SignUpInNewWorkspaceInput | null)} })
-    uploadNewWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {workspaceId: Scalars['String'], file: Scalars['Upload']} })
+    createNewWorkspaceLogoUpload?: (FileUploadTargetGenqlSelection & { __args: {workspaceId: Scalars['String'], filename: Scalars['String'], size: Scalars['Float']} })
+    completeNewWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {workspaceId: Scalars['String'], fileId: Scalars['String']} })
     generateTransientToken?: TransientTokenGenqlSelection
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     getAuthTokensFromSSOExchangeToken?: (AuthTokensGenqlSelection & { __args: {ssoExchangeToken: Scalars['String']} })

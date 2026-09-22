@@ -313,44 +313,6 @@ export class FileCorePictureService {
     return this.toFileWithSignedUrl({ file, workspaceId });
   }
 
-  async uploadWorkspacePicture({
-    file,
-    filename,
-    workspace,
-  }: {
-    file: Buffer;
-    filename: string;
-    workspace: WorkspaceEntity;
-  }): Promise<FileWithSignedUrlDTO> {
-    const savedFile = await this.uploadCorePicture({
-      file,
-      filename,
-      workspaceId: workspace.id,
-    });
-
-    await this.workspaceRepository.update(workspace.id, {
-      logoFileId: savedFile.id,
-    });
-
-    if (isDefined(workspace.logoFileId)) {
-      await this.deleteCorePicture({
-        fileId: workspace.logoFileId,
-        workspaceId: workspace.id,
-      });
-    }
-
-    const url = await this.fileUrlService.signFileByIdUrl({
-      fileId: savedFile.id,
-      fileFolder: FileFolder.CorePicture,
-      workspaceId: workspace.id,
-    });
-
-    return {
-      ...savedFile,
-      url,
-    };
-  }
-
   async getPendingWorkspaceForLogoUploadOrThrow({
     userId,
     workspaceId,
