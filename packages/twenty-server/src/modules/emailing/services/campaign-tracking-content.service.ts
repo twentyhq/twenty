@@ -25,6 +25,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
 import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
 import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag-prefix-by-message-part.constant';
+import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
 
@@ -60,6 +61,7 @@ export class CampaignTrackingContentService {
     private readonly shortLinkService: ShortLinkService,
     private readonly campaignTrackingTokenService: CampaignTrackingTokenService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly campaignEngagementEventService: CampaignEngagementEventService,
   ) {}
 
   async prepareBatch({
@@ -86,7 +88,7 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
-    if (!isNonEmptyString(this.twentyConfigService.get('CLICKHOUSE_URL'))) {
+    if (!this.campaignEngagementEventService.isAvailable()) {
       return untracked;
     }
 
