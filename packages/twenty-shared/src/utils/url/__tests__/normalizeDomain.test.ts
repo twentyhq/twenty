@@ -25,6 +25,7 @@ describe('normalizeDomain', () => {
     expect(normalizeDomain('münchen.de')).toBe('xn--mnchen-3ya.de');
     expect(normalizeDomain('https://München.de')).toBe('xn--mnchen-3ya.de');
     expect(normalizeDomain('xn--mnchen-3ya.de')).toBe('xn--mnchen-3ya.de');
+    expect(normalizeDomain('www.München．DE.')).toBe('xn--mnchen-3ya.de');
   });
 
   it('should read a backslash as a path separator, like a browser does', () => {

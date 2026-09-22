@@ -7,6 +7,7 @@ describe('canonicalizeEmail', () => {
     ['  Admin@💩。LA.  ', 'admin@xn--ls8h.la'],
     ['Admin@München．DE', 'admin@xn--mnchen-3ya.de'],
     ['Admin@München｡DE.', 'admin@xn--mnchen-3ya.de'],
+    ['Admin@WWW.München.DE', 'admin@www.xn--mnchen-3ya.de'],
     ['JÖHN@EXAMPLE.COM', 'jöhn@example.com'],
   ])('canonicalizes %s to %s', (input, expected) => {
     expect(canonicalizeEmail(input)).toBe(expected);
