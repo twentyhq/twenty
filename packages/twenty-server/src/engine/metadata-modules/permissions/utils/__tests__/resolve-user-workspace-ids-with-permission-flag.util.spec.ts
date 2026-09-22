@@ -47,6 +47,9 @@ const buildInput = ({
             rolePermissionFlagIds: role.grantedPermissionFlag
               ? [`role-permission-flag-${role.id}`]
               : [],
+            roleTargetIds: roleTargets.flatMap((roleTarget, index) =>
+              roleTarget.roleId === role.id ? [`role-target-${index}`] : [],
+            ),
           },
         ]),
       ),
@@ -73,6 +76,12 @@ const buildInput = ({
         roleTargets.map((roleTarget, index) => [
           `role-target-${index}`,
           roleTarget,
+        ]),
+      ),
+      universalIdentifierById: Object.fromEntries(
+        roleTargets.map((_, index) => [
+          `role-target-${index}`,
+          `role-target-${index}`,
         ]),
       ),
     } as unknown as FlatRoleTargetMaps,

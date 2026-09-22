@@ -13,6 +13,13 @@ import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-st
 import { type QueueJobEvent } from 'src/engine/subscriptions/types/queue-job-event.type';
 import { type WorkspaceBroadcastEvent } from 'src/engine/subscriptions/workspace-event-broadcaster/types/workspace-broadcast-event.type';
 
+// A stream carrying an application or an api key is narrower than the user it
+// authenticates: the read guard intersects the user role with the application
+// role, which this fan-out cannot evaluate, so a gated event must not reach it.
+const isStreamScopedToItsUser = (streamData: EventStreamData): boolean =>
+  !isDefined(streamData.authContext.applicationId) &&
+  !isDefined(streamData.authContext.apiKeyId);
+
 @Injectable()
 export class WorkspaceEventBroadcaster {
   constructor(
@@ -46,20 +53,15 @@ export class WorkspaceEventBroadcaster {
       const metadataEventsForStream = events
         .filter((event) => {
           if (isDefined(event.requiredPermissionFlag)) {
-            const allowedUserWorkspaceIds =
-              allowedUserWorkspaceIdsByPermissionFlag.get(
-                event.requiredPermissionFlag,
-              );
+            const isStreamAllowed =
+              isStreamScopedToItsUser(streamData) &&
+              isDefined(streamUserWorkspaceId) &&
+              (allowedUserWorkspaceIdsByPermissionFlag
+                .get(event.requiredPermissionFlag)
+                ?.has(streamUserWorkspaceId) ??
+                false);
 
-            // A stream carrying an application or api key is narrower than its
-            // user: the read guard intersects the user role with the application
-            // role, which this fan-out cannot evaluate, so it must not deliver.
-            if (
-              isDefined(streamData.authContext.applicationId) ||
-              isDefined(streamData.authContext.apiKeyId) ||
-              !isDefined(streamUserWorkspaceId) ||
-              !allowedUserWorkspaceIds?.has(streamUserWorkspaceId)
-            ) {
+            if (!isStreamAllowed) {
               return false;
             }
           }
