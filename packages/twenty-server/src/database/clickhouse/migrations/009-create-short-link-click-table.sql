@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS shortLinkClick
     `occurredAt`        DateTime64(3, 'UTC'),
     `activityClass`     LowCardinality(String)
 )
-    ENGINE = MergeTree
+    ENGINE = ReplacingMergeTree
     PARTITION BY toYYYYMM(occurredAt)
-    ORDER BY (workspaceId, messageCampaignId, shortLinkId, occurredAt)
+    ORDER BY (workspaceId, shortLinkId, occurredAt, eventId)
     TTL toDateTime(occurredAt) + INTERVAL 3 YEAR DELETE;

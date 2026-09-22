@@ -25,7 +25,7 @@ import {
 } from 'typeorm';
 
 import { ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-workspace-discoverability-to-workspace-upgrade-command-name.constant';
-import { ADD_SHORT_LINK_AND_MESSAGE_TRACKING_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-short-link-and-message-tracking-upgrade-command-name.constant';
+import { ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-campaign-tracking-flags-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -126,16 +126,14 @@ export class WorkspaceEntity {
 
   @Field()
   @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      ADD_SHORT_LINK_AND_MESSAGE_TRACKING_UPGRADE_COMMAND_NAME,
+    upgradeCommandName: ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME,
   })
   @Column({ default: false })
   isCampaignClickTrackingEnabled: boolean;
 
   @Field()
   @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      ADD_SHORT_LINK_AND_MESSAGE_TRACKING_UPGRADE_COMMAND_NAME,
+    upgradeCommandName: ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME,
   })
   @Column({ default: false })
   isCampaignOpenTrackingEnabled: boolean;

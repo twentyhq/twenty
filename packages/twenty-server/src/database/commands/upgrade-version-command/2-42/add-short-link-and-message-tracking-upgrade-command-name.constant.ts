@@ -1,2 +1,0 @@
-export const ADD_SHORT_LINK_AND_MESSAGE_TRACKING_UPGRADE_COMMAND_NAME =
-  '2.42.0_AddShortLinkAndMessageTrackingFastInstanceCommand_1789639200001';
