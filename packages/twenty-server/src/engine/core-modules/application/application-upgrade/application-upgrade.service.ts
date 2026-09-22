@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import chunk from 'lodash.chunk';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -13,6 +14,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import {
+  UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE,
   UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
   UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
   type UpgradeWorkspaceApplicationJobData,
@@ -111,24 +113,39 @@ export class ApplicationUpgradeService {
   async enqueueWorkspaceApplicationUpgrades({
     applicationRegistrationId,
     applications,
+    onlyAutoUpgrade,
   }: {
     applicationRegistrationId: string;
     applications: ApplicationEntity[];
+    onlyAutoUpgrade: boolean;
   }): Promise<string[]> {
     if (!isNonEmptyArray(applications)) {
       return [];
     }
 
-    return this.applicationUpgradeQueueService.bulkAdd<UpgradeWorkspaceApplicationJobData>(
-      UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
-      applications.map((application) => ({
-        data: {
-          applicationRegistrationId,
-          workspaceId: application.workspaceId,
-        },
-      })),
-      UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
-    );
+    const jobIds: string[] = [];
+
+    for (const applicationsBatch of chunk(
+      applications,
+      UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE,
+    )) {
+      const batchJobIds =
+        await this.applicationUpgradeQueueService.bulkAdd<UpgradeWorkspaceApplicationJobData>(
+          UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
+          applicationsBatch.map((application) => ({
+            data: {
+              applicationRegistrationId,
+              workspaceId: application.workspaceId,
+              onlyAutoUpgrade,
+            },
+          })),
+          UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
+        );
+
+      jobIds.push(...batchJobIds);
+    }
+
+    return jobIds;
   }
 
   async enqueueApplicationUpgrades({
@@ -151,6 +168,7 @@ export class ApplicationUpgradeService {
     const jobIds = await this.enqueueWorkspaceApplicationUpgrades({
       applicationRegistrationId,
       applications: applicationsToUpgrade,
+      onlyAutoUpgrade,
     });
 
     this.logger.log(
@@ -163,9 +181,11 @@ export class ApplicationUpgradeService {
   async upgradeWorkspaceApplicationToLatestVersion({
     applicationRegistrationId,
     workspaceId,
+    onlyAutoUpgrade,
   }: {
     applicationRegistrationId: string;
     workspaceId: string;
+    onlyAutoUpgrade: boolean;
   }): Promise<void> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
@@ -188,6 +208,14 @@ export class ApplicationUpgradeService {
     if (!isDefined(application)) {
       this.logger.log(
         `Skipping upgrade of ${appRegistration.universalIdentifier} on workspace ${workspaceId}: application is not installed anymore`,
+      );
+
+      return;
+    }
+
+    if (onlyAutoUpgrade && !application.autoUpgrade) {
+      this.logger.log(
+        `Skipping upgrade of ${appRegistration.universalIdentifier} on workspace ${workspaceId}: auto upgrade is disabled`,
       );
 
       return;

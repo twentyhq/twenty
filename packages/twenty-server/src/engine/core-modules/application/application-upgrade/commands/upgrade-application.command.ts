@@ -186,6 +186,7 @@ export class UpgradeApplicationCommand extends CommandRunner {
       await this.applicationUpgradeService.enqueueWorkspaceApplicationUpgrades({
         applicationRegistrationId: registration.id,
         applications: applicationsToUpgrade,
+        onlyAutoUpgrade: false,
       });
 
     this.logger.log(

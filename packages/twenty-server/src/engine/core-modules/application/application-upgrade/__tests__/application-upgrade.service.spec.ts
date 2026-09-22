@@ -7,6 +7,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
+  UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE,
   UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
   UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
 } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
@@ -30,15 +31,17 @@ const appRegistration = {
 const buildApplication = ({
   workspaceId,
   version,
+  autoUpgrade = true,
 }: {
   workspaceId: string;
   version: string | null;
+  autoUpgrade?: boolean;
 }) =>
   ({
     applicationRegistrationId: APPLICATION_REGISTRATION_ID,
     workspaceId,
     version,
-    autoUpgrade: true,
+    autoUpgrade,
   }) as ApplicationEntity;
 
 describe('ApplicationUpgradeService', () => {
@@ -124,11 +127,42 @@ describe('ApplicationUpgradeService', () => {
             data: {
               applicationRegistrationId: APPLICATION_REGISTRATION_ID,
               workspaceId: OUTDATED_WORKSPACE_ID,
+              onlyAutoUpgrade: true,
             },
           },
         ],
         UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
       );
+    });
+
+    it('splits a large fan-out into several bulk adds', async () => {
+      const workspaceIds = Array.from(
+        { length: UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE + 1 },
+        (_, index) =>
+          `20202020-0000-0000-0000-${String(index).padStart(12, '0')}`,
+      );
+
+      workspaceVersionService.getProvisionedWorkspaceIds.mockResolvedValue(
+        workspaceIds,
+      );
+      applicationRepository.find.mockResolvedValue(
+        workspaceIds.map((workspaceId) =>
+          buildApplication({ workspaceId, version: '1.0.0' }),
+        ),
+      );
+
+      const jobIds = await service.enqueueApplicationUpgrades({
+        applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+      });
+
+      expect(jobIds).toHaveLength(workspaceIds.length);
+      expect(applicationUpgradeQueueService.bulkAdd).toHaveBeenCalledTimes(2);
+      expect(
+        applicationUpgradeQueueService.bulkAdd.mock.calls[0][1],
+      ).toHaveLength(UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE);
+      expect(
+        applicationUpgradeQueueService.bulkAdd.mock.calls[1][1],
+      ).toHaveLength(1);
     });
 
     it('enqueues nothing when every installation already runs the latest version', async () => {
@@ -175,6 +209,7 @@ describe('ApplicationUpgradeService', () => {
       await service.upgradeWorkspaceApplicationToLatestVersion({
         applicationRegistrationId: APPLICATION_REGISTRATION_ID,
         workspaceId: OUTDATED_WORKSPACE_ID,
+        onlyAutoUpgrade: false,
       });
 
       expect(applicationInstallService.installApplication).toHaveBeenCalledWith(
@@ -194,6 +229,47 @@ describe('ApplicationUpgradeService', () => {
       await service.upgradeWorkspaceApplicationToLatestVersion({
         applicationRegistrationId: APPLICATION_REGISTRATION_ID,
         workspaceId: OUTDATED_WORKSPACE_ID,
+        onlyAutoUpgrade: false,
+      });
+
+      expect(
+        applicationInstallService.installApplication,
+      ).toHaveBeenCalledTimes(1);
+    });
+
+    it('skips an automatic upgrade on a workspace that disabled auto upgrade after the fan-out', async () => {
+      applicationRepository.findOne.mockResolvedValue(
+        buildApplication({
+          workspaceId: OUTDATED_WORKSPACE_ID,
+          version: '1.0.0',
+          autoUpgrade: false,
+        }),
+      );
+
+      await service.upgradeWorkspaceApplicationToLatestVersion({
+        applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+        workspaceId: OUTDATED_WORKSPACE_ID,
+        onlyAutoUpgrade: true,
+      });
+
+      expect(
+        applicationInstallService.installApplication,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('still upgrades a workspace that disabled auto upgrade when the upgrade is manual', async () => {
+      applicationRepository.findOne.mockResolvedValue(
+        buildApplication({
+          workspaceId: OUTDATED_WORKSPACE_ID,
+          version: '1.0.0',
+          autoUpgrade: false,
+        }),
+      );
+
+      await service.upgradeWorkspaceApplicationToLatestVersion({
+        applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+        workspaceId: OUTDATED_WORKSPACE_ID,
+        onlyAutoUpgrade: false,
       });
 
       expect(
@@ -212,6 +288,7 @@ describe('ApplicationUpgradeService', () => {
       await service.upgradeWorkspaceApplicationToLatestVersion({
         applicationRegistrationId: APPLICATION_REGISTRATION_ID,
         workspaceId: UP_TO_DATE_WORKSPACE_ID,
+        onlyAutoUpgrade: false,
       });
 
       expect(
@@ -225,6 +302,7 @@ describe('ApplicationUpgradeService', () => {
       await service.upgradeWorkspaceApplicationToLatestVersion({
         applicationRegistrationId: APPLICATION_REGISTRATION_ID,
         workspaceId: OUTDATED_WORKSPACE_ID,
+        onlyAutoUpgrade: false,
       });
 
       expect(
@@ -241,6 +319,7 @@ describe('ApplicationUpgradeService', () => {
       await service.upgradeWorkspaceApplicationToLatestVersion({
         applicationRegistrationId: APPLICATION_REGISTRATION_ID,
         workspaceId: OUTDATED_WORKSPACE_ID,
+        onlyAutoUpgrade: false,
       });
 
       expect(applicationRepository.findOne).not.toHaveBeenCalled();
