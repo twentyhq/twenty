@@ -141,9 +141,6 @@ export class WorkspaceIteratorService {
       } catch (error: unknown) {
         report.fail.push({ error: error as Error, workspaceId });
       } finally {
-        // A command visits each workspace once, so the metadata graphs the
-        // callback loaded would otherwise stay resident until the cache sweep
-        // caps them, which with thousands of workspaces exceeds the heap.
         await this.workspaceCacheService.evictWorkspaceFromLocalCache(
           workspaceId,
         );

@@ -358,10 +358,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
   }
 
-  // Drops the local copies only: Redis keeps its entries, so the next read
-  // refetches instead of recomputing. For processes that visit a workspace
-  // once and move on, where waiting for the idle sweep would keep every
-  // visited workspace's graphs resident.
   public async evictWorkspaceFromLocalCache(
     workspaceId: string,
   ): Promise<void> {
