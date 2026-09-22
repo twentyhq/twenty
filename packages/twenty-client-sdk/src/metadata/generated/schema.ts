@@ -3245,11 +3245,11 @@ export interface MinimalMetadata {
 export interface Query {
     navigationMenuItems: NavigationMenuItem[]
     navigationMenuItem?: NavigationMenuItem
-    applicationSdkClientChecksums?: SdkClientChecksums
-    isApplicationStopped: Scalars['Boolean']
     enterprisePortalSession?: Scalars['String']
     enterpriseCheckoutSession?: Scalars['String']
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
+    applicationSdkClientChecksums?: SdkClientChecksums
+    isApplicationStopped: Scalars['Boolean']
     usageLimits: UsageLimit[]
     usageQuotasWithConsumption: UsageQuotaWithConsumption[]
     usageQuotaDefinitions: UsageQuotaDefinitions
@@ -7044,11 +7044,11 @@ export interface MinimalMetadataGenqlSelection{
 export interface QueryGenqlSelection{
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    isApplicationStopped?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
+    applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    isApplicationStopped?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     usageLimits?: UsageLimitGenqlSelection
     usageQuotasWithConsumption?: UsageQuotaWithConsumptionGenqlSelection
     usageQuotaDefinitions?: UsageQuotaDefinitionsGenqlSelection
