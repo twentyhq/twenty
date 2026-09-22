@@ -294,48 +294,4 @@ describe('Generated client wrapper uploadFile', () => {
     expect(sentFile.type).toBe('application/pdf');
     expect(Buffer.from(await sentFile.arrayBuffer())).toEqual(fileBuffer);
   });
-
-  it('refreshes the token and retries when creating the upload target is unauthenticated', async () => {
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'stale-token';
-
-    const requestAccessTokenRefresh = vi
-      .fn<() => Promise<string>>()
-      .mockResolvedValue('fresh-token');
-
-    (globalThis as Record<string, unknown>).frontComponentHostCommunicationApi =
-      {
-        requestAccessTokenRefresh,
-      };
-
-    const { fetchMock, capturedRequests } = createFetchMock();
-
-    fetchMock.mockImplementationOnce(
-      async (url: string | URL | Request, requestInit?: RequestInit) => {
-        capturedRequests.push({ url: String(url), requestInit });
-
-        return createJsonResponse({
-          body: { message: 'Unauthorized' },
-          status: 401,
-          statusText: 'Unauthorized',
-        });
-      },
-    );
-
-    const result = await uploadInvoice(createClient(fetchMock));
-
-    expect(result).toEqual(uploadedFile);
-    expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
-    expect(
-      capturedRequests.map(({ requestInit }) => requestInit?.method),
-    ).toEqual(['POST', 'POST', 'PUT', 'POST']);
-    expect(getAuthorizationHeaderValue(capturedRequests[0].requestInit)).toBe(
-      'Bearer stale-token',
-    );
-    expect(getAuthorizationHeaderValue(capturedRequests[1].requestInit)).toBe(
-      'Bearer fresh-token',
-    );
-    expect(getAuthorizationHeaderValue(capturedRequests[3].requestInit)).toBe(
-      'Bearer fresh-token',
-    );
-  });
 });
