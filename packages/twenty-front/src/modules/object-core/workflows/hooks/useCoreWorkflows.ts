@@ -147,7 +147,7 @@ export const useCoreWorkflows = ({
     let requestedCount = Math.min(targetCount, CORE_WORKFLOWS_MAX_PAGE_SIZE);
     let pageInfo = refetched.data?.coreWorkflows.pageInfo;
 
-    while (requestedCount < targetCount && pageInfo?.hasNextPage === true) {
+    while (requestedCount < targetCount && pageInfo?.hasNextPage) {
       const nextPageSize = Math.min(
         targetCount - requestedCount,
         CORE_WORKFLOWS_MAX_PAGE_SIZE,
