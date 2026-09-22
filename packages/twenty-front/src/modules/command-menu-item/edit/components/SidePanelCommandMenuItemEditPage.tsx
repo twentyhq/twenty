@@ -1,3 +1,5 @@
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
+import { DraggableListItem } from '@/ui/layout/draggable-list/components/DraggableListItem';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
 import { useEditableCommandMenuItems } from '@/command-menu-item/edit/hooks/useEditableCommandMenuItems';
@@ -27,7 +29,7 @@ import {
   IconPinnedOff,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { LightIconButton } from 'twenty-ui/components';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -221,13 +223,10 @@ export const SidePanelCommandMenuItemEditPage = () => {
                         itemId={item.id}
                         onEnter={() => handleTogglePin(item.id, true)}
                       >
-                        <MenuItemDraggable
-                          withIconContainer
-                          LeftIcon={ItemIcon}
-                          text={getDisplayLabel(item)}
-                          gripMode="onHover"
-                          isIconDisplayedOnHoverOnly={false}
-                          iconButtons={
+                        <DraggableListItem
+                          grip="onHover"
+                          actionsVisibility="always"
+                          actions={
                             <ButtonGroup
                               attached={false}
                               aria-label={t`Menu item actions`}
@@ -256,7 +255,11 @@ export const SidePanelCommandMenuItemEditPage = () => {
                               </LightIconButton>
                             </ButtonGroup>
                           }
-                        />
+                          icon={ItemIcon}
+                          iconContainer
+                        >
+                          {getDisplayLabel(item)}
+                        </DraggableListItem>
                       </SelectableListItem>
                     }
                   />
@@ -277,12 +280,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
                   itemId={item.id}
                   onEnter={() => handleTogglePin(item.id, false)}
                 >
-                  <MenuItem
-                    withIconContainer
-                    LeftIcon={ItemIcon}
-                    text={getDisplayLabel(item)}
-                    isIconDisplayedOnHoverOnly={false}
-                    iconButtons={
+                  <ListItem
+                    actionsVisibility="always"
+                    actions={
                       <LightIconButton
                         aria-label={t`Pin`}
                         onClick={(event) => {
@@ -293,7 +293,12 @@ export const SidePanelCommandMenuItemEditPage = () => {
                         <IconPin />
                       </LightIconButton>
                     }
-                  />
+                    startIcon={
+                      <ListItemIcon icon={ItemIcon} container="soft" />
+                    }
+                  >
+                    {getDisplayLabel(item)}
+                  </ListItem>
                 </SelectableListItem>
               );
             })}

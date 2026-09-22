@@ -2388,6 +2388,13 @@
         "description": "Trailing content, such as buttons, rendered after the content."
       },
       {
+        "name": "actionsVisibility",
+        "type": "\"always\" | \"hover\"",
+        "required": false,
+        "defaultValue": "hover",
+        "description": "Shows actions on hover or focus by default. Use always to keep actions visible on every input device."
+      },
+      {
         "name": "color",
         "type": "\"danger\" | \"neutral\"",
         "required": false,
@@ -2470,6 +2477,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Icon rendered before the content."
+      },
+      {
+        "name": "submenuOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Rotates the submenu indicator when the host expands the row. The host owns the expansion state and semantics."
       }
     ]
   },

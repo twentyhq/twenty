@@ -1,3 +1,4 @@
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -19,7 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
 import { useContext } from 'react';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SidePanelWorkflowSelectTriggerTypeContent = () => {
@@ -82,13 +83,21 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
       {DATABASE_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
-          <MenuItem
-            withIconContainer={true}
+          <ListItem
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.blue} size={16} />}
-            text={action.defaultLabel}
-            onClick={handleTriggerTypeClick(action)}
-          />
+            onClick={(event) => {
+              event.preventDefault();
+              handleTriggerTypeClick(action)();
+            }}
+            startIcon={
+              <ListItemIcon
+                icon={() => <Icon color={theme.color.blue} size={16} />}
+                container="soft"
+              />
+            }
+          >
+            {action.defaultLabel}
+          </ListItem>
         );
       })}
 
@@ -98,13 +107,21 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
       {OTHER_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
-          <MenuItem
-            withIconContainer={true}
+          <ListItem
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.purple} size={16} />}
-            text={action.defaultLabel}
-            onClick={handleTriggerTypeClick(action)}
-          />
+            onClick={(event) => {
+              event.preventDefault();
+              handleTriggerTypeClick(action)();
+            }}
+            startIcon={
+              <ListItemIcon
+                icon={() => <Icon color={theme.color.purple} size={16} />}
+                container="soft"
+              />
+            }
+          >
+            {action.defaultLabel}
+          </ListItem>
         );
       })}
     </SidePanelStepListContainer>

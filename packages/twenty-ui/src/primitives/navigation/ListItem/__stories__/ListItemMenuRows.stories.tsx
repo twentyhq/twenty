@@ -1,5 +1,5 @@
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
-import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
@@ -10,44 +10,54 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { type MenuItemAccent } from '@ui/primitives/navigation/MenuItem/types/MenuItemAccent';
-import { MenuItem } from '@ui/primitives/navigation/MenuItem/MenuItem';
+import { type ListItemColor } from '../types/ListItemColor';
+import { ListItem } from '../ListItem';
 
-const meta: Meta<typeof MenuItem> = {
+const meta: Meta<typeof ListItem> = {
   title: 'UI/Navigation/Menu/MenuItem/MenuItem',
-  component: MenuItem,
+  component: ListItem,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItem>;
+type Story = StoryObj<typeof ListItem>;
 
 export const Default: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
-    text: 'Menu item text',
-    LeftIcon: IconBell,
-    accent: 'default',
-    iconButtons: (
+    children: 'Menu item text',
+    startIcon: <IconBell />,
+    color: 'neutral',
+    actions: (
       <ButtonGroup attached={false}>
-        <LightIconButton aria-label={'Notify'} onClick={action('Clicked')}>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={'Notify'}
+          onClick={action('Clicked')}
+        >
           <IconBell />
-        </LightIconButton>
-        <LightIconButton aria-label={'Notify'} onClick={action('Clicked')}>
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={'Notify'}
+          onClick={action('Clicked')}
+        >
           <IconBell />
-        </LightIconButton>
+        </Button>
       </ButtonGroup>
     ),
   },
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: CatalogStory<Story, typeof MenuItem> = {
+export const Catalog: CatalogStory<Story, typeof ListItem> = {
   args: { ...Default.args },
   argTypes: {
-    accent: { control: false },
+    color: { control: false },
     className: { control: false },
-    iconButtons: { control: false },
+    actions: { control: false },
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
@@ -58,24 +68,15 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
           name: 'withIcon',
           values: [true, false],
           props: (withIcon: boolean) => ({
-            LeftIcon: withIcon ? IconBell : undefined,
+            startIcon: withIcon ? <IconBell /> : undefined,
           }),
           labels: (withIcon: boolean) =>
             withIcon ? 'With left icon' : 'Without left icon',
         },
         {
-          name: 'withIconContainer',
-          values: [true, false],
-          props: (withIconContainer: boolean) => ({ withIconContainer }),
-          labels: (withIconContainer: boolean) =>
-            withIconContainer
-              ? 'With icon container'
-              : 'Without icon container',
-        },
-        {
-          name: 'accents',
-          values: ['default', 'danger'] satisfies MenuItemAccent[],
-          props: (accent: MenuItemAccent) => ({ accent }),
+          name: 'colors',
+          values: ['neutral', 'danger'] satisfies ListItemColor[],
+          props: (color: ListItemColor) => ({ color }),
         },
         {
           name: 'states',
@@ -92,31 +93,35 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
           },
         },
         {
-          name: 'iconButtons',
+          name: 'actions',
           values: ['no icon button', 'two icon buttons'],
           props: (choice: string) => {
             switch (choice) {
               case 'no icon button': {
                 return {
-                  iconButtons: null,
+                  actions: null,
                 };
               }
               case 'two icon buttons': {
                 return {
-                  iconButtons: (
+                  actions: (
                     <ButtonGroup attached={false}>
-                      <LightIconButton
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         aria-label={'Notify'}
                         onClick={action('Clicked on first icon button')}
                       >
                         <IconBell />
-                      </LightIconButton>
-                      <LightIconButton
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         aria-label={'Notify'}
                         onClick={action('Clicked on second icon button')}
                       >
                         <IconBell />
-                      </LightIconButton>
+                      </Button>
                     </ButtonGroup>
                   ),
                 };
@@ -142,15 +147,15 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
   decorators: [CatalogDecorator],
 };
 
-export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
+export const HotKeysCatalog: CatalogStory<Story, typeof ListItem> = {
   args: {
-    text: 'Menu item with hotkeys',
-    LeftIcon: IconBell,
-    hotKeys: ['⌘', 'K'],
+    children: 'Menu item with hotkeys',
+    startIcon: <IconBell />,
+    hotkeys: ['⌘', 'K'],
   },
   argTypes: {
     className: { control: false },
-    iconButtons: { control: false },
+    actions: { control: false },
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
@@ -163,11 +168,11 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
           props: (choice: string) => {
             switch (choice) {
               case 'no hotkeys':
-                return { hotKeys: undefined };
+                return { hotkeys: undefined };
               case 'single key':
-                return { hotKeys: ['K'] };
+                return { hotkeys: ['K'] };
               case 'modifier + key':
-                return { hotKeys: ['⌘', 'K'] };
+                return { hotkeys: ['⌘', 'K'] };
               default:
                 return {};
             }
@@ -210,9 +215,9 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
   decorators: [CatalogDecorator],
 };
 
-export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
+export const ContextualTextCatalog: CatalogStory<Story, typeof ListItem> = {
   args: {
-    text: 'Menu item with contextual text',
+    children: 'Menu item with contextual text',
   },
   decorators: [CatalogDecorator],
   parameters: {
@@ -221,51 +226,53 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
     catalog: {
       dimensions: [
         {
-          name: 'contextualTextPosition',
-          values: ['left', 'right'],
-          props: (contextualTextPosition: 'left' | 'right') => ({
-            contextualTextPosition,
+          name: 'descriptionPlacement',
+          values: ['inline', 'end'],
+          props: (descriptionPlacement: 'inline' | 'end') => ({
+            descriptionPlacement,
           }),
-          labels: (contextualTextPosition: 'left' | 'right') =>
-            contextualTextPosition === 'left' ? 'Left' : 'Right',
+          labels: (descriptionPlacement: 'inline' | 'end') =>
+            descriptionPlacement === 'inline' ? 'Left' : 'Right',
         },
         {
-          name: 'contextualText',
+          name: 'description',
           values: [
             'Contextual text',
             'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, corporis.',
           ],
-          props: (contextualText: string) => ({ contextualText }),
-          labels: (contextualText: string) => {
-            switch (contextualText) {
+          props: (description: string) => ({ description }),
+          labels: (description: string) => {
+            switch (description) {
               case 'Contextual text':
                 return 'Contextual text';
               case 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet, corporis.':
                 return 'Long contextual text';
               default:
-                return contextualText;
+                return description;
             }
           },
         },
         {
-          name: 'iconButtons',
+          name: 'actions',
           values: ['no icon button', 'one icon button'],
           props: (choice: string) => {
             switch (choice) {
               case 'no icon button': {
                 return {
-                  iconButtons: null,
+                  actions: null,
                 };
               }
               case 'one icon button': {
                 return {
-                  iconButtons: (
-                    <LightIconButton
+                  actions: (
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       aria-label={'Notify'}
                       onClick={action('Clicked on icon button')}
                     >
                       <IconBell />
-                    </LightIconButton>
+                    </Button>
                   ),
                 };
               }
@@ -308,22 +315,21 @@ export const ContextualTextCatalog: CatalogStory<Story, typeof MenuItem> = {
   },
 };
 
-export const SubMenuCatalog: CatalogStory<Story, typeof MenuItem> = {
+export const SubMenuCatalog: CatalogStory<Story, typeof ListItem> = {
   args: {
-    text: 'Menu item with sub menu',
-    LeftIcon: IconBell,
-    hasSubMenu: true,
+    children: 'Menu item with sub menu',
+    startIcon: <IconBell />,
+    hasSubmenu: true,
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {
-          name: 'isSubMenuOpened',
+          name: 'submenuOpen',
           values: [true, false],
-          props: (isSubMenuOpened: boolean) => ({ isSubMenuOpened }),
-          labels: (isSubMenuOpened: boolean) =>
-            isSubMenuOpened ? 'Opened' : 'Closed',
+          props: (submenuOpen: boolean) => ({ submenuOpen }),
+          labels: (submenuOpen: boolean) => (submenuOpen ? 'Opened' : 'Closed'),
         },
       ],
       options: {

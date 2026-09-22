@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { t } from '@lingui/core/macro';
-import { MenuPicker } from 'twenty-ui/primitives/navigation';
+import { ChartTypeChoice } from '@/side-panel/pages/page-layout/components/ChartTypeChoice';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const graphTypeOptions = [
@@ -33,16 +33,14 @@ export const ChartTypeSelectionSection = ({
     <StyledChartTypeSelectionContainer>
       {graphTypeOptions.map((graphType) => {
         return (
-          <MenuPicker
-            id={graphType}
+          <ChartTypeChoice
             selected={currentGraphType === graphType}
             key={graphType}
             icon={GRAPH_TYPE_INFORMATION[graphType].icon}
             onClick={() => {
               setCurrentGraphType(graphType);
             }}
-            showLabel
-            tooltipContent={t(GRAPH_TYPE_INFORMATION[graphType].label)}
+            label={t(GRAPH_TYPE_INFORMATION[graphType].label)}
           />
         );
       })}

@@ -1,13 +1,11 @@
+import { type SlashCommandMenuProps } from './types/SlashCommandMenuProps';
 import { i18n } from '@lingui/core';
 import { Extension, type Editor, type Range } from '@tiptap/core';
 import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
 import { type IconComponent } from 'twenty-ui/icon';
 
 import { DEFAULT_SLASH_COMMANDS } from '@/advanced-text-editor/extensions/slash-command/DefaultSlashCommands';
-import {
-  SlashCommandMenu,
-  type SlashCommandMenuProps,
-} from '@/advanced-text-editor/extensions/slash-command/SlashCommandMenu';
+import { SlashCommandMenu } from '@/advanced-text-editor/extensions/slash-command/SlashCommandMenu';
 import { type SlashCommandConfig } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandConfig';
 import { createSuggestionRenderLifecycle } from '@/ui/suggestion/components/createSuggestionRenderLifecycle';
 

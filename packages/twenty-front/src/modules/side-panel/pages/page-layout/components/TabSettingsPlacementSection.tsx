@@ -1,7 +1,5 @@
-import {
-  CommandMenuItem,
-  type CommandMenuItemProps,
-} from '@/command-menu/components/CommandMenuItem';
+import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';

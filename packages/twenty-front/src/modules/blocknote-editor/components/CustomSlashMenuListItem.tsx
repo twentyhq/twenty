@@ -1,12 +1,13 @@
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
+import { SuggestionRow } from '@/ui/suggestion/components/SuggestionRow';
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
 import { type SuggestionItem } from '@/blocknote-editor/types/types';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { MenuItemSuggestion } from 'twenty-ui/primitives/navigation';
 
-export type CustomSlashMenuListItemProps = {
+type CustomSlashMenuListItemProps = {
   item: SuggestionItem;
 };
 
@@ -27,12 +28,13 @@ export const CustomSlashMenuListItem = ({
 
   return (
     <SelectableListItem itemId={item.title} onEnter={handleClick}>
-      <MenuItemSuggestion
+      <SuggestionRow
         selected={isSelectedItemId}
-        onClick={handleClick}
-        LeftIcon={item.Icon}
-        text={item.title}
-      />
+        onSelect={handleClick}
+        startIcon={<ListItemIcon icon={item.Icon} />}
+      >
+        {item.title}
+      </SuggestionRow>
     </SelectableListItem>
   );
 };

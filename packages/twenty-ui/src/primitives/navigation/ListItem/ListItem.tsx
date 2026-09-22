@@ -24,6 +24,8 @@ export const ListItem = ({
   description,
   descriptionPlacement = 'inline',
   actions,
+  actionsVisibility = 'hover',
+  submenuOpen = false,
   hotkeys,
   hasSubmenu = false,
   className,
@@ -57,6 +59,8 @@ export const ListItem = ({
       ...props,
       className: clsx(styles.root, className),
       'aria-disabled': disabled || undefined,
+      'data-actions-visibility': actionsVisibility,
+      'data-submenu-open': submenuOpen || undefined,
       onClick: handleClick,
       children: (
         <>
@@ -78,13 +82,21 @@ export const ListItem = ({
               <span
                 className={clsx(styles.description, styles.inlineDescription)}
               >
-                {description}
+                {isString(description) ? (
+                  <OverflowingTextWithTooltip text={description} />
+                ) : (
+                  description
+                )}
               </span>
             )}
           </span>
           {hasDescription && descriptionPlacement === 'end' && (
             <span className={clsx(styles.description, styles.endDescription)}>
-              {description}
+              {isString(description) ? (
+                <OverflowingTextWithTooltip text={description} />
+              ) : (
+                description
+              )}
             </span>
           )}
           {isRenderableSlot(actions) && (

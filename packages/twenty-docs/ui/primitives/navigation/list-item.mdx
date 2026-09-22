@@ -36,6 +36,8 @@ ListItem
 | `actions`                            | Optional                         | Adds trailing content, such as a separately focusable action.                   |
 | `indicator`, `hotkeys`, `hasSubmenu` | Optional                         | Configure built-in selection marks, shortcut hints, and the submenu indicator.  |
 
+String descriptions keep an overflow tooltip. Set `actionsVisibility="always"` for persistent row actions. When the host expands a submenu row, pass `submenuOpen` alongside `hasSubmenu` to rotate the chevron.
+
 The row supplies layout. Use `render` to choose its element and semantics. For a row with independent action buttons, keep the row itself non-interactive so those buttons remain separate controls.
 
 ## Action row

@@ -1,10 +1,11 @@
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconNewSection } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
 import { FIELDS_CONFIGURATION_FIELD_DND_TYPE } from '@/page-layout/widgets/fields/constants/FieldsConfigurationFieldDndType';
@@ -169,13 +170,13 @@ export const FieldsConfigurationUngroupedEditor = ({
             compact
           />
 
-          <MenuItem
-            LeftIcon={IconNewSection}
-            text={t`Add a Group`}
-            onClick={onAddGroup}
-            withIconContainer
-            withIconContainerBackground={false}
-          />
+          <ListItem
+            onClick={(event) => {
+              event.preventDefault();
+              onAddGroup();
+            }}
+            startIcon={<ListItemIcon icon={IconNewSection} container="plain" />}
+          >{t`Add a Group`}</ListItem>
         </StyledFieldsDroppable>
       </DragDropProvider>
     </DragDropItemDndContext.Provider>

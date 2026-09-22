@@ -1,9 +1,9 @@
+import { DraggableListItem } from '@/ui/layout/draggable-list/components/DraggableListItem';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 import { IconBell } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DraggableList> = {
@@ -24,24 +24,27 @@ const meta: Meta<typeof DraggableList> = {
           index={0}
           isDragDisabled={false}
           itemComponent={
-            <MenuItemDraggable
-              LeftIcon={IconBell}
-              text="Non Draggable item 1"
-            />
+            <DraggableListItem icon={IconBell}>
+              Non Draggable item 1
+            </DraggableListItem>
           }
         />
         <DraggableItem
           draggableId="draggable-2"
           index={1}
           itemComponent={
-            <MenuItemDraggable LeftIcon={IconBell} text="Draggable item 2" />
+            <DraggableListItem icon={IconBell}>
+              Draggable item 2
+            </DraggableListItem>
           }
         />
         <DraggableItem
           draggableId="draggable-3"
           index={2}
           itemComponent={
-            <MenuItemDraggable LeftIcon={IconBell} text="Draggable item 3" />
+            <DraggableListItem icon={IconBell}>
+              Draggable item 3
+            </DraggableListItem>
           }
         />
       </>

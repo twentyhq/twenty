@@ -1,4 +1,4 @@
-import { Tag, ColorSample } from 'twenty-ui/primitives/data-display';
+import { Avatar, Tag, ColorSample } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { IconHome, IconUser } from 'twenty-ui/icon';
@@ -7,22 +7,12 @@ import {
   ContactLink,
   GithubVersionLink,
   LinkType,
-  MenuItem,
-  MenuItemAvatar,
-  MenuItemDraggable,
   MenuItemHotKeys,
-  MenuItemLeftContent,
-  MenuItemSuggestion,
-  MenuPicker,
   NavigationBar,
   NavigationBarItem,
   RawLink,
   RoundedLink,
   SocialLink,
-  StyledHoverableMenuItemBase,
-  StyledMenuItemIconCheck,
-  StyledMenuItemLabel,
-  StyledMenuItemLeftContent,
   UndecoratedLink,
   ListItem,
   DEFAULT_COLOR_LABELS,
@@ -48,49 +38,21 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     node: <GithubVersionLink version="v1.0.0" />,
   },
   {
-    name: 'MenuItem',
-    node: <MenuItem text="Menu item" LeftIcon={IconUser} />,
+    name: 'ListItem icon',
+    node: <ListItem startIcon={<IconUser />}>Menu item</ListItem>,
   },
+
   {
-    name: 'MenuItemLeftContent',
-    node: <MenuItemLeftContent text="Left content" LeftIcon={IconUser} />,
-  },
-  {
-    name: 'StyledHoverableMenuItemBase',
+    name: 'ListItem avatar',
     node: (
-      <StyledHoverableMenuItemBase>Hoverable base</StyledHoverableMenuItemBase>
+      <ListItem
+        startIcon={<Avatar name="Avatar item" size="md" shape="circle" />}
+      >
+        Avatar item
+      </ListItem>
     ),
   },
-  {
-    name: 'StyledMenuItemIconCheck',
-    node: <StyledMenuItemIconCheck size={16} />,
-  },
-  {
-    name: 'StyledMenuItemLabel',
-    node: <StyledMenuItemLabel>Label</StyledMenuItemLabel>,
-  },
-  {
-    name: 'StyledMenuItemLeftContent',
-    node: (
-      <StyledMenuItemLeftContent>
-        Left content wrapper
-      </StyledMenuItemLeftContent>
-    ),
-  },
-  {
-    name: 'MenuItemAvatar',
-    node: <MenuItemAvatar text="Avatar item" />,
-  },
-  {
-    name: 'MenuItemDraggable',
-    node: (
-      <MenuItemDraggable
-        text="Draggable"
-        LeftIcon={IconUser}
-        gripMode="always"
-      />
-    ),
-  },
+
   {
     name: 'MenuItemHotKeys',
     node: <MenuItemHotKeys hotKeys={['⌘', 'K']} />,
@@ -210,14 +172,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
       </ListItem>
     ),
   },
-  {
-    name: 'MenuItemSuggestion',
-    node: <MenuItemSuggestion text="Suggestion" onClick={() => {}} />,
-  },
-  {
-    name: 'MenuPicker',
-    node: <MenuPicker id="picker-1" icon={IconHome} label="Picker" />,
-  },
+
   {
     name: 'NavigationBar',
     node: (

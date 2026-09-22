@@ -1,3 +1,4 @@
+import { DraggableListItem } from '@/ui/layout/draggable-list/components/DraggableListItem';
 import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components';
 import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
@@ -9,7 +10,6 @@ import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/D
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldListContainer = styled.div`
@@ -95,9 +95,8 @@ export const RecordTableSettingsFieldVisibility = ({
                   draggableId={fieldItem.viewField.id}
                   index={index}
                   itemComponent={
-                    <MenuItemDraggable
-                      LeftIcon={getIcon(fieldItem.fieldMetadataItem.icon)}
-                      iconButtons={
+                    <DraggableListItem
+                      actions={
                         <LightIconButton
                           aria-label={t`Hide field`}
                           onClick={() => {
@@ -110,9 +109,11 @@ export const RecordTableSettingsFieldVisibility = ({
                           <IconEyeOff />
                         </LightIconButton>
                       }
-                      text={fieldItem.fieldMetadataItem.label}
-                      gripMode="always"
-                    />
+                      grip="always"
+                      icon={getIcon(fieldItem.fieldMetadataItem.icon)}
+                    >
+                      {fieldItem.fieldMetadataItem.label}
+                    </DraggableListItem>
                   }
                 />
               ))}
@@ -124,10 +125,9 @@ export const RecordTableSettingsFieldVisibility = ({
         <>
           <StyledSectionLabel>Hidden</StyledSectionLabel>
           {hiddenFieldItems.map((fieldItem) => (
-            <MenuItemDraggable
+            <DraggableListItem
               key={fieldItem.viewField.id}
-              LeftIcon={getIcon(fieldItem.fieldMetadataItem.icon)}
-              iconButtons={
+              actions={
                 <LightIconButton
                   aria-label={t`Show field`}
                   onClick={() => {
@@ -140,10 +140,12 @@ export const RecordTableSettingsFieldVisibility = ({
                   <IconEye />
                 </LightIconButton>
               }
-              text={fieldItem.fieldMetadataItem.label}
-              accent="placeholder"
-              isDragDisabled
-            />
+              placeholder
+              dragDisabled
+              icon={getIcon(fieldItem.fieldMetadataItem.icon)}
+            >
+              {fieldItem.fieldMetadataItem.label}
+            </DraggableListItem>
           ))}
         </>
       )}

@@ -1,9 +1,9 @@
 import { i18n } from '@lingui/core';
-import { Menu } from '@base-ui/react/menu';
+import { Menu as MenuPrimitive } from '@base-ui/react/menu';
+import { Menu } from '@ui/primitives/surfaces/Menu/Menu';
 import { CalendarEventIndicator } from './CalendarEventIndicator';
 import { IconButton } from '@ui/components/IconButton/IconButton';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { MenuItem } from '@ui/primitives/navigation/MenuItem/MenuItem';
 import styles from './MeetingRow.module.scss';
 import {
   IconCalendarEvent,
@@ -64,8 +64,8 @@ export const MeetingRow = ({
     </div>
     <div className="agenda-actions">
       {autoJoin && meeting.url && Date.parse(meeting.startsAt) > now && (
-        <Menu.Root>
-          <Menu.Trigger
+        <MenuPrimitive.Root>
+          <MenuPrimitive.Trigger
             render={
               <IconButton
                 variant="ghost"
@@ -76,15 +76,18 @@ export const MeetingRow = ({
               </IconButton>
             }
           />
-          <Menu.Portal>
-            <Menu.Positioner
+          <MenuPrimitive.Portal>
+            <MenuPrimitive.Positioner
               side="bottom"
               align="end"
               sideOffset={4}
               className="meeting-menu"
             >
-              <Menu.Popup className={styles.popup}>
+              <MenuPrimitive.Popup className={styles.popup}>
                 <Menu.Item
+                  startIcon={
+                    skipped ? <IconCalendarEvent /> : <IconCalendarX />
+                  }
                   disabled={isPending('skip', 'unskip')}
                   onClick={() =>
                     void command({
@@ -93,20 +96,14 @@ export const MeetingRow = ({
                     })
                   }
                 >
-                  <MenuItem
-                    disabled={isPending('skip', 'unskip')}
-                    LeftIcon={skipped ? IconCalendarEvent : IconCalendarX}
-                    text={
-                      skipped
-                        ? i18n._('Restore auto-join')
-                        : i18n._('Skip auto-join')
-                    }
-                  />
+                  {skipped
+                    ? i18n._('Restore auto-join')
+                    : i18n._('Skip auto-join')}
                 </Menu.Item>
-              </Menu.Popup>
-            </Menu.Positioner>
-          </Menu.Portal>
-        </Menu.Root>
+              </MenuPrimitive.Popup>
+            </MenuPrimitive.Positioner>
+          </MenuPrimitive.Portal>
+        </MenuPrimitive.Root>
       )}
       <Button
         disabled={!meeting.url || isPending('join')}

@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNavigationIcon = styled.div`
@@ -64,15 +64,17 @@ export const SidePanelBackButton = () => {
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {contextChips.slice(0, -1).map((chip, index) => (
-              <MenuItem
+              <ListItem
                 key={index}
-                LeftComponent={chip.Icons}
-                onClick={() => {
+                onClick={(event) => {
+                  event.preventDefault();
                   closeDropdown(SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID);
                   chip.onClick?.();
                 }}
-                text={chip.text}
-              />
+                startIcon={chip.Icons}
+              >
+                {chip.text}
+              </ListItem>
             ))}
           </DropdownMenuItemsContainer>
         </DropdownContent>

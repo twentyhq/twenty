@@ -29,7 +29,7 @@ import {
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/icon';
-import { MenuItemLeftContent } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
@@ -37,7 +37,7 @@ export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
 export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
   'date-picker-month-and-year-dropdown-year-select';
 
-const StyledButtonContainer = styled.div`
+const StyledButtonContainer = styled(ListItem)`
   align-items: center;
   border-radius: calc(
     ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
@@ -53,13 +53,6 @@ const StyledButtonContainer = styled.div`
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
   }
-`;
-
-const StyledButtonContent = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: start;
 `;
 
 const StyledDatePickerFallback = styled.div`
@@ -308,11 +301,11 @@ export const DatePicker = ({
         </Suspense>
       </div>
       {clearable && (
-        <StyledButtonContainer onClick={handleClear}>
-          <StyledButtonContent>
-            <MenuItemLeftContent LeftIcon={IconCalendarX} text={t`Clear`} />
-          </StyledButtonContent>
-        </StyledButtonContainer>
+        <StyledButtonContainer
+          render={<button type="button" />}
+          onClick={handleClear}
+          startIcon={<IconCalendarX />}
+        >{t`Clear`}</StyledButtonContainer>
       )}
     </StyledDatePickerContainer>
   );

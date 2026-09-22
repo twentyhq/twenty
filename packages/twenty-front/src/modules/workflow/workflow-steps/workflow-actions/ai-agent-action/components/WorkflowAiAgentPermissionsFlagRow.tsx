@@ -1,8 +1,10 @@
+import { isDefined } from 'twenty-shared/utils';
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
 import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { IconTrash } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowAiAgentPermissionsFlagRowProps = {
   permission: SettingsRolePermissionsSettingPermission;
@@ -21,18 +23,22 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsFlagRowProps) => {
-  const isClickable = !readonly && !isEnabled && Boolean(onAdd);
+  const isClickable = !readonly && !isEnabled && isDefined(onAdd);
   const isDisabled = isEnabled && !showDeleteButton;
   const showTrashButton = isEnabled && showDeleteButton;
 
   return (
-    <MenuItem
-      LeftIcon={permission.Icon}
-      withIconContainer
-      text={permission.name}
-      onClick={isClickable ? onAdd : undefined}
+    <ListItem
+      onClick={
+        isClickable
+          ? (event) => {
+              event.preventDefault();
+              onAdd();
+            }
+          : undefined
+      }
       disabled={isDisabled}
-      iconButtons={
+      actions={
         showTrashButton && (
           <LightIconButton
             aria-label={t`Remove permission`}
@@ -45,6 +51,9 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
           </LightIconButton>
         )
       }
-    />
+      startIcon={<ListItemIcon icon={permission.Icon} container="soft" />}
+    >
+      {permission.name}
+    </ListItem>
   );
 };

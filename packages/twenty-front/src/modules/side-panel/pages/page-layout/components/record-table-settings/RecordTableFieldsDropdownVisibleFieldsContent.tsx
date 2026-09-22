@@ -1,3 +1,4 @@
+import { DraggableListItem } from '@/ui/layout/draggable-list/components/DraggableListItem';
 import { LightIconButton } from 'twenty-ui/components';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
@@ -15,7 +16,7 @@ import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/D
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItemDraggable, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {
@@ -95,13 +96,14 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
     <DropdownContent>
       <DropdownMenuItemsContainer>
         {isDefined(fieldMetadataItemLabelIdentifier) && (
-          <MenuItemDraggable
-            LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
-            text={fieldMetadataItemLabelIdentifier.label}
-            accent="placeholder"
-            gripMode="always"
-            isDragDisabled
-          />
+          <DraggableListItem
+            placeholder
+            grip="always"
+            dragDisabled
+            icon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+          >
+            {fieldMetadataItemLabelIdentifier.label}
+          </DraggableListItem>
         )}
         {draggableRecordFields.length > 0 && (
           <DraggableList
@@ -119,9 +121,8 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                       draggableId={recordField.fieldMetadataItemId}
                       index={index}
                       itemComponent={
-                        <MenuItemDraggable
-                          LeftIcon={getIcon(fieldMetadataItem.icon)}
-                          iconButtons={
+                        <DraggableListItem
+                          actions={
                             <LightIconButton
                               aria-label={t`Hide field`}
                               onClick={() =>
@@ -131,9 +132,11 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                               <IconEyeOff />
                             </LightIconButton>
                           }
-                          text={fieldMetadataItem.label}
-                          gripMode="always"
-                        />
+                          grip="always"
+                          icon={getIcon(fieldMetadataItem.icon)}
+                        >
+                          {fieldMetadataItem.label}
+                        </DraggableListItem>
                       }
                     />
                   );

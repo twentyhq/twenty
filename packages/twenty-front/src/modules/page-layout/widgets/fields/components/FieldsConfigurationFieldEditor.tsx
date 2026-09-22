@@ -1,9 +1,9 @@
+import { DraggableListItem } from '@/ui/layout/draggable-list/components/DraggableListItem';
 import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldsConfigurationFieldItem } from '@/page-layout/types/FieldsConfiguration';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 
 type FieldsConfigurationFieldEditorProps = {
   field: FieldsConfigurationFieldItem;
@@ -21,13 +21,10 @@ export const FieldsConfigurationFieldEditor = ({
   const FieldIcon = getIcon(fieldMetadata.icon);
 
   return (
-    <MenuItemDraggable
-      LeftIcon={FieldIcon}
-      text={fieldMetadata.label}
-      gripMode="onHover"
-      withIconContainer
-      isIconDisplayedOnHoverOnly={false}
-      iconButtons={
+    <DraggableListItem
+      grip="onHover"
+      actionsVisibility="always"
+      actions={
         <LightIconButton
           aria-label={isVisible ? t`Hide field` : t`Show field`}
           onClick={(event) => {
@@ -38,6 +35,10 @@ export const FieldsConfigurationFieldEditor = ({
           {isVisible ? <IconEye /> : <IconEyeOff />}
         </LightIconButton>
       }
-    />
+      icon={FieldIcon}
+      iconContainer
+    >
+      {fieldMetadata.label}
+    </DraggableListItem>
   );
 };

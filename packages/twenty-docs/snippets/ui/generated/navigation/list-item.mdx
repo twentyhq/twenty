@@ -15,6 +15,10 @@
   Trailing content, such as buttons, rendered after the content.
 </ParamField>
 
+<ParamField body="actionsVisibility" type="&quot;always&quot; | &quot;hover&quot;" default="hover">
+  Shows actions on hover or focus by default. Use always to keep actions visible on every input device.
+</ParamField>
+
 <ParamField body="color" type="&quot;danger&quot; | &quot;neutral&quot;" default="neutral">
   Color of the text and icons. `danger` marks a destructive action.
 </ParamField>
@@ -68,4 +72,8 @@
 
 <ParamField body="startIcon" type="ReactNode">
   Icon rendered before the content.
+</ParamField>
+
+<ParamField body="submenuOpen" type="boolean" default="false">
+  Rotates the submenu indicator when the host expands the row. The host owns the expansion state and semantics.
 </ParamField>

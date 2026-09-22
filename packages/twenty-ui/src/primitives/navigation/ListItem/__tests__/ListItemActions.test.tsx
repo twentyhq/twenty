@@ -1,34 +1,28 @@
+import { ListItem } from '../ListItem';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { IconSearch, IconTrash } from '@ui/icon';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
-import { MenuItem } from '../MenuItem';
-import { MenuItemDraggable } from '@ui/primitives/navigation/MenuItemDraggable/MenuItemDraggable';
-import { MenuItemAvatar } from '@ui/primitives/navigation/MenuItemAvatar/MenuItemAvatar';
 
-describe.each([
-  { name: 'MenuItem', Component: MenuItem },
-  { name: 'MenuItemDraggable', Component: MenuItemDraggable },
-  { name: 'MenuItemAvatar', Component: MenuItemAvatar },
-])('$name icon buttons', ({ Component }) => {
+describe('ListItem actions', () => {
   it('preserves disabled buttons and wrapper-controlled triggers', async () => {
     const user = userEvent.setup();
     const onDelete = vi.fn();
     const onSearch = vi.fn();
     render(
-      <Component
-        text="Record"
-        iconButtons={
+      <ListItem
+        children="Record"
+        actions={
           <ButtonGroup attached={false} onClick={onSearch}>
-            <LightIconButton aria-label="Delete" disabled onClick={onDelete}>
+            <Button aria-label="Delete" disabled onClick={onDelete}>
               <IconTrash />
-            </LightIconButton>
-            <LightIconButton aria-label="Search">
+            </Button>
+            <Button aria-label="Search">
               <IconSearch />
-            </LightIconButton>
+            </Button>
           </ButtonGroup>
         }
       />,
@@ -52,13 +46,13 @@ describe.each([
     const onClick = vi.fn((event) => event.stopPropagation());
     render(
       <form onSubmit={onSubmit}>
-        <Component
-          text="Record"
+        <ListItem
+          children="Record"
           onClick={onParentClick}
-          iconButtons={
-            <LightIconButton aria-label="Search" onClick={onClick}>
+          actions={
+            <Button aria-label="Search" onClick={onClick}>
               <IconSearch />
-            </LightIconButton>
+            </Button>
           }
         />
       </form>,

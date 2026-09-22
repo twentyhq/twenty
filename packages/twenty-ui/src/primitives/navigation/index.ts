@@ -13,35 +13,16 @@ export { GithubVersionLink } from './GithubVersionLink/GithubVersionLink';
 export { CAL_LINK } from './Link/constants/Cal';
 export { GITHUB_LINK } from './Link/constants/GithubLink';
 export { TWENTY_PRICING_LINK } from './Link/constants/TwentyPricingLink';
+export { DEFAULT_COLOR_LABELS } from './ListItem/constants/DefaultColorLabels';
 export { ListItem } from './ListItem/ListItem';
+export type { ColorLabels } from './ListItem/types/ColorLabels';
 export type { ListItemColor } from './ListItem/types/ListItemColor';
 export type { ListItemDescriptionPlacement } from './ListItem/types/ListItemDescriptionPlacement';
 export type { ListItemIndicator } from './ListItem/types/ListItemIndicator';
 export type { ListItemProps } from './ListItem/types/ListItemProps';
 export type { ListItemState } from './ListItem/types/ListItemState';
-export type { ColorLabels } from './MenuItem/constants/DefaultColorLabels';
-export { DEFAULT_COLOR_LABELS } from './MenuItem/constants/DefaultColorLabels';
-export type { MenuItemProps } from './MenuItem/MenuItem';
-export {
-  MenuItemLeftContent,
-  StyledHoverableMenuItemBase,
-  StyledMenuItemIconCheck,
-  StyledMenuItemLabel,
-  StyledMenuItemLeftContent,
-  MenuItem,
-} from './MenuItem/MenuItem';
-export type { MenuItemAccent } from './MenuItem/types/MenuItemAccent';
-export type { MenuItemDraggableGripMode } from './MenuItem/types/MenuItemDraggableGripMode';
-export type { MenuItemAvatarProps } from './MenuItemAvatar/MenuItemAvatar';
-export { MenuItemAvatar } from './MenuItemAvatar/MenuItemAvatar';
-export type { MenuItemDraggableProps } from './MenuItemDraggable/MenuItemDraggable';
-export { MenuItemDraggable } from './MenuItemDraggable/MenuItemDraggable';
 export type { MenuItemHotKeysProps } from './MenuItemHotKeys/MenuItemHotKeys';
 export { MenuItemHotKeys } from './MenuItemHotKeys/MenuItemHotKeys';
-export type { MenuItemSuggestionProps } from './MenuItemSuggestion/MenuItemSuggestion';
-export { MenuItemSuggestion } from './MenuItemSuggestion/MenuItemSuggestion';
-export { MenuPicker } from './MenuPicker/MenuPicker';
-export type { MenuPickerProps } from './MenuPicker/types/MenuPickerProps';
 export { NavigationBar } from './NavigationBar/NavigationBar';
 export { NavigationBarItem } from './NavigationBarItem/NavigationBarItem';
 export { RawLink } from './RawLink/RawLink';

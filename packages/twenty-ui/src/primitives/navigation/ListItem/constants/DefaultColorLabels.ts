@@ -1,6 +1,4 @@
-import { type ThemeColor } from '@ui/theme';
-
-export type ColorLabels = Record<ThemeColor, string>;
+import { type ColorLabels } from '../types/ColorLabels';
 
 export const DEFAULT_COLOR_LABELS: ColorLabels = {
   gray: 'Gray',

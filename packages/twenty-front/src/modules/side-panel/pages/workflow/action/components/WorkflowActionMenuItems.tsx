@@ -1,7 +1,8 @@
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type Action = {
   defaultLabel: string;
@@ -24,15 +25,26 @@ export const WorkflowActionMenuItems = ({
         const Icon = getIcon(action.icon);
 
         return (
-          <MenuItem
-            withIconContainer={true}
+          <ListItem
             key={action.type}
-            LeftIcon={() => (
-              <Icon color={getActionIconColorOrThrow(action.type)} size={16} />
-            )}
-            text={action.defaultLabel}
-            onClick={() => onClick(action.type)}
-          />
+            onClick={(event) => {
+              event.preventDefault();
+              onClick(action.type);
+            }}
+            startIcon={
+              <ListItemIcon
+                icon={() => (
+                  <Icon
+                    color={getActionIconColorOrThrow(action.type)}
+                    size={16}
+                  />
+                )}
+                container="soft"
+              />
+            }
+          >
+            {action.defaultLabel}
+          </ListItem>
         );
       })}
     </>

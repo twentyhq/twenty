@@ -1,9 +1,10 @@
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { ListItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
@@ -93,41 +94,47 @@ export const EmailRecipientChipMenuContent = ({
         <>
           <DropdownMenuItemsContainer>
             {isDefined(workspaceMember) ? (
-              <MenuItemAvatar
-                avatar={{
-                  src: getAbsoluteImageUrl(workspaceMember.avatarUrl),
-                  name: isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
-                    : recipient.address,
-                  colorSeed: workspaceMember.id,
-                  size: 'md',
-                  shape: 'circle',
-                }}
-                text={
-                  isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
-                    : recipient.address
+              <ListItem
+                startIcon={
+                  <Avatar
+                    src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                    name={
+                      isNonEmptyString(workspaceMemberFullName)
+                        ? workspaceMemberFullName
+                        : recipient.address
+                    }
+                    colorSeed={workspaceMember.id}
+                    size="md"
+                    shape="circle"
+                  />
                 }
-                contextualText={t`Team member`}
-              />
+                description={t`Team member`}
+              >
+                {isNonEmptyString(workspaceMemberFullName)
+                  ? workspaceMemberFullName
+                  : recipient.address}
+              </ListItem>
             ) : isDefined(person) ? (
-              <MenuItemAvatar
-                avatar={{
-                  src: getAbsoluteImageUrl(person.avatarUrl),
-                  name: isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address,
-                  colorSeed: person.id,
-                  size: 'md',
-                  shape: 'circle',
-                }}
-                text={
-                  isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address
+              <ListItem
+                startIcon={
+                  <Avatar
+                    src={getAbsoluteImageUrl(person.avatarUrl)}
+                    name={
+                      isNonEmptyString(personFullName)
+                        ? personFullName
+                        : recipient.address
+                    }
+                    colorSeed={person.id}
+                    size="md"
+                    shape="circle"
+                  />
                 }
-                contextualText={recipient.address}
-              />
+                description={recipient.address}
+              >
+                {isNonEmptyString(personFullName)
+                  ? personFullName
+                  : recipient.address}
+              </ListItem>
             ) : (
               <ListItem
                 startIcon={<IconUserPlus />}

@@ -1,7 +1,8 @@
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type SearchRecord } from '~/generated/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -45,19 +46,25 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
         const workspaceMemberFullName = `${workspaceMember?.name.firstName ?? ''} ${workspaceMember?.name.lastName ?? ''}`;
 
         return (
-          <MenuItemAvatar
+          <ListItem
             key={workspaceMember.id}
-            onClick={() => onSelect(workspaceMember)}
-            avatar={{
-              shape: 'circle',
-              size: 'md',
-              name: workspaceMemberFullName,
-              colorSeed: workspaceMember.id,
-              src: workspaceMember.avatarUrl,
+            onClick={(event) => {
+              event.preventDefault();
+              onSelect(workspaceMember);
             }}
-            text={workspaceMemberFullName}
-            contextualText={workspaceMember.userEmail}
-          />
+            startIcon={
+              <Avatar
+                shape="circle"
+                size="md"
+                name={workspaceMemberFullName}
+                colorSeed={workspaceMember.id}
+                src={workspaceMember.avatarUrl}
+              />
+            }
+            description={workspaceMember.userEmail}
+          >
+            {workspaceMemberFullName}
+          </ListItem>
         );
       })}
     </>

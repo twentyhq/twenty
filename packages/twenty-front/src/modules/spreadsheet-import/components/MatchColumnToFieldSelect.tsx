@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
+import { useState } from 'react';
 import { type ReadonlyDeep } from 'type-fest';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -15,7 +17,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 interface MatchColumnToFieldSelectProps {
   columnIndex: string;
@@ -26,20 +28,12 @@ interface MatchColumnToFieldSelectProps {
   placeholder?: string;
 }
 
-const StyledMenuItemContainer = styled.div`
-  > div {
-    background-color: ${themeCssVariables.background.transparent.lighter};
-    border: 1px solid ${themeCssVariables.border.color.medium};
-    border-radius: ${themeCssVariables.border.radius.sm};
-  }
+const StyledMenuItem = styled(ListItem)`
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
 `;
 
-const StyledMenuItem = (props: React.ComponentProps<typeof MenuItem>) => (
-  <StyledMenuItemContainer>
-    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-    <MenuItem {...props} />
-  </StyledMenuItemContainer>
-);
 export const MatchColumnToFieldSelect = ({
   onChange,
   value,
@@ -128,11 +122,16 @@ export const MatchColumnToFieldSelect = ({
       dropdownPlacement="bottom-start"
       clickableComponent={
         <StyledMenuItem
-          LeftIcon={value?.Icon}
-          text={value?.label ?? placeholder ?? ''}
-          accent={value?.label ? 'default' : 'placeholder'}
-          RightIcon={IconChevronDown}
-        />
+          style={{
+            color: !isNonEmptyString(value?.label)
+              ? themeCssVariables.font.color.tertiary
+              : undefined,
+          }}
+          startIcon={<ListItemIcon icon={value?.Icon} />}
+          endIcon={<IconChevronDown />}
+        >
+          {value?.label ?? placeholder ?? ''}
+        </StyledMenuItem>
       }
       dropdownComponents={
         shouldShowNestedField ? (

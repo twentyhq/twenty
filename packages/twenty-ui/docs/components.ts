@@ -1,3 +1,4 @@
+import { LIST_ITEM_PROP_DESCRIPTIONS } from './listItemPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
@@ -123,6 +124,7 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'ListItem',
+    propDescriptions: LIST_ITEM_PROP_DESCRIPTIONS,
     source: 'primitives/navigation/ListItem/ListItem.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',

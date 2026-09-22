@@ -1,40 +1,41 @@
-import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
+import { LightIconButton } from 'twenty-ui/components';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
-import { IconBell, IconMinus } from '@ui/icon';
+import { IconBell, IconMinus } from 'twenty-ui/icon';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogDimension,
   type CatalogOptions,
   ComponentDecorator,
-} from '@ui/testing';
-import { type MenuItemAccent } from '@ui/primitives/navigation/MenuItem/types/MenuItemAccent';
-import { MenuItemDraggable } from '@ui/primitives/navigation/MenuItemDraggable/MenuItemDraggable';
+} from 'twenty-ui/testing';
+import { DraggableListItem } from '@/ui/layout/draggable-list/components/DraggableListItem';
 
-const meta: Meta<typeof MenuItemDraggable> = {
+type RowColor = 'neutral' | 'danger';
+
+const meta: Meta<typeof DraggableListItem> = {
   title: 'UI/Navigation/Menu/MenuItem/MenuItemDraggable',
-  component: MenuItemDraggable,
+  component: DraggableListItem,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItemDraggable>;
+type Story = StoryObj<typeof DraggableListItem>;
 
 export const Default: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
-    LeftIcon: IconBell,
-    accent: 'default',
-    iconButtons: (
-      <LightIconButton aria-label={'Remove'} onClick={action('Clicked')}>
+    icon: IconBell,
+    color: 'neutral',
+    actions: (
+      <LightIconButton aria-label="Remove" onClick={action('Clicked')}>
         <IconMinus />
       </LightIconButton>
     ),
     onClick: action('Clicked'),
-    text: 'Menu item draggable',
-    isDragDisabled: false,
+    children: 'Menu item draggable',
+    dragDisabled: false,
   },
   decorators: [ComponentDecorator],
 };
@@ -42,8 +43,8 @@ export const Default: Story = {
 export const Catalog: Story = {
   args: { ...Default.args },
   argTypes: {
-    accent: { control: false },
-    iconButtons: { control: false },
+    color: { control: false },
+    actions: { control: false },
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
@@ -51,27 +52,25 @@ export const Catalog: Story = {
     catalog: {
       dimensions: [
         {
-          name: 'withIconContainer',
+          name: 'iconContainer',
           values: [true, false],
-          props: (withIconContainer: boolean) => ({ withIconContainer }),
-          labels: (withIconContainer: boolean) =>
-            withIconContainer
-              ? 'With icon container'
-              : 'Without icon container',
+          props: (iconContainer: boolean) => ({ iconContainer }),
+          labels: (iconContainer: boolean) =>
+            iconContainer ? 'With icon container' : 'Without icon container',
         },
         {
-          name: 'isDragDisabled',
+          name: 'dragDisabled',
           values: [true, false],
-          props: (isDragDisabled: boolean) => ({
-            isDragDisabled: isDragDisabled,
+          props: (dragDisabled: boolean) => ({
+            dragDisabled: dragDisabled,
           }),
-          labels: (isDragDisabled: boolean) =>
-            isDragDisabled ? 'Without drag icon' : 'With drag icon',
+          labels: (dragDisabled: boolean) =>
+            dragDisabled ? 'Without drag icon' : 'With drag icon',
         },
         {
-          name: 'accents',
-          values: ['default', 'danger', 'placeholder'] as MenuItemAccent[],
-          props: (accent: MenuItemAccent) => ({ accent }),
+          name: 'colors',
+          values: ['neutral', 'danger'] as RowColor[],
+          props: (color: RowColor) => ({ color }),
         },
         {
           name: 'states',
@@ -88,20 +87,20 @@ export const Catalog: Story = {
           },
         },
         {
-          name: 'iconButtons',
+          name: 'actions',
           values: ['no icon button', 'minus icon buttons'],
           props: (choice: string) => {
             switch (choice) {
               case 'no icon button': {
                 return {
-                  iconButtons: null,
+                  actions: null,
                 };
               }
               case 'minus icon buttons': {
                 return {
-                  iconButtons: (
+                  actions: (
                     <LightIconButton
-                      aria-label={'Remove'}
+                      aria-label="Remove"
                       onClick={action('Clicked on minus icon button')}
                     >
                       <IconMinus />
@@ -125,25 +124,25 @@ export const Catalog: Story = {
 
 export const Grip: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { ...Default.args, gripMode: 'always', isDragDisabled: false },
+  args: { ...Default.args, grip: 'always', dragDisabled: false },
 };
 
 export const GripOnHover: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { ...Default.args, gripMode: 'onHover', isDragDisabled: false },
+  args: { ...Default.args, grip: 'onHover', dragDisabled: false },
 };
 
 export const GripOnHoverWithIconContainer: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     ...Default.args,
-    gripMode: 'onHover',
-    withIconContainer: true,
-    isDragDisabled: false,
+    grip: 'onHover',
+    iconContainer: true,
+    dragDisabled: false,
   },
 };
 
 export const HoverDisabled: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { ...Default.args, isHoverDisabled: true },
+  args: { ...Default.args, dragDisabled: true },
 };

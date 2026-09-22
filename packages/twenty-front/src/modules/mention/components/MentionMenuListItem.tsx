@@ -1,9 +1,8 @@
-import { type MouseEvent } from 'react';
+import { SuggestionRow } from '@/ui/suggestion/components/SuggestionRow';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemSuggestion } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type MentionMenuListItemProps = {
@@ -31,20 +30,11 @@ export const MentionMenuListItem = ({
     (item) => item.nameSingular === objectNameSingular,
   );
 
-  const handleClick = (event?: MouseEvent) => {
-    event?.preventDefault();
-    event?.stopPropagation();
-    onClick();
-  };
-
   return (
-    <MenuItemSuggestion
+    <SuggestionRow
       selected={isSelected}
-      onClick={handleClick}
-      text={label}
-      contextualText={objectLabelSingular}
-      contextualTextPosition="left"
-      LeftIcon={() => (
+      onSelect={onClick}
+      startIcon={
         <Avatar
           name={label}
           colorSeed={recordId}
@@ -52,7 +42,10 @@ export const MentionMenuListItem = ({
           shape={getAvatarShape(objectMetadataItem)}
           size="sm"
         />
-      )}
-    />
+      }
+      description={objectLabelSingular}
+    >
+      {label}
+    </SuggestionRow>
   );
 };

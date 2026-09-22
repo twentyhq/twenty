@@ -1,7 +1,5 @@
-import {
-  CommandMenuItem,
-  type CommandMenuItemProps,
-} from '@/command-menu/components/CommandMenuItem';
+import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import {
   Dropdown,

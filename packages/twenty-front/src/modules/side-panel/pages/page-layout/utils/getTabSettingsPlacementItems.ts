@@ -1,4 +1,5 @@
-import { type CommandMenuItemProps } from '@/command-menu/components/CommandMenuItem';
+import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
+
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';

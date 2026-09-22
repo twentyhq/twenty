@@ -1,29 +1,14 @@
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode } from 'react';
-import { IconArrowUpRight, type IconComponent } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { IconArrowUpRight } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export type CommandMenuItemProps = {
-  label: string;
-  description?: string;
-  to?: string;
-  id: string;
-  onClick?: () => void;
-  Icon?: IconComponent;
-  hotKeys?: Nullable<string[]>;
-  LeftComponent?: ReactNode;
-  RightComponent?: ReactNode;
-  contextualTextPosition?: 'left' | 'right';
-  hasSubMenu?: boolean;
-  isSubMenuOpened?: boolean;
-  disabled?: boolean;
-};
+import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
 
 export const CommandMenuItem = ({
   label,
@@ -52,28 +37,39 @@ export const CommandMenuItem = ({
   );
 
   return (
-    <MenuItem
-      withIconContainer={!isDefined(LeftComponent)}
-      LeftIcon={isDefined(LeftComponent) ? undefined : Icon}
-      LeftComponent={LeftComponent}
-      text={label}
-      contextualText={description}
-      contextualTextPosition={contextualTextPosition}
-      hotKeys={hotKeys}
+    <ListItem
+      hotkeys={hotKeys ?? undefined}
       onClick={
         onClick || to
-          ? () =>
+          ? (event) => {
+              event.preventDefault();
               onItemClick({
                 onClick,
                 to,
-              })
+              });
+            }
           : undefined
       }
       focused={!disabled && isSelectedItemId}
-      RightComponent={RightComponent}
-      hasSubMenu={hasSubMenu}
-      isSubMenuOpened={isSubMenuOpened}
+      hasSubmenu={hasSubMenu}
+      submenuOpen={isSubMenuOpened}
       disabled={disabled}
-    />
+      startIcon={
+        <>
+          <ListItemIcon
+            icon={isDefined(LeftComponent) ? undefined : Icon}
+            container={!isDefined(LeftComponent) ? 'soft' : 'none'}
+          />
+          {LeftComponent}
+        </>
+      }
+      endIcon={RightComponent}
+      description={description}
+      descriptionPlacement={
+        contextualTextPosition === 'right' ? 'end' : 'inline'
+      }
+    >
+      {label}
+    </ListItem>
   );
 };

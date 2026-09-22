@@ -1,17 +1,11 @@
-import { type Editor, type Range } from '@tiptap/core';
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
+import { SuggestionRow } from '@/ui/suggestion/components/SuggestionRow';
 import { forwardRef, useCallback, useState } from 'react';
-import { MenuItemSuggestion } from 'twenty-ui/primitives/navigation';
 
 import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
 
-export type SlashCommandMenuProps = {
-  items: SlashCommandItem[];
-  onSelect: (item: SlashCommandItem) => void;
-  editor: Editor;
-  range: Range;
-  query: string;
-};
+import { type SlashCommandMenuProps } from './types/SlashCommandMenuProps';
 
 const getItemKey = (item: SlashCommandItem) => item.id;
 
@@ -49,14 +43,15 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
 
     const renderItem = useCallback(
       (item: SlashCommandItem, isSelected: boolean) => (
-        <MenuItemSuggestion
-          LeftIcon={item.icon}
-          text={item.title}
+        <SuggestionRow
           selected={isSelected}
-          onClick={() => {
+          onSelect={() => {
             onSelect(item);
           }}
-        />
+          startIcon={<ListItemIcon icon={item.icon} />}
+        >
+          {item.title}
+        </SuggestionRow>
       ),
       [onSelect],
     );

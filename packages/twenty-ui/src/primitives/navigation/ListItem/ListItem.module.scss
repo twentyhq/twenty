@@ -94,6 +94,8 @@
 }
 
 .description {
+  align-items: baseline;
+  display: flex;
   color: var(--t-font-color-light);
   min-inline-size: 0;
   overflow: hidden;
@@ -103,10 +105,12 @@
 
 .inlineDescription::before {
   content: '·';
+  flex: none;
   margin-inline-end: var(--t-spacing-1);
 }
 
 .endDescription {
+  justify-content: flex-end;
   flex-shrink: 1;
   text-align: end;
 }
@@ -129,6 +133,7 @@
     opacity: 0;
   }
 
+  .root[data-actions-visibility='always'] .actions,
   .root:hover .actions,
   .root:focus-within .actions {
     opacity: 1;
@@ -143,6 +148,16 @@
 }
 
 .submenuIcon {
+  transition: transform duration(normal) ease-in-out;
+
+  .root[data-submenu-open] & {
+    transform: rotate(90deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
   block-size: calc(var(--t-icon-size-sm) * 1px);
   color: var(--t-font-color-light);
   flex: none;

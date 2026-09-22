@@ -10,7 +10,7 @@ import {
 } from '@ui/testing';
 
 import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
-import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/ListItemColor';
 import { type ListItemIndicator } from '@ui/primitives/navigation/ListItem/types/ListItemIndicator';
@@ -30,12 +30,22 @@ const START_ICON = <IconBell />;
 
 const ACTIONS = (
   <>
-    <LightIconButton aria-label="Edit" onClick={action('Edit')}>
+    <Button
+      variant="ghost"
+      size="sm"
+      aria-label="Edit"
+      onClick={action('Edit')}
+    >
       <IconEdit />
-    </LightIconButton>
-    <LightIconButton aria-label="Delete" onClick={action('Delete')}>
+    </Button>
+    <Button
+      variant="ghost"
+      size="sm"
+      aria-label="Delete"
+      onClick={action('Delete')}
+    >
       <IconTrash />
-    </LightIconButton>
+    </Button>
   </>
 );
 
@@ -200,4 +210,34 @@ export const CatalogDark: CatalogStory<Story, typeof ListItem> = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
+};
+
+export const OverflowingDescription: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST, container: { width: 240 } },
+  args: {
+    children: 'Workspace',
+    description: 'A long workspace description that does not fit on one row',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const label = canvas.getByText('Workspace');
+    const description = canvas.getByText(
+      'A long workspace description that does not fit on one row',
+    );
+    expect(description.getBoundingClientRect().top).toBe(
+      label.getBoundingClientRect().top,
+    );
+    expect(description.scrollWidth).toBeGreaterThan(description.clientWidth);
+    await userEvent.hover(description);
+    expect(await page.findByRole('tooltip')).toHaveTextContent(
+      'A long workspace description that does not fit on one row',
+    );
+  },
+};
+
+export const OverflowingEndDescription: Story = {
+  ...OverflowingDescription,
+  args: { ...OverflowingDescription.args, descriptionPlacement: 'end' },
 };

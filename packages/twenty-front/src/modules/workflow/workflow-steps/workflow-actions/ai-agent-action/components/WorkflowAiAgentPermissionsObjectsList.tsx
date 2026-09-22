@@ -1,9 +1,10 @@
+import { ListItemIcon } from '@/ui/navigation/list-item/components/ListItemIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSettings } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { WorkflowAiAgentPermissionsObjectRow } from './WorkflowAiAgentPermissionsObjectRow';
 
 type WorkflowAiAgentPermissionsObjectsListProps = {
@@ -37,12 +38,18 @@ export const WorkflowAiAgentPermissionsObjectsList = ({
         />
       ))}
       {isDefined(onSystemObjectsClick) && (
-        <MenuItem
-          LeftIcon={IconSettings}
-          text={t`System objects`}
-          hasSubMenu={!readonly}
-          onClick={!readonly ? onSystemObjectsClick : undefined}
-        />
+        <ListItem
+          hasSubmenu={!readonly}
+          onClick={
+            !readonly
+              ? (event) => {
+                  event.preventDefault();
+                  onSystemObjectsClick();
+                }
+              : undefined
+          }
+          startIcon={<ListItemIcon icon={IconSettings} />}
+        >{t`System objects`}</ListItem>
       )}
     </SidePanelGroup>
   );

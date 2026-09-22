@@ -1,3 +1,4 @@
+import { DraggableListItem } from '@/ui/layout/draggable-list/components/DraggableListItem';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
@@ -17,7 +18,6 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
@@ -100,15 +100,14 @@ export const ChartManualSortSubMenuContent = ({
                   index={index}
                   isDragDisabled={sortedOptions.length === 1}
                   itemComponent={
-                    <MenuItemDraggable
-                      gripMode="always"
-                      isDragDisabled={sortedOptions.length === 1}
-                      text={
-                        <Tag preventShrink color={option.color}>
-                          {option.label}
-                        </Tag>
-                      }
-                    />
+                    <DraggableListItem
+                      grip="always"
+                      dragDisabled={sortedOptions.length === 1}
+                    >
+                      <Tag preventShrink color={option.color}>
+                        {option.label}
+                      </Tag>
+                    </DraggableListItem>
                   }
                 />
               ))}

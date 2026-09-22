@@ -1,3 +1,4 @@
+import { DraggableListItem } from '@/ui/layout/draggable-list/components/DraggableListItem';
 import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import {
@@ -11,7 +12,6 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 
 type RecordGroupMenuItemDraggableProps = {
   recordGroupId: string;
@@ -49,16 +49,10 @@ export const RecordGroupMenuItemDraggable = ({
     recordGroupDefinition.isVisible || !isVisibleLimitReached;
 
   return (
-    <MenuItemDraggable
+    <DraggableListItem
       key={recordGroupDefinition.id}
-      text={
-        <RecordGroupChip
-          recordGroupDefinition={recordGroupDefinition}
-          fieldMetadataItem={recordIndexGroupFieldMetadataItem}
-        />
-      }
-      accent={isNoValue || showDragGrip ? 'placeholder' : 'default'}
-      iconButtons={
+      placeholder={isNoValue || showDragGrip}
+      actions={
         canToggleVisibility && (
           <LightIconButton
             aria-label={
@@ -82,8 +76,13 @@ export const RecordGroupMenuItemDraggable = ({
           </LightIconButton>
         )
       }
-      gripMode={isNoValue || showDragGrip ? 'always' : 'never'}
-      isDragDisabled={!isDraggable}
-    />
+      grip={isNoValue || showDragGrip ? 'always' : 'never'}
+      dragDisabled={!isDraggable}
+    >
+      <RecordGroupChip
+        recordGroupDefinition={recordGroupDefinition}
+        fieldMetadataItem={recordIndexGroupFieldMetadataItem}
+      />
+    </DraggableListItem>
   );
 };

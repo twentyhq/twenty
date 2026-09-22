@@ -1,10 +1,10 @@
+import { DraggableListItem } from '@/ui/layout/draggable-list/components/DraggableListItem';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { IconBell } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DraggableItem> = {
@@ -25,7 +25,7 @@ const meta: Meta<typeof DraggableItem> = {
     index: 0,
     isDragDisabled: false,
     itemComponent: (
-      <MenuItemDraggable LeftIcon={IconBell} text="Draggable item 1" />
+      <DraggableListItem icon={IconBell}>Draggable item 1</DraggableListItem>
     ),
   },
 };
