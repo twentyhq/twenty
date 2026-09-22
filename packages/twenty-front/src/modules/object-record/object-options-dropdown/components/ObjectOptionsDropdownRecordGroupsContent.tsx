@@ -29,12 +29,12 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { SettingsRow } from 'twenty-ui/components';
 import {
+  IconArrowBarToDownDashed,
   IconArrowsSort,
   IconChevronLeft,
   IconCircleOff,
   IconEyeOff,
   IconLayoutList,
-  IconListNumbers,
   IconPlus,
 } from 'twenty-ui/icon';
 
@@ -191,15 +191,14 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               itemId="LoadLimit"
               onEnter={() => onContentChange('recordGroupLoadLimit')}
             >
-              <MenuItem
+              <ListItem
                 focused={selectedItemId === 'LoadLimit'}
                 onClick={() => onContentChange('recordGroupLoadLimit')}
-                LeftIcon={IconListNumbers}
-                text={t`Load limit`}
-                contextualText={String(recordIndexGroupLoadLimit)}
-                contextualTextPosition="right"
-                hasSubMenu
-              />
+                startIcon={<IconArrowBarToDownDashed />}
+                description={String(recordIndexGroupLoadLimit)}
+                descriptionPlacement="end"
+                hasSubmenu
+              >{t`Load limit`}</ListItem>
             </SelectableListItem>
           )}
         </SelectableList>

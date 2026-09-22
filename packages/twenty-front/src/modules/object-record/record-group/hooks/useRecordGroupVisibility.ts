@@ -37,25 +37,43 @@ export const useRecordGroupVisibility = () => {
     [saveViewGroup, store],
   );
 
+  // These atoms drive what the grouped index renders and fetches, so a rejected
+  // mutation has to put the previous value back: the menu would otherwise keep
+  // showing a setting the view never took. The error is rethrown so failures
+  // stay as visible as they were before the rollback.
   const handleHideEmptyRecordGroupChange = useCallback(async () => {
-    const currentHideState = store.get(recordIndexShouldHideEmptyRecordGroups);
+    const previousHideState = store.get(recordIndexShouldHideEmptyRecordGroups);
 
-    const newHideState = !currentHideState;
+    const newHideState = !previousHideState;
 
     store.set(recordIndexShouldHideEmptyRecordGroups, newHideState);
 
-    await updateCurrentView({
-      shouldHideEmptyGroups: newHideState,
-    });
+    try {
+      await updateCurrentView({
+        shouldHideEmptyGroups: newHideState,
+      });
+    } catch (error) {
+      store.set(recordIndexShouldHideEmptyRecordGroups, previousHideState);
+
+      throw error;
+    }
   }, [store, recordIndexShouldHideEmptyRecordGroups, updateCurrentView]);
 
   const handleGroupLoadLimitChange = useCallback(
     async (limit: number) => {
+      const previousLimit = store.get(recordIndexGroupLoadLimit);
+
       store.set(recordIndexGroupLoadLimit, limit);
 
-      await updateCurrentView({
-        groupLoadLimit: limit,
-      });
+      try {
+        await updateCurrentView({
+          groupLoadLimit: limit,
+        });
+      } catch (error) {
+        store.set(recordIndexGroupLoadLimit, previousLimit);
+
+        throw error;
+      }
     },
     [store, recordIndexGroupLoadLimit, updateCurrentView],
   );

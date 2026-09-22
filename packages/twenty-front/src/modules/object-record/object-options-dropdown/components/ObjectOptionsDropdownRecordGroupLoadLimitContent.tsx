@@ -13,7 +13,6 @@ import { t } from '@lingui/core/macro';
 import { VIEW_GROUP_LOAD_LIMIT_OPTIONS } from 'twenty-shared/constants';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 
 export const ObjectOptionsDropdownRecordGroupLoadLimitContent = () => {
   const { onContentChange, dropdownId } = useObjectOptionsDropdown();
@@ -64,7 +63,7 @@ export const ObjectOptionsDropdownRecordGroupLoadLimitContent = () => {
                 selected={recordIndexGroupLoadLimit === loadLimitOption}
                 indicator="check"
               >
-                <OverflowingTextWithTooltip text={String(loadLimitOption)} />
+                {String(loadLimitOption)}
               </ListItem>
             </SelectableListItem>
           ))}

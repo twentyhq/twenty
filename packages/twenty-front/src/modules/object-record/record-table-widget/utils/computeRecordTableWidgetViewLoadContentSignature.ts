@@ -37,6 +37,7 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
       type: view.type,
       mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
       shouldHideEmptyGroups: view.shouldHideEmptyGroups,
+      groupLoadLimit: view.groupLoadLimit,
       kanbanAggregateOperation: view.kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId:
         view.kanbanAggregateOperationFieldMetadataId,

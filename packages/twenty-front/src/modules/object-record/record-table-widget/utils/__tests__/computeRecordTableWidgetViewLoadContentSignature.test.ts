@@ -29,6 +29,20 @@ describe('computeRecordTableWidgetViewLoadContentSignature', () => {
     );
   });
 
+  it('should include the group load limit in the record table widget view load signature', () => {
+    expect(
+      computeRecordTableWidgetViewLoadContentSignature({
+        ...makeView(null),
+        groupLoadLimit: 50,
+      }),
+    ).not.toEqual(
+      computeRecordTableWidgetViewLoadContentSignature({
+        ...makeView(null),
+        groupLoadLimit: 8,
+      }),
+    );
+  });
+
   it('should include the any-field filter in the record table widget view load signature', () => {
     expect(
       computeRecordTableWidgetViewLoadContentSignature({

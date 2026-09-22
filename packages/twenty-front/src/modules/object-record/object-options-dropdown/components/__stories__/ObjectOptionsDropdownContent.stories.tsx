@@ -1,4 +1,8 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -8,13 +12,16 @@ import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dro
 import { type ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewType } from '@/views/types/ViewType';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -70,65 +77,98 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
 export default meta;
 type Story = StoryObj<typeof ObjectOptionsDropdownContent>;
 
-const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
-  decorators: [
-    (Story) => {
-      const companyObjectMetadataItem =
-        getTestEnrichedObjectMetadataItemsMock().find(
-          (item) => item.nameSingular === 'company',
-        )!;
+const createContentDecorator =
+  (initialContentId: ObjectOptionsContentId | null): Decorator =>
+  (Story) => {
+    const [currentContentId, setCurrentContentId] = useState(initialContentId);
 
-      const {
-        fieldDefinitionByFieldMetadataItemId,
-        fieldMetadataItemByFieldMetadataItemId,
-        labelIdentifierFieldMetadataItem,
-        recordFieldByFieldMetadataItemId,
-      } = useRecordIndexFieldMetadataDerivedStates(
-        companyObjectMetadataItem,
-        instanceId,
-      );
+    const companyObjectMetadataItem =
+      getTestEnrichedObjectMetadataItemsMock().find(
+        (item) => item.nameSingular === 'company',
+      )!;
 
-      return (
-        <RecordIndexContextProvider
-          value={{
-            objectPermissionsByObjectMetadataId: {},
-            indexIdentifierUrl: () => '',
-            onIndexRecordsLoaded: () => {},
-            objectNamePlural: 'companies',
-            objectNameSingular: 'company',
-            objectMetadataItem: companyObjectMetadataItem,
-            recordIndexId: instanceId,
-            viewBarInstanceId: instanceId,
-            fieldDefinitionByFieldMetadataItemId,
-            fieldMetadataItemByFieldMetadataItemId,
-            labelIdentifierFieldMetadataItem,
-            recordFieldByFieldMetadataItemId,
-          }}
+    const {
+      fieldDefinitionByFieldMetadataItemId,
+      fieldMetadataItemByFieldMetadataItemId,
+      labelIdentifierFieldMetadataItem,
+      recordFieldByFieldMetadataItemId,
+    } = useRecordIndexFieldMetadataDerivedStates(
+      companyObjectMetadataItem,
+      instanceId,
+    );
+
+    return (
+      <RecordIndexContextProvider
+        value={{
+          objectPermissionsByObjectMetadataId: {},
+          indexIdentifierUrl: () => '',
+          onIndexRecordsLoaded: () => {},
+          objectNamePlural: 'companies',
+          objectNameSingular: 'company',
+          objectMetadataItem: companyObjectMetadataItem,
+          recordIndexId: instanceId,
+          viewBarInstanceId: instanceId,
+          fieldDefinitionByFieldMetadataItemId,
+          fieldMetadataItemByFieldMetadataItemId,
+          labelIdentifierFieldMetadataItem,
+          recordFieldByFieldMetadataItemId,
+        }}
+      >
+        <DropdownComponentInstanceContext.Provider
+          value={{ instanceId: OBJECT_OPTIONS_DROPDOWN_ID }}
         >
-          <DropdownComponentInstanceContext.Provider
-            value={{ instanceId: OBJECT_OPTIONS_DROPDOWN_ID }}
+          <ObjectOptionsDropdownContext.Provider
+            value={{
+              viewType: ViewType.TABLE,
+              objectMetadataItem: companyObjectMetadataItem,
+              recordIndexId: instanceId,
+              currentContentId,
+              onContentChange: setCurrentContentId,
+              resetContent: () => setCurrentContentId(null),
+              dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
+            }}
           >
-            <ObjectOptionsDropdownContext.Provider
-              value={{
-                viewType: ViewType.TABLE,
-                objectMetadataItem: companyObjectMetadataItem,
-                recordIndexId: instanceId,
-                currentContentId: contentId,
-                onContentChange: () => {},
-                resetContent: () => {},
-                dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
-              }}
-            >
-              <DropdownContent>
-                <Story />
-              </DropdownContent>
-            </ObjectOptionsDropdownContext.Provider>
-          </DropdownComponentInstanceContext.Provider>
-        </RecordIndexContextProvider>
-      );
-    },
-  ],
+            <DropdownContent>
+              <Story />
+            </DropdownContent>
+          </ObjectOptionsDropdownContext.Provider>
+        </DropdownComponentInstanceContext.Provider>
+      </RecordIndexContextProvider>
+    );
+  };
+
+const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
+  decorators: [createContentDecorator(contentId)],
 });
+
+// The Load limit row only renders on a grouped view, and seeding 25 rather than
+// the default 8 keeps the checked-option assertion from passing by accident.
+const GroupedViewWithLoadLimitDecorator: Decorator = (Story) => {
+  const groupByFieldMetadataItem = getTestEnrichedObjectMetadataItemsMock()
+    .find((item) => item.nameSingular === 'company')!
+    .fields.find((field) => field.name === 'idealCustomerProfile');
+
+  const setRecordIndexGroupFieldMetadataItem = useSetAtomComponentState(
+    recordIndexGroupFieldMetadataItemComponentState,
+    instanceId,
+  );
+
+  const setRecordIndexGroupLoadLimit = useSetAtomComponentState(
+    recordIndexGroupLoadLimitComponentState,
+    instanceId,
+  );
+
+  useEffect(() => {
+    setRecordIndexGroupFieldMetadataItem(groupByFieldMetadataItem);
+    setRecordIndexGroupLoadLimit(25);
+  }, [
+    groupByFieldMetadataItem,
+    setRecordIndexGroupFieldMetadataItem,
+    setRecordIndexGroupLoadLimit,
+  ]);
+
+  return <Story />;
+};
 
 export const Default = createStory(null);
 
@@ -147,6 +187,36 @@ export const RecordGroupSort = createStory('recordGroupSort');
 export const RecordGroupLoadLimit = createStory('recordGroupLoadLimit');
 
 export const HiddenRecordGroups = createStory('hiddenRecordGroups');
+
+export const RecordGroupLoadLimitSelectionAction: Story = {
+  decorators: [
+    GroupedViewWithLoadLimitDecorator,
+    createContentDecorator('recordGroups'),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('Load limit'));
+
+    const loadLimitOptions = await canvas.findAllByRole('option');
+
+    expect(loadLimitOptions.map((option) => option.textContent)).toEqual([
+      '8',
+      '25',
+      '50',
+      '100',
+    ]);
+
+    expect(canvas.getByRole('option', { name: '25' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(canvas.getByRole('option', { name: '8' })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
+  },
+};
 
 export const FieldsSearchVisibilityAction: Story = {
   ...createStory('fields'),
