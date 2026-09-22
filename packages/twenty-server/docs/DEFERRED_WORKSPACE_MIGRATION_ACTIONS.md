@@ -106,6 +106,8 @@ The runner delegates both steps to `DeferredWorkspaceMigrationActionRunnerServic
 | `applicationUniversalIdentifier` | application of the migration, passed back to the handler |
 | `actionHandlerKey` | one of the deferrable actions, used to find the handler |
 | `payload` | `jsonb`, the handler payload |
+| `position` | order of the action within its migration |
+| `runByVersion` | `APP_VERSION` of the server that ran the migration |
 | `status` | `PENDING`, `IN_PROGRESS` or `FAILED` |
 | `attempts`, `lastError`, `startedAt` | retry bookkeeping |
 
@@ -115,11 +117,11 @@ Index on `(workspaceId, status)`. A row is deleted once its action succeeds. The
 
 `RunDeferredWorkspaceMigrationActionsJob` runs on `workspaceQueue`, deduplicated per workspace, 3 attempts with exponential backoff. `DeferredWorkspaceMigrationActionRunnerService.runPendingActions`:
 
-1. loads the workspace's `PENDING` rows once (actions created later come with their own job);
+1. loads the workspace's `PENDING` rows once, ordered by creation then `position` (actions created later come with their own job);
 2. claims each row with a conditional update (`PENDING` to `IN_PROGRESS`, `attempts + 1`);
 3. resolves the handler with `actionHandlerKey` (`executeDeferredActionHandler`, registry `:118`) and calls `executeDeferredAction` with the flat entity maps loaded once per run through `WorkspaceManyOrAllFlatEntityMapsCacheService`, for the same metadata names the migration runner would load (`getMetadataNamesToLoadForWorkspaceMigration`), on a dedicated connection without the client `query_timeout` and with a server-side `statement_timeout` of one hour, so Postgres cancels a stuck statement itself;
-4. deletes the row on success, or sets it back to `PENDING` (`FAILED` after the last attempt) with `lastError`, then moves on to the next row;
-5. fails the job at the end if any action failed, so the queue retries it.
+4. deletes the row on success, or sets it back to `PENDING` (`FAILED` after the last attempt) with `lastError`;
+5. stops at the first failure and fails the job, so the queue retries it and the remaining actions keep running in order.
 
 `create_index` reads the index from the maps it receives and completes as obsolete if it is absent. The maps are fresh because the runner invalidates the cache after commit, before enqueueing the job. On a retry it runs `DROP INDEX CONCURRENTLY IF EXISTS` first, since a failed concurrent build leaves an invalid index behind.
 
@@ -152,7 +154,7 @@ Tested in PR 1:
 - integration, through the public APIs only: with the flag on, creating an object adds one join column index to each system relation object, records of the new object get timeline activities, and deleting a logic function succeeds; existing object, field, index and logic function suites pass;
 - manual, 3M `timelineActivity` rows: flag off logic function deletion removes files right after commit; flag on persists actions with the worker stopped and processes them once started (`timelineActivity` index built in 2.4s outside the transaction); an object deleted before the worker ran completes its actions as obsolete; a broken column fails three times with backoff then `FAILED` while the other indexes build immediately; restoring it before a retry drops and rebuilds the index.
 
-Known limitations until PRs 2 and 3: a worker crash leaves a row `IN_PROGRESS`; `FAILED` rows need a manual reset; metadata changes are not blocked while actions are pending, so a deletion racing an in-flight build can leave a physical index without metadata.
+Known limitations until PRs 2 and 3: a worker crash leaves a row `IN_PROGRESS`; `FAILED` rows need a manual reset and no longer hold back the actions after them; metadata changes are not blocked while actions are pending, so a deletion racing an in-flight build can leave a physical index without metadata.
 
 ## Open questions
 

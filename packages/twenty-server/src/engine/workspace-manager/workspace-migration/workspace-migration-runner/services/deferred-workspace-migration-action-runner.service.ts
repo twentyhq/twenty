@@ -6,6 +6,7 @@ import { DataSource, type QueryRunner } from 'typeorm';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DeferredWorkspaceMigrationActionEntity } from 'src/engine/metadata-modules/deferred-workspace-migration-action/deferred-workspace-migration-action.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -42,6 +43,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     private readonly messageQueueService: MessageQueueService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async persist({
@@ -62,11 +64,13 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     await queryRunner.manager
       .getRepository(DeferredWorkspaceMigrationActionEntity)
       .save(
-        deferredActions.map(({ actionHandlerKey, payload }) => ({
+        deferredActions.map(({ actionHandlerKey, payload }, position) => ({
           workspaceId,
           applicationUniversalIdentifier,
           actionHandlerKey,
           payload,
+          position,
+          runByVersion: this.twentyConfigService.get('APP_VERSION') ?? null,
         })),
       );
   }
@@ -106,7 +110,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     const pendingActions =
       await this.deferredWorkspaceMigrationActionRepository.find(workspaceId, {
         where: { status: 'PENDING' },
-        order: { createdAt: 'ASC' },
+        order: { createdAt: 'ASC', position: 'ASC' },
       });
 
     if (pendingActions.length === 0) {
@@ -120,7 +124,6 @@ export class DeferredWorkspaceMigrationActionRunnerService {
 
     const deferredActionDataSource =
       await this.createDeferredActionDataSource();
-    const failedActionIds: string[] = [];
 
     try {
       for (const pendingAction of pendingActions) {
@@ -131,18 +134,14 @@ export class DeferredWorkspaceMigrationActionRunnerService {
         });
 
         if (!hasSucceeded) {
-          failedActionIds.push(pendingAction.id);
+          throw new DeferredWorkspaceMigrationActionException(
+            `Deferred workspace migration action ${pendingAction.id} failed for workspace ${workspaceId}, the following actions will run on retry`,
+            DeferredWorkspaceMigrationActionExceptionCode.EXECUTION_FAILED,
+          );
         }
       }
     } finally {
       await deferredActionDataSource.destroy();
-    }
-
-    if (failedActionIds.length > 0) {
-      throw new DeferredWorkspaceMigrationActionException(
-        `${failedActionIds.length} deferred workspace migration action(s) failed for workspace ${workspaceId}: ${failedActionIds.join(', ')}`,
-        DeferredWorkspaceMigrationActionExceptionCode.EXECUTION_FAILED,
-      );
     }
   }
 

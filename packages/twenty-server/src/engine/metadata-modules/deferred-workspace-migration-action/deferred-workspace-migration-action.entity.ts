@@ -29,6 +29,12 @@ export class DeferredWorkspaceMigrationActionEntity extends WorkspaceRelatedEnti
   @Column({ type: 'jsonb' })
   payload: PersistedDeferredWorkspaceMigrationAction['payload'];
 
+  @Column({ type: 'integer' })
+  position: number;
+
+  @Column({ type: 'varchar', nullable: true })
+  runByVersion: string | null;
+
   @Column({ type: 'varchar', default: 'PENDING' })
   status: DeferredWorkspaceMigrationActionStatus;
 
