@@ -241,7 +241,9 @@ export enum AllMetadataName {
   viewFilterGroup = 'viewFilterGroup',
   viewGroup = 'viewGroup',
   viewSort = 'viewSort',
-  webhook = 'webhook'
+  webhook = 'webhook',
+  workflow = 'workflow',
+  workflowVersion = 'workflowVersion'
 }
 
 export type Analytics = {
@@ -2078,6 +2080,7 @@ export type FeatureFlag = {
 export enum FeatureFlagKey {
   IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
+  IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
   IS_INITIAL_OBJECT_VIEW_ENABLED = 'IS_INITIAL_OBJECT_VIEW_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',

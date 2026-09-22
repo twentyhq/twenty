@@ -757,18 +757,12 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       });
     }
 
-    const applicationId =
-      await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
-        workspaceId,
-      );
-
     const { coreWorkflowVersionId } =
       await this.coreWorkflowVersionWriteService.createDraftCoreWorkflowVersionAndMirror(
         {
           workspaceId,
           coreWorkflowId: coreWorkflow.id,
           workspaceWorkflowId,
-          applicationId,
           trigger: triggerToCopy,
           steps: copiedSteps,
         },

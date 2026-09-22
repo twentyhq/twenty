@@ -133,7 +133,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', array: true, nullable: false, default: '{}' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.42.0_AddApplicationGrantedCapabilitiesFastInstanceCommand_1790002742684',
+      '2.42.0_AddApplicationGrantedCapabilitiesFastInstanceCommand_1790088525621',
   })
   grantedCapabilities: ApplicationCapability[];
 

@@ -10,7 +10,7 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'Microsoft Teams',
   description:
-    'Your CRM, in the conversation. Mention the bot or message it directly to read, create, update and soft-delete records without leaving Teams, and post messages from your workflows.',
+    'Your CRM, in the conversation. Mention the bot or message it directly to read, create, update and soft-delete records without leaving Teams, and post messages from your workflows. Connect your Microsoft account for meeting transcripts.',
   logo: 'public/teams.svg',
   author: 'Twenty',
   category: 'Communication',
@@ -42,6 +42,19 @@ export default defineApplication({
     },
   },
   serverVariables: {
+    MICROSOFT_CLIENT_ID: {
+      description: 'OAuth client ID from the Microsoft Entra app registration.',
+      isSecret: false,
+      // Transcript credentials must not block chat-only installations.
+      isRequired: false,
+    },
+    MICROSOFT_CLIENT_SECRET: {
+      description:
+        'OAuth client secret value from the Microsoft Entra app registration.',
+      isSecret: true,
+      // Transcript credentials must not block chat-only installations.
+      isRequired: false,
+    },
     TEAMS_BOT_APP_ID: {
       description:
         'Application (client) ID of the Entra app registration backing the Azure Bot. Public in the Bot Framework protocol and used as the expected audience when verifying inbound activities.',
