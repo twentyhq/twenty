@@ -1,9 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
-
 import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -43,9 +39,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 
 @Module({
   imports: [
-    ApplicationModule,
-    WorkspaceMigrationModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
     RecordPositionModule,
     AutomatedTriggerModule,
@@ -65,7 +58,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     ToolModule,
     LogicFunctionModule,
     CodeStepBuildModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ConnectedAccountMetadataModule,
     WorkflowVersionCoreModule,
     WorkflowVersionValidationModule,
