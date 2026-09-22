@@ -1,7 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { SLACK_CHANNEL_RULE_CAPABILITY } from 'src/logic-functions/constants/slack-channel-rule-capability';
 import { type SlackChannelRule } from 'src/logic-functions/types/slack-channel-rule.type';
+import { isSlackChannelRuleCapability } from 'src/logic-functions/utils/is-slack-channel-rule-capability';
 import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 
 export const findSlackChannelRule = async (
@@ -21,6 +23,7 @@ export const findSlackChannelRule = async (
           slackChannelId: true,
           slackTeamId: true,
           mode: true,
+          capability: true,
         },
       },
     },
@@ -38,11 +41,23 @@ export const findSlackChannelRule = async (
     );
   }
 
+  if (
+    isNonEmptyString(node.capability) &&
+    !isSlackChannelRuleCapability(node.capability)
+  ) {
+    throw new Error(
+      `Slack channel rule ${node.id} has an unsupported capability "${node.capability}"`,
+    );
+  }
+
   return {
     id: node.id,
     name: node.name ?? undefined,
     slackChannelId: node.slackChannelId ?? slackChannelId,
     slackTeamId: node.slackTeamId ?? undefined,
     mode: node.mode,
+    capability: isSlackChannelRuleCapability(node.capability)
+      ? node.capability
+      : SLACK_CHANNEL_RULE_CAPABILITY.FULL,
   };
 };

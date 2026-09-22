@@ -5,12 +5,14 @@ import {
 } from 'twenty-sdk/define';
 
 import {
+  SLACK_CHANNEL_RULE_CAPABILITY_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_CHANNEL_RULE_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_CHANNEL_RULE_MODE_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_CHANNEL_RULE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_CHANNEL_RULE_OBJECT_UNIVERSAL_IDENTIFIER,
   SLACK_CHANNEL_RULE_TEAM_ID_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_CHANNEL_RULE_CAPABILITY } from 'src/logic-functions/constants/slack-channel-rule-capability';
 import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-channel-rule-mode';
 
 export default defineObject({
@@ -20,7 +22,7 @@ export default defineObject({
   labelSingular: 'Slack Channel Rule',
   labelPlural: 'Slack Channel Rules',
   description:
-    'Decides who the assistant answers in one Slack channel. A channel without a rule follows the workspace access mode.',
+    'Decides who the assistant answers in one Slack channel and what it may do there. A channel without a rule follows the workspace access mode with full capability.',
   icon: 'IconBrandSlack',
   writability: MetadataWritability.APPLICATION,
   labelIdentifierFieldMetadataUniversalIdentifier:
@@ -83,6 +85,32 @@ export default defineObject({
         },
       ],
       name: 'mode',
+    },
+    {
+      universalIdentifier:
+        SLACK_CHANNEL_RULE_CAPABILITY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      label: 'Capability',
+      description: 'What the assistant may do in this channel',
+      icon: 'IconShieldCheck',
+      defaultValue: `'${SLACK_CHANNEL_RULE_CAPABILITY.FULL}'`,
+      options: [
+        {
+          id: '89d9c95b-ed29-4eef-a4be-c40c6ed20ecd',
+          value: SLACK_CHANNEL_RULE_CAPABILITY.FULL,
+          label: 'Full',
+          position: 0,
+          color: 'green',
+        },
+        {
+          id: '9053bd28-6a82-4c30-8668-4d83c94839cb',
+          value: SLACK_CHANNEL_RULE_CAPABILITY.READ_ONLY,
+          label: 'Read-only',
+          position: 1,
+          color: 'blue',
+        },
+      ],
+      name: 'capability',
     },
   ],
 });
