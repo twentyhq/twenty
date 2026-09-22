@@ -111,7 +111,6 @@ describe('computeContextStoreFilters', () => {
     const serializedFilters = JSON.stringify(filters);
 
     expect(serializedFilters).not.toContain('linkedinLink');
-    // Other fields should still be searched.
     expect(serializedFilters).toContain('name');
   });
 
