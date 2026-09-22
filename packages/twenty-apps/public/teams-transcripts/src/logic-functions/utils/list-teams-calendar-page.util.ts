@@ -2,15 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { TEAMS_CALENDAR_PAGE_SIZE } from 'src/constants/teams.constant';
 import { type GraphCollectionPage } from 'src/logic-functions/types/graph-collection-page.type';
+import { type TeamsCalendarEvent } from 'src/logic-functions/types/teams-calendar-event.type';
 import { type TeamsMeetingWindow } from 'src/logic-functions/types/teams-meeting-window.type';
 import { graphFetchJson } from 'src/logic-functions/utils/graph-fetch-json.util';
-
-type TeamsCalendarEvent = {
-  isOrganizer?: boolean;
-  isCancelled?: boolean;
-  onlineMeetingProvider?: string;
-  onlineMeeting?: { joinUrl?: string | null } | null;
-};
 
 export const listTeamsCalendarPage = async ({
   accessToken,
