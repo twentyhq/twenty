@@ -1,3 +1,7 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
 import {
@@ -17,7 +21,6 @@ import { v4 } from 'uuid';
 
 type PendingRecordCreation = {
   requestId: string;
-  objectMetadataLabelSingular: string;
   createRecord: (draftRecord: Partial<ObjectRecord>) => Promise<ObjectRecord>;
   resolve: (createdRecord: ObjectRecord | null) => void;
   isSettling: boolean;
@@ -31,6 +34,8 @@ export const RecordCreationFormProvider = ({
   children,
 }: RecordCreationFormProviderProps) => {
   const store = useStore();
+  const { enqueueToast } = useToast();
+  const { goBackFromSidePanel } = useSidePanelHistory();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
   const [pendingRecordCreations, setPendingRecordCreations] = useState<
@@ -80,6 +85,13 @@ export const RecordCreationFormProvider = ({
         const createdRecord =
           await pendingRecordCreation.createRecord(draftRecord);
 
+        if (
+          store.get(sidePanelNavigationStackState.atom).at(-1)?.pageId ===
+          requestId
+        ) {
+          goBackFromSidePanel();
+        }
+
         pendingRecordCreation.resolve(createdRecord);
 
         setPendingRecordCreations((previousPendingRecordCreations) =>
@@ -87,7 +99,7 @@ export const RecordCreationFormProvider = ({
             (candidate) => candidate.requestId !== requestId,
           ),
         );
-      } catch {
+      } catch (error) {
         setPendingRecordCreations((previousPendingRecordCreations) =>
           previousPendingRecordCreations.map((candidate) =>
             candidate.requestId === requestId
@@ -96,15 +108,10 @@ export const RecordCreationFormProvider = ({
           ),
         );
 
-        navigateSidePanelMenu({
-          page: SidePanelPages.RecordCreationForm,
-          pageTitle: t`Create ${pendingRecordCreation.objectMetadataLabelSingular}`,
-          pageIcon: IconPlus,
-          pageId: requestId,
-        });
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
-    [navigateSidePanelMenu, pendingRecordCreations],
+    [enqueueToast, goBackFromSidePanel, pendingRecordCreations, store],
   );
 
   const requestRecordCreation = useCallback(
@@ -137,7 +144,6 @@ export const RecordCreationFormProvider = ({
           ...previousPendingRecordCreations,
           {
             requestId,
-            objectMetadataLabelSingular: objectMetadataItem.labelSingular,
             createRecord,
             resolve,
             isSettling: false,
