@@ -898,7 +898,8 @@ A `ref` gives you a sandbox element, not an `HTMLElement`.
 | What you write | What happens | Use instead |
 |----------------|--------------|-------------|
 | `ref.current.focus()`, `.blur()` | Move the sandbox's `document.activeElement` only; the real focus on the page does not change | `onFocus` / `onBlur` for the page's focus |
-| `ref.current.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Throws | Controlled components; read values from `event.target` |
+| `ref.current.click()` | Dispatches a `click` inside the sandbox: a checkbox or radio toggles and its `onChange` runs, but the element on the page is not clicked | Controlled components for anything the page must do |
+| `ref.current.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Throws | Controlled components; read values from `event.target` |
 | `document.createTreeWalker()` | Throws | `querySelector()` / `querySelectorAll()`, `matches()`, `closest()` (including pseudo-classes such as `:disabled` and `:not()`), `getElementById()`, `contains()` and `compareDocumentPosition()` work; `getElementsByClassName()` works too, but returns a static collection, not a live `HTMLCollection` |
 | `document.activeElement` | Follows the page's focus inside the component; `focus()` / `blur()` calls made inside the sandbox move it until the page's focus changes again | `onFocus` / `onBlur` to react to the page's focus |
 | `canvas` | Renders nothing, no error | SVG, or draw offscreen and show the result in an `img` element |
@@ -911,6 +912,8 @@ The portal gap is why Radix, Headless UI, MUI and react-select popovers render n
 ### Events
 
 Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `img`, clipboard and composition on `input`/`textarea`, media on `video`/`audio`, `toggle` on `details`/`dialog`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `img`) is dropped without warning.
+
+Handlers receive typed events built from the page event, `PointerEvent`, `MouseEvent`, `KeyboardEvent`, `InputEvent`, `WheelEvent` or `FocusEvent`, and those constructors exist in the sandbox for `dispatchEvent()`. Each forwarded event also carries React's synthetic event surface (`nativeEvent`, `isDefaultPrevented()`, `isPropagationStopped()`, `persist()`), so code written against React events keeps working even though the sandbox hands the event object to your handler directly.
 
 `document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
 

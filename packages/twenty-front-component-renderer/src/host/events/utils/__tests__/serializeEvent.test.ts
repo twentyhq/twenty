@@ -36,6 +36,16 @@ describe('serializeEvent', () => {
     expect(result).toEqual({ type: 'wheel' });
   });
 
+  it('should copy the numeric click count but not custom event payloads', () => {
+    expect(serializeEvent({ type: 'click', detail: 2 })).toEqual({
+      type: 'click',
+      detail: 2,
+    });
+    expect(serializeEvent({ type: 'custom', detail: { payload: 1 } })).toEqual({
+      type: 'custom',
+    });
+  });
+
   it('should map first changed touch coordinates into coordinate fields', () => {
     const result = serializeEvent({
       type: 'touchstart',

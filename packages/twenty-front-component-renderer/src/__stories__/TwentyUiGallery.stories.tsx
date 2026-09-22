@@ -8,7 +8,7 @@ import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/ic
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/responsiveHooksTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
-import { dropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSandboxFailureTest';
+import { createDropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownSandboxFailureTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -39,14 +39,12 @@ import {
   displayHelpersTest,
   galleryRenderTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
-import {
-  alertDialogTest,
-  menuTest,
-  popoverTest,
-  selectTest,
-  switchTest,
-  tabsTest,
-} from '@/__stories__/twenty-ui-gallery/utils/sandboxFailureTests';
+import { alertDialogTest } from '@/__stories__/twenty-ui-gallery/utils/alertDialogTest';
+import { menuTest } from '@/__stories__/twenty-ui-gallery/utils/menuTest';
+import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
+import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
+import { switchTest } from '@/__stories__/twenty-ui-gallery/utils/switchTest';
+import { tabsTest } from '@/__stories__/twenty-ui-gallery/utils/tabsTest';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import {
   tooltipEscapeDismissalTest,
@@ -306,13 +304,13 @@ export const MenuPreact: Story = createGalleryStory({
 export const DropdownReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'react',
-  play: dropdownSandboxFailureTest,
+  play: createDropdownSandboxFailureTest('react'),
 });
 
 export const DropdownPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'preact',
-  play: dropdownSandboxFailureTest,
+  play: createDropdownSandboxFailureTest('preact'),
 });
 
 export const SelectReact: Story = createGalleryStory({

@@ -72,6 +72,9 @@ export const serializeEvent = (event: unknown): SerializedEventData => {
   if (isNumber(domEvent.buttons)) {
     serialized.buttons = domEvent.buttons;
   }
+  if (isNumber(domEvent.detail)) {
+    serialized.detail = domEvent.detail;
+  }
 
   applyFirstChangedTouchCoordinates(serialized, domEvent);
 

@@ -1,5 +1,6 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
@@ -35,13 +36,14 @@ export const createListItemSandboxFailureTest =
       await waitFor(() =>
         expect(canvas.getByText('Fields: open')).toBeVisible(),
       );
-      await expectSandboxErrors({
-        requiredErrors: [
-          runtime === 'react'
-            ? SANDBOX_ERROR_PATTERNS.COMPOSED_PATH
-            : SANDBOX_ERROR_PATTERNS.ELEMENT_CONTAINS,
-        ],
-        allowedAdditionalErrors:
-          runtime === 'preact' ? [SANDBOX_ERROR_PATTERNS.COMPOSED_PATH] : [],
-      });
+
+      if (runtime === 'preact') {
+        await expectSandboxErrors({
+          requiredErrors: [SANDBOX_ERROR_PATTERNS.ELEMENT_CONTAINS],
+        });
+
+        return;
+      }
+
+      expect(errorHandler).not.toHaveBeenCalled();
     });

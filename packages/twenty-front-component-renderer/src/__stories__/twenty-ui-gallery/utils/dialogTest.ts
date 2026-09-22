@@ -1,7 +1,7 @@
-import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
-import { createSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createSandboxFailureTest';
+import { createOverlayOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createOverlayOpenTest';
 
-export const dialogTest = createSandboxFailureTest({
+export const dialogTest = createOverlayOpenTest({
   trigger: { role: 'button', name: 'Edit account' },
-  requiredErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
+  expectedOpenStatus: 'Dialog: open',
+  popupText: 'Update the account details.',
 });

@@ -81,9 +81,7 @@ const generateCommonEventsType = (
     type: (writer) => {
       writer.block(() => {
         for (const event of events) {
-          writer.writeLine(
-            `${event}(event: RemoteEvent<SerializedEventData>): void;`,
-          );
+          writer.writeLine(`${event}(event: Event): void;`);
         }
       });
     },
@@ -129,22 +127,13 @@ const generateCommonEventsType = (
               });
               writer.writeLine(');');
               writer.blankLine();
-              writer.writeLine('const event = new CustomEvent(eventType, {');
+              writer.writeLine('return createWorkerEventFromSerializedEvent({');
               writer.indent(() => {
-                writer.writeLine('detail: eventData,');
-              });
-              writer.writeLine('}) as RemoteEvent<SerializedEventData>;');
-              writer.blankLine();
-              writer.writeLine('applySerializedEventProperties(');
-              writer.indent(() => {
-                writer.writeLine(
-                  'event as unknown as Record<string, unknown>,',
-                );
+                writer.writeLine('target: this,');
+                writer.writeLine('eventType,');
                 writer.writeLine('eventData,');
               });
-              writer.writeLine(');');
-              writer.blankLine();
-              writer.writeLine('return event;');
+              writer.writeLine('});');
             });
             writer.writeLine('},');
           });
@@ -252,7 +241,7 @@ const generateElementDefinition = (
       : TYPE_NAMES.EMPTY_RECORD;
 
   const customEventsInline = customEvents
-    .map((event) => `${event}(event: RemoteEvent<SerializedEventData>): void`)
+    .map((event) => `${event}(event: Event): void`)
     .join('; ');
 
   let eventsType: string = TYPE_NAMES.EMPTY_RECORD;
@@ -404,21 +393,21 @@ export const generateRemoteElements = (
       'createRemoteElement',
       INTERNAL_ELEMENT_CLASSES.ROOT,
       INTERNAL_ELEMENT_CLASSES.FRAGMENT,
-      { name: 'RemoteEvent', isTypeOnly: true },
       { name: 'RemoteElementEventListenerDefinition', isTypeOnly: true },
       { name: 'RemoteElementEventListenersDefinition', isTypeOnly: true },
     ],
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '@/remote/elements/utils/applySerializedEventProperties',
-    namedImports: ['applySerializedEventProperties'],
+    moduleSpecifier:
+      '@/remote/elements/utils/applySerializedEventTargetProperties',
+    namedImports: ['applySerializedEventTargetProperties'],
   });
 
   sourceFile.addImportDeclaration({
     moduleSpecifier:
-      '@/remote/elements/utils/applySerializedEventTargetProperties',
-    namedImports: ['applySerializedEventTargetProperties'],
+      '@/remote/elements/utils/createWorkerEventFromSerializedEvent',
+    namedImports: ['createWorkerEventFromSerializedEvent'],
   });
 
   sourceFile.addImportDeclaration({

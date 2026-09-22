@@ -2,12 +2,11 @@ import {
   createRemoteElement,
   RemoteRootElement,
   RemoteFragmentElement,
-  type RemoteEvent,
   type RemoteElementEventListenerDefinition,
   type RemoteElementEventListenersDefinition,
 } from '@remote-dom/core/elements';
-import { applySerializedEventProperties } from '@/remote/elements/utils/applySerializedEventProperties';
 import { applySerializedEventTargetProperties } from '@/remote/elements/utils/applySerializedEventTargetProperties';
+import { createWorkerEventFromSerializedEvent } from '@/remote/elements/utils/createWorkerEventFromSerializedEvent';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export type HtmlCommonProperties = {
@@ -23,50 +22,50 @@ export type HtmlCommonProperties = {
   draggable?: string;
 };
 export type HtmlCommonEvents = {
-  click(event: RemoteEvent<SerializedEventData>): void;
-  dblclick(event: RemoteEvent<SerializedEventData>): void;
-  mousedown(event: RemoteEvent<SerializedEventData>): void;
-  mouseup(event: RemoteEvent<SerializedEventData>): void;
-  mousemove(event: RemoteEvent<SerializedEventData>): void;
-  mouseover(event: RemoteEvent<SerializedEventData>): void;
-  mouseout(event: RemoteEvent<SerializedEventData>): void;
-  mouseenter(event: RemoteEvent<SerializedEventData>): void;
-  mouseleave(event: RemoteEvent<SerializedEventData>): void;
-  pointerdown(event: RemoteEvent<SerializedEventData>): void;
-  pointerup(event: RemoteEvent<SerializedEventData>): void;
-  pointermove(event: RemoteEvent<SerializedEventData>): void;
-  pointerover(event: RemoteEvent<SerializedEventData>): void;
-  pointerout(event: RemoteEvent<SerializedEventData>): void;
-  pointerenter(event: RemoteEvent<SerializedEventData>): void;
-  pointerleave(event: RemoteEvent<SerializedEventData>): void;
-  pointercancel(event: RemoteEvent<SerializedEventData>): void;
-  keydown(event: RemoteEvent<SerializedEventData>): void;
-  keyup(event: RemoteEvent<SerializedEventData>): void;
-  keypress(event: RemoteEvent<SerializedEventData>): void;
-  focus(event: RemoteEvent<SerializedEventData>): void;
-  blur(event: RemoteEvent<SerializedEventData>): void;
-  change(event: RemoteEvent<SerializedEventData>): void;
-  input(event: RemoteEvent<SerializedEventData>): void;
-  submit(event: RemoteEvent<SerializedEventData>): void;
-  scroll(event: RemoteEvent<SerializedEventData>): void;
-  wheel(event: RemoteEvent<SerializedEventData>): void;
-  contextmenu(event: RemoteEvent<SerializedEventData>): void;
-  drag(event: RemoteEvent<SerializedEventData>): void;
-  dragstart(event: RemoteEvent<SerializedEventData>): void;
-  dragenter(event: RemoteEvent<SerializedEventData>): void;
-  dragleave(event: RemoteEvent<SerializedEventData>): void;
-  dragover(event: RemoteEvent<SerializedEventData>): void;
-  dragend(event: RemoteEvent<SerializedEventData>): void;
-  drop(event: RemoteEvent<SerializedEventData>): void;
-  touchstart(event: RemoteEvent<SerializedEventData>): void;
-  touchmove(event: RemoteEvent<SerializedEventData>): void;
-  touchend(event: RemoteEvent<SerializedEventData>): void;
-  touchcancel(event: RemoteEvent<SerializedEventData>): void;
-  focusin(event: RemoteEvent<SerializedEventData>): void;
-  focusout(event: RemoteEvent<SerializedEventData>): void;
-  animationend(event: RemoteEvent<SerializedEventData>): void;
-  transitionend(event: RemoteEvent<SerializedEventData>): void;
-  scrollend(event: RemoteEvent<SerializedEventData>): void;
+  click(event: Event): void;
+  dblclick(event: Event): void;
+  mousedown(event: Event): void;
+  mouseup(event: Event): void;
+  mousemove(event: Event): void;
+  mouseover(event: Event): void;
+  mouseout(event: Event): void;
+  mouseenter(event: Event): void;
+  mouseleave(event: Event): void;
+  pointerdown(event: Event): void;
+  pointerup(event: Event): void;
+  pointermove(event: Event): void;
+  pointerover(event: Event): void;
+  pointerout(event: Event): void;
+  pointerenter(event: Event): void;
+  pointerleave(event: Event): void;
+  pointercancel(event: Event): void;
+  keydown(event: Event): void;
+  keyup(event: Event): void;
+  keypress(event: Event): void;
+  focus(event: Event): void;
+  blur(event: Event): void;
+  change(event: Event): void;
+  input(event: Event): void;
+  submit(event: Event): void;
+  scroll(event: Event): void;
+  wheel(event: Event): void;
+  contextmenu(event: Event): void;
+  drag(event: Event): void;
+  dragstart(event: Event): void;
+  dragenter(event: Event): void;
+  dragleave(event: Event): void;
+  dragover(event: Event): void;
+  dragend(event: Event): void;
+  drop(event: Event): void;
+  touchstart(event: Event): void;
+  touchmove(event: Event): void;
+  touchend(event: Event): void;
+  touchcancel(event: Event): void;
+  focusin(event: Event): void;
+  focusout(event: Event): void;
+  animationend(event: Event): void;
+  transitionend(event: Event): void;
+  scrollend(event: Event): void;
 };
 
 const HTML_COMMON_EVENTS_ARRAY = [
@@ -124,16 +123,11 @@ const createSerializedEventConfig = (
       eventData,
     );
 
-    const event = new CustomEvent(eventType, {
-      detail: eventData,
-    }) as RemoteEvent<SerializedEventData>;
-
-    applySerializedEventProperties(
-      event as unknown as Record<string, unknown>,
+    return createWorkerEventFromSerializedEvent({
+      target: this,
+      eventType,
       eventData,
-    );
-
-    return event;
+    });
   },
 });
 const HTML_COMMON_EVENTS_CONFIG = Object.fromEntries(
@@ -431,10 +425,7 @@ export const HtmlImgElement = createRemoteElement<
   HtmlImgProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents & {
-    load(event: RemoteEvent<SerializedEventData>): void;
-    error(event: RemoteEvent<SerializedEventData>): void;
-  }
+  HtmlCommonEvents & { load(event: Event): void; error(event: Event): void }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
@@ -541,13 +532,13 @@ export const HtmlInputElement = createRemoteElement<
   Record<string, never>,
   Record<string, never>,
   HtmlCommonEvents & {
-    beforeinput(event: RemoteEvent<SerializedEventData>): void;
-    compositionstart(event: RemoteEvent<SerializedEventData>): void;
-    compositionupdate(event: RemoteEvent<SerializedEventData>): void;
-    compositionend(event: RemoteEvent<SerializedEventData>): void;
-    copy(event: RemoteEvent<SerializedEventData>): void;
-    paste(event: RemoteEvent<SerializedEventData>): void;
-    cut(event: RemoteEvent<SerializedEventData>): void;
+    beforeinput(event: Event): void;
+    compositionstart(event: Event): void;
+    compositionupdate(event: Event): void;
+    compositionend(event: Event): void;
+    copy(event: Event): void;
+    paste(event: Event): void;
+    cut(event: Event): void;
   }
 >({
   properties: {
@@ -590,13 +581,13 @@ export const HtmlTextareaElement = createRemoteElement<
   Record<string, never>,
   Record<string, never>,
   HtmlCommonEvents & {
-    beforeinput(event: RemoteEvent<SerializedEventData>): void;
-    compositionstart(event: RemoteEvent<SerializedEventData>): void;
-    compositionupdate(event: RemoteEvent<SerializedEventData>): void;
-    compositionend(event: RemoteEvent<SerializedEventData>): void;
-    copy(event: RemoteEvent<SerializedEventData>): void;
-    paste(event: RemoteEvent<SerializedEventData>): void;
-    cut(event: RemoteEvent<SerializedEventData>): void;
+    beforeinput(event: Event): void;
+    compositionstart(event: Event): void;
+    compositionupdate(event: Event): void;
+    compositionend(event: Event): void;
+    copy(event: Event): void;
+    paste(event: Event): void;
+    cut(event: Event): void;
   }
 >({
   properties: {
@@ -867,25 +858,25 @@ export const HtmlVideoElement = createRemoteElement<
   Record<string, never>,
   Record<string, never>,
   HtmlCommonEvents & {
-    timeupdate(event: RemoteEvent<SerializedEventData>): void;
-    play(event: RemoteEvent<SerializedEventData>): void;
-    pause(event: RemoteEvent<SerializedEventData>): void;
-    ended(event: RemoteEvent<SerializedEventData>): void;
-    loadedmetadata(event: RemoteEvent<SerializedEventData>): void;
-    loadeddata(event: RemoteEvent<SerializedEventData>): void;
-    volumechange(event: RemoteEvent<SerializedEventData>): void;
-    seeking(event: RemoteEvent<SerializedEventData>): void;
-    seeked(event: RemoteEvent<SerializedEventData>): void;
-    error(event: RemoteEvent<SerializedEventData>): void;
-    canplay(event: RemoteEvent<SerializedEventData>): void;
-    canplaythrough(event: RemoteEvent<SerializedEventData>): void;
-    waiting(event: RemoteEvent<SerializedEventData>): void;
-    progress(event: RemoteEvent<SerializedEventData>): void;
-    durationchange(event: RemoteEvent<SerializedEventData>): void;
-    ratechange(event: RemoteEvent<SerializedEventData>): void;
-    stalled(event: RemoteEvent<SerializedEventData>): void;
-    suspend(event: RemoteEvent<SerializedEventData>): void;
-    emptied(event: RemoteEvent<SerializedEventData>): void;
+    timeupdate(event: Event): void;
+    play(event: Event): void;
+    pause(event: Event): void;
+    ended(event: Event): void;
+    loadedmetadata(event: Event): void;
+    loadeddata(event: Event): void;
+    volumechange(event: Event): void;
+    seeking(event: Event): void;
+    seeked(event: Event): void;
+    error(event: Event): void;
+    canplay(event: Event): void;
+    canplaythrough(event: Event): void;
+    waiting(event: Event): void;
+    progress(event: Event): void;
+    durationchange(event: Event): void;
+    ratechange(event: Event): void;
+    stalled(event: Event): void;
+    suspend(event: Event): void;
+    emptied(event: Event): void;
   }
 >({
   properties: {
@@ -943,25 +934,25 @@ export const HtmlAudioElement = createRemoteElement<
   Record<string, never>,
   Record<string, never>,
   HtmlCommonEvents & {
-    timeupdate(event: RemoteEvent<SerializedEventData>): void;
-    play(event: RemoteEvent<SerializedEventData>): void;
-    pause(event: RemoteEvent<SerializedEventData>): void;
-    ended(event: RemoteEvent<SerializedEventData>): void;
-    loadedmetadata(event: RemoteEvent<SerializedEventData>): void;
-    loadeddata(event: RemoteEvent<SerializedEventData>): void;
-    volumechange(event: RemoteEvent<SerializedEventData>): void;
-    seeking(event: RemoteEvent<SerializedEventData>): void;
-    seeked(event: RemoteEvent<SerializedEventData>): void;
-    error(event: RemoteEvent<SerializedEventData>): void;
-    canplay(event: RemoteEvent<SerializedEventData>): void;
-    canplaythrough(event: RemoteEvent<SerializedEventData>): void;
-    waiting(event: RemoteEvent<SerializedEventData>): void;
-    progress(event: RemoteEvent<SerializedEventData>): void;
-    durationchange(event: RemoteEvent<SerializedEventData>): void;
-    ratechange(event: RemoteEvent<SerializedEventData>): void;
-    stalled(event: RemoteEvent<SerializedEventData>): void;
-    suspend(event: RemoteEvent<SerializedEventData>): void;
-    emptied(event: RemoteEvent<SerializedEventData>): void;
+    timeupdate(event: Event): void;
+    play(event: Event): void;
+    pause(event: Event): void;
+    ended(event: Event): void;
+    loadedmetadata(event: Event): void;
+    loadeddata(event: Event): void;
+    volumechange(event: Event): void;
+    seeking(event: Event): void;
+    seeked(event: Event): void;
+    error(event: Event): void;
+    canplay(event: Event): void;
+    canplaythrough(event: Event): void;
+    waiting(event: Event): void;
+    progress(event: Event): void;
+    durationchange(event: Event): void;
+    ratechange(event: Event): void;
+    stalled(event: Event): void;
+    suspend(event: Event): void;
+    emptied(event: Event): void;
   }
 >({
   properties: {
@@ -1397,7 +1388,7 @@ export const HtmlDetailsElement = createRemoteElement<
   HtmlDetailsProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents & { toggle(event: RemoteEvent<SerializedEventData>): void }
+  HtmlCommonEvents & { toggle(event: Event): void }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
@@ -1439,7 +1430,7 @@ export const HtmlDialogElement = createRemoteElement<
   HtmlDialogProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents & { toggle(event: RemoteEvent<SerializedEventData>): void }
+  HtmlCommonEvents & { toggle(event: Event): void }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
