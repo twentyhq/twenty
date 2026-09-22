@@ -11,6 +11,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Like, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import {
   VERSION_PROGRESSION_REASON_TO_DEPLOY_EXCEPTION_CODE,
@@ -28,6 +29,7 @@ import {
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
+import { getTarballUploadCompletionLockName } from 'src/engine/core-modules/application/application-registration/utils/get-tarball-upload-completion-lock-name.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -70,6 +72,7 @@ export class ApplicationTarballService {
     private readonly applicationService: ApplicationService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
   async uploadTarball(params: {
@@ -148,6 +151,31 @@ export class ApplicationTarballService {
     ownerWorkspaceId: string;
     fileId: string;
   }): Promise<ApplicationRegistrationEntity> {
+    // Completions of one upload run one at a time: an overlapping request
+    // would race the registration insert, so it is refused and a later retry
+    // finds the registration the first one attached.
+    const lockResult = await this.postgresAdvisoryLockService.tryWithLock(
+      getTarballUploadCompletionLockName(fileId),
+      () => this.completeTarballUploadExclusively({ ownerWorkspaceId, fileId }),
+    );
+
+    if (!lockResult.acquired) {
+      throw new ApplicationRegistrationException(
+        `Tarball upload ${fileId} is already being completed`,
+        ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_COMPLETION_IN_PROGRESS,
+      );
+    }
+
+    return lockResult.value;
+  }
+
+  private async completeTarballUploadExclusively({
+    ownerWorkspaceId,
+    fileId,
+  }: {
+    ownerWorkspaceId: string;
+    fileId: string;
+  }): Promise<ApplicationRegistrationEntity> {
     const file = await this.fileRepository.findOne(ownerWorkspaceId, {
       where: { id: fileId, path: Like(`${FileFolder.AppTarball}/%`) },
     });
@@ -163,10 +191,6 @@ export class ApplicationTarballService {
       fileId: file.id,
       ownerWorkspaceId,
     });
-
-    if (isDefined(attachedRegistration)) {
-      return attachedRegistration;
-    }
 
     const applicationUniversalIdentifier =
       await this.findOwnerCustomApplicationUniversalIdentifier(
@@ -202,6 +226,13 @@ export class ApplicationTarballService {
           tarballPath,
         );
 
+        if (isDefined(attachedRegistration)) {
+          return this.resumeAttachedRegistration({
+            appRegistration: attachedRegistration,
+            extractedTarball,
+          });
+        }
+
         return this.registerExtractedTarball({
           extractedTarball,
           ownerWorkspaceId,
@@ -216,6 +247,31 @@ export class ApplicationTarballService {
 
       throw error;
     }
+  }
+
+  // The registration is attached to its tarball before the assets are stored
+  // and the auto-upgrade is enqueued, so a retried completion cannot tell
+  // where the previous attempt stopped and reruns those idempotent steps.
+  private async resumeAttachedRegistration({
+    appRegistration,
+    extractedTarball: { contentDir, manifest },
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    extractedTarball: ExtractedTarball;
+  }): Promise<ApplicationRegistrationEntity> {
+    await this.applicationRegistrationAssetService.storeRegistrationAssets({
+      applicationRegistrationId: appRegistration.id,
+      manifestApplication: manifest.application,
+      readAsset: (path) => this.readAssetFromContentDir(contentDir, path),
+    });
+
+    await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
+      appRegistration.id,
+    );
+
+    return this.appRegistrationRepository.findOneOrFail({
+      where: { id: appRegistration.id },
+    });
   }
 
   private async findRegistrationAttachedToFile({

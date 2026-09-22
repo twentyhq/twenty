@@ -5,6 +5,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import {
+  ConflictError,
   InternalServerError,
   NotFoundError,
   UserInputError,
@@ -27,6 +28,8 @@ export class ApplicationRegistrationExceptionFilter implements ExceptionFilter {
       case ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS:
       case ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
         throw new UserInputError(exception);
+      case ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_COMPLETION_IN_PROGRESS:
+        throw new ConflictError(exception);
       default:
         throw new InternalServerError(exception);
     }

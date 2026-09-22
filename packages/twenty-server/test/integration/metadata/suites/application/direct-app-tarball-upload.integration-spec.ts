@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 
 import { type ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
+import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { completeAppTarballUpload } from 'test/integration/metadata/suites/application/utils/complete-app-tarball-upload.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import {
@@ -326,6 +327,127 @@ describe('Direct app tarball upload', () => {
     }
   });
 
+  it('reruns the asset and upgrade steps when a completion is retried after a late failure', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const first = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+    );
+
+    expect(first.completion.errors).toBeUndefined();
+
+    const storeRegistrationAssetsSpy = jest
+      .spyOn(
+        getAppProviderByClassName<ApplicationRegistrationAssetService>(
+          'ApplicationRegistrationAssetService',
+        ),
+        'storeRegistrationAssets',
+      )
+      .mockRejectedValueOnce(new Error('Asset storage unavailable'));
+    const enqueueAutoUpgradeSpy = jest.spyOn(
+      getAppProviderByClassName<ApplicationRegistrationService>(
+        'ApplicationRegistrationService',
+      ),
+      'enqueueAutoUpgradeApplications',
+    );
+
+    try {
+      const second = await deployTarball(
+        await buildValidTarball({ universalIdentifier, version: '1.1.0' }),
+        { expectToFail: true },
+      );
+
+      expect(second.completion.errors).toBeDefined();
+      expect(enqueueAutoUpgradeSpy).not.toHaveBeenCalled();
+
+      const { data, errors } = await completeAppTarballUpload({
+        fileId: second.uploadTarget.fileId,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data?.completeAppTarballUpload.id).toBe(
+        first.completion.data?.completeAppTarballUpload.id,
+      );
+      expect(storeRegistrationAssetsSpy).toHaveBeenCalledTimes(2);
+      expect(enqueueAutoUpgradeSpy).toHaveBeenCalledTimes(1);
+      expect(enqueueAutoUpgradeSpy).toHaveBeenCalledWith(
+        first.completion.data?.completeAppTarballUpload.id,
+      );
+    } finally {
+      storeRegistrationAssetsSpy.mockRestore();
+      enqueueAutoUpgradeSpy.mockRestore();
+    }
+  });
+
+  it('refuses a completion that overlaps another completion of the same upload', async () => {
+    const uploadTarget = await sendToStorage(
+      await buildValidTarball({
+        universalIdentifier: crypto.randomUUID(),
+        version: '1.0.0',
+      }),
+    );
+
+    const assetService =
+      getAppProviderByClassName<ApplicationRegistrationAssetService>(
+        'ApplicationRegistrationAssetService',
+      );
+    const storeRegistrationAssets =
+      assetService.storeRegistrationAssets.bind(assetService);
+
+    let releaseFirstCompletion = () => {};
+    const firstCompletionGate = new Promise<void>((resolve) => {
+      releaseFirstCompletion = resolve;
+    });
+
+    const storeRegistrationAssetsSpy = jest
+      .spyOn(assetService, 'storeRegistrationAssets')
+      .mockImplementationOnce(async (args) => {
+        await firstCompletionGate;
+
+        return storeRegistrationAssets(args);
+      });
+
+    try {
+      const firstCompletion = completeAppTarballUpload({
+        fileId: uploadTarget.fileId,
+      });
+
+      while (storeRegistrationAssetsSpy.mock.calls.length === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      }
+
+      const overlapping = await completeAppTarballUpload({
+        fileId: uploadTarget.fileId,
+        expectToFail: true,
+      });
+
+      expect(overlapping.errors?.[0].extensions.code).toBe('CONFLICT');
+      expect(overlapping.errors?.[0].message).toContain(
+        'already being completed',
+      );
+
+      releaseFirstCompletion();
+
+      const first = await firstCompletion;
+
+      expect(first.errors).toBeUndefined();
+
+      createdRegistrationIds.push(first.data!.completeAppTarballUpload.id);
+
+      const retried = await completeAppTarballUpload({
+        fileId: uploadTarget.fileId,
+      });
+
+      expect(retried.errors).toBeUndefined();
+      expect(retried.data?.completeAppTarballUpload.id).toBe(
+        first.data?.completeAppTarballUpload.id,
+      );
+    } finally {
+      releaseFirstCompletion();
+      storeRegistrationAssetsSpy.mockRestore();
+    }
+  });
+
   it('rejects a tarball without a manifest and drops the promoted file', async () => {
     const tarball = await createAppTarball({
       'readme.txt': 'no manifest here',
@@ -390,6 +512,7 @@ describe('Direct app tarball upload', () => {
         error.message.includes('has not been uploaded'),
       ),
     ).toBe(true);
+    expect(errors?.[0].extensions.code).toBe('BAD_USER_INPUT');
   });
 
   it('rejects an unknown upload', async () => {
@@ -416,5 +539,6 @@ describe('Direct app tarball upload', () => {
         error.message.includes('Invalid file size'),
       ),
     ).toBe(true);
+    expect(errors?.[0].extensions.code).toBe('BAD_USER_INPUT');
   });
 });
