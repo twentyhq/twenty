@@ -8,7 +8,6 @@ import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/up
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -33,11 +32,10 @@ export class SyncShortLinkObjectCommand extends ProvisionedWorkspaceCommandRunne
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
-        'flatIndexMaps',
       ]);
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -72,18 +70,6 @@ export class SyncShortLinkObjectCommand extends ProvisionedWorkspaceCommandRunne
             universalIdentifiers: Object.values(
               STANDARD_OBJECTS.shortLink.fields,
             ).map((field) => field.universalIdentifier),
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-      index: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
-            standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
-            existingFlatEntityMaps: flatIndexMaps,
-            universalIdentifiers: Object.values(
-              STANDARD_OBJECTS.shortLink.indexes,
-            ).map((index) => index.universalIdentifier),
           }),
         flatEntityToDelete: [],
         flatEntityToUpdate: [],

@@ -1007,11 +1007,7 @@ export const STANDARD_OBJECTS = {
   shortLink: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.shortLink,
     fields: STANDARD_OBJECT_FIELDS.shortLink,
-    indexes: {
-      identityHashUniqueIndex: {
-        universalIdentifier: 'b1330e3c-bd74-4bd1-a9dc-1ecefe41f199',
-      },
-    },
+    indexes: {},
     views: {},
   },
   task: {

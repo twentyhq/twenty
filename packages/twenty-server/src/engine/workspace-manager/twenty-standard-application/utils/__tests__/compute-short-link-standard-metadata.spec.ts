@@ -20,7 +20,7 @@ describe('ShortLink standard metadata build', () => {
       STANDARD_OBJECTS.shortLink.universalIdentifier
     ];
 
-  it('creates a workspace owned system object with explicit URL meanings', () => {
+  it('creates a workspace owned system object with a destination URL', () => {
     expect(shortLink).toMatchObject({
       nameSingular: 'shortLink',
       isSystem: true,
@@ -34,28 +34,17 @@ describe('ShortLink standard metadata build', () => {
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
-    expect(
-      fields
-        .filter((field) => field.objectMetadataId === shortLink?.id)
-        .map((field) => field.name),
-    ).toEqual(
-      expect.arrayContaining(['templateUrl', 'resolvedUrl', 'identityHash']),
-    );
+    const shortLinkFieldNames = fields
+      .filter((field) => field.objectMetadataId === shortLink?.id)
+      .map((field) => field.name);
+
+    expect(shortLinkFieldNames.filter((name) => name.endsWith('Url'))).toEqual([
+      'destinationUrl',
+    ]);
+    expect(shortLinkFieldNames).not.toContain('identityHash');
   });
 
-  it('uniquely indexes the link identity within each workspace', () => {
-    const index =
-      allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.shortLink.indexes.identityHashUniqueIndex
-          .universalIdentifier
-      ];
-
-    expect(index).toMatchObject({ isUnique: true });
-    expect(index?.flatIndexFieldMetadatas).toHaveLength(1);
-    expect(index?.flatIndexFieldMetadatas[0].fieldMetadataId).toBe(
-      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.shortLink.fields.identityHash.universalIdentifier
-      ]?.id,
-    );
+  it('does not require destination URL deduplication', () => {
+    expect(STANDARD_OBJECTS.shortLink.indexes).toEqual({});
   });
 });

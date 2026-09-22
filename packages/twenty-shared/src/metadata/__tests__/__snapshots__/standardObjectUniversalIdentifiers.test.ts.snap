@@ -2915,23 +2915,17 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "1a3026c1-9b00-5d61-b135-9d718f4064a9",
       },
+      "destinationUrl": {
+        "universalIdentifier": "5ba068eb-0594-4945-9183-7174a37a9406",
+      },
       "id": {
         "universalIdentifier": "5c0ecd7c-f0b5-54e3-a023-bdf42729ebd8",
-      },
-      "identityHash": {
-        "universalIdentifier": "175f7743-b027-4374-b577-6503679d00fc",
       },
       "position": {
         "universalIdentifier": "0d249731-8755-54f8-aac5-ee4f2a79a9bd",
       },
-      "resolvedUrl": {
-        "universalIdentifier": "5ba068eb-0594-4945-9183-7174a37a9406",
-      },
       "searchVector": {
         "universalIdentifier": "42eb2901-3d82-5cb5-b6b4-bb9c7640375b",
-      },
-      "templateUrl": {
-        "universalIdentifier": "6f588340-ddff-4113-984b-c37c045d496c",
       },
       "updatedAt": {
         "universalIdentifier": "3913f15e-4eb6-5f76-9354-9a58af42b4dd",
@@ -2940,11 +2934,7 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         "universalIdentifier": "aa1ff009-3977-5b66-afb6-bcca66fe1acb",
       },
     },
-    "indexes": {
-      "identityHashUniqueIndex": {
-        "universalIdentifier": "b1330e3c-bd74-4bd1-a9dc-1ecefe41f199",
-      },
-    },
+    "indexes": {},
     "universalIdentifier": "22c96608-d1b1-49a2-b328-3e738d61d82d",
     "views": {},
   },

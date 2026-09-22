@@ -1175,14 +1175,8 @@ export const STANDARD_OBJECT_FIELDS = {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.shortLink,
     ),
-    templateUrl: {
-      universalIdentifier: '6f588340-ddff-4113-984b-c37c045d496c',
-    },
-    resolvedUrl: {
+    destinationUrl: {
       universalIdentifier: '5ba068eb-0594-4945-9183-7174a37a9406',
-    },
-    identityHash: {
-      universalIdentifier: '175f7743-b027-4374-b577-6503679d00fc',
     },
   },
   task: {

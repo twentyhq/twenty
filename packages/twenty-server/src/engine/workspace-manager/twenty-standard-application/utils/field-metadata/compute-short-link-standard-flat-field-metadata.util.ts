@@ -157,53 +157,19 @@ export const buildShortLinkStandardFlatFieldMetadatas = (
       isSystem: true,
       isNullable: true,
     }),
-    templateUrl: createField({
-      fieldName: 'templateUrl',
+    destinationUrl: createField({
+      fieldName: 'destinationUrl',
       type: FieldMetadataType.TEXT,
       label: i18nLabel(
-        msg({ message: `Template URL`, context: 'fieldMetadata.label' }),
+        msg({ message: `Destination URL`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
-          message: `URL as authored in the campaign, including variables`,
+          message: `URL to open after the tracked link is clicked`,
           context: 'fieldMetadata.description',
         }),
       ),
       icon: 'IconLink',
-      isSystem: true,
-      isNullable: false,
-      isUIEditable: false,
-    }),
-    resolvedUrl: createField({
-      fieldName: 'resolvedUrl',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Resolved URL`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Destination URL after recipient variables are replaced`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconLink',
-      isSystem: true,
-      isNullable: false,
-      isUIEditable: false,
-    }),
-    identityHash: createField({
-      fieldName: 'identityHash',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Link identity hash`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Hash of the template and resolved URLs`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'Icon123',
       isSystem: true,
       isNullable: false,
       isUIEditable: false,
