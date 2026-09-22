@@ -22,7 +22,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { GateWorkflowFavoritesByCoreIndexFlagCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789981200000-gate-workflow-favorites-by-core-index-flag.command';
-import { NormalizeEmailDomainsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790089846053-normalize-email-domains.command';
 
 @Module({
   imports: [
@@ -38,7 +37,6 @@ import { NormalizeEmailDomainsCommand } from 'src/database/commands/upgrade-vers
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
   providers: [
-    NormalizeEmailDomainsCommand,
     GateWorkflowFavoritesByCoreIndexFlagCommand,
     MigrateAgentHistoryToWorkspaceCommand,
     UnpinCreationCommandsOnRecordSelectionCommand,
