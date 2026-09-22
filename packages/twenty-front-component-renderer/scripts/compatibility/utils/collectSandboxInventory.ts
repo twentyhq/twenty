@@ -1,3 +1,4 @@
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type BrowserContext } from 'playwright';
 
 export const collectSandboxInventory = async ({
@@ -47,7 +48,7 @@ export const collectSandboxInventory = async ({
       if (error === 'waiting-for-initialization') {
         continue;
       }
-      if (error || errors.length > 0) {
+      if (isNonEmptyString(error) || isNonEmptyArray(errors)) {
         throw new Error(
           `${runtime} fixture failed: ${[error, ...errors].join('; ')}`,
         );
