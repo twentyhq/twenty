@@ -75,6 +75,16 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
     ).toBe(NORMALIZED_SERVICE_URL);
   });
 
+  it('should ignore host casing between claim and activity', async () => {
+    expect(
+      await verify(
+        await signActivityToken({
+          serviceUrlClaim: 'https://SMBA.TrafficManager.net/amer/',
+        }),
+      ),
+    ).toBe(NORMALIZED_SERVICE_URL);
+  });
+
   it('should reject a missing Authorization header', async () => {
     await expect(
       verifyTeamsActivityTokenOrThrow({

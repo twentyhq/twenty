@@ -34,7 +34,7 @@ export const mintTeamsConnectorToken = async ({
     );
   }
 
-  const body = (await response.json()) as TeamsConnectorTokenResponse;
+  const body: TeamsConnectorTokenResponse = await response.json();
 
   if (!isNonEmptyString(body.access_token)) {
     throw new Error('Bot Connector token response carried no access_token');

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TEAMS_CONNECTOR_TOKEN_KV_KEY } from 'src/logic-functions/constants/teams-connector-token-kv-key';
+import { buildTeamsConnectorTokenKvKey } from 'src/logic-functions/utils/build-teams-connector-token-kv-key';
 import { getTeamsConnectorToken } from 'src/logic-functions/utils/get-teams-connector-token';
 import { TEAMS_TEST_BOT_CREDENTIALS } from 'src/__tests__/constants/teams-test-bot-credentials.constant';
 
@@ -51,11 +51,16 @@ describe('getTeamsConnectorToken', () => {
     expect(await getTeamsConnectorToken(TEAMS_TEST_BOT_CREDENTIALS)).toBe(
       'minted',
     );
-    expect(kvGetMock).toHaveBeenCalledWith(TEAMS_CONNECTOR_TOKEN_KV_KEY);
-    expect(kvSetMock).toHaveBeenCalledWith(TEAMS_CONNECTOR_TOKEN_KV_KEY, {
-      accessToken: 'minted',
-      expiresAtMs: Date.now() + 3600 * 1000,
-    });
+    expect(kvGetMock).toHaveBeenCalledWith(
+      buildTeamsConnectorTokenKvKey(TEAMS_TEST_BOT_CREDENTIALS.appId),
+    );
+    expect(kvSetMock).toHaveBeenCalledWith(
+      buildTeamsConnectorTokenKvKey(TEAMS_TEST_BOT_CREDENTIALS.appId),
+      {
+        accessToken: 'minted',
+        expiresAtMs: Date.now() + 3600 * 1000,
+      },
+    );
   });
 
   it('should refresh a token that expires inside the refresh margin', async () => {

@@ -16,7 +16,9 @@ export const parseTeamsConnectorResponseOrThrow = <TResponse>({
   }
 
   try {
-    return JSON.parse(responseBody) as TResponse;
+    const parsedResponse: TResponse = JSON.parse(responseBody);
+
+    return parsedResponse;
   } catch {
     throw new Error(
       `Bot Connector ${method} ${path} returned a body that is not valid JSON`,

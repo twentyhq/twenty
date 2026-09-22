@@ -20,6 +20,12 @@ describe('isTeamsConnectorServiceUrl', () => {
     ).toBe(true);
   });
 
+  it('should refuse another profile on the shared trafficmanager namespace', () => {
+    expect(
+      isTeamsConnectorServiceUrl('https://attacker.trafficmanager.net/amer'),
+    ).toBe(false);
+  });
+
   it('should refuse a host that only ends with the Bot Connector domain', () => {
     expect(
       isTeamsConnectorServiceUrl(
