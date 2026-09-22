@@ -130,6 +130,7 @@
     "twenty/no-icu-escaping-apostrophe": "error",
     "twenty/no-miscased-acronym-in-identifier": "error",
     "twenty/no-miscased-acronym-in-message": "error",
+    "twenty/types-folder-filename": ["warn", { "convention": "PascalCase" }],
     "twenty/enforce-module-boundaries": [
       "error",
       {
