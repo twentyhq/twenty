@@ -6,7 +6,7 @@ export const getNavigationMenuItemTargetRecordId = ({
   record,
 }: {
   objectNameSingular: string;
-  record: { id: string; coreWorkflowId?: unknown };
+  record: { id: string; coreWorkflowId?: string | null };
 }): string =>
   objectNameSingular === CoreObjectNameSingular.Workflow &&
   isNonEmptyString(record.coreWorkflowId)
