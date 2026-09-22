@@ -224,7 +224,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     allFlatEntityMaps: { flatFieldMetadataMaps },
     flatAction: { flatEntity: flatIndexMetadata },
   }: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>): boolean {
-    if (shouldDeferWorkspaceMigrationActions !== true) {
+    if (!shouldDeferWorkspaceMigrationActions) {
       return false;
     }
 
