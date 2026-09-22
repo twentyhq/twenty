@@ -7,7 +7,6 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildGateWorkflowFavoriteCommandMenuItemUpdates } from 'src/database/commands/upgrade-version-command/2-42/utils/build-gate-workflow-favorite-command-menu-item-updates.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -42,11 +41,11 @@ export class GateWorkflowFavoritesByCoreIndexFlagCommand extends ProvisionedWork
         flatCommandMenuItems: Object.values(
           flatCommandMenuItemMaps.byUniversalIdentifier,
         ),
-        conditionalAvailabilityExpressionByEngineComponentKey: {
-          [EngineComponentKey.ADD_TO_FAVORITES]:
+        conditionalAvailabilityExpressionByUniversalIdentifier: {
+          [STANDARD_COMMAND_MENU_ITEMS.addToFavorites.universalIdentifier]:
             STANDARD_COMMAND_MENU_ITEMS.addToFavorites
               .conditionalAvailabilityExpression,
-          [EngineComponentKey.REMOVE_FROM_FAVORITES]:
+          [STANDARD_COMMAND_MENU_ITEMS.removeFromFavorites.universalIdentifier]:
             STANDARD_COMMAND_MENU_ITEMS.removeFromFavorites
               .conditionalAvailabilityExpression,
         },
