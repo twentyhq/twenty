@@ -105,7 +105,9 @@
         "{projectRoot}/src/__stories__/showcase/**/*",
         "{projectRoot}/src/__stories__/twenty-ui-gallery/**/*",
         "{projectRoot}/src/__stories__/shared/front-components/**/*",
-        "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*"
+        "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*",
+        "{projectRoot}/src/__stories__/compatibility/**/*",
+        "{projectRoot}/scripts/compatibility/**/*"
       ],
       "outputs": [
         "{projectRoot}/src/__stories__/example-sources-built/*",
@@ -148,6 +150,15 @@
         "command": "vitest run --config vitest.storybook.config.ts --shard={args.shard}"
       }
     },
-    "storybook:coverage": {}
+    "storybook:coverage": {},
+    "compatibility:audit": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["storybook:build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx scripts/compatibility/runInventoryAudit.ts"
+      }
+    }
   }
 }

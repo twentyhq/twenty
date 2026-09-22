@@ -19,6 +19,7 @@ const exampleSourcesBuiltPreactDir = path.resolve(
 );
 
 const SOURCE_SCAN_ROOTS = [
+  'compatibility',
   'html-tag',
   'host-api',
   'media',

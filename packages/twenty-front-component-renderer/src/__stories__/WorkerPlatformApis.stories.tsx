@@ -1,3 +1,4 @@
+import { CompatibilityInventoryHarness } from '@/__stories__/compatibility/CompatibilityInventoryHarness';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
@@ -137,3 +138,13 @@ export const ClassListPreact: Story = createStory({
   play: classListTest,
   runtime: 'preact',
 });
+
+export const CompatibilityInventoryReact: Story = {
+  tags: ['!test'],
+  render: () => <CompatibilityInventoryHarness runtime="react" />,
+};
+
+export const CompatibilityInventoryPreact: Story = {
+  tags: ['!test'],
+  render: () => <CompatibilityInventoryHarness runtime="preact" />,
+};
