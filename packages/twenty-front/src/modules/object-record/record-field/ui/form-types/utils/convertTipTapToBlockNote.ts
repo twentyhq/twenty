@@ -58,7 +58,8 @@ export const convertTipTapToBlockNote = (
       case 'taskList': {
         const listItemType =
           TIPTAP_LIST_TYPE_TO_BLOCKNOTE_LIST_ITEM_TYPE[node.type];
-        return (node.content ?? []).map((item) => {
+        const start = node.attrs?.start;
+        return (node.content ?? []).map((item, index) => {
           const [paragraph, ...children] = item.content ?? [];
           if (paragraph?.type !== 'paragraph') {
             return throwUnsupportedRecordRichTextContent();
@@ -68,7 +69,9 @@ export const convertTipTapToBlockNote = (
             props:
               node.type === 'taskList'
                 ? { checked: item.attrs?.checked === true }
-                : {},
+                : index === 0 && typeof start === 'number' && start !== 1
+                  ? { start }
+                  : {},
             content: convertInlineNodes(paragraph.content ?? []),
             children: convertTipTapToBlockNote(children),
           };

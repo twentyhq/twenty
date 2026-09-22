@@ -271,3 +271,74 @@ it('keeps workflow variables resolvable without resolving literal mustache text'
     },
   ]);
 });
+
+it('keeps the start number of an ordered list typed in the shared editor', () => {
+  const document = {
+    type: 'doc',
+    content: [
+      {
+        type: 'orderedList',
+        attrs: { start: 3, type: null },
+        content: [
+          {
+            type: 'listItem',
+            content: [
+              { type: 'paragraph', content: [{ type: 'text', text: 'Third' }] },
+            ],
+          },
+          {
+            type: 'listItem',
+            content: [
+              { type: 'paragraph', content: [{ type: 'text', text: 'Fourth' }] },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+  const blocks = [
+    {
+      type: 'numberedListItem',
+      props: { start: 3 },
+      content: [{ type: 'text', text: 'Third', styles: {} }],
+      children: [],
+    },
+    {
+      type: 'numberedListItem',
+      props: {},
+      content: [{ type: 'text', text: 'Fourth', styles: {} }],
+      children: [],
+    },
+  ];
+  expect(
+    JSON.parse(convertTipTapDocumentToBlockNote(JSON.stringify(document))),
+  ).toEqual(blocks);
+  const reopenedDocument = parseLegacyRecordRichTextDocument(
+    JSON.stringify(blocks),
+  );
+  expect(reopenedDocument).toMatchObject({
+    content: [{ type: 'orderedList', attrs: { start: 3 } }],
+  });
+  expect(
+    JSON.parse(
+      convertTipTapDocumentToBlockNote(JSON.stringify(reopenedDocument)),
+    ),
+  ).toEqual(blocks);
+});
+
+it.each([
+  { type: 'heading', props: { level: 2, isToggleable: true } },
+  {
+    type: 'image',
+    props: { url: 'https://example.com/image.png', showPreview: false },
+  },
+])(
+  'rejects $type props the shared editor cannot keep',
+  ({ type, props }) => {
+    expect(() =>
+      parseLegacyRecordRichTextDocument(
+        JSON.stringify([{ type, props, content: [] }]),
+      ),
+    ).toThrow('Unsupported record rich-text content');
+  },
+);

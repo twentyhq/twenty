@@ -101,9 +101,14 @@ export const convertBlockNoteToTipTap = (
       const content = convertInlineContent(block.content, enableVariables);
       if (isBlockNoteListItemType(block.type)) {
         const isTask = block.type === 'checkListItem';
+        const start =
+          block.type === 'numberedListItem' && typeof props.start === 'number'
+            ? props.start
+            : undefined;
         return [
           {
             type: BLOCKNOTE_LIST_ITEM_TYPE_TO_TIPTAP_LIST_TYPE[block.type],
+            ...(isDefined(start) ? { attrs: { start } } : {}),
             content: [
               {
                 type: isTask ? 'taskItem' : 'listItem',
@@ -118,7 +123,10 @@ export const convertBlockNoteToTipTap = (
         case 'paragraph':
           return [{ type: 'paragraph', content }, ...children];
         case 'heading':
-          if (typeof props.level === 'number' && props.level > 3) {
+          if (
+            (typeof props.level === 'number' && props.level > 3) ||
+            props.isToggleable === true
+          ) {
             return throwUnsupportedRecordRichTextContent();
           }
           return [
@@ -126,6 +134,9 @@ export const convertBlockNoteToTipTap = (
             ...children,
           ];
         case 'image':
+          if (props.showPreview === false) {
+            return throwUnsupportedRecordRichTextContent();
+          }
           return [
             {
               type: 'image',
@@ -148,7 +159,8 @@ export const convertBlockNoteToTipTap = (
       if (
         isDefined(previousNode) &&
         isTipTapListType(node.type) &&
-        previousNode.type === node.type
+        previousNode.type === node.type &&
+        !isDefined(node.attrs?.start)
       ) {
         previousNode.content = [
           ...(previousNode.content ?? []),
