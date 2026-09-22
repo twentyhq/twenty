@@ -200,14 +200,12 @@ export class AgentChatService {
   }
 
   private async getRankedThreads({
-    threadIds,
     attachedToRecord,
     userWorkspaceId,
     workspaceId,
     limit,
     offset,
   }: {
-    threadIds?: string[];
     attachedToRecord?: { objectMetadataId: string; recordId: string };
     userWorkspaceId: string;
     workspaceId: string;
@@ -219,11 +217,6 @@ export class AgentChatService {
       async ({ manager, table, storage }) => {
         const parameters: unknown[] = [userWorkspaceId];
         const conditions = ['thread."userWorkspaceId" = $1'];
-
-        if (isDefined(threadIds)) {
-          parameters.push(threadIds);
-          conditions.push(`thread.id = ANY($${parameters.length}::uuid[])`);
-        }
 
         if (storage === 'core') {
           parameters.push(workspaceId);
@@ -251,10 +244,9 @@ export class AgentChatService {
           );
         }
 
-        // Paging is applied after the ordering so a page reflects the ranked
-        // order rather than the order the ids arrived in. The id breaks ties on
-        // both timestamps, without which two equally ranked threads have no
-        // defined order and successive pages can repeat or skip one.
+        // The id breaks ties on both timestamps, without which two equally
+        // ranked threads have no defined order and successive pages of that
+        // order can repeat or skip one.
         let pagination = '';
 
         if (isDefined(limit)) {
