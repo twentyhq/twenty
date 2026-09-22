@@ -39,6 +39,7 @@ import {
   DestroySoftDeletedWorkspaceJob,
   type DestroySoftDeletedWorkspaceJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/destroy-soft-deleted-workspace.job';
+import { hasPassedDestroyGracePeriod } from 'src/engine/workspace-manager/workspace-cleaner/utils/has-passed-destroy-grace-period.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const CLEAN_SUSPENDED_WORKSPACES_OPERATIONS = [
@@ -338,17 +339,6 @@ export class CleanerWorkspaceService {
     }
   }
 
-  hasPassedDestroyGracePeriod(workspace: WorkspaceEntity): boolean {
-    if (!isDefined(workspace.deletedAt)) {
-      return false;
-    }
-
-    return (
-      differenceInDays(new Date(), workspace.deletedAt) >
-      this.inactiveDaysBeforeDelete - this.inactiveDaysBeforeSoftDelete
-    );
-  }
-
   async batchWarnOrCleanSuspendedWorkspaces({
     workspaceIds,
     dryRun = false,
@@ -399,7 +389,12 @@ export class CleanerWorkspaceService {
         ) {
           const canDestroy =
             ignoreDestroyGracePeriod ||
-            this.hasPassedDestroyGracePeriod(workspace);
+            hasPassedDestroyGracePeriod({
+              workspace,
+              gracePeriodInDays:
+                this.inactiveDaysBeforeDelete -
+                this.inactiveDaysBeforeSoftDelete,
+            });
 
           if (canDestroy) {
             this.logger.log(

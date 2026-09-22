@@ -1,4 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -6,6 +9,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type DestroySoftDeletedWorkspaceJobData = {
   workspaceId: string;
@@ -17,6 +21,8 @@ export class DestroySoftDeletedWorkspaceJob {
   private readonly logger = new Logger(DestroySoftDeletedWorkspaceJob.name);
 
   constructor(
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceService: WorkspaceService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -25,6 +31,17 @@ export class DestroySoftDeletedWorkspaceJob {
   async handle({
     workspaceId,
   }: DestroySoftDeletedWorkspaceJobData): Promise<void> {
+    const isWorkspaceStillPresent = await this.workspaceRepository.exists({
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
+
+    if (!isWorkspaceStillPresent) {
+      this.logger.log(`Workspace ${workspaceId} is already destroyed`);
+
+      return;
+    }
+
     this.logger.log(`Destroying workspace ${workspaceId}`);
 
     await this.workspaceService.deleteWorkspace(workspaceId);
