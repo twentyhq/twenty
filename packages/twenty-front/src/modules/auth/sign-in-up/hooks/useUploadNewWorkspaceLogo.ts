@@ -1,4 +1,5 @@
 import { putFileToUploadTarget } from '@/file/utils/putFileToUploadTarget';
+import { t } from '@lingui/core/macro';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -29,7 +30,7 @@ export const useUploadNewWorkspaceLogo = () => {
     const uploadTarget = createResult?.data?.createNewWorkspaceLogoUpload;
 
     if (!isDefined(uploadTarget)) {
-      throw new Error('Failed to initiate logo upload');
+      throw new Error(t`Failed to initiate logo upload`);
     }
 
     await putFileToUploadTarget({ file, uploadTarget });
@@ -41,7 +42,7 @@ export const useUploadNewWorkspaceLogo = () => {
     const uploadedLogo = completeResult?.data?.completeNewWorkspaceLogoUpload;
 
     if (!isDefined(uploadedLogo)) {
-      throw new Error('Failed to finalize logo upload');
+      throw new Error(t`Failed to finalize logo upload`);
     }
 
     return uploadedLogo;
