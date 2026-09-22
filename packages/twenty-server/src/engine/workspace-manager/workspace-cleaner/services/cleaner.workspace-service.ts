@@ -369,7 +369,7 @@ export class CleanerWorkspaceService {
       warnedUserVars.map((userVar) => userVar.workspaceId),
     );
 
-    let deletedWorkspacesCount = 0;
+    let enqueuedWorkspacesCount = 0;
 
     for (const [index, workspace] of workspaces.entries()) {
       this.logger.log(
@@ -379,7 +379,7 @@ export class CleanerWorkspaceService {
       try {
         const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
         const isWithinDeletionLimit =
-          deletedWorkspacesCount <
+          enqueuedWorkspacesCount <
           this.maxNumberOfWorkspacesDeletedPerExecution;
 
         if (
@@ -412,9 +412,9 @@ export class CleanerWorkspaceService {
                 },
               );
 
-              deletedWorkspacesCount++;
+              enqueuedWorkspacesCount++;
               this.logger.log(
-                `Enqueued ${deletedWorkspacesCount} workspaces on ${this.maxNumberOfWorkspacesDeletedPerExecution} limit during this execution`,
+                `Enqueued ${enqueuedWorkspacesCount} workspaces on ${this.maxNumberOfWorkspacesDeletedPerExecution} limit during this execution`,
               );
             }
           }
