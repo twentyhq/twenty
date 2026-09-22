@@ -1,7 +1,7 @@
 {
   "name": "@twentyhq/teams",
   "version": "0.1.0",
-  "description": "Microsoft Teams assistant and workflow steps for Twenty",
+  "description": "Microsoft Teams chat, workflows, and transcripts for Twenty",
   "license": "MIT",
   "engines": {
     "twenty": ">=2.41.0",
@@ -24,6 +24,7 @@
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "typecheck": "tsgo --noEmit -p tsconfig.spec.json",
+    "test": "vitest run",
     "test:unit": "vitest run --config vitest.unit.config.ts",
     "test:watch": "vitest --config vitest.unit.config.ts"
   },

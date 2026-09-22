@@ -4,10 +4,15 @@ Microsoft Teams chat and transcript features in one application.
 
 ## Status
 
-The application provides a settings page and the Bot Connector helpers. Chat
-handlers and transcript imports are still under development. Both features are
-unavailable in this version and their workspace settings default to off. The
-default application role has no CRM data access.
+The application provides a settings page, the Bot Connector helpers, and a
+Microsoft OAuth connection for transcripts. Chat handlers and transcript imports
+are still under development. Both features are unavailable in this version and
+their workspace settings default to off. Connecting a Microsoft account does not
+start transcript imports or register subscriptions. The default application role
+has no CRM data access.
+
+See [SETUP.md](SETUP.md) for Microsoft OAuth setup and the transition from the
+former Teams Transcripts application.
 
 ## Features, settings, and feature flags
 
@@ -47,10 +52,11 @@ feature's handlers. The shared settings component composes each feature's
 section; the app's single uninstall hook will compose their cleanup.
 
 Feature flags do not exclude SDK definitions from the manifest or make broken
-code buildable. Disabled features must still pass typecheck and build. This
-foundation does not yet move the separate Teams Transcripts OAuth provider.
+code buildable. Disabled features must still pass typecheck and build. The
+Microsoft OAuth connection remains available independently of the transcript
+release flag; connecting an account only stores its credentials for future use.
 
-## Server variables
+## Bot server variables
 
 The bot's identity is an Entra app registration behind an Azure Bot resource.
 An admin configures these on the Teams application registration under
@@ -76,3 +82,6 @@ yarn typecheck
 yarn test:unit
 yarn twenty dev:build
 ```
+
+Installation tests run with `yarn test` against a disposable Twenty workspace.
+They install and uninstall the Teams application; see [SETUP.md](SETUP.md).
