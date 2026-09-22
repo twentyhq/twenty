@@ -2,8 +2,6 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
-import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
 export const inlineBannerSandboxTest: TwentyUiGalleryPlayFunction = async ({
@@ -32,7 +30,5 @@ export const inlineBannerSandboxTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.tab();
   await expect(canvas.getByText('Mailbox needs attention.')).toHaveFocus();
 
-  await expectSandboxErrors({
-    requiredErrors: [SANDBOX_ERROR_PATTERNS.COMPOSED_PATH],
-  });
+  await expect(errorHandler).not.toHaveBeenCalled();
 };

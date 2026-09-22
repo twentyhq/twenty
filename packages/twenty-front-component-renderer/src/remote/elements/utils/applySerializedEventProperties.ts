@@ -20,6 +20,7 @@ const SERIALIZED_EVENT_PROPERTY_KEYS = [
   'movementY',
   'button',
   'buttons',
+  'detail',
   'pointerId',
   'pointerType',
   'pressure',
@@ -42,12 +43,17 @@ const SERIALIZED_EVENT_PROPERTY_KEYS = [
 ] as const satisfies readonly (keyof SerializedEventData)[];
 
 export const applySerializedEventProperties = (
-  event: Record<string, unknown>,
+  event: object,
   eventData: SerializedEventData,
 ): void => {
   for (const key of SERIALIZED_EVENT_PROPERTY_KEYS) {
     if (key in eventData) {
-      event[key] = eventData[key];
+      Object.defineProperty(event, key, {
+        value: eventData[key],
+        configurable: true,
+        enumerable: true,
+        writable: true,
+      });
     }
   }
 

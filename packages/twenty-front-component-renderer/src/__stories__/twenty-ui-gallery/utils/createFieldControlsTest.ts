@@ -1,8 +1,7 @@
+import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { TYPING_DELAY } from '@/__stories__/shared/test-utils/timeouts';
-import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 type CreateFieldControlsTestOptions = {
@@ -44,7 +43,5 @@ export const createFieldControlsTest =
         expectedReportedValues,
       ),
     );
-    await expectSandboxErrors({
-      requiredErrors: [SANDBOX_ERROR_PATTERNS.COMPOSED_PATH],
-    });
+    expect(errorHandler).not.toHaveBeenCalled();
   };
