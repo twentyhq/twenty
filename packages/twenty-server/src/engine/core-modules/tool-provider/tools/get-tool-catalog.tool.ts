@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export const GET_TOOL_CATALOG_TOOL_NAME = 'get_tool_catalog';
 
@@ -31,6 +32,7 @@ export const createGetToolCatalogTool = (
   workspaceId: string,
   roleId: string,
   options?: {
+    rolePermissionConfig?: RolePermissionConfig;
     userId?: string;
     userWorkspaceId?: string;
     excludeTools?: Set<string>;

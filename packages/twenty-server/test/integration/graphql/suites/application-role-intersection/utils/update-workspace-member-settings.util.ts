@@ -1,46 +1,39 @@
+import { updateWorkspaceMemberSettingsQueryFactory } from 'test/integration/graphql/suites/application-role-intersection/utils/update-workspace-member-settings-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateViewQueryFactory } from 'test/integration/metadata/suites/view/utils/update-view-query-factory.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
+import { type UpdateWorkspaceMemberSettingsInput } from 'src/engine/core-modules/user/dtos/update-workspace-member-settings.input';
 
-export const updateOneView = async ({
-  viewId,
+export const updateWorkspaceMemberSettings = async ({
   input,
-  gqlFields,
-  expectToFail,
+  expectToFail = false,
   token,
 }: {
-  viewId: string;
-  input: UpdateViewInput;
-  gqlFields?: string;
+  input: UpdateWorkspaceMemberSettingsInput;
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
-  updateView: ViewDTO;
+  updateWorkspaceMemberSettings: boolean;
 }> => {
-  const graphqlOperation = updateViewQueryFactory({
-    viewId,
-    input,
-    gqlFields,
-  });
-
-  const response = await makeMetadataAPIRequest(graphqlOperation, token);
+  const response = await makeMetadataAPIRequest(
+    updateWorkspaceMemberSettingsQueryFactory({ input }),
+    token,
+  );
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'View update should have failed but did not',
+      errorMessage:
+        'updateWorkspaceMemberSettings should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'View update has failed but should not',
+      errorMessage: 'updateWorkspaceMemberSettings has failed but should not',
     });
   }
 
