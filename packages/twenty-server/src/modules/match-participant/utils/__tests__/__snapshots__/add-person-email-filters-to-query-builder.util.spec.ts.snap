@@ -4,7 +4,7 @@ exports[`addPersonEmailFiltersToQueryBuilder case-insensitive email normalizatio
 [
   {
     "args": [
-      "LOWER("person"."emailsPrimaryEmail") IN (:...emails)",
+      ""person"."emailsPrimaryEmail" IN (:...emails)",
       {
         "emails": [
           "test@example.com",
@@ -47,7 +47,7 @@ exports[`addPersonEmailFiltersToQueryBuilder emails with empty exclusion array: 
 [
   {
     "args": [
-      "LOWER("person"."emailsPrimaryEmail") IN (:...emails)",
+      ""person"."emailsPrimaryEmail" IN (:...emails)",
       {
         "emails": [
           "test@example.com",
@@ -80,7 +80,7 @@ exports[`addPersonEmailFiltersToQueryBuilder empty emails array: should handle e
 [
   {
     "args": [
-      "LOWER("person"."emailsPrimaryEmail") IN (:...emails)",
+      ""person"."emailsPrimaryEmail" IN (:...emails)",
       {
         "emails": [],
       },
@@ -102,7 +102,7 @@ exports[`addPersonEmailFiltersToQueryBuilder multiple emails with exclusions: sh
 [
   {
     "args": [
-      "LOWER("person"."emailsPrimaryEmail") IN (:...emails)",
+      ""person"."emailsPrimaryEmail" IN (:...emails)",
       {
         "emails": [
           "test@example.com",
@@ -162,7 +162,7 @@ exports[`addPersonEmailFiltersToQueryBuilder multiple emails without exclusions:
 [
   {
     "args": [
-      "LOWER("person"."emailsPrimaryEmail") IN (:...emails)",
+      ""person"."emailsPrimaryEmail" IN (:...emails)",
       {
         "emails": [
           "test@example.com",
@@ -205,7 +205,7 @@ exports[`addPersonEmailFiltersToQueryBuilder single email with person ID exclusi
 [
   {
     "args": [
-      "LOWER("person"."emailsPrimaryEmail") IN (:...emails)",
+      ""person"."emailsPrimaryEmail" IN (:...emails)",
       {
         "emails": [
           "test@example.com",
@@ -254,7 +254,7 @@ exports[`addPersonEmailFiltersToQueryBuilder single email without exclusions: sh
 [
   {
     "args": [
-      "LOWER("person"."emailsPrimaryEmail") IN (:...emails)",
+      ""person"."emailsPrimaryEmail" IN (:...emails)",
       {
         "emails": [
           "test@example.com",
@@ -287,7 +287,7 @@ exports[`addPersonEmailFiltersToQueryBuilder three emails with unique parameter 
 [
   {
     "args": [
-      "LOWER("person"."emailsPrimaryEmail") IN (:...emails)",
+      ""person"."emailsPrimaryEmail" IN (:...emails)",
       {
         "emails": [
           "email1@example.com",

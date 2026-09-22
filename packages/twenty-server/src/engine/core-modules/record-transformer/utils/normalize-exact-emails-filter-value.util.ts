@@ -4,15 +4,18 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { normalizeEmailAddress } from 'src/engine/core-modules/record-transformer/utils/normalize-email-address.util';
 
 export const normalizeExactEmailsFilterValue = ({
+  operator,
   fieldMetadataType,
   subFieldKey,
   value,
 }: {
+  operator: string;
   fieldMetadataType: FieldMetadataType;
   subFieldKey?: string;
   value: unknown;
 }): unknown => {
   if (
+    (operator !== 'eq' && operator !== 'neq' && operator !== 'in') ||
     fieldMetadataType !== FieldMetadataType.EMAILS ||
     subFieldKey !== 'primaryEmail'
   ) {

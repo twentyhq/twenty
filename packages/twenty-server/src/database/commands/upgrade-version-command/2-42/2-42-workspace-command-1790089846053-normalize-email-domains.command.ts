@@ -74,7 +74,7 @@ export class NormalizeEmailDomainsCommand extends ProvisionedWorkspaceCommandRun
       for (const objectMetadata of Object.values(
         flatObjectMetadataMaps.byUniversalIdentifier,
       )) {
-        if (!isDefined(objectMetadata) || !objectMetadata.isActive) {
+        if (!isDefined(objectMetadata)) {
           continue;
         }
 
@@ -82,9 +82,7 @@ export class NormalizeEmailDomainsCommand extends ProvisionedWorkspaceCommandRun
           objectMetadata,
           flatFieldMetadataMaps,
         ).filter(
-          (fieldMetadata) =>
-            fieldMetadata.type === FieldMetadataType.EMAILS &&
-            fieldMetadata.isActive,
+          (fieldMetadata) => fieldMetadata.type === FieldMetadataType.EMAILS,
         );
 
         if (emailFields.length === 0) {
@@ -92,16 +90,40 @@ export class NormalizeEmailDomainsCommand extends ProvisionedWorkspaceCommandRun
         }
 
         const tableName = computeObjectTargetTable(objectMetadata);
-        const [table] = await runner.query<{ exists: boolean }[]>(
-          'SELECT to_regclass($1) IS NOT NULL AS "exists"',
+        const existingColumns = await runner.query<{ columnName: string }[]>(
+          `SELECT attname AS "columnName"
+FROM pg_attribute
+WHERE attrelid = to_regclass($1)
+  AND attnum > 0
+  AND NOT attisdropped`,
           [`${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`],
         );
 
-        if (!table?.exists) {
+        if (existingColumns.length === 0) {
           continue;
         }
 
+        const existingColumnNames = new Set(
+          existingColumns.map(({ columnName }) => columnName),
+        );
+
         for (const emailField of emailFields) {
+          const primaryColumn = computeCompositeColumnName(
+            emailField,
+            emailsCompositeType.properties[0],
+          );
+          const additionalColumn = computeCompositeColumnName(
+            emailField,
+            emailsCompositeType.properties[1],
+          );
+
+          if (
+            !existingColumnNames.has(primaryColumn) ||
+            !existingColumnNames.has(additionalColumn)
+          ) {
+            continue;
+          }
+
           await this.normalizeField({
             runner,
             workspaceId,

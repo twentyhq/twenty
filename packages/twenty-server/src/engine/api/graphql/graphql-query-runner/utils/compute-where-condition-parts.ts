@@ -46,6 +46,7 @@ export const computeWhereConditionParts = ({
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
   const exactValue = normalizeExactEmailsFilterValue({
+    operator,
     fieldMetadataType,
     subFieldKey,
     value,
@@ -155,7 +156,7 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}`,
-        params: { [`${key}${paramSuffix}`]: exactValue },
+        params: { [`${key}${paramSuffix}`]: value },
       };
     case 'like':
       return {
