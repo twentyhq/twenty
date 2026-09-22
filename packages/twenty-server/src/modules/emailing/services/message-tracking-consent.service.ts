@@ -71,16 +71,6 @@ export class MessageTrackingConsentService {
     return { decision: await this.findDecision({ workspaceId, emailAddress }) };
   }
 
-  async findTrackingRefusedEmailAddresses({
-    workspaceId,
-    emailAddresses,
-  }: {
-    workspaceId: string;
-    emailAddresses: string[];
-  }): Promise<Set<string>> {
-    return this.findDeniedEmailAddresses({ workspaceId, emailAddresses });
-  }
-
   async findDeniedEmailAddresses({
     workspaceId,
     emailAddresses,

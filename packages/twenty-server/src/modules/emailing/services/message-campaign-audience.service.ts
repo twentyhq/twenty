@@ -73,7 +73,7 @@ export class MessageCampaignAudienceService {
         emailAddresses,
         unsubscribeTopicId,
       }),
-      this.messageTrackingConsentService.findTrackingRefusedEmailAddresses({
+      this.messageTrackingConsentService.findDeniedEmailAddresses({
         workspaceId,
         emailAddresses,
       }),
