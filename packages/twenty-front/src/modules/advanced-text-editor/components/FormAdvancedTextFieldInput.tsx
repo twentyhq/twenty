@@ -139,6 +139,12 @@ export const FormAdvancedTextFieldInput = ({
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  useEffect(() => {
+    return () => {
+      removeFocusItemFromFocusStackById({ focusId: instanceId });
+    };
+  }, [instanceId, removeFocusItemFromFocusStackById]);
+
   const editor = useAdvancedTextEditor({
     profile,
     placeholder: placeholder,

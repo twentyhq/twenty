@@ -53,7 +53,7 @@ export const FormRichTextFieldInput = ({
   if (hasUnsupportedContent) {
     return (
       <FormFieldInputContainer>
-        {label && <Field.Label>{label}</Field.Label>}
+        {label ? <Field.Label>{label}</Field.Label> : null}
         <Field.Error
           match
         >{t`This content was saved in an older format and cannot be edited here`}</Field.Error>
