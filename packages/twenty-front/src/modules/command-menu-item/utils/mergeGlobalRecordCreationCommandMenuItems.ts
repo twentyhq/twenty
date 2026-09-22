@@ -11,7 +11,7 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
   commandMenuItems: CommandMenuItemDefinition[];
   globalRecordCreationCommandMenuItems: CommandMenuItemDefinition[];
   shouldDisplayGlobalRecordCreationCommands: boolean;
-  contextObjectMetadataId?: unknown;
+  contextObjectMetadataId?: string;
 }): CommandMenuItemDefinition[] => {
   const sortedCommandMenuItems = [...commandMenuItems].sort(
     (firstItem, secondItem) => firstItem.position - secondItem.position,
