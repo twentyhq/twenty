@@ -116,6 +116,7 @@ export const FormNumberFieldInput = ({
               }
               value={draftValue.value}
               copyButton={false}
+              isNativeTabNavigationEnabled
               onChange={handleChange}
               disabled={readonly}
             />

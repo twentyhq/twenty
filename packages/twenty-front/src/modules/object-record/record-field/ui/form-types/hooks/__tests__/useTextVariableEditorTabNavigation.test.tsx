@@ -124,6 +124,7 @@ it.each([false, true])(
             copyButton={false}
             onTab={shift ? undefined : onNavigate}
             onShiftTab={shift ? onNavigate : undefined}
+            isNativeTabNavigationEnabled
           />
         </FormFieldInputInnerContainer>
         <button>After</button>
@@ -138,5 +139,28 @@ it.each([false, true])(
     expect(
       screen.getByRole('button', { name: shift ? 'After' : 'Before' }),
     ).toHaveFocus();
+  },
+);
+
+it.each([false, true])(
+  'keeps Tab inside inputs that do not opt into native navigation (shift: %s)',
+  async (shift) => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button>Before</button>
+        <FormFieldInputInnerContainer
+          formFieldInputInstanceId="cell-input"
+          hasRightElement={false}
+        >
+          <TextInput instanceId="cell-input" value="Draft" copyButton={false} />
+        </FormFieldInputInnerContainer>
+        <button>After</button>
+      </>,
+    );
+    const input = screen.getByDisplayValue('Draft');
+    await user.click(input);
+    await user.tab({ shift });
+    expect(input).toHaveFocus();
   },
 );
