@@ -30,7 +30,6 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS:
       return 400;
-    case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
       return 402;

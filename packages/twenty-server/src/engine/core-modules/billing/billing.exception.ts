@@ -33,7 +33,6 @@ export enum BillingExceptionCode {
   BILLING_PRICE_INVALID = 'BILLING_PRICE_INVALID',
   BILLING_SUBSCRIPTION_PHASE_NOT_FOUND = 'BILLING_SUBSCRIPTION_PHASE_NOT_FOUND',
   BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND = 'BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND',
-  BILLING_CREDITS_EXHAUSTED = 'BILLING_CREDITS_EXHAUSTED',
   BILLING_SUBSCRIPTION_INACTIVE = 'BILLING_SUBSCRIPTION_INACTIVE',
   BILLING_SUBSCRIPTION_NOT_CANCELED = 'BILLING_SUBSCRIPTION_NOT_CANCELED',
   BILLING_CREDIT_AMOUNT_INVALID = 'BILLING_CREDIT_AMOUNT_INVALID',
@@ -97,8 +96,6 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Subscription phase not found.`;
     case BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND:
       return msg`Multiple subscriptions found where one was expected.`;
-    case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
-      return msg`You have exhausted your credits. Please upgrade your plan to continue.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
       return msg`This workspace has no active subscription.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED:
