@@ -34,11 +34,12 @@ const attachGeneratedPdf = async (
   const bytes = await generateDocumentPdf(content);
   const fileName = toPdfFileName(documentName);
 
-  const uploaded = await new MetadataApiClient().uploadFile({
-    fileBuffer: Buffer.from(bytes),
-    filename: fileName,
-    fieldMetadataUniversalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
-  });
+  const uploaded = await new MetadataApiClient().uploadFile(
+    Buffer.from(bytes),
+    fileName,
+    'application/pdf',
+    DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  );
 
   await client.mutation({
     updateDocument: {
