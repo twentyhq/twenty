@@ -33,15 +33,13 @@ export class MessagingMessageCleanerConnectedAccountListener {
 
     await Promise.all(
       batchEvent.events.map((event) =>
-        event.skipDataCleanup
-          ? undefined
-          : this.messageQueueService.add<MessagingConnectedAccountDeletionCleanupJobData>(
-              MessagingConnectedAccountDeletionCleanupJob.name,
-              {
-                workspaceId,
-                connectedAccountId: event.connectedAccountId,
-              },
-            ),
+        this.messageQueueService.add<MessagingConnectedAccountDeletionCleanupJobData>(
+          MessagingConnectedAccountDeletionCleanupJob.name,
+          {
+            workspaceId,
+            connectedAccountId: event.connectedAccountId,
+          },
+        ),
       ),
     );
   }

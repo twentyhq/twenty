@@ -33,15 +33,13 @@ export class MessagingMessageCleanerMessageChannelListener {
 
     await Promise.all(
       batchEvent.events.map((event) =>
-        event.skipDataCleanup
-          ? undefined
-          : this.messageQueueService.add<MessagingMessageChannelDeletionCleanupJobData>(
-              MessagingMessageChannelDeletionCleanupJob.name,
-              {
-                workspaceId,
-                messageChannelId: event.messageChannelId,
-              },
-            ),
+        this.messageQueueService.add<MessagingMessageChannelDeletionCleanupJobData>(
+          MessagingMessageChannelDeletionCleanupJob.name,
+          {
+            workspaceId,
+            messageChannelId: event.messageChannelId,
+          },
+        ),
       ),
     );
   }

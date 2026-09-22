@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
 import {
@@ -32,13 +31,9 @@ import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/messa
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
-import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
 @Injectable()
 export class ConnectedAccountMetadataService {
@@ -55,11 +50,8 @@ export class ConnectedAccountMetadataService {
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    private readonly calendarEventCleanerService: CalendarEventCleanerService,
-    private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
     private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
     private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async findMailboxesUsableByCaller({
@@ -388,15 +380,35 @@ export class ConnectedAccountMetadataService {
 
     const connectedAccountIds = connectedAccounts.map((account) => account.id);
 
-    await this.archiveAndPauseConnectedAccounts({
-      connectedAccountIds,
-      workspaceId,
-      connectedAccountData: {
-        userWorkspaceId: toUserWorkspaceId,
-        accessToken: null,
-        refreshToken: null,
-        connectionParameters: null,
-      },
+    await this.repository.manager.transaction(async (entityManager) => {
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id: In(connectedAccountIds), workspaceId },
+        {
+          userWorkspaceId: toUserWorkspaceId,
+          accessToken: null,
+          refreshToken: null,
+          connectionParameters: null,
+        },
+      );
+
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
+        { archivedAt: new Date() },
+      );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        { connectedAccountId: In(connectedAccountIds), workspaceId },
+        { isSyncEnabled: false },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        { connectedAccountId: In(connectedAccountIds), workspaceId },
+        { isSyncEnabled: false },
+      );
     });
 
     for (const connectedAccount of connectedAccounts) {
@@ -442,16 +454,36 @@ export class ConnectedAccountMetadataService {
       workspaceId,
     });
 
-    await this.archiveAndPauseConnectedAccounts({
-      connectedAccountIds: [id],
-      workspaceId,
-      connectedAccountData: {
-        accessToken: null,
-        refreshToken: null,
-        connectionParameters: null,
-        authFailedAt: null,
-        authFailedReason: null,
-      },
+    await this.repository.manager.transaction(async (entityManager) => {
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id, workspaceId },
+        {
+          accessToken: null,
+          refreshToken: null,
+          connectionParameters: null,
+          authFailedAt: null,
+          authFailedReason: null,
+        },
+      );
+
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id, workspaceId, archivedAt: IsNull() },
+        { archivedAt: new Date() },
+      );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        { connectedAccountId: id, workspaceId },
+        { isSyncEnabled: false },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        { connectedAccountId: id, workspaceId },
+        { isSyncEnabled: false },
+      );
     });
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
@@ -507,30 +539,12 @@ export class ConnectedAccountMetadataService {
       await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
     }
 
-    // A failed cleanup leaves a paused account that can safely be retried.
-    await this.archiveAndPauseConnectedAccounts({
-      connectedAccountIds: [id],
-      workspaceId,
-      connectedAccountData: {},
-    });
-
-    await this.deleteConnectedAccountData({
-      workspaceId,
-      messageChannelIds: messageChannels.map(
-        ({ id: messageChannelId }) => messageChannelId,
-      ),
-      calendarChannelIds: calendarChannels.map(
-        ({ id: calendarChannelId }) => calendarChannelId,
-      ),
-    });
-
     await this.repository.delete({ id, workspaceId });
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,
       messageChannels.map((messageChannel) => ({
         messageChannelId: messageChannel.id,
-        skipDataCleanup: true,
       })),
       workspaceId,
     );
@@ -539,7 +553,6 @@ export class ConnectedAccountMetadataService {
       CALENDAR_CHANNEL_DELETED_EVENT,
       calendarChannels.map((calendarChannel) => ({
         calendarChannelId: calendarChannel.id,
-        skipDataCleanup: true,
       })),
       workspaceId,
     );
@@ -550,85 +563,12 @@ export class ConnectedAccountMetadataService {
         {
           connectedAccountId: id,
           userWorkspaceId: connectedAccount.userWorkspaceId,
-          skipDataCleanup: true,
         },
       ],
       workspaceId,
     );
 
     return connectedAccount;
-  }
-
-  private async archiveAndPauseConnectedAccounts({
-    connectedAccountIds,
-    workspaceId,
-    connectedAccountData,
-  }: {
-    connectedAccountIds: string[];
-    workspaceId: string;
-    connectedAccountData: QueryDeepPartialEntity<ConnectedAccountEntity>;
-  }): Promise<void> {
-    await this.repository.manager.transaction(async (entityManager) => {
-      if (Object.keys(connectedAccountData).length > 0) {
-        await entityManager.update(
-          ConnectedAccountEntity,
-          { id: In(connectedAccountIds), workspaceId },
-          connectedAccountData,
-        );
-      }
-
-      await entityManager.update(
-        ConnectedAccountEntity,
-        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
-        { archivedAt: new Date() },
-      );
-
-      await entityManager.update(
-        MessageChannelEntity,
-        { connectedAccountId: In(connectedAccountIds), workspaceId },
-        { isSyncEnabled: false },
-      );
-
-      await entityManager.update(
-        CalendarChannelEntity,
-        { connectedAccountId: In(connectedAccountIds), workspaceId },
-        { isSyncEnabled: false },
-      );
-    });
-  }
-
-  private async deleteConnectedAccountData({
-    workspaceId,
-    messageChannelIds,
-    calendarChannelIds,
-  }: {
-    workspaceId: string;
-    messageChannelIds: string[];
-    calendarChannelIds: string[];
-  }): Promise<void> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        await this.workspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            for (const messageChannelId of messageChannelIds) {
-              await this.messagingMessageCleanerService.deleteMessageChannelMessageAssociationsAndRelatedOrphansInTransaction(
-                { workspaceId, messageChannelId, transactionScope },
-              );
-            }
-
-            for (const calendarChannelId of calendarChannelIds) {
-              await this.calendarEventCleanerService.deleteCalendarChannelEventAssociationsAndRelatedOrphansInTransaction(
-                { workspaceId, calendarChannelId, transactionScope },
-              );
-            }
-          },
-        );
-      },
-      authContext,
-      { lite: true },
-    );
   }
 
   private async stopWebhookSubscriptions({

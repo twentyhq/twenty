@@ -31,6 +31,7 @@ import { LightIconButton } from 'twenty-ui/components';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
 import { DISCONNECT_CONNECTED_ACCOUNT } from '../graphql/mutations/disconnectConnectedAccount';
+import { isConnectedAccountEligibleForProviderReconnect } from '../constants/isConnectedAccountEligibleForProviderReconnect.const';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -69,10 +70,8 @@ export const SettingsAccountsRowDropdownMenu = ({
         channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
     );
 
-  const canReconnect =
-    (account.provider === ConnectedAccountProvider.GOOGLE ||
-      account.provider === ConnectedAccountProvider.MICROSOFT) &&
-    (isDefined(account.authFailedAt) || isDefined(account.archivedAt));
+  const isEligibleForProviderReconnect =
+    isConnectedAccountEligibleForProviderReconnect(account);
 
   const deleteAccount = async () => {
     await deleteConnectedAccountMutation({
@@ -138,7 +137,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                   closeDropdown(dropdownId);
                 }}
               >{t`Calendar settings`}</ListItem>
-              {canReconnect && (
+              {isEligibleForProviderReconnect && (
                 <ListItem
                   startIcon={<IconRefresh />}
                   onClick={() => {

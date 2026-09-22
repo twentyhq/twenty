@@ -16,9 +16,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
-import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
 import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module';
-import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
 
 @Module({
   imports: [
@@ -29,10 +27,8 @@ import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cle
       UserWorkspaceEntity,
     ]),
     AppOAuthRefreshModule,
-    CalendarEventCleanerModule,
     ConnectionProviderModule,
     FeatureFlagModule,
-    MessagingMessageCleanerModule,
     WebhookSubscriptionModule,
     PermissionsModule,
     UserRoleModule,
