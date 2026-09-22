@@ -123,7 +123,7 @@ exports[`Sync application should fail on invalid settings menu items when two it
             },
           ],
           "flatEntityMinimalInformation": {
-            "title": "First",
+            "title": "Second",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "settingsMenuItem",
@@ -159,7 +159,7 @@ exports[`Sync application should fail on invalid settings menu items when two it
             },
           ],
           "flatEntityMinimalInformation": {
-            "title": "First",
+            "title": "Second",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "settingsMenuItem",
