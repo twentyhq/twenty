@@ -9,29 +9,16 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 export const isIndexCreationDeferrable = ({
   flatIndexMetadata,
   indexedFlatFieldMetadatas,
-  createdObjectMetadataUniversalIdentifiers,
 }: {
   flatIndexMetadata: Pick<
     FlatIndexMetadata,
-    | 'isUnique'
-    | 'indexWhereClause'
-    | 'objectMetadataUniversalIdentifier'
-    | 'flatIndexFieldMetadatas'
+    'isUnique' | 'indexWhereClause' | 'flatIndexFieldMetadatas'
   >;
   indexedFlatFieldMetadatas: FlatFieldMetadata[];
-  createdObjectMetadataUniversalIdentifiers: ReadonlySet<string>;
 }): boolean => {
   if (
     flatIndexMetadata.isUnique ||
     isNonEmptyString(flatIndexMetadata.indexWhereClause)
-  ) {
-    return false;
-  }
-
-  if (
-    createdObjectMetadataUniversalIdentifiers.has(
-      flatIndexMetadata.objectMetadataUniversalIdentifier,
-    )
   ) {
     return false;
   }

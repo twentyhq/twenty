@@ -220,11 +220,11 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   private shouldDeferIndexCreation({
-    deferredActionsContext,
+    shouldDeferWorkspaceMigrationActions,
     allFlatEntityMaps: { flatFieldMetadataMaps },
     flatAction: { flatEntity: flatIndexMetadata },
   }: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>): boolean {
-    if (!isDefined(deferredActionsContext)) {
+    if (shouldDeferWorkspaceMigrationActions !== true) {
       return false;
     }
 
@@ -236,8 +236,6 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
           (flatIndexFieldMetadata) => flatIndexFieldMetadata.fieldMetadataId,
         ),
       }),
-      createdObjectMetadataUniversalIdentifiers:
-        deferredActionsContext.createdObjectMetadataUniversalIdentifiers,
     });
   }
 }

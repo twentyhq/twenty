@@ -21,9 +21,7 @@ export type WorkspaceMigrationActionRunnerArgs<
   getSearchFieldMetadatasByTsVectorFieldId?: (
     tsVectorFieldMetadataId: string,
   ) => FlatSearchFieldMetadata[];
-  deferredActionsContext?: {
-    createdObjectMetadataUniversalIdentifiers: ReadonlySet<string>;
-  };
+  shouldDeferWorkspaceMigrationActions?: boolean;
 };
 
 export type WorkspaceMigrationActionRunnerContext<

@@ -43,7 +43,6 @@ import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/worksp
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
-import { collectCreatedObjectMetadataUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/collect-created-object-metadata-universal-identifiers.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -364,13 +363,6 @@ export class WorkspaceMigrationRunnerService {
         workspaceId,
       ));
 
-    const deferredActionsContext = shouldDeferWorkspaceMigrationActions
-      ? {
-          createdObjectMetadataUniversalIdentifiers:
-            collectCreatedObjectMetadataUniversalIdentifiers(actions),
-        }
-      : undefined;
-
     this.logger.perfTime('Runner', 'Transaction execution');
 
     await queryRunner.connect();
@@ -407,7 +399,7 @@ export class WorkspaceMigrationRunnerService {
                 preallocatedIdByUniversalIdentifierByMetadataName,
                 getSearchFieldMetadatasByTsVectorFieldId:
                   searchFieldMetadatasByTsVectorFieldIdAccessor.get,
-                deferredActionsContext,
+                shouldDeferWorkspaceMigrationActions,
               },
             },
           );

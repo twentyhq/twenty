@@ -7,7 +7,6 @@ import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 
 const TIMELINE_ACTIVITY_OBJECT_UNIVERSAL_IDENTIFIER = 'timeline-activity';
-const NEW_APP_OBJECT_UNIVERSAL_IDENTIFIER = 'new-app-object';
 
 const buildJoinColumnField = (
   overrides: Partial<FlatFieldMetadata> = {},
@@ -50,32 +49,15 @@ const buildIndex = (
   });
 
 describe('isIndexCreationDeferrable', () => {
-  it('should defer a join column index on an object that already exists', () => {
+  it('should defer a join column index', () => {
     const joinColumnField = buildJoinColumnField();
 
     expect(
       isIndexCreationDeferrable({
         flatIndexMetadata: buildIndex([joinColumnField]),
         indexedFlatFieldMetadatas: [joinColumnField],
-        createdObjectMetadataUniversalIdentifiers: new Set([
-          NEW_APP_OBJECT_UNIVERSAL_IDENTIFIER,
-        ]),
       }),
     ).toBe(true);
-  });
-
-  it('should not defer an index on an object created in the same migration', () => {
-    const joinColumnField = buildJoinColumnField();
-
-    expect(
-      isIndexCreationDeferrable({
-        flatIndexMetadata: buildIndex([joinColumnField]),
-        indexedFlatFieldMetadatas: [joinColumnField],
-        createdObjectMetadataUniversalIdentifiers: new Set([
-          TIMELINE_ACTIVITY_OBJECT_UNIVERSAL_IDENTIFIER,
-        ]),
-      }),
-    ).toBe(false);
   });
 
   it('should not defer a unique index', () => {
@@ -85,7 +67,6 @@ describe('isIndexCreationDeferrable', () => {
       isIndexCreationDeferrable({
         flatIndexMetadata: buildIndex([joinColumnField], { isUnique: true }),
         indexedFlatFieldMetadatas: [joinColumnField],
-        createdObjectMetadataUniversalIdentifiers: new Set(),
       }),
     ).toBe(false);
   });
@@ -99,7 +80,6 @@ describe('isIndexCreationDeferrable', () => {
           indexWhereClause: '"deletedAt" IS NULL',
         }),
         indexedFlatFieldMetadatas: [joinColumnField],
-        createdObjectMetadataUniversalIdentifiers: new Set(),
       }),
     ).toBe(false);
   });
@@ -115,7 +95,6 @@ describe('isIndexCreationDeferrable', () => {
       isIndexCreationDeferrable({
         flatIndexMetadata: buildIndex([textField]),
         indexedFlatFieldMetadatas: [textField],
-        createdObjectMetadataUniversalIdentifiers: new Set(),
       }),
     ).toBe(false);
   });
@@ -130,7 +109,6 @@ describe('isIndexCreationDeferrable', () => {
       isIndexCreationDeferrable({
         flatIndexMetadata: buildIndex([oneToManyField]),
         indexedFlatFieldMetadatas: [oneToManyField],
-        createdObjectMetadataUniversalIdentifiers: new Set(),
       }),
     ).toBe(false);
   });
@@ -147,7 +125,6 @@ describe('isIndexCreationDeferrable', () => {
       isIndexCreationDeferrable({
         flatIndexMetadata: buildIndex([joinColumnField, textField]),
         indexedFlatFieldMetadatas: [joinColumnField, textField],
-        createdObjectMetadataUniversalIdentifiers: new Set(),
       }),
     ).toBe(false);
   });
@@ -159,7 +136,6 @@ describe('isIndexCreationDeferrable', () => {
       isIndexCreationDeferrable({
         flatIndexMetadata: buildIndex([joinColumnField]),
         indexedFlatFieldMetadatas: [],
-        createdObjectMetadataUniversalIdentifiers: new Set(),
       }),
     ).toBe(false);
   });
