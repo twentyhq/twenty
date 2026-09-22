@@ -101,7 +101,6 @@ describe('RecordViewsList', () => {
       .mocked(useRecordViews)
       .mockReturnValue({ ...mockResult, views: [], loading: true });
     renderList();
-    expect(screen.getByText('Finding views…')).toBeVisible();
     expect(
       screen.queryByText('No views contain this record'),
     ).not.toBeInTheDocument();

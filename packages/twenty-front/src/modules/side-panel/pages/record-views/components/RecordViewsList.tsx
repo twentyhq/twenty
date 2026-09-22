@@ -1,4 +1,5 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/components/RecordPickerLoadingSkeletonList';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -47,13 +48,7 @@ export const RecordViewsList = ({
       noResults={!error && views.length === 0}
       noResultsText={t`No views contain this record`}
     >
-      {loading && (
-        <CommandMenuItem
-          id="loading-record-views"
-          label={t`Finding views…`}
-          disabled
-        />
-      )}
+      {loading && <RecordPickerLoadingSkeletonList />}
       {error && (
         <SidePanelGroup heading={t`Unable to load views`}>
           <SelectableListItem itemId={RETRY_ITEM_ID} onEnter={retry}>
