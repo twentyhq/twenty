@@ -410,6 +410,48 @@ describe('List My Teams Transcripts', () => {
       expect(graph.calls).toHaveLength(0);
     });
 
+    it.each([
+      'https://graph.microsoft.com/v1.0/me/messages',
+      'https://graph.microsoft.com/v1.0/users/another-user/calendarView',
+      'https://graph.microsoft.com/v1.0/me/calendarView/events',
+      'https://graph.microsoft.com/v1.0/me/calendarView/../messages',
+      'https://graph.microsoft.com/v1.0/me/calendarView%2F..%2Fmessages',
+      'https://graph.microsoft.com/beta/me/calendarView',
+    ])('rejects non-calendar pagination URL %s', async (nextPageUrl) => {
+      const result = await teamsListOrganizerTranscriptsHandler(
+        { nextPageUrl },
+        requesterContext,
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: 'Teams calendar pagination URLs must use /v1.0/me/calendarView',
+      });
+      expect(graph.calls).toHaveLength(0);
+    });
+
+    it.each([
+      'https://graph.microsoft.com/v1.0/me/calendarView',
+      'https://graph.microsoft.com/v1.0/me/calendarView/',
+      '/v1.0/me/calendarView',
+      'me/calendarView',
+    ])('preserves continuation parameters for %s', async (calendarUrl) => {
+      const query = '?%24skiptoken=next%2Bpage%2F%3D&%24top=10';
+      const result = await teamsListOrganizerTranscriptsHandler(
+        { nextPageUrl: `${calendarUrl}${query}` },
+        requesterContext,
+      );
+
+      expect(result).toEqual({
+        success: true,
+        connectedAccount: 'organizer@example.com',
+        isTruncated: false,
+        transcripts: [],
+      });
+      expect(graph.calls).toHaveLength(1);
+      expect(new URL(graph.calls[0].url).search).toBe(query);
+    });
+
     it('retries a throttled request after the Retry-After delay', async () => {
       addRoadmapMeeting();
       graph.failNextCall({ status: 429, headers: { 'Retry-After': '1' } });
