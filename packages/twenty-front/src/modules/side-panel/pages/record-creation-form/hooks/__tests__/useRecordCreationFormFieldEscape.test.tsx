@@ -1,10 +1,16 @@
+import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
+import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { FormUuidFieldInput } from '@/object-record/record-field/ui/form-types/components/FormUuidFieldInput';
 import { useRecordCreationFormFieldEscape } from '@/side-panel/pages/record-creation-form/hooks/useRecordCreationFormFieldEscape';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
-import { useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
 const mockHandleSidePanelEscape = jest.fn();
@@ -43,9 +49,11 @@ const Field = ({
 const Form = ({
   onDateEscape,
   showDateField = false,
+  firstField,
 }: {
   onDateEscape?: () => void;
   showDateField?: boolean;
+  firstField?: ReactNode;
 }) => {
   const formFieldsRef = useRef<HTMLDivElement>(null);
   useRecordCreationFormFieldEscape({ formFieldsRef });
@@ -53,6 +61,7 @@ const Form = ({
   return (
     <>
       <div ref={formFieldsRef}>
+        {firstField}
         <Field instanceId="name" label="Name" />
         {showDateField && (
           <Field instanceId="date" label="Date" onEscape={onDateEscape} />
@@ -63,10 +72,14 @@ const Form = ({
   );
 };
 
-const renderForm = () => {
+const renderForm = (firstField?: ReactNode) => {
   const store = createStore();
-  const utils = render(<Form />, {
-    wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+  const utils = render(<Form firstField={firstField} />, {
+    wrapper: ({ children }) => (
+      <I18nProvider i18n={i18n}>
+        <Provider store={store}>{children}</Provider>
+      </I18nProvider>
+    ),
   });
 
   return utils;
@@ -106,6 +119,74 @@ it('ignores Escape in fields outside the creation form', async () => {
 
   await userEvent.keyboard('{Escape}');
 
+  await new Promise((resolve) => setTimeout(resolve));
+  expect(mockHandleSidePanelEscape).not.toHaveBeenCalled();
+});
+
+it.each([
+  [
+    'Enter a number',
+    <FormNumberFieldInput
+      key="number"
+      label="Employees"
+      defaultValue={undefined}
+      onChange={jest.fn()}
+    />,
+  ],
+  [
+    'Enter a UUID',
+    <FormUuidFieldInput
+      key="uuid"
+      label="External id"
+      defaultValue={undefined}
+      onChange={jest.fn()}
+    />,
+  ],
+  [
+    'Enter an item',
+    <FormArrayFieldInput
+      key="array"
+      label="Tags"
+      defaultValue={[]}
+      onChange={jest.fn()}
+    />,
+  ],
+])(
+  'leaves the creation form when Escape is pressed in the "%s" field',
+  async (placeholder, firstField) => {
+    renderForm(firstField);
+    const input = screen.getByPlaceholderText(placeholder);
+    await userEvent.click(input);
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(mockHandleSidePanelEscape).toHaveBeenCalledTimes(1),
+    );
+    expect(input).not.toHaveFocus();
+  },
+);
+
+it('closes only the open select dropdown when Escape is pressed in it', async () => {
+  renderForm(
+    <FormSelectFieldInput
+      label="Stage"
+      defaultValue="a"
+      onChange={jest.fn()}
+      options={[
+        { label: 'Option A', value: 'a' },
+        { label: 'Option B', value: 'b' },
+      ]}
+    />,
+  );
+  await userEvent.click(screen.getByText('Option A'));
+  expect(await screen.findByText('Option B')).toBeInTheDocument();
+
+  await userEvent.keyboard('{Escape}');
+
+  await waitFor(() =>
+    expect(screen.queryByText('Option B')).not.toBeInTheDocument(),
+  );
   await new Promise((resolve) => setTimeout(resolve));
   expect(mockHandleSidePanelEscape).not.toHaveBeenCalled();
 });
