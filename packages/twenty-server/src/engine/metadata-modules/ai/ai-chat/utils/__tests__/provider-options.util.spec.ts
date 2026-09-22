@@ -262,7 +262,7 @@ describe('provider-options.util', () => {
       ]);
     });
 
-    it('leaves messages untouched for providers without cache provider options', () => {
+    it('leaves messages untouched for non-Bedrock providers', () => {
       const messages: ModelMessage[] = [
         { role: 'user', content: 'first' },
         {

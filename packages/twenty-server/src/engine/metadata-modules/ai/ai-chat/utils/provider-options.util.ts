@@ -10,12 +10,14 @@ import {
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 
+const BEDROCK_CACHE_POINT = { cachePoint: { type: 'default' } };
+
 export const getCacheProviderOptions = (
   sdkPackage: AiSdkPackage,
 ): ProviderOptions | undefined => {
   switch (sdkPackage) {
     case AI_SDK_BEDROCK:
-      return { bedrock: { cachePoint: { type: 'default' } } };
+      return { bedrock: { ...BEDROCK_CACHE_POINT } };
     default:
       return undefined;
   }
@@ -57,59 +59,48 @@ export const getCallLevelProviderOptions = ({
   }
 };
 
-const omitCacheProviderOptions = (
+const omitBedrockCachePoint = (
   providerOptions: ProviderOptions | undefined,
-  cacheOptions: ProviderOptions,
 ): ProviderOptions | undefined => {
-  if (!isDefined(providerOptions)) return undefined;
+  const bedrock = providerOptions?.bedrock;
 
-  const remainingProviderOptions = Object.entries(
-    providerOptions,
-  ).reduce<ProviderOptions>((accumulator, [namespace, options]) => {
-    const cacheKeys = Object.keys(cacheOptions[namespace] ?? {});
-    const remainingOptions = Object.fromEntries(
-      Object.entries(options).filter(([key]) => !cacheKeys.includes(key)),
-    );
+  if (!isDefined(providerOptions) || !isDefined(bedrock)) {
+    return providerOptions;
+  }
 
-    return Object.keys(remainingOptions).length === 0
-      ? accumulator
-      : { ...accumulator, [namespace]: remainingOptions };
-  }, {});
+  const { bedrock: _bedrock, ...otherProviderOptions } = providerOptions;
+  const { cachePoint: _cachePoint, ...otherBedrockOptions } = bedrock;
 
-  return Object.keys(remainingProviderOptions).length === 0
-    ? undefined
-    : remainingProviderOptions;
+  if (Object.keys(otherBedrockOptions).length > 0) {
+    return { ...otherProviderOptions, bedrock: otherBedrockOptions };
+  }
+
+  if (Object.keys(otherProviderOptions).length > 0) {
+    return otherProviderOptions;
+  }
+
+  return undefined;
 };
 
 export const injectCacheBreakpoint = (
   messages: ModelMessage[],
   sdkPackage: AiSdkPackage,
 ): ModelMessage[] => {
-  if (messages.length === 0) return messages;
-
-  const cacheOptions = getCacheProviderOptions(sdkPackage);
-
-  if (!cacheOptions) return messages;
+  if (messages.length === 0 || sdkPackage !== AI_SDK_BEDROCK) return messages;
 
   const lastIdx = messages.length - 1;
 
   return messages.map((message, index) => {
-    const providerOptions = omitCacheProviderOptions(
-      message.providerOptions,
-      cacheOptions,
-    );
+    const providerOptions = omitBedrockCachePoint(message.providerOptions);
 
     if (index !== lastIdx) return { ...message, providerOptions };
 
     return {
       ...message,
-      providerOptions: Object.entries(cacheOptions).reduce<ProviderOptions>(
-        (accumulator, [namespace, options]) => ({
-          ...accumulator,
-          [namespace]: { ...(accumulator[namespace] ?? {}), ...options },
-        }),
-        providerOptions ?? {},
-      ),
+      providerOptions: {
+        ...providerOptions,
+        bedrock: { ...providerOptions?.bedrock, ...BEDROCK_CACHE_POINT },
+      },
     };
   });
 };
