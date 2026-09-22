@@ -3967,8 +3967,10 @@ type Mutation {
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
-  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
+  createWorkspaceLogoUpload(filename: String!, size: Float!): FileUploadTarget!
+  completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
+  createWorkspaceMemberProfilePictureUpload(filename: String!, size: Float!): FileUploadTarget!
+  completeWorkspaceMemberProfilePictureUpload(fileId: String!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   createUsageLimit(input: CreateUsageLimitInput!): UsageLimit!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!

@@ -1,21 +1,15 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import {
+  createWorkspaceLogoUploadMutation,
+  uploadWorkspaceLogoWithDirectUpload,
+} from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-
-const uploadWorkspaceLogoMutation = gql`
-  mutation UploadWorkspaceLogo($file: Upload!) {
-    uploadWorkspaceLogo(file: $file) {
-      id
-      url
-    }
-  }
-`;
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -369,26 +363,14 @@ describe('workspace permissions', () => {
           'base64',
         );
 
-        const uploadResponse = await makeMetadataAPIRequestWithFileUpload(
-          {
-            query: uploadWorkspaceLogoMutation,
-            variables: { file: null },
-          },
-          {
-            field: 'file',
-            buffer: testImageBuffer,
-            filename: 'test-logo.png',
-            contentType: 'image/png',
-          },
-          APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        );
+        const uploadedLogo = await uploadWorkspaceLogoWithDirectUpload({
+          filename: 'test-logo.png',
+          content: testImageBuffer,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        });
 
-        expect(uploadResponse.status).toBe(200);
-        expect(uploadResponse.body.errors).toBeUndefined();
-        expect(uploadResponse.body.data).toBeDefined();
-        expect(uploadResponse.body.data.uploadWorkspaceLogo).toBeDefined();
-        expect(uploadResponse.body.data.uploadWorkspaceLogo.id).toBeDefined();
-        expect(uploadResponse.body.data.uploadWorkspaceLogo.url).toBeDefined();
+        expect(uploadedLogo.id).toBeDefined();
+        expect(uploadedLogo.url).toBeDefined();
 
         const getWorkspaceQuery = gql`
           query GetWorkspace {
@@ -406,21 +388,10 @@ describe('workspace permissions', () => {
       });
 
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const testImageBuffer = Buffer.from(
-          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-          'base64',
-        );
-
-        const response = await makeMetadataAPIRequestWithFileUpload(
+        const response = await makeMetadataAPIRequest(
           {
-            query: uploadWorkspaceLogoMutation,
-            variables: { file: null },
-          },
-          {
-            field: 'file',
-            buffer: testImageBuffer,
-            filename: 'test-logo.png',
-            contentType: 'image/png',
+            query: createWorkspaceLogoUploadMutation,
+            variables: { filename: 'test-logo.png', size: 67 },
           },
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );

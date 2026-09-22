@@ -8546,21 +8546,47 @@ export default {
                     ]
                 }
             ],
-            "uploadWorkspaceLogo": [
-                159,
+            "createWorkspaceLogoUpload": [
+                160,
                 {
-                    "file": [
-                        431,
-                        "Upload!"
+                    "filename": [
+                        1,
+                        "String!"
+                    ],
+                    "size": [
+                        15,
+                        "Float!"
                     ]
                 }
             ],
-            "uploadWorkspaceMemberProfilePicture": [
+            "completeWorkspaceLogoUpload": [
                 159,
                 {
-                    "file": [
-                        431,
-                        "Upload!"
+                    "fileId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "createWorkspaceMemberProfilePictureUpload": [
+                160,
+                {
+                    "filename": [
+                        1,
+                        "String!"
+                    ],
+                    "size": [
+                        15,
+                        "Float!"
+                    ]
+                }
+            ],
+            "completeWorkspaceMemberProfilePictureUpload": [
+                159,
+                {
+                    "fileId": [
+                        1,
+                        "String!"
                     ]
                 }
             ],
