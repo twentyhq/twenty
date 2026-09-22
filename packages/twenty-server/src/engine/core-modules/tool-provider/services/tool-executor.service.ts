@@ -64,10 +64,13 @@ export class ToolExecutorService {
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
     const safeArgs = args ?? {};
+    const executionContext = context.resolveExecutionContext
+      ? await context.resolveExecutionContext()
+      : context;
 
     return withResolvedToolAuthContext(
       {
-        context,
+        context: executionContext,
         userRepository: this.userRepository,
         userWorkspaceRepository: this.userWorkspaceRepository,
         workspaceCacheService: this.workspaceCacheService,

@@ -36,6 +36,9 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     threadMessages = [hiddenKickoffMessageEntity],
   } = {}) => {
     const threadRepository = {
+      findOneOrFail: jest
+        .fn()
+        .mockResolvedValue({ userWorkspaceId: 'user-workspace-id' }),
       findOne: jest.fn().mockResolvedValue(kickoffThread),
       update: jest.fn().mockResolvedValue({ affected: claimAffected }),
     };
@@ -80,6 +83,17 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
         eventPublisherService as never,
         metricsService as never,
       ),
+      {
+        authorizeJob: jest.fn().mockResolvedValue(undefined),
+        authorizeRetry: jest.fn().mockResolvedValue(undefined),
+        authorize: jest.fn().mockResolvedValue({}),
+        resolveMessage: jest.fn().mockResolvedValue({
+          sender: {
+            userWorkspaceId: 'user-workspace-id',
+            applicationId: null,
+          },
+        }),
+      } as never,
     );
 
     return {
@@ -146,6 +160,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     expect(agentChatService.ensureHiddenKickoffMessage).toHaveBeenCalledWith({
       threadId: 'thread-id',
       workspaceId: 'workspace-id',
+      userWorkspaceId: 'user-workspace-id',
       text: kickoffText,
     });
     expect(agentChatService.getMessagesForThread).toHaveBeenCalledWith(

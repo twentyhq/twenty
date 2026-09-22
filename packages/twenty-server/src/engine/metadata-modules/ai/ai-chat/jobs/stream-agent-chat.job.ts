@@ -1,3 +1,4 @@
+import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -89,6 +90,7 @@ export class StreamAgentChatJob {
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly actorService: AgentChatActorService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -162,6 +164,13 @@ export class StreamAgentChatJob {
         );
       }
 
+      await this.actorService.authorizeJob({
+        workspaceId: data.workspaceId,
+        threadId: data.threadId,
+        messageId: data.messageId,
+        turnId: data.existingTurnId,
+        userWorkspaceId: data.userWorkspaceId,
+      });
       await this.executeStream(
         data,
         workspace,
@@ -186,7 +195,7 @@ export class StreamAgentChatJob {
       await this.threadRepository
         .update(
           data.workspaceId,
-          { id: data.threadId },
+          { id: data.threadId, activeStreamId: data.streamId },
           {
             lastStreamError: {
               ...streamError,
@@ -234,12 +243,11 @@ export class StreamAgentChatJob {
 
       if (!abortController.signal.aborted) {
         await this.agentChatStreamingService
-          .flushNextQueuedMessage(
-            data.threadId,
-            data.userWorkspaceId,
-            data.workspaceId,
-            data.hasTitle,
-          )
+          .flushNextQueuedMessage({
+            threadId: data.threadId,
+            workspaceId: data.workspaceId,
+            hasTitle: data.hasTitle,
+          })
           .catch((error) => {
             this.logger.error(
               `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
@@ -332,6 +340,7 @@ export class StreamAgentChatJob {
     const userMessagePromise = data.existingTurnId
       ? Promise.resolve({ turnId: data.existingTurnId })
       : this.agentChatService.addMessage({
+          userWorkspaceId: data.userWorkspaceId,
           threadId: data.threadId,
           uiMessage: {
             role: AgentMessageRole.USER,
@@ -349,6 +358,7 @@ export class StreamAgentChatJob {
       ? Promise.resolve(null)
       : this.agentChatService
           .generateTitleIfNeeded({
+            userWorkspaceId: data.userWorkspaceId,
             threadId: data.threadId,
             messageContent: data.lastUserMessageText,
             workspaceId: data.workspaceId,
@@ -466,6 +476,7 @@ export class StreamAgentChatJob {
               threadId: data.threadId,
               streamId: data.streamId,
               turnId: data.existingTurnId,
+              messageId: data.messageId,
               messages: data.messages,
               browsingContext: data.browsingContext,
               modelId: data.modelId,

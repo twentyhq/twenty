@@ -16,6 +16,8 @@ export class AgentMessageWorkspaceEntity extends BaseWorkspaceEntity {
   threadId: string;
   turnId: string | null;
   agentId: string | null;
+  senderUserWorkspaceId: string | null;
+  senderApplicationId: string | null;
   role: AgentMessageRole;
   status: AgentMessageStatus;
   isHidden: boolean;

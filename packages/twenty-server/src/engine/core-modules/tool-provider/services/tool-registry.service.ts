@@ -37,6 +37,9 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options?: { categories?: ToolCategory[]; excludeTools?: Set<string> },
   ): Promise<ToolIndexEntry[]> {
+    const executionContext = context.resolveExecutionContext
+      ? await context.resolveExecutionContext()
+      : context;
     const categorySet = options?.categories
       ? new Set(options.categories)
       : undefined;
@@ -47,8 +50,8 @@ export class ToolRegistryService {
           return [];
         }
 
-        if (await provider.isAvailable(context)) {
-          return provider.generateDescriptors(context, {
+        if (await provider.isAvailable(executionContext)) {
+          return provider.generateDescriptors(executionContext, {
             includeSchemas: false,
           });
         }
@@ -71,6 +74,9 @@ export class ToolRegistryService {
     context: ToolProviderContext;
     precomputedCatalog?: ToolIndexEntry[];
   }): Promise<Map<string, object>> {
+    const executionContext = context.resolveExecutionContext
+      ? await context.resolveExecutionContext()
+      : context;
     const index = precomputedCatalog ?? (await this.getCatalog(context));
     const nameSet = new Set(toolNames);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
@@ -97,7 +103,7 @@ export class ToolRegistryService {
 
       const entryNameSet = new Set(entries.map((entry) => entry.name));
 
-      const descriptors = await provider.generateDescriptors(context, {
+      const descriptors = await provider.generateDescriptors(executionContext, {
         includeSchemas: true,
         toolNames: entryNameSet,
       });
@@ -438,6 +444,12 @@ export class ToolRegistryService {
       };
 
     return {
+      resolveExecutionContext: context.resolveExecutionContext
+        ? async () =>
+            this.buildContextFromToolContext(
+              await context.resolveExecutionContext!(),
+            )
+        : undefined,
       workspaceId: context.workspaceId,
       roleId: context.roleId,
       rolePermissionConfig,

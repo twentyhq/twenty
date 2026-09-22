@@ -34,6 +34,7 @@ type KernelResponse = {
 };
 
 type LocalSession = {
+  actorKey?: string;
   workDir: string;
   outputDir: string;
   scriptsDir: string;
@@ -120,7 +121,11 @@ export class LocalDriver implements CodeInterpreterDriver {
     context: ExecutionContext | undefined,
     callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult> {
-    const session = await this.getOrCreateSession(sessionId, context?.env);
+    const session = await this.getOrCreateSession(
+      sessionId,
+      context?.env,
+      context?.actorKey,
+    );
 
     // /home/user/output is cleared at the start of every call (matching the E2B
     // behavior and the tool contract).
@@ -153,7 +158,9 @@ export class LocalDriver implements CodeInterpreterDriver {
       // next call recreates a clean one. The 'exit' handler reclaims the work
       // dir.
       session.hasExited = true;
-      this.sessions.delete(sessionId);
+      if (this.sessions.get(sessionId) === session) {
+        this.sessions.delete(sessionId);
+      }
       session.child.kill('SIGKILL');
 
       return {
@@ -308,14 +315,33 @@ export class LocalDriver implements CodeInterpreterDriver {
     }
   }
 
+  async releaseSession(sessionId: string): Promise<void> {
+    const session = this.sessions.get(sessionId);
+    if (!isDefined(session)) {
+      return;
+    }
+    this.sessions.delete(sessionId);
+    session.hasExited = true;
+    session.child.kill('SIGKILL');
+    await fs.rm(session.workDir, { recursive: true, force: true });
+  }
+
   private async getOrCreateSession(
     sessionId: string,
     env?: Record<string, string>,
+    actorKey?: string,
   ): Promise<LocalSession> {
     const existing = this.sessions.get(sessionId);
 
-    if (isDefined(existing) && !existing.hasExited) {
+    if (
+      isDefined(existing) &&
+      !existing.hasExited &&
+      existing.actorKey === actorKey
+    ) {
       return existing;
+    }
+    if (isDefined(existing) && !existing.hasExited) {
+      await this.releaseSession(sessionId);
     }
 
     if (isDefined(existing)) {
@@ -354,6 +380,7 @@ export class LocalDriver implements CodeInterpreterDriver {
     const controlOut = child.stdio[4] as Readable;
 
     const session: LocalSession = {
+      actorKey,
       workDir,
       outputDir,
       scriptsDir,
@@ -394,7 +421,9 @@ export class LocalDriver implements CodeInterpreterDriver {
 
     const markExited = () => {
       session.hasExited = true;
-      this.sessions.delete(sessionId);
+      if (this.sessions.get(sessionId) === session) {
+        this.sessions.delete(sessionId);
+      }
       session.pending?.reject(new Error('Python kernel process exited'));
       session.pending = undefined;
       // The kernel self-terminates (idle watchdog) or dies on its own; reclaim

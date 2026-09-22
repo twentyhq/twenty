@@ -260,6 +260,9 @@ describe('StreamAgentChatJob', () => {
         .fn()
         .mockReturnValue({ modelId: 'openai/gpt-5.6-luna' }),
     };
+    const actorService = {
+      authorizeJob: jest.fn().mockResolvedValue(undefined),
+    };
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -271,6 +274,7 @@ describe('StreamAgentChatJob', () => {
       streamHeartbeatService as never,
       metricsService as never,
       aiModelRegistryService as never,
+      actorService as never,
     );
 
     const turnCounts = (key: string) =>
@@ -280,6 +284,8 @@ describe('StreamAgentChatJob', () => {
 
     return {
       job,
+      actorService,
+      chatExecutionService,
       publishedEvents,
       threadRepository,
       agentChatService,
@@ -291,6 +297,21 @@ describe('StreamAgentChatJob', () => {
       turnCounts,
     };
   };
+
+  it('does not invoke the model when the saved sender lost access before execution', async () => {
+    const { job, actorService, chatExecutionService, threadRepository } =
+      buildJob();
+    actorService.authorizeJob.mockRejectedValue(
+      new Error('Sender access revoked'),
+    );
+    await expect(job.handle(jobData)).rejects.toThrow('Sender access revoked');
+    expect(chatExecutionService.streamChat).not.toHaveBeenCalled();
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'stream-id' },
+      { activeStreamId: null },
+    );
+  });
 
   it('publishes all chunks in order with message-persisted last on success', async () => {
     const {
@@ -403,7 +424,7 @@ describe('StreamAgentChatJob', () => {
     );
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
-      { id: 'thread-id' },
+      { id: 'thread-id', activeStreamId: 'stream-id' },
       {
         lastStreamError: expect.objectContaining({
           code: 'STREAM_EXECUTION_FAILED',
@@ -482,7 +503,7 @@ describe('StreamAgentChatJob', () => {
     });
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
-      { id: 'thread-id' },
+      { id: 'thread-id', activeStreamId: 'stream-id' },
       {
         lastStreamError: expect.objectContaining({
           code: AiExceptionCode.WORKSPACE_NOT_FOUND,
@@ -568,7 +589,7 @@ describe('StreamAgentChatJob', () => {
     expect(eventTypes).not.toContain('message-persisted');
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
-      { id: 'thread-id' },
+      { id: 'thread-id', activeStreamId: 'stream-id' },
       {
         lastStreamError: expect.objectContaining({
           code: AiExceptionCode.STREAM_INTERRUPTED,

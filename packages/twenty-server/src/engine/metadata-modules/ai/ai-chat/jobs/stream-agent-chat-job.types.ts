@@ -17,6 +17,8 @@ export type StreamAgentChatJobData = {
   lastUserMessageParts: ExtendedUIMessagePart[];
   hasTitle: boolean;
   existingTurnId?: string;
+  // Absent only on jobs queued before sender attribution was deployed.
+  messageId?: string;
   conversationSizeTokens: number;
   isResume?: boolean;
 };

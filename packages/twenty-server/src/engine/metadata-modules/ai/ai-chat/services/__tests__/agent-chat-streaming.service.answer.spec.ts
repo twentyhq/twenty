@@ -27,11 +27,14 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     const agentChatService = {
       resolvePendingQuestion: jest.fn().mockResolvedValue({
         turnId: 'turn-id',
+        answerText: 'Which option?\nFirst option',
         rollback: { partId: 'part-id', previousOutput: {} },
       }),
       restorePendingQuestion: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
-      addMessage: jest.fn().mockResolvedValue({ id: 'file-message-id' }),
+      addMessage: jest
+        .fn()
+        .mockResolvedValue({ id: 'file-message-id', turnId: 'answer-turn-id' }),
       deleteMessage: jest.fn().mockResolvedValue(undefined),
     };
     const eventPublisherService = {
@@ -65,6 +68,17 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
         eventPublisherService as never,
         metricsService as never,
       ),
+      {
+        authorizeJob: jest.fn().mockResolvedValue(undefined),
+        authorizeRetry: jest.fn().mockResolvedValue(undefined),
+        authorize: jest.fn().mockResolvedValue({}),
+        resolveMessage: jest.fn().mockResolvedValue({
+          sender: {
+            userWorkspaceId: 'user-workspace-id',
+            applicationId: null,
+          },
+        }),
+      } as never,
     );
 
     return {
@@ -96,7 +110,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
 
     expect(result).toEqual({
       streamId: expect.any(String),
-      turnId: 'turn-id',
+      turnId: 'answer-turn-id',
     });
     expect(streamHeartbeatService.markClaimed).toHaveBeenCalledWith(
       result.streamId,
@@ -125,7 +139,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
       expect.any(String),
       expect.objectContaining({
         threadId: 'thread-id',
-        existingTurnId: 'turn-id',
+        existingTurnId: 'answer-turn-id',
         isResume: true,
       }),
     );
@@ -153,7 +167,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     expect(publishedEvents).toHaveLength(0);
   });
 
-  it('persists attached files as a user message on the question turn before enqueueing', async () => {
+  it('persists the attributed answer and files in a new turn before enqueueing', async () => {
     const { service, agentChatService, fileRepository, messageQueueService } =
       buildService();
 
@@ -172,6 +186,10 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
         role: AgentMessageRole.USER,
         parts: [
           {
+            type: 'text',
+            text: 'Which option?\nFirst option',
+          },
+          {
             type: 'file',
             mediaType: 'text/csv',
             filename: 'contacts.csv',
@@ -180,7 +198,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
           },
         ],
       },
-      turnId: 'turn-id',
+      userWorkspaceId: 'user-workspace-id',
       workspaceId: 'workspace-id',
     });
     expect(
@@ -188,12 +206,17 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
   });
 
-  it('does not persist a user message when there are no attachments', async () => {
+  it('persists the answer sender even without attachments', async () => {
     const { service, agentChatService } = buildService();
 
     await service.answerPendingQuestionAndResumeStream(answerArguments);
 
-    expect(agentChatService.addMessage).not.toHaveBeenCalled();
+    expect(agentChatService.addMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userWorkspaceId: 'user-workspace-id',
+        uiMessage: expect.objectContaining({ role: AgentMessageRole.USER }),
+      }),
+    );
   });
 
   it('restores the question when persisting attachments fails', async () => {
