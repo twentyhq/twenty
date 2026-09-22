@@ -76,7 +76,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
       const recordPosition =
         loadedRecordPosition !== -1
           ? loadedRecordPosition
-          : recordPositionInIndex;
+          : recordPositionInIndex?.position;
 
       if (!isDefined(recordPosition)) {
         return;

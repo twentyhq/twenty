@@ -1,3 +1,4 @@
+import { RecordIndexRecordToRevealEffect } from '@/object-record/record-index/components/RecordIndexRecordToRevealEffect';
 import { RecordTableDeactivateRecordTableRowEffect } from '@/object-record/record-table/components/RecordTableDeactivateRecordTableRowEffect';
 import { RecordTableEmptyHasNewRecordEffect } from '@/object-record/record-table/components/RecordTableEmptyHasNewRecordEffect';
 import { RecordTableBodyEscapeHotkeyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEscapeHotkeyEffect';
@@ -20,7 +21,10 @@ export const RecordTableBodyEffectsWrapper = ({
   return (
     <>
       {hasRecordGroups ? (
-        <RecordTableRecordGroupBodyEffects />
+        <>
+          <RecordIndexRecordToRevealEffect />
+          <RecordTableRecordGroupBodyEffects />
+        </>
       ) : (
         <>
           <RecordTableEmptyHasNewRecordEffect />

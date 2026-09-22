@@ -1,23 +1,28 @@
 import { useEffect } from 'react';
+import { useStore } from 'jotai';
 
-import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
-
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { recordIndexRecordToRevealComponentState } from '@/object-record/record-index/states/recordIndexRecordToRevealComponentState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { recordTableId } = useRecordTableContextOrThrow();
+
+  const store = useStore();
 
   const setRecordTableData = useSetRecordTableData({
     recordTableId,
@@ -29,8 +34,13 @@ export const RecordTableRecordGroupBodyEffect = () => {
 
   const recordGroupId = useCurrentRecordGroupId();
 
-  const { records, loading, hasNextPage } =
+  const { records, loading, hasNextPage, fetchMoreRecords, queryIdentifier } =
     useRecordIndexTableQuery(objectNameSingular);
+
+  const isFetchingMoreRecords = useAtomFamilyStateValue(
+    isFetchingMoreRecordsFamilyState,
+    queryIdentifier,
+  );
 
   const setRecordIndexHasFetchedAllRecordsByGroup =
     useSetAtomComponentFamilyState(
@@ -38,11 +48,14 @@ export const RecordTableRecordGroupBodyEffect = () => {
       recordGroupId,
     );
 
-  const lastShowPageRecordId = useAtomComponentStateValue(
-    lastShowPageRecordIdState,
+  const [recordIndexRecordToReveal, setRecordIndexRecordToReveal] =
+    useAtomComponentState(recordIndexRecordToRevealComponentState);
+
+  const allRecordIdsCallbackState = useAtomComponentSelectorCallbackState(
+    recordIndexAllRecordIdsComponentSelector,
   );
 
-  const { scrollToPosition } = useScrollToPosition();
+  const { focusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
   useEffect(() => {
     if (!loading) {
@@ -64,18 +77,58 @@ export const RecordTableRecordGroupBodyEffect = () => {
   ]);
 
   useEffect(() => {
-    if (isNonEmptyString(lastShowPageRecordId)) {
-      const recordPosition = records.findIndex(
-        (record) => record.id === lastShowPageRecordId,
-      );
-
-      if (recordPosition !== -1) {
-        const positionInPx = recordPosition * RECORD_TABLE_ROW_HEIGHT;
-
-        scrollToPosition(positionInPx);
-      }
+    if (
+      !isDefined(recordIndexRecordToReveal) ||
+      recordIndexRecordToReveal.recordGroupId !== recordGroupId ||
+      loading ||
+      isFetchingMoreRecords
+    ) {
+      return;
     }
-  }, [lastShowPageRecordId, records, scrollToPosition]);
+
+    const isRecordLoaded = records.some(
+      (record) => record.id === recordIndexRecordToReveal.recordId,
+    );
+
+    if (isRecordLoaded) {
+      setRecordIndexRecordToReveal(null);
+
+      // Rows are focused by their index across all groups, which the effect
+      // above has just refreshed in the store from this group's records.
+      const rowIndex = store
+        .get(allRecordIdsCallbackState)
+        .indexOf(recordIndexRecordToReveal.recordId);
+
+      if (rowIndex !== -1) {
+        focusRecordTableRow(rowIndex);
+      }
+
+      return;
+    }
+
+    const isRecordBeyondLoadedPages =
+      records.length <= recordIndexRecordToReveal.positionInGroup;
+
+    if (isRecordBeyondLoadedPages && hasNextPage) {
+      fetchMoreRecords();
+
+      return;
+    }
+
+    setRecordIndexRecordToReveal(null);
+  }, [
+    recordIndexRecordToReveal,
+    setRecordIndexRecordToReveal,
+    recordGroupId,
+    loading,
+    isFetchingMoreRecords,
+    records,
+    hasNextPage,
+    fetchMoreRecords,
+    store,
+    allRecordIdsCallbackState,
+    focusRecordTableRow,
+  ]);
 
   return <></>;
 };
