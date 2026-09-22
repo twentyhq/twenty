@@ -6,6 +6,7 @@ import { DROPDOWN_BOUNDARY_HORIZONTAL_PADDING } from '@/ui/layout/dropdown/const
 import { DROPDOWN_RESIZE_MIN_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownResizeMinHeight';
 import { DROPDOWN_RESIZE_MIN_WIDTH } from '@/ui/layout/dropdown/constants/DropdownResizeMinWidth';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
 import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxWidthComponentState';
@@ -25,6 +26,7 @@ import {
 } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import {
+  type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
   useCallback,
@@ -52,6 +54,7 @@ const StyledClickableComponent = styled.div<{
 export type DropdownProps = {
   clickableComponent?: ReactNode;
   clickableComponentWidth?: Width;
+  clickableComponentTabIndex?: number;
   dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
@@ -88,6 +91,7 @@ export const Dropdown = ({
   onClose,
   onOpen,
   clickableComponentWidth = 'auto',
+  clickableComponentTabIndex,
   excludedClickOutsideIds,
   isDropdownInModal = false,
   disableClickForClickableComponent = false,
@@ -99,6 +103,7 @@ export const Dropdown = ({
   );
 
   const { toggleDropdown } = useToggleDropdown();
+  const { closeDropdown } = useCloseDropdown();
 
   const isUsingOffset =
     isDefined(dropdownOffset?.x) || isDefined(dropdownOffset?.y);
@@ -145,7 +150,13 @@ export const Dropdown = ({
     },
   };
 
-  const { refs, floatingStyles, placement } = useFloating({
+  const { refs, floatingStyles, placement, context } = useFloating({
+    open: isDropdownOpen,
+    onOpenChange: (open) => {
+      if (!open) {
+        closeDropdown(dropdownId);
+      }
+    },
     placement: dropdownPlacement,
     middleware: [
       ...offsetMiddleware,
@@ -188,7 +199,7 @@ export const Dropdown = ({
   }, [positionReference, refs]);
 
   const handleClickableComponentClick = useCallback(
-    async (event: MouseEvent) => {
+    (event: MouseEvent | KeyboardEvent) => {
       if (disableClickForClickableComponent) return;
       event.stopPropagation();
       event.preventDefault();
@@ -214,6 +225,17 @@ export const Dropdown = ({
         <StyledClickableComponent
           ref={refs.setReference}
           onClick={handleClickableComponentClick}
+          tabIndex={clickableComponentTabIndex}
+          onKeyDown={(event) => {
+            if (
+              !isDropdownOpen &&
+              isDefined(clickableComponentTabIndex) &&
+              event.target === event.currentTarget &&
+              (event.key === 'Enter' || event.key === ' ')
+            ) {
+              handleClickableComponentClick(event);
+            }
+          }}
           aria-controls={`${dropdownId}-options`}
           aria-expanded={isDropdownOpen}
           aria-haspopup={true}
@@ -228,6 +250,8 @@ export const Dropdown = ({
       {isDropdownOpen && (
         <DropdownInternalContainer
           floatingStyles={floatingStyles}
+          floatingContext={context}
+          manageFocus={isDefined(clickableComponentTabIndex)}
           dropdownComponents={dropdownComponents}
           dropdownId={dropdownId}
           dropdownPlacement={placement}

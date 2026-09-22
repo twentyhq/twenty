@@ -217,6 +217,7 @@ export const FormSingleRecordPicker = ({
         ) : (
           <StyledDropdownContainer>
             <Dropdown
+              clickableComponentTabIndex={0}
               dropdownId={dropdownId}
               dropdownPlacement="bottom-start"
               clickableComponentWidth="100%"
