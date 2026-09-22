@@ -11,8 +11,7 @@ their workspace settings default to off. Connecting a Microsoft account does not
 start transcript imports or register subscriptions. The default application role
 has no CRM data access.
 
-See [SETUP.md](SETUP.md) for Microsoft OAuth setup and the transition from the
-former Teams Transcripts application.
+See [SETUP.md](SETUP.md) for Microsoft OAuth setup.
 
 ## Features, settings, and feature flags
 

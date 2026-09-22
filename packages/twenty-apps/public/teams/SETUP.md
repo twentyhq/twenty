@@ -42,19 +42,6 @@ an account does not enable them.
 References: [Microsoft authorization code flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
 and [transcript permissions](https://learn.microsoft.com/en-us/graph/api/onlinemeeting-list-transcripts?view=graph-rest-1.0).
 
-## Moving from Teams Transcripts
-
-The separate Teams Transcripts package has been retired. Microsoft Teams keeps
-its existing application identity and uses a new transcript connection provider
-identifier so both applications can coexist during the transition.
-
-Existing connections and registration variables belong to the old application;
-they are not transferred by this source-code change. Configure the Microsoft
-OAuth credentials on the Teams registration, install or update Teams, and sign
-in again through its settings. Verify the new connection before uninstalling the
-old Teams Transcripts application. Uninstalling the old application removes its
-connections. Removing its source package does not uninstall deployed copies.
-
 ## Development
 
 Use the Node version in `.nvmrc` and Yarn 4. From this directory:
