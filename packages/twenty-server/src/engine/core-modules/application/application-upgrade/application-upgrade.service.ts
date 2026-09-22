@@ -4,10 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import {
-  WorkspaceIteratorService,
-  type WorkspaceIteratorReport,
-} from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -16,6 +12,14 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import {
+  UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
+  UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
+  type UpgradeWorkspaceApplicationJobData,
+} from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 @Injectable()
@@ -28,8 +32,9 @@ export class ApplicationUpgradeService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
-    private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceVersionService: WorkspaceVersionService,
+    @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
+    private readonly applicationUpgradeQueueService: MessageQueueService,
   ) {}
 
   async findApplicationsToUpgrade({
@@ -103,61 +108,106 @@ export class ApplicationUpgradeService {
     };
   }
 
-  async upgradeApplications({
-    appRegistration,
-    targetVersion,
+  async enqueueWorkspaceApplicationUpgrades({
+    applicationRegistrationId,
     applications,
   }: {
-    appRegistration: ApplicationRegistrationEntity;
-    targetVersion: string;
+    applicationRegistrationId: string;
     applications: ApplicationEntity[];
-  }): Promise<WorkspaceIteratorReport> {
-    // An empty workspace id list makes the iterator fall back to every
-    // provisioned workspace, which would upgrade workspaces that were
-    // filtered out.
+  }): Promise<string[]> {
     if (!isNonEmptyArray(applications)) {
-      return { success: [], fail: [], interrupted: false };
+      return [];
     }
 
-    return this.workspaceIteratorService.iterate({
-      workspaceIds: applications.map((application) => application.workspaceId),
-      callback: async ({ workspaceId }) => {
-        await this.upgradeApplicationToVersion({
-          appRegistration,
-          targetVersion,
-          workspaceId,
-        });
-      },
-    });
+    return this.applicationUpgradeQueueService.bulkAdd<UpgradeWorkspaceApplicationJobData>(
+      UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
+      applications.map((application) => ({
+        data: {
+          applicationRegistrationId,
+          workspaceId: application.workspaceId,
+        },
+      })),
+      UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
+    );
   }
 
-  async upgradeAllApplications({
+  async enqueueApplicationUpgrades({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
-    workspaceIds,
-    workspaceCountLimit,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
-    workspaceIds?: string[];
-    workspaceCountLimit?: number;
-  }): Promise<void> {
+  }): Promise<string[]> {
     const { appRegistration, targetVersion, applicationsToUpgrade } =
       await this.findApplicationsToUpgrade({
         applicationRegistrationId,
         onlyAutoUpgrade,
-        workspaceIds,
-        workspaceCountLimit,
       });
 
     if (!isDefined(targetVersion)) {
+      return [];
+    }
+
+    const jobIds = await this.enqueueWorkspaceApplicationUpgrades({
+      applicationRegistrationId,
+      applications: applicationsToUpgrade,
+    });
+
+    this.logger.log(
+      `Enqueued ${jobIds.length} upgrade job(s) to bring ${appRegistration.universalIdentifier} to version ${targetVersion}`,
+    );
+
+    return jobIds;
+  }
+
+  async upgradeWorkspaceApplicationToLatestVersion({
+    applicationRegistrationId,
+    workspaceId,
+  }: {
+    applicationRegistrationId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+      where: { id: applicationRegistrationId },
+    });
+
+    const targetVersion = appRegistration.latestAvailableVersion;
+
+    if (!isDefined(targetVersion)) {
+      this.logger.log(
+        `Skipping upgrade of ${appRegistration.universalIdentifier} on workspace ${workspaceId}: no latest available version`,
+      );
+
       return;
     }
 
-    await this.upgradeApplications({
+    const application = await this.applicationRepository.findOne({
+      where: { applicationRegistrationId, workspaceId },
+    });
+
+    if (!isDefined(application)) {
+      this.logger.log(
+        `Skipping upgrade of ${appRegistration.universalIdentifier} on workspace ${workspaceId}: application is not installed anymore`,
+      );
+
+      return;
+    }
+
+    // The target is resolved when the job runs, so a job enqueued before a
+    // newer publish, or retried after a partial failure, stops here instead
+    // of reinstalling
+    if (application.version === targetVersion) {
+      this.logger.log(
+        `Skipping upgrade of ${appRegistration.universalIdentifier} on workspace ${workspaceId}: already on version ${targetVersion}`,
+      );
+
+      return;
+    }
+
+    await this.upgradeApplicationToVersion({
       appRegistration,
       targetVersion,
-      applications: applicationsToUpgrade,
+      workspaceId,
     });
   }
 

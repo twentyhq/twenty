@@ -21,6 +21,7 @@ import { ApplicationManifestModule } from 'src/engine/core-modules/application/a
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/upgrade-applications.job';
+import { UpgradeWorkspaceApplicationJob } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job';
 import { InstallPreInstalledAppsJob } from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job';
@@ -138,6 +139,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateWorkspaceMemberEmailJob,
     GenerateSdkClientJob,
     UpgradeApplicationsJob,
+    UpgradeWorkspaceApplicationJob,
     InstallOnboardingAppsJob,
     InstallPreInstalledAppsJob,
     TriggerInstallApplicationJob,

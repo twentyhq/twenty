@@ -1,23 +1,25 @@
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import {
-  UPGRADE_APPLICATIONS_JOB_NAME,
-  type UpgradeApplicationsJobData,
-} from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
+  UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
+  type UpgradeWorkspaceApplicationJobData,
+} from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 @Processor(MessageQueue.applicationUpgradeQueue)
-export class UpgradeApplicationsJob {
+export class UpgradeWorkspaceApplicationJob {
   constructor(
     private readonly applicationUpgradeService: ApplicationUpgradeService,
   ) {}
 
-  @Process(UPGRADE_APPLICATIONS_JOB_NAME)
-  async handle(data: UpgradeApplicationsJobData): Promise<void> {
-    await this.applicationUpgradeService.enqueueApplicationUpgrades({
-      applicationRegistrationId: data.applicationRegistrationId,
-      onlyAutoUpgrade: data.onlyAutoUpgrade,
-    });
+  @Process(UPGRADE_WORKSPACE_APPLICATION_JOB_NAME)
+  async handle(data: UpgradeWorkspaceApplicationJobData): Promise<void> {
+    await this.applicationUpgradeService.upgradeWorkspaceApplicationToLatestVersion(
+      {
+        applicationRegistrationId: data.applicationRegistrationId,
+        workspaceId: data.workspaceId,
+      },
+    );
   }
 }
