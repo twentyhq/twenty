@@ -71,7 +71,7 @@ describe('useFindManyRecordIndexTableParams', () => {
     expect(result.current.limit).toBe(50);
   });
 
-  it('should not set a limit when the view is not grouped', () => {
+  it('should not set a limit outside a record group', () => {
     const { result } = renderHook(
       () => useFindManyRecordIndexTableParams('company', INSTANCE_ID),
       { wrapper: getWrapper('unknown-record-group-id') },
