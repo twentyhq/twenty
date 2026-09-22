@@ -32,6 +32,20 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
+export const FullWidth: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    variant: 'error',
+    title: 'Your Postcard provider key was revoked.',
+    fullWidth: true,
+    action: {
+      label: 'Reconnect',
+      onClick: () => {},
+    },
+  },
+  decorators: [ComponentDecorator],
+};
+
 export const Catalog: CatalogStory<Story, typeof Callout> = {
   args: {
     title: 'This form will appear in workflow runs.',

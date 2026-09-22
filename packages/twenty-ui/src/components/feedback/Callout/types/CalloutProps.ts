@@ -4,7 +4,8 @@ import { type CalloutVariant } from './CalloutVariant';
 export type CalloutProps = {
   variant: CalloutVariant;
   title: string;
-  description: string;
+  description?: string;
+  fullWidth?: boolean;
   Icon?: IconComponent;
   action?: {
     label: string;

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';
 import { useState } from 'react';
@@ -29,6 +30,7 @@ export const Callout = ({
   variant,
   title,
   description,
+  fullWidth = false,
   Icon = IconHelp,
   action,
   isClosable = false,
@@ -54,6 +56,7 @@ export const Callout = ({
       className={clsx(
         styles.container,
         CALLOUT_CONTAINER_VARIANT_CLASS_NAMES[variant],
+        fullWidth && styles.containerFullWidth,
       )}
     >
       <div className={styles.header}>
@@ -77,14 +80,16 @@ export const Callout = ({
           />
         )}
       </div>
-      <div
-        className={clsx(
-          styles.descriptionWrapper,
-          isDefined(action) && styles.descriptionWrapperWithAction,
-        )}
-      >
-        <div className={styles.description}>{description}</div>
-      </div>
+      {isNonEmptyString(description) && (
+        <div
+          className={clsx(
+            styles.descriptionWrapper,
+            isDefined(action) && styles.descriptionWrapperWithAction,
+          )}
+        >
+          <div className={styles.description}>{description}</div>
+        </div>
+      )}
       {isDefined(action) && (
         <div className={styles.footer}>
           <Button

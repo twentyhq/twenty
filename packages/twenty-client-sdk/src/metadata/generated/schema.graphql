@@ -548,6 +548,7 @@ type Application {
   autoUpgrade: Boolean!
   defaultRoleId: String
   settingsCustomTabFrontComponentId: UUID
+  healthCheckLogicFunctionId: UUID
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
@@ -2004,6 +2005,7 @@ enum FeatureFlagKey {
   IS_RECORD_SHARING_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
+  IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2354,6 +2356,28 @@ type DeletedWorkspaceMember {
   userEmail: String!
   avatarUrl: String
   userWorkspaceId: UUID
+}
+
+type ApplicationHealthCheckAction {
+  label: String!
+  location: String
+}
+
+type ApplicationHealthCheckResult {
+  status: ApplicationHealthStatus!
+  title: String
+  description: String
+  action: ApplicationHealthCheckAction
+}
+
+enum ApplicationHealthStatus {
+  OK
+  SUCCESS
+  INFO
+  WARNING
+  ERROR
+  NEUTRAL
+  UNKNOWN
 }
 
 type MarketplaceApp {
@@ -3632,6 +3656,8 @@ enum AllMetadataName {
   connectionProvider
   searchFieldMetadata
   timelineActivityType
+  workflow
+  workflowVersion
 }
 
 type MinimalObjectMetadata {
@@ -4059,6 +4085,7 @@ type Mutation {
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
+  runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
