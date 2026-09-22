@@ -1,3 +1,5 @@
+import { type ModelMessage } from 'ai';
+
 import {
   getCallLevelProviderOptions,
   getCacheProviderOptions,
@@ -194,6 +196,78 @@ describe('provider-options.util', () => {
           },
         },
       ]);
+    });
+
+    it('moves the cache point off earlier messages that already carry one', () => {
+      expect(
+        injectCacheBreakpoint(
+          [
+            {
+              role: 'user',
+              content: 'first',
+              providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+            },
+            {
+              role: 'tool',
+              content: [],
+              providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+            },
+            { role: 'tool', content: [] },
+          ],
+          AI_SDK_BEDROCK,
+        ),
+      ).toEqual([
+        { role: 'user', content: 'first' },
+        { role: 'tool', content: [] },
+        {
+          role: 'tool',
+          content: [],
+          providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+        },
+      ]);
+    });
+
+    it('keeps bedrock provider options other than the cache point', () => {
+      expect(
+        injectCacheBreakpoint(
+          [
+            {
+              role: 'user',
+              content: 'first',
+              providerOptions: {
+                bedrock: { cachePoint: { type: 'default' }, guardrail: 'on' },
+              },
+            },
+            { role: 'user', content: 'last' },
+          ],
+          AI_SDK_BEDROCK,
+        ),
+      ).toEqual([
+        {
+          role: 'user',
+          content: 'first',
+          providerOptions: { bedrock: { guardrail: 'on' } },
+        },
+        {
+          role: 'user',
+          content: 'last',
+          providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+        },
+      ]);
+    });
+
+    it('leaves messages untouched for providers without cache provider options', () => {
+      const messages: ModelMessage[] = [
+        { role: 'user', content: 'first' },
+        {
+          role: 'user',
+          content: 'last',
+          providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+        },
+      ];
+
+      expect(injectCacheBreakpoint(messages, AI_SDK_ANTHROPIC)).toBe(messages);
+      expect(injectCacheBreakpoint(messages, AI_SDK_OPENAI)).toBe(messages);
     });
   });
 });

@@ -56,6 +56,30 @@ export const getCallLevelProviderOptions = ({
   }
 };
 
+const omitCacheProviderOptions = (
+  providerOptions: ProviderOptions | undefined,
+  cacheOptions: ProviderOptions,
+): ProviderOptions | undefined => {
+  if (!providerOptions) return undefined;
+
+  const remainingProviderOptions = Object.entries(
+    providerOptions,
+  ).reduce<ProviderOptions>((accumulator, [namespace, options]) => {
+    const cacheKeys = Object.keys(cacheOptions[namespace] ?? {});
+    const remainingOptions = Object.fromEntries(
+      Object.entries(options).filter(([key]) => !cacheKeys.includes(key)),
+    );
+
+    return Object.keys(remainingOptions).length === 0
+      ? accumulator
+      : { ...accumulator, [namespace]: remainingOptions };
+  }, {});
+
+  return Object.keys(remainingProviderOptions).length === 0
+    ? undefined
+    : remainingProviderOptions;
+};
+
 export const injectCacheBreakpoint = (
   messages: ModelMessage[],
   sdkPackage: AiSdkPackage,
@@ -69,12 +93,17 @@ export const injectCacheBreakpoint = (
   const lastIdx = messages.length - 1;
 
   return messages.map((message, index) => {
-    if (index !== lastIdx) return message;
+    const providerOptions = omitCacheProviderOptions(
+      message.providerOptions,
+      cacheOptions,
+    );
+
+    if (index !== lastIdx) return { ...message, providerOptions };
 
     return {
       ...message,
       providerOptions: {
-        ...(message.providerOptions ?? {}),
+        ...(providerOptions ?? {}),
         ...cacheOptions,
       },
     };
