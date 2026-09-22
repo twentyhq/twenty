@@ -29,6 +29,7 @@ import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflo
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
+import { assertPrivateCoreWorkflowHasOwner } from 'src/engine/core-modules/workflow/utils/assert-private-core-workflow-has-owner.util';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -423,6 +424,8 @@ export class CoreWorkflowMutationWorkspaceService {
     name?: string;
     visibility?: WorkflowVisibility;
   }): Promise<CoreWorkflowDTO> {
+    assertPrivateCoreWorkflowHasOwner({ visibility, userWorkspaceId });
+
     const applicationId =
       await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
         workspaceId,
