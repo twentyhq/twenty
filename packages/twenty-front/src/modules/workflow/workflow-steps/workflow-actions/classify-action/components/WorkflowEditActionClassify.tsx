@@ -42,9 +42,7 @@ type WorkflowEditActionClassifyProps = {
     | { readonly: true }
     | {
         readonly?: false;
-        onActionUpdate: (
-          action: WorkflowClassifyAction,
-        ) => void | Promise<unknown>;
+        onActionUpdate: (action: WorkflowClassifyAction) => Promise<unknown>;
       };
 };
 

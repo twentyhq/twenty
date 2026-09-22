@@ -247,6 +247,40 @@ describe('useTextVariableEditor', () => {
 });
 
 describe('external content updates', () => {
+  it('preserves selection when multiline values switch between raw and serialized text', () => {
+    const onUpdate = jest.fn();
+    const rawValue = 'First line\n{{step.name}}';
+    const { result, rerender, unmount } = renderHook(
+      ({ defaultValue }) =>
+        useTextVariableEditor({
+          placeholder: undefined,
+          multiline: true,
+          readonly: false,
+          defaultValue,
+          onUpdate,
+        }),
+      { initialProps: { defaultValue: rawValue } },
+    );
+    const editor = result.current!;
+    act(() => {
+      editor.commands.setTextSelection(4);
+    });
+    const selection = editor.state.selection.toJSON();
+    const document = editor.getJSON();
+
+    rerender({ defaultValue: content(editor) });
+    rerender({ defaultValue: rawValue });
+
+    expect(editor.getJSON()).toEqual(document);
+    expect(editor.state.selection.toJSON()).toEqual(selection);
+    expect(onUpdate).not.toHaveBeenCalled();
+
+    rerender({ defaultValue: 'Changed\nvalue' });
+    expect(content(editor)).toBe('Changed  \nvalue');
+    expect(onUpdate).not.toHaveBeenCalled();
+    unmount();
+  });
+
   it('loads changed values without emitting another update', () => {
     const onUpdate = jest.fn();
     const { result, rerender } = renderHook(

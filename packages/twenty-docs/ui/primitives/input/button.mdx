@@ -3,6 +3,7 @@ title: Button
 description: Trigger actions or navigate with styled buttons.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ButtonReference from '/snippets/ui/generated/input/button.mdx';
 
 Use `Button` for an action. Supply its visible label as children, and give icon-only buttons an `aria-label`.
@@ -69,6 +70,46 @@ export const CreateRecord = () => (
 Choose `solid`, `outline`, `soft`, or `ghost` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and backdrop blur. Neutral outline buttons also gain a bordered surface with matching text and interaction colors. Other variants and semantic colors keep their existing palette. It defaults to `false` and does not change size or position. `hotkeys` displays keyboard hints on larger screens; bind the shortcuts in your application.
 
 `disabled`, `loading`, and `soon` prevent activation. Loading keeps the label accessible and preserves the button's width while showing a spinner. Customize the upcoming-feature label with `soonLabel`.
+
+## Animated icons
+
+Compose `Button` with `AnimatedIconCrossfade` to change its icon when application state changes. Pass the animated element to `startIcon` and the label as children.
+
+```tsx
+import { useState } from 'react';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { AnimatedIconCrossfade } from 'twenty-ui/primitives/layout';
+
+export const EditActions = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          ActiveIcon={IconX}
+          InactiveIcon={IconPencil}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+When an icon is itself an action, use `IconButton` or `LightIconButton` and animate its icon content. When a disclosure header owns expansion, keep its chevron decorative and expose `aria-expanded` on the header control. Keep animation styles with the feature and respect `prefers-reduced-motion`.
+
+<StoryEmbed
+  title="Button with an animated icon"
+  storyId="ui-input-button-button--animated-icon-documentation"
+  height={120}
+/>
 
 ## Links and forms
 
