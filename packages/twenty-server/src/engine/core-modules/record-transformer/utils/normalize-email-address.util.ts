@@ -1,4 +1,4 @@
-import { domainToUnicode } from 'url';
+import { domainToUnicode } from 'node:url';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -10,15 +10,11 @@ export const normalizeEmailAddress = (email: string): string => {
   }
 
   const localPart = email.slice(0, separatorIndex).toLowerCase();
-  const domain = email
-    .slice(separatorIndex + 1)
-    .replace(/[。．｡]/gu, '.')
-    .replace(/\.+$/u, '')
-    .toLowerCase();
+  const domain = email.slice(separatorIndex + 1);
   const unicodeDomain = domainToUnicode(domain);
   const normalizedDomain = isNonEmptyString(unicodeDomain)
     ? unicodeDomain
-    : domain;
+    : domain.toLowerCase();
 
-  return `${localPart}@${normalizedDomain}`;
+  return `${localPart}@${normalizedDomain.replace(/\.+$/u, '')}`;
 };
