@@ -9,15 +9,19 @@ import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constan
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TeamsSettings } from 'src/front-components/components/TeamsSettings';
 
-const { featureFlags, variables, queryMock, mutationMock } = vi.hoisted(() => ({
-  featureFlags: {
-    IS_CHAT_ASSISTANT_ENABLED: false,
-    IS_TRANSCRIPT_IMPORT_ENABLED: false,
-  },
-  variables: {} as Record<string, string | undefined>,
-  queryMock: vi.fn(),
-  mutationMock: vi.fn(),
-}));
+const { featureFlags, variables, queryMock, mutationMock } = vi.hoisted(() => {
+  const variables: Record<string, string | undefined> = {};
+
+  return {
+    featureFlags: {
+      IS_CHAT_ASSISTANT_ENABLED: false,
+      IS_TRANSCRIPT_IMPORT_ENABLED: false,
+    },
+    variables,
+    queryMock: vi.fn(),
+    mutationMock: vi.fn(),
+  };
+});
 
 vi.mock('src/feature-flags/feature-flags', () => ({
   FEATURE_FLAGS: featureFlags,
@@ -79,9 +83,9 @@ describe('TeamsSettings', () => {
     [true, true],
   ])(
     'supports independent chat (%s) and transcript (%s) releases',
-    (chatAvailable, transcriptsAvailable) => {
-      featureFlags.IS_CHAT_ASSISTANT_ENABLED = chatAvailable;
-      featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = transcriptsAvailable;
+    (isChatAvailable, isTranscriptsAvailable) => {
+      featureFlags.IS_CHAT_ASSISTANT_ENABLED = isChatAvailable;
+      featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = isTranscriptsAvailable;
       variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
       variables[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
 
@@ -92,12 +96,14 @@ describe('TeamsSettings', () => {
         name: 'Enable transcripts',
       });
 
-      expect(chat.getAttribute('aria-checked')).toBe(String(chatAvailable));
-      expect(chat.hasAttribute('disabled')).toBe(!chatAvailable);
+      expect(chat.getAttribute('aria-checked')).toBe(String(isChatAvailable));
+      expect(chat.hasAttribute('disabled')).toBe(!isChatAvailable);
       expect(transcripts.getAttribute('aria-checked')).toBe(
-        String(transcriptsAvailable),
+        String(isTranscriptsAvailable),
       );
-      expect(transcripts.hasAttribute('disabled')).toBe(!transcriptsAvailable);
+      expect(transcripts.hasAttribute('disabled')).toBe(
+        !isTranscriptsAvailable,
+      );
     },
   );
 

@@ -33,18 +33,17 @@ const StyledControl = styled.div`
   padding: ${() => themeCssVariables.spacing[4]};
 `;
 
-// The front component sandbox does not provide the PointerEvent used by the
-// base-ui switch, so this control uses a native button.
+// The sandbox lacks PointerEvent, which base-ui's switch requires.
 const StyledSwitch = styled.button`
   background: ${() => themeCssVariables.background.transparent.medium};
   border: 0;
-  border-radius: 999px;
+  border-radius: ${() => themeCssVariables.border.radius.pill};
   corner-shape: round;
   cursor: pointer;
   flex-shrink: 0;
-  height: 20px;
-  padding: 2px;
-  width: 32px;
+  height: ${() => themeCssVariables.spacing[5]};
+  padding: ${() => themeCssVariables.spacing[0.5]};
+  width: ${() => themeCssVariables.spacing[8]};
 
   &[aria-checked='true'] {
     background: ${() => themeCssVariables.color.blue};
@@ -61,12 +60,12 @@ const StyledSwitch = styled.button`
     corner-shape: round;
     content: '';
     display: block;
-    height: 16px;
-    width: 16px;
+    height: ${() => themeCssVariables.spacing[4]};
+    width: ${() => themeCssVariables.spacing[4]};
   }
 
   &[aria-checked='true']::after {
-    transform: translateX(12px);
+    transform: translateX(${() => themeCssVariables.spacing[3]});
   }
 `;
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { getApplicationVariable } from 'twenty-sdk/front-component';
 
-import { saveFeatureSetting } from 'src/front-components/utils/save-feature-setting';
+import { saveFeatureSettingOrThrow } from 'src/front-components/utils/save-feature-setting-or-throw';
 
 type UseFeatureSettingParams = {
   variableKey: string;
@@ -27,7 +27,7 @@ export const useFeatureSetting = ({
     setHasSaveError(false);
 
     try {
-      await saveFeatureSetting({ variableKey, isEnabled });
+      await saveFeatureSettingOrThrow({ variableKey, isEnabled });
       setSettingValue(String(isEnabled));
     } catch {
       setHasSaveError(true);

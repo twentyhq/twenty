@@ -3,15 +3,15 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
-type SaveFeatureSettingParams = {
+type SaveFeatureSettingOrThrowParams = {
   variableKey: string;
   isEnabled: boolean;
 };
 
-export const saveFeatureSetting = async ({
+export const saveFeatureSettingOrThrow = async ({
   variableKey,
   isEnabled,
-}: SaveFeatureSettingParams): Promise<void> => {
+}: SaveFeatureSettingOrThrowParams): Promise<void> => {
   const client = new MetadataApiClient();
   const result = await client.query({
     findOneApplication: {
