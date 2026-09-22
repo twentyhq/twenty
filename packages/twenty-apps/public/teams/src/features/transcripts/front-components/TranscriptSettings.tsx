@@ -8,11 +8,17 @@ import { useFeatureSetting } from 'src/front-components/hooks/use-feature-settin
 
 export const TranscriptSettings = () => {
   const { t } = useTranslate();
-  const { settingValue, isSaving, hasSaveError, updateSetting } =
-    useFeatureSetting({
-      variableKey: TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY,
-      isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
-    });
+  const {
+    settingValue,
+    isLoading,
+    hasLoadError,
+    isSaving,
+    hasSaveError,
+    updateSetting,
+  } = useFeatureSetting({
+    variableKey: TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY,
+    isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
+  });
 
   const handleChange = (isEnabled: boolean) => {
     void updateSetting(isEnabled);
@@ -27,6 +33,8 @@ export const TranscriptSettings = () => {
       )}
       isAvailable={FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED}
       isEnabled={isTranscriptsEnabled(settingValue)}
+      isLoading={isLoading}
+      hasLoadError={hasLoadError}
       isSaving={isSaving}
       hasSaveError={hasSaveError}
       onChange={handleChange}

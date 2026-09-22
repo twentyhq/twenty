@@ -33,7 +33,10 @@ The frontend and future handlers share `isChatEnabled(settingValue)` and
 and the serialized workspace setting to be enabled. In a logic function, pass
 `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` or
 `process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY]`; the settings page
-reads the same values through `getApplicationVariable`.
+initializes from `getApplicationVariable`, then reads current values through the
+metadata API on mount, after saves, and every 30 seconds for available features.
+Failed refreshes preserve the last known value and disable editing until a
+refresh succeeds. Refreshes pause during saves and stop when the page unmounts.
 
 New routes, connection hooks that start work, workflow actions, schedulers, and
 queued workers must check feature availability before starting work and then

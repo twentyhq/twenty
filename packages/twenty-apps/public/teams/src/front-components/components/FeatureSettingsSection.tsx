@@ -75,6 +75,8 @@ type FeatureSettingsSectionProps = {
   description: string;
   isAvailable: boolean;
   isEnabled: boolean;
+  isLoading: boolean;
+  hasLoadError: boolean;
   isSaving: boolean;
   hasSaveError: boolean;
   onChange: (isEnabled: boolean) => void;
@@ -86,6 +88,8 @@ export const FeatureSettingsSection = ({
   description,
   isAvailable,
   isEnabled,
+  isLoading,
+  hasLoadError,
   isSaving,
   hasSaveError,
   onChange,
@@ -107,12 +111,17 @@ export const FeatureSettingsSection = ({
           role="switch"
           aria-checked={isEnabled}
           aria-describedby={!isAvailable ? availabilityId : undefined}
-          disabled={!isAvailable || isSaving}
+          disabled={!isAvailable || isLoading || hasLoadError || isSaving}
           onClick={() => onChange(!isEnabled)}
         />
       </StyledControl>
       {!isAvailable && (
         <p id={availabilityId}>{t('Not available in this version yet.')}</p>
+      )}
+      {hasLoadError && (
+        <p role="alert">
+          {t('Could not refresh this setting. Retrying automatically.')}
+        </p>
       )}
       {hasSaveError && (
         <p role="alert">
