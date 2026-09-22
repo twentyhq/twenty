@@ -1,3 +1,4 @@
+import { useAdvancedTextEditorFocus } from '@/advanced-text-editor/hooks/useAdvancedTextEditorFocus';
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
@@ -8,9 +9,6 @@ import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputCon
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
@@ -135,15 +133,7 @@ export const FormAdvancedTextFieldInput = ({
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const { t } = useLingui();
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
-
-  useEffect(() => {
-    return () => {
-      removeFocusItemFromFocusStackById({ focusId: instanceId });
-    };
-  }, [instanceId, removeFocusItemFromFocusStackById]);
+  const { onFocus, onBlur } = useAdvancedTextEditorFocus(instanceId);
 
   const editor = useAdvancedTextEditor({
     profile,
@@ -153,21 +143,8 @@ export const FormAdvancedTextFieldInput = ({
     onUpdate: (editor) => {
       onChange?.(serializeAdvancedTextEditorDocument(editor));
     },
-    onFocus: () => {
-      pushFocusItemToFocusStack({
-        focusId: instanceId,
-        component: {
-          type: FocusComponentType.FORM_FIELD_INPUT,
-          instanceId: instanceId,
-        },
-        globalHotkeysConfig: {
-          enableGlobalHotkeysConflictingWithKeyboard: false,
-        },
-      });
-    },
-    onBlur: () => {
-      removeFocusItemFromFocusStackById({ focusId: instanceId });
-    },
+    onFocus,
+    onBlur,
     onImageUpload,
     onImageUploadError,
   });

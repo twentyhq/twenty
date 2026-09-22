@@ -18,7 +18,6 @@ type FormRichTextFieldInputProps = {
   readonly?: boolean;
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
-  minHeight?: number;
 };
 
 export const FormRichTextFieldInput = ({
@@ -30,7 +29,6 @@ export const FormRichTextFieldInput = ({
   onChange,
   readonly,
   VariablePicker,
-  minHeight,
 }: FormRichTextFieldInputProps) => {
   const storedValue = defaultValue?.blocknote ?? defaultValue?.markdown;
   const hasUnsupportedContent = useMemo(() => {
@@ -80,7 +78,6 @@ export const FormRichTextFieldInput = ({
       readonly={readonly}
       VariablePicker={VariablePicker}
       profile={RECORD_RICH_TEXT_EDITOR_PROFILE}
-      minHeight={minHeight}
     />
   );
 };
