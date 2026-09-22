@@ -108,7 +108,7 @@ it('keeps a rejected creation open, reports the error, and resolves only after a
   expect(resolved).toHaveBeenCalledWith(createdRecord);
 });
 
-it('does not navigate back from another page when an in-flight creation finishes', async () => {
+it('removes the form from deeper in the history when the user moved on before creation finished', async () => {
   const { result, store } = setup();
   let completeCreation: (record: ObjectRecord) => void = () => {};
   const createRecord = jest.fn(
@@ -123,28 +123,31 @@ it('does not navigate back from another page when an in-flight creation finishes
       createRecord,
     });
   });
-  const requestId = store.get(sidePanelNavigationStackState.atom)[0].pageId;
+  const [formPage] = store.get(sidePanelNavigationStackState.atom);
   let submission: Promise<void> | undefined;
   act(() => {
     submission = result.current.settleRecordCreationDraft({
-      requestId,
+      requestId: formPage.pageId,
       draftRecord: { name: 'Test' },
     });
   });
   await act(async () => {
     await result.current.settleRecordCreationDraft({
-      requestId,
+      requestId: formPage.pageId,
       draftRecord: { name: 'Test' },
     });
   });
   expect(createRecord).toHaveBeenCalledTimes(1);
 
+  const otherPage = { ...formPage, pageId: 'other-page' };
   act(() => {
-    store.set(sidePanelNavigationStackState.atom, []);
+    store.set(sidePanelNavigationStackState.atom, [formPage, otherPage]);
   });
   await act(async () => {
     completeCreation({ id: 'created-company', __typename: 'Company' });
     await submission;
   });
+
   expect(mockGoBackFromSidePanel).not.toHaveBeenCalled();
+  expect(store.get(sidePanelNavigationStackState.atom)).toEqual([otherPage]);
 });

@@ -1,5 +1,6 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -85,11 +86,25 @@ export const RecordCreationFormProvider = ({
         const createdRecord =
           await pendingRecordCreation.createRecord(draftRecord);
 
-        if (
-          store.get(sidePanelNavigationStackState.atom).at(-1)?.pageId ===
-          requestId
-        ) {
+        const navigationStack = store.get(sidePanelNavigationStackState.atom);
+
+        if (navigationStack.at(-1)?.pageId === requestId) {
           goBackFromSidePanel();
+        } else {
+          const remainingNavigationStack = navigationStack.filter(
+            (item) => item.pageId !== requestId,
+          );
+
+          store.set(
+            sidePanelNavigationStackState.atom,
+            remainingNavigationStack,
+          );
+          releaseRemovedRoutedFlowStateScopes({
+            removedItems: navigationStack.filter(
+              (item) => item.pageId === requestId,
+            ),
+            remainingItems: remainingNavigationStack,
+          });
         }
 
         pendingRecordCreation.resolve(createdRecord);
