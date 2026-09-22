@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -118,9 +117,7 @@ export const SettingsBillingLimitUsageSelect = ({
                       />
                     }
                   >
-                    <OverflowingTextWithTooltip
-                      text={t(USAGE_OPERATION_TYPE_LABELS[candidate])}
-                    />
+                    {t(USAGE_OPERATION_TYPE_LABELS[candidate])}
                   </ListItem>
                 ),
               )}
@@ -148,11 +145,7 @@ export const SettingsBillingLimitUsageSelect = ({
                     />
                   }
                 >
-                  <OverflowingTextWithTooltip
-                    text={t(
-                      USAGE_LIMIT_RESOURCE_TYPE_LABELS[definition.resourceType],
-                    )}
-                  />
+                  {t(USAGE_LIMIT_RESOURCE_TYPE_LABELS[definition.resourceType])}
                 </ListItem>
               ))}
             </DropdownMenuItemsContainer>

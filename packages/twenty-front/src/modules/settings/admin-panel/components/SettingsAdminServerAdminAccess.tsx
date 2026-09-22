@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
@@ -18,7 +19,6 @@ import { IconDotsVertical } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetServerAdminsDocument,
@@ -173,12 +173,7 @@ export const SettingsAdminServerAdminAccess = ({
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItem
-                  text={
-                    canAccessFullAdminPanel
-                      ? t`Revoke admin panel access`
-                      : t`Grant admin panel access`
-                  }
+                <ListItem
                   disabled={isLastFullAdmin}
                   onClick={() =>
                     requestChange({
@@ -189,13 +184,12 @@ export const SettingsAdminServerAdminAccess = ({
                       },
                     })
                   }
-                />
-                <MenuItem
-                  text={
-                    canImpersonate
-                      ? t`Disable impersonation`
-                      : t`Enable impersonation`
-                  }
+                >
+                  {canAccessFullAdminPanel
+                    ? t`Revoke admin panel access`
+                    : t`Grant admin panel access`}
+                </ListItem>
+                <ListItem
                   onClick={() =>
                     requestChange({
                       description: t`impersonation`,
@@ -203,10 +197,13 @@ export const SettingsAdminServerAdminAccess = ({
                       update: { canImpersonate: !canImpersonate },
                     })
                   }
-                />
+                >
+                  {canImpersonate
+                    ? t`Disable impersonation`
+                    : t`Enable impersonation`}
+                </ListItem>
                 {!hasFullAccess && (
-                  <MenuItem
-                    text={t`Grant full access`}
+                  <ListItem
                     onClick={() =>
                       requestChange({
                         description: t`full server access`,
@@ -217,7 +214,7 @@ export const SettingsAdminServerAdminAccess = ({
                         },
                       })
                     }
-                  />
+                  >{t`Grant full access`}</ListItem>
                 )}
               </DropdownMenuItemsContainer>
             </DropdownContent>

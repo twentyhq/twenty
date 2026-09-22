@@ -1,5 +1,5 @@
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
-import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
+import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
@@ -227,12 +227,12 @@ export const DisplayHelpersPreact: Story = createGalleryStory({
 export const ListItemReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-list-item',
   runtime: 'react',
-  play: listItemTest,
+  play: createListItemSandboxFailureTest('react'),
 });
 export const ListItemPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-list-item',
   runtime: 'preact',
-  play: listItemTest,
+  play: createListItemSandboxFailureTest('preact'),
 });
 
 export const PickerListItemsReact: Story = createGalleryStory({

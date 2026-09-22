@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -10,7 +11,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowObjectDropdownContentProps = {
   dropdownId: string;
@@ -104,14 +104,15 @@ export const WorkflowObjectDropdownContent = ({
               itemId={objectMetadataItem.nameSingular}
               onEnter={() => onOptionClick(objectMetadataItem.nameSingular)}
             >
-              <MenuItem
+              <ListItem
                 focused={selectedItemId === objectMetadataItem.nameSingular}
-                LeftIcon={() => (
+                startIcon={
                   <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-                )}
-                text={objectMetadataItem.labelPlural}
+                }
                 onClick={() => onOptionClick(objectMetadataItem.nameSingular)}
-              />
+              >
+                {objectMetadataItem.labelPlural}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>
