@@ -83,10 +83,6 @@ const addEmptyPublicDirectory = async ({
   await fs.ensureDir(join(appDirectory, 'public'));
 };
 
-// The template only carries a yarn.lock when one was generated at release time.
-// Without any lockfile, Yarn walks up to the nearest parent project, so scaffolding
-// inside a directory that has one (a monorepo, an existing repo) fails to install
-// and never writes a lockfile. An empty one marks the app as its own project root.
 const ensureLockfile = async ({ appDirectory }: { appDirectory: string }) => {
   const lockfilePath = join(appDirectory, 'yarn.lock');
 
