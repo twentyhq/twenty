@@ -118,11 +118,10 @@ describe('useLoadRecordIndexStates', () => {
   it('falls back to the default group load limit when the view has none', () => {
     const { result } = renderUseLoadRecordIndexStates();
 
-    // Generated view mocks are @ts-nocheck and their query never selected the field
     const viewWithoutGroupLoadLimit = {
       ...makeView(null),
       groupLoadLimit: undefined,
-    } as unknown as View;
+    };
 
     act(() => {
       result.current.loadRecordIndexStates(
