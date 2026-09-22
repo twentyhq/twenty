@@ -1,4 +1,4 @@
-import { useFocusFirstRecordFormInput } from '@/object-record/record-form/hooks/useFocusFirstRecordFormInput';
+import { RecordCreationFormFocusEffect } from '@/object-record/record-form/components/RecordCreationFormFocusEffect';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -18,7 +18,7 @@ import { recordCreationFormRequestComponentState } from '@/side-panel/pages/reco
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useContext, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -76,7 +76,7 @@ const SidePanelRecordCreationForm = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { formFieldsRef } = useFocusFirstRecordFormInput(requestId);
+  const formFieldsRef = useRef<HTMLDivElement>(null);
   const { theme } = useContext(ThemeContext);
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
@@ -151,6 +151,11 @@ const SidePanelRecordCreationForm = ({
         }
       />
       <StyledContent ref={formFieldsRef}>
+        <RecordCreationFormFocusEffect
+          requestId={requestId}
+          fieldCount={recordFormFieldMetadataItems.length}
+          formFieldsRef={formFieldsRef}
+        />
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={recordFormFieldMetadataItems}
