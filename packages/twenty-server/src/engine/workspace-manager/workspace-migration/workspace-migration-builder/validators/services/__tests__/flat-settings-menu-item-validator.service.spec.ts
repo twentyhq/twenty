@@ -35,13 +35,16 @@ const buildArgs = ({
   itemToCreate,
   optimisticItems,
   finalItems,
+  remainingItems = [],
 }: {
   itemToCreate: ReturnType<typeof buildSettingsMenuItem>;
   optimisticItems: ReturnType<typeof buildSettingsMenuItem>[];
   finalItems: ReturnType<typeof buildSettingsMenuItem>[];
+  remainingItems?: ReturnType<typeof buildSettingsMenuItem>[];
 }) =>
   ({
     flatEntityToValidate: itemToCreate,
+    remainingFlatEntityMapsToValidate: buildMaps(remainingItems),
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatSettingsMenuItemMaps: buildMaps(optimisticItems),
       flatFrontComponentMaps: {
@@ -106,6 +109,43 @@ describe('settings menu item position collision on creation', () => {
 
     expect(errors).toHaveLength(1);
     expect(errors[0].code).toBe(
+      SettingsMenuItemExceptionCode.SETTINGS_MENU_ITEM_POSITION_ALREADY_TAKEN,
+    );
+  });
+
+  // Both items are in the final state from the start, so comparing against it
+  // naively reports the clash twice; the sync must surface it once.
+  it('should report a position shared by two new items once, on the later one', () => {
+    const firstItem = buildSettingsMenuItem({
+      universalIdentifier: 'item-first',
+      position: 1,
+    });
+    const secondItem = buildSettingsMenuItem({
+      universalIdentifier: 'item-second',
+      position: 1,
+    });
+    const finalItems = [firstItem, secondItem];
+
+    const firstResult = service.validateFlatSettingsMenuItemCreation(
+      buildArgs({
+        itemToCreate: firstItem,
+        optimisticItems: [],
+        finalItems,
+        remainingItems: [secondItem],
+      }),
+    );
+    const secondResult = service.validateFlatSettingsMenuItemCreation(
+      buildArgs({
+        itemToCreate: secondItem,
+        optimisticItems: [firstItem],
+        finalItems,
+        remainingItems: [],
+      }),
+    );
+
+    expect(firstResult.errors).toEqual([]);
+    expect(secondResult.errors).toHaveLength(1);
+    expect(secondResult.errors[0].code).toBe(
       SettingsMenuItemExceptionCode.SETTINGS_MENU_ITEM_POSITION_ALREADY_TAKEN,
     );
   });

@@ -24,6 +24,7 @@ type SettingsMenuItemPositionCollisionArgs = {
   scope: SettingsMenuItemScope;
   position: number;
   flatSettingsMenuItemMapsToSearch: MetadataUniversalFlatEntityMaps<'settingsMenuItem'>[];
+  universalIdentifiersToIgnore: string[];
 };
 
 // Two menu items of the same application sharing a position in the same scope would
@@ -35,12 +36,16 @@ const hasSettingsMenuItemPositionCollision = ({
   scope,
   position,
   flatSettingsMenuItemMapsToSearch,
+  universalIdentifiersToIgnore,
 }: SettingsMenuItemPositionCollisionArgs): boolean =>
   flatSettingsMenuItemMapsToSearch.some((flatSettingsMenuItemMaps) =>
     Object.values(flatSettingsMenuItemMaps.byUniversalIdentifier).some(
       (existingSettingsMenuItem) =>
         isDefined(existingSettingsMenuItem) &&
         existingSettingsMenuItem.universalIdentifier !== universalIdentifier &&
+        !universalIdentifiersToIgnore.includes(
+          existingSettingsMenuItem.universalIdentifier,
+        ) &&
         existingSettingsMenuItem.applicationUniversalIdentifier ===
           applicationUniversalIdentifier &&
         existingSettingsMenuItem.scope === scope &&
@@ -56,6 +61,7 @@ export class FlatSettingsMenuItemValidatorService {
       flatFrontComponentMaps,
     },
     finalFlatEntityMaps,
+    remainingFlatEntityMapsToValidate,
   }: FlatEntityCreationValidationArgs<
     typeof ALL_METADATA_NAME.settingsMenuItem
   >): FailedFlatEntityValidation<'settingsMenuItem', 'create'> {
@@ -109,6 +115,13 @@ export class FlatSettingsMenuItemValidatorService {
         scope: flatSettingsMenuItem.scope,
         position: flatSettingsMenuItem.position,
         flatSettingsMenuItemMapsToSearch: [finalFlatEntityMaps],
+        // The final state already holds every item this manifest creates, so a shared
+        // position would be reported on both of them. Ignoring the creations still
+        // queued leaves exactly one error, on the later item, while items merely moved
+        // by this migration are compared at the position they end on.
+        universalIdentifiersToIgnore: Object.keys(
+          remainingFlatEntityMapsToValidate.byUniversalIdentifier,
+        ),
       })
     ) {
       validationResult.errors.push({
@@ -203,6 +216,7 @@ export class FlatSettingsMenuItemValidatorService {
         scope: nextScope,
         position: nextPosition,
         flatSettingsMenuItemMapsToSearch: [finalFlatEntityMaps],
+        universalIdentifiersToIgnore: [],
       })
     ) {
       validationResult.errors.push({
