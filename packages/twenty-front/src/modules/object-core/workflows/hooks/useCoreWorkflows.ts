@@ -113,12 +113,19 @@ export const useCoreWorkflows = ({
     }
   };
 
+  const loadedCount = connection?.edges.length ?? 0;
+
+  // A plain refetch re-runs the first page and drops what fetchMore accumulated,
+  // so ask for as many rows as are currently displayed.
+  const refetchLoadedCoreWorkflows = () =>
+    refetch({ first: Math.max(loadedCount, CORE_WORKFLOWS_PAGE_SIZE) });
+
   return {
     coreWorkflows: connection?.edges.map((edge) => edge.node) ?? [],
     totalCount: connection?.totalCount ?? 0,
     hasNextPage: connection?.pageInfo.hasNextPage ?? false,
     fetchNextPage,
-    refetch,
+    refetchLoadedCoreWorkflows,
     loading,
     error,
   };

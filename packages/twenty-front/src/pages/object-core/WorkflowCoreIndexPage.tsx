@@ -64,7 +64,7 @@ export const WorkflowCoreIndexPage = () => {
     loading,
     error,
     fetchNextPage,
-    refetch: refetchCoreWorkflows,
+    refetchLoadedCoreWorkflows,
   } = useCoreWorkflows({ tableId });
 
   const { ref: fetchMoreRef, inView } = useInView();
@@ -75,7 +75,7 @@ export const WorkflowCoreIndexPage = () => {
   const { displayedCoreWorkflows, selectedRowIds, toggleRow, selectRows } =
     useCoreWorkflowsSelection({ coreWorkflows });
 
-  useListenToCoreWorkflowEvents({ refetch: refetchCoreWorkflows });
+  useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,

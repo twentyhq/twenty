@@ -56,11 +56,12 @@ const CoreWorkflowShowContent = ({
       coreWorkflowId,
     });
   const versions = useCoreWorkflowVersions(coreWorkflowId);
+  const { refetchCoreWorkflowVersions } = versions;
 
   const refetchCoreWorkflowAndVersions = useCallback(() => {
     void refetch();
-    void versions.refetchCoreWorkflowVersions();
-  }, [refetch, versions]);
+    void refetchCoreWorkflowVersions();
+  }, [refetch, refetchCoreWorkflowVersions]);
 
   useListenToCoreWorkflowEvents({
     coreWorkflowId,
