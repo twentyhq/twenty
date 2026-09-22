@@ -7,7 +7,6 @@ import { TEAMS_BOT_OPENID_KEYS_URL } from 'src/logic-functions/constants/teams-b
 import { TEAMS_JWT_CLOCK_TOLERANCE_SECONDS } from 'src/logic-functions/constants/teams-jwt-clock-tolerance-seconds';
 import { normalizeTeamsServiceUrl } from 'src/logic-functions/utils/normalize-teams-service-url';
 
-// Module scope so the set survives warm invocations; jose refetches on an unknown key id.
 const botConnectorKeySet = createRemoteJWKSet(
   new URL(TEAMS_BOT_OPENID_KEYS_URL),
 );

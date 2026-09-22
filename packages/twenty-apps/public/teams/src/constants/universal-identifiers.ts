@@ -4,10 +4,6 @@ export const APPLICATION_UNIVERSAL_IDENTIFIER =
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   '0812c4a5-3fe7-488f-a517-c2a5ae5e04f1';
 
-// Named for the bot rather than Teams generally: the teams-transcripts app
-// already ships a provider called `microsoft-teams`, and its registration is
-// multi-tenant delegated Graph while this one has to be a single-tenant bot,
-// so the two can never be the same Entra app.
 export const TEAMS_BOT_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER =
   'a46388a0-8f12-4435-95d8-423117435e05';
 
