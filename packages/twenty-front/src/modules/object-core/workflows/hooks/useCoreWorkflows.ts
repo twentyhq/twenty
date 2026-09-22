@@ -16,6 +16,7 @@ import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
   GetCoreWorkflowsDocument,
+  type GetCoreWorkflowsQuery,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
@@ -33,6 +34,30 @@ export const CORE_WORKFLOWS_INITIAL_SORT: TableSortValue = {
 const ORDER_BY_FIELD_BY_FIELD_NAME: Record<string, CoreWorkflowOrderByField> = {
   name: CoreWorkflowOrderByField.NAME,
   updatedAt: CoreWorkflowOrderByField.UPDATED_AT,
+};
+
+// Two refreshes racing each other would otherwise append the same page twice,
+// and the ids are what make the merge idempotent.
+const mergeFetchedCoreWorkflowPage = (
+  previousResult: GetCoreWorkflowsQuery,
+  { fetchMoreResult }: { fetchMoreResult: GetCoreWorkflowsQuery },
+): GetCoreWorkflowsQuery => {
+  const alreadyLoadedIds = new Set(
+    previousResult.coreWorkflows.edges.map((edge) => edge.node.id),
+  );
+
+  return {
+    ...fetchMoreResult,
+    coreWorkflows: {
+      ...fetchMoreResult.coreWorkflows,
+      edges: [
+        ...previousResult.coreWorkflows.edges,
+        ...fetchMoreResult.coreWorkflows.edges.filter(
+          (edge) => !alreadyLoadedIds.has(edge.node.id),
+        ),
+      ],
+    },
+  };
 };
 
 export const useCoreWorkflows = ({
@@ -97,16 +122,7 @@ export const useCoreWorkflows = ({
     try {
       await fetchMore({
         variables: { after: connection.pageInfo.endCursor },
-        updateQuery: (previousResult, { fetchMoreResult }) => ({
-          ...fetchMoreResult,
-          coreWorkflows: {
-            ...fetchMoreResult.coreWorkflows,
-            edges: [
-              ...previousResult.coreWorkflows.edges,
-              ...fetchMoreResult.coreWorkflows.edges,
-            ],
-          },
-        }),
+        updateQuery: mergeFetchedCoreWorkflowPage,
       });
     } catch (fetchMoreError) {
       logError(`useCoreWorkflows fetchMore error : ${fetchMoreError}`);
@@ -139,16 +155,7 @@ export const useCoreWorkflows = ({
 
       const nextPage = await fetchMore({
         variables: { after: pageInfo.endCursor, first: nextPageSize },
-        updateQuery: (previousResult, { fetchMoreResult }) => ({
-          ...fetchMoreResult,
-          coreWorkflows: {
-            ...fetchMoreResult.coreWorkflows,
-            edges: [
-              ...previousResult.coreWorkflows.edges,
-              ...fetchMoreResult.coreWorkflows.edges,
-            ],
-          },
-        }),
+        updateQuery: mergeFetchedCoreWorkflowPage,
       });
 
       requestedCount += nextPageSize;

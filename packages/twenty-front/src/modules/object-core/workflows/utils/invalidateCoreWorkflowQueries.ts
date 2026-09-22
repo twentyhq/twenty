@@ -20,9 +20,10 @@ export const invalidateCoreWorkflowQueries = async (
     'coreWorkflowVersionById',
     'coreWorkflowVersionsByCoreWorkflowId',
     'workflowVersionContent',
-    ...(shouldInvalidateWorkflowList
-      ? ['coreWorkflows', 'coreWorkflowsWithCurrentVersions']
-      : []),
+    // The command menu reads this one to decide which workflow actions to offer,
+    // so a version change has to refresh it even when the list is left alone.
+    'coreWorkflowsWithCurrentVersions',
+    ...(shouldInvalidateWorkflowList ? ['coreWorkflows'] : []),
   ];
 
   for (const fieldName of fieldNames) {
@@ -35,12 +36,8 @@ export const invalidateCoreWorkflowQueries = async (
       GetCoreWorkflowVersionDocument,
       GetCoreWorkflowDocument,
       GET_WORKFLOW_VERSION_CONTENT,
-      ...(shouldInvalidateWorkflowList
-        ? [
-            GetCoreWorkflowsDocument,
-            GetCoreWorkflowsWithCurrentVersionsDocument,
-          ]
-        : []),
+      GetCoreWorkflowsWithCurrentVersionsDocument,
+      ...(shouldInvalidateWorkflowList ? [GetCoreWorkflowsDocument] : []),
     ],
     onQueryUpdated: (query) => query.options.fetchPolicy !== 'standby',
   });
