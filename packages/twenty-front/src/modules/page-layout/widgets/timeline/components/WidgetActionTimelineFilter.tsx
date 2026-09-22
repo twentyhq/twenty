@@ -1,5 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useTimelineActivityTypeFilter } from '@/activities/timeline-activities/hooks/useTimelineActivityTypeFilter';
 import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/activities/timeline-activities/states/timelineActivityTypeUniversalIdentifiersFilterFamilyState';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
@@ -15,7 +15,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export const WidgetActionTimelineFilter = () => {
@@ -117,26 +116,23 @@ export const WidgetActionTimelineFilter = () => {
                     />
                   }
                 >
-                  <OverflowingTextWithTooltip
-                    text={timelineActivityType.label}
-                  />
+                  {timelineActivityType.label}
                 </ListItem>
               ))
             ) : (
-              <MenuItem disabled text={t`No results`} accent="placeholder" />
+              <ListItem disabled>{t`No results`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
           {isNonEmptyArray(timelineActivityTypeUniversalIdentifiersFilter) && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer scrollable={false}>
-                <MenuItem
-                  LeftIcon={IconFilterOff}
-                  text={t`Clear filter`}
+                <ListItem
+                  startIcon={<IconFilterOff />}
                   onClick={() =>
                     setTimelineActivityTypeUniversalIdentifiersFilter([])
                   }
-                />
+                >{t`Clear filter`}</ListItem>
               </DropdownMenuItemsContainer>
             </>
           )}

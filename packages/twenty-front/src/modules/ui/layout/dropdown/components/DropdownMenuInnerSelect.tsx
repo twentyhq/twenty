@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -72,7 +71,7 @@ export const DropdownMenuInnerSelect = ({
                 selected={selectOption.value === selectedOption.value}
                 indicator="check"
               >
-                <OverflowingTextWithTooltip text={selectOption.label} />
+                {selectOption.label}
               </ListItem>
             ))}
           </DropdownMenuItemsContainer>

@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnIntoBlockOptions';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -8,7 +10,6 @@ import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
 import { useContext, useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMenuItem = styled.button`
@@ -59,17 +60,18 @@ export const TurnIntoBlockDropdown = ({
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {options.map(({ id, title, icon, onClick }) => (
-              <MenuItem
+              <ListItem
                 key={id}
-                text={title}
-                LeftIcon={icon}
+                startIcon={<SelectOptionIcon Icon={icon} />}
                 onClick={() => {
                   onClick();
                   toggleDropdown({
                     dropdownComponentInstanceIdFromProps: dropdownId,
                   });
                 }}
-              />
+              >
+                {title}
+              </ListItem>
             ))}
           </DropdownMenuItemsContainer>
         </DropdownContent>

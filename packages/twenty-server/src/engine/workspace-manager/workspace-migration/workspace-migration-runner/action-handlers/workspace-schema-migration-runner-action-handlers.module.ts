@@ -1,3 +1,9 @@
+import { CreateWorkflowVersionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow-version/services/create-workflow-version-action-handler.service';
+import { DeleteWorkflowVersionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow-version/services/delete-workflow-version-action-handler.service';
+import { UpdateWorkflowVersionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow-version/services/update-workflow-version-action-handler.service';
+import { CreateWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/create-workflow-action-handler.service';
+import { DeleteWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/delete-workflow-action-handler.service';
+import { UpdateWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/update-workflow-action-handler.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -110,6 +116,14 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
     MetricsModule,
   ],
   providers: [
+    CreateWorkflowActionHandlerService,
+    UpdateWorkflowActionHandlerService,
+    DeleteWorkflowActionHandlerService,
+
+    CreateWorkflowVersionActionHandlerService,
+    UpdateWorkflowVersionActionHandlerService,
+    DeleteWorkflowVersionActionHandlerService,
+
     CreateFieldActionHandlerService,
     UpdateFieldActionHandlerService,
     DeleteFieldActionHandlerService,

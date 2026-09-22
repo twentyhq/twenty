@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
@@ -12,8 +14,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { isDefined } from 'twenty-shared/utils';
-import { Icon123, IconCheck, IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { Icon123, IconChevronLeft, useIcons } from 'twenty-ui/icon';
 
 export const RecordGroupAggregateDropdownFieldsContent = () => {
   const {
@@ -73,8 +74,13 @@ export const RecordGroupAggregateDropdownFieldsContent = () => {
           );
 
           if (!fieldMetadata) return null;
+
+          const isSelected =
+            recordIndexGroupAggregateFieldMetadataItem?.id === fieldId &&
+            recordIndexGroupAggregateOperation === aggregateOperation;
+
           return (
-            <MenuItem
+            <ListItem
               key={fieldId}
               onClick={() => {
                 updateViewAggregate({
@@ -84,15 +90,18 @@ export const RecordGroupAggregateDropdownFieldsContent = () => {
                 });
                 closeDropdown();
               }}
-              LeftIcon={getIcon(fieldMetadata.icon) ?? Icon123}
-              text={fieldMetadata.label}
-              RightIcon={
-                recordIndexGroupAggregateFieldMetadataItem?.id === fieldId &&
-                recordIndexGroupAggregateOperation === aggregateOperation
-                  ? IconCheck
-                  : undefined
+              startIcon={
+                <SelectOptionIcon
+                  Icon={getIcon(fieldMetadata.icon) ?? Icon123}
+                />
               }
-            />
+              role="option"
+              aria-selected={isSelected}
+              indicator="check"
+              selected={isSelected}
+            >
+              {fieldMetadata.label}
+            </ListItem>
           );
         })}
       </DropdownMenuItemsContainer>

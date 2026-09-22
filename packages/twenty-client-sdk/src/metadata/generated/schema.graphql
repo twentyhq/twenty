@@ -1608,6 +1608,7 @@ enum UsageOperationType {
   WEB_SEARCH
   CALL_RECORDING
   EMAIL_SEND
+  MESSAGE_CAMPAIGN_SEND
   API_REQUEST
   WEBHOOK_CALL
   STORAGE_FILE
@@ -3631,6 +3632,8 @@ enum AllMetadataName {
   connectionProvider
   searchFieldMetadata
   timelineActivityType
+  workflow
+  workflowVersion
 }
 
 type MinimalObjectMetadata {

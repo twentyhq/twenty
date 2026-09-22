@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
@@ -350,9 +349,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
                 aria-selected={!isDefined(currentGroupByFieldMetadataId)}
                 selected={!isDefined(currentGroupByFieldMetadataId)}
                 indicator="check"
-              >
-                <OverflowingTextWithTooltip text={t`None`} />
-              </ListItem>
+              >{t`None`}</ListItem>
             </SelectableListItem>
           )}
 
@@ -392,7 +389,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
                   <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
                 }
               >
-                <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+                {fieldMetadataItem.label}
               </ListItem>
             </SelectableListItem>
           ))}
