@@ -7,6 +7,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
@@ -82,9 +83,15 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThread;
+  surface?: AiChatThreadActionsSurface;
 };
 
-export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
+// The surface keys the row's dropdown state, so two rows for the same thread on
+// screen at once — a record page list and the side panel — must not share one.
+export const AiChatThreadListItem = ({
+  thread,
+  surface = AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
+}: AiChatThreadListItemProps) => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { handleThreadClick } = useAiChatThreadClick();
@@ -102,7 +109,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
   const displayTitle = thread.title ?? t`Untitled`;
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
     thread.id,
-    AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
+    surface,
   );
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -157,7 +164,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
           threadId={thread.id}
           threadTitle={displayTitle}
           isArchived={isArchived}
-          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
+          surface={surface}
           onRenameRequested={startRename}
         />
       </StyledMenuTrigger>

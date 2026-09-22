@@ -16,6 +16,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { type GetChatThreadsForRecordQuery } from '~/generated-metadata/graphql';
 
@@ -87,7 +88,11 @@ export const ChatThreadsCardContent = ({
   return (
     <StyledThreadsContainer>
       {threads.map((thread) => (
-        <AiChatThreadListItem key={thread.id} thread={thread} />
+        <AiChatThreadListItem
+          key={thread.id}
+          thread={thread}
+          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.RECORD_PAGE}
+        />
       ))}
     </StyledThreadsContainer>
   );
