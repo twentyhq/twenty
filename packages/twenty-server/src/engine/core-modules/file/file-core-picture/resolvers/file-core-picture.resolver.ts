@@ -1,9 +1,14 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
+import bytes from 'bytes';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import type { FileUpload } from 'graphql-upload/processRequest.mjs';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { settings } from 'src/engine/constants/settings';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
@@ -18,6 +23,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -33,6 +39,55 @@ export class FileCorePictureResolver {
   constructor(
     private readonly fileCorePictureService: FileCorePictureService,
   ) {}
+
+  @Mutation(() => FileWithSignedUrlDTO, {
+    deprecationReason:
+      'Use createWorkspaceLogoUpload and completeWorkspaceLogoUpload, which send the logo straight to file storage.',
+  })
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+  )
+  async uploadWorkspaceLogo(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename }: FileUpload,
+  ): Promise<FileWithSignedUrlDTO> {
+    const buffer = await streamToBuffer(
+      createReadStream(),
+      bytes(settings.storage.maxFileSize) ?? undefined,
+    );
+
+    return await this.fileCorePictureService.uploadWorkspacePicture({
+      file: buffer,
+      filename,
+      workspace,
+    });
+  }
+
+  @Mutation(() => FileWithSignedUrlDTO, {
+    deprecationReason:
+      'Use createWorkspaceMemberProfilePictureUpload and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.',
+  })
+  @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
+  async uploadWorkspaceMemberProfilePicture(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename }: FileUpload,
+  ): Promise<FileWithSignedUrlDTO> {
+    const buffer = await streamToBuffer(
+      createReadStream(),
+      bytes(settings.storage.maxFileSize) ?? undefined,
+    );
+
+    return await this.fileCorePictureService.uploadWorkspaceMemberProfilePicture(
+      {
+        file: buffer,
+        filename,
+        workspaceId,
+      },
+    );
+  }
 
   @Mutation(() => FileUploadTargetDTO)
   @UseGuards(
