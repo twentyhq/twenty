@@ -1650,9 +1650,6 @@ export default {
             "aiModelIdByTier": [
                 9
             ],
-            "aiEvaluationModelId": [
-                1
-            ],
             "aiAdditionalInstructions": [
                 1
             ],
@@ -12572,9 +12569,6 @@ export default {
             ],
             "aiModelIdByTier": [
                 9
-            ],
-            "aiEvaluationModelId": [
-                1
             ],
             "aiAdditionalInstructions": [
                 1
