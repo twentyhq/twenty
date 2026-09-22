@@ -594,10 +594,16 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 questions: [
                   {
                     id: v4(),
-                    name: 'category',
+                    name: '',
                     type: 'choice',
                     instructions: '',
-                    criteria: [],
+                    criteria: [
+                      {
+                        id: v4(),
+                        name: 'Lawyer',
+                        description: 'Advises clients on legal matters',
+                      },
+                    ],
                   },
                 ],
               },

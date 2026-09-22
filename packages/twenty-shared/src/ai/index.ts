@@ -28,6 +28,7 @@ export type { DatabaseCrudOperation } from './constants/database-crud-operation.
 export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.const';
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
+export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export { ToolCategory } from './constants/tool-category.const';
 export type {
   AgentResponseFormatType,
