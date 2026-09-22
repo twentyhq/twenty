@@ -56,7 +56,7 @@ export const getInventoryEnvironment = async ({
       cwd: workspaceRoot,
       encoding: 'utf8',
     }).trim(),
-    workingTreeDirty: isNonEmptyString(
+    isWorkingTreeDirty: isNonEmptyString(
       execFileSync('git', ['status', '--porcelain'], {
         cwd: workspaceRoot,
         encoding: 'utf8',

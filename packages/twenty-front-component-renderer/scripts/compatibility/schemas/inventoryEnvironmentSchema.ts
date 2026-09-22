@@ -11,7 +11,7 @@ export const inventoryEnvironmentSchema = z.strictObject({
   operatingSystemRelease: z.string().min(1),
   nodeVersion: z.string().min(1),
   commit: z.string().min(1),
-  workingTreeDirty: z.boolean(),
+  isWorkingTreeDirty: z.boolean(),
   lockfileSha256: z.string().min(1),
   launch: z.strictObject({
     headless: z.literal(true),

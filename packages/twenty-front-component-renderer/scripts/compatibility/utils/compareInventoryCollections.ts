@@ -38,7 +38,7 @@ export const compareInventoryCollections = ({
       if (isUndefined(expected)) {
         throw new Error(`Missing reference member: ${id}`);
       }
-      const shapeDiffers =
+      const isShapeDifferent =
         observation.shape !== expected.shape ||
         (observation.shape === 'accessor' &&
           expected.shape === 'accessor' &&
@@ -48,7 +48,7 @@ export const compareInventoryCollections = ({
           expected.shape === 'value' &&
           observation.valueType !== expected.valueType);
       const hasPlacement = 'depth' in observation && 'depth' in expected;
-      const descriptorDiffers =
+      const isDescriptorDifferent =
         hasPlacement &&
         (observation.enumerable !== expected.enumerable ||
           observation.configurable !== expected.configurable ||
@@ -65,12 +65,13 @@ export const compareInventoryCollections = ({
             : observation.shape === 'missing' ||
                 observation.shape === 'uninspectable'
               ? observation.shape
-              : shapeDiffers
+              : isShapeDifferent
                 ? 'shape-mismatch'
                 : 'present-behavior-unverified',
         behavior: 'unverified',
-        placementDiffers: hasPlacement && observation.depth !== expected.depth,
-        descriptorDiffers,
+        isPlacementDifferent:
+          hasPlacement && observation.depth !== expected.depth,
+        isDescriptorDifferent,
       });
     }),
   );

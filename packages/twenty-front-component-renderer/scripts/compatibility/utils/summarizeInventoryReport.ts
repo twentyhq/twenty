@@ -31,7 +31,7 @@ export const summarizeInventoryReport = (
         findings.filter((finding) => finding.observation === status).length,
     );
     lines.push(
-      `| ${runtime} | ${counts.join(' | ')} | ${findings.filter((finding) => finding.placementDiffers).length} | ${findings.filter((finding) => finding.descriptorDiffers).length} |`,
+      `| ${runtime} | ${counts.join(' | ')} | ${findings.filter((finding) => finding.isPlacementDifferent).length} | ${findings.filter((finding) => finding.isDescriptorDifferent).length} |`,
     );
     const missingTargets = report.sandboxes[runtime].targets.filter(
       (target) => target.status === 'missing',

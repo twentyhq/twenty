@@ -11,6 +11,6 @@ export const inventoryFindingSchema = z.strictObject({
     'uninspectable',
   ]),
   behavior: z.literal('unverified'),
-  placementDiffers: z.boolean(),
-  descriptorDiffers: z.boolean(),
+  isPlacementDifferent: z.boolean(),
+  isDescriptorDifferent: z.boolean(),
 });

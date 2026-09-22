@@ -108,7 +108,7 @@ export const collectInventory = ({
   const collection = inventoryCollectionSchema.parse({
     schemaVersion: 1,
     runtime,
-    globalThisEqualsWindow: objects.globalThis === objects.window,
+    isGlobalThisWindow: objects.globalThis === objects.window,
     targets,
     coverage: {
       skipped,

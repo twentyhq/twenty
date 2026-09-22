@@ -6,7 +6,7 @@ import { inventoryTargetSchema } from './inventoryTargetSchema';
 export const inventoryCollectionSchema = z.strictObject({
   schemaVersion: z.literal(1),
   runtime: z.enum(['reference', 'react', 'preact']),
-  globalThisEqualsWindow: z.boolean(),
+  isGlobalThisWindow: z.boolean(),
   targets: z
     .array(
       z.strictObject({

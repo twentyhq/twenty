@@ -89,7 +89,7 @@ describe('browser API inventory', () => {
       findings.find((finding) => finding.id === 'window.available'),
     ).toMatchObject({
       observation: 'present-behavior-unverified',
-      placementDiffers: true,
+      isPlacementDifferent: true,
       runtime: 'preact',
     });
     expect(
