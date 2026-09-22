@@ -2,6 +2,8 @@
 
 This change removes the previous exports immediately. Release it as a breaking package change and migrate applications together with the library. The package now exposes 42 primitives and 32 shared React components, including the optional code editor.
 
+The sections below describe the current implementation. The [remaining migration plan](#remaining-migration-plan) records the proposed next steps separately.
+
 ## Choosing a module
 
 - A primitive owns one foundational interaction or presentation contract. It may compose other primitives to fulfill that contract. Examples include Button, Field, ListItem, Dialog, Text, and Avatar.
@@ -26,7 +28,6 @@ Source folders group shared components by `data-display`, `feedback`, `input`, `
 ## Interface changes
 
 - `OverflowingTextWithTooltip` stays a typography primitive: it owns truncation and overflow disclosure. ListItem, Chip, and Tag use it directly, and its implementation and private linkification helper live beside it.
-
 - `JsonTree` accepts either `value` or `entries: { id, label, value }[]`. Entry IDs determine highlighting paths; labels determine presentation. Its default expansion opens the first two levels. Use `shouldExpandNodeInitially` to override that policy. Node renderers, context, and traversal helpers are private.
 - Replace custom menu-row assemblies with `ListItem` slots and native role/selection props. `actionsVisibility` preserves either persistent or hover/focus actions. Styled menu fragments are private.
 - `Info` accepts `href` and `render` instead of `to`. Supply a router link through `render` when client-side navigation is required. React Router is an optional peer used only by testing decorators.
@@ -105,3 +106,81 @@ Existing guides and examples use the new public imports. The Toast guide moves t
 The 12 existing story files for frontend-owned modules move beside their implementations. Their 37 stories remain available in the frontend Storybook.
 
 This migration does not add the missing guides from the coverage report. Documentation coverage remains separate work. The checked-in ownership manifest enumerates public React exports; `check:ownership` verifies the generated barrels and prevents primitives, including their stories and tests, from importing or re-exporting shared compositions. Production UI code cannot depend on application code.
+
+## Remaining migration plan
+
+Status: planned, not implemented. The assessment covers all 32 current shared React exports: consolidate 7, move 7 to frontend owners, consider 8 for primitive ownership, and retain 10 as shared exports. These recommendations do not change the current export lists or ownership manifest above.
+
+Retain modules that centralize a useful presentation, accessibility, or lifecycle contract. Small implementations can still earn a public interface, and primitives may compose other primitives. Treat the frontend ownership candidates below as design recommendations based on current callers, not proof that external consumers do not use them.
+
+### Phase 1: Consolidate the menu family and correct Pill ownership
+
+Start with these clear ownership and duplication issues. Keep `Menu.Item`: it provides menu interaction through Base UI and already renders `ListItem`.
+
+| Current export | Planned replacement or owner | Behavior to preserve |
+| --- | --- | --- |
+| `MenuItem` | `ListItem` for general rows; `Menu.Item` inside a menu. | Icon containers, contextual-text tooltips, submenu-open presentation, disabled behavior, and click cancellation. |
+| `MenuItemAvatar` | `ListItem` with `Avatar` in its `startIcon` slot. | Avatar size, shape, fallback, row actions, and description placement. |
+| `MenuItemDraggable` | Frontend draggable-list row adapter built on `ListItem`. | Grip modes, icon-to-grip swapping, placeholder accents, cursor, and disabled styling. Actual dragging stays with the existing frontend drag owner. |
+| `MenuItemSuggestion` | Frontend suggestion-row adapter built on `ListItem`. | Editor focus, selection, keyboard activation, and the semantics required by each mention or editor host. |
+| `MenuPicker` | Frontend chart-type choice control using button/tooltip or radio primitives. | Selected styling, accessible labels, and keyboard behavior. Its current production frontend caller is `ChartTypeSelectionSection`. |
+| `Pill` | Public primitive under `primitives/data-display`. | Compact label/icon presentation and `ButtonSoon` usage. Move its implementation with its public owner and remove the components re-export. |
+
+### Phase 2: Reclassify foundational contracts
+
+Prioritize `IconButton` and `TabButton`. Confirm the lower-priority category changes against their callers before moving them. Keep their existing behavior and interfaces unless a separate simplification is agreed.
+
+| Current export | Proposed primitive family | Contract to retain |
+| --- | --- | --- |
+| `IconButton` | `input` | Icon-only dimensions, shapes, ButtonGroup sizing, and tooltip behavior for disabled/loading controls. |
+| `TabButton` | `navigation` | Tab-styled buttons and links used for navigation, More actions, and measurements. Preserve its distinction from `Tabs.Tab`. |
+| `NotificationCounter` | `data-display` | A count badge with no notification policy; its current frontend caller displays a multi-record drag count. Consider a generic name such as `CountBadge` separately. |
+| `AvatarGroup` | `data-display` | Overlap, visible limit, and overflow-avatar placement. |
+| `TintedIconTile` | `data-display` | Icon-tile sizing and theme-derived color shades. |
+| `AnimatedIconCrossfade` | `layout` | Fixed-size icon transition, independent of the control that uses it. |
+| `Section` | `layout` | The compound Root/Header interface, heading semantics, description association, and truncation. This is a lower-priority move with many callers. |
+
+### Phase 3: Consolidate appearance presets and duplicate patterns
+
+Define the replacement presentation before retiring each export. Existing primitive defaults are not sufficient to preserve every current appearance.
+
+| Current export | Planned replacement | Behavior to preserve |
+| --- | --- | --- |
+| `LightButton` | `Button` with explicit appearance/defaults. | Small ghost presentation, regular weight, and subtle text color. |
+| `MainButton` | `Button` with primary-action presentation. | Solid/elevated defaults, semibold weight, and wider padding. |
+| `LightIconButton` | `IconButton` with explicit appearance/defaults. | Icon-size mapping, subtle color, and distinct disabled styling. |
+| `CardPicker` | Card presentation within the `Radio` family, used with `RadioGroup`. | Card layout, indicator placement, selection, and form behavior. Its interaction already comes from `Radio`. |
+| `Info` | One canonical `InlineBanner` pattern built on `Banner`. | Link/render support, button actions, wrapping, spacing, and colors. Extend the action interface before migrating link callers. |
+
+Preserve the button sizes, elevated styles, animation, and dropdown-row behavior introduced by the recent button and dropdown migrations.
+
+### Phase 4: Move frontend presentations and rebuild SearchInput
+
+| Current export | Planned owner or implementation | Behavior to preserve |
+| --- | --- | --- |
+| `ColorSchemePicker` | Profile appearance settings, using radio choices and theme previews. | Light/Dark/System selection and preview presentation. |
+| `CommandBlock` | Developer/application setup UI. | Command-line presentation and the supplied action button. |
+| `NavigationBar` | Mobile navigation UI composed from icon controls. | Floating-bar layout, active state, accessible labels, and hide transition. |
+| `RoundedLink` | Field/link display adapters and the admin external-link caller. | Safe URL handling, opening a new tab, click propagation, and pill-link presentation. |
+| `SearchInput` | Keep the shared interface; rebuild it with `InputGroup`, `Input`, and button primitives. | Search adornment, focus treatment, controlled input, accessible labeling, and the optional filter trigger. |
+
+### Shared compositions to retain
+
+Together with `SearchInput`, retain these ten shared exports in total:
+
+| Exports | Reason to retain |
+| --- | --- |
+| `InlineBanner` | Canonical compact message/action layout with focusable overflow disclosure. |
+| `Callout` | Titled message with description, optional action, and dismissal. |
+| `SettingsRow` | Label activation, description association, switch state, and form props across `ListItem` and `Switch`. |
+| `JsonTree` | Traversal, expansion, node rendering, paths, and context behind one data-driven interface. |
+| `CodeEditor`, `CodeEditorHeader` | Editor integration and toolbar presentation, kept in the optional code-editor family. |
+| `Toast`, `ToastProvider`, `Toaster` | Distinct notification presentation, store lifetime, and portal/lifecycle responsibilities. |
+
+### Migration requirements
+
+- Update callers, public types, barrels, the ownership manifest, and the replacement table as each phase is implemented. Remove retired exports as a breaking package change.
+- Keep implementations, private parts, tests, and stories beside their declared owner. Primitives must not import shared components or hide a shared component implementation in primitive internals to bypass the ownership check.
+- Account for frontend, renderer, and companion callers. Keep changes under `packages/twenty-apps` in the separate application migration and coordinate it with the breaking package release.
+- Preserve embedded story IDs when moving stories, or update all affected embeds. Adding missing guides remains separate work.
+- Verify affected interactions through their public interfaces, including menu navigation, editor focus, drag handles, disabled tooltips, radio selection, link behavior, and action propagation. Run the ownership check, affected typechecks, and documentation checks for each implemented phase.
