@@ -20,6 +20,7 @@ const tryParseJson = (value: string): unknown => {
 
 export const parseLegacyRecordRichTextDocument = (
   serializedDocument: string,
+  enableVariables = true,
 ): Content => {
   const blocks = tryParseJson(serializedDocument);
 
@@ -40,12 +41,15 @@ export const parseLegacyRecordRichTextDocument = (
             ))),
     )
   ) {
-    return { type: 'doc', content: convertBlockNoteToTipTap(blocks) };
+    return {
+      type: 'doc',
+      content: convertBlockNoteToTipTap(blocks, enableVariables),
+    };
   }
 
   if (isTipTapNodeArray(blocks)) {
     return { type: 'doc', content: blocks };
   }
 
-  return getInitialEditorContent(serializedDocument);
+  return getInitialEditorContent(serializedDocument, enableVariables);
 };

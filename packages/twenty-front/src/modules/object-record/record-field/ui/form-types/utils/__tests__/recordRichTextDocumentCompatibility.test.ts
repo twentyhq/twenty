@@ -194,3 +194,47 @@ it('recognizes styled BlockNote text even when optional block props are absent',
     ],
   });
 });
+
+it.each(['left', 'center', 'right'])(
+  'preserves %s image alignment',
+  (align) => {
+    const document = {
+      type: 'doc',
+      content: [
+        {
+          type: 'image',
+          attrs: {
+            src: 'https://example.com/image.png',
+            align,
+            alt: '',
+            title: '',
+            width: null,
+          },
+        },
+      ],
+    };
+    const stored = convertTipTapDocumentToBlockNote(JSON.stringify(document));
+    expect(JSON.parse(stored)[0].props.textAlignment).toBe(align);
+    expect(parseLegacyRecordRichTextDocument(stored)).toEqual(document);
+  },
+);
+
+it('preserves literal mustache text when variables are disabled', () => {
+  const blocks = [
+    {
+      type: 'paragraph',
+      props: {},
+      content: [{ type: 'text', text: 'Use {{name}} here', styles: {} }],
+    },
+  ];
+  expect(
+    parseLegacyRecordRichTextDocument(JSON.stringify(blocks), false),
+  ).toMatchObject({
+    content: [{ content: [{ type: 'text', text: 'Use {{name}} here' }] }],
+  });
+  expect(
+    parseLegacyRecordRichTextDocument('Use {{name}} here', false),
+  ).toMatchObject({
+    content: [{ content: [{ type: 'text', text: 'Use {{name}} here' }] }],
+  });
+});

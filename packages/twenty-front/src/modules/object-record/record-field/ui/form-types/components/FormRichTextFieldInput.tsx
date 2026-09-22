@@ -1,3 +1,4 @@
+import { parseLegacyRecordRichTextDocument } from '@/object-record/record-field/ui/form-types/utils/parseLegacyRecordRichTextDocument';
 import { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
 import { Field } from 'twenty-ui/primitives/input';
@@ -18,6 +19,7 @@ type FormRichTextFieldInputProps = {
   readonly?: boolean;
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
+  enableVariables?: boolean;
 };
 
 export const FormRichTextFieldInput = ({
@@ -29,7 +31,16 @@ export const FormRichTextFieldInput = ({
   onChange,
   readonly,
   VariablePicker,
+  enableVariables = true,
 }: FormRichTextFieldInputProps) => {
+  const profile = useMemo(
+    () => ({
+      ...RECORD_RICH_TEXT_EDITOR_PROFILE,
+      parseLegacyDocument: (value: string) =>
+        parseLegacyRecordRichTextDocument(value, enableVariables),
+    }),
+    [enableVariables],
+  );
   const storedValue = defaultValue?.blocknote ?? defaultValue?.markdown;
   const hasUnsupportedContent = useMemo(() => {
     if (!storedValue) {
@@ -38,15 +49,14 @@ export const FormRichTextFieldInput = ({
     try {
       const document = deserializeAdvancedTextEditorDocument({
         serializedDocument: storedValue,
-        parseLegacyDocument:
-          RECORD_RICH_TEXT_EDITOR_PROFILE.parseLegacyDocument,
+        parseLegacyDocument: profile.parseLegacyDocument,
       });
       convertTipTapDocumentToBlockNote(JSON.stringify(document));
       return false;
     } catch {
       return true;
     }
-  }, [storedValue]);
+  }, [storedValue, profile]);
 
   if (hasUnsupportedContent) {
     return (
@@ -77,7 +87,7 @@ export const FormRichTextFieldInput = ({
       onChange={handleChange}
       readonly={readonly}
       VariablePicker={VariablePicker}
-      profile={RECORD_RICH_TEXT_EDITOR_PROFILE}
+      profile={profile}
     />
   );
 };

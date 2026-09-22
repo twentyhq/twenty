@@ -229,6 +229,7 @@ export const FormFieldInput = ({
     />
   ) : isFieldRichText(field) ? (
     <FormRichTextFieldInput
+      enableVariables={VariablePicker !== undefined}
       label={field.label}
       defaultValue={defaultValue as FieldRichTextValue | undefined}
       onChange={onChange}

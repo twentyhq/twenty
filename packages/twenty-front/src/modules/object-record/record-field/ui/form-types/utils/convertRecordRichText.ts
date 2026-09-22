@@ -14,9 +14,15 @@ const unsupportedContent = (): never => {
   throw new Error('Unsupported record rich-text content');
 };
 
-const convertInlineContent = (content: unknown): JSONContent[] => {
+const convertInlineContent = (
+  content: unknown,
+  enableVariables: boolean,
+): JSONContent[] => {
   if (typeof content === 'string') {
-    return content ? [{ type: 'text', text: content }] : [];
+    return (
+      getInitialEditorContent(content, enableVariables).content?.[0]?.content ??
+      []
+    );
   }
   if (content === undefined) {
     return [];
@@ -29,13 +35,15 @@ const convertInlineContent = (content: unknown): JSONContent[] => {
       return unsupportedContent();
     }
     if (item.type === 'link' && typeof item.href === 'string') {
-      return convertInlineContent(item.content).map((node) => ({
-        ...node,
-        marks: [
-          ...(node.marks ?? []),
-          { type: 'link', attrs: { href: item.href } },
-        ],
-      }));
+      return convertInlineContent(item.content, enableVariables).map(
+        (node) => ({
+          ...node,
+          marks: [
+            ...(node.marks ?? []),
+            { type: 'link', attrs: { href: item.href } },
+          ],
+        }),
+      );
     }
     if (item.type === 'text' && typeof item.text === 'string') {
       const styles = isPlainObject(item.styles) ? item.styles : {};
@@ -50,14 +58,18 @@ const convertInlineContent = (content: unknown): JSONContent[] => {
         (type) => ({ type }),
       );
       return (
-        getInitialEditorContent(item.text).content?.[0]?.content ?? []
+        getInitialEditorContent(item.text, enableVariables).content?.[0]
+          ?.content ?? []
       ).map((node) => ({ ...node, marks }));
     }
     return unsupportedContent();
   });
 };
 
-export const convertBlockNoteToTipTap = (blocks: unknown[]): JSONContent[] =>
+export const convertBlockNoteToTipTap = (
+  blocks: unknown[],
+  enableVariables = false,
+): JSONContent[] =>
   blocks
     .flatMap((block): JSONContent[] => {
       if (!isPlainObject(block)) {
@@ -69,12 +81,14 @@ export const convertBlockNoteToTipTap = (blocks: unknown[]): JSONContent[] =>
         (props.textColor !== undefined && props.textColor !== 'default') ||
         (props.backgroundColor !== undefined &&
           props.backgroundColor !== 'default') ||
-        (props.textAlignment !== undefined && props.textAlignment !== 'left')
+        (block.type !== 'image' &&
+          props.textAlignment !== undefined &&
+          props.textAlignment !== 'left')
       ) {
         return unsupportedContent();
       }
       const children = Array.isArray(block.children)
-        ? convertBlockNoteToTipTap(block.children)
+        ? convertBlockNoteToTipTap(block.children, enableVariables)
         : [];
       if (
         children.length > 0 &&
@@ -82,7 +96,7 @@ export const convertBlockNoteToTipTap = (blocks: unknown[]): JSONContent[] =>
       ) {
         return unsupportedContent();
       }
-      const content = convertInlineContent(block.content);
+      const content = convertInlineContent(block.content, enableVariables);
       switch (block.type) {
         case 'paragraph':
           return [{ type: 'paragraph', content }, ...children];
@@ -120,6 +134,7 @@ export const convertBlockNoteToTipTap = (blocks: unknown[]): JSONContent[] =>
               type: 'image',
               attrs: {
                 src: props.url,
+                align: props.textAlignment ?? 'left',
                 alt: props.caption ?? '',
                 title: props.name ?? '',
                 width: props.previewWidth ?? null,
@@ -223,6 +238,7 @@ export const convertTipTapToBlockNote = (
             type: 'image',
             props: {
               url: node.attrs?.src,
+              textAlignment: node.attrs?.align ?? 'left',
               caption: node.attrs?.alt ?? '',
               name: node.attrs?.title ?? '',
               previewWidth: node.attrs?.width,

@@ -4,15 +4,20 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
 export const CAPTURE_VARIABLE_TAG_REGEX = /({{[^{}]+}})/;
 
-export const getInitialEditorContent = (rawContent: string): JSONContent => {
+export const getInitialEditorContent = (
+  rawContent: string,
+  enableVariables = true,
+): JSONContent => {
   const paragraphContent: JSONContent[] = [];
   const lines = rawContent.split(/\n/);
 
   lines.forEach((line, index) => {
-    const parts = line.split(CAPTURE_VARIABLE_TAG_REGEX);
+    const parts = enableVariables
+      ? line.split(CAPTURE_VARIABLE_TAG_REGEX)
+      : [line];
 
     parts.forEach((part) => {
-      if (isStandaloneVariableString(part)) {
+      if (enableVariables && isStandaloneVariableString(part)) {
         paragraphContent.push({
           type: 'variableTag',
           attrs: { variable: part },
