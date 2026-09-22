@@ -112,7 +112,9 @@ export const convertBlockNoteToTipTap = (
             content: [
               {
                 type: isTask ? 'taskItem' : 'listItem',
-                ...(isTask ? { attrs: { checked: props.checked === true } } : {}),
+                ...(isTask
+                  ? { attrs: { checked: props.checked === true } }
+                  : {}),
                 content: [{ type: 'paragraph', content }, ...children],
               },
             ],

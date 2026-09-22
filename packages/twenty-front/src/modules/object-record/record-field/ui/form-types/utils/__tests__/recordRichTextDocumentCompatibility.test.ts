@@ -41,7 +41,9 @@ describe('record rich-text document compatibility', () => {
   it('reads the legacy content-array shape', () => {
     const content = [{ type: 'paragraph', content: [] }];
 
-    expect(parseLegacyRecordRichTextDocument(JSON.stringify(content), false)).toEqual({
+    expect(
+      parseLegacyRecordRichTextDocument(JSON.stringify(content), false),
+    ).toEqual({
       type: 'doc',
       content,
     });
@@ -52,7 +54,9 @@ describe('record rich-text document compatibility', () => {
       { type: 'paragraph', content: 'Legacy BlockNote plain content' },
     ];
 
-    expect(parseLegacyRecordRichTextDocument(JSON.stringify(content), false)).toEqual({
+    expect(
+      parseLegacyRecordRichTextDocument(JSON.stringify(content), false),
+    ).toEqual({
       type: 'doc',
       content: [
         {
@@ -68,7 +72,9 @@ describe('record rich-text document compatibility', () => {
       { type: 'paragraph', marks: 'invalid' },
     ]);
 
-    expect(parseLegacyRecordRichTextDocument(serializedDocument, false)).toEqual({
+    expect(
+      parseLegacyRecordRichTextDocument(serializedDocument, false),
+    ).toEqual({
       type: 'doc',
       content: [
         {
@@ -295,7 +301,10 @@ it('keeps the start number of an ordered list typed in the shared editor', () =>
           {
             type: 'listItem',
             content: [
-              { type: 'paragraph', content: [{ type: 'text', text: 'Fourth' }] },
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: 'Fourth' }],
+              },
             ],
           },
         ],
@@ -339,14 +348,11 @@ it.each([
     type: 'image',
     props: { url: 'https://example.com/image.png', showPreview: false },
   },
-])(
-  'rejects $type props the shared editor cannot keep',
-  ({ type, props }) => {
-    expect(() =>
-      parseLegacyRecordRichTextDocument(
-        JSON.stringify([{ type, props, content: [] }]),
-        false,
-      ),
-    ).toThrow('Unsupported record rich-text content');
-  },
-);
+])('rejects $type props the shared editor cannot keep', ({ type, props }) => {
+  expect(() =>
+    parseLegacyRecordRichTextDocument(
+      JSON.stringify([{ type, props, content: [] }]),
+      false,
+    ),
+  ).toThrow('Unsupported record rich-text content');
+});
