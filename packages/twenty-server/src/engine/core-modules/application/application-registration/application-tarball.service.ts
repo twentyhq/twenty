@@ -38,9 +38,9 @@ import {
   type FileUploadStorageLocation,
 } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { assertValidDirectUploadSize } from 'src/engine/core-modules/file/file-upload/utils/assert-valid-direct-upload-size.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import type { ApplicationManifest, Manifest } from 'twenty-shared/application';
@@ -67,7 +67,6 @@ export class ApplicationTarballService {
     private readonly fileStorageService: FileStorageService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly applicationService: ApplicationService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
@@ -108,19 +107,7 @@ export class ApplicationTarballService {
     ownerWorkspaceId: string;
     size: number;
   }): Promise<FileUploadTargetDTO> {
-    const maxSize = this.twentyConfigService.get(
-      'MAX_TARBALL_UPLOAD_SIZE_BYTES',
-    );
-
-    if (!Number.isInteger(size) || size <= 0 || size > maxSize) {
-      throw new ApplicationRegistrationException(
-        `Invalid tarball size ${size} (max ${maxSize} bytes)`,
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
-        {
-          userFriendlyMessage: msg`The tarball is empty or exceeds the maximum allowed size.`,
-        },
-      );
-    }
+    assertValidDirectUploadSize(size);
 
     const applicationUniversalIdentifier =
       await this.findOwnerCustomApplicationUniversalIdentifier(

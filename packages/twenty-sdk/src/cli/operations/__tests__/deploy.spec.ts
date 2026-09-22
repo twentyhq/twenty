@@ -112,7 +112,7 @@ describe('appDeploy', () => {
   it('reports a refused upload target without sending anything', async () => {
     mockCreateAppTarballUpload.mockResolvedValue({
       success: false,
-      error: 'Invalid tarball size 0 (max 104857600 bytes)',
+      error: 'Invalid file size 0 (max 1073741824 bytes)',
     });
 
     const result = await appDeploy({ tarballPath });
@@ -121,7 +121,7 @@ describe('appDeploy', () => {
       success: false,
       error: {
         code: 'DEPLOY_FAILED',
-        message: 'Upload failed: Invalid tarball size 0 (max 104857600 bytes)',
+        message: 'Upload failed: Invalid file size 0 (max 1073741824 bytes)',
       },
     });
     expect(mockPutFileToUploadUrl).not.toHaveBeenCalled();

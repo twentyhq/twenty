@@ -329,15 +329,15 @@ describe('Direct app tarball upload', () => {
     ).toBe(true);
   });
 
-  it('rejects a declared size above the limit', async () => {
+  it('rejects a declared size above the direct upload limit', async () => {
     const { errors } = await createAppTarballUpload({
-      size: 101 * 1024 * 1024,
+      size: 1024 * 1024 * 1024 + 1,
       expectToFail: true,
     });
 
     expect(
       errors?.some((error: { message: string }) =>
-        error.message.includes('Invalid tarball size'),
+        error.message.includes('Invalid file size'),
       ),
     ).toBe(true);
   });
