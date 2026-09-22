@@ -1,4 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -7,6 +9,7 @@ import { type RecordViewsTarget } from '@/side-panel/pages/record-views/types/Re
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -26,9 +29,16 @@ export const RecordViewsList = ({
   });
   const { closeSidePanelMenu } = useSidePanelMenu();
   const navigate = useNavigate();
+  const store = useStore();
 
   const openView = (viewId: string) => {
     closeSidePanelMenu();
+    store.set(
+      lastShowPageRecordIdState.atomFamily({
+        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
+      recordId,
+    );
     navigate(
       getAppPath(
         AppPath.RecordIndexPage,

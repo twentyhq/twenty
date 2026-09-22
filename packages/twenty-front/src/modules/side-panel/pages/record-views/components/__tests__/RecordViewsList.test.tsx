@@ -1,4 +1,6 @@
 import { Provider, createStore } from 'jotai';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -62,13 +64,14 @@ const renderList = () => {
       },
     },
   ]);
-  return render(
+  render(
     <Provider store={store}>
       <MemoryRouter>
         <RecordViewsList objectNameSingular="company" recordId="record-1" />
       </MemoryRouter>
     </Provider>,
   );
+  return { store };
 };
 
 describe('RecordViewsList', () => {
@@ -77,11 +80,18 @@ describe('RecordViewsList', () => {
     jest.mocked(useRecordViews).mockReturnValue(mockResult);
   });
 
-  it('opens the chosen view and closes the picker', async () => {
+  it('opens the chosen view on the record and closes the picker', async () => {
     const user = userEvent.setup();
-    renderList();
+    const { store } = renderList();
     await user.click(screen.getByText('Sales pipeline'));
     expect(mockClose).toHaveBeenCalledTimes(1);
+    expect(
+      store.get(
+        lastShowPageRecordIdState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+      ),
+    ).toBe('record-1');
     expect(mockNavigate).toHaveBeenCalledWith(
       '/objects/companies?viewId=pipeline',
     );

@@ -1,31 +1,42 @@
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
+import { useLazyFindRecordPositionInIndex } from '@/object-record/record-index/hooks/useLazyFindRecordPositionInIndex';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useScrollTableToPosition } from '@/object-record/record-table/hooks/useScrollTableToPosition';
 import { useProcessTreadmillScrollTop } from '@/object-record/record-table/virtualization/hooks/useProcessTreadmillScrollTop';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
   const store = useStore();
+
+  const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
   const lastShowPageRecordIdAtom = useAtomComponentStateCallbackState(
     lastShowPageRecordIdState,
   );
 
-  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
-
-  const allRecordIds = useAtomComponentSelectorValue(
-    recordIndexAllRecordIdsComponentSelector,
+  // Subscribed only to re-run the effect when a record gets targeted while the
+  // table is already mounted; the effect reads the value from the store.
+  const lastShowPageRecordId = useAtomComponentStateValue(
+    lastShowPageRecordIdState,
   );
 
-  const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
+
+  const allRecordIdsCallbackState = useAtomComponentSelectorCallbackState(
+    recordIndexAllRecordIdsComponentSelector,
+  );
 
   const { scrollTableToPosition } = useScrollTableToPosition();
 
@@ -36,23 +47,40 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
 
   const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
+  const { findRecordPositionInIndex } =
+    useLazyFindRecordPositionInIndex(objectNameSingular);
+
+  const { focusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
+
   useEffect(() => {
     // Read directly from the Jotai store to avoid stale values from useAtom's
     // internal useReducer, which can desync under high-frequency store updates.
-    const lastShowPageRecordId = store.get(lastShowPageRecordIdAtom);
+    const recordIdToReveal = store.get(lastShowPageRecordIdAtom);
 
-    if (!isNonEmptyString(lastShowPageRecordId)) {
+    if (!isNonEmptyString(recordIdToReveal)) {
       return;
     }
 
     const run = async () => {
       store.set(lastShowPageRecordIdAtom, null);
 
-      const recordPosition = allRecordIds.findIndex(
-        (recordId) => recordId === lastShowPageRecordId,
-      );
+      const [, recordPositionInIndex] = await Promise.all([
+        triggerInitialRecordTableDataLoad(),
+        findRecordPositionInIndex(recordIdToReveal),
+      ]);
 
-      await triggerInitialRecordTableDataLoad();
+      const loadedRecordPosition = store
+        .get(allRecordIdsCallbackState)
+        .indexOf(recordIdToReveal);
+
+      const recordPosition =
+        loadedRecordPosition !== -1
+          ? loadedRecordPosition
+          : recordPositionInIndex;
+
+      if (!isDefined(recordPosition)) {
+        return;
+      }
 
       const { scrollWrapperElement } = getScrollWrapperElement();
 
@@ -82,22 +110,32 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
 
       processTreadmillScrollTop(targetScrollPositionInPx);
 
-      setHasInitializedScroll(true);
-
       await triggerFetchPagesWithoutDebounce();
+
+      // The counted position can drift from the scan order on sparse sort
+      // fields, so locate the record among the rows loaded around it.
+      const revealedRowIndex = store
+        .get(allRecordIdsCallbackState)
+        .indexOf(recordIdToReveal);
+
+      if (revealedRowIndex !== -1) {
+        focusRecordTableRow(revealedRowIndex);
+      }
     };
 
     run();
   }, [
     store,
     lastShowPageRecordIdAtom,
-    hasInitializedScroll,
+    lastShowPageRecordId,
+    allRecordIdsCallbackState,
     scrollTableToPosition,
-    allRecordIds,
     triggerInitialRecordTableDataLoad,
     processTreadmillScrollTop,
     getScrollWrapperElement,
     triggerFetchPagesWithoutDebounce,
+    findRecordPositionInIndex,
+    focusRecordTableRow,
   ]);
 
   return <></>;
