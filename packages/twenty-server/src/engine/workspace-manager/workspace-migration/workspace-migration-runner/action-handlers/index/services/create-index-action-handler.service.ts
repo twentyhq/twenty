@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
@@ -13,6 +17,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import { fromUniversalFlatIndexToFlatIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/from-universal-flat-index-to-flat-index.util';
 import { createIndexInWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
+import { isIndexCreationDeferrable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/is-index-creation-deferrable.util';
+import { type DeferredWorkspaceMigrationActionPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
+import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
+import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
   type WorkspaceMigrationActionRunnerArgs,
   type WorkspaceMigrationActionRunnerContext,
@@ -79,6 +87,10 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       workspaceId,
     } = context;
 
+    if (this.shouldDeferIndexCreation(context)) {
+      return;
+    }
+
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
       flatEntityId: flatIndexMetadata.objectMetadataId,
@@ -91,6 +103,95 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
       queryRunner,
       workspaceId,
+    });
+  }
+
+  protected override getDeferredAction(
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>,
+  ) {
+    if (!this.shouldDeferIndexCreation(context)) {
+      return undefined;
+    }
+
+    return {
+      actionHandlerKey: 'create_index' as const,
+      payload: { indexMetadataId: context.flatAction.flatEntity.id },
+    };
+  }
+
+  override async executeDeferredAction({
+    workspaceId,
+    payload: { indexMetadataId },
+    allFlatEntityMaps: {
+      flatIndexMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    },
+    attempt,
+    queryRunner,
+  }: DeferredWorkspaceMigrationActionExecutionArgs<
+    DeferredWorkspaceMigrationActionPayload<'create_index'>
+  >): Promise<void> {
+    const flatIndexMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatIndexMaps,
+      flatEntityId: indexMetadataId,
+    });
+
+    if (!isDefined(flatIndexMetadata)) {
+      return;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: flatIndexMetadata.objectMetadataId,
+    });
+
+    if (attempt > 1) {
+      const { schemaName } = getWorkspaceSchemaContextForMigration({
+        workspaceId,
+        objectMetadata: flatObjectMetadata,
+      });
+
+      await this.workspaceSchemaManagerService.indexManager.dropIndex({
+        queryRunner,
+        schemaName,
+        indexName: flatIndexMetadata.name,
+        concurrently: true,
+      });
+    }
+
+    await createIndexInWorkspaceSchema({
+      flatIndexMetadata,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+      queryRunner,
+      workspaceId,
+      concurrently: true,
+    });
+  }
+
+  private shouldDeferIndexCreation({
+    featureFlagsMap,
+    allFlatEntityMaps: { flatFieldMetadataMaps },
+    flatAction: { flatEntity: flatIndexMetadata },
+  }: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>): boolean {
+    if (
+      !featureFlagsMap?.[
+        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
+      ]
+    ) {
+      return false;
+    }
+
+    return isIndexCreationDeferrable({
+      flatIndexMetadata,
+      indexedFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityIds: flatIndexMetadata.flatIndexFieldMetadatas.map(
+          (flatIndexFieldMetadata) => flatIndexFieldMetadata.fieldMetadataId,
+        ),
+      }),
     });
   }
 }
