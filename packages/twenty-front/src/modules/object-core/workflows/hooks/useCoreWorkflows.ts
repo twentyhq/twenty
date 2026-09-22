@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useQuery } from '@apollo/client/react';
 
@@ -21,6 +21,9 @@ import { logError } from '~/utils/logError';
 
 export const CORE_WORKFLOWS_TABLE_ID = 'workflowCore';
 export const CORE_WORKFLOWS_PAGE_SIZE = 60;
+
+// Mirrors the @Max on CoreWorkflowsInput.first
+const CORE_WORKFLOWS_MAX_PAGE_SIZE = 200;
 
 export const CORE_WORKFLOWS_INITIAL_SORT: TableSortValue = {
   fieldName: 'updatedAt',
@@ -116,9 +119,15 @@ export const useCoreWorkflows = ({
   const loadedCount = connection?.edges.length ?? 0;
 
   // A plain refetch re-runs the first page and drops what fetchMore accumulated,
-  // so ask for as many rows as are currently displayed.
-  const refetchLoadedCoreWorkflows = () =>
-    refetch({ first: Math.max(loadedCount, CORE_WORKFLOWS_PAGE_SIZE) });
+  // so ask for as many rows as are currently displayed, within what the server takes.
+  const refetchLoadedCoreWorkflows = useCallback(() => {
+    const first = Math.min(
+      Math.max(loadedCount, CORE_WORKFLOWS_PAGE_SIZE),
+      CORE_WORKFLOWS_MAX_PAGE_SIZE,
+    );
+
+    return refetch({ first });
+  }, [loadedCount, refetch]);
 
   return {
     coreWorkflows: connection?.edges.map((edge) => edge.node) ?? [],
