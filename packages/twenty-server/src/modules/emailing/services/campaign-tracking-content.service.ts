@@ -28,6 +28,7 @@ import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emaili
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
+import { normalizeCampaignRecipientEmailAddress } from 'src/modules/emailing/utils/normalize-campaign-recipient-email-address.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
 
 type CampaignMessagePart =
@@ -116,7 +117,9 @@ export class CampaignTrackingContentService {
         emailAddresses: recipients.map(({ email }) => email),
       });
     const isTracked = (recipient: TrackingRecipient) =>
-      !deniedEmailAddresses.has(recipient.email.trim().toLowerCase());
+      !deniedEmailAddresses.has(
+        normalizeCampaignRecipientEmailAddress(recipient.email),
+      );
 
     const shortLinkIdByIdentity = await this.registerShortLinks({
       workspaceId,

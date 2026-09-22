@@ -19,6 +19,7 @@ import { MessageTrackingConsentSource } from 'src/engine/core-modules/emailing-d
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type TrackingPreference } from 'src/modules/emailing/types/tracking-preference.type';
+import { normalizeCampaignRecipientEmailAddress } from 'src/modules/emailing/utils/normalize-campaign-recipient-email-address.util';
 
 const isUniqueViolation = (error: unknown): boolean =>
   error instanceof QueryFailedError &&
@@ -38,7 +39,8 @@ export class MessageTrackingConsentService {
     workspaceId: string;
     emailAddress: string;
   }): Promise<MessageTrackingConsentEntity | null> {
-    const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
+    const normalizedEmailAddress =
+      normalizeCampaignRecipientEmailAddress(emailAddress);
 
     if (!isNonEmptyString(normalizedEmailAddress)) {
       return null;
@@ -79,7 +81,7 @@ export class MessageTrackingConsentService {
     emailAddresses: string[];
   }): Promise<Set<string>> {
     const normalizedEmailAddresses = [
-      ...new Set(emailAddresses.map(this.normalizeEmailAddress)),
+      ...new Set(emailAddresses.map(normalizeCampaignRecipientEmailAddress)),
     ].filter(isNonEmptyString);
 
     if (!isNonEmptyArray(normalizedEmailAddresses)) {
@@ -137,7 +139,8 @@ export class MessageTrackingConsentService {
     decision: MessageTrackingConsentDecision;
     source: MessageTrackingConsentSource;
   }): Promise<void> {
-    const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
+    const normalizedEmailAddress =
+      normalizeCampaignRecipientEmailAddress(emailAddress);
 
     if (!isNonEmptyString(normalizedEmailAddress)) {
       return;
@@ -254,9 +257,5 @@ export class MessageTrackingConsentService {
         EmailingDomainExceptionCode.MESSAGE_TRACKING_CONSENT_REFUSED_BY_RECIPIENT,
       );
     }
-  }
-
-  private normalizeEmailAddress(emailAddress: string): string {
-    return emailAddress.trim().toLowerCase();
   }
 }
