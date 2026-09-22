@@ -11,7 +11,7 @@ describe('isApplicationHealthCheckResult', () => {
       {
         status: 'error',
         message: 'Key revoked',
-        action: { label: 'Fix', location: 'variables' },
+        action: { label: 'Fix', location: '/settings/billing' },
       },
     ],
     [{ status: 'error', message: 'Key revoked', action: { label: 'Fix' } }],

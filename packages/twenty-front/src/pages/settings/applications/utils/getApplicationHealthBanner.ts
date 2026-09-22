@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 import { type RunApplicationHealthCheckMutation } from '~/generated-metadata/graphql';
 
 type ApplicationHealthCheckResult = NonNullable<
@@ -9,17 +10,15 @@ type ApplicationHealthCheckResult = NonNullable<
 type ApplicationHealthBanner = {
   status: ApplicationHealthCheckResult['status'];
   message: string;
-  action?: { label: string; tabId: string };
+  action?: { label: string; to: string };
 };
 
 export const getApplicationHealthBanner = ({
   healthCheckResult,
-  availableTabIds,
-  fallbackTabId,
+  fallbackLocation,
 }: {
   healthCheckResult?: ApplicationHealthCheckResult | null;
-  availableTabIds: string[];
-  fallbackTabId?: string;
+  fallbackLocation?: string;
 }): ApplicationHealthBanner | undefined => {
   if (!isDefined(healthCheckResult)) {
     return undefined;
@@ -35,13 +34,15 @@ export const getApplicationHealthBanner = ({
     return { status, message };
   }
 
-  const tabId = isNonEmptyString(action.location)
+  const to = isNonEmptyString(action.location)
     ? action.location
-    : fallbackTabId;
+    : fallbackLocation;
 
-  if (!isDefined(tabId) || !availableTabIds.includes(tabId)) {
+  // An app supplies this string, so anything that could leave the workspace
+  // loses its button rather than becoming a redirect to somewhere else.
+  if (!isDefined(to) || !isSafeInternalPath(to)) {
     return { status, message };
   }
 
-  return { status, message, action: { label: action.label, tabId } };
+  return { status, message, action: { label: action.label, to } };
 };

@@ -1,7 +1,10 @@
 import { ApplicationHealthStatus } from '~/generated-metadata/graphql';
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 
-const AVAILABLE_TAB_IDS = ['general', 'variables'];
+const FALLBACK_LOCATION = '/settings/applications/app-id#variables';
+
+// Assembled rather than written out, since oxlint rejects a script url literal.
+const SCRIPT_URL = ['java', 'script:alert(1)'].join('');
 
 const buildResult = (
   overrides: Partial<{
@@ -20,10 +23,7 @@ const buildResult = (
 describe('getApplicationHealthBanner', () => {
   it('should return nothing when there is no result', () => {
     expect(
-      getApplicationHealthBanner({
-        healthCheckResult: null,
-        availableTabIds: AVAILABLE_TAB_IDS,
-      }),
+      getApplicationHealthBanner({ healthCheckResult: null }),
     ).toBeUndefined();
   });
 
@@ -31,7 +31,6 @@ describe('getApplicationHealthBanner', () => {
     expect(
       getApplicationHealthBanner({
         healthCheckResult: buildResult({ message: null }),
-        availableTabIds: AVAILABLE_TAB_IDS,
       }),
     ).toBeUndefined();
   });
@@ -40,40 +39,55 @@ describe('getApplicationHealthBanner', () => {
     expect(
       getApplicationHealthBanner({
         healthCheckResult: buildResult({
-          action: { label: 'Reconnect', location: 'variables' },
+          action: { label: 'Add credits', location: '/settings/billing' },
         }),
-        availableTabIds: AVAILABLE_TAB_IDS,
       })?.action,
-    ).toEqual({ label: 'Reconnect', tabId: 'variables' });
+    ).toEqual({ label: 'Add credits', to: '/settings/billing' });
   });
 
-  it('should fall back to the configuration tab when the app reports no location', () => {
+  it('should keep the hash the app reported so it can point at a tab', () => {
+    expect(
+      getApplicationHealthBanner({
+        healthCheckResult: buildResult({
+          action: {
+            label: 'Reconnect',
+            location: '/settings/applications/app-id#variables',
+          },
+        }),
+      })?.action?.to,
+    ).toBe('/settings/applications/app-id#variables');
+  });
+
+  it("should fall back to the app's configuration tab when it reports no location", () => {
     expect(
       getApplicationHealthBanner({
         healthCheckResult: buildResult({ action: { label: 'Configure' } }),
-        availableTabIds: AVAILABLE_TAB_IDS,
-        fallbackTabId: 'variables',
+        fallbackLocation: FALLBACK_LOCATION,
       })?.action,
-    ).toEqual({ label: 'Configure', tabId: 'variables' });
+    ).toEqual({ label: 'Configure', to: FALLBACK_LOCATION });
   });
 
-  it('should drop the action when the reported location is not rendered', () => {
+  it.each([
+    ['an absolute url', 'https://evil.example.com'],
+    ['a protocol-relative url', '//evil.example.com'],
+    ['a script url', SCRIPT_URL],
+    ['a relative path', 'settings/billing'],
+  ])('should drop the action when the location is %s', (_label, location) => {
     const banner = getApplicationHealthBanner({
       healthCheckResult: buildResult({
-        action: { label: 'Reconnect', location: 'settings' },
+        action: { label: 'Reconnect', location },
       }),
-      availableTabIds: AVAILABLE_TAB_IDS,
+      fallbackLocation: FALLBACK_LOCATION,
     });
 
     expect(banner?.message).toBe('Your key was revoked');
     expect(banner?.action).toBeUndefined();
   });
 
-  it('should drop the action when there is no location and no fallback tab', () => {
+  it('should drop the action when there is no location and no fallback', () => {
     expect(
       getApplicationHealthBanner({
         healthCheckResult: buildResult({ action: { label: 'Configure' } }),
-        availableTabIds: AVAILABLE_TAB_IDS,
       })?.action,
     ).toBeUndefined();
   });

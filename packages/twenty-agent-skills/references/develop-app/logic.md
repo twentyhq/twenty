@@ -123,6 +123,6 @@ The handler returns `ApplicationHealthCheckResult`, a discriminated union:
 - `{ status: 'ok' }`
 - `{ status: 'success' | 'info' | 'warning' | 'error' | 'neutral'; message: string; action?: { label: string; location?: string } }`
 
-`message` is shown in a banner on the app's settings page. `action` renders a button labelled `label` that switches to `location`, a settings tab id (today `general`, `variables` or `settings`); omitting it lands on the app's configuration tab. The button is omitted when the location does not exist for that app.
+`message` is shown in a banner on the app's settings page. `action` renders a button labelled `label` that redirects to `location`, an absolute path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab; omitting it lands on the app's configuration tab. The button is omitted when the location leaves Twenty, and when there is no location and no configuration tab to fall back to.
 
 Twenty runs the check when the app's settings page opens and shows the result. Nothing is stored. A check that throws, times out, or returns a shape Twenty cannot read is treated as unknown, never as an error, and no banner is shown.

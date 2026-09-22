@@ -839,7 +839,7 @@ export default defineHealthCheck({
       return {
         status: 'error',
         message: 'Your Stripe key was revoked',
-        action: { label: 'Reconnect', location: 'variables' },
+        action: { label: 'Add a key', location: '/settings/billing' },
       };
     }
 
@@ -854,7 +854,7 @@ The result is a discriminated union, not a boolean:
 | --- | --- | --- |
 | `status` | Yes | `ok` when there is nothing to report, otherwise `success`, `info`, `warning`, `error` or `neutral` |
 | `message` | For every status but `ok` | Shown in the banner on the app's settings page |
-| `action` | No | `{ label, location }` for the banner's button. `location` is the settings tab it opens, today `general`, `variables` or `settings`; omit it to land on the app's configuration tab |
+| `action` | No | `{ label, location }` for the banner's button. `location` is where the button redirects to, an absolute path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab; omit it to land on the app's own configuration tab |
 
 `ok` shows no banner at all; every other status renders the message in a banner coloured after it, so pick the one that matches how much the person needs to act.
 
@@ -862,7 +862,7 @@ Twenty runs the check when the app's settings page opens and shows the result in
 
 A check that throws, times out or returns a shape Twenty cannot read is treated as **unknown**, never as an error, and no banner is shown. A third-party outage should not paint every installed app red — if it did, people would learn to ignore the signal.
 
-The button is only rendered when the app reports an action and the location it points at exists for that app, so a check on an app with no variables and no custom settings tab shows its message without a dead button.
+The location has to stay inside Twenty: an external, protocol-relative or relative one loses its button rather than becoming a redirect somewhere else. The button is also dropped when the app reports no location and has no configuration tab to fall back to, so a check on an app with no variables and no custom settings tab shows its message without a dead button.
 
 Only one health check is allowed per app; declaring more than one fails the build.
 

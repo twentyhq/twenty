@@ -14,12 +14,11 @@ import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -69,11 +68,6 @@ export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
 
   const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    APPLICATION_DETAIL_ID,
-  );
-
-  const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     APPLICATION_DETAIL_ID,
   );
@@ -155,6 +149,7 @@ export const SettingsApplicationDetails = () => {
   };
 
   const navigate = useNavigateSettings();
+  const redirect = useNavigate();
   const handleUninstallCompleted = useCallback(() => {
     navigate(SettingsPath.Applications);
   }, [navigate]);
@@ -220,23 +215,31 @@ export const SettingsApplicationDetails = () => {
     CONFIGURATION_TAB_IDS.includes(tab.id),
   )?.id;
 
-  const goToConfigurationTab = isDefined(configurationTabId)
-    ? () => setActiveTabId(configurationTabId)
+  const configurationTabLocation = isDefined(configurationTabId)
+    ? getSettingsPath(
+        SettingsPath.ApplicationDetail,
+        { applicationId },
+        undefined,
+        configurationTabId,
+      )
+    : undefined;
+
+  const goToConfigurationTab = isDefined(configurationTabLocation)
+    ? () => redirect(configurationTabLocation)
     : undefined;
 
   const healthBanner = isNonEmptyArray(missingRequiredApplicationVariables)
     ? undefined
     : getApplicationHealthBanner({
         healthCheckResult,
-        availableTabIds: tabs.map((tab) => tab.id),
-        fallbackTabId: configurationTabId,
+        fallbackLocation: configurationTabLocation,
       });
 
   const healthBannerAction = healthBanner?.action;
   const healthBannerButton = isDefined(healthBannerAction)
     ? {
         label: healthBannerAction.label,
-        onClick: () => setActiveTabId(healthBannerAction.tabId),
+        onClick: () => redirect(healthBannerAction.to),
       }
     : undefined;
 
