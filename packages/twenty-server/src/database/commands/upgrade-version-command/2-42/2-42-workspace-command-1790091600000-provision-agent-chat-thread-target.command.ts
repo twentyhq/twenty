@@ -18,7 +18,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // workspace without the table. This provisions it the same way agent history
 // provisioned its five objects: an additive from/to migration over the standard
 // definitions, which custom-object side effects must not expand.
-@RegisteredWorkspaceCommand('2.42.0', 1790022700000)
+@RegisteredWorkspaceCommand('2.42.0', 1790091600000)
 @Command({
   name: 'upgrade:2-42:provision-agent-chat-thread-target',
   description:
