@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
@@ -53,7 +52,7 @@ export const SettingsUnsubscribersFilterOptionsContent = ({
             selected={selectedValue === option.value}
             indicator="check"
           >
-            <OverflowingTextWithTooltip text={option.label} />
+            {option.label}
           </ListItem>
         ))}
       </DropdownMenuItemsContainer>

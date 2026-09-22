@@ -241,7 +241,9 @@ export enum AllMetadataName {
   viewFilterGroup = 'viewFilterGroup',
   viewGroup = 'viewGroup',
   viewSort = 'viewSort',
-  webhook = 'webhook'
+  webhook = 'webhook',
+  workflow = 'workflow',
+  workflowVersion = 'workflowVersion'
 }
 
 export type Analytics = {
@@ -6885,6 +6887,7 @@ export enum UsageOperationType {
   CALL_RECORDING = 'CALL_RECORDING',
   CODE_EXECUTION = 'CODE_EXECUTION',
   EMAIL_SEND = 'EMAIL_SEND',
+  MESSAGE_CAMPAIGN_SEND = 'MESSAGE_CAMPAIGN_SEND',
   RECORD_WRITE = 'RECORD_WRITE',
   STORAGE_FILE = 'STORAGE_FILE',
   SUBSCRIPTION = 'SUBSCRIPTION',

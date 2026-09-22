@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 /* @license Enterprise */
 
 import {
@@ -6,7 +8,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
@@ -156,10 +157,10 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
                     );
                   }}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === subFieldName}
                     key={`select-filter-${index}`}
-                    testId={`select-filter-${index}`}
+                    data-testid={`select-filter-${index}`}
                     onClick={() => {
                       if (isDefined(fieldMetadataItemUsedInDropdown)) {
                         handleSelectFilter(
@@ -168,15 +169,20 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
                         );
                       }
                     }}
-                    text={getCompositeSubFieldLabel(
+                    startIcon={
+                      <SelectOptionIcon
+                        Icon={getIcon(
+                          ICON_NAME_BY_SUB_FIELD[subFieldName] ??
+                            fieldMetadataItemUsedInDropdown?.icon,
+                        )}
+                      />
+                    }
+                  >
+                    {getCompositeSubFieldLabel(
                       objectFilterDropdownSubMenuFieldType,
                       subFieldName,
                     )}
-                    LeftIcon={getIcon(
-                      ICON_NAME_BY_SUB_FIELD[subFieldName] ??
-                        fieldMetadataItemUsedInDropdown?.icon,
-                    )}
-                  />
+                  </ListItem>
                 </SelectableListItem>
               ))}
           </SelectableList>

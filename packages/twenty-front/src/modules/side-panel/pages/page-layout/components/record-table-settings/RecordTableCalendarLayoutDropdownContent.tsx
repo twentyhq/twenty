@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -82,7 +81,7 @@ export const RecordTableCalendarLayoutDropdownContent = ({
               indicator="check"
               startIcon={<SelectOptionIcon Icon={Icon} />}
             >
-              <OverflowingTextWithTooltip text={label} />
+              {label}
             </ListItem>
           </SelectableListItem>
         ))}

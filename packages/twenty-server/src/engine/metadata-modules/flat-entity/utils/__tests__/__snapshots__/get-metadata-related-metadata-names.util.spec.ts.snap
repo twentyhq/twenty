@@ -216,3 +216,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 `;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for webhook 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for workflow 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for workflowVersion 1`] = `[]`;

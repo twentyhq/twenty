@@ -106,6 +106,8 @@ exports[`registry-derived override property maps derives the overridable propert
   "viewGroup": [],
   "viewSort": [],
   "webhook": [],
+  "workflow": [],
+  "workflowVersion": [],
 }
 `;
 
