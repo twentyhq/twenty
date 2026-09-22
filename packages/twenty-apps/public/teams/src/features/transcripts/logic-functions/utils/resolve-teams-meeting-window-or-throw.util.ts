@@ -6,7 +6,7 @@ import {
 } from 'src/features/transcripts/constants/teams.constant';
 import { type TeamsMeetingWindow } from 'src/features/transcripts/logic-functions/types/teams-meeting-window.type';
 
-export const resolveTeamsMeetingWindow = ({
+export const resolveTeamsMeetingWindowOrThrow = ({
   startDateTime,
   endDateTime,
 }: {

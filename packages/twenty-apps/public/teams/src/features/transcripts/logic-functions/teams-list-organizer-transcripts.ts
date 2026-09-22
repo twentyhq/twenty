@@ -11,10 +11,10 @@ import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_LIST_ORGANIZER_TRANSCRIPTS_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { getMeetingByJoinUrl } from 'src/features/transcripts/logic-functions/utils/get-meeting-by-join-url.util';
-import { getTeamsConnectionForRequest } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request.util';
+import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw.util';
 import { listMeetingTranscripts } from 'src/features/transcripts/logic-functions/utils/list-meeting-transcripts.util';
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page.util';
-import { resolveTeamsMeetingWindow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-meeting-window.util';
+import { resolveTeamsMeetingWindowOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-meeting-window-or-throw.util';
 import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message.util';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 
@@ -77,8 +77,8 @@ export const teamsListOrganizerTranscriptsHandler = async (
   }
 
   try {
-    const window = resolveTeamsMeetingWindow(parameters);
-    const connection = await getTeamsConnectionForRequest(context);
+    const window = resolveTeamsMeetingWindowOrThrow(parameters);
+    const connection = await getTeamsConnectionForRequestOrThrow(context);
     const page = await listTeamsCalendarPage({
       accessToken: connection.accessToken,
       window,

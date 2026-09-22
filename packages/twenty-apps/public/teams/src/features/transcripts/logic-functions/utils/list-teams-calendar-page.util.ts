@@ -5,6 +5,7 @@ import { type GraphCollectionPage } from 'src/features/transcripts/logic-functio
 import { type TeamsCalendarEvent } from 'src/features/transcripts/logic-functions/types/teams-calendar-event.type';
 import { type TeamsMeetingWindow } from 'src/features/transcripts/logic-functions/types/teams-meeting-window.type';
 import { graphFetchJson } from 'src/features/transcripts/logic-functions/utils/graph-fetch-json.util';
+import { resolveGraphUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-graph-url-or-throw.util';
 
 export const listTeamsCalendarPage = async ({
   accessToken,
@@ -22,9 +23,21 @@ export const listTeamsCalendarPage = async ({
       'isOrganizer,isCancelled,isOnlineMeeting,onlineMeetingProvider,onlineMeeting',
     $top: String(TEAMS_CALENDAR_PAGE_SIZE),
   });
+  const url = resolveGraphUrlOrThrow(nextPageUrl ?? `me/calendarView?${query}`);
+  const pathname = new URL(url).pathname;
+
+  if (
+    pathname !== '/v1.0/me/calendarView' &&
+    pathname !== '/v1.0/me/calendarView/'
+  ) {
+    throw new Error(
+      'Teams calendar pagination URLs must use /v1.0/me/calendarView',
+    );
+  }
+
   const page = await graphFetchJson<GraphCollectionPage<TeamsCalendarEvent>>({
     accessToken,
-    url: nextPageUrl ?? `me/calendarView?${query}`,
+    url,
   });
   const joinWebUrls = (page.value ?? []).flatMap((event) =>
     event.isOrganizer &&
