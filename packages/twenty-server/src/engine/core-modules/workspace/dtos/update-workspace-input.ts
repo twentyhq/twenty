@@ -142,11 +142,6 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  aiEvaluationModelId?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
   aiAdditionalInstructions?: string;
 
   @Field(() => [String], { nullable: true })
