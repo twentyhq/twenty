@@ -70,6 +70,16 @@ jobs:
         with:
           fetch-depth: 10
 
+      - name: Preserve released metadata baseline and comparison tools
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RELEASE_TAG=$(gh api "repos/${{ github.repository }}/releases/latest" --jq .tag_name)
+          git fetch origin "refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"
+          git show "$RELEASE_TAG:packages/twenty-client-sdk/src/metadata/generated/schema.graphql" > /tmp/released-metadata-schema.graphql
+          cp -R packages/twenty-server/scripts/api-compatibility /tmp/api-compatibility
+          echo "Released metadata baseline: $RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Try to merge main into current branch
         id: merge_attempt
         run: |
@@ -456,6 +466,16 @@ jobs:
 
           echo "valid=$valid" >> $GITHUB_OUTPUT
 
+      - name: Allow removal of unreleased metadata fields
+        if: steps.validate-schemas.outputs.valid == 'true'
+        run: |
+          cp -R /tmp/api-compatibility packages/twenty-server/scripts/api-compatibility
+          npx tsx packages/twenty-server/scripts/api-compatibility/prepare-metadata-baseline.ts \
+            main-metadata-schema-introspection.json \
+            current-metadata-schema-introspection.json \
+            /tmp/released-metadata-schema.graphql \
+            main-released-metadata-schema-introspection.json
+
       - name: Install OpenAPI Diff Tool
         run: |
           # Using the Java-based OpenAPITools/openapi-diff via Docker
@@ -490,18 +510,18 @@ jobs:
 
           # Check if GraphQL metadata schema has changes
           echo "Checking GraphQL metadata schema for changes..."
-          if graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >/dev/null 2>&1; then
+          if graphql-inspector diff main-released-metadata-schema-introspection.json current-metadata-schema-introspection.json >/dev/null 2>&1; then
             echo "✅ No changes in GraphQL metadata schema"
           else
             echo "⚠️ Changes detected in GraphQL metadata schema, generating report..."
             echo "metadata_breaking=true" >> $GITHUB_OUTPUT
             echo "# GraphQL Metadata Schema Changes" > graphql-metadata-diff.md
             echo "" >> graphql-metadata-diff.md
-            graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >> graphql-metadata-diff.md 2>&1 || {
+            graphql-inspector diff main-released-metadata-schema-introspection.json current-metadata-schema-introspection.json >> graphql-metadata-diff.md 2>&1 || {
               echo "⚠️ **Breaking changes or errors detected in GraphQL metadata schema**" >> graphql-metadata-diff.md
               echo "" >> graphql-metadata-diff.md
               echo "\`\`\`" >> graphql-metadata-diff.md
-              graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json 2>&1 >> graphql-metadata-diff.md || echo "Error generating diff" >> graphql-metadata-diff.md
+              graphql-inspector diff main-released-metadata-schema-introspection.json current-metadata-schema-introspection.json 2>&1 >> graphql-metadata-diff.md || echo "Error generating diff" >> graphql-metadata-diff.md
               echo "\`\`\`" >> graphql-metadata-diff.md
             }
           fi
