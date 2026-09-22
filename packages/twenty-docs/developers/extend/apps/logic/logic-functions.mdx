@@ -854,7 +854,7 @@ The result is a discriminated union, not a boolean:
 | --- | --- | --- |
 | `status` | Yes | `OK` when there is nothing to report, otherwise `SUCCESS`, `INFO`, `WARNING`, `ERROR` or `NEUTRAL` |
 | `message` | For every status but `OK` | Shown in the banner on the app's settings page |
-| `action` | No | `{ label, location }` for the banner's button. `location` is where the button redirects to, an absolute path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab; omit it to land on the app's own configuration tab |
+| `action` | No | `{ label, location }` for the banner's button. `location` is where the button redirects to: a path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab, or a hash alone such as `#variables` to move to a tab of your own settings page; omit it to land on the app's configuration tab |
 
 `OK` shows no banner at all; every other status renders the message in a banner coloured after it, so pick the one that matches how much the person needs to act. The statuses are Twenty's own `ApplicationHealthStatus`, so the plain string and the enum member are interchangeable:
 
@@ -868,7 +868,7 @@ Twenty runs the check when the app's settings page opens and shows the result in
 
 A check that throws, times out or returns a shape Twenty cannot read is treated as **unknown**, never as an error, and no banner is shown. A third-party outage should not paint every installed app red — if it did, people would learn to ignore the signal.
 
-The location has to stay inside Twenty: an external, protocol-relative or relative one loses its button rather than becoming a redirect somewhere else. The button is also dropped when the app reports no location and has no configuration tab to fall back to, so a check on an app with no variables and no custom settings tab shows its message without a dead button.
+The location has to stay inside Twenty, so it starts with `/` or `#`: an external, protocol-relative or relative one loses its button rather than becoming a redirect somewhere else. The button is also dropped when the app reports no location and has no configuration tab to fall back to, so a check on an app with no variables and no custom settings tab shows its message without a dead button.
 
 Only one health check is allowed per app; declaring more than one fails the build.
 

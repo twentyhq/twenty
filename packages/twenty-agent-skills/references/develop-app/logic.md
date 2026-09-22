@@ -125,6 +125,6 @@ The handler returns `ApplicationHealthCheckResult`, a discriminated union:
 
 The statuses come from `ApplicationHealthStatus`, exported from `twenty-sdk/define`, so `ApplicationHealthStatus.WARNING` and `'WARNING'` are interchangeable. `UNKNOWN` belongs to Twenty and an app cannot report it.
 
-`message` is shown in a banner on the app's settings page. `action` renders a button labelled `label` that redirects to `location`, an absolute path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab; omitting it lands on the app's configuration tab. The button is omitted when the location leaves Twenty, and when there is no location and no configuration tab to fall back to.
+`message` is shown in a banner on the app's settings page. `action` renders a button labelled `label` that redirects to `location`: a path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab, or a hash alone such as `#variables` to move to a tab of the app's own settings page; omitting it lands on the app's configuration tab. The button is omitted when the location leaves Twenty, and when there is no location and no configuration tab to fall back to.
 
 Twenty runs the check when the app's settings page opens and shows the result. Nothing is stored. A check that throws, times out, or returns a shape Twenty cannot read is treated as unknown, never as an error, and no banner is shown.
