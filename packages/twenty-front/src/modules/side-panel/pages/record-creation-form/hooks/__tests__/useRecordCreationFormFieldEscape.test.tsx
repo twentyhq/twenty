@@ -2,16 +2,24 @@ import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { FormUuidFieldInput } from '@/object-record/record-field/ui/form-types/components/FormUuidFieldInput';
 import { useRecordCreationFormFieldEscape } from '@/side-panel/pages/record-creation-form/hooks/useRecordCreationFormFieldEscape';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode, useRef } from 'react';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
 
 const mockHandleSidePanelEscape = jest.fn();
 
@@ -166,6 +174,30 @@ it.each([
     expect(input).not.toHaveFocus();
   },
 );
+
+it('leaves the creation form when Escape is pressed in a text editor field', async () => {
+  const { container } = renderForm(
+    <FormTextFieldInput
+      label="Company name"
+      defaultValue={undefined}
+      onChange={jest.fn()}
+    />,
+  );
+  const editor = container.querySelector<HTMLElement>(
+    '[contenteditable="true"]',
+  );
+  if (!isDefined(editor)) {
+    throw new Error('Text editor not rendered');
+  }
+  act(() => editor.focus());
+
+  // ProseMirror prevents the default of any keydown whose keyCode is Escape's
+  fireEvent.keyDown(editor, { key: 'Escape', code: 'Escape', keyCode: 27 });
+
+  await waitFor(() =>
+    expect(mockHandleSidePanelEscape).toHaveBeenCalledTimes(1),
+  );
+});
 
 it('closes only the open select dropdown when Escape is pressed in it', async () => {
   renderForm(

@@ -10,6 +10,7 @@ import { Slice } from '@tiptap/pm/model';
 
 import { type Editor, useEditor } from '@tiptap/react';
 import { useEffect } from 'react';
+import { Key } from 'ts-key-enum';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 
@@ -66,6 +67,11 @@ export const useTextVariableEditor = ({
       onUpdate(editor);
     },
     editorProps: {
+      handleDOMEvents: {
+        // ProseMirror prevents Escape's default without using the key, which
+        // record forms read as a field having handled Escape itself
+        keydown: (_view, event) => event.key === Key.Escape,
+      },
       handleKeyDown: (view, event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
