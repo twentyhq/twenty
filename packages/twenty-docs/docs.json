@@ -6653,7 +6653,55 @@
       "destination": "/ui/getting-started"
     },
     {
-      "source": "/l/:language/twenty-ui/:slug*",
+      "source": "/fr/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/ar/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/cs/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/de/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/es/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/it/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/ja/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/ko/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/pt/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/ro/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/ru/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/tr/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/zh/twenty-ui/:slug*",
       "destination": "/ui/getting-started"
     },
     {
@@ -6765,8 +6813,56 @@
       "destination": "/developers/extend/apps/operations/translations"
     },
     {
-      "source": "/l/:language/developers/extend/apps/translations/overview",
-      "destination": "/l/:language/developers/extend/apps/operations/translations"
+      "source": "/fr/developers/extend/apps/translations/overview",
+      "destination": "/fr/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/ar/developers/extend/apps/translations/overview",
+      "destination": "/ar/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/cs/developers/extend/apps/translations/overview",
+      "destination": "/cs/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/de/developers/extend/apps/translations/overview",
+      "destination": "/de/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/es/developers/extend/apps/translations/overview",
+      "destination": "/es/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/it/developers/extend/apps/translations/overview",
+      "destination": "/it/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/ja/developers/extend/apps/translations/overview",
+      "destination": "/ja/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/ko/developers/extend/apps/translations/overview",
+      "destination": "/ko/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/pt/developers/extend/apps/translations/overview",
+      "destination": "/pt/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/ro/developers/extend/apps/translations/overview",
+      "destination": "/ro/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/ru/developers/extend/apps/translations/overview",
+      "destination": "/ru/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/tr/developers/extend/apps/translations/overview",
+      "destination": "/tr/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/zh/developers/extend/apps/translations/overview",
+      "destination": "/zh/developers/extend/apps/operations/translations"
     },
     {
       "source": "/developers/extend/capabilities/api",
