@@ -2,8 +2,8 @@ import isEmpty from 'lodash.isempty';
 import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
 
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-update.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
@@ -59,10 +59,11 @@ export const buildMirroredWorkflowVersionMetadataEvents = ({
       update,
     },
     allFlatEntityMaps: {
+      ...createEmptyAllFlatEntityMaps(),
       flatWorkflowVersionMaps: addFlatEntityToFlatEntityMapsOrThrow({
         flatEntity: previousFlatWorkflowVersion,
         flatEntityMaps: createEmptyFlatEntityMaps(),
       }),
-    } as AllFlatEntityMaps,
+    },
   });
 };
