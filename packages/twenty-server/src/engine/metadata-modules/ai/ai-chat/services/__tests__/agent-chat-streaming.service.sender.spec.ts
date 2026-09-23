@@ -1,3 +1,7 @@
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import {
   AuthException,
@@ -63,6 +67,17 @@ describe('Sender-aware queue draining', () => {
       }),
     );
   });
+  it('preserves a non-owner request when a worker cannot yet authorize thread access', async () => {
+    const { service, actors, chat, queue } = build();
+    actors.authorize.mockRejectedValue(
+      new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
+    );
+    await service.flushNextQueuedMessage(args);
+    expect(chat.deleteQueuedMessage).not.toHaveBeenCalled();
+    expect(chat.promoteQueuedMessage).not.toHaveBeenCalled();
+    expect(queue.add).not.toHaveBeenCalled();
+  });
+
   it('removes revoked queued work before promoting or invoking it', async () => {
     const { service, actors, chat, queue } = build();
     actors.authorize.mockRejectedValue(

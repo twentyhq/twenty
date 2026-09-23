@@ -742,15 +742,21 @@ export class AgentChatStreamingService {
         userWorkspaceId = sender.userWorkspaceId;
         break;
       } catch (error) {
+        // A rolling upgrade can temporarily leave a worker with an older access
+        // policy. Preserve the request until a worker can authorize it.
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.THREAD_NOT_FOUND
+        ) {
+          continue;
+        }
+
         if (
           !(error instanceof AuthException) &&
           !(error instanceof PermissionsException) &&
           !(
             error instanceof AiException &&
-            [
-              AiExceptionCode.THREAD_NOT_FOUND,
-              AiExceptionCode.MESSAGE_NOT_FOUND,
-            ].includes(error.code)
+            error.code === AiExceptionCode.MESSAGE_NOT_FOUND
           )
         ) {
           throw error;
