@@ -1,12 +1,7 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
 type SettingsAdminWorkspaceCreditGrantRowDropdownMenuProps = {
   creditGrantId: string;
@@ -18,32 +13,24 @@ export const SettingsAdminWorkspaceCreditGrantRowDropdownMenu = ({
   onRevoke,
 }: SettingsAdminWorkspaceCreditGrantRowDropdownMenuProps) => {
   const dropdownId = `settings-admin-credit-grant-row-${creditGrantId}`;
-
-  const { closeDropdown } = useCloseDropdown();
-
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="right-start"
-      clickableComponent={
-        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
-          <IconDotsVertical />
-        </LightIconButton>
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
-              color="danger"
-              startIcon={<IconTrash />}
-              onClick={() => {
-                onRevoke();
-                closeDropdown(dropdownId);
-              }}
-            >{t`Revoke`}</ListItem>
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-    />
+    <DropdownRoot type="menu" dropdownId={dropdownId}>
+      <Dropdown.Trigger
+        render={
+          <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+            <IconDotsVertical />
+          </LightIconButton>
+        }
+      />
+      <Dropdown.Content side="right" align="start">
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            color="danger"
+            startIcon={<IconTrash />}
+            onClick={onRevoke}
+          >{t`Revoke`}</Dropdown.ActionItem>
+        </Dropdown.Section>
+      </Dropdown.Content>
+    </DropdownRoot>
   );
 };

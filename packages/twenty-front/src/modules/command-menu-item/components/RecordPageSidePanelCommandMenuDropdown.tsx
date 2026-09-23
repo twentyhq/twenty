@@ -1,31 +1,35 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
 import { useSidePanelFooterPinnedItemsAvailableWidth } from '@/command-menu-item/hooks/useSidePanelFooterPinnedItemsAvailableWidth';
-import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
-import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
-import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown, IconButton } from 'twenty-ui/components';
+import { IconDotsVertical } from 'twenty-ui/icon';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useSidePanelOptionsHotkeys } from '@/side-panel/hooks/useSidePanelOptionsHotkeys';
+import { CommandMenuDropdownActionItem } from '@/command-menu-item/display/components/CommandMenuDropdownActionItem';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const RecordPageSidePanelCommandMenuDropdown = () => {
   const { commandMenuItems } = useContext(CommandMenuContext);
 
+  const { t } = useLingui();
   const commandMenuId = useAvailableComponentInstanceIdOrThrow(
     CommandMenuComponentInstanceContext,
   );
-
   const dropdownId =
     getSidePanelCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
-
   const { closeDropdown } = useCloseDropdown();
+  const { handleContentKeyDown } = useSidePanelOptionsHotkeys(dropdownId);
 
   const sidePanelWidgetFooterCommandMenuItems = useAtomStateValue(
     sidePanelWidgetFooterCommandMenuItemsState,
@@ -81,36 +85,47 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
           pinnedOverflowCommandMenuItemIds.has(item.id),
       );
 
-  const selectableItemIdArray = [
-    ...dropdownWidgetCommandMenuItems.map(
-      (commandMenuItem) => commandMenuItem.id,
-    ),
-    ...listedCommandMenuItems.map((item) => item.id),
-  ];
-
   return (
-    <OptionsDropdownMenu
+    <DropdownRoot
       dropdownId={dropdownId}
-      selectableListId={commandMenuId}
-      selectableItemIdArray={selectableItemIdArray}
+      type="menu"
+      globalHotkeysConfig={{ enableGlobalHotkeysWithModifiers: true }}
     >
-      {dropdownWidgetCommandMenuItems.map((commandMenuItem) => (
-        <ListItem
-          key={commandMenuItem.id}
-          startIcon={<SelectOptionIcon Icon={commandMenuItem.Icon} />}
-          onClick={() => {
-            closeDropdown(dropdownId);
-            commandMenuItem.onClick();
-          }}
-        >
-          {commandMenuItem.label}
-        </ListItem>
-      ))}
-      {dropdownWidgetCommandMenuItems.length > 0 &&
-        listedCommandMenuItems.length > 0 && <HorizontalSeparator noMargin />}
-      {listedCommandMenuItems.map((item) => (
-        <CommandMenuItemRenderer item={item} key={item.id} />
-      ))}
-    </OptionsDropdownMenu>
+      <Dropdown.Trigger
+        data-select-disable
+        render={
+          <IconButton aria-label={t`Options`} size="sm" variant="outline">
+            <IconDotsVertical />
+          </IconButton>
+        }
+      />
+      <Dropdown.Content
+        data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}
+        side="top"
+        align="end"
+        sideOffset={8}
+        onKeyDown={handleContentKeyDown}
+      >
+        <Dropdown.Section>
+          {dropdownWidgetCommandMenuItems.map((commandMenuItem) => (
+            <Dropdown.ActionItem
+              key={commandMenuItem.id}
+              startIcon={<SelectOptionIcon Icon={commandMenuItem.Icon} />}
+              onClick={() => {
+                closeDropdown(dropdownId);
+                commandMenuItem.onClick();
+              }}
+            >
+              {commandMenuItem.label}
+            </Dropdown.ActionItem>
+          ))}
+          {isNonEmptyArray(dropdownWidgetCommandMenuItems) &&
+            isNonEmptyArray(listedCommandMenuItems) && <Dropdown.Separator />}
+          {listedCommandMenuItems.map((item) => (
+            <CommandMenuDropdownActionItem item={item} key={item.id} />
+          ))}
+        </Dropdown.Section>
+      </Dropdown.Content>
+    </DropdownRoot>
   );
 };

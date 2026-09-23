@@ -1,15 +1,11 @@
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, useToast } from 'twenty-ui/components';
+import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type ApprovedAccessDomain,
   DeleteApprovedAccessDomainDocument,
@@ -23,12 +19,9 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
   approvedAccessDomain,
 }: SettingsSecurityApprovedAccessDomainRowDropdownMenuProps) => {
   const dropdownId = `settings-approved-access-domain-row-${approvedAccessDomain.id}`;
-
   const setApprovedAccessDomains = useSetAtomState(approvedAccessDomainsState);
 
   const { enqueueToast } = useToast();
-
-  const { closeDropdown } = useCloseDropdown();
 
   const [deleteApprovedAccessDomain] = useMutation(
     DeleteApprovedAccessDomainDocument,
@@ -59,30 +52,25 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
   };
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="right-start"
-      clickableComponent={
-        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
-          <IconDotsVertical />
-        </LightIconButton>
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
-              color="danger"
-              startIcon={<IconTrash />}
-              onClick={() => {
-                handleDeleteApprovedAccessDomain();
-                closeDropdown(dropdownId);
-              }}
-            >
-              {'Delete'}
-            </ListItem>
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-    />
+    <DropdownRoot type="menu" dropdownId={dropdownId}>
+      <Dropdown.Trigger
+        render={
+          <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+            <IconDotsVertical />
+          </LightIconButton>
+        }
+      />
+      <Dropdown.Content side="right" align="start">
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            color="danger"
+            startIcon={<IconTrash />}
+            onClick={handleDeleteApprovedAccessDomain}
+          >
+            {t`Delete`}
+          </Dropdown.ActionItem>
+        </Dropdown.Section>
+      </Dropdown.Content>
+    </DropdownRoot>
   );
 };

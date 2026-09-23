@@ -1,10 +1,10 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useContext } from 'react';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
+import { Dropdown } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks/useAddStepFilterToGroup';
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
@@ -22,11 +22,8 @@ type WorkflowStepFilterAddFilterRuleSelectProps = {
 export const WorkflowStepFilterAddFilterRuleSelect = ({
   stepFilterGroup,
 }: WorkflowStepFilterAddFilterRuleSelectProps) => {
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
-
-  const dropdownId = getAdvancedFilterAddFilterRuleSelectDropdownId(
-    stepFilterGroup.id,
-  );
 
   const { lastChildPosition } = useChildStepFiltersAndChildStepFilterGroups({
     stepFilterGroupId: stepFilterGroup.id,
@@ -34,21 +31,11 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
 
   const newPositionInStepFilterGroup = lastChildPosition + 1;
 
-  const { closeDropdown } = useCloseDropdown();
-
   const { addStepFilterToGroup } = useAddStepFilterToGroup({
     stepFilterGroup,
   });
 
-  const handleAddFilter = () => {
-    closeDropdown(dropdownId);
-
-    addStepFilterToGroup();
-  };
-
   const handleAddFilterGroup = () => {
-    closeDropdown(dropdownId);
-
     const newStepFilterGroupId = v4();
 
     const newStepFilterGroup: StepFilterGroup = {
@@ -80,41 +67,47 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
           shortLabel: t`Add rule`,
           key: 'add-rule',
         }}
-        onClick={handleAddFilter}
+        onClick={addStepFilterToGroup}
       />
     );
   }
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <CommandMenuButton
-          command={{
-            Icon: IconPlus,
-            label: t`Add filter rule`,
-            shortLabel: t`Add filter rule`,
-            key: 'add-filter-rule',
-          }}
-        />
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
-              startIcon={<IconPlus />}
-              onClick={handleAddFilter}
-            >{t`Add rule`}</ListItem>
-            {isFilterRuleGroupOptionVisible && (
-              <ListItem
-                startIcon={<IconLibraryPlus />}
-                onClick={handleAddFilterGroup}
-              >{t`Add rule group`}</ListItem>
-            )}
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-      dropdownPlacement="bottom-start"
-    />
+    <DropdownRoot
+      dropdownId={getAdvancedFilterAddFilterRuleSelectDropdownId(
+        stepFilterGroup.id,
+      )}
+      type="menu"
+    >
+      <Dropdown.Trigger
+        render={
+          <NavigationButton
+            size="sm"
+            variant="outline"
+            color="neutral"
+            startIcon={<IconPlus />}
+            aria-label={t`Add filter rule`}
+          >
+            {t`Add filter rule`}
+          </NavigationButton>
+        }
+      />
+      <Dropdown.Content data-click-outside-id={parentClickOutsideId}>
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            startIcon={<IconPlus />}
+            onClick={addStepFilterToGroup}
+          >
+            {t`Add rule`}
+          </Dropdown.ActionItem>
+          <Dropdown.ActionItem
+            startIcon={<IconLibraryPlus />}
+            onClick={handleAddFilterGroup}
+          >
+            {t`Add rule group`}
+          </Dropdown.ActionItem>
+        </Dropdown.Section>
+      </Dropdown.Content>
+    </DropdownRoot>
   );
 };

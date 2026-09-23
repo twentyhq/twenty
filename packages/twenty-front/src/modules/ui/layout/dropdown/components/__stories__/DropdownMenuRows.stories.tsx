@@ -1,18 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
-import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems';
-import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
-
-const DROPDOWN_ID = 'dropdown-menu-rows-story';
+import { Dropdown } from 'twenty-ui/components';
+import { IconCopyPlus, IconPencil } from 'twenty-ui/icon';
 
 type DropdownMenuRowsProps = {
   onAction: (action: string) => void;
@@ -23,65 +15,43 @@ const DropdownMenuRows = ({
   onAction,
   onParentClick,
 }: DropdownMenuRowsProps) => {
-  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
-  const { closeDropdown } = useCloseDropdown();
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    DROPDOWN_ID,
-  );
-
-  const handleDuplicate = () => {
-    onAction('duplicate');
-    closeDropdown(DROPDOWN_ID);
-  };
-
   return (
     <>
       <div onClick={onParentClick}>
-        <OptionsDropdownMenu
-          dropdownId={DROPDOWN_ID}
-          shouldRegisterOptionsHotkey={false}
-          clickableComponent={<Button>Open actions</Button>}
-          onOpen={() => setIsSubmenuOpen(false)}
-          selectableItemIdArray={
-            isSubmenuOpen
-              ? ['disabled', 'destination']
-              : [
-                  WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode,
-                  WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode,
-                ]
-          }
-        >
-          {isSubmenuOpen ? (
-            <>
-              <NavigationMenuItemSelectableItem
-                item={{
-                  id: 'disabled',
-                  label: 'Unavailable destination',
-                  isDisabled: true,
-                  onClick: () => onAction('disabled'),
-                }}
-              />
-              <NavigationMenuItemSelectableItem
-                item={{
-                  id: 'destination',
-                  label: 'Choose destination',
-                  onClick: () => {
-                    onAction('destination');
-                    closeDropdown(DROPDOWN_ID);
-                  },
-                }}
-              />
-            </>
-          ) : (
-            <WorkflowStepOptionsMenuItems
-              selectedItemId={selectedItemId}
-              changeNodeText="Change node"
-              onChangeNode={() => setIsSubmenuOpen(true)}
-              onDuplicateNode={handleDuplicate}
-            />
-          )}
-        </OptionsDropdownMenu>
+        <Dropdown.Root type="menu">
+          <Dropdown.Trigger render={<Button>Open actions</Button>} />
+          <Dropdown.Content side="top" align="end" sideOffset={8}>
+            <Dropdown.Page id="root">
+              <Dropdown.Section>
+                <Dropdown.ActionItem
+                  page="destinations"
+                  startIcon={<IconPencil />}
+                >
+                  Change node
+                </Dropdown.ActionItem>
+                <Dropdown.ActionItem
+                  startIcon={<IconCopyPlus />}
+                  onClick={() => onAction('duplicate')}
+                >
+                  Duplicate node
+                </Dropdown.ActionItem>
+              </Dropdown.Section>
+            </Dropdown.Page>
+            <Dropdown.Page id="destinations">
+              <Dropdown.Section>
+                <Dropdown.ActionItem
+                  disabled
+                  onClick={() => onAction('disabled')}
+                >
+                  Unavailable destination
+                </Dropdown.ActionItem>
+                <Dropdown.ActionItem onClick={() => onAction('destination')}>
+                  Choose destination
+                </Dropdown.ActionItem>
+              </Dropdown.Section>
+            </Dropdown.Page>
+          </Dropdown.Content>
+        </Dropdown.Root>
       </div>
       <Button>Outside</Button>
     </>
@@ -143,12 +113,11 @@ export const SubmenuAndDisabledActions: Story = {
     await userEvent.click(canvas.getByText('Open actions'));
     await userEvent.click(await canvas.findByText('Change node'));
     await userEvent.click(await canvas.findByText('Unavailable destination'));
-    await userEvent.keyboard('{Enter}');
 
     expect(args.onAction).not.toHaveBeenCalled();
     expect(canvas.getByText('Choose destination')).toBeVisible();
 
-    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await userEvent.keyboard('{Enter}');
 
     expect(args.onAction).toHaveBeenCalledTimes(1);
     expect(args.onAction).toHaveBeenCalledWith('destination');

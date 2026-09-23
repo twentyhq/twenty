@@ -1,14 +1,13 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useRemoveStepFilterGroup } from '@/workflow/workflow-steps/filters/hooks/useRemoveStepFilterGroup';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown, IconButton } from 'twenty-ui/components';
+
+const FILTER_MENU_SIDE_OFFSET = 2;
 
 type WorkflowStepFilterGroupOptionsDropdownProps = {
   stepFilterGroupId: string;
@@ -17,34 +16,43 @@ type WorkflowStepFilterGroupOptionsDropdownProps = {
 export const WorkflowStepFilterGroupOptionsDropdown = ({
   stepFilterGroupId,
 }: WorkflowStepFilterGroupOptionsDropdownProps) => {
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { removeStepFilterGroup } = useRemoveStepFilterGroup();
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={`step-filter-group-options-${stepFilterGroupId}`}
-      clickableComponent={
-        <IconButton
-          aria-label={t`Step filter group options`}
-          variant="ghost"
-          disabled={readonly}
-        >
-          <IconDotsVertical />
-        </IconButton>
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <ListItem
-              startIcon={<IconTrash />}
-              onClick={() => removeStepFilterGroup(stepFilterGroupId)}
-              color="danger"
-            >{t`Delete group`}</ListItem>
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-      dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
-    />
+      type="menu"
+    >
+      <Dropdown.Trigger
+        disabled={readonly}
+        render={
+          <IconButton
+            aria-label={t`Step filter group options`}
+            variant="ghost"
+            disabled={readonly}
+          >
+            <IconDotsVertical />
+          </IconButton>
+        }
+      />
+      <Dropdown.Content
+        data-click-outside-id={parentClickOutsideId}
+        align="end"
+        sideOffset={FILTER_MENU_SIDE_OFFSET}
+      >
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            startIcon={<IconTrash />}
+            onClick={() => removeStepFilterGroup(stepFilterGroupId)}
+            color="danger"
+          >
+            {t`Delete group`}
+          </Dropdown.ActionItem>
+        </Dropdown.Section>
+      </Dropdown.Content>
+    </DropdownRoot>
   );
 };
