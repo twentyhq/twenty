@@ -1,3 +1,4 @@
+import { settingsRoleEditorPersistedRoleFamilyState } from '@/settings/roles/states/settingsRoleEditorPersistedRoleFamilyState';
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
@@ -8,7 +9,7 @@ import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedF
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -19,10 +20,6 @@ type SettingsRoleEditEffectProps = {
 export const SettingsRoleEditEffect = ({
   roleId,
 }: SettingsRoleEditEffectProps) => {
-  const [previousPersistedRoles, setPreviousPersistedRoles] = useState(
-    () => new Map<string, RoleWithPartialMembers>(),
-  );
-
   const settingsPersistedRole = useAtomFamilyStateValue(
     settingsPersistedRoleFamilyState,
     roleId,
@@ -39,11 +36,6 @@ export const SettingsRoleEditEffect = ({
 
   const store = useStore();
   const routedFlowStateScopeId = useRoutedFlowStateScopeId();
-  const persistedRoleSnapshotKey = JSON.stringify([
-    routedFlowStateScopeId,
-    roleId,
-  ]);
-
   const reconcileDraftRole = useCallback(
     (newRole: RoleWithPartialMembers) => {
       const draftRoleAtom = settingsDraftRoleFamilyState.getAtom(
@@ -51,9 +43,12 @@ export const SettingsRoleEditEffect = ({
         routedFlowStateScopeId,
       );
       const currentDraftRole = store.get(draftRoleAtom);
-      const previousPersistedRole = previousPersistedRoles.get(
-        persistedRoleSnapshotKey,
-      );
+      const previousPersistedRoleAtom =
+        settingsRoleEditorPersistedRoleFamilyState.getAtom(
+          newRole.id,
+          routedFlowStateScopeId,
+        );
+      const previousPersistedRole = store.get(previousPersistedRoleAtom);
       const isUninitialized = currentDraftRole.id !== newRole.id;
       const wasCleanBeforeRefresh =
         isDefined(previousPersistedRole) &&
@@ -63,22 +58,9 @@ export const SettingsRoleEditEffect = ({
         store.set(draftRoleAtom, newRole);
       }
 
-      setPreviousPersistedRoles((currentSnapshots) => {
-        if (
-          isDeeplyEqual(currentSnapshots.get(persistedRoleSnapshotKey), newRole)
-        ) {
-          return currentSnapshots;
-        }
-
-        return new Map(currentSnapshots).set(persistedRoleSnapshotKey, newRole);
-      });
+      store.set(previousPersistedRoleAtom, newRole);
     },
-    [
-      persistedRoleSnapshotKey,
-      previousPersistedRoles,
-      routedFlowStateScopeId,
-      store,
-    ],
+    [routedFlowStateScopeId, store],
   );
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { useQuery } from '@apollo/client/react';
 import { useIcons } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
 import {
   GetPermissionFlagsDocument,
   PermissionFlagType,
@@ -12,8 +13,8 @@ export const useRolePermissionFlagConfig = ({
 }: {
   permissionType: 'settings' | 'tool';
   standardPermissionsConfig: SettingsRolePermissionsSettingPermission[];
-}): SettingsRolePermissionsSettingPermission[] => {
-  const { data } = useQuery(GetPermissionFlagsDocument, {
+}) => {
+  const { data, loading, error } = useQuery(GetPermissionFlagsDocument, {
     fetchPolicy: 'cache-and-network',
   });
   const { getIcon } = useIcons();
@@ -35,13 +36,16 @@ export const useRolePermissionFlagConfig = ({
       isToolPermission: permissionType === 'tool',
     }));
 
-  return [
-    ...standardPermissionsConfig.map((permission) => ({
-      ...permission,
-      applicationId: permissionFlags.find(
-        (permissionFlag) => permissionFlag.key === permission.key,
-      )?.applicationId,
-    })),
-    ...applicationPermissionsConfig,
-  ];
+  return {
+    isReady: !loading && !isDefined(error) && isDefined(data),
+    permissions: [
+      ...standardPermissionsConfig.map((permission) => ({
+        ...permission,
+        applicationId: permissionFlags.find(
+          (permissionFlag) => permissionFlag.key === permission.key,
+        )?.applicationId,
+      })),
+      ...applicationPermissionsConfig,
+    ],
+  };
 };

@@ -6,7 +6,7 @@ import { SettingsRolePermissionsToolSection } from '@/settings/roles/role-permis
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { MockedProvider } from '@apollo/client/testing/react';
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
@@ -22,7 +22,11 @@ const APP_TOOL_FLAG = 'APP_SEND_NOTIFICATION';
 const renderPermissionSections = ({
   isEditable = true,
   roleOverrides = {},
+  queryFails = false,
+  queryDelay = 0,
 }: {
+  queryFails?: boolean;
+  queryDelay?: number;
   isEditable?: boolean;
   roleOverrides?: Partial<RoleWithPartialMembers>;
 } = {}) => {
@@ -63,6 +67,8 @@ const renderPermissionSections = ({
         mocks={[
           {
             request: { query: GetPermissionFlagsDocument },
+            delay: queryDelay,
+            error: queryFails ? new Error('Metadata unavailable') : undefined,
             result: {
               data: {
                 getPermissionFlags: [
@@ -166,6 +172,43 @@ describe('role permission flag sections', () => {
       ).not.toBeInTheDocument();
     },
   );
+
+  it('disables bulk selection until all application flags have loaded', async () => {
+    renderPermissionSections({ queryDelay: 50 });
+
+    for (const checkbox of screen.getAllByRole('checkbox', {
+      name: 'Toggle all permissions',
+    })) {
+      expect(checkbox).toHaveAttribute('aria-disabled', 'true');
+    }
+
+    await screen.findByText('Configure notifications');
+
+    for (const checkbox of screen.getAllByRole('checkbox', {
+      name: 'Toggle all permissions',
+    })) {
+      expect(checkbox).not.toHaveAttribute('aria-disabled', 'true');
+    }
+  });
+
+  it('keeps bulk selection disabled when flag metadata fails to load', async () => {
+    jest.useFakeTimers();
+
+    try {
+      renderPermissionSections({ queryFails: true });
+      await act(async () => {
+        await jest.advanceTimersByTimeAsync(100);
+      });
+
+      for (const checkbox of screen.getAllByRole('checkbox', {
+        name: 'Toggle all permissions',
+      })) {
+        expect(checkbox).toHaveAttribute('aria-disabled', 'true');
+      }
+    } finally {
+      jest.useRealTimers();
+    }
+  });
 
   it('adds and removes application flags using their custom keys', async () => {
     const user = userEvent.setup();

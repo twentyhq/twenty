@@ -10,6 +10,7 @@ import { type ReactNode } from 'react';
 import {
   GetRolesDocument,
   UpsertPermissionFlagsDocument,
+  UpdateOneRoleDocument,
 } from '~/generated-metadata/graphql';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 
@@ -17,7 +18,11 @@ const ROLE_ID = 'role-id';
 const SCOPE_ID = 'role-editor';
 const PERMISSION_FLAG_KEY = 'APP_SEND_NOTIFICATION';
 
-const setup = ({ fails = false } = {}) => {
+const setup = ({
+  fails = false,
+  partialFailure = false,
+  refreshFails = false,
+} = {}) => {
   const store = createStore();
   const draftRoleAtom = settingsDraftRoleFamilyState.getAtom(ROLE_ID, SCOPE_ID);
   const persistedRoleAtom =
@@ -30,6 +35,7 @@ const setup = ({ fails = false } = {}) => {
   };
   const draftRole = {
     ...persistedRole,
+    ...(partialFailure ? { label: 'Updated role' } : {}),
     permissionFlags: [
       { id: 'temporary-id', roleId: ROLE_ID, flag: PERMISSION_FLAG_KEY },
     ],
@@ -55,6 +61,10 @@ const setup = ({ fails = false } = {}) => {
         <MockedProvider
           mocks={[
             {
+              request: { query: UpdateOneRoleDocument, variables: () => true },
+              error: new Error('Role update failed'),
+            },
+            {
               request: {
                 query: UpsertPermissionFlagsDocument,
                 variables: {
@@ -76,7 +86,13 @@ const setup = ({ fails = false } = {}) => {
             },
             {
               request: { query: GetRolesDocument },
-              result: { data: { getRoles: [savedRole] } },
+              ...(refreshFails
+                ? { error: new Error('Refresh failed') }
+                : {
+                    result: {
+                      data: { getRoles: [fails ? persistedRole : savedRole] },
+                    },
+                  }),
               maxUsageCount: 2,
             },
           ]}
@@ -143,6 +159,109 @@ describe('useSaveDraftRoleToDB', () => {
     ).toEqual({
       label: 'Edited during save',
     });
+  });
+
+  it('keeps canonical IDs when adding a flag during save and then undoing it', async () => {
+    const { result, store, draftRoleAtom, persistedRoleAtom, savedRole } =
+      setup();
+    const addedFlag = { id: 'new-id', roleId: ROLE_ID, flag: 'APP_NEW_FLAG' };
+
+    await act(async () => {
+      const saving = result.current.saveDraftRoleToDB();
+      store.set(draftRoleAtom, (draft) => ({
+        ...draft,
+        permissionFlags: [...(draft.permissionFlags ?? []), addedFlag],
+      }));
+      await saving;
+    });
+
+    expect(store.get(draftRoleAtom).permissionFlags).toEqual([
+      ...savedRole.permissionFlags,
+      addedFlag,
+    ]);
+
+    act(() => {
+      store.set(draftRoleAtom, (draft) => ({
+        ...draft,
+        permissionFlags: draft.permissionFlags?.filter(
+          (permission) => permission.flag !== addedFlag.flag,
+        ),
+      }));
+    });
+
+    expect(
+      getDirtyFields(store.get(draftRoleAtom), store.get(persistedRoleAtom)),
+    ).toEqual({});
+  });
+
+  it('preserves removal of a flag while its save is pending', async () => {
+    const { result, store, draftRoleAtom, persistedRoleAtom, savedRole } =
+      setup();
+
+    await act(async () => {
+      const saving = result.current.saveDraftRoleToDB();
+      store.set(draftRoleAtom, (draft) => ({ ...draft, permissionFlags: [] }));
+      await saving;
+    });
+
+    expect(store.get(persistedRoleAtom)?.permissionFlags).toEqual(
+      savedRole.permissionFlags,
+    );
+    expect(store.get(draftRoleAtom).permissionFlags).toEqual([]);
+  });
+
+  it('refreshes successful mutations after a later mutation fails', async () => {
+    const { result, store, draftRoleAtom, persistedRoleAtom, savedRole } =
+      setup({ partialFailure: true });
+
+    await act(async () => {
+      await expect(result.current.saveDraftRoleToDB()).rejects.toThrow(
+        'Role update failed',
+      );
+    });
+
+    expect(store.get(persistedRoleAtom)).toEqual(savedRole);
+    expect(store.get(draftRoleAtom).permissionFlags).toEqual(
+      savedRole.permissionFlags,
+    );
+    expect(
+      getDirtyFields(store.get(draftRoleAtom), store.get(persistedRoleAtom)),
+    ).toEqual({ label: 'Updated role' });
+  });
+
+  it('preserves concurrent reversals after a partial save fails', async () => {
+    const { result, store, draftRoleAtom, persistedRoleAtom, savedRole } =
+      setup({ partialFailure: true });
+
+    await act(async () => {
+      const saving = result.current.saveDraftRoleToDB();
+      store.set(draftRoleAtom, (draft) => ({
+        ...draft,
+        label: 'Test role',
+        permissionFlags: [],
+      }));
+      await expect(saving).rejects.toThrow('Role update failed');
+    });
+
+    expect(store.get(persistedRoleAtom)).toEqual(savedRole);
+    expect(
+      getDirtyFields(store.get(draftRoleAtom), store.get(persistedRoleAtom)),
+    ).toEqual({ permissionFlags: [] });
+  });
+
+  it('preserves the original save error and draft if refreshing also fails', async () => {
+    const { result, store, draftRoleAtom, draftRole } = setup({
+      fails: true,
+      refreshFails: true,
+    });
+
+    await act(async () => {
+      await expect(result.current.saveDraftRoleToDB()).rejects.toThrow(
+        'Save failed',
+      );
+    });
+
+    expect(store.get(draftRoleAtom)).toEqual(draftRole);
   });
 
   it('keeps the draft dirty when saving fails', async () => {

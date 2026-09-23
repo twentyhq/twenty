@@ -1,9 +1,11 @@
+import { settingsRoleEditorPersistedRoleFamilyState } from '@/settings/roles/states/settingsRoleEditorPersistedRoleFamilyState';
 import { useUpsertRowLevelPermissionPredicatesMutation } from '@/settings/roles/graphql/hooks/useUpsertRowLevelPermissionPredicatesMutation';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
+import { reconcileRoleDraft } from '@/settings/roles/role/utils/reconcileRoleDraft';
 import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
@@ -475,25 +477,61 @@ export const useSaveDraftRoleToDB = ({
       );
       const submittedDraftRole = store.get(draftRoleAtom);
 
-      await updateExistingRole();
+      const persistedRoleBeforeSave =
+        store.get(settingsPersistedRoleFamilyState.atomFamily(roleId)) ??
+        submittedDraftRole;
+      let saveError: unknown;
+      let saveFailed = false;
 
-      const { data } = await apolloClient.query({
-        query: GetRolesDocument,
-        fetchPolicy: 'network-only',
-      });
-      const savedRole = data?.getRoles.find((role) => role.id === roleId);
+      try {
+        await updateExistingRole();
+      } catch (error) {
+        saveFailed = true;
+        saveError = error;
+      }
 
-      if (isDefined(savedRole)) {
-        const unsavedChanges = getDirtyFields(
-          store.get(draftRoleAtom),
-          submittedDraftRole,
-        );
+      try {
+        const { data } = await apolloClient.query({
+          query: GetRolesDocument,
+          fetchPolicy: 'network-only',
+        });
+        const savedRole = data?.getRoles.find((role) => role.id === roleId);
 
-        store.set(
-          settingsPersistedRoleFamilyState.atomFamily(roleId),
-          savedRole,
-        );
-        store.set(draftRoleAtom, { ...savedRole, ...unsavedChanges });
+        if (isDefined(savedRole)) {
+          const submittedRoleAfterSave = saveFailed
+            ? reconcileRoleDraft({
+                savedRole,
+                baselineRole: persistedRoleBeforeSave,
+                draftRole: submittedDraftRole,
+              })
+            : savedRole;
+          const reconciledDraftRole = reconcileRoleDraft({
+            savedRole: submittedRoleAfterSave,
+            baselineRole: submittedDraftRole,
+            draftRole: store.get(draftRoleAtom),
+          });
+
+          store.set(
+            settingsRoleEditorPersistedRoleFamilyState.getAtom(
+              roleId,
+              routedFlowStateScopeId,
+            ),
+            savedRole,
+          );
+          store.set(
+            settingsPersistedRoleFamilyState.atomFamily(roleId),
+            savedRole,
+          );
+          store.set(draftRoleAtom, reconciledDraftRole);
+        }
+      } catch (error) {
+        if (!saveFailed) {
+          throw error;
+        }
+      }
+
+      if (saveFailed) {
+        throw saveError;
       }
     }
   };
