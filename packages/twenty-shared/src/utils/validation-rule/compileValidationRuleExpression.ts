@@ -2,6 +2,7 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { evaluateValidationRuleExpression } from '@/utils/validation-rule/evaluateValidationRuleExpression';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
 
@@ -46,6 +47,17 @@ export const compileValidationRuleExpression = ({
     }
 
     bindings = { ...bindings, ...resolution.bindings };
+  }
+
+  const emptyRecordEvaluation = evaluateValidationRuleExpression({
+    expression,
+    record: {},
+    fields,
+    now: new Date().toISOString(),
+  });
+
+  if (emptyRecordEvaluation.status === 'errored') {
+    return { isValid: false, errorMessage: emptyRecordEvaluation.errorMessage };
   }
 
   return { isValid: true, bindings };

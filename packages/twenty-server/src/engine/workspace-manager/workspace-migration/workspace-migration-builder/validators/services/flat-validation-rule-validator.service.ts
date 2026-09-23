@@ -46,6 +46,12 @@ export class FlatValidationRuleValidatorService {
         message: t`Validation rule object not found`,
         userFriendlyMessage: msg`Validation rule object not found`,
       });
+    } else if (flatObjectMetadata.isSystem) {
+      errors.push({
+        code: ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_INPUT,
+        message: t`Validation rules cannot be added to system objects`,
+        userFriendlyMessage: msg`Validation rules cannot be added to system objects`,
+      });
     }
 
     const errorFieldMetadataUniversalIdentifier =

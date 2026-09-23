@@ -993,14 +993,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     await this.validateWrittenRecordsAgainstValidationRulesOrThrow({
       recordIds: insertedIds,
       inputIndexByRecordId: new Map(
-        rawRows.length === records.length
-          ? insertedIds.map((insertedId, inputIndex) => [
+        records.every((record) => isNonEmptyString(record.id))
+          ? records.map((record, inputIndex) => [String(record.id), inputIndex])
+          : insertedIds.map((insertedId, inputIndex) => [
               insertedId,
               inputIndex,
-            ])
-          : records.flatMap((record, inputIndex) =>
-              isNonEmptyString(record.id) ? [[record.id, inputIndex]] : [],
-            ),
+            ]),
       ),
     });
 

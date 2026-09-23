@@ -120,12 +120,15 @@ const SidePanelRecordCreationForm = ({
     });
 
   const updateDraftRecord = (gqlFieldName: string, value: JsonValue) => {
-    const nextDraftRecord = { ...draftRecord, [gqlFieldName]: value };
-
-    setRecordCreationFormDraft(nextDraftRecord);
+    setRecordCreationFormDraft((previousDraftRecord) => ({
+      ...(previousDraftRecord ?? initialDraftRecord),
+      [gqlFieldName]: value,
+    }));
 
     if (validationRuleViolations.length > 0) {
-      setValidationRuleViolations(computeViolations(nextDraftRecord));
+      setValidationRuleViolations(
+        computeViolations({ ...draftRecord, [gqlFieldName]: value }),
+      );
     }
   };
 

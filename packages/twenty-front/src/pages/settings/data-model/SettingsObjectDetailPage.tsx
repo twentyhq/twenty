@@ -132,7 +132,7 @@ export const SettingsObjectDetailPage = () => {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.VALIDATION_RULES,
       title: t`Validation`,
       Icon: IconListCheck,
-      hide: objectMetadataItem.isRemote,
+      hide: objectMetadataItem.isRemote || objectMetadataItem.isSystem,
     },
   ];
 

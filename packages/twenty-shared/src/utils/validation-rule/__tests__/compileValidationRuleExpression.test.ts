@@ -108,6 +108,14 @@ describe('compileValidationRuleExpression', () => {
     });
   });
 
+  it('should reject an expression that does not return true or false', () => {
+    expect(compile('stage')).toEqual({
+      isValid: false,
+      errorMessage: 'Expression did not return true or false',
+    });
+    expect(compile('amount.amountMicros + 1').isValid).toBe(false);
+  });
+
   it('should reject assignments', () => {
     expect(compile('stage = "WON"').isValid).toBe(false);
   });

@@ -19,9 +19,11 @@ const getRecordValidationRuleUserFriendlyMessage = ({
 }): MessageDescriptor => {
   switch (code) {
     case RecordValidationRuleExceptionCode.VALIDATION_RULE_VIOLATION: {
-      const ruleMessage = violations[0]?.message ?? '';
-
-      return { id: ruleMessage, message: ruleMessage };
+      return {
+        id: 'validation-rule-violation',
+        message: '{ruleMessage}',
+        values: { ruleMessage: violations[0]?.message ?? '' },
+      };
     }
     case RecordValidationRuleExceptionCode.VALIDATION_RULE_EVALUATION_FAILED:
       return msg`A validation rule could not be evaluated. Ask an admin to review it.`;
