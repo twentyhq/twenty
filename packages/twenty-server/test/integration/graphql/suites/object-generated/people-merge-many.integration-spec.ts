@@ -373,6 +373,67 @@ describe('people merge resolvers (integration)', () => {
     });
   });
 
+  describe('merging with a partial response selection', () => {
+    it('should merge every field even when the mutation only selects the id', async () => {
+      const createPersonsResponse = await makeGraphqlAPIRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id',
+          data: [
+            { name: { firstName: 'Partial', lastName: 'Priority' } },
+            {
+              name: { firstName: 'Partial', lastName: 'Duplicate' },
+              jobTitle: 'CTO',
+              intro: 'Intro from the duplicate',
+              emails: {
+                primaryEmail: 'duplicate@example.com',
+                additionalEmails: ['duplicate.alt@example.com'],
+              },
+            },
+          ],
+        }),
+      );
+
+      expect(createPersonsResponse.body.errors).toBeUndefined();
+
+      const [priorityPerson, duplicatePerson] =
+        createPersonsResponse.body.data.createPeople;
+
+      createdPersonIdsForCleaning.push(priorityPerson.id, duplicatePerson.id);
+
+      const mergeResponse = await makeGraphqlAPIRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id',
+          ids: [priorityPerson.id, duplicatePerson.id],
+          conflictPriorityIndex: 0,
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+
+      const findMergedPersonResponse = await makeGraphqlAPIRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          filter: { id: { eq: priorityPerson.id } },
+        }),
+      );
+
+      expect(findMergedPersonResponse.body.errors).toBeUndefined();
+
+      const mergedPerson = findMergedPersonResponse.body.data.person;
+
+      expect(mergedPerson.jobTitle).toBe('CTO');
+      expect(mergedPerson.intro).toBe('Intro from the duplicate');
+      expect(mergedPerson.emails.primaryEmail).toBe('duplicate@example.com');
+      expect(mergedPerson.emails.additionalEmails).toEqual(
+        expect.arrayContaining(['duplicate.alt@example.com']),
+      );
+    });
+  });
+
   describe('merging composite fields', () => {
     it('should merge emails composite field correctly', async () => {
       const createPersonsOperation = createManyOperationFactory({
