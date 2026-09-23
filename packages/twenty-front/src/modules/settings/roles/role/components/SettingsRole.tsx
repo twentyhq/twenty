@@ -26,8 +26,7 @@ import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconLock, IconSettings, IconUserPlus } from 'twenty-ui/icon';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getDirtyFields } from '~/utils/getDirtyFields';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
 
 type SettingsRoleProps = {
   roleId: string;
@@ -98,7 +97,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     },
   ];
 
-  const isDirty = !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
+  const dirtyFields = getRoleDirtyFields(
+    settingsDraftRole,
+    settingsPersistedRole,
+  );
+  const isDirty = Object.keys(dirtyFields).length > 0;
 
   const handleCancel = () => {
     if (isCreateMode) {
@@ -113,11 +116,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const handleSave = async () => {
     setIsSaving(true);
-
-    const dirtyFields = getDirtyFields(
-      settingsDraftRole,
-      settingsPersistedRole,
-    );
 
     if (isDefined(dirtyFields.label) && dirtyFields.label === '') {
       enqueueToast({
