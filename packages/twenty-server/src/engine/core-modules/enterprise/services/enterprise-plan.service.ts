@@ -204,9 +204,8 @@ export class EnterprisePlanService implements OnModuleInit {
     return this.isCachedValidityPayloadValid();
   }
 
-  // Sign-in is the one gate a user meets before anything else in the process
-  // has read the license, so it waits for a due reload rather than turning a
-  // first sign-in away on a copy that has just aged out.
+  // Sign-in waits for a due reload rather than turning a first sign-in away on
+  // a copy that has just aged out.
   async isValidWithFreshToken(): Promise<boolean> {
     if (this.isCachedValidityPayloadValid()) {
       return true;
