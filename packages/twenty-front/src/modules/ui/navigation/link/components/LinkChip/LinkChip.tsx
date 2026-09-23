@@ -1,4 +1,3 @@
-import { createElement } from 'react';
 import { css } from '@linaria/core';
 import { Link } from 'react-router-dom';
 import { type LinkChipProps } from './types/LinkChipProps';
@@ -53,7 +52,7 @@ export const LinkChip = ({
         target={target}
         rel={target === '_blank' ? 'noopener noreferrer' : undefined}
       >
-        {createElement(Chip, { clickable: true, ...props })}
+        <Chip clickable {...props} />
       </Link>
     </span>
   );
