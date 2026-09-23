@@ -122,12 +122,12 @@ export class CodeInterpreterTool implements Tool {
         isDefined(authContext) && isUserAuthContext(authContext)
           ? authContext.application?.id
           : undefined;
-      const sessionToken = await this.generateSessionToken(
+      const sessionToken = await this.generateSessionToken({
         workspaceId,
         userId,
         userWorkspaceId,
         applicationId,
-      );
+      });
 
       this.logger.debug(
         `MCP session: workspaceId=${workspaceId}, userId=${userId}, userWorkspaceId=${userWorkspaceId}, serverUrl=${serverUrl}`,
@@ -315,12 +315,17 @@ export class CodeInterpreterTool implements Tool {
     return inputFiles;
   }
 
-  private async generateSessionToken(
-    workspaceId: string,
-    userId?: string,
-    userWorkspaceId?: string,
-    applicationId?: string,
-  ): Promise<string> {
+  private async generateSessionToken({
+    workspaceId,
+    userId,
+    userWorkspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    userId?: string;
+    userWorkspaceId?: string;
+    applicationId?: string;
+  }): Promise<string> {
     const payload: AccessTokenJwtPayload | ApplicationAccessTokenJwtPayload =
       isDefined(applicationId)
         ? {

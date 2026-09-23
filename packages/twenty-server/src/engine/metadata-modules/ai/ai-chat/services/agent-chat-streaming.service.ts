@@ -543,7 +543,7 @@ export class AgentChatStreamingService {
       !answers.some(
         (answer) =>
           isNonEmptyString(answer.freeText?.trim()) ||
-          answer.selectedOptionIndices.length > 0,
+          isNonEmptyArray(answer.selectedOptionIndices),
       ) &&
       !isNonEmptyArray(fileAttachments)
     ) {
