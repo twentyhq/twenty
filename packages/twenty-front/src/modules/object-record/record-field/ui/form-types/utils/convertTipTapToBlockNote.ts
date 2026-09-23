@@ -6,6 +6,26 @@ import { type JSONContent } from '@tiptap/core';
 const isSupportedTextStyle = (markType: string | undefined) =>
   RECORD_RICH_TEXT_TEXT_STYLES.some((style) => style === markType);
 
+const buildListItemProps = ({
+  listType,
+  item,
+  isFirstItem,
+  start,
+}: {
+  listType: string | undefined;
+  item: JSONContent;
+  isFirstItem: boolean;
+  start: unknown;
+}): Record<string, unknown> => {
+  if (listType === 'taskList') {
+    return { checked: item.attrs?.checked === true };
+  }
+  if (isFirstItem && typeof start === 'number' && start !== 1) {
+    return { start };
+  }
+  return {};
+};
+
 const convertInlineNodes = (nodes: JSONContent[]): Record<string, unknown>[] =>
   nodes.map((node) => {
     if (node.type === 'hardBreak') {
@@ -74,12 +94,12 @@ export const convertTipTapToBlockNote = (
           }
           return {
             type: listItemType,
-            props:
-              node.type === 'taskList'
-                ? { checked: item.attrs?.checked === true }
-                : index === 0 && typeof start === 'number' && start !== 1
-                  ? { start }
-                  : {},
+            props: buildListItemProps({
+              listType: node.type,
+              item,
+              isFirstItem: index === 0,
+              start,
+            }),
             content: convertInlineNodes(paragraph.content ?? []),
             children: convertTipTapToBlockNote(children),
           };
