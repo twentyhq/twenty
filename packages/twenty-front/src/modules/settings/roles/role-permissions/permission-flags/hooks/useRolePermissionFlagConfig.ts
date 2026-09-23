@@ -1,4 +1,4 @@
-import { permissionFlagsSelector } from '@/metadata-store/states/permissionFlagsSelector';
+import { settingsPermissionFlagsState } from '@/settings/roles/states/settingsPermissionFlagsState';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIcons } from 'twenty-ui/icon';
@@ -11,11 +11,13 @@ export const useRolePermissionFlagConfig = ({
   permissionType: 'settings' | 'tool';
   standardPermissionsConfig: SettingsRolePermissionsSettingPermission[];
 }) => {
-  const permissionFlags = useAtomStateValue(permissionFlagsSelector);
+  const settingsPermissionFlags = useAtomStateValue(
+    settingsPermissionFlagsState,
+  );
   const { getIcon } = useIcons();
   const standardPermissionKeys: string[] = Object.values(PermissionFlagType);
 
-  const applicationPermissionsConfig = permissionFlags
+  const applicationPermissionsConfig = settingsPermissionFlags
     .filter(
       (permissionFlag) =>
         permissionFlag.permissionType === permissionType &&
@@ -33,7 +35,7 @@ export const useRolePermissionFlagConfig = ({
   return [
     ...standardPermissionsConfig.map((permission) => ({
       ...permission,
-      applicationId: permissionFlags.find(
+      applicationId: settingsPermissionFlags.find(
         (permissionFlag) => permissionFlag.key === permission.key,
       )?.applicationId,
     })),

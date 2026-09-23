@@ -15,7 +15,6 @@ const METADATA_NAME_TO_ENTITY_KEY: Record<string, MetadataEntityKey> = {
   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroups',
   logicFunction: 'logicFunctions',
   role: 'roles',
-  permissionFlag: 'permissionFlags',
   roleTarget: 'roleTargets',
   agent: 'agents',
   skill: 'skills',

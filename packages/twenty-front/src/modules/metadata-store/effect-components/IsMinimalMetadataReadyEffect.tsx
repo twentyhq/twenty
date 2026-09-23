@@ -30,10 +30,6 @@ export const IsMinimalMetadataReadyEffect = () => {
     metadataStoreState,
     'viewFields',
   );
-  const metadataStorePermissionFlags = useAtomFamilyStateValue(
-    metadataStoreState,
-    'permissionFlags',
-  );
   const setIsMinimalMetadataReady = useSetAtomState(
     isMinimalMetadataReadyState,
   );
@@ -53,13 +49,7 @@ export const IsMinimalMetadataReadyEffect = () => {
       metadataStoreViews.status === 'up-to-date' &&
       metadataStoreViewFields.status === 'up-to-date';
 
-    const arePermissionFlagsLoaded =
-      metadataStorePermissionFlags.status === 'up-to-date';
-
-    if (
-      !areObjectsLoaded ||
-      (hasProvisionedWorkspace && !arePermissionFlagsLoaded)
-    ) {
+    if (!areObjectsLoaded) {
       setIsMinimalMetadataReady(false);
       return;
     }
@@ -78,7 +68,6 @@ export const IsMinimalMetadataReadyEffect = () => {
     metadataStoreFieldMetadataItems.status,
     metadataStoreViews.status,
     metadataStoreViewFields.status,
-    metadataStorePermissionFlags.status,
     setIsMinimalMetadataReady,
   ]);
 

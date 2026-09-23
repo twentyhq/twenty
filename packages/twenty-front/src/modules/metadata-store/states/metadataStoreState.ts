@@ -26,7 +26,6 @@ export const ALL_METADATA_ENTITY_KEYS = [
   'frontComponents',
   'webhooks',
   'roles',
-  'permissionFlags',
   'roleTargets',
   'agents',
   'skills',
