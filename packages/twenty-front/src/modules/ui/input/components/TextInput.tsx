@@ -270,6 +270,7 @@ const TextInputComponent = forwardRef<
 >(
   (
     {
+      'aria-label': ariaLabel,
       className,
       label,
       value,
@@ -357,6 +358,7 @@ const TextInputComponent = forwardRef<
             )}
 
             <StyledInput
+              aria-label={ariaLabel}
               id={instanceId}
               width={width}
               data-testid={dataTestId}

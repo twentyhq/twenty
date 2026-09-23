@@ -592,6 +592,7 @@
                 "ui/components/input/light-icon-button",
                 "ui/components/section",
                 "ui/components/settings-row",
+                "ui/components/dropdown",
                 "ui/components/tab-button",
                 "ui/components/code-editor",
                 "ui/components/toast"
