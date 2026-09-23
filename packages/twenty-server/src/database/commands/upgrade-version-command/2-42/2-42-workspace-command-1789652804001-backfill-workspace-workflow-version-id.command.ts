@@ -5,6 +5,7 @@ import { type QueryRunner } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { buildWorkspaceWorkflowVersionIdBackfillPredicate } from 'src/database/commands/upgrade-version-command/2-42/utils/build-workspace-workflow-version-id-backfill-predicate.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -48,12 +49,8 @@ export class BackfillWorkspaceWorkflowVersionIdCommand extends ProvisionedWorksp
         return;
       }
 
-      const predicate = `
-        FROM "${schema}"."workflowVersion" wv
-        WHERE wv."coreWorkflowVersionId" = cv."id"
-          AND wv."deletedAt" IS NULL
-          AND cv."workspaceId" = $1
-          AND cv."workspaceWorkflowVersionId" IS DISTINCT FROM wv."id"`;
+      const predicate =
+        buildWorkspaceWorkflowVersionIdBackfillPredicate(schema);
 
       if (options.dryRun ?? false) {
         const [{ count }] = await queryRunner.query(

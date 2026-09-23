@@ -5,6 +5,7 @@ import { type QueryRunner } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { buildWorkspaceWorkflowVersionIdBackfillPredicate } from 'src/database/commands/upgrade-version-command/2-42/utils/build-workspace-workflow-version-id-backfill-predicate.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -40,56 +41,59 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
       const schema = getWorkspaceSchemaName(workspaceId);
 
       if (!(await queryRunner.hasTable(`${schema}.workflowVersion`))) {
-        this.logger.log(`Workflow version table absent in workspace ${workspaceId}, skipping backfill`);
+        this.logger.log(
+          `Workflow version table absent in workspace ${workspaceId}, skipping backfill`,
+        );
 
         return;
       }
 
       if (!(await this.hasRequiredColumns(queryRunner, schema))) {
-        throw new Error(`Workflow execution schema is not ready in workspace ${workspaceId}`);
+        throw new Error(
+          `Workflow execution schema is not ready in workspace ${workspaceId}`,
+        );
       }
 
       await queryRunner.startTransaction();
 
-      const invalidMappings = await queryRunner.query(
-        `SELECT wv.id FROM "${schema}"."workflowVersion" wv
-         LEFT JOIN core."workflowVersion" cv ON cv.id = wv."coreWorkflowVersionId"
-         LEFT JOIN core."workflow" cw ON cw.id = cv."coreWorkflowId"
-         WHERE (wv."deletedAt" IS NULL OR cv.id IS NOT NULL) AND (
-           cv.id IS NULL OR cv."workspaceId" <> $1 OR
-           cv."workflowId" IS DISTINCT FROM wv."workflowId" OR
-           cw.id IS NULL OR cw."workspaceId" <> $1 OR
-           cw."workspaceWorkflowId" IS DISTINCT FROM wv."workflowId" OR
-           cv."workspaceWorkflowVersionId" IS DISTINCT FROM wv.id
-         ) LIMIT 1`,
-        [workspaceId],
-      );
-      const duplicates = await queryRunner.query(
-        `SELECT wv."coreWorkflowVersionId" FROM "${schema}"."workflowVersion" wv
-         JOIN core."workflowVersion" cv ON cv.id = wv."coreWorkflowVersionId" AND cv."workspaceId" = $1
-         GROUP BY wv."coreWorkflowVersionId" HAVING count(*) > 1 LIMIT 1`,
-        [workspaceId],
-      );
-
-      if (invalidMappings.length > 0 || duplicates.length > 0) {
-        throw new Error(`Missing or conflicting workflow version mapping in workspace ${workspaceId}`);
+      if (options.dryRun) {
+        await queryRunner.query(
+          `UPDATE core."workflowVersion" cv
+           SET "workspaceWorkflowVersionId" = wv."id"
+           ${buildWorkspaceWorkflowVersionIdBackfillPredicate(schema)}`,
+          [workspaceId],
+        );
       }
 
-      const conflictingRuns = await queryRunner.query(
-        `SELECT r.id FROM "${schema}"."workflowRun" r
-         LEFT JOIN core."workflowVersion" cv
-           ON cv."workspaceId" = $1 AND cv."workspaceWorkflowVersionId" = r."workflowVersionId"
-         LEFT JOIN core."workflow" cw
-           ON cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = r."workflowId"
-         WHERE (r."coreWorkflowVersionId" IS NOT NULL AND cv.id IS NOT NULL AND r."coreWorkflowVersionId" <> cv.id)
-            OR (r."coreWorkflowId" IS NOT NULL AND cw.id IS NOT NULL AND r."coreWorkflowId" <> cw.id)
-            OR (cv.id IS NOT NULL AND cw.id IS NOT NULL AND cv."coreWorkflowId" <> cw.id)
-         LIMIT 1`,
-        [workspaceId],
-      );
+      const invalidMappings: { id: string; reason: string }[] =
+        await queryRunner.query(
+          `SELECT wv.id, CASE
+             WHEN cv.id IS NULL THEN 'missing core version'
+             WHEN cv."workspaceWorkflowVersionId" IS DISTINCT FROM wv.id THEN 'version alias mismatch'
+             WHEN cv."workflowId" IS DISTINCT FROM wv."workflowId" THEN 'workflow mismatch'
+             WHEN cw.id IS NULL THEN 'missing core workflow'
+             ELSE 'core workflow mismatch'
+           END AS reason
+           FROM "${schema}"."workflowVersion" wv
+           JOIN "${schema}"."workflow" w ON w.id = wv."workflowId" AND w."deletedAt" IS NULL
+           LEFT JOIN core."workflowVersion" cv ON cv.id = wv."coreWorkflowVersionId" AND cv."workspaceId" = $1
+           LEFT JOIN core."workflow" cw ON cw.id = cv."coreWorkflowId" AND cw."workspaceId" = $1
+           WHERE wv."deletedAt" IS NULL AND (
+             cv.id IS NULL OR
+             cv."workspaceWorkflowVersionId" IS DISTINCT FROM wv.id OR
+             cv."workflowId" IS DISTINCT FROM wv."workflowId" OR
+             cw.id IS NULL OR
+             cw."workspaceWorkflowId" IS DISTINCT FROM wv."workflowId"
+           ) LIMIT 10`,
+          [workspaceId],
+        );
 
-      if (conflictingRuns.length > 0) {
-        throw new Error(`Conflicting workflow run core ids in workspace ${workspaceId}`);
+      if (invalidMappings.length > 0) {
+        throw new Error(
+          `Missing or conflicting workflow version mapping in workspace ${workspaceId}: ${invalidMappings
+            .map(({ id, reason }) => `${id} (${reason})`)
+            .join(', ')}`,
+        );
       }
 
       await queryRunner.query(
@@ -97,7 +101,10 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          SET "coreWorkflowVersionId" = cv.id
          FROM core."workflowVersion" cv
          WHERE cv."workspaceId" = $1 AND cv."workspaceWorkflowVersionId" = r."workflowVersionId"
-           AND r."coreWorkflowVersionId" IS NULL`,
+           AND NOT EXISTS (
+             SELECT 1 FROM core."workflowVersion" stored
+             WHERE stored.id = r."coreWorkflowVersionId" AND stored."workspaceId" = $1
+           )`,
         [workspaceId],
       );
       await queryRunner.query(
@@ -105,7 +112,11 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          SET "coreWorkflowId" = cv."coreWorkflowId"
          FROM core."workflowVersion" cv
          WHERE cv."workspaceId" = $1 AND cv.id = r."coreWorkflowVersionId"
-           AND r."coreWorkflowId" IS NULL`,
+           AND cv."coreWorkflowId" IS NOT NULL
+           AND NOT EXISTS (
+             SELECT 1 FROM core."workflow" stored
+             WHERE stored.id = r."coreWorkflowId" AND stored."workspaceId" = $1
+           )`,
         [workspaceId],
       );
       await queryRunner.query(
@@ -113,37 +124,50 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          SET "coreWorkflowId" = cw.id
          FROM core."workflow" cw
          WHERE cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = r."workflowId"
-           AND r."coreWorkflowId" IS NULL`,
+           AND NOT EXISTS (
+             SELECT 1 FROM core."workflow" stored
+             WHERE stored.id = r."coreWorkflowId" AND stored."workspaceId" = $1
+           )`,
         [workspaceId],
       );
 
-      const unmappedPendingRuns = await queryRunner.query(
+      const unmappedPendingRuns: { id: string }[] = await queryRunner.query(
         `SELECT r.id FROM "${schema}"."workflowRun" r
          LEFT JOIN core."workflowVersion" cv ON cv.id = r."coreWorkflowVersionId" AND cv."workspaceId" = $1
          LEFT JOIN core."workflow" cw ON cw.id = r."coreWorkflowId" AND cw."workspaceId" = $1
          WHERE r."deletedAt" IS NULL AND r.status IN ('NOT_STARTED', 'ENQUEUED', 'RUNNING')
            AND (cv.id IS NULL OR cw.id IS NULL OR cv."coreWorkflowId" <> cw.id)
-         LIMIT 1`,
+         LIMIT 10`,
         [workspaceId],
       );
 
       if (unmappedPendingRuns.length > 0) {
-        throw new Error(`Pending workflow runs have no valid core mapping in workspace ${workspaceId}`);
+        throw new Error(
+          `Pending workflow runs have no valid core mapping in workspace ${workspaceId}: ${unmappedPendingRuns
+            .map(({ id }) => id)
+            .join(', ')}`,
+        );
       }
 
-      const conflictingPublishedVersions = await queryRunner.query(
-        `SELECT cw.id FROM core."workflow" cw
-         LEFT JOIN core."workflowVersion" cv ON cv."workspaceId" = cw."workspaceId"
-           AND cv."workspaceWorkflowVersionId" = cw."lastPublishedVersionId"
-         WHERE cw."workspaceId" = $1 AND cw."lastPublishedVersionId" IS NOT NULL
-           AND (cv.id IS NULL OR cv."coreWorkflowId" <> cw.id OR
-             (cw."lastPublishedCoreWorkflowVersionId" IS NOT NULL AND cw."lastPublishedCoreWorkflowVersionId" <> cv.id))
-         LIMIT 1`,
-        [workspaceId],
-      );
+      const conflictingPublishedVersions: { id: string }[] =
+        await queryRunner.query(
+          `SELECT cw.id FROM core."workflow" cw
+           JOIN "${schema}"."workflow" w ON w.id = cw."workspaceWorkflowId" AND w."deletedAt" IS NULL
+           LEFT JOIN core."workflowVersion" cv ON cv."workspaceId" = cw."workspaceId"
+             AND cv."workspaceWorkflowVersionId" = cw."lastPublishedVersionId"
+           WHERE cw."workspaceId" = $1 AND cw."lastPublishedVersionId" IS NOT NULL
+             AND (cv.id IS NULL OR cv."coreWorkflowId" <> cw.id OR
+               (cw."lastPublishedCoreWorkflowVersionId" IS NOT NULL AND cw."lastPublishedCoreWorkflowVersionId" <> cv.id))
+           LIMIT 10`,
+          [workspaceId],
+        );
 
       if (conflictingPublishedVersions.length > 0) {
-        throw new Error(`Invalid published core version mapping in workspace ${workspaceId}`);
+        throw new Error(
+          `Invalid published core version mapping in workspace ${workspaceId}: ${conflictingPublishedVersions
+            .map(({ id }) => id)
+            .join(', ')}`,
+        );
       }
 
       await queryRunner.query(
@@ -157,13 +181,17 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
 
       if (options.dryRun) {
         await queryRunner.rollbackTransaction();
-        this.logger.log(`[DRY RUN] Workflow execution mappings validated in workspace ${workspaceId}`);
+        this.logger.log(
+          `[DRY RUN] Workflow execution mappings validated in workspace ${workspaceId}`,
+        );
       } else {
         await queryRunner.commitTransaction();
         await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
           'workflowAutomatedTriggerMaps',
         ]);
-        this.logger.log(`Workflow execution mappings backfilled in workspace ${workspaceId}`);
+        this.logger.log(
+          `Workflow execution mappings backfilled in workspace ${workspaceId}`,
+        );
       }
     } catch (error) {
       if (queryRunner.isTransactionActive) {
