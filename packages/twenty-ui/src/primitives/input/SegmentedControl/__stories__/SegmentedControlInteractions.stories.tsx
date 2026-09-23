@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { IconComment, IconHome } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
@@ -70,6 +71,42 @@ const meta: Meta<typeof SegmentedControl> = {
 
 export default meta;
 type Story = StoryObj<typeof SegmentedControl>;
+
+export const WrappedIcons: Story = {
+  args: {
+    'aria-label': 'Start page',
+    defaultValue: 'home',
+    options: [
+      {
+        startIcon: <IconHome data-testid="direct-icon" />,
+        'aria-label': 'Home',
+        value: 'home',
+      },
+      {
+        startIcon: (
+          <span>
+            <IconComment data-testid="wrapped-icon" />
+          </span>
+        ),
+        'aria-label': 'Chat',
+        value: 'chat',
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const directIconBounds = canvas
+      .getByTestId('direct-icon')
+      .getBoundingClientRect();
+    const wrappedIconBounds = canvas
+      .getByTestId('wrapped-icon')
+      .getBoundingClientRect();
+
+    await expect(directIconBounds.width).toBeGreaterThan(0);
+    await expect(wrappedIconBounds.width).toBe(directIconBounds.width);
+    await expect(wrappedIconBounds.height).toBe(directIconBounds.height);
+  },
+};
 
 export const Uncontrolled: Story = {
   play: async ({ canvasElement, args }) => {

@@ -75,7 +75,7 @@
   justify-content: center;
   inline-size: var(--t-spacing-5);
 
-  > svg {
+  svg {
     block-size: calc(var(--t-icon-size-md) * 1px);
     inline-size: calc(var(--t-icon-size-md) * 1px);
   }
