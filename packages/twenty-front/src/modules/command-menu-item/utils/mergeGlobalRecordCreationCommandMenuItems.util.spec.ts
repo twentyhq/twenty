@@ -81,3 +81,116 @@ it('preserves object-scoped creation when a missing template disables replacemen
     }),
   ).toEqual([objectScopedCreationCommand, pageCommand]);
 });
+
+const pinnedCreationCommand = {
+  ...legacyCreationCommand,
+  isPinned: true,
+  label: 'Create Company',
+  shortLabel: 'Create',
+  icon: 'IconPlus',
+};
+const companyCreationCommand = {
+  ...globalRecordCreationCommandMenuItems[0],
+  isPinned: false,
+  label: 'Create Company',
+  shortLabel: null,
+  icon: 'IconBuildingSkyscraper',
+};
+const taskCreationCommand = {
+  ...globalRecordCreationCommandMenuItems[1],
+  isPinned: false,
+  label: 'Create Task',
+  shortLabel: null,
+  icon: 'IconCheckbox',
+};
+const globalCreationCommands = [companyCreationCommand, taskCreationCommand];
+
+const askAiCommand = {
+  ...pageCommand,
+  id: 'ask-ai',
+  isPinned: true,
+  position: 0,
+};
+const pinnedPageCommand = {
+  ...pageCommand,
+  id: 'pinned-page',
+  isPinned: true,
+  position: 5,
+};
+
+it('keeps pinned contextual creation at its position and removes its global duplicate', () => {
+  const result = mergeGlobalRecordCreationCommandMenuItems({
+    commandMenuItems: [pinnedPageCommand, pinnedCreationCommand, askAiCommand],
+    globalRecordCreationCommandMenuItems: globalCreationCommands,
+    shouldDisplayGlobalRecordCreationCommands: true,
+    contextObjectMetadataId: 'company',
+  });
+
+  expect(result).toEqual([
+    askAiCommand,
+    pinnedCreationCommand,
+    pinnedPageCommand,
+    taskCreationCommand,
+  ]);
+  expect(result[1].creationTargetObjectMetadataId).toBeUndefined();
+});
+
+it('follows the configured order when contextual creation is moved below another pinned command', () => {
+  const movedCreationCommand = { ...pinnedCreationCommand, position: 7 };
+
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [movedCreationCommand, pinnedPageCommand],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: true,
+      contextObjectMetadataId: 'company',
+    }),
+  ).toEqual([pinnedPageCommand, movedCreationCommand, taskCreationCommand]);
+});
+
+it('preserves the option to hide the contextual command short label', () => {
+  const result = mergeGlobalRecordCreationCommandMenuItems({
+    commandMenuItems: [{ ...pinnedCreationCommand, shortLabel: null }],
+    globalRecordCreationCommandMenuItems: globalCreationCommands,
+    shouldDisplayGlobalRecordCreationCommands: true,
+    contextObjectMetadataId: 'company',
+  });
+
+  expect(result[0]).toMatchObject({
+    label: 'Create Company',
+    shortLabel: null,
+    icon: 'IconPlus',
+  });
+});
+
+it('does not pin creation for an object without a global creation command', () => {
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [pageCommand, pinnedCreationCommand],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: true,
+      contextObjectMetadataId: 'person',
+    }),
+  ).toEqual([pageCommand, ...globalCreationCommands]);
+});
+
+it('keeps the current object in global creation when contextual creation is unpinned', () => {
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [{ ...pinnedCreationCommand, isPinned: false }],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: true,
+      contextObjectMetadataId: 'company',
+    }),
+  ).toEqual(globalCreationCommands);
+});
+
+it('does not pin creation outside an object context', () => {
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [pageCommand, pinnedCreationCommand],
+      globalRecordCreationCommandMenuItems: globalCreationCommands,
+      shouldDisplayGlobalRecordCreationCommands: true,
+    }),
+  ).toEqual([pageCommand, ...globalCreationCommands]);
+});
