@@ -120,4 +120,6 @@ Primitives provide foundational interaction and presentation. Shared components 
 
 Routing adapters, record formatting, product illustrations, and feature-specific animation belong to `twenty-front`. Implementation parts live in `internal` or `parts` directories and are excluded from published barrels.
 
-Run `node --import tsx scripts/checkModuleOwnership.ts` from this package after changing the public interface. Update `docs/module-ownership.json` when intentionally adding or removing a public React component.
+Run `node --import tsx scripts/checkModuleOwnership.ts` from this package after changing the public interface. When intentionally adding or removing a public React component, regenerate `docs/module-ownership.json` with `node --import tsx scripts/checkModuleOwnership.ts --write` and review the snapshot diff. CI checks the committed snapshot and the dependency boundaries without updating them.
+
+`twenty-ui/testing` includes routing decorators and requires the optional `react-router-dom` peer. The package check verifies each published entry point, allowing that peer only in testing and the Monaco peers only in `twenty-ui/components/code-editor`.

@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 import { globSync } from 'glob';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
@@ -26,6 +26,11 @@ const IMPLEMENTATION_ONLY_PATTERN = /\/(internal|internals|parts)\//;
 const SUPPORT_DIRECTORY_PATTERN = /\/(contexts|hooks)\//;
 const TEST_DIRECTORY_PATTERN = /\/(testing|__tests__|__stories__|__mocks__)\//;
 const TEST_FILE_PATTERN = /\.(stories|test|spec)\.tsx?$/;
+const shouldUpdateSnapshot = process.argv.includes('--write');
+const actualOwnership: Record<keyof typeof ownership, string[]> = {
+  primitives: [],
+  components: [],
+};
 const errors: string[] = [];
 
 for (const layer of ['primitives', 'components'] as const) {
@@ -79,6 +84,12 @@ for (const layer of ['primitives', 'components'] as const) {
         }
       }
     }
+  }
+
+  actualOwnership[layer] = [...actual].sort();
+
+  if (shouldUpdateSnapshot) {
+    continue;
   }
 
   for (const name of expected) {
@@ -140,6 +151,13 @@ if (isNonEmptyArray(errors)) {
   throw new Error(errors.join('\n'));
 }
 
+if (shouldUpdateSnapshot) {
+  writeFileSync(
+    path.join(PACKAGE_ROOT, 'docs/module-ownership.json'),
+    `${JSON.stringify(actualOwnership, null, 2)}\n`,
+  );
+}
+
 process.stdout.write(
-  `Module ownership verified: ${ownership.primitives.length} primitives and ${ownership.components.length} shared components.\n`,
+  `Module ownership verified: ${actualOwnership.primitives.length} primitives and ${actualOwnership.components.length} shared components.\n`,
 );
