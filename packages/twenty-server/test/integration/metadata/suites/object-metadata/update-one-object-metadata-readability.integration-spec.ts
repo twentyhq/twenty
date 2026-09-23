@@ -67,7 +67,11 @@ describe('Object metadata readability update', () => {
     expect(openData.updateOneObject.readability).toBe(MetadataReadability.OPEN);
   });
 
-  it.each([MetadataReadability.SYSTEM, MetadataReadability.APPLICATION])(
+  it.each([
+    MetadataReadability.SYSTEM,
+    MetadataReadability.APPLICATION,
+    MetadataReadability.INHERITED,
+  ])(
     'should reject setting readability to %s',
     async (readability) => {
       const { errors } = await updateOneObjectMetadata({
