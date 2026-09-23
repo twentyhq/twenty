@@ -211,6 +211,7 @@ export type {
 } from './settingsMenuItemManifestType';
 export {
   SETTINGS_MENU_ITEM_SCOPES,
+  isSettingsMenuItemScope,
   DEFAULT_SETTINGS_MENU_ITEM_SCOPE,
 } from './settingsMenuItemManifestType';
 export type { SkillManifest } from './skillManifestType';

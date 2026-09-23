@@ -6,6 +6,11 @@ export const SETTINGS_MENU_ITEM_SCOPES = ['WORKSPACE', 'USER'] as const;
 
 export type SettingsMenuItemScope = (typeof SETTINGS_MENU_ITEM_SCOPES)[number];
 
+export const isSettingsMenuItemScope = (
+  scope: string,
+): scope is SettingsMenuItemScope =>
+  (SETTINGS_MENU_ITEM_SCOPES as readonly string[]).includes(scope);
+
 export const DEFAULT_SETTINGS_MENU_ITEM_SCOPE: SettingsMenuItemScope =
   'WORKSPACE';
 
