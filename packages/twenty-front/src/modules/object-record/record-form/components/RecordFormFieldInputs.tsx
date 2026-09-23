@@ -35,6 +35,7 @@ export const RecordFormFieldInputs = ({
 
       return (
         <FormFieldInput
+          currencyAmountUnit="units"
           key={fieldMetadataItem.id}
           field={formatFieldMetadataItemAsFieldDefinition({
             field: fieldMetadataItem,
