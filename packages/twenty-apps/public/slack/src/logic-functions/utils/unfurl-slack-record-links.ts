@@ -1,12 +1,14 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { SLACK_CHANNEL_SILENCED_SKIP_REASON } from 'src/logic-functions/constants/slack-channel-silenced-skip-reason';
 import { SLACK_UNFURL_MAX_ENTITIES } from 'src/logic-functions/constants/slack-unfurl-max-entities';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { fetchSlackRecordEntities } from 'src/logic-functions/utils/fetch-slack-record-entities';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { isSlackChannelSilenced } from 'src/logic-functions/utils/is-slack-channel-silenced';
 import { parseSlackLinkSharedEvent } from 'src/logic-functions/utils/parse-slack-link-shared-event';
 import { parseTwentyRecordLinks } from 'src/logic-functions/utils/parse-twenty-record-links';
 import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
@@ -28,6 +30,21 @@ export const unfurlSlackRecordLinks = async (
   }
 
   const { unfurlTarget, slackUserId, urls } = parsed.linkShared;
+
+  const client = new CoreApiClient();
+
+  // Slack fires the composer event before the message exists, so it carries
+  // no channel and no rule can be resolved for it.
+  if (unfurlTarget.source === 'conversations_history') {
+    const isSilenced = await isSlackChannelSilenced({
+      client,
+      slackChannelId: unfurlTarget.slackChannelId,
+    });
+
+    if (isSilenced) {
+      return { ok: true, skipped: SLACK_CHANNEL_SILENCED_SKIP_REASON };
+    }
+  }
 
   const workspaceBaseUrls = await fetchWorkspaceBaseUrls();
 
@@ -51,7 +68,6 @@ export const unfurlSlackRecordLinks = async (
   }
 
   const slackClient = slackClientResult.client;
-  const client = new CoreApiClient();
 
   const identity = await fetchSlackUserIdentity({
     client: slackClient,
