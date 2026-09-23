@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.42.0', 1790174500000)
+@RegisteredInstanceCommand('2.43.0', 1790177200000)
 export class AddValidationRuleTableFastInstanceCommand
   implements FastInstanceCommand
 {
