@@ -27,10 +27,10 @@ import {
 } from 'twenty-shared/utils';
 import {
   IconAlertTriangle,
-  IconAdjustments,
   IconDeviceFloppy,
   IconSettings,
   IconVariable,
+  useIcons,
 } from 'twenty-ui/icon';
 import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
@@ -53,6 +53,7 @@ import { getApplicationDescriptionSummary } from '~/pages/settings/applications/
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
+import { getWorkspaceSettingsMenuItems } from '~/pages/settings/applications/utils/getWorkspaceSettingsMenuItems';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
@@ -60,12 +61,10 @@ const APPLICATION_DETAIL_ID = 'application-detail-id';
 
 const GENERAL_TAB_ID = 'general';
 const VARIABLES_TAB_ID = 'variables';
-const CUSTOM_SETTINGS_TAB_ID = 'settings';
-
-const CONFIGURATION_TAB_IDS = [CUSTOM_SETTINGS_TAB_ID, VARIABLES_TAB_ID];
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
+  const { getIcon } = useIcons();
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -173,15 +172,16 @@ export const SettingsApplicationDetails = () => {
     applicationVariables: displayedApplicationVariables,
   });
 
-  const settingsFrontComponentId =
-    application?.settingsCustomTabFrontComponentId;
-  const hasCustomSettingsTab = isDefined(settingsFrontComponentId);
+  const workspaceSettingsMenuItems = getWorkspaceSettingsMenuItems(
+    application?.settingsMenuItems ?? [],
+  );
 
   const missingRequiredApplicationVariables =
     getMissingRequiredApplicationVariables(displayedApplicationVariables);
 
   const hasVariablesTab =
-    !hasCustomSettingsTab && displayedApplicationVariables.length > 0;
+    !isNonEmptyArray(workspaceSettingsMenuItems) &&
+    displayedApplicationVariables.length > 0;
 
   const { healthCheckResult, runHealthCheck } = useApplicationHealthCheck({
     applicationId,
@@ -195,25 +195,28 @@ export const SettingsApplicationDetails = () => {
 
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
-    // A custom settings tab lays out the application variables itself, so
-    // exposing them again would duplicate the same fields.
+    // An application declaring its own settings tabs lays the application
+    // variables out itself, so exposing them again would duplicate the same
+    // fields.
     ...(hasVariablesTab
       ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
       : []),
-    ...(hasCustomSettingsTab
-      ? [
-          {
-            id: CUSTOM_SETTINGS_TAB_ID,
-            title: t`Settings`,
-            Icon: IconAdjustments,
-          },
-        ]
-      : []),
+    ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
+      id: settingsMenuItem.universalIdentifier,
+      title: settingsMenuItem.title,
+      // The icon is a free-form name the application picks and can name one this
+      // build does not ship; falling back to the icon the single settings tab
+      // always rendered keeps such a tab recognisable rather than generic.
+      Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
+    })),
   ];
 
-  const configurationTabId = tabs.find((tab) =>
-    CONFIGURATION_TAB_IDS.includes(tab.id),
-  )?.id;
+  // Where the missing-configuration and health banners send someone: the
+  // generated variables tab when there is one, otherwise the first tab the
+  // application declares, which is where it lays its own variables out.
+  const configurationTabId = hasVariablesTab
+    ? VARIABLES_TAB_ID
+    : workspaceSettingsMenuItems.at(0)?.universalIdentifier;
 
   const configurationTabLocation = isDefined(configurationTabId)
     ? getSettingsPath(
@@ -272,14 +275,22 @@ export const SettingsApplicationDetails = () => {
             onVariableChange={setApplicationVariableValue}
           />
         );
-      case CUSTOM_SETTINGS_TAB_ID:
-        return hasCustomSettingsTab ? (
+      default: {
+        const activeSettingsMenuItem = workspaceSettingsMenuItems.find(
+          (settingsMenuItem) =>
+            settingsMenuItem.universalIdentifier === activeTabId,
+        );
+
+        if (!isDefined(activeSettingsMenuItem)) {
+          return <></>;
+        }
+
+        return (
           <SettingsApplicationCustomSettingsSection
-            frontComponentId={settingsFrontComponentId}
+            frontComponentId={activeSettingsMenuItem.frontComponentId}
           />
-        ) : null;
-      default:
-        return <></>;
+        );
+      }
     }
   };
 

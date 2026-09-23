@@ -14,6 +14,7 @@ import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/appli
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
+import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-item/dtos/settings-menu-item.dto';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -118,6 +119,9 @@ export class ApplicationDTO {
 
   @Field(() => [CommandMenuItemDTO])
   commandMenuItems?: CommandMenuItemDTO[];
+
+  @Field(() => [SettingsMenuItemDTO])
+  settingsMenuItems?: SettingsMenuItemDTO[];
 
   @Field(() => [LogicFunctionDTO])
   logicFunctions?: LogicFunctionDTO[];
