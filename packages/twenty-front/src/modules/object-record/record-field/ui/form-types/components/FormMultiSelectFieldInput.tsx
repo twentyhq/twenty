@@ -11,23 +11,14 @@ import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/obje
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray } from '@sniptt/guards';
-import {
-  type FocusEvent,
-  type KeyboardEvent,
-  useContext,
-  useId,
-  useState,
-} from 'react';
-import { Key } from 'ts-key-enum';
+import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { IconChevronDown } from 'twenty-ui/icon';
@@ -65,23 +56,15 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.button`
+const StyledDisplayModeContainer = styled.div`
   align-items: center;
   background: transparent;
   border: none;
-  color: inherit;
   cursor: pointer;
   display: flex;
-  font: inherit;
+  font-family: inherit;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
-  text-align: left;
   width: 100%;
-`;
-
-const StyledSelectInputContainer = styled.div`
-  position: absolute;
-  top: calc(100% + ${themeCssVariables.spacing[1]});
-  z-index: 1;
 `;
 
 const StyledPlaceholderContainer = styled.div`
@@ -111,15 +94,13 @@ export const FormMultiSelectFieldInput = ({
   const { theme } = useContext(ThemeContext);
   const instanceId = useId();
 
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
+  const dropdownId = `form-multi-select-${instanceId}`;
+  const { closeDropdown } = useCloseDropdown();
 
   const [draftValue, setDraftValue] = useState<
     | {
         type: 'static';
         value: FieldMultiSelectValue | string;
-        editingMode: 'view' | 'edit';
       }
     | {
         type: 'variable';
@@ -134,43 +115,12 @@ export const FormMultiSelectFieldInput = ({
       : {
           type: 'static',
           value: isDefined(defaultValue) ? defaultValue : [],
-          editingMode: 'view',
         },
   );
-
-  const [displayModeButton, setDisplayModeButton] =
-    useState<HTMLButtonElement | null>(null);
 
   const { resetSelectedItem } = useSelectableList(
     SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID,
   );
-
-  const isSelectInputOpen =
-    draftValue.type === 'static' && draftValue.editingMode === 'edit';
-
-  const handleDisplayModeClick = () => {
-    if (draftValue.type !== 'static') {
-      throw new Error(
-        'This function can only be called when editing a static value.',
-      );
-    }
-
-    setDraftValue({
-      ...draftValue,
-      editingMode: 'edit',
-    });
-
-    pushFocusItemToFocusStack({
-      focusId: instanceId,
-      component: {
-        type: FocusComponentType.FORM_FIELD_INPUT,
-        instanceId,
-      },
-      globalHotkeysConfig: {
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
-  };
 
   const onOptionSelected = (value: FieldMultiSelectValue) => {
     if (draftValue.type !== 'static') {
@@ -180,40 +130,9 @@ export const FormMultiSelectFieldInput = ({
     setDraftValue({
       type: 'static',
       value,
-      editingMode: 'edit',
     });
 
     onChange(value);
-  };
-
-  const closeSelectInput = () => {
-    if (draftValue.type !== 'static') {
-      throw new Error('Can only be called when editing a static value');
-    }
-
-    setDraftValue({
-      ...draftValue,
-      editingMode: 'view',
-    });
-
-    removeFocusItemFromFocusStackById({ focusId: instanceId });
-    resetSelectedItem();
-  };
-
-  const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === Key.Escape && isSelectInputOpen) {
-      displayModeButton?.focus({ preventScroll: true });
-    }
-  };
-
-  const handleRowBlur = (event: FocusEvent<HTMLDivElement>) => {
-    const isFocusMovingOutsideRow =
-      event.relatedTarget instanceof Node &&
-      !event.currentTarget.contains(event.relatedTarget);
-
-    if (isSelectInputOpen && isFocusMovingOutsideRow) {
-      closeSelectInput();
-    }
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -229,7 +148,6 @@ export const FormMultiSelectFieldInput = ({
     setDraftValue({
       type: 'static',
       value: [],
-      editingMode: 'view',
     });
 
     onChange([]);
@@ -255,10 +173,7 @@ export const FormMultiSelectFieldInput = ({
     <FormFieldInputContainer data-testid={testId}>
       {label ? <Field.Label>{label}</Field.Label> : null}
 
-      <StyledFormFieldInputRowContainer
-        onBlur={handleRowBlur}
-        onKeyDown={handleRowKeyDown}
-      >
+      <StyledFormFieldInputRowContainer>
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
@@ -284,31 +199,54 @@ export const FormMultiSelectFieldInput = ({
                 />
               </StyledDisplayModeReadonlyContainer>
             ) : (
-              <StyledDisplayModeContainer
-                ref={setDisplayModeButton}
-                type="button"
-                data-open={draftValue.editingMode === 'edit'}
-                onClick={handleDisplayModeClick}
-              >
-                <VisibilityHidden>{t`Edit`}</VisibilityHidden>
+              <Dropdown
+                clickableComponentTabIndex={0}
+                dropdownId={dropdownId}
+                dropdownPlacement="bottom-start"
+                clickableComponentWidth="100%"
+                dropdownOffset={{
+                  y: parseInt(theme.spacing[1], 10),
+                }}
+                onClose={resetSelectedItem}
+                clickableComponent={
+                  <StyledDisplayModeContainer>
+                    <VisibilityHidden>{t`Edit`}</VisibilityHidden>
 
-                {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
-                  <StyledMultiSelectDisplay
+                    {isDefined(selectedOptions) &&
+                    selectedOptions.length > 0 ? (
+                      <StyledMultiSelectDisplay
+                        values={selectedNames}
+                        options={selectedOptions}
+                      />
+                    ) : (
+                      <StyledPlaceholderContainer>
+                        <FormFieldPlaceholder>
+                          {placeholderText}
+                        </FormFieldPlaceholder>
+                      </StyledPlaceholderContainer>
+                    )}
+                    <IconChevronDown
+                      size={theme.icon.size.md}
+                      color={theme.font.color.tertiary}
+                    />
+                  </StyledDisplayModeContainer>
+                }
+                dropdownComponents={
+                  <MultiSelectInput
+                    selectableListComponentInstanceId={
+                      SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
+                    }
+                    focusId={dropdownId}
+                    options={options}
+                    onCancel={() => closeDropdown(dropdownId)}
+                    onOptionSelected={onOptionSelected}
                     values={selectedNames}
-                    options={selectedOptions}
+                    dropdownWidth={
+                      dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge
+                    }
                   />
-                ) : (
-                  <StyledPlaceholderContainer>
-                    <FormFieldPlaceholder>
-                      {placeholderText}
-                    </FormFieldPlaceholder>
-                  </StyledPlaceholderContainer>
-                )}
-                <IconChevronDown
-                  size={theme.icon.size.md}
-                  color={theme.font.color.tertiary}
-                />
-              </StyledDisplayModeContainer>
+                }
+              />
             )
           ) : (
             <VariableChipStandalone
@@ -317,25 +255,6 @@ export const FormMultiSelectFieldInput = ({
             />
           )}
         </FormFieldInputInnerContainer>
-        <StyledSelectInputContainer>
-          {isSelectInputOpen && (
-            <OverlayContainer>
-              <MultiSelectInput
-                selectableListComponentInstanceId={
-                  SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
-                }
-                focusId={instanceId}
-                options={options}
-                onCancel={closeSelectInput}
-                onOptionSelected={onOptionSelected}
-                values={selectedNames}
-                dropdownWidth={
-                  dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge
-                }
-              />
-            </OverlayContainer>
-          )}
-        </StyledSelectInputContainer>
 
         {VariablePicker && !readonly && (
           <VariablePicker
