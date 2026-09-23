@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import {
   type ObjectRecordCursor,
@@ -89,6 +89,8 @@ export const computeCursorArgFilter = ({
     ] as ObjectRecordFilter[];
 
     if (andConditions.length === 1) {
+      assertIsDefinedOrThrow(andConditions[0]);
+
       return [andConditions[0]];
     }
 

@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { getGroupByExpression } from 'src/engine/api/common/common-query-runners/utils/get-group-by-expression.util';
@@ -25,13 +27,19 @@ export const getGroupByDefinitions = ({
           ? [groupByField.nestedSubFieldName]
           : undefined,
       )[0];
+      assertIsDefinedOrThrow(nestedColumnName);
 
       columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
     } else {
-      columnName = formatColumnNamesFromCompositeFieldAndSubfields(
-        groupByField.fieldMetadata.name,
-        groupByField.subFieldName ? [groupByField.subFieldName] : undefined,
-      )[0];
+      const formattedColumnName =
+        formatColumnNamesFromCompositeFieldAndSubfields(
+          groupByField.fieldMetadata.name,
+          groupByField.subFieldName ? [groupByField.subFieldName] : undefined,
+        )[0];
+
+      assertIsDefinedOrThrow(formattedColumnName);
+
+      columnName = formattedColumnName;
       columnNameWithQuotes = `"${objectMetadataNameSingular}"."${columnName}"`;
     }
 

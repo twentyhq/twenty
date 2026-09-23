@@ -13,7 +13,7 @@ import {
   ObjectRecord,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -233,12 +233,18 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       if (recordsWithValues.length === 0) {
         return;
       } else if (recordsWithValues.length === 1) {
-        mergedResult[fieldName] = recordsWithValues[0]!.value;
+        assertIsDefinedOrThrow(recordsWithValues[0]);
+
+        mergedResult[fieldName] = recordsWithValues[0].value;
       } else {
-        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldIdByName[fieldName],
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
+        const fieldMetadataId = fieldIdByName[fieldName];
+
+        const fieldMetadata = isDefined(fieldMetadataId)
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: fieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            })
+          : undefined;
 
         if (!fieldMetadata) {
           return;
@@ -269,10 +275,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     fieldIdByName: Record<string, string>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   ): boolean {
-    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldIdByName[fieldName],
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const fieldMetadataId = fieldIdByName[fieldName];
+
+    const fieldMetadata = isDefined(fieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
 
     return fieldMetadata?.isSystem ?? false;
   }

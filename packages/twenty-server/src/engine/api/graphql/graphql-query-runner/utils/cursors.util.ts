@@ -1,5 +1,5 @@
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isPlainObject } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -61,7 +61,9 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   }).filter(checkIfLeafCanCarryCursorValue)) {
     const [rootKey, ...nestedKeys] = leaf.path;
     const valueSource = orderByValuesFromScan ?? objectRecord;
-    let leafValue: unknown = valueSource[rootKey]!;
+    assertIsDefinedOrThrow(rootKey);
+
+    let leafValue: unknown = valueSource[rootKey];
 
     for (const key of nestedKeys) {
       if (leafValue === null) {
@@ -80,7 +82,11 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
       container[key] = isPlainObject(container[key]) ? container[key] : {};
       container = container[key];
     }
-    container[leaf.path[leaf.path.length - 1]!] = leafValue;
+    const firstPath = leaf.path[leaf.path.length - 1];
+
+    assertIsDefinedOrThrow(firstPath);
+
+    container[firstPath] = leafValue;
   }
 
   const cursorData: CursorData = {

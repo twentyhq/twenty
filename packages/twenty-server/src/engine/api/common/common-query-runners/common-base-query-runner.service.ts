@@ -460,10 +460,14 @@ export abstract class CommonBaseQueryRunnerService<
       const columnKeyedRecord: Partial<ObjectRecord> = {};
 
       for (const [fieldName, value] of Object.entries(record)) {
-        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldIdByName[fieldName],
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
+        const fieldMetadataId = fieldIdByName[fieldName];
+
+        const fieldMetadata = isDefined(fieldMetadataId)
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: fieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            })
+          : undefined;
 
         if (
           isDefined(fieldMetadata) &&

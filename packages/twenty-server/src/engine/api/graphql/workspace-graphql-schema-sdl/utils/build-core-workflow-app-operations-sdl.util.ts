@@ -12,7 +12,7 @@ import {
   printSchema,
   type GraphQLFieldConfigMap,
 } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreWorkflowVersionMutationResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-version-mutation.resolver';
 import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
@@ -50,10 +50,13 @@ const pickRootType = ({
   }
 
   const fields: GraphQLFieldConfigMap<unknown, unknown> = Object.fromEntries(
-    operationNames.map((operationName) => [
-      operationName,
-      rootTypeConfig.fields[operationName],
-    ]),
+    operationNames.map((operationName) => {
+      const field = rootTypeConfig.fields[operationName];
+
+      assertIsDefinedOrThrow(field);
+
+      return [operationName, field];
+    }),
   );
 
   return new GraphQLObjectType({ ...rootTypeConfig, fields });

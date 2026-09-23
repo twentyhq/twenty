@@ -4,6 +4,7 @@ import { isDefined } from 'class-validator';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
@@ -94,6 +95,19 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
     } = queryRunnerContext;
 
+    const processedRecordInput = (
+      await this.dataArgProcessor.process({
+        partialRecordInputs: [args.data],
+        authContext,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        shouldBackfillPositionIfUndefined: false,
+      })
+    )[0];
+
+    assertIsDefinedOrThrow(processedRecordInput);
+
     return {
       ...args,
       filter: this.filterArgProcessor.process({
@@ -102,16 +116,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
-      data: (
-        await this.dataArgProcessor.process({
-          partialRecordInputs: [args.data],
-          authContext,
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-          flatObjectMetadataMaps,
-          shouldBackfillPositionIfUndefined: false,
-        })
-      )[0],
+      data: processedRecordInput,
     };
   }
 

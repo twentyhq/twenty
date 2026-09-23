@@ -9,6 +9,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 
 import { validateAndTransformValueOrThrow } from './validate-and-transform-value-or-throw.util';
 import { validateOperatorForFieldTypeOrThrow } from './validate-operator-for-field-type-or-throw.util';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 export const validateAndTransformOperatorAndValue = (
   fieldName: string,
@@ -37,7 +38,10 @@ export const validateAndTransformOperatorAndValue = (
     );
   }
 
-  const [[operator, value]] = entries;
+  const [operatorEntry] = entries;
+  assertIsDefinedOrThrow(operatorEntry);
+
+  const [operator, value] = operatorEntry;
 
   validateOperatorForFieldTypeOrThrow(
     operator as FilterOperator,

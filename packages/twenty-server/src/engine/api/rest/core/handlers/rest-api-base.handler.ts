@@ -143,6 +143,8 @@ export abstract class RestApiBaseHandler {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
+    assertIsDefinedOrThrow(objectsPermissions);
+
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
       flatObjectMetadataMaps,
@@ -173,6 +175,8 @@ export abstract class RestApiBaseHandler {
   }> {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
+
+    assertIsDefinedOrThrow(objectsPermissions);
 
     return this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,

@@ -1,6 +1,6 @@
 import { isObject } from 'class-validator';
 import { type ObjectRecordOrderByForRelationField } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import {
   type GroupByField,
@@ -30,7 +30,9 @@ export const prepareForOrderByRelationFieldParsing = ({
   groupByFields: GroupByField[];
 }) => {
   const relationFieldName = Object.keys(orderByArg)[0];
-  const nestedFieldOrderByObject = orderByArg[relationFieldName]!;
+  assertIsDefinedOrThrow(relationFieldName);
+
+  const nestedFieldOrderByObject = orderByArg[relationFieldName];
 
   if (
     !isDefined(nestedFieldOrderByObject) ||
@@ -46,7 +48,9 @@ export const prepareForOrderByRelationFieldParsing = ({
   }
 
   const nestedFieldName = Object.keys(nestedFieldOrderByObject)[0];
-  const nestedFieldOrderByValue = nestedFieldOrderByObject[nestedFieldName]!;
+  assertIsDefinedOrThrow(nestedFieldName);
+
+  const nestedFieldOrderByValue = nestedFieldOrderByObject[nestedFieldName];
 
   if (!isDefined(nestedFieldOrderByValue)) {
     return {};
@@ -75,7 +79,7 @@ export const prepareForOrderByRelationFieldParsing = ({
       targetObjectMetadata,
     );
 
-  const nestedFieldMetadataId = targetFieldIdByName[nestedFieldName]!;
+  const nestedFieldMetadataId = targetFieldIdByName[nestedFieldName];
 
   if (!isDefined(nestedFieldMetadataId)) {
     throw new UserInputError(

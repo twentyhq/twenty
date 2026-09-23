@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'class-validator';
 import { type OrderByWithGroupBy } from 'twenty-shared/types';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type ObjectRecordFilter,
@@ -158,7 +158,8 @@ export class GraphqlQueryParser {
 
         // Relation columns are never in columnsToSelect
         const isMainEntity = alias === objectNameSingular;
-        const isAlreadySelected = isMainEntity && columnsToSelect[column]!;
+        const isAlreadySelected =
+          isMainEntity && isDefined(column) && columnsToSelect[column];
 
         if (!isAlreadySelected) {
           queryBuilder.addSelect(

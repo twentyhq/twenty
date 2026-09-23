@@ -3,7 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { MetadataReadability, ObjectRecord } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import {
   Brackets,
   FindOptionsRelations,
@@ -547,10 +551,16 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     });
 
     const savedRecords = await writeRepository.runBatchUpdate({
-      inputs: updateInputs.map((input, index) => ({
-        id: input.id,
-        data: resolvedData[index],
-      })),
+      inputs: updateInputs.map((input, index) => {
+        const resolvedRecordData = resolvedData[index];
+
+        assertIsDefinedOrThrow(resolvedRecordData);
+
+        return {
+          id: input.id,
+          data: resolvedRecordData,
+        };
+      }),
       columnsToReturn,
     });
 
@@ -782,6 +792,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       flatObjectMetadata,
     );
+
+    assertIsDefinedOrThrow(fieldIdByName['createdBy']);
 
     const createdByFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldIdByName['createdBy'],

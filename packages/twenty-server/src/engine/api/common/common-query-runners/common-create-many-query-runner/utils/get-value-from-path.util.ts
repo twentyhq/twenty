@@ -1,4 +1,5 @@
 import { type ObjectRecord } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type ConflictingFieldValue } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 
@@ -13,6 +14,9 @@ export const getValueFromPath = (
   }
 
   const [parentField, childField] = pathParts;
+
+  assertIsDefinedOrThrow(parentField);
+  assertIsDefinedOrThrow(childField);
 
   return record[parentField]?.[childField];
 };

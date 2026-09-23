@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecord } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
@@ -45,6 +46,8 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       queryRunnerContext,
     );
 
+    assertIsDefinedOrThrow(result[0]);
+
     return result[0];
   }
 
@@ -67,6 +70,8 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadataMaps,
       shouldBackfillPositionIfUndefined: !args.upsert,
     });
+
+    assertIsDefinedOrThrow(coercedData[0]);
 
     return {
       ...args,

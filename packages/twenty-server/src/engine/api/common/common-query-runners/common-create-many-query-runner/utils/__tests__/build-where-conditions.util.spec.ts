@@ -2,6 +2,7 @@ import { type ObjectRecord } from 'twenty-shared/types';
 
 import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('buildWhereConditions', () => {
   const records: Partial<ObjectRecord>[] = [
@@ -42,7 +43,7 @@ describe('buildWhereConditions', () => {
 
     expect(where).toHaveLength(1);
 
-    const operator = where[0]?.uniqueText!;
+    const operator = where[0]?.uniqueText;
 
     expect(operator?.type.toLowerCase()).toBe('in');
     expect(operator?.value).toEqual(['alpha', 'beta']);
@@ -68,7 +69,7 @@ describe('buildWhereConditions', () => {
     );
 
     expect(where).toHaveLength(1);
-    expect(where[0]?.uniqueText.value!).toEqual(['alpha', 'beta']);
+    expect(where[0]?.uniqueText?.value).toEqual(['alpha', 'beta']);
   });
 
   it('skips adding a condition when all values for a field are undefined', () => {
@@ -103,7 +104,9 @@ describe('buildWhereConditions', () => {
 
     expect(where).toHaveLength(1);
 
-    const operator = where[0]?.emailsFieldPrimaryEmail!;
+    jestExpectToBeDefined(where[0]);
+
+    const operator = where[0].emailsFieldPrimaryEmail;
 
     expect(operator?.type.toLowerCase()).toBe('in');
     expect(operator?.value).toEqual(['alpha@example.com', 'beta@example.com']);
@@ -154,7 +157,7 @@ describe('buildWhereConditions', () => {
     );
 
     expect(where).toHaveLength(1);
-    expect(where[0]?.externalId.value!).toEqual([42, 43]);
+    expect(where[0]?.externalId?.value).toEqual([42, 43]);
   });
 
   it('builds composite group conditions with all properties ANDed together per record', () => {
@@ -190,8 +193,8 @@ describe('buildWhereConditions', () => {
     ]);
 
     where.forEach((condition) => {
-      expect(condition.customerId.type.toLowerCase()).toBe('equal');
-      expect(condition.environment.type.toLowerCase()).toBe('equal');
+      expect(condition.customerId?.type.toLowerCase()).toBe('equal');
+      expect(condition.environment?.type.toLowerCase()).toBe('equal');
     });
   });
 
@@ -297,9 +300,9 @@ describe('buildWhereConditions', () => {
       (condition) => 'customerId' in condition,
     );
 
-    expect(idCondition?.id.type.toLowerCase()).toBe('in');
-    expect(idCondition?.id.value).toEqual(['record-1']);
-    expect(compositeCondition?.customerId.type.toLowerCase()).toBe('equal');
-    expect(compositeCondition?.environment.type.toLowerCase()).toBe('equal');
+    expect(idCondition?.id?.type.toLowerCase()).toBe('in');
+    expect(idCondition?.id?.value).toEqual(['record-1']);
+    expect(compositeCondition?.customerId?.type.toLowerCase()).toBe('equal');
+    expect(compositeCondition?.environment?.type.toLowerCase()).toBe('equal');
   });
 });

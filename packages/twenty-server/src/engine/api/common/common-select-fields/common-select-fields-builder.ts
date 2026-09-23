@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   RelationType,
@@ -43,8 +43,11 @@ export class CommonSelectFieldsBuilder {
   }): {
     selectedFields: CommonSelectedFields;
   } => {
-    const restrictedFields =
-      objectsPermissions[flatObjectMetadata.id].restrictedFields;
+    const objectPermissions = objectsPermissions[flatObjectMetadata.id];
+
+    assertIsDefinedOrThrow(objectPermissions);
+
+    const { restrictedFields } = objectPermissions;
 
     const readableFlatFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityIds: flatObjectMetadata.fieldIds,

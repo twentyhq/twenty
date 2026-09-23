@@ -2,6 +2,7 @@ import { type ObjectRecord } from 'twenty-shared/types';
 
 import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
 import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const assignActivities = (
   parentRecords: ObjectRecord[],
@@ -57,11 +58,15 @@ describe('relation record assignment', () => {
     const child = { id: 'activity', opportunityId: 'first' };
 
     assignActivities(parents, [child]);
+    jestExpectToBeDefined(parents[0]);
+
     parents[0].activities.push({ id: 'new' });
+    jestExpectToBeDefined(parents[2]);
+
     parents[2].activities.push({ id: 'another' });
 
-    expect(parents[1].activities).toEqual([child]);
-    expect(parents[3].activities).toEqual([]);
+    expect(parents[1]?.activities).toEqual([child]);
+    expect(parents[3]?.activities).toEqual([]);
   });
 
   it('returns empty collections when no related records are available', () => {

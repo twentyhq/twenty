@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type ObjectRecord } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -58,6 +59,8 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
+    assertIsDefinedOrThrow(result[0]);
+
     return result[0];
   }
 
@@ -72,18 +75,22 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadataMaps,
     } = queryRunnerContext;
 
+    const processedRecordInput = (
+      await this.dataArgProcessor.process({
+        partialRecordInputs: [args.data],
+        authContext,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        shouldBackfillPositionIfUndefined: false,
+      })
+    )[0];
+
+    assertIsDefinedOrThrow(processedRecordInput);
+
     return {
       ...args,
-      data: (
-        await this.dataArgProcessor.process({
-          partialRecordInputs: [args.data],
-          authContext,
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-          flatObjectMetadataMaps,
-          shouldBackfillPositionIfUndefined: false,
-        })
-      )[0],
+      data: processedRecordInput,
     };
   }
 

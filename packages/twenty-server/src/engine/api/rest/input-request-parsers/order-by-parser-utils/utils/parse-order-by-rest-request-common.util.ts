@@ -3,6 +3,7 @@ import { OrderByDirection } from 'twenty-shared/types';
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import type { ParsedQs } from 'qs';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { addDefaultOrderById } from 'src/engine/api/rest/input-request-parsers/order-by-parser-utils/add-default-order-by-id.util';
 import {
@@ -29,6 +30,8 @@ export const parseOrderBy = (
     // orderByItem -> field_1[AscNullsFirst]
     if (orderByItem.includes('[') && orderByItem.includes(']')) {
       const [fieldName, directionWithRightBracket] = orderByItem.split('[');
+      assertIsDefinedOrThrow(directionWithRightBracket);
+
       const direction = directionWithRightBracket.replace(']', '');
 
       // fields -> [field_1] ; direction -> AscNullsFirst
@@ -44,6 +47,8 @@ export const parseOrderBy = (
       }
 
       itemDirection = direction;
+      assertIsDefinedOrThrow(fieldName);
+
       itemFields = fieldName;
     } else {
       // orderByItem -> field_3

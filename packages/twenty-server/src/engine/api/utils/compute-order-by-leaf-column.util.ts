@@ -1,5 +1,5 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -21,28 +21,37 @@ export const computeOrderByLeafColumn = (
         return null;
       }
 
+      const [tableAlias, relationFieldName] = leaf.path;
+
+      assertIsDefinedOrThrow(tableAlias);
+      assertIsDefinedOrThrow(relationFieldName);
+
       return {
-        tableAlias: leaf.path[0],
+        tableAlias,
         columnName: isDefined(leaf.targetCompositeProperty)
           ? computeCompositeColumnName(
-              leaf.path[1]!,
+              relationFieldName,
               leaf.targetCompositeProperty,
             )
-          : leaf.path[1],
+          : relationFieldName,
         columnType: (leaf.targetCompositeProperty ?? leaf.targetFieldMetadata)
           .type,
       };
     }
     case 'composite':
+      assertIsDefinedOrThrow(leaf.path[0]);
+
       return {
         tableAlias: objectNameSingular,
         columnName: computeCompositeColumnName(
-          leaf.path[0]!,
+          leaf.path[0],
           leaf.compositeProperty,
         ),
         columnType: leaf.compositeProperty.type,
       };
     case 'scalar':
+      assertIsDefinedOrThrow(leaf.path[0]);
+
       return {
         tableAlias: objectNameSingular,
         columnName: leaf.path[0],

@@ -10,6 +10,7 @@ import {
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('resolveOrderByLeaves', () => {
   const workspaceId = 'workspace-id';
@@ -206,7 +207,7 @@ describe('resolveOrderByLeaves', () => {
     ]);
 
     expect(leaves).toHaveLength(1);
-    expect(leaves[0]?.direction!).toBe(OrderByDirection.AscNullsLast);
+    expect(leaves[0]?.direction).toBe(OrderByDirection.AscNullsLast);
   });
 
   it('should let a caller-provided id ordering win over the appended tie-breaker', () => {
@@ -216,7 +217,7 @@ describe('resolveOrderByLeaves', () => {
     ]);
 
     expect(leaves).toHaveLength(1);
-    expect(leaves[0]?.direction!).toBe(OrderByDirection.DescNullsLast);
+    expect(leaves[0]?.direction).toBe(OrderByDirection.DescNullsLast);
   });
 
   it('should rebuild the canonical orderBy from the leaves', () => {
@@ -405,6 +406,7 @@ describe('resolveOrderByLeaves', () => {
     const firstNameLeaf = resolve([
       { fullName: { firstName: OrderByDirection.AscNullsLast } },
     ])[0];
+    jestExpectToBeDefined(firstNameLeaf);
 
     it('should read nested values, including null', () => {
       expect(

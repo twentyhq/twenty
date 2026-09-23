@@ -25,46 +25,46 @@ export const parseCorePath = (
     );
   }
 
-  if (queryAction.length === 0) {
+  const [firstSegment, secondSegment] = queryAction;
+
+  if (!isDefined(firstSegment)) {
     throw new BadRequestException(
       `Query path '${request.path}' invalid. Valid examples: /${ApiPath.Rest}/companies/id or /${ApiPath.Rest}/companies or /${ApiPath.Rest}/batch/companies`,
     );
   }
 
-  if (queryAction.length === 1) {
-    return { object: queryAction[0] };
+  if (!isDefined(secondSegment)) {
+    return { object: firstSegment };
   }
 
-  if (queryAction[0] === 'batch') {
-    return { object: queryAction[1] };
+  if (firstSegment === 'batch') {
+    return { object: secondSegment };
   }
 
   if (
-    queryAction[1] === 'duplicates' ||
-    queryAction[1] === 'groupBy' ||
-    queryAction[1] === 'merge'
+    secondSegment === 'duplicates' ||
+    secondSegment === 'groupBy' ||
+    secondSegment === 'merge'
   ) {
-    return { object: queryAction[0] };
+    return { object: firstSegment };
   }
 
   if (isRestoreRequest) {
-    const recordId = queryAction.length === 3 ? queryAction[1] : undefined;
+    const recordId = queryAction.length === 3 ? secondSegment : undefined;
 
     if (isDefined(recordId) && !isValidUuid(recordId)) {
       throw new BadRequestException(`'${recordId}' is not a valid UUID`);
     }
 
     return {
-      object: queryAction[0],
+      object: firstSegment,
       id: recordId,
     };
   }
 
-  const recordId = queryAction[1];
-
-  if (!isValidUuid(recordId)) {
-    throw new BadRequestException(`'${recordId}' is not a valid UUID`);
+  if (!isValidUuid(secondSegment)) {
+    throw new BadRequestException(`'${secondSegment}' is not a valid UUID`);
   }
 
-  return { object: queryAction[0], id: recordId };
+  return { object: firstSegment, id: secondSegment };
 };

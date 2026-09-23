@@ -1,5 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isPlainObject,
+} from 'twenty-shared/utils';
 
 import { isGroupByDateFieldDefinition } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/is-group-by-date-field-definition.util';
 import { isRelationNestedFieldSupportedInGroupBy } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/is-relation-nested-field-supported-in-group-by.util';
@@ -71,16 +75,21 @@ const getNestedFieldMetadataDetails = ({
   });
 
   const nestedFieldName = nestedFieldNames[0];
+  assertIsDefinedOrThrow(nestedFieldName);
+
   const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
     flatFieldMetadataMaps,
     targetObjectMetadata,
   );
 
-  const nestedFieldMetadataId = fieldIdByName[nestedFieldName]!;
-  const nestedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: nestedFieldMetadataId,
-    flatEntityMaps: flatFieldMetadataMaps,
-  });
+  const nestedFieldMetadataId = fieldIdByName[nestedFieldName];
+
+  const nestedFieldMetadata = isDefined(nestedFieldMetadataId)
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: nestedFieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      })
+    : undefined;
 
   if (!isDefined(nestedFieldMetadata) || !isDefined(nestedFieldMetadataId)) {
     throw new CommonQueryRunnerException(
@@ -151,6 +160,8 @@ const validateAndTransformNestedCompositeFieldOrThrow = ({
   });
 
   const nestedSubFieldName = compositeSubFields[0];
+  assertIsDefinedOrThrow(nestedSubFieldName);
+
   const supportedCompositeSubFields = getGroupableSubFieldsForCompositeType(
     nestedFieldMetadata.type,
   );

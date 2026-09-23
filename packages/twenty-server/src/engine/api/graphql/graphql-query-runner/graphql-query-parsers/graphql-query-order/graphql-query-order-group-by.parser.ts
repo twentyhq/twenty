@@ -10,7 +10,7 @@ import {
   OrderByDirection,
   type OrderByWithGroupBy,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import {
   type GroupByDateField,
@@ -102,7 +102,11 @@ export class GraphqlQueryOrderGroupByParser {
       }
 
       const fieldName = Object.keys(orderByArg)[0];
-      const fieldMetadataId = this.fieldIdByName[fieldName]!;
+      assertIsDefinedOrThrow(fieldName);
+
+      const fieldMetadataId = this.fieldIdByName[fieldName];
+      assertIsDefinedOrThrow(fieldMetadataId);
+
       const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: fieldMetadataId,
         flatEntityMaps: this.flatFieldMetadataMaps,
@@ -217,6 +221,7 @@ export class GraphqlQueryOrderGroupByParser {
       Object.values(orderByArg)[0];
 
     if (
+      isDefined(scalarFieldOrCompositeFieldOrderByValue) &&
       Object.values(OrderByDirection).includes(
         scalarFieldOrCompositeFieldOrderByValue,
       )
@@ -253,6 +258,7 @@ export class GraphqlQueryOrderGroupByParser {
     )[0];
 
     if (
+      isDefined(compositeFieldOrderByDirection) &&
       Object.values(OrderByDirection).includes(
         compositeFieldOrderByDirection as OrderByDirection,
       )
@@ -329,6 +335,7 @@ export class GraphqlQueryOrderGroupByParser {
     }
 
     const relationFieldOrderByValue = Object.values(orderByArg)[0];
+    assertIsDefinedOrThrow(relationFieldOrderByValue);
 
     if (!isObject(relationFieldOrderByValue)) {
       return false;
@@ -349,7 +356,11 @@ export class GraphqlQueryOrderGroupByParser {
       );
     }
 
-    const aggregateField = availableAggregations[Object.keys(aggregate)[0]]!;
+    const key = Object.keys(aggregate)[0];
+
+    assertIsDefinedOrThrow(key);
+
+    const aggregateField = availableAggregations[key];
 
     if (!aggregateField) {
       throw new UserInputError(
@@ -368,6 +379,8 @@ export class GraphqlQueryOrderGroupByParser {
       );
     }
     const orderByDirection = Object.values(aggregate)[0];
+    assertIsDefinedOrThrow(orderByDirection);
+
     const convertedDirection =
       convertOrderByToFindOptionsOrder(orderByDirection);
 
@@ -425,7 +438,9 @@ export class GraphqlQueryOrderGroupByParser {
     fieldMetadata: OrmFlatFieldMetadata;
   }): Record<string, OrderByClause> | null => {
     const fieldName = Object.keys(orderByArg)[0];
-    const orderBySubField = orderByArg[fieldName]!;
+    assertIsDefinedOrThrow(fieldName);
+
+    const orderBySubField = orderByArg[fieldName];
 
     if (!isDefined(orderBySubField)) {
       return null;
@@ -438,6 +453,7 @@ export class GraphqlQueryOrderGroupByParser {
     }
 
     const subFieldName = Object.keys(orderBySubField)[0];
+    assertIsDefinedOrThrow(subFieldName);
 
     if (
       !groupByFields.some(
@@ -558,6 +574,8 @@ export class GraphqlQueryOrderGroupByParser {
       }
 
       const nestedSubFieldName = compositeSubFields[0];
+      assertIsDefinedOrThrow(nestedSubFieldName);
+
       const orderByDirection = (
         nestedFieldOrderByValue as Record<string, OrderByDirection>
       )[nestedSubFieldName];
@@ -590,6 +608,7 @@ export class GraphqlQueryOrderGroupByParser {
         nestedFieldMetadata.name,
         [nestedSubFieldName],
       )[0];
+      assertIsDefinedOrThrow(nestedColumnName);
 
       const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
 
@@ -636,6 +655,7 @@ export class GraphqlQueryOrderGroupByParser {
           ? [associatedGroupByField.nestedSubFieldName]
           : undefined,
       )[0];
+      assertIsDefinedOrThrow(nestedColumnName);
 
       const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
 
@@ -664,6 +684,7 @@ export class GraphqlQueryOrderGroupByParser {
           ? [associatedGroupByField.nestedSubFieldName]
           : undefined,
       )[0];
+      assertIsDefinedOrThrow(nestedColumnName);
 
       const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
 

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isInputObjectType, type GraphQLFieldConfigArgumentMap } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type ArgsMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
 
@@ -26,13 +26,14 @@ export class ArgsTypeGenerator {
       if (!args.hasOwnProperty(key)) {
         continue;
       }
-      const arg = args[key];
+      const keyArg = args[key];
+      assertIsDefinedOrThrow(keyArg);
 
-      if (isDefined(arg.type)) {
-        const gqlType = applyTypeOptionsForOutputType(arg.type, {
-          defaultValue: arg.defaultValue,
-          nullable: arg.isNullable,
-          isArray: arg.isArray,
+      if (isDefined(keyArg.type)) {
+        const gqlType = applyTypeOptionsForOutputType(keyArg.type, {
+          defaultValue: keyArg.defaultValue,
+          nullable: keyArg.isNullable,
+          isArray: keyArg.isArray,
         });
 
         fieldConfigMap[key] = {
@@ -40,10 +41,10 @@ export class ArgsTypeGenerator {
         };
       }
 
-      if (isDefined(arg.kind)) {
+      if (isDefined(keyArg.kind)) {
         const storageKey = computeObjectMetadataInputTypeKey(
           objectMetadataSingularName,
-          arg.kind,
+          keyArg.kind,
         );
 
         const inputType = this.gqlTypesStorage.getGqlTypeByKey(storageKey);
@@ -62,8 +63,8 @@ export class ArgsTypeGenerator {
         }
 
         const gqlType = applyTypeOptionsForOutputType(inputType, {
-          nullable: arg.isNullable,
-          isArray: arg.isArray,
+          nullable: keyArg.isNullable,
+          isArray: keyArg.isArray,
         });
 
         fieldConfigMap[key] = {
