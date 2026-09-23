@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import {
@@ -20467,6 +20467,8 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = PERSON_DATA_SEEDS_RAW.map(
     const workspaceMemberName = isDefined(workspaceMember)
       ? `${workspaceMember?.nameFirstName} ${workspaceMember?.nameLastName}`
       : 'Unkonwn';
+
+    assertIsDefinedOrThrow(workspaceMemberId);
 
     const dataSeed: PersonDataSeed = {
       ...person,

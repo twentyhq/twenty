@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 export type RandomUserData = {
@@ -471,7 +473,11 @@ export function generateRandomUsers(): {
     );
 
     const firstName = FIRST_NAMES[firstNameIndex];
+    assertIsDefinedOrThrow(firstName);
+
     const lastName = LAST_NAMES[lastNameIndex];
+    assertIsDefinedOrThrow(lastName);
+
     const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@apple.dev`;
 
     const userId =
@@ -525,12 +531,16 @@ export function generateRandomUsers(): {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
     });
 
+    const colorScheme = COLOR_SCHEMES[colorSchemeIndex];
+
+    assertIsDefinedOrThrow(colorScheme);
+
     workspaceMembers.push({
       id: workspaceMemberId,
       nameFirstName: firstName,
       nameLastName: lastName,
       locale: 'en',
-      colorScheme: COLOR_SCHEMES[colorSchemeIndex],
+      colorScheme,
       userEmail: email,
       userId,
     });

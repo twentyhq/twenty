@@ -70,9 +70,10 @@ describe('seedAgents', () => {
       expect(messages).toHaveLength(messageCount);
       expect(parts).toHaveLength(messageCount);
       expect(turns).toHaveLength(turnCount);
+
       expect(queryBuilder.where).toHaveBeenCalledWith(
         'id = :threadId AND "workspaceId" = :workspaceId',
-        { threadId: threads[0].id, workspaceId },
+        { threadId: threads[0]?.id, workspaceId },
       );
       expect(queryBuilder.andWhere).toHaveBeenCalledWith('title IS NULL');
       expect(new Set(turns.map((turn) => turn.id)).size).toBe(turns.length);

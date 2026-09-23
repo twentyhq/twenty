@@ -1,4 +1,7 @@
+import { randomUUID } from 'crypto';
+
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { MESSAGE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
@@ -89,7 +92,12 @@ const FIND_UNUSED_PERSON_ID = (
 
   if (AVAILABLE_IDS.length === 0) return null;
 
-  return AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+  const availableId =
+    AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+
+  assertIsDefinedOrThrow(availableId);
+
+  return availableId;
 };
 
 const FIND_UNUSED_WORKSPACE_MEMBER_ID = (
@@ -102,7 +110,12 @@ const FIND_UNUSED_WORKSPACE_MEMBER_ID = (
 
   if (AVAILABLE_IDS.length === 0) return null;
 
-  return AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+  const availableId =
+    AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+
+  assertIsDefinedOrThrow(availableId);
+
+  return availableId;
 };
 
 const CREATE_PERSON_PARTICIPANT = (
@@ -141,27 +154,41 @@ const CREATE_WORKSPACE_MEMBER_PARTICIPANT = (
 
   switch (WORKSPACE_MEMBER_ID) {
     case WORKSPACE_MEMBER_DATA_SEED_IDS.TIM:
+      assertIsDefinedOrThrow(personIds[0]);
+
       return {
         workspaceMemberId: WORKSPACE_MEMBER_ID,
         personId: personIds[0],
         displayName: 'Tim Apple',
         handle: 'tim@apple.dev',
       };
-    case WORKSPACE_MEMBER_DATA_SEED_IDS.JONY:
+    case WORKSPACE_MEMBER_DATA_SEED_IDS.JONY: {
+      const secondParticipantPersonId = personIds[1] || personIds[0];
+
+      assertIsDefinedOrThrow(secondParticipantPersonId);
+
       return {
         workspaceMemberId: WORKSPACE_MEMBER_ID,
-        personId: personIds[1] || personIds[0],
+        personId: secondParticipantPersonId,
         displayName: 'Jony Ive',
         handle: 'jony@apple.dev',
       };
-    case WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL:
+    }
+    case WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL: {
+      const thirdParticipantPersonId = personIds[2] || personIds[0];
+
+      assertIsDefinedOrThrow(thirdParticipantPersonId);
+
       return {
         workspaceMemberId: WORKSPACE_MEMBER_ID,
-        personId: personIds[2] || personIds[0],
+        personId: thirdParticipantPersonId,
         displayName: 'Phil Schiller',
         handle: 'phil@apple.dev',
       };
+    }
     default:
+      assertIsDefinedOrThrow(personIds[0]);
+
       return {
         workspaceMemberId: WORKSPACE_MEMBER_ID,
         personId: personIds[0],
@@ -177,10 +204,16 @@ const CREATE_FAKE_PARTICIPANT = (
 ): ParticipantData => {
   const FAKE = GET_RANDOM_FAKE_PARTICIPANT();
 
+  assertIsDefinedOrThrow(workspaceMemberIds[0]);
+  const personId =
+    personIds[Math.floor(Math.random() * Math.min(10, personIds.length))];
+
+  assertIsDefinedOrThrow(personId);
+  assertIsDefinedOrThrow(FAKE);
+
   return {
     workspaceMemberId: workspaceMemberIds[0],
-    personId:
-      personIds[Math.floor(Math.random() * Math.min(10, personIds.length))],
+    personId,
     displayName: FAKE.name,
     handle: FAKE.email,
   };
@@ -195,6 +228,8 @@ const CREATE_PARTICIPANT_DATA = (
   const PARTICIPANT_TYPE = Math.random();
 
   if (PARTICIPANT_TYPE < 0.4) {
+    assertIsDefinedOrThrow(workspaceMemberIds[0]);
+
     const PERSON_PARTICIPANT = CREATE_PERSON_PARTICIPANT(
       personIds,
       usedPersonIds,
@@ -250,7 +285,9 @@ const CREATE_MESSAGE_PARTICIPANTS = (
     );
 
     PARTICIPANTS.push({
-      id: MESSAGE_PARTICIPANT_DATA_SEED_IDS[`ID_${participantIndex}`],
+      id:
+        MESSAGE_PARTICIPANT_DATA_SEED_IDS[`ID_${participantIndex}`] ??
+        randomUUID(),
       createdAt: PARTICIPANT_DATE,
       updatedAt: PARTICIPANT_DATE,
       deletedAt: null,
@@ -286,6 +323,8 @@ const GENERATE_MESSAGE_PARTICIPANT_SEEDS = (
   );
 
   for (const MESSAGE_ID of MESSAGE_IDS) {
+    assertIsDefinedOrThrow(MESSAGE_ID);
+
     const RESULT = CREATE_MESSAGE_PARTICIPANTS(
       MESSAGE_ID,
       PERSON_IDS,

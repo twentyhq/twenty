@@ -35,6 +35,6 @@ describe('validateAgentTriggersCallerApplication', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(AiExceptionCode.RUN_AGENT_NOT_ALLOWED);
+    expect(errors[0]?.code).toBe(AiExceptionCode.RUN_AGENT_NOT_ALLOWED);
   });
 });

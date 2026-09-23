@@ -1,4 +1,8 @@
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -32,6 +36,8 @@ export const buildStandardFlatPageLayoutTabMetadataMaps = ({
 
     for (const tabTitle of Object.keys(layout.tabs)) {
       const tab = layout.tabs[tabTitle];
+      assertIsDefinedOrThrow(tab);
+
       const tabWidgets = Object.values(tab.widgets);
 
       const isFilledOnlyWithExcludedWidgets =

@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { NOTE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
@@ -44,13 +46,20 @@ const GENERATE_NOTE_TARGET_SEEDS = (): NoteTargetDataSeed[] => {
   const NOTE_TARGET_SEEDS: NoteTargetDataSeed[] = [];
 
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
+    const noteTargetDataSeedId = NOTE_TARGET_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(noteTargetDataSeedId);
+    const noteDataSeedId = NOTE_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(noteDataSeedId);
+
+    const PERSON_DATA_SEED_IDSItem =
+      PERSON_DATA_SEED_IDS[`ID_${INDEX}` as keyof typeof PERSON_DATA_SEED_IDS];
+
     NOTE_TARGET_SEEDS.push({
-      id: NOTE_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
-      noteId: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
-      targetPersonId:
-        PERSON_DATA_SEED_IDS[
-          `ID_${INDEX}` as keyof typeof PERSON_DATA_SEED_IDS
-        ],
+      id: noteTargetDataSeedId,
+      noteId: noteDataSeedId,
+      targetPersonId: PERSON_DATA_SEED_IDSItem,
       targetCompanyId: null,
       targetOpportunityId: null,
     });
@@ -59,14 +68,23 @@ const GENERATE_NOTE_TARGET_SEEDS = (): NoteTargetDataSeed[] => {
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const COMPANY_INDEX = INDEX - 1200;
 
+    const noteTargetId = NOTE_TARGET_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(noteTargetId);
+    const noteId = NOTE_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(noteId);
+
+    const COMPANY_DATA_SEED_IDSItem =
+      COMPANY_DATA_SEED_IDS[
+        `ID_${COMPANY_INDEX}` as keyof typeof COMPANY_DATA_SEED_IDS
+      ];
+
     NOTE_TARGET_SEEDS.push({
-      id: NOTE_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
-      noteId: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: noteTargetId,
+      noteId,
       targetPersonId: null,
-      targetCompanyId:
-        COMPANY_DATA_SEED_IDS[
-          `ID_${COMPANY_INDEX}` as keyof typeof COMPANY_DATA_SEED_IDS
-        ],
+      targetCompanyId: COMPANY_DATA_SEED_IDSItem,
       targetOpportunityId: null,
     });
   }

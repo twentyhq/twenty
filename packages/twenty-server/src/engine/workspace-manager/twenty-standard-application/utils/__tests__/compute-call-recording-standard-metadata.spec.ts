@@ -61,22 +61,20 @@ describe('CallRecording standard metadata build', () => {
   });
 
   it('links callRecording to a calendarEvent through a direct relation', () => {
-    const calendarEventField =
+    expect(
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.callRecording.fields.calendarEvent.universalIdentifier
-      ];
-
-    expect(calendarEventField).toBeDefined();
+      ],
+    ).toBeDefined();
   });
 
   it('indexes the calendarEvent foreign key', () => {
-    const calendarEventIdIndex =
+    expect(
       allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.callRecording.indexes.calendarEventIdIndex
           .universalIdentifier
-      ];
-
-    expect(calendarEventIdIndex).toBeDefined();
+      ],
+    ).toBeDefined();
   });
 
   it('keeps the callRecording table view focused on its label identifier and statuses', () => {

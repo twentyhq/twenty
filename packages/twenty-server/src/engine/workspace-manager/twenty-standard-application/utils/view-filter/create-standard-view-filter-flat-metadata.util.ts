@@ -78,7 +78,9 @@ export const createStandardViewFilterFlatMetadata = <
   };
 
   const viewDefinition = objectDefinition.views[viewName];
+
   const viewFilterDefinition = viewDefinition.viewFilters[viewFilterName];
+
   const fieldDefinition = objectDefinition.fields[fieldName];
 
   if (!isDefined(viewFilterDefinition)) {

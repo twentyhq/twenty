@@ -4,7 +4,7 @@ import {
   type PageLayoutWidgetPosition,
   type WidgetType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -64,6 +64,8 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
   objectMetadataUniversalIdentifier: string | null;
 }): FlatPageLayoutWidget => {
   const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
+  assertIsDefinedOrThrow(layoutIds);
+
   const layout = STANDARD_PAGE_LAYOUTS[
     layoutName as keyof typeof STANDARD_PAGE_LAYOUTS
   ] as {
@@ -76,8 +78,13 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     >;
   };
   const tabDefinition = layout.tabs[tabTitle];
-  const widgetDef: StandardPageLayoutWidgetConfig =
-    tabDefinition.widgets[widgetName];
+  assertIsDefinedOrThrow(tabDefinition);
+
+  const widget = tabDefinition.widgets[widgetName];
+
+  assertIsDefinedOrThrow(widget);
+
+  const widgetDef: StandardPageLayoutWidgetConfig = widget;
 
   if (!isDefined(widgetDef)) {
     throw new Error(
@@ -86,7 +93,10 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
   }
 
   const tabIds = layoutIds.tabs[tabTitle];
+  assertIsDefinedOrThrow(tabIds);
+
   const widgetIds = tabIds.widgets[widgetName];
+  assertIsDefinedOrThrow(widgetIds);
 
   return {
     id: widgetIds.id,

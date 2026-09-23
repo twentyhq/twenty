@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { MESSAGE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -86,10 +88,17 @@ const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_SEEDS =
       const MESSAGE_EXTERNAL_ID = `msg-${ASSOCIATION_INDEX}-${Date.now()}`;
       const MESSAGE_THREAD_EXTERNAL_ID = `thread-${Math.floor(ASSOCIATION_INDEX / 2)}-${Date.now()}`;
 
-      ASSOCIATION_SEEDS.push({
-        id: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_IDS[
+      assertIsDefinedOrThrow(messageId);
+
+      const messageChannelMessageAssociationDataSeedId =
+        MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_IDS[
           `ID_${ASSOCIATION_INDEX}`
-        ],
+        ];
+
+      assertIsDefinedOrThrow(messageChannelMessageAssociationDataSeedId);
+
+      ASSOCIATION_SEEDS.push({
+        id: messageChannelMessageAssociationDataSeedId,
         createdAt: ASSOCIATION_DATE,
         updatedAt: ASSOCIATION_DATE,
         deletedAt: null,

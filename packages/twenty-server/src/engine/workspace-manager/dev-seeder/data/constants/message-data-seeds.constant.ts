@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
 
 type MessageDataSeed = {
@@ -102,9 +104,11 @@ const GENERATE_MESSAGE_SEEDS = (): MessageDataSeed[] => {
   for (let INDEX = 1; INDEX <= 600; INDEX++) {
     const TEMPLATE_INDEX = (INDEX - 1) % EMAIL_TEMPLATES.length;
     const TEMPLATE = EMAIL_TEMPLATES[TEMPLATE_INDEX];
+    assertIsDefinedOrThrow(TEMPLATE);
 
     const THREAD_INDEX = Math.floor((INDEX - 1) / 2); // 2 messages per thread on average
     const THREAD_ID = THREAD_IDS[THREAD_INDEX % THREAD_IDS.length];
+    assertIsDefinedOrThrow(THREAD_ID);
 
     const NOW = new Date();
     const RANDOM_DAYS_OFFSET = Math.floor(Math.random() * 90);
@@ -119,8 +123,12 @@ const GENERATE_MESSAGE_SEEDS = (): MessageDataSeed[] => {
       0,
     );
 
+    const messageDataSeedId = MESSAGE_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(messageDataSeedId);
+
     MESSAGE_SEEDS.push({
-      id: MESSAGE_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: messageDataSeedId,
       createdAt: MESSAGE_DATE,
       updatedAt: MESSAGE_DATE,
       deletedAt: null,

@@ -6,6 +6,7 @@ import { join } from 'path';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { DataSource, type EntityManager } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -504,6 +505,7 @@ export class DevSeederDataService {
     for (const metadata of fileSeedMetadata) {
       const resourcePath = `${metadata.fileId}.${metadata.extension}`;
       const sourceFile = sampleFileBuffers[metadata.sampleFileIndex];
+      assertIsDefinedOrThrow(sourceFile);
 
       await this.fileStorageService.writeFile({
         sourceFile,

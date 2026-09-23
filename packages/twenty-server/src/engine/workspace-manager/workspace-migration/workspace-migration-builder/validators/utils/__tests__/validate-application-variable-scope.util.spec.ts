@@ -27,10 +27,10 @@ describe('validateApplicationVariableScope', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(
+    expect(errors[0]?.code).toBe(
       ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
     );
-    expect(errors[0].message).toContain('TEAM');
+    expect(errors[0]?.message).toContain('TEAM');
   });
 
   it('should return an error for a workspace variable without a value', () => {
@@ -40,7 +40,7 @@ describe('validateApplicationVariableScope', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(
+    expect(errors[0]?.code).toBe(
       ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
     );
   });
@@ -52,7 +52,7 @@ describe('validateApplicationVariableScope', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(
+    expect(errors[0]?.code).toBe(
       ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
     );
   });

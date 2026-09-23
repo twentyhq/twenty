@@ -36,7 +36,7 @@ describe('validateFlatPermissionFlagUpdate', () => {
     );
 
     expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].code).toBe(
+    expect(result.errors[0]?.code).toBe(
       PermissionFlagExceptionCode.PERMISSION_FLAG_NOT_FOUND,
     );
   });
@@ -51,7 +51,7 @@ describe('validateFlatPermissionFlagUpdate', () => {
     );
 
     expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].code).toBe(
+    expect(result.errors[0]?.code).toBe(
       PermissionFlagExceptionCode.PERMISSION_FLAG_KEY_IMMUTABLE,
     );
   });
@@ -78,7 +78,7 @@ describe('validateFlatPermissionFlagUpdate', () => {
     );
 
     expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].code).toBe(
+    expect(result.errors[0]?.code).toBe(
       PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE,
     );
   });
@@ -99,7 +99,7 @@ describe('validateFlatPermissionFlagUpdate', () => {
     );
 
     expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].code).toBe(
+    expect(result.errors[0]?.code).toBe(
       PermissionFlagExceptionCode.PERMISSION_FLAG_IS_STANDARD,
     );
   });

@@ -1,4 +1,5 @@
 import { FieldActorSource } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { NOTE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
@@ -153,9 +154,14 @@ export const generateAttachmentSeedsForWorkspace = (
   for (let index = 1; index <= 400; index++) {
     const nameVariationIndex = index % FILE_NAME_VARIATIONS.length;
     const nameVariation = FILE_NAME_VARIATIONS[nameVariationIndex];
+    assertIsDefinedOrThrow(nameVariation);
+
     const sampleFile = ATTACHMENT_SAMPLE_FILES[nameVariation.sampleFileIndex];
+    assertIsDefinedOrThrow(sampleFile);
 
     const attachmentId = ATTACHMENT_DATA_SEED_IDS[`ID_${index}`];
+    assertIsDefinedOrThrow(attachmentId);
+
     const fileId = deriveFileId(index, workspaceId);
 
     let targetPersonId: string | null = null;
@@ -167,20 +173,40 @@ export const generateAttachmentSeedsForWorkspace = (
     const distributionValue = index % 100;
 
     if (distributionValue < 30) {
-      targetPersonId = PERSON_IDS[entityIndex % PERSON_IDS.length];
+      const personId = PERSON_IDS[entityIndex % PERSON_IDS.length];
+
+      assertIsDefinedOrThrow(personId);
+
+      targetPersonId = personId;
       entityIndex++;
     } else if (distributionValue < 60) {
-      targetCompanyId = COMPANY_IDS[entityIndex % COMPANY_IDS.length];
+      const companyId = COMPANY_IDS[entityIndex % COMPANY_IDS.length];
+
+      assertIsDefinedOrThrow(companyId);
+
+      targetCompanyId = companyId;
       entityIndex++;
     } else if (distributionValue < 80) {
-      targetNoteId = NOTE_IDS[entityIndex % NOTE_IDS.length];
+      const noteId = NOTE_IDS[entityIndex % NOTE_IDS.length];
+
+      assertIsDefinedOrThrow(noteId);
+
+      targetNoteId = noteId;
       entityIndex++;
     } else if (distributionValue < 95) {
-      targetTaskId = TASK_IDS[entityIndex % TASK_IDS.length];
+      const taskId = TASK_IDS[entityIndex % TASK_IDS.length];
+
+      assertIsDefinedOrThrow(taskId);
+
+      targetTaskId = taskId;
       entityIndex++;
     } else {
-      targetOpportunityId =
+      const opportunityId =
         OPPORTUNITY_IDS[entityIndex % OPPORTUNITY_IDS.length];
+
+      assertIsDefinedOrThrow(opportunityId);
+
+      targetOpportunityId = opportunityId;
       entityIndex++;
     }
 

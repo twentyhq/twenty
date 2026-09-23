@@ -1,6 +1,6 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type AggregateOperations } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -71,7 +71,9 @@ export const createStandardViewFieldFlatMetadata = <
   };
 
   const viewDefinition = objectDefinition.views[viewName];
+
   const viewFieldDefinition = viewDefinition.viewFields[viewFieldName];
+
   const fieldDefinition = objectDefinition.fields[fieldName];
 
   if (!isDefined(viewFieldDefinition)) {
@@ -107,10 +109,14 @@ export const createStandardViewFieldFlatMetadata = <
     viewFieldGroupUniversalIdentifier =
       viewFieldGroupDefinition.universalIdentifier;
 
-    viewFieldGroupId = (
+    const viewFieldGroup = (
       standardObjectMetadataRelatedEntityIds[objectName].views[viewName]
         .viewFieldGroups as Record<string, { id: string }>
-    )[viewFieldGroupName as string].id;
+    )[viewFieldGroupName as string];
+
+    assertIsDefinedOrThrow(viewFieldGroup);
+
+    viewFieldGroupId = viewFieldGroup.id;
   }
 
   return {

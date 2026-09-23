@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 
@@ -27,9 +28,13 @@ const computeTabIds = (
   const tabIds: TabIds = {};
 
   for (const tabTitle of Object.keys(tabs)) {
+    const tab = tabs[tabTitle];
+
+    assertIsDefinedOrThrow(tab);
+
     tabIds[tabTitle] = {
       id: v4(),
-      widgets: computeWidgetIds(tabs[tabTitle].widgets),
+      widgets: computeWidgetIds(tab.widgets),
     };
   }
 

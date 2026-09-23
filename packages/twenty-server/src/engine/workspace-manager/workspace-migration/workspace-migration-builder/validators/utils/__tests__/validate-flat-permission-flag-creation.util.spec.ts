@@ -39,7 +39,7 @@ describe('validateFlatPermissionFlagCreation', () => {
     );
 
     expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].code).toBe(
+    expect(result.errors[0]?.code).toBe(
       PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
     );
   });
@@ -55,7 +55,7 @@ describe('validateFlatPermissionFlagCreation', () => {
     );
 
     expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].code).toBe(
+    expect(result.errors[0]?.code).toBe(
       PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
     );
   });
@@ -77,10 +77,10 @@ describe('validateFlatPermissionFlagCreation', () => {
     );
 
     expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].code).toBe(
+    expect(result.errors[0]?.code).toBe(
       PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
     );
-    expect(result.errors[0].message).toContain('CAN_DO_THING');
+    expect(result.errors[0]?.message).toContain('CAN_DO_THING');
   });
 
   it('should report an error for an unsupported permission type', () => {
@@ -95,7 +95,7 @@ describe('validateFlatPermissionFlagCreation', () => {
     );
 
     expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].code).toBe(
+    expect(result.errors[0]?.code).toBe(
       PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE,
     );
   });
@@ -140,6 +140,6 @@ describe('validateFlatPermissionFlagCreation', () => {
     expect(result.errors.map((error) => error.code)).toEqual([
       PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
     ]);
-    expect(result.errors[0].message).toContain('universal identifier');
+    expect(result.errors[0]?.message).toContain('universal identifier');
   });
 });

@@ -8,6 +8,7 @@ import {
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const PLACEHOLDER_REGEX = /\{(\w+)\}/g;
 
@@ -33,12 +34,13 @@ describe('authored metadata label placeholders', () => {
     // Guards against the check below passing vacuously
     expect(usedNames.size).toBeGreaterThan(0);
     expect(
-      [...usedNames].filter(
-        (name) =>
-          !(METADATA_LABEL_PLACEHOLDER_NAMES as readonly string[]).includes(
-            name,
-          ),
-      ),
+      [...usedNames].filter((name) => {
+        jestExpectToBeDefined(name);
+
+        return !(
+          METADATA_LABEL_PLACEHOLDER_NAMES as readonly string[]
+        ).includes(name);
+      }),
     ).toEqual([]);
   });
 

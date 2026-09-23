@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
@@ -177,6 +177,7 @@ const GENERATE_OPPORTUNITY_SEEDS = (): OpportunityDataSeed[] => {
   for (let INDEX = 1; INDEX <= OPPORTUNITY_DATA_SEED_COUNT; INDEX++) {
     const TEMPLATE_INDEX = (INDEX - 1) % OPPORTUNITY_TEMPLATES.length;
     const TEMPLATE = OPPORTUNITY_TEMPLATES[TEMPLATE_INDEX];
+    assertIsDefinedOrThrow(TEMPLATE);
 
     const DAYS_AHEAD = Math.floor(Math.random() * 90) + 1;
     const CLOSE_DATE = new Date();
@@ -193,8 +194,13 @@ const GENERATE_OPPORTUNITY_SEEDS = (): OpportunityDataSeed[] => {
       ? `${workspaceMember?.nameFirstName} ${workspaceMember?.nameLastName}`
       : 'Unkonwn';
 
+    const opportunityDataSeedId = OPPORTUNITY_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(opportunityDataSeedId);
+    assertIsDefinedOrThrow(workspaceMemberId);
+
     const rawSeed: OpportunityDataSeed = {
-      id: OPPORTUNITY_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: opportunityDataSeedId,
       name: TEMPLATE.name,
       amountAmountMicros: TEMPLATE.amount * 1000000,
       amountCurrencyCode: 'USD',

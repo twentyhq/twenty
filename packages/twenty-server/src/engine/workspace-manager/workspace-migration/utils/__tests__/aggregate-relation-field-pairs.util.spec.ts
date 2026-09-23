@@ -5,6 +5,7 @@ import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manag
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { aggregateRelationFieldPairs } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-relation-field-pairs.util';
 import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('aggregateRelationFieldPairs', () => {
   it('should bundle relation field pairs into single action with relatedFieldId', () => {
@@ -105,8 +106,10 @@ describe('aggregateRelationFieldPairs', () => {
       },
     ]);
     expect(
-      result.fieldMetadata.create[0].relatedUniversalFlatFieldMetadata,
+      result.fieldMetadata.create[0]?.relatedUniversalFlatFieldMetadata,
     ).toBeUndefined();
+    jestExpectToBeDefined(result.fieldMetadata.create[0]);
+
     expect(result.fieldMetadata.create[0].relatedFieldId).toBeUndefined();
   });
 
@@ -150,8 +153,10 @@ describe('aggregateRelationFieldPairs', () => {
       },
     ]);
     expect(
-      result.fieldMetadata.create[0].relatedUniversalFlatFieldMetadata,
+      result.fieldMetadata.create[0]?.relatedUniversalFlatFieldMetadata,
     ).toBeUndefined();
+    jestExpectToBeDefined(result.fieldMetadata.create[0]);
+
     expect(result.fieldMetadata.create[0].relatedFieldId).toBeUndefined();
   });
 

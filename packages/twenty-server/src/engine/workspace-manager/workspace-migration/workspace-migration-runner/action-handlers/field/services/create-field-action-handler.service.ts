@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -96,6 +96,8 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           context,
         }),
       );
+
+    assertIsDefinedOrThrow(flatFieldMetadata);
 
     return {
       type: action.type,

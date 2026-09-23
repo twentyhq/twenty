@@ -114,19 +114,18 @@ describe('CalendarEvent standard metadata build', () => {
   });
 
   it('groups the record page fields into general and system sections', () => {
-    const generalGroup =
+    expect(
       allFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
           .viewFieldGroups.general.universalIdentifier
-      ];
-    const systemGroup =
+      ],
+    ).toBeDefined();
+    expect(
       allFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
           .viewFieldGroups.system.universalIdentifier
-      ];
-
-    expect(generalGroup).toBeDefined();
-    expect(systemGroup).toBeDefined();
+      ],
+    ).toBeDefined();
   });
 
   it('links the calendar event fields widget to its record-page fields view', () => {
@@ -185,22 +184,21 @@ describe('CalendarEvent standard metadata build', () => {
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
         .summary.widgets.summary.universalIdentifier;
 
-    const summaryTab =
+    expect(
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
         summaryTabUniversalIdentifier
-      ];
-    const summaryWidget =
-      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        summaryWidgetUniversalIdentifier
-      ];
-
-    expect(summaryTab).toMatchObject({
+      ],
+    ).toMatchObject({
       title: 'Summary',
       icon: 'IconFileText',
       position: 30,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     });
-    expect(summaryWidget).toMatchObject({
+    expect(
+      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
+        summaryWidgetUniversalIdentifier
+      ],
+    ).toMatchObject({
       title: 'Summary',
       type: WidgetType.CALL_RECORDING_SUMMARY,
       pageLayoutTabUniversalIdentifier: summaryTabUniversalIdentifier,
@@ -226,22 +224,21 @@ describe('CalendarEvent standard metadata build', () => {
       'e812ce13-5531-530a-a881-84a67315c9fe',
     );
 
-    const callRecordingTab =
+    expect(
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
         callRecordingTabUniversalIdentifier
-      ];
-    const transcriptWidget =
-      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        transcriptWidgetUniversalIdentifier
-      ];
-
-    expect(callRecordingTab).toMatchObject({
+      ],
+    ).toMatchObject({
       title: 'Transcript',
       icon: 'IconBlockquote',
       position: 40,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     });
-    expect(transcriptWidget).toMatchObject({
+    expect(
+      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
+        transcriptWidgetUniversalIdentifier
+      ],
+    ).toMatchObject({
       title: 'Transcript',
       type: WidgetType.CALL_RECORDING_TRANSCRIPT,
       pageLayoutTabUniversalIdentifier: callRecordingTabUniversalIdentifier,

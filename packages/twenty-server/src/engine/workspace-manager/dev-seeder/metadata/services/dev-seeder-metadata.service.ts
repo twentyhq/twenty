@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -342,6 +342,9 @@ export class DevSeederMetadataService {
     const [targetObjectName, targetFieldName] =
       junctionConfig.junctionTargetFieldRef.split('.');
 
+    assertIsDefinedOrThrow(targetObjectName);
+    assertIsDefinedOrThrow(targetFieldName);
+
     const junctionTargetFieldId = this.findFieldId(
       targetObjectName,
       targetFieldName,
@@ -408,6 +411,8 @@ export class DevSeederMetadataService {
             throw new Error('Morph relations creation payload is not defined');
           }
 
+          assertIsDefinedOrThrow(seed.morphRelationsCreationPayload[0]);
+
           return {
             type: seed.morphRelationsCreationPayload[0].type,
             targetFieldLabel:
@@ -436,6 +441,7 @@ export class DevSeederMetadataService {
     flatMaps: FlatMaps;
   }): Promise<void> {
     const sourceObjectId = flatMaps.objectIdByName[field.sourceObjectName];
+
     const targetObjectId = flatMaps.objectIdByName[field.targetObjectName];
 
     if (!isDefined(sourceObjectId)) {

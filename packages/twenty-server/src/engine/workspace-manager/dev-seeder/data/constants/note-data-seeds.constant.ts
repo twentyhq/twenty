@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type NoteDataSeed = {
@@ -143,9 +145,14 @@ const GENERATE_NOTE_SEEDS = (): NoteDataSeed[] => {
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
     const TEMPLATE_INDEX = (INDEX - 1) % PERSON_NOTE_TEMPLATES.length;
     const TEMPLATE = PERSON_NOTE_TEMPLATES[TEMPLATE_INDEX];
+    assertIsDefinedOrThrow(TEMPLATE);
+
+    const noteDataSeedId = NOTE_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(noteDataSeedId);
 
     NOTE_SEEDS.push({
-      id: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: noteDataSeedId,
       position: INDEX,
       title: TEMPLATE.title,
       bodyV2Blocknote: JSON.stringify([
@@ -176,9 +183,14 @@ const GENERATE_NOTE_SEEDS = (): NoteDataSeed[] => {
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const TEMPLATE_INDEX = (INDEX - 1201) % COMPANY_NOTE_TEMPLATES.length;
     const TEMPLATE = COMPANY_NOTE_TEMPLATES[TEMPLATE_INDEX];
+    assertIsDefinedOrThrow(TEMPLATE);
+
+    const noteId = NOTE_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(noteId);
 
     NOTE_SEEDS.push({
-      id: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: noteId,
       position: INDEX,
       title: TEMPLATE.title,
       bodyV2Blocknote: JSON.stringify([

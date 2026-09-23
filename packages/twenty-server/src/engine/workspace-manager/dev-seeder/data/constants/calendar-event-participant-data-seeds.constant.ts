@@ -1,3 +1,7 @@
+import { randomUUID } from 'crypto';
+
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { CALENDAR_EVENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import {
@@ -78,7 +82,12 @@ const FIND_UNUSED_PERSON_ID = (
 
   if (AVAILABLE_IDS.length === 0) return null;
 
-  return AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+  const availableId =
+    AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+
+  assertIsDefinedOrThrow(availableId);
+
+  return availableId;
 };
 
 const FIND_UNUSED_WORKSPACE_MEMBER_ID = (
@@ -91,7 +100,12 @@ const FIND_UNUSED_WORKSPACE_MEMBER_ID = (
 
   if (AVAILABLE_IDS.length === 0) return null;
 
-  return AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+  const availableId =
+    AVAILABLE_IDS[Math.floor(Math.random() * AVAILABLE_IDS.length)];
+
+  assertIsDefinedOrThrow(availableId);
+
+  return availableId;
 };
 
 const CREATE_PERSON_EVENT_PARTICIPANT = (
@@ -160,6 +174,8 @@ const CREATE_WORKSPACE_MEMBER_EVENT_PARTICIPANT = (
 
 const CREATE_FAKE_EVENT_PARTICIPANT = (): EventParticipantData => {
   const FAKE = GET_RANDOM_FAKE_PARTICIPANT();
+
+  assertIsDefinedOrThrow(FAKE);
 
   return {
     handle: FAKE.email,
@@ -252,7 +268,9 @@ const CREATE_EVENT_PARTICIPANTS = (
     const RESPONSE_STATUS = GET_RESPONSE_STATUS(IS_ORGANIZER);
 
     PARTICIPANTS.push({
-      id: CALENDAR_EVENT_PARTICIPANT_DATA_SEED_IDS[`ID_${participantIndex}`],
+      id:
+        CALENDAR_EVENT_PARTICIPANT_DATA_SEED_IDS[`ID_${participantIndex}`] ??
+        randomUUID(),
       calendarEventId: eventId,
       handle: PARTICIPANT_DATA.handle,
       displayName: PARTICIPANT_DATA.displayName,
@@ -289,6 +307,8 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS = (
   );
 
   for (const EVENT_ID of EVENT_IDS) {
+    assertIsDefinedOrThrow(EVENT_ID);
+
     const RESULT = CREATE_EVENT_PARTICIPANTS(
       EVENT_ID,
       PERSON_IDS,
