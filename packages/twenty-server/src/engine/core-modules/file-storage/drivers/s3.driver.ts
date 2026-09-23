@@ -673,6 +673,10 @@ export class S3Driver implements StorageDriver {
     const fromFolderPath = result.groups.folder;
     const filename = result.groups.file;
 
+    if (!isDefined(fromFolderPath) || !isDefined(filename)) {
+      return;
+    }
+
     return { fromFolderPath, filename };
   }
 

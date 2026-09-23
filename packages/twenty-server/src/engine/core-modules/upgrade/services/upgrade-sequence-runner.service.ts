@@ -98,6 +98,10 @@ export class UpgradeSequenceRunnerService {
     while (cursor < sequence.length) {
       const step = sequence[cursor];
 
+      if (!isDefined(step)) {
+        break;
+      }
+
       if (this.commandShutdownService.isShutdownRequested()) {
         this.logger.warn(
           formatUpgradeLog({
@@ -265,6 +269,12 @@ export class UpgradeSequenceRunnerService {
       });
 
     const lastAttemptedStep = sequence[lastAttemptedCursor];
+
+    if (!isDefined(lastAttemptedStep)) {
+      throw new Error(
+        `Upgrade step "${lastAttempted.name}" is missing from the sequence.`,
+      );
+    }
 
     switch (lastAttemptedStep.kind) {
       case 'fast-instance':

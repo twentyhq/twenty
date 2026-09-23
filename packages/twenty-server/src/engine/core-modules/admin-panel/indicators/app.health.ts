@@ -21,7 +21,7 @@ export class AppHealthIndicator {
   ) {}
 
   // TODO refactor, a workspace health should be based on its app versioning
-  async isHealthy(): Promise<HealthIndicatorResult> {
+  async isHealthy(): Promise<HealthIndicatorResult<'app'>> {
     const indicator = this.healthIndicatorService.check('app');
 
     try {

@@ -19,7 +19,9 @@ export class ConnectedAccountHealth {
     private readonly metricsService: MetricsService,
   ) {}
 
-  private async checkMessageSyncHealth(): Promise<HealthIndicatorResult> {
+  private async checkMessageSyncHealth(): Promise<
+    HealthIndicatorResult<'messageSync'>
+  > {
     const indicator = this.healthIndicatorService.check('messageSync');
 
     try {
@@ -67,7 +69,9 @@ export class ConnectedAccountHealth {
     }
   }
 
-  private async checkCalendarSyncHealth(): Promise<HealthIndicatorResult> {
+  private async checkCalendarSyncHealth(): Promise<
+    HealthIndicatorResult<'calendarSync'>
+  > {
     const indicator = this.healthIndicatorService.check('calendarSync');
 
     try {
@@ -115,7 +119,7 @@ export class ConnectedAccountHealth {
     }
   }
 
-  async isHealthy(): Promise<HealthIndicatorResult> {
+  async isHealthy(): Promise<HealthIndicatorResult<'connectedAccount'>> {
     const indicator = this.healthIndicatorService.check('connectedAccount');
 
     const [messageResult, calendarResult] = await Promise.all([
