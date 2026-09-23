@@ -58,6 +58,8 @@ export const FrontComponentWorkerEffect = ({
       return;
     }
 
+    setError(null);
+
     const newReceiver = new RemoteReceiver({ retain, release });
 
     const sandboxIframe = createFrontComponentSandboxIframe(
