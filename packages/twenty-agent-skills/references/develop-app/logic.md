@@ -65,6 +65,18 @@ Extract and test:
 - summary count aggregation;
 - error message normalization.
 
+## Server Cron Trigger
+
+Use `serverCronTriggerSettings` instead of `cronTriggerSettings` when every install calls the same third-party account (one key in `serverVariables`) and running once per workspace would multiply calls against the provider's rate limits. The function runs once per server per tick, in the app's owner workspace, and hands each workspace its share of the data.
+
+- `serverCronTriggerSettings: { pattern: string }` takes exactly 5 cron fields, evaluated in UTC. The function cannot declare any other trigger.
+- The handler (`ServerCronHandler`) receives `ServerCronPayload`: `{ scheduledAt, step, cursor? }`. Compute time windows from `scheduledAt`, which is the same for every step of a tick.
+- It returns `ServerCronDispatchResult`: `{ dispatches: ServerCronDispatch[]; next?: { cursor; delayMs? } }`. Each dispatch is `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload?, delayMs? }` and enqueues that target, a logic function of the same app, in that workspace.
+- Return `next` to page through a large list in bounded steps instead of one long run. Limits: 1,000 dispatches per step, 100 steps per tick, 256 KiB per dispatch payload.
+- Dispatches to workspaces without the app are dropped. Targets run at least once, so keep them idempotent, and only send a workspace its own data.
+- Keep per-workspace settings (application variables) and record writes in the target, not in the dispatcher.
+- Import the types from `twenty-sdk/define` or `twenty-sdk/logic-function`.
+
 ## Skills And Agents
 
 Skills and agents should describe when they apply, what context they need, and what output is expected.
