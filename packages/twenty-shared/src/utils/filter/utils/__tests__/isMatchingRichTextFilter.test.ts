@@ -119,20 +119,25 @@ describe('isMatchingRichTextFilter', () => {
       ).toBe(true);
     });
 
-    it('should keep a trailing escape char literal', () => {
-      // postgres rejects a pattern ending with a lone escape char, the mirror
-      // stays lenient and treats it as a literal backslash
-      expect(
+    it('should reject a trailing escape character', () => {
+      expect(() =>
         isMatchingRichTextFilter({
           richTextFilter: { markdown: { ilike: 'abc\\' } },
           value: 'abc\\',
         }),
-      ).toBe(true);
+      ).toThrow('LIKE pattern must not end with escape character');
+    });
+
+    it('should not broaden matching with Unicode case folding', () => {
+      expect(
+        isMatchingRichTextFilter({
+          richTextFilter: { markdown: { ilike: 's' } },
+          value: 'ſ',
+        }),
+      ).toBe(false);
     });
 
     it('should not match when the markdown filter has no ilike', () => {
-      // ILIKE NULL is never true in postgres, the old code matched the literal
-      // word undefined bcs escapeRegExp coerced its argument
       expect(
         isMatchingRichTextFilter({
           richTextFilter: { markdown: {} },
@@ -146,7 +151,7 @@ describe('isMatchingRichTextFilter', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>
         isMatchingRichTextFilter({
-          richTextFilter: {} as any,
+          richTextFilter: {},
           value: 'test',
         }),
       ).toThrow('Unexpected value for RICH_TEXT filter');
