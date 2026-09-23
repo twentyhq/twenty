@@ -149,6 +149,22 @@ export interface ObjectMetadataCommandMenuItemPayload {
     __typename: 'ObjectMetadataCommandMenuItemPayload'
 }
 
+export interface SettingsMenuItem {
+    id: Scalars['UUID']
+    frontComponentId: Scalars['UUID']
+    title: Scalars['String']
+    icon?: Scalars['String']
+    position: Scalars['Float']
+    scope: SettingsMenuItemScope
+    universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'SettingsMenuItem'
+}
+
+export type SettingsMenuItemScope = 'WORKSPACE' | 'USER'
+
 export interface LogicFunction {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -370,6 +386,7 @@ export interface Application {
     agents: Agent[]
     frontComponents: FrontComponent[]
     commandMenuItems: CommandMenuItem[]
+    settingsMenuItems: SettingsMenuItem[]
     logicFunctions: LogicFunction[]
     objects: Object[]
     applicationVariables: ApplicationVariable[]
@@ -3810,6 +3827,21 @@ export interface ObjectMetadataCommandMenuItemPayloadGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SettingsMenuItemGenqlSelection{
+    id?: boolean | number
+    frontComponentId?: boolean | number
+    title?: boolean | number
+    icon?: boolean | number
+    position?: boolean | number
+    scope?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface LogicFunctionGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -4042,6 +4074,7 @@ export interface ApplicationGenqlSelection{
     agents?: AgentGenqlSelection
     frontComponents?: FrontComponentGenqlSelection
     commandMenuItems?: CommandMenuItemGenqlSelection
+    settingsMenuItems?: SettingsMenuItemGenqlSelection
     logicFunctions?: LogicFunctionGenqlSelection
     objects?: ObjectGenqlSelection
     applicationVariables?: ApplicationVariableGenqlSelection
@@ -8035,6 +8068,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const SettingsMenuItem_possibleTypes: string[] = ['SettingsMenuItem']
+    export const isSettingsMenuItem = (obj?: { __typename?: any } | null): obj is SettingsMenuItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSettingsMenuItem"')
+      return SettingsMenuItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const LogicFunction_possibleTypes: string[] = ['LogicFunction']
     export const isLogicFunction = (obj?: { __typename?: any } | null): obj is LogicFunction => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunction"')
@@ -10467,6 +10508,11 @@ export const enumCommandMenuItemAvailabilityType = {
    GLOBAL_OBJECT_CONTEXT: 'GLOBAL_OBJECT_CONTEXT' as const,
    RECORD_SELECTION: 'RECORD_SELECTION' as const,
    FALLBACK: 'FALLBACK' as const
+}
+
+export const enumSettingsMenuItemScope = {
+   WORKSPACE: 'WORKSPACE' as const,
+   USER: 'USER' as const
 }
 
 export const enumLogicFunctionExecutionMode = {
