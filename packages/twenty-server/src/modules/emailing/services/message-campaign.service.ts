@@ -138,7 +138,7 @@ export class MessageCampaignService {
 
     if (sendableRecipients.length > 0 && isDefined(sendRefusal)) {
       throw new EmailingDomainException(
-        `Campaign ${campaignId} cannot be sent to ${sendableRecipients.length} recipient(s): ${sendRefusal.kind}`,
+        `Campaign ${campaignId} cannot be sent to ${sendableRecipients.length} recipient(s) because its email usage was refused`,
         EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
       );
     }

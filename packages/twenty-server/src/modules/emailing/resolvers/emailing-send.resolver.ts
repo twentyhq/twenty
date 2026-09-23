@@ -19,6 +19,7 @@ import { SendMessageCampaignTestInput } from 'src/engine/core-modules/emailing-d
 import { SendMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-output.dto';
 import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain/services/email-group-access.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -50,6 +51,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   EmailingDomainGraphqlApiExceptionFilter,
   ThrottlerGraphqlApiExceptionFilter,
   AuthGraphqlApiExceptionFilter,
+  UsageLimitGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
