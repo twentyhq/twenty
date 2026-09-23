@@ -1,13 +1,5 @@
+import { type ObjectPermissionAction } from '@/application/objectPermissionActionType';
 import { type RoleManifest } from '@/application/roleManifestType';
-
-export const OBJECT_PERMISSION_ACTIONS = [
-  'canReadObjectRecords',
-  'canUpdateObjectRecords',
-  'canSoftDeleteObjectRecords',
-  'canDestroyObjectRecords',
-] as const;
-
-export type ObjectPermissionAction = (typeof OBJECT_PERMISSION_ACTIONS)[number];
 
 export type EffectiveObjectPermissions = Record<
   ObjectPermissionAction,

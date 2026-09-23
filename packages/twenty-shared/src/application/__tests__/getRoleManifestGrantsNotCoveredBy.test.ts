@@ -1,10 +1,10 @@
-import { SystemPermissionFlag } from '../../constants';
+import { type RoleManifest } from '@/application/roleManifestType';
+import { getRoleManifestGrantsNotCoveredBy } from '@/application/utils/getRoleManifestGrantsNotCoveredBy';
+import { SystemPermissionFlag } from '@/constants';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
-} from '../../types';
-import { type RoleManifest } from '../roleManifestType';
-import { getRoleManifestGrantsNotCoveredBy } from '../utils/getRoleManifestGrantsNotCoveredBy';
+} from '@/types';
 
 const PERSON = 'object-person';
 const COMPANY = 'object-company';
@@ -36,7 +36,13 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
     });
 
-    expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([]);
+    expect(
+      getRoleManifestGrantsNotCoveredBy({
+        role,
+        superset,
+        toolPermissionFlagUniversalIdentifiers: [],
+      }),
+    ).toEqual([]);
   });
 
   it('reports role-level flags the superset lacks', () => {
@@ -44,12 +50,20 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canUpdateAllSettings: true,
+      canAccessAllTools: true,
     });
     const superset = buildRole({ canReadAllObjectRecords: true });
 
-    expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+    expect(
+      getRoleManifestGrantsNotCoveredBy({
+        role,
+        superset,
+        toolPermissionFlagUniversalIdentifiers: [],
+      }),
+    ).toEqual([
       { type: 'ALL_OBJECT_RECORDS', action: 'canUpdateObjectRecords' },
-      { type: 'ALL_SETTINGS', flag: 'canUpdateAllSettings' },
+      { type: 'ALL_SETTINGS' },
+      { type: 'ALL_TOOLS' },
     ]);
   });
 
@@ -70,7 +84,13 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       ],
     });
 
-    expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+    expect(
+      getRoleManifestGrantsNotCoveredBy({
+        role,
+        superset,
+        toolPermissionFlagUniversalIdentifiers: [],
+      }),
+    ).toEqual([
       {
         type: 'OBJECT_RECORDS',
         objectUniversalIdentifier: PERSON,
@@ -93,7 +113,13 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       ],
     });
 
-    expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+    expect(
+      getRoleManifestGrantsNotCoveredBy({
+        role,
+        superset,
+        toolPermissionFlagUniversalIdentifiers: [],
+      }),
+    ).toEqual([
       {
         type: 'OBJECT_RECORDS',
         objectUniversalIdentifier: PERSON,
@@ -126,6 +152,7 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       getRoleManifestGrantsNotCoveredBy({
         role,
         superset: buildRole({ canAccessAllTools: true }),
+        toolPermissionFlagUniversalIdentifiers: [],
       }),
     ).toEqual([
       {
@@ -174,7 +201,13 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       ],
     });
 
-    expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+    expect(
+      getRoleManifestGrantsNotCoveredBy({
+        role,
+        superset,
+        toolPermissionFlagUniversalIdentifiers: [],
+      }),
+    ).toEqual([
       {
         type: 'FIELD_VALUE',
         objectUniversalIdentifier: PERSON,
@@ -231,7 +264,13 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
     it('reports an object the superset narrows while the role reaches it unnarrowed', () => {
       const role = buildRole({ objectPermissions: [readablePerson] });
 
-      expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset,
+          toolPermissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([
         { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier: PERSON },
       ]);
     });
@@ -242,7 +281,13 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
         operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
       });
 
-      expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([]);
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset,
+          toolPermissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([]);
     });
 
     it('reports a restriction that differs by operand or value', () => {
@@ -257,7 +302,13 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       });
 
       for (const role of [differentOperand, differentValue]) {
-        expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+        expect(
+          getRoleManifestGrantsNotCoveredBy({
+            role,
+            superset,
+            toolPermissionFlagUniversalIdentifiers: [],
+          }),
+        ).toEqual([
           { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier: PERSON },
         ]);
       }
@@ -270,7 +321,13 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
         logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
       });
 
-      expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset,
+          toolPermissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([
         { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier: PERSON },
       ]);
     });
@@ -285,6 +342,7 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
         getRoleManifestGrantsNotCoveredBy({
           role,
           superset: buildRole({ objectPermissions: [readablePerson] }),
+          toolPermissionFlagUniversalIdentifiers: [],
         }),
       ).toEqual([]);
     });

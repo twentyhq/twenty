@@ -1,118 +1,16 @@
+import { OBJECT_PERMISSION_ACTIONS } from '@/application/objectPermissionActionType';
+import { type RoleManifestGrant } from '@/application/roleManifestGrantType';
 import { type RoleManifest } from '@/application/roleManifestType';
 import {
   getEffectiveObjectPermissionsFromRoleManifest,
-  OBJECT_PERMISSION_ACTIONS,
-  type ObjectPermissionAction,
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
 } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
+import { getRowLevelRestrictionSignature } from '@/application/utils/getRowLevelRestrictionSignature';
 import { SystemPermissionFlag } from '@/constants/SystemPermissionFlag';
 import { TOOL_PERMISSION_FLAGS } from '@/constants/ToolPermissionFlags';
-import { getUniqueValues } from '@/utils/array/getUniqueValues';
-import { isDefined } from '@/utils/validation/isDefined';
 
-export type RoleManifestGrant =
-  | {
-      type: 'ALL_OBJECT_RECORDS';
-      action: ObjectPermissionAction;
-    }
-  | {
-      type: 'ALL_SETTINGS';
-      flag: 'canUpdateAllSettings' | 'canAccessAllTools';
-    }
-  | {
-      type: 'PERMISSION_FLAG';
-      permissionFlagUniversalIdentifier: string;
-    }
-  | {
-      type: 'OBJECT_RECORDS';
-      objectUniversalIdentifier: string;
-      action: ObjectPermissionAction;
-    }
-  | {
-      type: 'FIELD_VALUE';
-      objectUniversalIdentifier: string;
-      fieldUniversalIdentifier: string;
-      action: 'canReadFieldValue' | 'canUpdateFieldValue';
-    }
-  | {
-      type: 'ROW_LEVEL_RESTRICTION';
-      objectUniversalIdentifier: string;
-    };
-
-const SYSTEM_TOOL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS: readonly string[] =
+const SYSTEM_TOOL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS =
   TOOL_PERMISSION_FLAGS.map((flag) => SystemPermissionFlag[flag]);
-
-const stringifyWithSortedKeys = (value: unknown): string =>
-  JSON.stringify(value, (_key, nestedValue) =>
-    nestedValue !== null &&
-    typeof nestedValue === 'object' &&
-    !Array.isArray(nestedValue)
-      ? Object.fromEntries(
-          Object.entries(nestedValue as Record<string, unknown>).sort(
-            ([leftKey], [rightKey]) => leftKey.localeCompare(rightKey),
-          ),
-        )
-      : nestedValue,
-  );
-
-// Two row-level restrictions are only known to select the same rows when
-// their predicates match exactly, including how their groups nest.
-const getRowLevelRestrictionSignature = ({
-  role,
-  objectUniversalIdentifier,
-}: {
-  role: RoleManifest;
-  objectUniversalIdentifier: string;
-}): string[] => {
-  const groupsByUniversalIdentifier = new Map(
-    (role.rowLevelPermissionPredicateGroups ?? []).map((group) => [
-      group.universalIdentifier,
-      group,
-    ]),
-  );
-
-  const getGroupPath = (
-    groupUniversalIdentifier: string | null | undefined,
-  ): string[] => {
-    const path: string[] = [];
-    const visited = new Set<string>();
-    let current = groupUniversalIdentifier;
-
-    while (isDefined(current) && !visited.has(current)) {
-      visited.add(current);
-      const group = groupsByUniversalIdentifier.get(current);
-
-      if (!isDefined(group)) {
-        break;
-      }
-
-      path.push(group.logicalOperator);
-      current = group.parentPredicateGroupUniversalIdentifier;
-    }
-
-    return path;
-  };
-
-  return (role.rowLevelPermissionPredicates ?? [])
-    .filter(
-      (predicate) =>
-        predicate.objectUniversalIdentifier === objectUniversalIdentifier,
-    )
-    .map((predicate) =>
-      stringifyWithSortedKeys({
-        fieldUniversalIdentifier: predicate.fieldUniversalIdentifier,
-        subFieldName: predicate.subFieldName ?? null,
-        operand: predicate.operand,
-        value: predicate.value ?? null,
-        workspaceMemberFieldUniversalIdentifier:
-          predicate.workspaceMemberFieldUniversalIdentifier ?? null,
-        workspaceMemberSubFieldName:
-          predicate.workspaceMemberSubFieldName ?? null,
-        groupPath: getGroupPath(predicate.predicateGroupUniversalIdentifier),
-      }),
-    )
-    .sort();
-};
 
 const haveSameRowLevelRestriction = ({
   roleSignature,
@@ -127,35 +25,40 @@ const haveSameRowLevelRestriction = ({
       predicateSignature === supersetSignature[index],
   );
 
-// Lists what `role` may do that `superset` may not. An empty result means the
-// superset covers the role. A superset row-level restriction is only treated
-// as covered when the role carries the exact same one on that object, since
-// two different predicate sets cannot be proven to select the same rows.
-export const getRoleManifestGrantsNotCoveredBy = ({
+const getRoleLevelGrantsNotCoveredBy = ({
   role,
   superset,
-  toolPermissionFlagUniversalIdentifiers = [],
 }: {
   role: RoleManifest;
   superset: RoleManifest;
-  toolPermissionFlagUniversalIdentifiers?: string[];
-}): RoleManifestGrant[] => {
-  const grants: RoleManifestGrant[] = [];
-
-  for (const action of OBJECT_PERMISSION_ACTIONS) {
+}): RoleManifestGrant[] => [
+  ...OBJECT_PERMISSION_ACTIONS.filter((action) => {
     const roleLevelFlag = ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action];
 
-    if (role[roleLevelFlag] && !superset[roleLevelFlag]) {
-      grants.push({ type: 'ALL_OBJECT_RECORDS', action });
-    }
-  }
+    return role[roleLevelFlag] && !superset[roleLevelFlag];
+  }).map<RoleManifestGrant>((action) => ({
+    type: 'ALL_OBJECT_RECORDS',
+    action,
+  })),
+  ...(role.canUpdateAllSettings && !superset.canUpdateAllSettings
+    ? [{ type: 'ALL_SETTINGS' } as const]
+    : []),
+  ...(role.canAccessAllTools && !superset.canAccessAllTools
+    ? [{ type: 'ALL_TOOLS' } as const]
+    : []),
+];
 
-  for (const flag of ['canUpdateAllSettings', 'canAccessAllTools'] as const) {
-    if (role[flag] && !superset[flag]) {
-      grants.push({ type: 'ALL_SETTINGS', flag });
-    }
-  }
-
+// A tool flag is covered by canAccessAllTools and a settings flag by
+// canUpdateAllSettings, the same way the server resolves them at runtime.
+const getPermissionFlagGrantsNotCoveredBy = ({
+  role,
+  superset,
+  toolPermissionFlagUniversalIdentifiers,
+}: {
+  role: RoleManifest;
+  superset: RoleManifest;
+  toolPermissionFlagUniversalIdentifiers: string[];
+}): RoleManifestGrant[] => {
   const toolFlagUniversalIdentifiers = new Set([
     ...SYSTEM_TOOL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
     ...toolPermissionFlagUniversalIdentifiers,
@@ -164,128 +67,168 @@ export const getRoleManifestGrantsNotCoveredBy = ({
     superset.permissionFlagUniversalIdentifiers ?? [],
   );
 
-  for (const permissionFlagUniversalIdentifier of getUniqueValues(
-    role.permissionFlagUniversalIdentifiers ?? [],
-  )) {
-    const isCoveredByRoleLevelFlag = toolFlagUniversalIdentifiers.has(
-      permissionFlagUniversalIdentifier,
-    )
-      ? superset.canAccessAllTools
-      : superset.canUpdateAllSettings;
-
-    if (
-      !isCoveredByRoleLevelFlag &&
-      !supersetFlagUniversalIdentifiers.has(permissionFlagUniversalIdentifier)
-    ) {
-      grants.push({
-        type: 'PERMISSION_FLAG',
+  return [...new Set(role.permissionFlagUniversalIdentifiers ?? [])]
+    .filter((permissionFlagUniversalIdentifier) => {
+      const isCoveredByRoleLevelFlag = toolFlagUniversalIdentifiers.has(
         permissionFlagUniversalIdentifier,
-      });
-    }
-  }
+      )
+        ? superset.canAccessAllTools
+        : superset.canUpdateAllSettings;
 
-  const objectUniversalIdentifiers = getUniqueValues(
-    [...(role.objectPermissions ?? []), ...(superset.objectPermissions ?? [])]
-      .map((permission) => permission.objectUniversalIdentifier)
-      .concat(
-        (superset.rowLevelPermissionPredicates ?? []).map(
-          (predicate) => predicate.objectUniversalIdentifier,
-        ),
-      ),
-  );
+      return (
+        !isCoveredByRoleLevelFlag &&
+        !supersetFlagUniversalIdentifiers.has(permissionFlagUniversalIdentifier)
+      );
+    })
+    .map((permissionFlagUniversalIdentifier) => ({
+      type: 'PERMISSION_FLAG',
+      permissionFlagUniversalIdentifier,
+    }));
+};
 
-  for (const objectUniversalIdentifier of objectUniversalIdentifiers) {
-    const roleEffectivePermissions =
-      getEffectiveObjectPermissionsFromRoleManifest({
-        role,
+// A superset row-level restriction is only treated as covered when the role
+// carries the exact same one on that object, since two different predicate
+// sets cannot be proven to select the same rows.
+const getObjectGrantsNotCoveredBy = ({
+  role,
+  superset,
+}: {
+  role: RoleManifest;
+  superset: RoleManifest;
+}): RoleManifestGrant[] => {
+  const objectUniversalIdentifiers = new Set([
+    ...[
+      ...(role.objectPermissions ?? []),
+      ...(superset.objectPermissions ?? []),
+    ].map((permission) => permission.objectUniversalIdentifier),
+    ...(superset.rowLevelPermissionPredicates ?? []).map(
+      (predicate) => predicate.objectUniversalIdentifier,
+    ),
+  ]);
+
+  return [...objectUniversalIdentifiers].flatMap(
+    (objectUniversalIdentifier): RoleManifestGrant[] => {
+      const roleEffectivePermissions =
+        getEffectiveObjectPermissionsFromRoleManifest({
+          role,
+          objectUniversalIdentifier,
+        });
+      const supersetEffectivePermissions =
+        getEffectiveObjectPermissionsFromRoleManifest({
+          role: superset,
+          objectUniversalIdentifier,
+        });
+
+      const objectRecordGrants = OBJECT_PERMISSION_ACTIONS.filter(
+        (action) =>
+          roleEffectivePermissions[action] &&
+          !supersetEffectivePermissions[action],
+      ).map<RoleManifestGrant>((action) => ({
+        type: 'OBJECT_RECORDS',
         objectUniversalIdentifier,
-      });
-    const supersetEffectivePermissions =
-      getEffectiveObjectPermissionsFromRoleManifest({
+        action,
+      }));
+
+      const roleReachesObject = OBJECT_PERMISSION_ACTIONS.some(
+        (action) => roleEffectivePermissions[action],
+      );
+      const supersetSignature = getRowLevelRestrictionSignature({
         role: superset,
         objectUniversalIdentifier,
       });
-
-    for (const action of OBJECT_PERMISSION_ACTIONS) {
-      if (
-        roleEffectivePermissions[action] &&
-        !supersetEffectivePermissions[action]
-      ) {
-        grants.push({
-          type: 'OBJECT_RECORDS',
-          objectUniversalIdentifier,
-          action,
-        });
-      }
-    }
-
-    const roleReachesObject = OBJECT_PERMISSION_ACTIONS.some(
-      (action) => roleEffectivePermissions[action],
-    );
-    const supersetRowLevelRestriction = getRowLevelRestrictionSignature({
-      role: superset,
-      objectUniversalIdentifier,
-    });
-    const roleRowLevelRestriction = getRowLevelRestrictionSignature({
-      role,
-      objectUniversalIdentifier,
-    });
-
-    if (
-      roleReachesObject &&
-      supersetRowLevelRestriction.length > 0 &&
-      !haveSameRowLevelRestriction({
-        roleSignature: roleRowLevelRestriction,
-        supersetSignature: supersetRowLevelRestriction,
-      })
-    ) {
-      grants.push({
-        type: 'ROW_LEVEL_RESTRICTION',
-        objectUniversalIdentifier,
-      });
-    }
-  }
-
-  for (const supersetFieldPermission of superset.fieldPermissions ?? []) {
-    const { objectUniversalIdentifier, fieldUniversalIdentifier } =
-      supersetFieldPermission;
-    const roleEffectivePermissions =
-      getEffectiveObjectPermissionsFromRoleManifest({
+      const roleSignature = getRowLevelRestrictionSignature({
         role,
         objectUniversalIdentifier,
       });
-    const roleFieldPermission = role.fieldPermissions?.find(
-      (permission) =>
-        permission.objectUniversalIdentifier === objectUniversalIdentifier &&
-        permission.fieldUniversalIdentifier === fieldUniversalIdentifier,
-    );
 
-    if (
-      supersetFieldPermission.canReadFieldValue === false &&
-      roleEffectivePermissions.canReadObjectRecords &&
-      roleFieldPermission?.canReadFieldValue !== false
-    ) {
-      grants.push({
-        type: 'FIELD_VALUE',
-        objectUniversalIdentifier,
-        fieldUniversalIdentifier,
-        action: 'canReadFieldValue',
-      });
-    }
+      const escapesRowLevelRestriction =
+        roleReachesObject &&
+        supersetSignature.length > 0 &&
+        !haveSameRowLevelRestriction({ roleSignature, supersetSignature });
 
-    if (
-      supersetFieldPermission.canUpdateFieldValue === false &&
-      roleEffectivePermissions.canUpdateObjectRecords &&
-      roleFieldPermission?.canUpdateFieldValue !== false
-    ) {
-      grants.push({
-        type: 'FIELD_VALUE',
-        objectUniversalIdentifier,
-        fieldUniversalIdentifier,
-        action: 'canUpdateFieldValue',
-      });
-    }
-  }
-
-  return grants;
+      return escapesRowLevelRestriction
+        ? [
+            ...objectRecordGrants,
+            { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier },
+          ]
+        : objectRecordGrants;
+    },
+  );
 };
+
+const getFieldGrantsNotCoveredBy = ({
+  role,
+  superset,
+}: {
+  role: RoleManifest;
+  superset: RoleManifest;
+}): RoleManifestGrant[] =>
+  (superset.fieldPermissions ?? []).flatMap(
+    (supersetFieldPermission): RoleManifestGrant[] => {
+      const { objectUniversalIdentifier, fieldUniversalIdentifier } =
+        supersetFieldPermission;
+      const roleEffectivePermissions =
+        getEffectiveObjectPermissionsFromRoleManifest({
+          role,
+          objectUniversalIdentifier,
+        });
+      const roleFieldPermission = role.fieldPermissions?.find(
+        (permission) =>
+          permission.objectUniversalIdentifier === objectUniversalIdentifier &&
+          permission.fieldUniversalIdentifier === fieldUniversalIdentifier,
+      );
+
+      const escapesReadRestriction =
+        supersetFieldPermission.canReadFieldValue === false &&
+        roleEffectivePermissions.canReadObjectRecords &&
+        roleFieldPermission?.canReadFieldValue !== false;
+      const escapesUpdateRestriction =
+        supersetFieldPermission.canUpdateFieldValue === false &&
+        roleEffectivePermissions.canUpdateObjectRecords &&
+        roleFieldPermission?.canUpdateFieldValue !== false;
+
+      return [
+        ...(escapesReadRestriction
+          ? ([
+              {
+                type: 'FIELD_VALUE',
+                objectUniversalIdentifier,
+                fieldUniversalIdentifier,
+                action: 'canReadFieldValue',
+              },
+            ] as const)
+          : []),
+        ...(escapesUpdateRestriction
+          ? ([
+              {
+                type: 'FIELD_VALUE',
+                objectUniversalIdentifier,
+                fieldUniversalIdentifier,
+                action: 'canUpdateFieldValue',
+              },
+            ] as const)
+          : []),
+      ];
+    },
+  );
+
+// Lists what `role` may do that `superset` may not. An empty result means the
+// superset covers the role.
+export const getRoleManifestGrantsNotCoveredBy = ({
+  role,
+  superset,
+  toolPermissionFlagUniversalIdentifiers,
+}: {
+  role: RoleManifest;
+  superset: RoleManifest;
+  toolPermissionFlagUniversalIdentifiers: string[];
+}): RoleManifestGrant[] => [
+  ...getRoleLevelGrantsNotCoveredBy({ role, superset }),
+  ...getPermissionFlagGrantsNotCoveredBy({
+    role,
+    superset,
+    toolPermissionFlagUniversalIdentifiers,
+  }),
+  ...getObjectGrantsNotCoveredBy({ role, superset }),
+  ...getFieldGrantsNotCoveredBy({ role, superset }),
+];

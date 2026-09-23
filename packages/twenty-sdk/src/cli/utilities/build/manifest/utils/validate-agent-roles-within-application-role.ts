@@ -51,9 +51,9 @@ const describeGrant = ({
     case 'ALL_OBJECT_RECORDS':
       return `${OBJECT_ACTION_LABELS[grant.action]} all object records`;
     case 'ALL_SETTINGS':
-      return grant.flag === 'canUpdateAllSettings'
-        ? 'update all settings'
-        : 'access all tools';
+      return 'update all settings';
+    case 'ALL_TOOLS':
+      return 'access all tools';
     case 'PERMISSION_FLAG': {
       const flagKey =
         permissionFlags.find(
