@@ -225,6 +225,24 @@ type ObjectMetadataCommandMenuItemPayload {
   objectMetadataItemId: UUID! @deprecated(reason: "Never returned anymore: navigation targets moved to CommandMenuItem.navigationTargetObjectMetadataId. This variant only remains one release so frontends deployed after the server keep validating; it will be removed in the next release.")
 }
 
+type SettingsMenuItem {
+  id: UUID!
+  frontComponentId: UUID!
+  title: String!
+  icon: String
+  position: Float!
+  scope: SettingsMenuItemScope!
+  universalIdentifier: UUID!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum SettingsMenuItemScope {
+  WORKSPACE
+  USER
+}
+
 type LogicFunction {
   id: UUID!
   name: String!
@@ -555,6 +573,7 @@ type Application {
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
   commandMenuItems: [CommandMenuItem!]!
+  settingsMenuItems: [SettingsMenuItem!]
   logicFunctions: [LogicFunction!]!
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
@@ -3666,6 +3685,7 @@ enum AllMetadataName {
   connectionProvider
   searchFieldMetadata
   timelineActivityType
+  settingsMenuItem
   workflow
   workflowVersion
 }
@@ -4087,7 +4107,8 @@ type Mutation {
   createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration!
+  completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
+  uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
