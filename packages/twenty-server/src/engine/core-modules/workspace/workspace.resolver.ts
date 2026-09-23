@@ -161,6 +161,16 @@ export class WorkspaceResolver {
     }
   }
 
+  @ResolveField(() => [String], { nullable: true })
+  async allowedIframeOrigins(@Parent() workspace: WorkspaceEntity) {
+    // Auth contexts carry a flat workspace without the uncached framing policy.
+    const freshWorkspace = await this.workspaceService.findOneWorkspaceById(
+      workspace.id,
+    );
+
+    return freshWorkspace?.allowedIframeOrigins ?? [];
+  }
+
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
   async featureFlags(
     @Parent() workspace: WorkspaceEntity,

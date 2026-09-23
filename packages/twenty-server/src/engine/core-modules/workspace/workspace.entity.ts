@@ -309,6 +309,10 @@ export class WorkspaceEntity {
   })
   editableProfileFields: string[] | null;
 
+  @Field(() => [String], { nullable: true })
+  @Column({ type: 'varchar', array: true, nullable: true, default: '{}' })
+  allowedIframeOrigins: string[] | null;
+
   // TODO: set as non nullable
   @Column({ nullable: true, type: 'uuid' })
   defaultRoleId: string | null;

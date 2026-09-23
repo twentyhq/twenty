@@ -13,6 +13,7 @@ import {
   assertIsDefinedOrThrow,
   isAutoSelectModelId,
   isDefined,
+  normalizeAllowedIframeOrigin,
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
@@ -135,6 +136,7 @@ export class WorkspaceService {
     isMicrosoftAuthEnabled: PermissionFlagType.SECURITY,
     isPasswordAuthEnabled: PermissionFlagType.SECURITY,
     editableProfileFields: PermissionFlagType.SECURITY,
+    allowedIframeOrigins: PermissionFlagType.SECURITY,
     isTwoFactorAuthenticationEnforced: PermissionFlagType.SECURITY,
     defaultRoleId: PermissionFlagType.ROLES,
     aiChatModelTier: PermissionFlagType.AI_SETTINGS,
@@ -313,6 +315,16 @@ export class WorkspaceService {
       await this.subdomainManagerService.validateSubdomainOrThrow(
         payload.subdomain,
       );
+    }
+
+    if (isDefined(payload.allowedIframeOrigins)) {
+      payload.allowedIframeOrigins = [
+        ...new Set(
+          payload.allowedIframeOrigins
+            .map(normalizeAllowedIframeOrigin)
+            .filter(isDefined),
+        ),
+      ];
     }
 
     let customDomainRegistered = false;

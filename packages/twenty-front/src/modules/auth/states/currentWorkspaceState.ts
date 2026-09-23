@@ -42,6 +42,7 @@ export type CurrentWorkspace = Pick<
   | 'aiModelIdByTier'
   | 'aiAdditionalInstructions'
   | 'editableProfileFields'
+  | 'allowedIframeOrigins'
   | 'isInternalMessagesImportEnabled'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;

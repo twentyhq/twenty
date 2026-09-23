@@ -32,6 +32,7 @@ describe('Security permissions', () => {
           isPublicInviteLinkEnabled
           subdomain
           isCustomDomainEnabled
+          allowedIframeOrigins
         }
       }
     `;
@@ -52,6 +53,7 @@ describe('Security permissions', () => {
             isMicrosoftAuthEnabled: ${originalWorkspaceState.isMicrosoftAuthEnabled},
             isPasswordAuthEnabled: ${originalWorkspaceState.isPasswordAuthEnabled}
             isPublicInviteLinkEnabled: ${originalWorkspaceState.isPublicInviteLinkEnabled}
+            allowedIframeOrigins: ${JSON.stringify(originalWorkspaceState.allowedIframeOrigins ?? [])}
           }) {
             id
           }
@@ -62,6 +64,83 @@ describe('Security permissions', () => {
   });
 
   describe('security permissions', () => {
+    describe('iframe embedding', () => {
+      const query = `
+        mutation UpdateEmbeddingOrigins($data: UpdateWorkspaceInput!) {
+          updateWorkspace(data: $data) {
+            id
+            allowedIframeOrigins
+          }
+        }
+      `;
+
+      it('allows an administrator to normalize origins and revoke embedding', async () => {
+        const response = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send({
+            query,
+            variables: {
+              data: {
+                allowedIframeOrigins: [
+                  'https://PORTAL.example.com:443/',
+                  'https://portal.example.com',
+                ],
+              },
+            },
+          })
+          .expect(200);
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.updateWorkspace.allowedIframeOrigins).toEqual(
+          ['https://portal.example.com'],
+        );
+
+        const reloaded = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send({
+            query:
+              '{ currentUser { currentWorkspace { allowedIframeOrigins } } }',
+          })
+          .expect(200);
+
+        expect(reloaded.body.errors).toBeUndefined();
+        expect(
+          reloaded.body.data.currentUser.currentWorkspace.allowedIframeOrigins,
+        ).toEqual(['https://portal.example.com']);
+
+        const revoked = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send({ query, variables: { data: { allowedIframeOrigins: [] } } })
+          .expect(200);
+
+        expect(revoked.body.errors).toBeUndefined();
+        expect(revoked.body.data.updateWorkspace.allowedIframeOrigins).toEqual(
+          [],
+        );
+      });
+
+      it('rejects updates from a member without Security permission', async () => {
+        const response = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+          .send({
+            query,
+            variables: {
+              data: { allowedIframeOrigins: ['https://portal.example.com'] },
+            },
+          })
+          .expect(200);
+
+        expect(response.body.data).toBeNull();
+        expect(response.body.errors[0].extensions.code).toBe(
+          ErrorCode.FORBIDDEN,
+        );
+      });
+    });
+
     describe('microsoft auth', () => {
       it('should update workspace when user has permission (admin role)', async () => {
         const queryData = {

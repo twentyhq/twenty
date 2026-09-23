@@ -850,6 +850,7 @@ type Workspace {
   isMicrosoftAuthBypassEnabled: Boolean!
   isCustomDomainEnabled: Boolean!
   isInternalMessagesImportEnabled: Boolean!
+  allowedIframeOrigins: [String!]
   editableProfileFields: [String!]
   defaultRole: Role
   aiChatModelTier: AiModelTier!
@@ -4963,6 +4964,7 @@ input UpdateWorkspaceInput {
   aiModelIdByTier: JSON
   aiEvaluationModelId: String
   aiAdditionalInstructions: String
+  allowedIframeOrigins: [String!]
   editableProfileFields: [String!]
   isInternalMessagesImportEnabled: Boolean
 }

@@ -17,7 +17,10 @@ jobs:
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
+        .github/workflows/ci-test-docker-compose.yaml
         packages/twenty-docker/**
+        packages/twenty-server/src/engine/core-modules/frontend/**
+        packages/twenty-server/src/engine/core-modules/client-config/**
         docker-compose.yml
   test-compose:
     needs: changed-files-check
@@ -112,7 +115,7 @@ jobs:
       - name: Create frontend placeholder
         run: |
           mkdir -p packages/twenty-front/build
-          echo '<html><body>CI placeholder</body></html>' > packages/twenty-front/build/index.html
+          echo '<html><head></head><body>CI placeholder</body></html>' > packages/twenty-front/build/index.html
       - name: Build app-dev image
         run: |
           docker build \
@@ -153,6 +156,15 @@ jobs:
             fi
             echo "Still waiting... (${count}/300s) [HTTP ${status}]"
             sleep 1
+          done
+      - name: Verify backend HTML bootstrap
+        run: |
+          for path in / /index.html /objects/people; do
+            curl --fail --silent --show-error --dump-header /tmp/twenty-headers \
+              "http://localhost:2020${path}" --output /tmp/twenty-document
+            grep -qi '^cache-control: no-store' /tmp/twenty-headers
+            grep -qi "^content-security-policy: frame-ancestors 'self';" /tmp/twenty-headers
+            grep -q 'id="twenty-client-config" type="application/json"' /tmp/twenty-document
           done
   ci-test-docker-status-check:
     if: always() && !cancelled()

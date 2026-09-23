@@ -1645,6 +1645,9 @@ export default {
             "isInternalMessagesImportEnabled": [
                 8
             ],
+            "allowedIframeOrigins": [
+                1
+            ],
             "editableProfileFields": [
                 1
             ],
@@ -12669,6 +12672,9 @@ export default {
                 1
             ],
             "aiAdditionalInstructions": [
+                1
+            ],
+            "allowedIframeOrigins": [
                 1
             ],
             "editableProfileFields": [
