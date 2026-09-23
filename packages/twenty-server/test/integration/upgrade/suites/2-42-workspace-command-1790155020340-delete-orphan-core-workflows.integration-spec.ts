@@ -3,7 +3,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { type DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790155020340-delete-core-workflows-of-soft-deleted-workflows.command';
+import { type DeleteOrphanCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790155020340-delete-orphan-core-workflows.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -11,15 +11,16 @@ jest.useRealTimers();
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
-describe('DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand (integration)', () => {
+describe('DeleteOrphanCoreWorkflowsCommand (integration)', () => {
   let dataSource: DataSource;
-  let command: DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand;
-  let applicationId: string;
+  let command: DeleteOrphanCoreWorkflowsCommand;
+  let customApplicationId: string;
+  let otherApplicationId: string;
 
   const createdWorkspaceWorkflowIds: string[] = [];
   const seededCoreWorkflowIds: string[] = [];
 
-  const createWorkflow = async (
+  const createWorkflowWithNullCorePointer = async (
     name: string,
   ): Promise<{ workspaceWorkflowId: string; coreWorkflowId: string }> => {
     const response = await workflowGraphqlRequest(
@@ -42,27 +43,29 @@ describe('DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand (integration)', () =>
 
     seededCoreWorkflowIds.push(coreWorkflowId);
 
-    return { workspaceWorkflowId, coreWorkflowId };
-  };
-
-  const createSoftDeletedWorkflowWithCoreRow = async (
-    name: string,
-  ): Promise<string> => {
-    const { workspaceWorkflowId, coreWorkflowId } = await createWorkflow(name);
-
-    await dataSource.query(
-      `UPDATE "${schema}"."workflow" SET "deletedAt" = now() WHERE "id" = $1`,
-      [workspaceWorkflowId],
-    );
     await dataSource.query(
       `UPDATE core."workflow" SET "workspaceWorkflowId" = NULL WHERE "id" = $1`,
       [coreWorkflowId],
     );
 
+    return { workspaceWorkflowId, coreWorkflowId };
+  };
+
+  const createSoftDeletedWorkflow = async (name: string): Promise<string> => {
+    const { workspaceWorkflowId, coreWorkflowId } =
+      await createWorkflowWithNullCorePointer(name);
+
+    await dataSource.query(
+      `UPDATE "${schema}"."workflow" SET "deletedAt" = now() WHERE "id" = $1`,
+      [workspaceWorkflowId],
+    );
+
     return coreWorkflowId;
   };
 
-  const seedCoreOnlyWorkflow = async (): Promise<string> => {
+  const seedUnreferencedCoreWorkflow = async (
+    applicationId: string,
+  ): Promise<string> => {
     const coreWorkflowId = v4();
 
     await dataSource.query(
@@ -72,7 +75,7 @@ describe('DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand (integration)', () =>
       [
         coreWorkflowId,
         SEED_APPLE_WORKSPACE_ID,
-        'Core Only Workflow Spec',
+        'Unreferenced Core Workflow Spec',
         v4(),
         applicationId,
       ],
@@ -114,17 +117,23 @@ describe('DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand (integration)', () =>
 
     await dataSource.initialize();
 
-    command =
-      getAppProviderByClassName<DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand>(
-        'DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand',
-      );
+    command = getAppProviderByClassName<DeleteOrphanCoreWorkflowsCommand>(
+      'DeleteOrphanCoreWorkflowsCommand',
+    );
 
     const [workspace] = await dataSource.query(
       `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE "id" = $1`,
       [SEED_APPLE_WORKSPACE_ID],
     );
 
-    applicationId = workspace.workspaceCustomApplicationId;
+    customApplicationId = workspace.workspaceCustomApplicationId;
+
+    const [otherApplication] = await dataSource.query(
+      `SELECT "id" FROM core."application" WHERE "workspaceId" = $1 AND "id" <> $2 LIMIT 1`,
+      [SEED_APPLE_WORKSPACE_ID, customApplicationId],
+    );
+
+    otherApplicationId = otherApplication.id;
   });
 
   afterAll(async () => {
@@ -152,8 +161,8 @@ describe('DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand (integration)', () =>
   });
 
   it('writes nothing on a dry run', async () => {
-    const coreWorkflowId = await createSoftDeletedWorkflowWithCoreRow(
-      'Soft Deleted Workflow Dry Run Spec',
+    const coreWorkflowId = await createSoftDeletedWorkflow(
+      'Orphan Core Workflow Dry Run Spec',
     );
 
     await runCommand({ dryRun: true });
@@ -161,17 +170,24 @@ describe('DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand (integration)', () =>
     expect(await doesCoreWorkflowExist(coreWorkflowId)).toBe(true);
   });
 
-  it('deletes only the core workflows whose workspace workflow is soft-deleted', async () => {
-    const softDeletedCoreWorkflowId =
-      await createSoftDeletedWorkflowWithCoreRow('Soft Deleted Workflow Spec');
+  it('deletes custom application core workflows that no live workspace workflow mirrors', async () => {
+    const softDeletedCoreWorkflowId = await createSoftDeletedWorkflow(
+      'Soft Deleted Workflow Spec',
+    );
+    const purgedCoreWorkflowId =
+      await seedUnreferencedCoreWorkflow(customApplicationId);
     const { coreWorkflowId: liveCoreWorkflowId } =
-      await createWorkflow('Live Workflow Spec');
-    const coreOnlyWorkflowId = await seedCoreOnlyWorkflow();
+      await createWorkflowWithNullCorePointer('Live Workflow Spec');
+    const otherApplicationCoreWorkflowId =
+      await seedUnreferencedCoreWorkflow(otherApplicationId);
 
     await runCommand();
 
     expect(await doesCoreWorkflowExist(softDeletedCoreWorkflowId)).toBe(false);
+    expect(await doesCoreWorkflowExist(purgedCoreWorkflowId)).toBe(false);
     expect(await doesCoreWorkflowExist(liveCoreWorkflowId)).toBe(true);
-    expect(await doesCoreWorkflowExist(coreOnlyWorkflowId)).toBe(true);
+    expect(await doesCoreWorkflowExist(otherApplicationCoreWorkflowId)).toBe(
+      true,
+    );
   });
 });

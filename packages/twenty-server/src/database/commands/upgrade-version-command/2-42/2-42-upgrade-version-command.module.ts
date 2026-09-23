@@ -9,7 +9,7 @@ import { BackfillWorkflowExecutionCoreIdsCommand } from 'src/database/commands/u
 import { MakeWorkflowRunProjectionRelationsNullableCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789719131002-make-workflow-run-projection-relations-nullable.command';
 import { PurgeSoftDeletedViewsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789744500000-purge-soft-deleted-views.command';
 import { PurgeSoftDeletedRowLevelPermissionPredicatesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789978629000-purge-soft-deleted-row-level-permission-predicates.command';
-import { DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790155020340-delete-core-workflows-of-soft-deleted-workflows.command';
+import { DeleteOrphanCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790155020340-delete-orphan-core-workflows.command';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { UnpinCreationCommandsOnRecordSelectionCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789634112046-unpin-creation-commands-on-record-selection.command';
 import { BackfillMissingSystemRelationIndexesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789663454000-backfill-missing-system-relation-indexes.command';
@@ -19,6 +19,7 @@ import { SetMessageTextDisplayedMaxRowsCommand } from 'src/database/commands/upg
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
@@ -30,6 +31,7 @@ import { GateWorkflowFavoritesByCoreIndexFlagCommand } from 'src/database/comman
     AgentChatStreamStateModule,
     AgentHistoryModule,
     ApplicationModule,
+    WorkflowCoreModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
@@ -50,7 +52,7 @@ import { GateWorkflowFavoritesByCoreIndexFlagCommand } from 'src/database/comman
     SyncMessageRecordPageCommand,
     SetMessageTextDisplayedMaxRowsCommand,
     PurgeSoftDeletedRowLevelPermissionPredicatesCommand,
-    DeleteCoreWorkflowsOfSoftDeletedWorkflowsCommand,
+    DeleteOrphanCoreWorkflowsCommand,
   ],
   exports: [
     GateWorkflowFavoritesByCoreIndexFlagCommand,
