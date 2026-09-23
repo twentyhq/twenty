@@ -264,6 +264,7 @@ export class FileCorePictureService {
     const completedFile = await this.fileUploadService.completeFileUpload({
       workspaceId,
       fileId,
+      dedicatedFileFolder: FileFolder.CorePicture,
     });
 
     await this.bindWorkspaceLogo({ workspaceId, fileId });
@@ -283,6 +284,7 @@ export class FileCorePictureService {
     const completedFile = await this.fileUploadService.completeFileUpload({
       workspaceId,
       fileId,
+      dedicatedFileFolder: FileFolder.CorePicture,
     });
 
     await this.fileRepository.update(

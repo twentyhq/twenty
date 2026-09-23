@@ -56,6 +56,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
 // allowed to upload files, must not persist bytes in that folder.
 export const DEDICATED_COMPLETION_FILE_FOLDERS = [
   FileFolder.AppTarball,
+  FileFolder.CorePicture,
 ] as const;
 
 @Injectable()
@@ -250,9 +251,11 @@ export class FileUploadService {
   async completeFileUpload({
     workspaceId,
     fileId,
+    dedicatedFileFolder,
   }: {
     workspaceId: string;
     fileId: string;
+    dedicatedFileFolder?: FileFolder;
   }): Promise<CompletedFileUpload> {
     const file = await this.findFileOrThrow({ workspaceId, fileId });
     const [fileFolder] = file.path.split('/');
@@ -272,6 +275,7 @@ export class FileUploadService {
     }
 
     if (
+      fileFolder !== dedicatedFileFolder &&
       DEDICATED_COMPLETION_FILE_FOLDERS.includes(
         fileFolder as (typeof DEDICATED_COMPLETION_FILE_FOLDERS)[number],
       )

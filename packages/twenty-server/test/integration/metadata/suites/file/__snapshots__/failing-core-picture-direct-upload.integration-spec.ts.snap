@@ -12,6 +12,18 @@ exports[`Core picture direct upload should fail should refuse a logo whose conte
 }
 `;
 
+exports[`Core picture direct upload should fail should refuse the generic completion for a core picture 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "This file must be completed with its dedicated mutation.",
+  },
+  "message": "File <fileId> in folder core-picture is completed by its dedicated mutation",
+  "name": "UserInputError",
+}
+`;
+
 exports[`Core picture direct upload should fail should refuse to bind a completed profile picture as the workspace logo 1`] = `
 {
   "extensions": {

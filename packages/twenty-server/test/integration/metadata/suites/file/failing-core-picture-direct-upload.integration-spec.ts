@@ -6,6 +6,7 @@ import {
   uploadWorkspaceMemberProfilePictureWithDirectUpload,
 } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
 import {
+  completeFileUploadMutation,
   createFileUploadMutation,
   putFileToUploadTarget,
 } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
@@ -146,6 +147,35 @@ describe('Core picture direct upload should fail', () => {
     });
     expect(await findFileStatus(uploadTarget.fileId)).toBe(FILE_STATUS.PENDING);
     expect(await findWorkspaceLogoFileId()).not.toBe(uploadTarget.fileId);
+  }, 30000);
+
+  it('should refuse the generic completion for a core picture', async () => {
+    const uploadTarget = await createCorePictureUpload({
+      filename: 'logo.png',
+      size: ONE_BY_ONE_TRANSPARENT_PNG.length,
+    });
+
+    reservedFileIds.push(uploadTarget.fileId);
+
+    const putResponse = await putFileToUploadTarget({
+      uploadTarget,
+      content: ONE_BY_ONE_TRANSPARENT_PNG,
+    });
+
+    expect(putResponse.status).toBe(204);
+
+    const completeResponse = await makeMetadataAPIRequest({
+      query: completeFileUploadMutation,
+      variables: { fileId: uploadTarget.fileId },
+    });
+
+    expect(completeResponse.body.data).toBeNull();
+    expectOneNotInternalServerErrorSnapshot({
+      errors: completeResponse.body.errors,
+      normalizeMessage: (message) =>
+        message.replace(uploadTarget.fileId, '<fileId>'),
+    });
+    expect(await findFileStatus(uploadTarget.fileId)).toBe(FILE_STATUS.PENDING);
   }, 30000);
 
   it('should refuse to bind a completed profile picture as the workspace logo', async () => {
