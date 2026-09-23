@@ -52,7 +52,7 @@ describe('Dashboard page layout auto-creation should succeed', () => {
 
       expect(tabsData.getPageLayoutTabs).toBeDefined();
       expect(tabsData.getPageLayoutTabs.length).toBeGreaterThanOrEqual(1);
-      expect(tabsData.getPageLayoutTabs[0].title).toBe('Tab 1');
+      expect(tabsData.getPageLayoutTabs[0]?.title).toBe('Tab 1');
     });
   });
 

@@ -6,6 +6,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { FieldMetadataType } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_TABLE_NAME = '_mostlyEmptyProbe';
 
@@ -95,7 +96,11 @@ describe('mostlyEmptyFieldMetadataIds', () => {
         [testObjectMetadataId],
       );
 
-    testSchemaName = schemaRows[0].schema_name;
+    const schema_name = schemaRows[0]?.schema_name;
+
+    jestExpectToBeDefined(schema_name);
+
+    testSchemaName = schema_name;
   });
 
   afterAll(async () => {

@@ -47,7 +47,11 @@ const getToolCatalog = async (
 
   expect(result.isError).toBe(false);
 
-  return JSON.parse(result.content[0].text).catalog;
+  const text = result.content[0]?.text;
+
+  jestExpectToBeDefined(text);
+
+  return JSON.parse(text).catalog;
 };
 
 const READ_ONLY_TOOL_NAME_PATTERN = /^(find_|list_|get_|search_)/;
@@ -63,7 +67,11 @@ const isDispatchFailure = (result: {
   let output: { success?: boolean; message?: string };
 
   try {
-    output = JSON.parse(result.content[0].text);
+    const text = result.content[0]?.text;
+
+    jestExpectToBeDefined(text);
+
+    output = JSON.parse(text);
   } catch {
     return false;
   }
@@ -212,7 +220,11 @@ describe('MCP tool catalog (integration)', () => {
       const categoriesWithoutReadOnlyTool: string[] = [];
 
       for (const category of categories) {
-        const readOnlyCandidates = catalog[category]
+        const categoryTools = catalog[category];
+
+        jestExpectToBeDefined(categoryTools);
+
+        const readOnlyCandidates = categoryTools
           .filter((tool) => READ_ONLY_TOOL_NAME_PATTERN.test(tool.name))
           .slice(0, 3);
 

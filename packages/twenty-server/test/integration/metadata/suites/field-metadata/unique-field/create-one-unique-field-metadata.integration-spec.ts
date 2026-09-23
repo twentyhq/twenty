@@ -10,6 +10,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type SuccessfulTestCases = EachTestingContext<
   (args: {
@@ -191,6 +192,8 @@ describe('failing createOne unique field metadata', () => {
       expect(errors).toBeDefined();
       expect(errors.length).toBe(1);
       const [firstError] = errors;
+
+      jestExpectToBeDefined(firstError);
 
       expect(firstError).toMatchSnapshot(
         extractRecordIdsAndDatesAsExpectAny(firstError),

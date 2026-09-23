@@ -71,6 +71,7 @@ describe('Agent creation should succeed', () => {
         },
       },
     } as const satisfies CreateAgentInput;
+
     const { data } = await createOneAgent({
       expectToFail: false,
       input,

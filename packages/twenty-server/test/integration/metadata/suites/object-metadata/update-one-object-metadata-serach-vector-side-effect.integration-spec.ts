@@ -5,6 +5,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('Object metadata update - search vector side effect', () => {
   let testObjectMetadataId: string;
@@ -71,7 +72,11 @@ describe('Object metadata update - search vector side effect', () => {
       expectToFail: false,
     });
 
-    createdRecordId = data.createdRecords[0].id;
+    const id = data.createdRecords[0]?.id;
+
+    jestExpectToBeDefined(id);
+
+    createdRecordId = id;
   });
 
   afterAll(async () => {
@@ -110,11 +115,11 @@ describe('Object metadata update - search vector side effect', () => {
     });
 
     expect(searchByNewLabelField.data.search.edges.length).toBe(1);
-    expect(searchByNewLabelField.data.search.edges[0].node.recordId).toBe(
+    expect(searchByNewLabelField.data.search.edges[0]?.node.recordId).toBe(
       createdRecordId,
     );
     expect(
-      searchByNewLabelField.data.search.edges[0].node.objectNameSingular,
+      searchByNewLabelField.data.search.edges[0]?.node.objectNameSingular,
     ).toBe(OBJECT_NAME_SINGULAR);
 
     // The previously indexed name field remains searchable.
@@ -126,7 +131,7 @@ describe('Object metadata update - search vector side effect', () => {
     });
 
     expect(searchByName.data.search.edges.length).toBe(1);
-    expect(searchByName.data.search.edges[0].node.recordId).toBe(
+    expect(searchByName.data.search.edges[0]?.node.recordId).toBe(
       createdRecordId,
     );
   });

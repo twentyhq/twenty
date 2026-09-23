@@ -16,6 +16,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful update field metadata %s tests suite v2',
@@ -122,7 +123,11 @@ describe.each(fieldMetadataEnumTypes)(
     it('Should update default value to null even if it was set before', async () => {
       const isMultiSelect =
         testedFieldMetadataType === FieldMetadataType.MULTI_SELECT;
-      const rawDefaultValue = `'${initialOptions[0].value}'`;
+      const firstOptionValue = initialOptions[0]?.value;
+
+      jestExpectToBeDefined(firstOptionValue);
+
+      const rawDefaultValue = `'${firstOptionValue}'`;
       const expectedDefaultValue = isMultiSelect
         ? [rawDefaultValue]
         : rawDefaultValue;

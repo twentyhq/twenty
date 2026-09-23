@@ -500,8 +500,8 @@ describe('If/Else Workflow (e2e)', () => {
       expect(elseBranch?.nextStepIds).toContain(elseBranchEmptyNodeId);
 
       expect(elseIfBranches.length).toBe(1);
-      expect(elseIfBranches[0].filterGroupId).toBeDefined();
-      expect(elseIfBranches[0].nextStepIds).toContain(elseIfBranchEmptyNodeId);
+      expect(elseIfBranches[0]?.filterGroupId).toBeDefined();
+      expect(elseIfBranches[0]?.nextStepIds).toContain(elseIfBranchEmptyNodeId);
     });
   });
 

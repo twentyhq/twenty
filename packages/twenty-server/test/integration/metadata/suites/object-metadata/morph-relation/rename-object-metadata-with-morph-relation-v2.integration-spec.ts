@@ -434,7 +434,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       const [relationIndex] = parentRelationIndex;
 
       relationIndexByFieldId[
-        relationIndex.indexFieldMetadataList[0].fieldMetadataId
+        relationIndex?.indexFieldMetadataList[0]?.fieldMetadataId!
       ] = relationIndex;
     }
 
@@ -495,7 +495,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       const [relationIndex] = parentRelationIndex;
       const previousIndex = relationIndexByFieldId[sourceFieldMetadata.id];
 
-      expect(previousIndex.name).toBe(relationIndex.name);
+      expect(previousIndex?.name).toBe(relationIndex?.name);
     }
   });
 });

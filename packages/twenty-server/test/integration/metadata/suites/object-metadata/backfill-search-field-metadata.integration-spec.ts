@@ -3,6 +3,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 // Asserts the DB-level invariant the backfill relies on: a custom object's
 // searchFieldMetadata rows are persisted with the object's own applicationId, never the
@@ -52,7 +53,11 @@ const queryStandardApplicationIdForObjectWorkspace = async (
     [objectMetadataId, STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER],
   );
 
-  return rows[0].id;
+  const id = rows[0]?.id;
+
+  jestExpectToBeDefined(id);
+
+  return id;
 };
 
 describe('searchFieldMetadata rows - app-correct and deterministic per object', () => {

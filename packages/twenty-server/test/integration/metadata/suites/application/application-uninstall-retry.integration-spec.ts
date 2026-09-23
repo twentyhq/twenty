@@ -212,7 +212,7 @@ describe('Application uninstall retry', () => {
       ).size,
     ).toBe(1);
 
-    expect(installedApplications[0].workspaceId).toBe(workspaceId);
+    expect(installedApplications[0]?.workspaceId).toBe(workspaceId);
 
     executeSpy.mockClear();
     executeSpy

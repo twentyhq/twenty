@@ -8,6 +8,7 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('deleteOne FieldMetadataService morph relation fields', () => {
   let createdObjectMetadataPersonId = '';
@@ -238,7 +239,8 @@ describe('deleteOne FieldMetadataService morph relation fields', () => {
       });
 
       const targetRelationField =
-        createdField.morphRelations[0].targetFieldMetadata;
+        createdField.morphRelations[0]?.targetFieldMetadata;
+      jestExpectToBeDefined(targetRelationField);
 
       const deactivatedTargetRelationField = await updateOneFieldMetadata({
         input: {

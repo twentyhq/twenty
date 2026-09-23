@@ -289,7 +289,7 @@ describe('recordShare object', () => {
       });
 
     expect(recordSharesAfterDuplicateInsert).toHaveLength(1);
-    expect(recordSharesAfterDuplicateInsert[0].accessLevel).toBe(
+    expect(recordSharesAfterDuplicateInsert[0]?.accessLevel).toBe(
       RecordShareAccessLevel.READ,
     );
 

@@ -91,13 +91,13 @@ describe('metadata list pagination', () => {
     const firstPage = await queryObjects({ first: 1 });
 
     expect(firstPage.errors).toBeUndefined();
-    expect(firstPage.data?.objects.edges).toHaveLength(1);
-    expect(firstPage.data?.objects.pageInfo).toMatchObject({
+    expect(firstPage.data.objects!.edges).toHaveLength(1);
+    expect(firstPage.data.objects!.pageInfo).toMatchObject({
       hasNextPage: true,
       hasPreviousPage: false,
     });
 
-    const firstPageEndCursor = firstPage.data?.objects.pageInfo.endCursor;
+    const firstPageEndCursor = firstPage.data.objects!.pageInfo.endCursor;
 
     expect(firstPageEndCursor).toBeTruthy();
 
@@ -107,23 +107,23 @@ describe('metadata list pagination', () => {
     });
 
     expect(secondPage.errors).toBeUndefined();
-    expect(secondPage.data?.objects.edges).toHaveLength(1);
-    expect(secondPage.data?.objects.pageInfo.hasPreviousPage).toBe(true);
-    expect(secondPage.data?.objects.edges[0].node.id).not.toBe(
-      firstPage.data?.objects.edges[0].node.id,
+    expect(secondPage.data.objects!.edges).toHaveLength(1);
+    expect(secondPage.data.objects!.pageInfo.hasPreviousPage).toBe(true);
+    expect(secondPage.data.objects!.edges[0]!.node.id!).not.toBe(
+      firstPage.data.objects!.edges[0]!.node.id!,
     );
 
-    const secondPageStartCursor = secondPage.data?.objects.pageInfo.startCursor;
+    const secondPageStartCursor = secondPage.data.objects!.pageInfo.startCursor;
     const backPage = await queryObjects({
       last: 1,
       before: secondPageStartCursor,
     });
 
     expect(backPage.errors).toBeUndefined();
-    expect(backPage.data?.objects.edges[0].node.id).toBe(
-      firstPage.data?.objects.edges[0].node.id,
+    expect(backPage.data.objects!.edges[0]!.node.id!).toBe(
+      firstPage.data.objects!.edges[0]!.node.id!,
     );
-    expect(backPage.data?.objects.pageInfo.hasNextPage).toBe(true);
+    expect(backPage.data.objects!.pageInfo.hasNextPage).toBe(true);
   });
 
   it('batches bounded nested pagination independently for every parent', async () => {
@@ -139,14 +139,14 @@ describe('metadata list pagination', () => {
       const page = await queryObjects({ first: 2 });
 
       expect(page.errors).toBeUndefined();
-      expect(page.data?.objects.edges).toHaveLength(2);
+      expect(page.data.objects!.edges).toHaveLength(2);
 
-      for (const { node: objectMetadata } of page.data?.objects.edges ?? []) {
+      for (const { node: objectMetadata } of page.data.objects!.edges ?? []) {
         expect(objectMetadata.fields.edges).toHaveLength(1);
-        expect(objectMetadata.fields.edges[0].node.objectMetadataId).toBe(
+        expect(objectMetadata.fields.edges[0]?.node.objectMetadataId!).toBe(
           objectMetadata.id,
         );
-        expect(objectMetadata.fields.edges[0].cursor).toBeTruthy();
+        expect(objectMetadata.fields.edges[0]?.cursor!).toBeTruthy();
         expect(objectMetadata.fields.pageInfo.hasPreviousPage).toBe(false);
       }
 
@@ -250,7 +250,7 @@ describe('metadata list pagination', () => {
     });
 
     expect(malformedCursorResponse.data).toBeNull();
-    expect(malformedCursorResponse.errors?.[0].message).toContain(
+    expect(malformedCursorResponse.errors?.[0]?.message).toContain(
       'Invalid cursor',
     );
 

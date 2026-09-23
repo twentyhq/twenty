@@ -145,10 +145,10 @@ describe('MCP find tools relation selection (integration)', () => {
 
     const record = payload.result.records[0];
 
-    expect(record.id).toBe(companyId);
-    expect(record.name).toBe(companyName);
+    expect(record?.id).toBe(companyId);
+    expect(record?.name).toBe(companyName);
 
-    const opportunities = record.opportunities as Array<
+    const opportunities = record?.opportunities as Array<
       Record<string, unknown>
     >;
 
@@ -179,7 +179,7 @@ describe('MCP find tools relation selection (integration)', () => {
 
     const record = payload.result.records[0];
 
-    const opportunities = record.opportunities as Array<
+    const opportunities = record?.opportunities as Array<
       Record<string, unknown>
     >;
 
@@ -197,8 +197,8 @@ describe('MCP find tools relation selection (integration)', () => {
 
     const record = payload.result.records[0];
 
-    expect(record.id).toBe(opportunityAId);
-    expect(record.company).toEqual(
+    expect(record?.id).toBe(opportunityAId);
+    expect(record?.company).toEqual(
       expect.objectContaining({
         id: companyId,
         name: companyName,
@@ -217,9 +217,9 @@ describe('MCP find tools relation selection (integration)', () => {
 
     const record = payload.result.records[0];
 
-    expect(record.name).toBe(companyName);
+    expect(record?.name).toBe(companyName);
 
-    const opportunities = record.opportunities as Array<
+    const opportunities = record?.opportunities as Array<
       Record<string, unknown>
     >;
 

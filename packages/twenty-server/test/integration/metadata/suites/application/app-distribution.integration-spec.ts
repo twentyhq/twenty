@@ -164,8 +164,8 @@ describe('App Distribution (integration)', () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data?.uploadAppTarball.id).toBeDefined();
-      expect(data?.uploadAppTarball.universalIdentifier).toBe(uid);
+      expect(data.uploadAppTarball.id).toBeDefined();
+      expect(data.uploadAppTarball.universalIdentifier).toBe(uid);
       createdRegistrationIds.push(data!.uploadAppTarball.id);
 
       const rows = await ds.query(
@@ -281,8 +281,8 @@ describe('App Distribution (integration)', () => {
         universalIdentifier: uid,
       });
 
-      expect(secondResult.data?.uploadAppTarball.id).toBe(
-        firstResult.data?.uploadAppTarball.id,
+      expect(secondResult.data.uploadAppTarball.id).toBe(
+        firstResult.data.uploadAppTarball.id,
       );
     });
   });
@@ -349,7 +349,7 @@ describe('App Distribution (integration)', () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data?.uploadAppTarball.id).toBe(regId);
+      expect(data.uploadAppTarball.id).toBe(regId);
 
       const rows = await ds.query(
         `SELECT "sourceType" FROM core."applicationRegistration"

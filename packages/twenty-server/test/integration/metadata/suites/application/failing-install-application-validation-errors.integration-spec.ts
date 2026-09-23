@@ -140,7 +140,7 @@ describe('Install application should return structured validation errors', () =>
     });
 
     expect(uploadResult.errors).toBeUndefined();
-    expect(uploadResult.data?.uploadAppTarball.id).toBeDefined();
+    expect(uploadResult.data.uploadAppTarball.id).toBeDefined();
 
     createdApplicationUniversalIdentifiers.push(universalIdentifier);
 
@@ -156,10 +156,10 @@ describe('Install application should return structured validation errors', () =>
 
     const [error] = errors;
 
-    expect(error.extensions.code).toBe('METADATA_VALIDATION_FAILED');
-    expect(error.extensions.errors).toBeDefined();
-    expect(error.extensions.summary).toBeDefined();
-    expect(error.extensions.summary.totalErrors).toBeGreaterThan(0);
-    expect(error.extensions.message).toMatch(/Validation failed for/);
+    expect(error?.extensions.code).toBe('METADATA_VALIDATION_FAILED');
+    expect(error?.extensions.errors).toBeDefined();
+    expect(error?.extensions.summary).toBeDefined();
+    expect(error?.extensions.summary.totalErrors).toBeGreaterThan(0);
+    expect(error?.extensions.message).toMatch(/Validation failed for/);
   }, 120000);
 });

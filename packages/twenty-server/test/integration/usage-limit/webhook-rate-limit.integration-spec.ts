@@ -18,6 +18,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const WEBHOOK_RECEIVER_PORT = 4318;
 const WINDOW_SECONDS = 60;
@@ -108,6 +109,8 @@ describe('Webhook rate limiting', () => {
         burstValue: LIMIT_VALUE,
       },
     ]);
+
+    jestExpectToBeDefined(usageLimit);
 
     usageLimitId = usageLimit.id;
 

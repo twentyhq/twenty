@@ -14,6 +14,7 @@ import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { sendEmail } from 'test/integration/utils/send-email.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'gmail-outbound@apple.dev';
 const ALIAS = 'gmail-outbound-alias@apple.dev';
@@ -89,7 +90,10 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
     expect(result).toMatchObject({ success: true });
     expect(google.sentMessages).toHaveLength(1);
 
-    const [{ raw, threadId }] = google.sentMessages;
+    const [destructuredRow] = google.sentMessages;
+    jestExpectToBeDefined(destructuredRow);
+
+    const { raw, threadId } = destructuredRow;
 
     expect(threadId).toBe(PARENT_MESSAGE.threadId);
     expect(raw).toContain(`To: ${RECIPIENTS.to}`);
@@ -120,7 +124,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         'messageChannelId',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual([
       expect.objectContaining({ messageChannelId: channel.channelId }),
@@ -130,7 +134,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
         'messageParticipant',
         'messageParticipants',
         'handle role',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual(
       expect.arrayContaining([
@@ -160,7 +164,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         'messageChannelId messageExternalId',
-        { messageId: { eq: draft.id } },
+        { messageId: { eq: draft?.id } },
       ),
     ).toEqual([
       expect.objectContaining({
@@ -173,7 +177,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
         'messageParticipant',
         'messageParticipants',
         'handle role',
-        { messageId: { eq: draft.id } },
+        { messageId: { eq: draft?.id } },
       ),
     ).toEqual(
       expect.arrayContaining([
@@ -190,7 +194,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
       bcc: RECIPIENTS.bcc,
       subject: DRAFT_SUBJECT,
       body: 'Gmail draft body',
-      draftMessageId: draft.id,
+      draftMessageId: draft?.id,
     });
 
     expect(result).toMatchObject({ success: true });
@@ -217,10 +221,12 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
       'messageChannelMessageAssociation',
       'messageChannelMessageAssociations',
       'messageChannelId messageExternalId',
-      { messageId: { eq: sentMessage.id } },
+      { messageId: { eq: sentMessage?.id } },
     );
 
-    expect(association.messageChannelId).toBe(channel.channelId);
+    expect(association?.messageChannelId).toBe(channel.channelId);
+    jestExpectToBeDefined(association);
+
     expect(association.messageExternalId).not.toBe(DRAFT_MESSAGE.id);
     expect(result.messageThreadId).toEqual(expect.any(String));
   }, 60000);
@@ -244,7 +250,10 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
 
     expect(result).toMatchObject({ success: true });
 
-    const [{ raw }] = google.sentMessages.slice(-1);
+    const [destructuredRow] = google.sentMessages.slice(-1);
+    jestExpectToBeDefined(destructuredRow);
+
+    const { raw } = destructuredRow;
 
     const encodedAliasDisplayName = Buffer.from(
       GOOGLE_ALIAS_DISPLAY_NAME,

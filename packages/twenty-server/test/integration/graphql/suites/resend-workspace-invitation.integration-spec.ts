@@ -31,7 +31,7 @@ describe('resendWorkspaceInvitation (integration)', () => {
       const remainingTokens = await findWorkspaceInvitationsByEmail({ email });
 
       expect(remainingTokens).toHaveLength(1);
-      expect(remainingTokens[0].value).toBe(value);
+      expect(remainingTokens[0]?.value).toBe(value);
     } finally {
       await deleteWorkspaceInvitationsByEmail({ email });
     }

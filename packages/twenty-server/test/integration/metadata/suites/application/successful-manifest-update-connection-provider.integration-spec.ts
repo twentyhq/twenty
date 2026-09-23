@@ -114,8 +114,8 @@ describe('Manifest update - connection providers', () => {
       await findConnectionProvidersByApplication(TEST_APP_ID);
 
     expect(providersAfterFirstSync).toHaveLength(1);
-    expect(providersAfterFirstSync[0].oauthConfig?.scopes).toEqual(['read']);
-    expect(providersAfterFirstSync[0].oauthConfig?.usePkce).toBe(true);
+    expect(providersAfterFirstSync[0]?.oauthConfig?.scopes).toEqual(['read']);
+    expect(providersAfterFirstSync[0]?.oauthConfig?.usePkce).toBe(true);
 
     await syncApplication({
       manifest: buildManifest({
@@ -228,7 +228,7 @@ describe('Manifest update - connection providers', () => {
       await findConnectionProvidersByApplication(TEST_APP_ID);
 
     expect(providersAfterSecondSync).toHaveLength(1);
-    expect(providersAfterSecondSync[0].name).toBe('linear');
+    expect(providersAfterSecondSync[0]?.name).toBe('linear');
   }, 60000);
 
   it('should hard-delete connection providers (no soft-delete behaviour)', async () => {

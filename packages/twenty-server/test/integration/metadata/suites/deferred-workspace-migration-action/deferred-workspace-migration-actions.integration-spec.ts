@@ -105,7 +105,7 @@ describe('Deferred workspace migration actions', () => {
         systemRelationObjectName
       ].filter(
         (indexName) =>
-          !indexNamesBeforeObjectCreation[systemRelationObjectName].includes(
+          !indexNamesBeforeObjectCreation[systemRelationObjectName]?.includes(
             indexName,
           ),
       );

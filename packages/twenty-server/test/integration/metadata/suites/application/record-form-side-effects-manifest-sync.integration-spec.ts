@@ -21,6 +21,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -158,13 +159,17 @@ const findRecordFormTabId = async (objectMetadataId: string) => {
   const tabs = tabsData?.getPageLayoutTabs ?? [];
 
   expect(tabs).toHaveLength(1);
-  expect(tabs[0].title).toBe('Fields');
-  expect(tabs[0].universalIdentifier).toBe(
+  expect(tabs[0]?.title).toBe('Fields');
+  expect(tabs[0]?.universalIdentifier).toBe(
     DERIVED_RECORD_FORM_TAB_UNIVERSAL_IDENTIFIER,
   );
-  expect(tabs[0].isSystemSideEffect).toBe(true);
+  expect(tabs[0]?.isSystemSideEffect).toBe(true);
 
-  return tabs[0].id;
+  const id = tabs[0]?.id;
+
+  jestExpectToBeDefined(id);
+
+  return id;
 };
 
 const findRecordFormWidgets = async (pageLayoutTabId: string) => {

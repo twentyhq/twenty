@@ -14,6 +14,7 @@ import { updateOneViewField } from 'test/integration/metadata/suites/view-field/
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('View Field Resolver - Successful object metadata identifier update side effect on view field', () => {
   let testSetup: ViewFieldTestSetup & {
@@ -45,7 +46,8 @@ describe('View Field Resolver - Successful object metadata identifier update sid
         viewId
       `,
     });
-    const testLabelIdentifierViewFieldId = getViewFields[0].id;
+    const testLabelIdentifierViewFieldId = getViewFields[0]?.id;
+    jestExpectToBeDefined(testLabelIdentifierViewFieldId);
 
     testSetup = {
       testFieldMetadataId,

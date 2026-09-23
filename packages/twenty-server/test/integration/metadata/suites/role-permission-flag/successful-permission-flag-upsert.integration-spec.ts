@@ -66,7 +66,7 @@ describe('Permission flag upsert should succeed', () => {
       roleId: createdRoleId,
       flag: PermissionFlagType.DATA_MODEL,
     });
-    expect(data?.upsertPermissionFlags?.[0].id).toBeDefined();
+    expect(data.upsertPermissionFlags[0]?.id).toBeDefined();
   });
 
   it('should upsert with multiple permission flags', async () => {
@@ -99,7 +99,7 @@ describe('Permission flag upsert should succeed', () => {
     });
 
     expect(data?.upsertPermissionFlags).toHaveLength(1);
-    expect(data?.upsertPermissionFlags?.[0].flag).toBe(
+    expect(data.upsertPermissionFlags[0]?.flag).toBe(
       PermissionFlagType.DATA_MODEL,
     );
   });

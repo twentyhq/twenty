@@ -7,6 +7,7 @@ import { createOneView } from 'test/integration/metadata/suites/view/utils/creat
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CreateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/create-view-field-group.input';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('View Field Group Resolver - Successful Create Many Operations', () => {
   let testSetup: {
@@ -119,10 +120,10 @@ describe('View Field Group Resolver - Successful Create Many Operations', () => 
 
     createdViewFieldGroups.forEach((viewFieldGroup, index) => {
       expect(viewFieldGroup).toMatchObject({
-        name: inputs[index].name,
+        name: inputs[index]?.name,
         viewId: testSetup.testViewId,
-        position: inputs[index].position,
-        isVisible: inputs[index].isVisible,
+        position: inputs[index]?.position,
+        isVisible: inputs[index]?.isVisible,
       });
 
       createdViewFieldGroupIds.push(viewFieldGroup.id);
@@ -159,6 +160,8 @@ describe('View Field Group Resolver - Successful Create Many Operations', () => 
       position: 5,
       isVisible: true,
     });
+
+    jestExpectToBeDefined(viewFieldGroup);
 
     createdViewFieldGroupIds.push(viewFieldGroup.id);
   });

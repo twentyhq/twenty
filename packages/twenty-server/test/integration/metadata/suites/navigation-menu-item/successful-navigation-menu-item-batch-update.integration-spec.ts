@@ -67,11 +67,17 @@ describe('NavigationMenuItem batch update should succeed', () => {
     const items = createData.createManyNavigationMenuItems;
     createdIds = items.map((item) => item.id);
 
+    const firstItemId = items[0]?.id;
+    const secondItemId = items[1]?.id;
+
+    jestExpectToBeDefined(firstItemId);
+    jestExpectToBeDefined(secondItemId);
+
     const { data: updateData } = await updateManyNavigationMenuItems({
       expectToFail: false,
       inputs: [
-        { id: items[0].id, update: { position: 10 } },
-        { id: items[1].id, update: { position: 20 } },
+        { id: firstItemId, update: { position: 10 } },
+        { id: secondItemId, update: { position: 20 } },
       ],
     });
 
@@ -80,12 +86,14 @@ describe('NavigationMenuItem batch update should succeed', () => {
     const updatedItems = updateData.updateManyNavigationMenuItems;
 
     expect(updatedItems).toHaveLength(2);
+
     expect(updatedItems[0]).toMatchObject({
-      id: items[0].id,
+      id: firstItemId,
       position: 10,
     });
+
     expect(updatedItems[1]).toMatchObject({
-      id: items[1].id,
+      id: secondItemId,
       position: 20,
     });
   });
@@ -121,11 +129,17 @@ describe('NavigationMenuItem batch update should succeed', () => {
     const items = createData.createManyNavigationMenuItems;
     createdIds = items.map((item) => item.id);
 
+    const secondItemId = items[1]?.id;
+    const thirdItemId = items[2]?.id;
+
+    jestExpectToBeDefined(secondItemId);
+    jestExpectToBeDefined(thirdItemId);
+
     const { data: updateData } = await updateManyNavigationMenuItems({
       expectToFail: false,
       inputs: [
-        { id: items[1].id, update: { folderId } },
-        { id: items[2].id, update: { folderId } },
+        { id: secondItemId, update: { folderId } },
+        { id: thirdItemId, update: { folderId } },
       ],
     });
 
@@ -134,8 +148,9 @@ describe('NavigationMenuItem batch update should succeed', () => {
     const updatedItems = updateData.updateManyNavigationMenuItems;
 
     expect(updatedItems).toHaveLength(2);
-    expect(updatedItems[0]).toMatchObject({ id: items[1].id, folderId });
-    expect(updatedItems[1]).toMatchObject({ id: items[2].id, folderId });
+
+    expect(updatedItems[0]).toMatchObject({ id: secondItemId, folderId });
+    expect(updatedItems[1]).toMatchObject({ id: thirdItemId, folderId });
   });
 
   it('should return empty array for empty inputs', async () => {

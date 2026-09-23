@@ -16,6 +16,7 @@ import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'gmail-channel-visibility@apple.dev';
 
@@ -23,6 +24,8 @@ const RESTRICTED = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
 
 describe('Message channel visibility (integration)', () => {
   const inbox = [gmailMessage()];
+  jestExpectToBeDefined(inbox[0]);
+
   const subject = getGmailMessageSubject(inbox[0]);
 
   setupGoogleMock({ handle: HANDLE, inbox });

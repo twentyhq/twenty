@@ -179,7 +179,7 @@ describe('Bulk object metadata update should fail', () => {
       const [firstError] = errors;
 
       expect(errors).toHaveLength(1);
-      expect(firstError.extensions.code).toBe('METADATA_VALIDATION_FAILED');
+      expect(firstError?.extensions.code).toBe('METADATA_VALIDATION_FAILED');
 
       const { objects } = await findManyObjectMetadata({
         expectToFail: false,

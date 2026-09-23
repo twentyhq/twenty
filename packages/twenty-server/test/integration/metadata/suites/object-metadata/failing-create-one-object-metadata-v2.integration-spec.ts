@@ -22,15 +22,15 @@ describe('Object metadata creation should fail v2', () => {
 
       const [error] = errors;
 
-      expect(error.extensions.code).toBe(expected.errorCode);
+      expect(error?.extensions.code).toBe(expected.errorCode);
 
       if (expected.errorCode === 'BAD_USER_INPUT') {
-        expect(error.message).toContain(expected.messageContains);
+        expect(error?.message).toContain(expected.messageContains);
 
         return;
       }
 
-      const objectMetadataFailures = error.extensions.errors.objectMetadata;
+      const objectMetadataFailures = error?.extensions.errors.objectMetadata;
 
       expect(objectMetadataFailures).toHaveLength(1);
       expect(objectMetadataFailures[0].errors).toEqual(

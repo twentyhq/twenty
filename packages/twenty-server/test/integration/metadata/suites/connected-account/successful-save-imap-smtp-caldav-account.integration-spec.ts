@@ -282,6 +282,8 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
       data.connectedAccountId,
     );
 
-    expect(calendarChannel.visibility).toBe(CalendarChannelVisibility.METADATA);
+    expect(calendarChannel?.visibility).toBe(
+      CalendarChannelVisibility.METADATA,
+    );
   });
 });

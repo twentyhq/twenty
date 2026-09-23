@@ -11,6 +11,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 /* global APP_PORT */
 
@@ -40,7 +41,7 @@ const parseLogfmt = (line: string): Record<string, string> =>
     [...line.matchAll(/([a-z_]+)=("(?:[^"\\]|\\.)*"|\S+)/g)].map(
       ([, key, value]) => [
         key,
-        value.startsWith('"') ? JSON.parse(value) : value,
+        value?.startsWith('"') ? JSON.parse(value) : value,
       ],
     ),
   );
@@ -125,7 +126,7 @@ describe('API access log', () => {
       token_type: 'ACCESS',
       request_id: requestId,
     });
-    expect(Number(line.duration_ms)).toBeGreaterThanOrEqual(0);
+    expect(Number(line?.duration_ms)).toBeGreaterThanOrEqual(0);
   });
 
   it('should log the api key as the actor of a REST request', async () => {
@@ -144,7 +145,7 @@ describe('API access log', () => {
       actor: 'apiKey',
       workspace_id: SEED_APPLE_WORKSPACE_ID,
     });
-    expect(line.actor_id).toBeDefined();
+    expect(line?.actor_id).toBeDefined();
   });
 
   it('should log an unauthenticated request as anonymous', async () => {
@@ -157,7 +158,9 @@ describe('API access log', () => {
 
     const line = await waitForAccessLogLine(requestId);
 
-    expect(line.actor).toBe('anonymous');
+    expect(line?.actor).toBe('anonymous');
+    jestExpectToBeDefined(line);
+
     expect(line.actor_id).toBeUndefined();
   });
 

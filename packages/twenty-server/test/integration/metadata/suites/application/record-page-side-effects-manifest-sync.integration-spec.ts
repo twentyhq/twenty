@@ -114,9 +114,7 @@ const findTicketRecordPageView = async (objectMetadataId: string) => {
     expectToFail: false,
   });
 
-  // The key is never persisted for the record-page view: it resolves strictly
-  // by its derived universal identifier.
-  return data?.getViews.find(
+  return data.getViews.find(
     (view) =>
       view.universalIdentifier ===
       DERIVED_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,

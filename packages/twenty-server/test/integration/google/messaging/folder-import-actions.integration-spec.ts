@@ -19,12 +19,15 @@ import {
   runFolderActionsWithoutPendingActions,
 } from 'test/integration/utils/run-folder-actions.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'gmail-folder-actions@apple.dev';
 const DELETED_FOLDER_NAME = 'INBOX';
 
 describe('Gmail folder actions (integration)', () => {
   const inbox = [gmailMessage()];
+  jestExpectToBeDefined(inbox[0]);
+
   const importedSubject = getGmailMessageSubject(inbox[0]);
 
   setupGoogleMock({ handle: HANDLE, inbox });

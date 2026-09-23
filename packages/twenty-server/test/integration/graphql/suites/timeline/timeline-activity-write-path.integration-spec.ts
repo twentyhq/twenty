@@ -19,6 +19,7 @@ import {
 } from 'twenty-shared/timeline';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TIMELINE_ACTIVITY_GQL_FIELDS = `
   id
@@ -337,15 +338,17 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
-      expect(timelineActivities[0].timelineActivityTypeId).toBe(
+      expect(timelineActivities[0]?.timelineActivityTypeId).toBe(
         timelineActivityTypeIdForOrThrow('created'),
       );
-      expect(timelineActivities[0].timelineActivityTypeSnapshot).toMatchObject({
-        id: timelineActivityTypeIdForOrThrow('created'),
-        action: 'created',
-      });
-      expect(timelineActivities[0].targetCompanyId).toBe(COMPANY_ID);
-      expect(timelineActivities[0].linkedRecordId).toBeNull();
+      expect(timelineActivities[0]?.timelineActivityTypeSnapshot).toMatchObject(
+        {
+          id: timelineActivityTypeIdForOrThrow('created'),
+          action: 'created',
+        },
+      );
+      expect(timelineActivities[0]?.targetCompanyId).toBe(COMPANY_ID);
+      expect(timelineActivities[0]?.linkedRecordId).toBeNull();
     });
 
     it('should write an updated entry holding the field diff', async () => {
@@ -365,7 +368,7 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
-      expect(timelineActivities[0].properties).toEqual({
+      expect(timelineActivities[0]?.properties).toEqual({
         diff: {
           name: {
             before: 'Timeline Write Path',
@@ -413,10 +416,14 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
-      expect(
-        new Date(timelineActivities[0].happensAt).getTime(),
-      ).toBeGreaterThanOrEqual(updateStartedAt);
-      expect(timelineActivities[0].properties).toMatchObject({
+      const happensAt = timelineActivities[0]?.happensAt;
+
+      jestExpectToBeDefined(happensAt);
+
+      expect(new Date(happensAt).getTime()).toBeGreaterThanOrEqual(
+        updateStartedAt,
+      );
+      expect(timelineActivities[0]?.properties).toMatchObject({
         diff: {
           address: {
             before: {
@@ -468,7 +475,7 @@ describe('timeline activity write path (integration)', () => {
         });
 
         expect(timelineActivities).toHaveLength(1);
-        expect(timelineActivities[0].properties).toEqual({
+        expect(timelineActivities[0]?.properties).toEqual({
           diff: {
             name: { before: `Batch ${index}`, after: 'Batch renamed twice' },
           },
@@ -544,7 +551,7 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
-      expect(timelineActivities[0].properties).toEqual({
+      expect(timelineActivities[0]?.properties).toEqual({
         diff: {
           name: { before: 'Rollup Host', after: 'Rollup Host Renamed' },
         },
@@ -585,16 +592,20 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
-      expect(timelineActivities[0].timelineActivityTypeSnapshot).toMatchObject({
-        id: timelineActivityTypeIdForOrThrow(
-          'linked',
-          NOTE_UNIVERSAL_IDENTIFIER,
-        ),
-        action: 'linked',
-        objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
-      });
-      expect(timelineActivities[0].linkedRecordId).toBe(NOTE_ID);
-      expect(timelineActivities[0].linkedRecordCachedName).toBe('Linked note');
+      expect(timelineActivities[0]?.timelineActivityTypeSnapshot).toMatchObject(
+        {
+          id: timelineActivityTypeIdForOrThrow(
+            'linked',
+            NOTE_UNIVERSAL_IDENTIFIER,
+          ),
+          action: 'linked',
+          objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+        },
+      );
+      expect(timelineActivities[0]?.linkedRecordId).toBe(NOTE_ID);
+      expect(timelineActivities[0]?.linkedRecordCachedName).toBe('Linked note');
+      jestExpectToBeDefined(timelineActivities[0]);
+
       expect(timelineActivities[0].linkedObjectMetadataId).not.toBeNull();
     });
 
@@ -627,9 +638,9 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(onCompany).toHaveLength(1);
-      expect(onCompany[0].linkedRecordId).toBe(NOTE_ID);
-      expect(onCompany[0].linkedRecordCachedName).toBe('Linked note renamed');
-      expect(onCompany[0].properties).toEqual({
+      expect(onCompany[0]?.linkedRecordId).toBe(NOTE_ID);
+      expect(onCompany[0]?.linkedRecordCachedName).toBe('Linked note renamed');
+      expect(onCompany[0]?.properties).toEqual({
         diff: {
           title: { before: 'Linked note', after: 'Linked note renamed' },
         },
@@ -668,7 +679,7 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(onCompany).toHaveLength(1);
-      expect(onCompany[0].properties).toEqual({
+      expect(onCompany[0]?.properties).toEqual({
         diff: {
           title: { before: 'Linked note', after: 'Linked note renamed' },
         },
@@ -695,7 +706,7 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(timelineActivities).toHaveLength(1);
-      expect(timelineActivities[0].linkedRecordId).toBe(NOTE_ID);
+      expect(timelineActivities[0]?.linkedRecordId).toBe(NOTE_ID);
     });
   });
 
@@ -753,7 +764,11 @@ describe('timeline activity write path (integration)', () => {
         linkedRecordId: ROUTED_MESSAGE_ID,
         linkedRecordCachedName: 'Generic message routing',
       });
-      expect(new Date(messageActivities[0].happensAt).toISOString()).toBe(
+      const messageActivityHappensAt = messageActivities[0]?.happensAt;
+
+      jestExpectToBeDefined(messageActivityHappensAt);
+
+      expect(new Date(messageActivityHappensAt).toISOString()).toBe(
         ROUTED_MESSAGE_RECEIVED_AT,
       );
 
@@ -817,7 +832,11 @@ describe('timeline activity write path (integration)', () => {
         linkedRecordId: ROUTED_CALENDAR_EVENT_ID,
         linkedRecordCachedName: 'Generic calendar routing',
       });
-      expect(new Date(calendarActivities[0].happensAt).toISOString()).toBe(
+      const calendarActivityHappensAt = calendarActivities[0]?.happensAt;
+
+      jestExpectToBeDefined(calendarActivityHappensAt);
+
+      expect(new Date(calendarActivityHappensAt).toISOString()).toBe(
         ROUTED_CALENDAR_EVENT_STARTS_AT,
       );
     });
@@ -840,7 +859,12 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(activitiesAfterRename).toHaveLength(1);
-      expect(new Date(activitiesAfterRename[0].happensAt).toISOString()).toBe(
+      const activitiesAfterRenameHappensAt =
+        activitiesAfterRename[0]?.happensAt;
+
+      jestExpectToBeDefined(activitiesAfterRenameHappensAt);
+
+      expect(new Date(activitiesAfterRenameHappensAt).toISOString()).toBe(
         ROUTED_CALENDAR_EVENT_STARTS_AT,
       );
 
@@ -861,9 +885,14 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(activitiesAfterReschedule).toHaveLength(1);
-      expect(
-        new Date(activitiesAfterReschedule[0].happensAt).toISOString(),
-      ).toBe(ROUTED_CALENDAR_EVENT_RESCHEDULED_STARTS_AT);
+      const activitiesAfterRescheduleHappensAt =
+        activitiesAfterReschedule[0]?.happensAt;
+
+      jestExpectToBeDefined(activitiesAfterRescheduleHappensAt);
+
+      expect(new Date(activitiesAfterRescheduleHappensAt).toISOString()).toBe(
+        ROUTED_CALENDAR_EVENT_RESCHEDULED_STARTS_AT,
+      );
 
       await updateRecord({
         objectMetadataSingularName: 'calendarEvent',
@@ -882,7 +911,12 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(activitiesAfterClearing).toHaveLength(1);
-      expect(new Date(activitiesAfterClearing[0].happensAt).toISOString()).toBe(
+      const activitiesAfterClearingHappensAt =
+        activitiesAfterClearing[0]?.happensAt;
+
+      jestExpectToBeDefined(activitiesAfterClearingHappensAt);
+
+      expect(new Date(activitiesAfterClearingHappensAt).toISOString()).toBe(
         ROUTED_CALENDAR_EVENT_RESCHEDULED_STARTS_AT,
       );
     });
@@ -950,7 +984,7 @@ describe('timeline activity write path (integration)', () => {
       });
 
       expect(secondTargetActivities).toHaveLength(1);
-      expect(secondTargetActivities[0].linkedRecordCachedName).toBe(
+      expect(secondTargetActivities[0]?.linkedRecordCachedName).toBe(
         'proposal-final.pdf',
       );
 

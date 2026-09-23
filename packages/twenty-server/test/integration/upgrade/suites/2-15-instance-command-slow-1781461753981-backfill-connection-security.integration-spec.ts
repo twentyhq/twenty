@@ -120,12 +120,12 @@ describe('BackfillConnectionSecuritySlowInstanceCommand (integration)', () => {
 
     const params = await getConnectionParameters(id);
 
-    expect(params.IMAP.connectionSecurity).toBe('SSL_TLS');
-    expect(params.SMTP.connectionSecurity).toBe('STARTTLS');
-    expect(params.CALDAV.connectionSecurity).toBe('SSL_TLS');
-    expect(params.IMAP.secure).toBeUndefined();
-    expect(params.SMTP.secure).toBeUndefined();
-    expect(params.CALDAV.secure).toBeUndefined();
+    expect(params.IMAP!.connectionSecurity).toBe('SSL_TLS');
+    expect(params.SMTP!.connectionSecurity).toBe('STARTTLS');
+    expect(params.CALDAV!.connectionSecurity).toBe('SSL_TLS');
+    expect(params.IMAP!.secure).toBeUndefined();
+    expect(params.SMTP!.secure).toBeUndefined();
+    expect(params.CALDAV!.secure).toBeUndefined();
   });
 
   it('maps implicit-TLS SMTP (port 465) and opportunistic IMAP (secure:false) correctly', async () => {

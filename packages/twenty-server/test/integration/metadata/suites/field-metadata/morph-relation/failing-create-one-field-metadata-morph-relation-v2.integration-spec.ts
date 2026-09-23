@@ -440,9 +440,9 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
       const [firstError] = errors;
 
       expect(firstError).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(firstError),
+        extractRecordIdsAndDatesAsExpectAny(firstError!),
       );
-      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+      expect(firstError?.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     },
   );
 
@@ -497,9 +497,9 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
       const [firstError] = errors;
 
       expect(firstError).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(firstError),
+        extractRecordIdsAndDatesAsExpectAny(firstError!),
       );
-      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+      expect(firstError?.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     });
 
     it('it should fail to create a already existing morph relation with same field', async () => {
@@ -540,9 +540,9 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
       const [firstError] = errors;
 
       expect(firstError).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(firstError),
+        extractRecordIdsAndDatesAsExpectAny(firstError!),
       );
-      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+      expect(firstError?.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     });
   });
 });

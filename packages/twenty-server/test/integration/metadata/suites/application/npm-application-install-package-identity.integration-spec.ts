@@ -27,8 +27,8 @@ const SUBSTITUTE_PACKAGE_NAME = '@evil/substitute-app';
 
 const expectPackageResolutionFailure = (errors: BaseGraphQLError[]) => {
   expect(errors).toHaveLength(1);
-  expect(errors[0].extensions.code).toBe('INTERNAL_SERVER_ERROR');
-  expect(errors[0].extensions.subCode).toBe('PACKAGE_RESOLUTION_FAILED');
+  expect(errors[0]?.extensions.code).toBe('INTERNAL_SERVER_ERROR');
+  expect(errors[0]?.extensions.subCode).toBe('PACKAGE_RESOLUTION_FAILED');
 };
 
 describe('npm application install package identity (integration)', () => {

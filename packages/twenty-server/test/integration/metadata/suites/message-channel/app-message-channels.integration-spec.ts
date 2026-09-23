@@ -20,6 +20,7 @@ import { INGEST_APP_MESSAGES_MAX_BATCH_SIZE } from 'src/engine/metadata-modules/
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const OWNING_APP_ID = uuidv4();
 const OWNING_APP_ROLE_ID = uuidv4();
@@ -336,9 +337,15 @@ describe('app message channels API (e2e)', () => {
     const [otherProvider] =
       await findConnectionProvidersByApplication(OTHER_APP_ID);
 
+    jestExpectToBeDefined(owningProvider);
+
     owningApplicationDbId = owningProvider.applicationId;
+
     owningProviderDbId = owningProvider.id;
+    jestExpectToBeDefined(otherProvider);
+
     otherApplicationDbId = otherProvider.applicationId;
+
     otherProviderDbId = otherProvider.id;
 
     const [userWorkspace] = await globalThis.testDataSource.query(

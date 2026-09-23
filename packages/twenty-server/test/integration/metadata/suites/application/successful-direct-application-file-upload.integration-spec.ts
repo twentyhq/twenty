@@ -81,13 +81,13 @@ describe('Direct application file upload', () => {
 
     expect(reservationErrors).toEqual([]);
     expect(targets).toHaveLength(2);
-    expect(targets[0].filePath).toBe(HANDLER_PATH);
-    expect(targets[0].fileFolder).toBe('BuiltLogicFunction');
-    expect(targets[1].filePath).toBe(LOGO_PATH);
+    expect(targets[0]?.filePath!).toBe(HANDLER_PATH);
+    expect(targets[0]?.fileFolder!).toBe('BuiltLogicFunction');
+    expect(targets[1]?.filePath!).toBe(LOGO_PATH);
 
     const [pendingRow] = await globalThis.testDataSource.query(
       `SELECT status, "mimeType" FROM core."file" WHERE id = $1`,
-      [targets[0].fileId],
+      [targets[0]?.fileId!],
     );
 
     expect(pendingRow.status).toBe('PENDING');
@@ -140,7 +140,7 @@ describe('Direct application file upload', () => {
     );
 
     const logoRow = rows.find(
-      (row: { id: string }) => row.id === targets[1].fileId,
+      (row: { id: string }) => row.id === targets[1]?.fileId!,
     );
 
     expect(logoRow.mimeType).toBe('image/svg+xml');
@@ -162,10 +162,10 @@ describe('Direct application file upload', () => {
     const { targets, errors } = data!.createApplicationFileUploads;
 
     expect(targets).toHaveLength(1);
-    expect(targets[0].filePath).toBe('src/valid.ts');
+    expect(targets[0]?.filePath!).toBe('src/valid.ts');
     expect(errors).toHaveLength(1);
-    expect(errors[0].filePath).toBe('note.pdf');
-    expect(errors[0].message).toContain('Invalid fileFolder');
+    expect(errors[0]?.filePath!).toBe('note.pdf');
+    expect(errors[0]?.message!).toContain('Invalid fileFolder');
   }, 30000);
 
   it('should fail slow: report a path escaping the application folder as a per-file error', async () => {
@@ -188,7 +188,7 @@ describe('Direct application file upload', () => {
 
     expect(targets).toEqual([]);
     expect(errors).toHaveLength(1);
-    expect(errors[0].filePath).toBe('../../../etc/passwd.ts');
+    expect(errors[0]?.filePath!).toBe('../../../etc/passwd.ts');
   }, 30000);
 
   it('should fail slow: report a file whose bytes never reached storage as a per-file completion error', async () => {
@@ -201,11 +201,11 @@ describe('Direct application file upload', () => {
       ],
     });
 
-    const fileId = createData!.createApplicationFileUploads.targets[0].fileId;
+    const fileId = createData!.createApplicationFileUploads.targets[0]?.fileId;
 
     const { data: completeData } = await completeApplicationFileUploads({
       applicationUniversalIdentifier: TEST_APP_UID,
-      fileIds: [fileId],
+      fileIds: [fileId!],
     });
 
     jest.useFakeTimers();
@@ -214,7 +214,7 @@ describe('Direct application file upload', () => {
 
     expect(files).toEqual([]);
     expect(errors).toHaveLength(1);
-    expect(errors[0].fileId).toBe(fileId);
-    expect(errors[0].message).toContain('has not been uploaded to storage');
+    expect(errors[0]?.fileId!).toBe(fileId);
+    expect(errors[0]?.message!).toContain('has not been uploaded to storage');
   }, 30000);
 });

@@ -129,8 +129,8 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
         ConnectedAccountProvider.APP,
         SEED_APPLE_WORKSPACE_ID,
         userWorkspace.id,
-        provider.applicationId,
-        provider.id,
+        provider?.applicationId,
+        provider?.id,
       ],
     );
   };
@@ -214,7 +214,7 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
       expect.objectContaining({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         payload: {
-          connectionProviderId: provider.id,
+          connectionProviderId: provider?.id,
           connectionProviderName: PROVIDER_NAME,
           connectedAccountId,
         },

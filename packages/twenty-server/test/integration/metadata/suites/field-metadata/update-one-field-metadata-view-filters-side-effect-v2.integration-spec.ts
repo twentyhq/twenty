@@ -23,6 +23,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
@@ -151,6 +152,10 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
         ? ViewFilterOperand.CONTAINS
         : ViewFilterOperand.IS;
 
+    const sixthOptionValue = ALL_OPTIONS[5]?.value;
+
+    jestExpectToBeDefined(sixthOptionValue);
+
     const testCases: TestCase[] = [
       {
         title:
@@ -173,9 +178,13 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
         title: 'should update related solo selected option view filter',
         context: {
           createViewFilter: {
-            value: [ALL_OPTIONS[5].value],
+            value: [sixthOptionValue],
           },
-          updateOptions: (options) => [fakeOptionUpdate(options[5])],
+          updateOptions: (options) => {
+            jestExpectToBeDefined(options[5]);
+
+            return [fakeOptionUpdate(options[5])];
+          },
         },
       },
       {
@@ -314,6 +323,10 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
           type: fieldType,
         });
 
+      const firstOptionValue = ALL_OPTIONS[0]?.value;
+
+      jestExpectToBeDefined(firstOptionValue);
+
       const {
         data: { createViewFilter: createdViewFilter },
       } = await createOneViewFilter({
@@ -321,7 +334,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
           viewId: createdView.id,
           fieldMetadataId: createOneField.id,
           operand: operandForFieldType,
-          value: ALL_OPTIONS[0].value,
+          value: firstOptionValue,
         },
         expectToFail: false,
         gqlFields: `
@@ -334,6 +347,8 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
       if (!isDefined(optionsWithIds)) {
         throw new Error('optionsWithIds is not defined');
       }
+
+      jestExpectToBeDefined(optionsWithIds[0]);
 
       const updatedOption = fakeOptionUpdate(optionsWithIds[0]);
 
@@ -384,6 +399,8 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
       if (!isDefined(optionsWithIds)) {
         throw new Error('optionsWithIds is not defined');
       }
+
+      jestExpectToBeDefined(optionsWithIds[0]);
 
       await updateOneFieldMetadata({
         expectToFail: false,
@@ -449,7 +466,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
         });
 
         expect(errors).toBeDefined();
-        expect(errors![0].extensions.code).toBe('METADATA_VALIDATION_FAILED');
+        expect(errors[0]?.extensions.code).toBe('METADATA_VALIDATION_FAILED');
       },
     );
   });

@@ -27,11 +27,14 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'gmail-channel-deletion-cleanup@apple.dev';
 
 describe('Channel deletion cleanup (integration)', () => {
   const inbox = [gmailMessage()];
+  jestExpectToBeDefined(inbox[0]);
+
   const expectedSubject = getGmailMessageSubject(inbox[0]);
   const eventTitle = `Calendar event ${randomUUID()}`;
 

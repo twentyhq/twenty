@@ -17,6 +17,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { resetCalendarChannelSyncState } from 'test/integration/utils/reset-channel-sync-state.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'calendar-event-save-operations@apple.dev';
 
@@ -107,7 +108,9 @@ describe('Calendar event save operations (integration)', () => {
         [`%${handleSuffix}`],
       );
 
-    return Number(rows[0].count);
+    const count = rows[0]?.count;
+
+    return Number(count);
   };
 
   const countParticipantsByHandleSuffixAndDisplayName = async (
@@ -124,7 +127,9 @@ describe('Calendar event save operations (integration)', () => {
         [`%${handleSuffix}`, displayName],
       );
 
-    return Number(rows[0].count);
+    const rowCount = rows[0]?.count;
+
+    return Number(rowCount);
   };
 
   beforeAll(async () => {
@@ -162,22 +167,29 @@ describe('Calendar event save operations (integration)', () => {
     const events = await findEventsByTitle(title);
 
     expect(events).toHaveLength(1);
-    expect(events[0].location).toBe('Room 1');
-    expect(events[0].isFullDay).toBe(false);
+    expect(events[0]?.location).toBe('Room 1');
+    expect(events[0]?.isFullDay).toBe(false);
 
     const associations = await findAssociationsByExternalId(eventExternalId);
 
     expect(associations).toHaveLength(1);
-    expect(associations[0].calendarEventId).toBe(events[0].id);
-    expect(associations[0].recurringEventExternalId).toBe('');
+    jestExpectToBeDefined(associations[0]);
+    jestExpectToBeDefined(events[0]);
 
-    const participants = await findParticipantsByCalendarEventId(events[0].id);
+    expect(associations[0].calendarEventId).toBe(events[0].id);
+    expect(associations[0]?.recurringEventExternalId).toBe('');
+
+    const id = events[0]?.id;
+
+    jestExpectToBeDefined(id);
+
+    const participants = await findParticipantsByCalendarEventId(id);
 
     expect(participants).toHaveLength(1);
-    expect(participants[0].handle).toBe(attendee);
-    expect(participants[0].displayName).toBe('Ada Lovelace');
-    expect(participants[0].isOrganizer).toBe(true);
-    expect(participants[0].responseStatus).toBe('ACCEPTED');
+    expect(participants[0]?.handle).toBe(attendee);
+    expect(participants[0]?.displayName).toBe('Ada Lovelace');
+    expect(participants[0]?.isOrganizer).toBe(true);
+    expect(participants[0]?.responseStatus).toBe('ACCEPTED');
   }, 120000);
 
   it('should update the existing event and association rather than insert a second one when the same external event is imported again', async () => {
@@ -213,13 +225,16 @@ describe('Calendar event save operations (integration)', () => {
     const updatedEvents = await findEventsByTitle(updatedTitle);
 
     expect(updatedEvents).toHaveLength(1);
+    jestExpectToBeDefined(updatedEvents[0]);
+    jestExpectToBeDefined(initialEvent);
+
     expect(updatedEvents[0].id).toBe(initialEvent.id);
-    expect(updatedEvents[0].location).toBe('Room 2');
+    expect(updatedEvents[0]?.location).toBe('Room 2');
 
     const associations = await findAssociationsByExternalId(eventExternalId);
 
     expect(associations).toHaveLength(1);
-    expect(associations[0].recurringEventExternalId).toBe(
+    expect(associations[0]?.recurringEventExternalId).toBe(
       recurringEventExternalId,
     );
   }, 180000);
@@ -244,12 +259,14 @@ describe('Calendar event save operations (integration)', () => {
     );
 
     const [event] = await findEventsByTitle(title);
+    jestExpectToBeDefined(event);
+
     const [initialParticipant] = await findParticipantsByCalendarEventId(
       event.id,
     );
 
-    expect(initialParticipant.displayName).toBe('Before');
-    expect(initialParticipant.responseStatus).toBe('NEEDS_ACTION');
+    expect(initialParticipant?.displayName).toBe('Before');
+    expect(initialParticipant?.responseStatus).toBe('NEEDS_ACTION');
 
     await importEvent(
       googleCalendarEvent({
@@ -269,10 +286,13 @@ describe('Calendar event save operations (integration)', () => {
     const participants = await findParticipantsByCalendarEventId(event.id);
 
     expect(participants).toHaveLength(1);
+    jestExpectToBeDefined(participants[0]);
+    jestExpectToBeDefined(initialParticipant);
+
     expect(participants[0].id).toBe(initialParticipant.id);
-    expect(participants[0].displayName).toBe('After');
-    expect(participants[0].isOrganizer).toBe(true);
-    expect(participants[0].responseStatus).toBe('DECLINED');
+    expect(participants[0]?.displayName).toBe('After');
+    expect(participants[0]?.isOrganizer).toBe(true);
+    expect(participants[0]?.responseStatus).toBe('DECLINED');
   }, 180000);
 
   it('should insert an added attendee and delete a removed one while leaving the unchanged attendee alone', async () => {
@@ -291,6 +311,8 @@ describe('Calendar event save operations (integration)', () => {
     );
 
     const [event] = await findEventsByTitle(title);
+    jestExpectToBeDefined(event);
+
     const initialParticipants = await findParticipantsByCalendarEventId(
       event.id,
     );
@@ -403,7 +425,7 @@ describe('Calendar event save operations (integration)', () => {
         objectMetadataSingularName: 'calendarEventParticipant',
         gqlFields: 'id',
         data: {
-          calendarEventId: event.id,
+          calendarEventId: event?.id,
           handle: attendee,
           displayName: 'Duplicate',
         },
@@ -411,6 +433,8 @@ describe('Calendar event save operations (integration)', () => {
     );
 
     expect(duplicateResponse.body.errors).toBeUndefined();
+    jestExpectToBeDefined(event);
+
     expect(await findParticipantsByCalendarEventId(event.id)).toHaveLength(2);
 
     await importEvent(

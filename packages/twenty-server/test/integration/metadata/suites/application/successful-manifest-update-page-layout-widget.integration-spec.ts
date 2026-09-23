@@ -160,8 +160,9 @@ describe('Manifest update - page layout widgets (standalone)', () => {
     const widgetsAfterSecondSync = await findStandardPersonHomeTabWidgets();
 
     expect(widgetsAfterSecondSync).toHaveLength(1);
+
     expect(widgetsAfterSecondSync[0]).toMatchObject({
-      id: widgetsAfterFirstSync[0].id,
+      id: widgetsAfterFirstSync[0]?.id,
       title: 'Recent activity',
       position: {
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,

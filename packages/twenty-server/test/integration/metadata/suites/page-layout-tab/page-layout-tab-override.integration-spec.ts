@@ -3,6 +3,7 @@ import { updateOnePageLayoutTab } from 'test/integration/metadata/suites/page-la
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
 
 import { PageLayoutType } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TAB_OVERRIDE_GQL_FIELDS = `
   id
@@ -46,8 +47,12 @@ describe('Page layout tab override behavior', () => {
 
     const firstTab = tabsData.getPageLayoutTabs[0];
 
+    jestExpectToBeDefined(firstTab);
+
     seededTabId = firstTab.id;
+
     seededTabOriginalTitle = firstTab.title;
+
     seededTabOriginalPosition = firstTab.position;
     seededTabOriginalIcon = firstTab.icon ?? null;
   });

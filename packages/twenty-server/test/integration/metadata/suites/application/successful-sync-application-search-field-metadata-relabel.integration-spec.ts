@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_APP_UNIVERSAL_IDENTIFIER = uuidv4();
 const TEST_ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
@@ -123,7 +124,11 @@ describe('Application manifest sync - search field metadata on label identifier 
       expectToFail: false,
     });
 
-    recordId = data.createdRecords[0].id;
+    const id = data.createdRecords[0]?.id;
+
+    jestExpectToBeDefined(id);
+
+    recordId = id;
   }, 120000);
 
   afterAll(async () => {

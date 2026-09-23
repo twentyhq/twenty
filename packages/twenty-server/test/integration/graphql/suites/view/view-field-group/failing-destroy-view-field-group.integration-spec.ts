@@ -11,6 +11,7 @@ import {
 } from 'twenty-shared/testing';
 
 import { type DestroyViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/destroy-view-field-group.input';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_NOT_EXISTING_VIEW_FIELD_GROUP_ID =
   '20202020-0000-4000-8000-000000000002';
@@ -53,6 +54,8 @@ describe('View Field Group Resolver - Failing Destroy Operation', () => {
       expect(response.errors).toBeDefined();
       expect(response.errors.length).toBe(1);
       const [firstError] = response.errors;
+
+      jestExpectToBeDefined(firstError);
 
       expect(firstError).toMatchSnapshot(
         extractRecordIdsAndDatesAsExpectAny(firstError),

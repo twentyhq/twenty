@@ -71,11 +71,11 @@ describe('ClickHouse Event Registration (integration)', () => {
     const rows = await queryResult.json<GenericTrackEvent>();
 
     expect(rows.length).toEqual(1);
-    expect(rows[0].properties).toEqual(variables.properties);
-    expect(rows[0].event).toEqual(variables.event);
+    expect(rows[0]?.properties).toEqual(variables.properties);
+    expect(rows[0]?.event).toEqual(variables.event);
     // workspaceId and userId are empty/undefined for unauthenticated requests
-    expect(rows[0].workspaceId ?? '').toEqual('');
-    expect(rows[0].userId ?? '').toEqual('');
-    expect(rows[0].timestamp).toHaveLength(23);
+    expect(rows[0]?.workspaceId ?? '').toEqual('');
+    expect(rows[0]?.userId ?? '').toEqual('');
+    expect(rows[0]?.timestamp).toHaveLength(23);
   });
 });

@@ -208,7 +208,9 @@ export class FileUploadCompletionService {
     fileFolder: FileFolder,
     mimeType: string,
   ): void {
-    const { allowedMimeTypes } = fileFolderConfigs[fileFolder];
+    const fileFolderConfig = fileFolderConfigs[fileFolder];
+
+    const { allowedMimeTypes } = fileFolderConfig;
 
     if (
       allowedMimeTypes === ANY_MIME_TYPE ||

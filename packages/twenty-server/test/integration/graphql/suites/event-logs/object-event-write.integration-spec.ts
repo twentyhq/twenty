@@ -108,9 +108,9 @@ describe('Object event write (integration)', () => {
     }
 
     expect(rows.length).toBeGreaterThanOrEqual(1);
-    expect(rows[0].event).toBe(OBJECT_RECORD_CREATED_EVENT);
-    expect(rows[0].recordId).toBe(recordId);
-    expect(rows[0].objectMetadataId).toBe(personObjectMetadataId);
+    expect(rows[0]?.event).toBe(OBJECT_RECORD_CREATED_EVENT);
+    expect(rows[0]?.recordId).toBe(recordId);
+    expect(rows[0]?.objectMetadataId).toBe(personObjectMetadataId);
 
     await clickHouseClient.command({
       query: `ALTER TABLE objectEvent DELETE WHERE recordId = '${recordId}'`,

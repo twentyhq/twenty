@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const APP_ID = uuidv4();
 const APP_ROLE_ID = uuidv4();
@@ -99,6 +100,8 @@ describe('app connection management guards (e2e)', () => {
 
     expect(response.status).toBe(302);
 
+    jestExpectToBeDefined(response.headers.location);
+
     return (
       new URL(response.headers.location).searchParams.get('errorMessage') ?? ''
     );
@@ -141,7 +144,10 @@ describe('app connection management guards (e2e)', () => {
 
     const [provider] = await findConnectionProvidersByApplication(APP_ID);
 
+    jestExpectToBeDefined(provider);
+
     applicationDbId = provider.applicationId;
+
     providerDbId = provider.id;
 
     await insertAppConnection({

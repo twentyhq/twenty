@@ -16,6 +16,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { type BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -94,9 +95,13 @@ describe('Billing credit rollover (integration)', () => {
       type: BillingCreditGrantType.ROLLOVER,
       revokedAt: null,
     });
-    expect(new Date(grants[0].effectiveAt)).toEqual(CLOSING_PERIOD_END);
+    const effectiveAt = grants[0]?.effectiveAt;
+
+    jestExpectToBeDefined(effectiveAt);
+
+    expect(new Date(effectiveAt)).toEqual(CLOSING_PERIOD_END);
     // Stamping the next period end would expose the balance to the following transition
-    expect(grants[0].expiresAt).toBeNull();
+    expect(grants[0]?.expiresAt).toBeNull();
   });
 
   it('reads usage over the closing period, not the one just opened', async () => {

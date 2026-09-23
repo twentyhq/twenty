@@ -2,6 +2,7 @@ import request from 'supertest';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -170,7 +171,9 @@ describe('discard draft workflow version core mirror (e2e)', () => {
 
     // only the discarded draft's core row is removed; the active row remains
     expect(versionsAfter).toHaveLength(1);
-    expect(versionsAfter[0].id).toBe(activeCoreId);
+    expect(versionsAfter[0]?.id).toBe(activeCoreId);
+    jestExpectToBeDefined(versionsAfter[0]);
+
     expect(versionsAfter[0].id).not.toBe(draftCoreId);
   });
 });

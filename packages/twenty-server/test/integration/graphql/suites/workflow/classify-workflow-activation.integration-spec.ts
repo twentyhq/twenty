@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -157,24 +158,30 @@ describe('Classify step activation (e2e)', () => {
 
   const completeQuestion = (
     overrides: Partial<ClassifyQuestion> = {},
-  ): ClassifyQuestion => ({
-    id: classifyStep.settings.input.questions[0].id,
-    name: 'intent',
-    type: 'choice',
-    instructions: 'Which team should handle this?',
-    criteria: [
-      { id: BILLING_CRITERION_ID, name: 'billing' },
-      { id: SUPPORT_CRITERION_ID, name: 'support' },
-    ],
-    ...overrides,
-  });
+  ): ClassifyQuestion => {
+    const id = classifyStep.settings.input.questions[0]?.id;
+
+    jestExpectToBeDefined(id);
+
+    return {
+      id,
+      name: 'intent',
+      type: 'choice',
+      instructions: 'Which team should handle this?',
+      criteria: [
+        { id: BILLING_CRITERION_ID, name: 'billing' },
+        { id: SUPPORT_CRITERION_ID, name: 'support' },
+      ],
+      ...overrides,
+    };
+  };
 
   it('should ship a step that cannot be activated until it is configured', () => {
     expect(classifyStep).toBeDefined();
     expect(classifyStep.settings.input.state).toBe('');
     expect(classifyStep.settings.input.questions).toHaveLength(1);
-    expect(classifyStep.settings.input.questions[0].instructions).toBe('');
-    expect(classifyStep.settings.input.questions[0].criteria).toEqual([
+    expect(classifyStep.settings.input.questions[0]?.instructions).toBe('');
+    expect(classifyStep.settings.input.questions[0]?.criteria).toEqual([
       {
         id: expect.any(String),
         name: 'Lawyer',

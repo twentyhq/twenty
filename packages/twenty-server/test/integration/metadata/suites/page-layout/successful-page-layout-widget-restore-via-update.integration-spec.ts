@@ -14,6 +14,7 @@ import {
 import { v4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('Page layout widget restore via bulk update should succeed', () => {
   let testFieldMetadataIds: {
@@ -110,8 +111,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
 
     const createdTab = createData.updatePageLayoutWithTabsAndWidgets.tabs![0];
 
-    expect(createdTab.widgets).toHaveLength(1);
-    expect(createdTab.widgets![0].id).toBe(widgetId);
+    expect(createdTab?.widgets).toHaveLength(1);
+    expect(createdTab?.widgets?.[0]?.id).toBe(widgetId);
 
     const { data: deleteData } = await updateOnePageLayoutWithTabsAndWidgets({
       expectToFail: false,
@@ -133,7 +134,7 @@ describe('Page layout widget restore via bulk update should succeed', () => {
 
     const deletedTab = deleteData.updatePageLayoutWithTabsAndWidgets.tabs![0];
 
-    expect(deletedTab.widgets).toHaveLength(0);
+    expect(deletedTab?.widgets).toHaveLength(0);
 
     const { data: restoreData } = await updateOnePageLayoutWithTabsAndWidgets({
       expectToFail: false,
@@ -177,8 +178,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
 
     const restoredTab = restoreData.updatePageLayoutWithTabsAndWidgets.tabs![0];
 
-    expect(restoredTab.widgets).toHaveLength(1);
-    expect(restoredTab.widgets![0]).toMatchObject({
+    expect(restoredTab?.widgets).toHaveLength(1);
+    expect(restoredTab?.widgets?.[0]).toMatchObject({
       id: widgetId,
       title: 'Restored Graph Widget',
       deletedAt: null,
@@ -370,15 +371,23 @@ describe('Page layout widget restore via bulk update should succeed', () => {
 
     const mixedTab = mixedData.updatePageLayoutWithTabsAndWidgets.tabs![0];
 
-    expect(mixedTab.widgets).toHaveLength(3);
+    expect(mixedTab?.widgets).toHaveLength(3);
 
-    const updatedWidget = mixedTab.widgets!.find(
+    const widgets = mixedTab?.widgets;
+
+    jestExpectToBeDefined(widgets);
+
+    const updatedWidget = widgets.find(
       (w: { id: string }) => w.id === widgetToUpdateId,
     );
-    const restoredWidget = mixedTab.widgets!.find(
+    const mixedTabWidgets = mixedTab?.widgets;
+
+    jestExpectToBeDefined(mixedTabWidgets);
+
+    const restoredWidget = mixedTabWidgets.find(
       (w: { id: string }) => w.id === widgetToRestoreId,
     );
-    const newWidget = mixedTab.widgets!.find(
+    const newWidget = mixedTabWidgets.find(
       (w: { id: string }) => w.id === newWidgetId,
     );
 

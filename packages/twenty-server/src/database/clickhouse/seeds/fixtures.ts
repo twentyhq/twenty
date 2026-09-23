@@ -197,7 +197,7 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
             (1 + nextRandom() * 4) *
               dayMultiplier *
               recencyMultiplier *
-              userWeight,
+              userWeight!,
           ),
         );
 
@@ -240,7 +240,7 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
             unit: op.unit,
             creditsUsedMicro: Math.round(op.baseCreditsMicro * jitter),
             resourceId: '',
-            resourceContext,
+            resourceContext: resourceContext!,
             metadata: {},
           });
         }

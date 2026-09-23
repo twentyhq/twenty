@@ -125,7 +125,7 @@ const resolveNewVersion = ({
     if (nextVersions.length > 0) {
       const highestNextVersion = nextVersions[nextVersions.length - 1];
 
-      if (semver.gt(newVersionArg, highestNextVersion)) {
+      if (semver.gt(newVersionArg, highestNextVersion!)) {
         throw new Error(
           `New version '${newVersionArg}' cannot be greater than highest planned next version '${highestNextVersion}'`,
         );

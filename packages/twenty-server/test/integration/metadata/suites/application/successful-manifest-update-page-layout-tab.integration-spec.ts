@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -299,6 +300,8 @@ describe('Manifest update - page layout tabs (standalone)', () => {
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
     });
 
+    jestExpectToBeDefined(tabAfterFirstSync);
+
     const { data: widgetsAfterFirstSyncData } = await findPageLayoutWidgets({
       gqlFields: PAGE_LAYOUT_WIDGET_GQL_FIELDS,
       expectToFail: false,
@@ -326,7 +329,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
 
     await globalThis.testDataSource.query(
       `UPDATE core."pageLayoutWidget" SET "overrides" = $1 WHERE "id" = $2`,
-      [JSON.stringify(widgetOverrides), widgetAfterFirstSync.id],
+      [JSON.stringify(widgetOverrides), widgetAfterFirstSync?.id],
     );
 
     const workspaceCacheService =
@@ -356,6 +359,8 @@ describe('Manifest update - page layout tabs (standalone)', () => {
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
     });
 
+    jestExpectToBeDefined(tabAfterSecondSync);
+
     const { data: widgetsAfterSecondSyncData } = await findPageLayoutWidgets({
       gqlFields: PAGE_LAYOUT_WIDGET_GQL_FIELDS,
       expectToFail: false,
@@ -364,7 +369,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
 
     expect(widgetsAfterSecondSyncData.getPageLayoutWidgets).toEqual([
       expect.objectContaining({
-        id: widgetAfterFirstSync.id,
+        id: widgetAfterFirstSync?.id,
         universalIdentifier: TEST_WIDGET_ID,
         applicationId: testApplicationId,
         pageLayoutTabId: tabAfterSecondSync.id,
@@ -380,7 +385,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
     ]);
     const [widgetAfterMigrationAndSync] = await globalThis.testDataSource.query(
       `SELECT "overrides" FROM core."pageLayoutWidget" WHERE "id" = $1`,
-      [widgetAfterFirstSync.id],
+      [widgetAfterFirstSync?.id],
     );
 
     expect(widgetAfterMigrationAndSync.overrides).toEqual(widgetOverrides);

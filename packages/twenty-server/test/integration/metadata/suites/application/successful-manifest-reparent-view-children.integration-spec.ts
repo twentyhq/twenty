@@ -14,6 +14,7 @@ import {
   ViewType,
 } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -221,10 +222,13 @@ const findReparentViews = async (personObjectId: string) => {
 
 const getChildIdsByCollection = (view: ViewWithChildren) =>
   Object.fromEntries(
-    CHILD_COLLECTION_KEYS.map((childCollectionKey) => [
-      childCollectionKey,
-      view[childCollectionKey][0].id,
-    ]),
+    CHILD_COLLECTION_KEYS.map((childCollectionKey) => {
+      const id = view[childCollectionKey][0]?.id;
+
+      jestExpectToBeDefined(id);
+
+      return [childCollectionKey, id];
+    }),
   ) as Record<(typeof CHILD_COLLECTION_KEYS)[number], string>;
 
 describe('Manifest reparent - all view children are reparentable', () => {
@@ -262,7 +266,7 @@ describe('Manifest reparent - all view children are reparentable', () => {
     // and the target view has none.
     for (const childCollectionKey of CHILD_COLLECTION_KEYS) {
       expect(sourceAfterFirstSync[childCollectionKey]).toHaveLength(1);
-      expect(sourceAfterFirstSync[childCollectionKey][0].viewId).toBe(
+      expect(sourceAfterFirstSync[childCollectionKey][0]?.viewId).toBe(
         sourceAfterFirstSync.id,
       );
       expect(targetAfterFirstSync[childCollectionKey]).toHaveLength(0);
@@ -287,10 +291,10 @@ describe('Manifest reparent - all view children are reparentable', () => {
       // The target view now owns exactly the same row (same id), proving the
       // reparent updated viewId instead of deleting and recreating the child.
       expect(targetAfterReparent[childCollectionKey]).toHaveLength(1);
-      expect(targetAfterReparent[childCollectionKey][0].id).toBe(
+      expect(targetAfterReparent[childCollectionKey][0]?.id).toBe(
         childIdsByCollectionBeforeReparent[childCollectionKey],
       );
-      expect(targetAfterReparent[childCollectionKey][0].viewId).toBe(
+      expect(targetAfterReparent[childCollectionKey][0]?.viewId).toBe(
         targetAfterReparent.id,
       );
     }
@@ -343,10 +347,10 @@ describe('Manifest reparent - all view children are reparentable', () => {
       // target view as the very same row (same id) instead of being
       // cascade-deleted along with the source view.
       expect(targetAfterReparent[childCollectionKey]).toHaveLength(1);
-      expect(targetAfterReparent[childCollectionKey][0].id).toBe(
+      expect(targetAfterReparent[childCollectionKey][0]?.id).toBe(
         childIdsByCollectionBeforeReparent[childCollectionKey],
       );
-      expect(targetAfterReparent[childCollectionKey][0].viewId).toBe(
+      expect(targetAfterReparent[childCollectionKey][0]?.viewId).toBe(
         targetAfterReparent.id,
       );
     }

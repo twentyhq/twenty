@@ -256,12 +256,12 @@ describe('Page layout with tabs update should fail', () => {
 
       const [firstError] = errors!;
 
-      expect(firstError.extensions.code).toBe('BAD_USER_INPUT');
-      expect(firstError.message).toContain(`Chart "${chartTitle}":`);
-      expect(firstError.message).toContain(
+      expect(firstError?.extensions.code).toBe('BAD_USER_INPUT');
+      expect(firstError?.message).toContain(`Chart "${chartTitle}":`);
+      expect(firstError?.message).toContain(
         'Please remove or replace this filter rule.',
       );
-      expect(String(firstError.extensions.userFriendlyMessage)).toContain(
+      expect(String(firstError?.extensions.userFriendlyMessage)).toContain(
         `Chart "${chartTitle}":`,
       );
     });

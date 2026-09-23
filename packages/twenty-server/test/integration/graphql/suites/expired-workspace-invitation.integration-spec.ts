@@ -5,6 +5,7 @@ import {
 } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { sendInvitationsOperationFactory } from 'test/integration/graphql/utils/send-invitations-operation-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
@@ -33,10 +34,14 @@ describe('sendInvitations expired invitation handling (integration)', () => {
       const remainingTokens = await findWorkspaceInvitationsByEmail({ email });
 
       expect(remainingTokens).toHaveLength(1);
+      jestExpectToBeDefined(remainingTokens[0]);
+
       expect(remainingTokens[0].value).not.toBe(staleToken);
-      expect(new Date(remainingTokens[0].expiresAt).getTime()).toBeGreaterThan(
-        Date.now(),
-      );
+      const expiresAt = remainingTokens[0]?.expiresAt;
+
+      jestExpectToBeDefined(expiresAt);
+
+      expect(new Date(expiresAt).getTime()).toBeGreaterThan(Date.now());
     } finally {
       await deleteWorkspaceInvitationsByEmail({ email });
     }

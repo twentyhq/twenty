@@ -6,6 +6,7 @@ import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'messaging-incremental-sync@apple.dev';
 
@@ -29,6 +30,8 @@ describe('Messaging incremental sync (integration)', () => {
 
   it('imports the initial inbox through a full sync', async () => {
     await runMessageChannelSync(channel.channelId);
+
+    jestExpectToBeDefined(inbox[0]);
 
     const initialSubject = getGmailMessageSubject(inbox[0]);
 

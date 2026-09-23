@@ -63,7 +63,7 @@ export const evictLeastRecentlyUsed = <Key, Value>({
   );
 
   for (let index = 0; index < evictCount; index += 1) {
-    map.delete(candidates[index][0]);
+    map.delete(candidates[index][0]!);
   }
 
   return evictCount;

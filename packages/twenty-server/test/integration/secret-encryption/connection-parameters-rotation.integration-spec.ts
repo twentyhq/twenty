@@ -34,7 +34,7 @@ const readConnectionParameters = async (
   )) as ConnectionParametersRow[];
 
   expect(row).toBeDefined();
-  expect(row.connectionParameters).toBeDefined();
+  expect(row?.connectionParameters).toBeDefined();
 
   return row;
 };

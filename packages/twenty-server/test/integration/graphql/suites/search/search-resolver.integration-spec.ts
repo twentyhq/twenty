@@ -39,6 +39,7 @@ import {
 import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { type SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import { type SearchCursor } from 'src/engine/core-modules/search/services/search.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('SearchResolver', () => {
   const persons = [
@@ -202,6 +203,23 @@ describe('SearchResolver', () => {
       data: companies,
     });
   });
+
+  jestExpectToBeDefined(searchInput1Person);
+  jestExpectToBeDefined(searchInput2Person);
+  jestExpectToBeDefined(searchInput3Person);
+  jestExpectToBeDefined(josePerson);
+  jestExpectToBeDefined(francoisPerson);
+  jestExpectToBeDefined(josePersonNoAccent);
+  jestExpectToBeDefined(francoisPersonNoAccent);
+  jestExpectToBeDefined(multiEmailPerson);
+  jestExpectToBeDefined(multiPhonePerson);
+  jestExpectToBeDefined(naiveCorp);
+  jestExpectToBeDefined(cafeCorp);
+  jestExpectToBeDefined(searchInput1Pet);
+  jestExpectToBeDefined(searchInput2Pet);
+  jestExpectToBeDefined(cjkPet);
+  jestExpectToBeDefined(cafePet);
+  jestExpectToBeDefined(naivePet);
 
   const testsUseCases: EachTestingContext<{
     input: SearchArgs;

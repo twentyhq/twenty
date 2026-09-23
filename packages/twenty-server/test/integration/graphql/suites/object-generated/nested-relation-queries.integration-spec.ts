@@ -25,6 +25,7 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const PERSON_GQL_FIELDS_WITH_COMPANY = `
   id
@@ -454,6 +455,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     );
 
     expect(response.body.errors).toBeDefined();
+
+    jestExpectToBeDefined(companyIds[0]);
+    jestExpectToBeDefined(companyIds[1]);
 
     const [newPersonResponse, firstCompanyResponse, secondCompanyResponse] =
       await Promise.all([

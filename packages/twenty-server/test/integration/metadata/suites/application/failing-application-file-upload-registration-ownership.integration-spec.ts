@@ -19,6 +19,7 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_APP_UID = uuidv4();
 const STORAGE_LOCAL_PATH = join(process.cwd(), '.local-storage');
@@ -174,6 +175,8 @@ const reservePendingHandlerUpload = async () => {
 
   const [uploadTarget] = data.createApplicationFileUploads.targets;
 
+  jestExpectToBeDefined(uploadTarget);
+
   const response = await putApplicationFileUploadTarget({
     uploadTarget,
     body,
@@ -322,6 +325,7 @@ describe('Application file endpoints should fail', () => {
         });
 
         expectOneNotInternalServerErrorSnapshot({ errors, normalizeMessage });
+
         expect(await getFileStatus(pendingFileId)).toBe('PENDING');
       },
       30000,

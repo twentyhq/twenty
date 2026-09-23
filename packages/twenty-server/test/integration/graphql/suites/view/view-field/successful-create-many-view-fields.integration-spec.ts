@@ -9,6 +9,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('View Field Resolver - Successful Create Many Operations', () => {
   let testSetup: {
@@ -193,11 +194,11 @@ describe('View Field Resolver - Successful Create Many Operations', () => {
 
     createdViewFields.forEach((viewField, index) => {
       expect(viewField).toMatchObject({
-        fieldMetadataId: inputs[index].fieldMetadataId,
+        fieldMetadataId: inputs[index]?.fieldMetadataId,
         viewId: testSetup.testViewId,
-        position: inputs[index].position,
-        isVisible: inputs[index].isVisible,
-        size: inputs[index].size,
+        position: inputs[index]?.position,
+        isVisible: inputs[index]?.isVisible,
+        size: inputs[index]?.size,
       });
 
       createdViewFieldIds.push(viewField.id);
@@ -236,6 +237,8 @@ describe('View Field Resolver - Successful Create Many Operations', () => {
       isVisible: true,
       size: 250,
     });
+
+    jestExpectToBeDefined(viewField);
 
     createdViewFieldIds.push(viewField.id);
   });

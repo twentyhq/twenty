@@ -9,6 +9,7 @@ import { createOneView } from 'test/integration/metadata/suites/view/utils/creat
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('View Group Resolver - Successful Update Many Operations - v2', () => {
   let testSetup: {
@@ -126,14 +127,22 @@ describe('View Group Resolver - Successful Update Many Operations - v2', () => {
       (viewGroup: { id: string }) => viewGroup.id,
     );
 
+    const firstGroupId = createdGroups[0]?.id;
+    const secondGroupId = createdGroups[1]?.id;
+    const thirdGroupId = createdGroups[2]?.id;
+
+    jestExpectToBeDefined(firstGroupId);
+    jestExpectToBeDefined(secondGroupId);
+    jestExpectToBeDefined(thirdGroupId);
+
     const {
       data: { updateManyViewGroups: updatedGroups },
       errors,
     } = await updateManyViewGroups({
       inputs: [
-        { id: createdGroups[0].id, update: { position: 2 } },
-        { id: createdGroups[1].id, update: { position: 0 } },
-        { id: createdGroups[2].id, update: { position: 1 } },
+        { id: firstGroupId, update: { position: 2 } },
+        { id: secondGroupId, update: { position: 0 } },
+        { id: thirdGroupId, update: { position: 1 } },
       ],
       expectToFail: false,
     });
@@ -143,15 +152,15 @@ describe('View Group Resolver - Successful Update Many Operations - v2', () => {
     expect(updatedGroups).toHaveLength(3);
 
     expect(updatedGroups[0]).toMatchObject({
-      id: createdGroups[0].id,
+      id: firstGroupId,
       position: 2,
     });
     expect(updatedGroups[1]).toMatchObject({
-      id: createdGroups[1].id,
+      id: secondGroupId,
       position: 0,
     });
     expect(updatedGroups[2]).toMatchObject({
-      id: createdGroups[2].id,
+      id: thirdGroupId,
       position: 1,
     });
   });
@@ -183,14 +192,20 @@ describe('View Group Resolver - Successful Update Many Operations - v2', () => {
       (viewGroup: { id: string }) => viewGroup.id,
     );
 
+    const firstGroupId = createdGroups[0]?.id;
+    const secondGroupId = createdGroups[1]?.id;
+
+    jestExpectToBeDefined(firstGroupId);
+    jestExpectToBeDefined(secondGroupId);
+
     const {
       data: { updateManyViewGroups: updatedGroups },
       errors,
     } = await updateManyViewGroups({
       inputs: [
-        { id: createdGroups[0].id, update: { isVisible: false } },
+        { id: firstGroupId, update: { isVisible: false } },
         {
-          id: createdGroups[1].id,
+          id: secondGroupId,
           update: { isVisible: false, position: 5 },
         },
       ],
@@ -202,11 +217,11 @@ describe('View Group Resolver - Successful Update Many Operations - v2', () => {
     expect(updatedGroups).toHaveLength(2);
 
     expect(updatedGroups[0]).toMatchObject({
-      id: createdGroups[0].id,
+      id: firstGroupId,
       isVisible: false,
     });
     expect(updatedGroups[1]).toMatchObject({
-      id: createdGroups[1].id,
+      id: secondGroupId,
       isVisible: false,
       position: 5,
     });

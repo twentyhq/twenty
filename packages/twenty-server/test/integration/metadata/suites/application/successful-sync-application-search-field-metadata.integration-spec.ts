@@ -103,11 +103,15 @@ describe('Application manifest sync search field metadata population', () => {
 
     expect(searchResult.data.search.edges).toHaveLength(1);
 
-    const searchResultNode = searchResult.data.search.edges[0].node;
-
-    expect(searchResultNode.recordId).toBe(matchingRecordId);
-    expect(searchResultNode.objectNameSingular).toBe(OBJECT_NAME_SINGULAR);
-    expect(searchResultNode.label).toBe(RECORD_NAME_VALUE);
+    expect(searchResult.data.search.edges[0]?.node?.recordId).toBe(
+      matchingRecordId,
+    );
+    expect(searchResult.data.search.edges[0]?.node?.objectNameSingular).toBe(
+      OBJECT_NAME_SINGULAR,
+    );
+    expect(searchResult.data.search.edges[0]?.node?.label).toBe(
+      RECORD_NAME_VALUE,
+    );
   }, 60000);
 
   it('should not return records whose label identifier does not match the search term', async () => {
