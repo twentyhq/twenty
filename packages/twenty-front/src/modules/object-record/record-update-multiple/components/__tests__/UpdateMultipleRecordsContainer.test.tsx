@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -11,6 +11,10 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { type UpdateMultipleRecordsFormProps } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
 const mockOpenDialog = jest.fn();
 
@@ -72,13 +76,26 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </I18nProvider>
 );
 
-it('asks to confirm the bulk update on Mod+Enter typed in a rich-text field', async () => {
+const SIDE_PANEL_FOCUS_STACK_ITEM = {
+  focusId: SIDE_PANEL_FOCUS_ID,
+  componentInstance: {
+    componentType: FocusComponentType.SIDE_PANEL,
+    componentInstanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
+  },
+  globalHotkeysConfig: {
+    enableGlobalHotkeysWithModifiers: true,
+    enableGlobalHotkeysConflictingWithKeyboard: false,
+  },
+};
+
+const renderContainerAndTypeInRichTextField = async () => {
   store.set(
     contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
       instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
     }),
     3,
   );
+  store.set(focusStackState.atom, [SIDE_PANEL_FOCUS_STACK_ITEM]);
   render(
     <UpdateMultipleRecordsContainer
       objectNameSingular="company"
@@ -100,9 +117,47 @@ it('asks to confirm the bulk update on Mod+Enter typed in a rich-text field', as
   });
 
   await userEvent.click(screen.getByRole('textbox'));
-  await userEvent.keyboard('Hello{Control>}{Enter}{/Control}');
+  await userEvent.keyboard('Hello');
+};
 
+const giveFocusBackToSidePanel = () => {
+  act(() => {
+    store.set(focusStackState.atom, [SIDE_PANEL_FOCUS_STACK_ITEM]);
+  });
+};
+
+beforeEach(() => {
+  mockOpenDialog.mockClear();
+});
+
+it('asks to confirm the bulk update once on Mod+Enter typed in a rich-text field', async () => {
+  await renderContainerAndTypeInRichTextField();
+
+  await userEvent.keyboard('{Control>}{Enter}{/Control}');
+
+  expect(mockOpenDialog).toHaveBeenCalledTimes(1);
   expect(mockOpenDialog).toHaveBeenCalledWith(
     'update-multiple-records-confirmation',
   );
+});
+
+it('asks to confirm the bulk update once on Mod+Enter inside the form when the side panel owns focus', async () => {
+  await renderContainerAndTypeInRichTextField();
+  giveFocusBackToSidePanel();
+
+  await userEvent.keyboard('{Control>}{Enter}{/Control}');
+
+  expect(mockOpenDialog).toHaveBeenCalledTimes(1);
+});
+
+it('asks to confirm the bulk update once on Mod+Enter outside the form when the side panel owns focus', async () => {
+  await renderContainerAndTypeInRichTextField();
+  giveFocusBackToSidePanel();
+  act(() => {
+    (document.activeElement as HTMLElement).blur();
+  });
+
+  await userEvent.keyboard('{Control>}{Enter}{/Control}');
+
+  expect(mockOpenDialog).toHaveBeenCalledTimes(1);
 });

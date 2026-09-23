@@ -102,16 +102,24 @@ export const UpdateMultipleRecordsContainer = ({
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
   // A focused field owns the focus stack, so the footer hotkey bound to the
-  // side panel focus never sees Mod+Enter typed inside the form.
+  // side panel focus never sees Mod+Enter typed inside the form. Side panel
+  // focus stays with the footer, so the event must keep bubbling up to it.
   const formContainerRef = useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
     callback: () => {
-      if (!isUpdating && !isUpdateDisabled) {
+      if (
+        currentFocusId !== SIDE_PANEL_FOCUS_ID &&
+        !isUpdating &&
+        !isUpdateDisabled
+      ) {
         handleUpdateClick();
       }
     },
     focusId: currentFocusId ?? SIDE_PANEL_FOCUS_ID,
     dependencies: [currentFocusId, isUpdating, isUpdateDisabled],
+    options: {
+      preventDefault: false,
+    },
   });
 
   const handleFieldChange = (fieldName: string, value: any) => {
