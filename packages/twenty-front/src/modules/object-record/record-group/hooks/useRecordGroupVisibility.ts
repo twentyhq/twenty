@@ -9,13 +9,18 @@ import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
 import { useCallback, useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordGroupVisibility = () => {
   const store = useStore();
 
-  // A request counter, not rendered state
+  // Request bookkeeping, not rendered state
   // oxlint-disable-next-line twenty/no-state-useref
   const latestGroupLoadLimitRequestIdRef = useRef(0);
+  // oxlint-disable-next-line twenty/no-state-useref
+  const pendingGroupLoadLimitRequestCountRef = useRef(0);
+  // oxlint-disable-next-line twenty/no-state-useref
+  const savedGroupLoadLimitRef = useRef<number | undefined>(undefined);
 
   const recordIndexShouldHideEmptyRecordGroups =
     useAtomComponentStateCallbackState(
@@ -53,13 +58,19 @@ export const useRecordGroupVisibility = () => {
     });
   }, [store, recordIndexShouldHideEmptyRecordGroups, updateCurrentView]);
 
-  // A failed save restores the previous limit, since it drives what groups fetch.
+  // A failed save restores the last saved limit, since it drives what groups fetch.
   // Only the latest request may roll back: the menu stays open during a save.
   const handleGroupLoadLimitChange = useCallback(
     async (limit: number) => {
-      const previousLimit = store.get(recordIndexGroupLoadLimit);
+      // With nothing in flight the atom holds a saved value, possibly re-hydrated
+      // from another view; mid-save it can hold an optimistic one that may fail too
+      if (pendingGroupLoadLimitRequestCountRef.current === 0) {
+        savedGroupLoadLimitRef.current = store.get(recordIndexGroupLoadLimit);
+      }
 
       const requestId = ++latestGroupLoadLimitRequestIdRef.current;
+
+      pendingGroupLoadLimitRequestCountRef.current += 1;
 
       store.set(recordIndexGroupLoadLimit, limit);
 
@@ -67,12 +78,19 @@ export const useRecordGroupVisibility = () => {
         await updateCurrentView({
           groupLoadLimit: limit,
         });
+
+        savedGroupLoadLimitRef.current = limit;
       } catch (error) {
-        if (latestGroupLoadLimitRequestIdRef.current === requestId) {
-          store.set(recordIndexGroupLoadLimit, previousLimit);
+        if (
+          latestGroupLoadLimitRequestIdRef.current === requestId &&
+          isDefined(savedGroupLoadLimitRef.current)
+        ) {
+          store.set(recordIndexGroupLoadLimit, savedGroupLoadLimitRef.current);
         }
 
         throw error;
+      } finally {
+        pendingGroupLoadLimitRequestCountRef.current -= 1;
       }
     },
     [store, recordIndexGroupLoadLimit, updateCurrentView],

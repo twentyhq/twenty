@@ -170,4 +170,84 @@ describe('useRecordGroupVisibility', () => {
 
     expect(store.get(groupLoadLimitAtom)).toBe(50);
   });
+
+  it('should restore the last saved group load limit when consecutive requests both fail', async () => {
+    const store = createStore();
+    store.set(groupLoadLimitAtom, 8);
+
+    const olderViewUpdate = createDeferredViewUpdate();
+    const newerViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => olderViewUpdate.promise)
+      .mockImplementationOnce(() => newerViewUpdate.promise);
+
+    const { result } = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let olderCall!: Promise<void>;
+    let newerCall!: Promise<void>;
+
+    act(() => {
+      olderCall = result.current.handleGroupLoadLimitChange(25);
+      newerCall = result.current.handleGroupLoadLimitChange(50);
+    });
+
+    const olderCallAssertion =
+      expect(olderCall).rejects.toThrow('Network error');
+    const newerCallAssertion =
+      expect(newerCall).rejects.toThrow('Network error');
+
+    await act(async () => {
+      olderViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await olderCallAssertion;
+    });
+
+    await act(async () => {
+      newerViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await newerCallAssertion;
+    });
+
+    expect(store.get(groupLoadLimitAtom)).toBe(8);
+  });
+
+  it('should restore an older saved group load limit when the newer request fails after it', async () => {
+    const store = createStore();
+    store.set(groupLoadLimitAtom, 8);
+
+    const olderViewUpdate = createDeferredViewUpdate();
+    const newerViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => olderViewUpdate.promise)
+      .mockImplementationOnce(() => newerViewUpdate.promise);
+
+    const { result } = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let olderCall!: Promise<void>;
+    let newerCall!: Promise<void>;
+
+    act(() => {
+      olderCall = result.current.handleGroupLoadLimitChange(25);
+      newerCall = result.current.handleGroupLoadLimitChange(50);
+    });
+
+    const newerCallAssertion =
+      expect(newerCall).rejects.toThrow('Network error');
+
+    await act(async () => {
+      olderViewUpdate.resolveViewUpdate();
+      await olderCall;
+    });
+
+    await act(async () => {
+      newerViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await newerCallAssertion;
+    });
+
+    expect(store.get(groupLoadLimitAtom)).toBe(25);
+  });
 });
