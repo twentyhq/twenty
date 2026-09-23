@@ -39,10 +39,9 @@ export class WorkspaceBillingCustomerPaymentStatusCacheService extends Workspace
     }
 
     const [hasPaymentMethod, hasReceivedPayment] = await Promise.all([
-      billingCustomer.hasPaymentMethod ??
-        this.stripeCustomerService.hasPaymentMethod(
-          billingCustomer.stripeCustomerId,
-        ),
+      this.stripeCustomerService.hasPaymentMethod(
+        billingCustomer.stripeCustomerId,
+      ),
       this.stripeInvoiceService.hasPaidNonZeroInvoice(
         billingCustomer.stripeCustomerId,
       ),
