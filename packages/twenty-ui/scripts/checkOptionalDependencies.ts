@@ -29,8 +29,14 @@ const OPTIONAL_PEER_DEPENDENCY_NAMES = Object.entries(
 const BARE_IMPORT_PATH_PATTERN = /^[^./]/;
 const DECLARATION_FILE_SUFFIXES = ['.d.ts', '/index.d.ts'];
 
-const isOptionalPeerDependencyImportPath = (importPath: string) =>
-  OPTIONAL_PEER_DEPENDENCY_NAMES.some(
+const matchesDependencyImportPath = ({
+  importPath,
+  dependencyNames,
+}: {
+  importPath: string;
+  dependencyNames: string[];
+}) =>
+  dependencyNames.some(
     (dependencyName) =>
       importPath === dependencyName ||
       importPath.startsWith(`${dependencyName}/`),
@@ -42,11 +48,14 @@ const createOptionalPeerDependenciesPlugin = (
   name: 'reject-optional-peer-dependencies',
   setup: (build) => {
     build.onResolve({ filter: BARE_IMPORT_PATH_PATTERN }, ({ path }) =>
-      isOptionalPeerDependencyImportPath(path) &&
-      !allowedOptionalPeers.some(
-        (dependencyName) =>
-          path === dependencyName || path.startsWith(`${dependencyName}/`),
-      )
+      matchesDependencyImportPath({
+        importPath: path,
+        dependencyNames: OPTIONAL_PEER_DEPENDENCY_NAMES,
+      }) &&
+      !matchesDependencyImportPath({
+        importPath: path,
+        dependencyNames: allowedOptionalPeers,
+      })
         ? { errors: [{ text: `Unexpected optional peer dependency: ${path}` }] }
         : undefined,
     );
@@ -128,12 +137,14 @@ for (const [entryName, entryPoint] of Object.entries(packageJson.exports)) {
     visitedDeclarationFilePaths: new Set(),
   }).filter(
     ({ importPath }) =>
-      isOptionalPeerDependencyImportPath(importPath) &&
-      !allowedOptionalPeers.some(
-        (dependencyName) =>
-          importPath === dependencyName ||
-          importPath.startsWith(`${dependencyName}/`),
-      ),
+      matchesDependencyImportPath({
+        importPath,
+        dependencyNames: OPTIONAL_PEER_DEPENDENCY_NAMES,
+      }) &&
+      !matchesDependencyImportPath({
+        importPath,
+        dependencyNames: allowedOptionalPeers,
+      }),
   );
 
   if (isNonEmptyArray(unexpectedDeclarationImports)) {
