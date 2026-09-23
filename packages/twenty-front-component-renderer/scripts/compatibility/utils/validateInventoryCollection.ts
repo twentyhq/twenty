@@ -1,21 +1,20 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { type z } from 'zod';
 
-import { inventoryCatalogSchema } from '../schemas/inventoryCatalogSchema';
+import { type inventoryCatalogSchema } from '../schemas/inventoryCatalogSchema';
 import { inventoryCollectionSchema } from '../schemas/inventoryCollectionSchema';
 import { getInventoryTargetId } from './getInventoryTargetId';
 import { getInventoryMemberId } from './getInventoryMemberId';
 
 export const validateInventoryCollection = ({
-  catalog: catalogInput,
+  catalog,
   collection: collectionInput,
   runtime,
 }: {
-  catalog: unknown;
+  catalog: z.infer<typeof inventoryCatalogSchema>;
   collection: unknown;
   runtime: z.infer<typeof inventoryCollectionSchema>['runtime'];
 }) => {
-  const catalog = inventoryCatalogSchema.parse(catalogInput);
   const collection = inventoryCollectionSchema.parse(collectionInput);
   if (
     collection.runtime !== runtime ||
@@ -36,13 +35,13 @@ export const validateInventoryCollection = ({
     if (
       isUndefined(expected) ||
       seenTargets.has(targetId) ||
-      JSON.stringify(expected.target) !== JSON.stringify(result.target)
+      expected.target.kind !== result.target.kind
     ) {
       throw new Error(`Unexpected or duplicate target: ${targetId}`);
     }
     seenTargets.add(targetId);
-    if ((result.status === 'collected') !== isNull(result.reason)) {
-      throw new Error(`Inconsistent target reason: ${targetId}`);
+    if (runtime === 'reference' && result.status !== 'collected') {
+      throw new Error(`Unavailable reference target: ${targetId}`);
     }
     const expectedIds = new Set(
       expected.keys.map((key) => getInventoryMemberId({ targetId, key })),

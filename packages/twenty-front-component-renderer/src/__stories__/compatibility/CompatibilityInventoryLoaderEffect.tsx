@@ -1,14 +1,20 @@
 import { useEffect } from 'react';
 
+import { INVENTORY_FIXTURE_PROTOCOL } from '../../../scripts/compatibility/constants/INVENTORY_FIXTURE_PROTOCOL';
 import { inventoryCatalogSchema } from '../../../scripts/compatibility/schemas/inventoryCatalogSchema';
+import { type InventorySandboxRuntime } from '../../../scripts/compatibility/types/InventorySandboxRuntime';
 
 type CompatibilityInventoryLoaderEffectProps = {
-  setCatalog: (catalog: string) => void;
+  runtime: InventorySandboxRuntime;
+  setApplicationVariables: (
+    applicationVariables: Record<string, string>,
+  ) => void;
   setError: (error: string) => void;
 };
 
 export const CompatibilityInventoryLoaderEffect = ({
-  setCatalog,
+  runtime,
+  setApplicationVariables,
   setError,
 }: CompatibilityInventoryLoaderEffectProps) => {
   useEffect(() => {
@@ -26,7 +32,11 @@ export const CompatibilityInventoryLoaderEffect = ({
         const catalog = inventoryCatalogSchema.parse(await response.json());
         localStorage.setItem('compatibility-audit:ready', 'seeded');
         sessionStorage.setItem('compatibility-audit:ready', 'seeded');
-        setCatalog(JSON.stringify(catalog));
+        setApplicationVariables({
+          [INVENTORY_FIXTURE_PROTOCOL.applicationVariables.catalog]:
+            JSON.stringify(catalog),
+          [INVENTORY_FIXTURE_PROTOCOL.applicationVariables.runtime]: runtime,
+        });
       } catch (error) {
         if (!controller.signal.aborted) {
           setError(String(error));
@@ -35,7 +45,7 @@ export const CompatibilityInventoryLoaderEffect = ({
     };
     void loadCatalog();
     return () => controller.abort();
-  }, [setCatalog, setError]);
+  }, [runtime, setApplicationVariables, setError]);
 
   return null;
 };

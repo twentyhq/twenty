@@ -107,7 +107,8 @@
         "{projectRoot}/src/__stories__/shared/front-components/**/*",
         "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*",
         "{projectRoot}/src/__stories__/compatibility/**/*",
-        "{projectRoot}/scripts/compatibility/**/*"
+        "{projectRoot}/scripts/compatibility/**/*",
+        "!{projectRoot}/scripts/compatibility/**/__tests__/**"
       ],
       "outputs": [
         "{projectRoot}/src/__stories__/example-sources-built/*",

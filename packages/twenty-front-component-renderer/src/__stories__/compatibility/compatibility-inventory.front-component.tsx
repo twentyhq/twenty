@@ -9,6 +9,7 @@ import {
 import { collectInventory } from '../../../scripts/compatibility/utils/collectInventory';
 import { createInventoryFactories } from '../../../scripts/compatibility/utils/createInventoryFactories';
 import { inventoryCatalogSchema } from '../../../scripts/compatibility/schemas/inventoryCatalogSchema';
+import { inventorySandboxRuntimeSchema } from '../../../scripts/compatibility/schemas/inventorySandboxRuntimeSchema';
 import { INVENTORY_FIXTURE_PROTOCOL } from '../../../scripts/compatibility/constants/INVENTORY_FIXTURE_PROTOCOL';
 
 const CompatibilityInventory = () => {
@@ -30,7 +31,7 @@ const CompatibilityInventory = () => {
       }
       const rectangle = renderedDiv.getBoundingClientRect();
       const ready =
-        frontComponentId === 'compatibility-audit' &&
+        frontComponentId === INVENTORY_FIXTURE_PROTOCOL.frontComponentId &&
         window.innerWidth > 0 &&
         rectangle.width > 0 &&
         rectangle.height > 0 &&
@@ -40,12 +41,17 @@ const CompatibilityInventory = () => {
         setFailure(INVENTORY_FIXTURE_PROTOCOL.waitingForInitialization);
         return;
       }
-      const runtime = getApplicationVariable('COMPATIBILITY_RUNTIME');
-      if (runtime !== 'react' && runtime !== 'preact') {
-        throw new Error('Missing audit runtime');
-      }
+      const runtime = inventorySandboxRuntimeSchema.parse(
+        getApplicationVariable(
+          INVENTORY_FIXTURE_PROTOCOL.applicationVariables.runtime,
+        ),
+      );
       const catalog = inventoryCatalogSchema.parse(
-        JSON.parse(getApplicationVariable('COMPATIBILITY_CATALOG') ?? 'null'),
+        JSON.parse(
+          getApplicationVariable(
+            INVENTORY_FIXTURE_PROTOCOL.applicationVariables.catalog,
+          ) ?? 'null',
+        ),
       );
       const { collection } = collectInventory({
         runtime,
@@ -90,7 +96,10 @@ const CompatibilityInventory = () => {
       <pre data-testid={INVENTORY_FIXTURE_PROTOCOL.testIds.failure}>
         {failure}
       </pre>
-      <pre data-testid={INVENTORY_FIXTURE_PROTOCOL.testIds.output}>
+      <pre
+        data-testid={INVENTORY_FIXTURE_PROTOCOL.testIds.output}
+        style={{ display: 'none' }}
+      >
         {output}
       </pre>
     </div>

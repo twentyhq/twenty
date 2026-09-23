@@ -1,16 +1,9 @@
 import { z } from 'zod';
 
-export const inventoryFindingSchema = z.strictObject({
-  id: z.string().min(1),
-  targetId: z.string().min(1),
-  runtime: z.enum(['react', 'preact']),
-  observation: z.enum([
-    'missing',
-    'shape-mismatch',
-    'present-behavior-unverified',
-    'uninspectable',
-  ]),
-  behavior: z.literal('unverified'),
-  isPlacementDifferent: z.boolean(),
-  isDescriptorDifferent: z.boolean(),
-});
+import { inventoryMemberFindingSchema } from './inventoryMemberFindingSchema';
+import { inventoryTargetFindingSchema } from './inventoryTargetFindingSchema';
+
+export const inventoryFindingSchema = z.discriminatedUnion('scope', [
+  inventoryTargetFindingSchema,
+  inventoryMemberFindingSchema,
+]);

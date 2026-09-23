@@ -1,56 +1,137 @@
 import { isUndefined } from '@sniptt/guards';
 import { type z } from 'zod';
 
+import { inventoryMemberFindingSchema } from '../schemas/inventoryMemberFindingSchema';
 import { type inventoryReportSchema } from '../schemas/inventoryReportSchema';
+import { inventorySandboxRuntimeSchema } from '../schemas/inventorySandboxRuntimeSchema';
+import { inventoryTargetFindingSchema } from '../schemas/inventoryTargetFindingSchema';
 
-export const summarizeInventoryReport = (
-  report: z.infer<typeof inventoryReportSchema>,
-): string => {
+type InventoryReport = z.infer<typeof inventoryReportSchema>;
+type InventoryFinding = InventoryReport['findings'][number];
+
+const TARGET_OBSERVATION_LABELS: Record<
+  z.infer<typeof inventoryTargetFindingSchema>['observation'],
+  string
+> = {
+  missing: 'Absent targets',
+  uninspectable: 'Uninspectable targets',
+};
+
+const MEMBER_OBSERVATION_LABELS: Record<
+  z.infer<typeof inventoryMemberFindingSchema>['observation'],
+  string
+> = {
+  missing: 'Missing members',
+  'shape-mismatch': 'Shape mismatch',
+  'present-behavior-unverified': 'Present, unverified',
+  uninspectable: 'Uninspectable members',
+};
+
+const EXAMPLE_MEMBER_IDS = [
+  'window.requestAnimationFrame',
+  'window.fetch',
+  'globalThis.Element.prototype.closest',
+  'globalThis.Clipboard.prototype.readText',
+  'instance:rendered.div.closest',
+];
+
+const describeExampleMember = ({
+  id,
+  findings,
+}: {
+  id: string;
+  findings: InventoryFinding[];
+}) => {
+  const memberFinding = findings.find((finding) => finding.id === id);
+  if (!isUndefined(memberFinding)) {
+    return `- ${id}: ${memberFinding.observation}`;
+  }
+  const [targetFinding] = findings
+    .filter(
+      (finding) =>
+        finding.scope === 'target' && id.startsWith(`${finding.targetId}.`),
+    )
+    .sort((first, second) => second.targetId.length - first.targetId.length);
+  return isUndefined(targetFinding)
+    ? undefined
+    : `- ${id}: ${targetFinding.observation} (target ${targetFinding.targetId})`;
+};
+
+export const summarizeInventoryReport = (report: InventoryReport): string => {
+  const targetObservations =
+    inventoryTargetFindingSchema.shape.observation.options;
+  const memberObservations =
+    inventoryMemberFindingSchema.shape.observation.options;
+  const columnLabels = [
+    ...targetObservations.map(
+      (observation) => TARGET_OBSERVATION_LABELS[observation],
+    ),
+    ...memberObservations.map(
+      (observation) => MEMBER_OBSERVATION_LABELS[observation],
+    ),
+    'Placement differences',
+    'Descriptor differences',
+  ];
+  const referenceMemberCount = report.reference.targets.reduce(
+    (count, target) => count + target.members.length,
+    0,
+  );
+  const sharedFindingCount = report.findings.filter(
+    (finding) =>
+      finding.runtimes.length === inventorySandboxRuntimeSchema.options.length,
+  ).length;
   const lines = [
     '# Renderer API inventory',
     '',
     `Complete collection. Chromium ${report.metadata.chromiumVersion}, Playwright ${report.metadata.playwrightVersion}, ${report.metadata.platform}/${report.metadata.architecture}.`,
-    `${report.catalog.targets.length} reference targets; ${report.reference.targets.reduce((count, target) => count + target.members.length, 0)} reference members per runtime.`,
+    `${report.catalog.targets.length} reference targets; ${referenceMemberCount} reference members per runtime.`,
+    `${report.findings.length} findings; ${sharedFindingCount} apply to every runtime. An unavailable target is one finding that groups its catalog members.`,
     'Every present API has unverified behavior. Differences are observations, without policy classification or a regression gate.',
     '',
-    '| Runtime | Missing | Shape mismatch | Present, unverified | Uninspectable | Placement differences | Descriptor differences |',
-    '| --- | ---: | ---: | ---: | ---: | ---: | ---: |',
+    `| Runtime | ${columnLabels.join(' | ')} |`,
+    `| --- | ${columnLabels.map(() => '---:').join(' | ')} |`,
   ];
   const details: string[] = [];
-  for (const runtime of ['react', 'preact'] as const) {
-    const findings = report.findings.filter(
-      (finding) => finding.runtime === runtime,
+  for (const runtime of inventorySandboxRuntimeSchema.options) {
+    const findings = report.findings.filter((finding) =>
+      finding.runtimes.includes(runtime),
+    );
+    const targetFindings = findings.filter(
+      (finding) => finding.scope === 'target',
+    );
+    const memberFindings = findings.filter(
+      (finding) => finding.scope === 'member',
     );
     const counts = [
-      'missing',
-      'shape-mismatch',
-      'present-behavior-unverified',
-      'uninspectable',
-    ].map(
-      (status) =>
-        findings.filter((finding) => finding.observation === status).length,
+      ...targetObservations.map(
+        (observation) =>
+          targetFindings.filter(
+            (finding) => finding.observation === observation,
+          ).length,
+      ),
+      ...memberObservations.map(
+        (observation) =>
+          memberFindings.filter(
+            (finding) => finding.observation === observation,
+          ).length,
+      ),
+      memberFindings.filter((finding) => finding.isPlacementDifferent).length,
+      memberFindings.filter((finding) => finding.isDescriptorDifferent).length,
+    ];
+    lines.push(`| ${runtime} | ${counts.join(' | ')} |`);
+    const absentTargetFindings = targetFindings.filter(
+      (finding) => finding.observation === 'missing',
     );
-    lines.push(
-      `| ${runtime} | ${counts.join(' | ')} | ${findings.filter((finding) => finding.isPlacementDifferent).length} | ${findings.filter((finding) => finding.isDescriptorDifferent).length} |`,
+    const absentMemberCount = absentTargetFindings.reduce(
+      (count, finding) => count + finding.memberCount,
+      0,
     );
-    const missingTargets = report.sandboxes[runtime].targets.filter(
-      (target) => target.status === 'missing',
-    );
-    details.push('');
     details.push(
-      `${runtime}: ${missingTargets.length} absent targets (affected members remain grouped by target in JSON).`,
-    );
-    const examples = [
-      'window.requestAnimationFrame',
-      'window.fetch',
-      'globalThis.Element.prototype.closest',
-      'window.Clipboard.prototype.readText',
-      'instance:rendered.div.closest',
-    ]
-      .map((id) => findings.find((finding) => finding.id === id))
-      .filter((finding) => !isUndefined(finding));
-    details.push(
-      ...examples.map((finding) => `- ${finding.id}: ${finding.observation}`),
+      '',
+      `${runtime}: ${absentTargetFindings.length} absent targets group ${absentMemberCount} catalog members, listed per target in JSON.`,
+      ...EXAMPLE_MEMBER_IDS.map((id) =>
+        describeExampleMember({ id, findings }),
+      ).filter((line) => !isUndefined(line)),
     );
   }
   lines.push(...details);

@@ -1,7 +1,16 @@
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
-import { type BrowserContext } from 'playwright';
+import { isNonEmptyArray, isNonEmptyString, isNull } from '@sniptt/guards';
+import { type BrowserContext, type Locator } from 'playwright';
 
 import { INVENTORY_FIXTURE_PROTOCOL } from '../constants/INVENTORY_FIXTURE_PROTOCOL';
+import { type InventorySandboxRuntime } from '../types/InventorySandboxRuntime';
+
+const { testIds } = INVENTORY_FIXTURE_PROTOCOL;
+
+const throwOnHarnessError = async (harnessError: Locator) => {
+  if (await harnessError.isVisible()) {
+    throw new Error(`Harness failed: ${await harnessError.textContent()}`);
+  }
+};
 
 export const collectSandboxInventory = async ({
   context,
@@ -11,64 +20,77 @@ export const collectSandboxInventory = async ({
 }: {
   context: BrowserContext;
   origin: string;
-  runtime: 'react' | 'preact';
+  runtime: InventorySandboxRuntime;
   timeout: number;
 }): Promise<unknown> => {
+  const deadline = Date.now() + timeout;
+  const getRemainingTimeout = () => Math.max(1, deadline - Date.now());
   const page = await context.newPage();
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(String(error)));
-  page.on('crash', () => errors.push('Browser page crashed'));
+  const pageErrors: string[] = [];
+  page.on('pageerror', (error) => pageErrors.push(String(error)));
+  page.on('crash', () => pageErrors.push('Browser page crashed'));
   try {
-    page.setDefaultTimeout(timeout);
-    await page.goto(
-      `${origin}/iframe.html?id=frontcomponent-worker-platform-apis--compatibility-inventory-${runtime}&viewMode=story`,
-      { timeout },
+    const response = await page.goto(
+      `${origin}/iframe.html?id=${INVENTORY_FIXTURE_PROTOCOL.storyIdPrefix}${runtime}&viewMode=story`,
+      { timeout: getRemainingTimeout() },
     );
-    const collectButton = page.getByTestId(
-      INVENTORY_FIXTURE_PROTOCOL.testIds.collect,
-    );
-    await collectButton.waitFor();
-    const deadline = Date.now() + timeout;
+    if (isNull(response) || !response.ok()) {
+      throw new Error(
+        `Story page responded with ${response?.status() ?? 'no response'}`,
+      );
+    }
+    const collectButton = page.getByTestId(testIds.collect);
+    const harnessError = page.getByTestId(testIds.harnessError);
+    await collectButton
+      .or(harnessError)
+      .first()
+      .waitFor({ timeout: getRemainingTimeout() });
+    await throwOnHarnessError(harnessError);
     while (Date.now() < deadline) {
       const previousAttempt = await page
-        .getByTestId(INVENTORY_FIXTURE_PROTOCOL.testIds.attempt)
-        .textContent();
-      await collectButton.click({
-        timeout: Math.max(1, deadline - Date.now()),
-      });
+        .getByTestId(testIds.attempt)
+        .textContent({ timeout: getRemainingTimeout() });
+      await collectButton.click({ timeout: getRemainingTimeout() });
       await page.waitForFunction(
-        ({ previousAttempt, attemptTestId }) => {
-          const attempt = document.querySelector(
-            `[data-testid="${attemptTestId}"]`,
-          )?.textContent;
-          return attempt !== previousAttempt;
-        },
+        ({ previousAttempt, attemptTestId, harnessErrorTestId }) =>
+          document.querySelector(`[data-testid="${harnessErrorTestId}"]`) !==
+            null ||
+          document.querySelector(`[data-testid="${attemptTestId}"]`)
+            ?.textContent !== previousAttempt,
         {
           previousAttempt,
-          attemptTestId: INVENTORY_FIXTURE_PROTOCOL.testIds.attempt,
+          attemptTestId: testIds.attempt,
+          harnessErrorTestId: testIds.harnessError,
         },
-        { timeout: Math.max(1, deadline - Date.now()) },
+        { timeout: getRemainingTimeout() },
       );
-      const error = await page
-        .getByTestId(INVENTORY_FIXTURE_PROTOCOL.testIds.failure)
-        .textContent();
-      if (error === INVENTORY_FIXTURE_PROTOCOL.waitingForInitialization) {
+      await throwOnHarnessError(harnessError);
+      const failure = await page
+        .getByTestId(testIds.failure)
+        .textContent({ timeout: getRemainingTimeout() });
+      if (failure === INVENTORY_FIXTURE_PROTOCOL.waitingForInitialization) {
         continue;
       }
-      if (isNonEmptyString(error) || isNonEmptyArray(errors)) {
-        throw new Error(
-          `${runtime} fixture failed: ${[error, ...errors].join('; ')}`,
-        );
+      if (isNonEmptyString(failure)) {
+        throw new Error(`Fixture failed: ${failure}`);
+      }
+      if (isNonEmptyArray(pageErrors)) {
+        throw new Error('The story page reported errors');
       }
       const output = await page
-        .getByTestId(INVENTORY_FIXTURE_PROTOCOL.testIds.output)
-        .textContent();
-      return JSON.parse(output ?? 'null');
+        .getByTestId(testIds.output)
+        .textContent({ timeout: getRemainingTimeout() });
+      if (!isNonEmptyString(output)) {
+        throw new Error('The fixture returned no inventory output');
+      }
+      return JSON.parse(output);
     }
-    throw new Error(`${runtime} fixture initialization timed out`);
+    throw new Error('Fixture initialization timed out');
   } catch (error) {
     throw new Error(
-      `${runtime} inventory failed: ${String(error)} ${errors.join('; ')}`,
+      [`${runtime} inventory failed: ${String(error)}`, ...pageErrors].join(
+        '; ',
+      ),
     );
   } finally {
     await page.close();

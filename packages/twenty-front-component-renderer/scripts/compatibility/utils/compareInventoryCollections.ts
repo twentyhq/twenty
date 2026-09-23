@@ -1,40 +1,46 @@
 import { isUndefined } from '@sniptt/guards';
 import { type z } from 'zod';
 
-import { inventoryFindingSchema } from '../schemas/inventoryFindingSchema';
+import { type inventoryCollectionSchema } from '../schemas/inventoryCollectionSchema';
+import { type inventoryFindingSchema } from '../schemas/inventoryFindingSchema';
+import { type InventorySandboxRuntime } from '../types/InventorySandboxRuntime';
 import { getInventoryFindingObservation } from './getInventoryFindingObservation';
 import { getInventoryTargetId } from './getInventoryTargetId';
-import { validateInventoryCollection } from './validateInventoryCollection';
+
+type InventoryCollection = z.infer<typeof inventoryCollectionSchema>;
+type InventoryFinding = z.infer<typeof inventoryFindingSchema>;
 
 export const compareInventoryCollections = ({
-  catalog,
-  reference: referenceInput,
-  sandbox: sandboxInput,
+  reference,
+  sandbox,
   runtime,
 }: {
-  catalog: unknown;
-  reference: unknown;
-  sandbox: unknown;
-  runtime: 'react' | 'preact';
-}): z.infer<typeof inventoryFindingSchema>[] => {
-  const reference = validateInventoryCollection({
-    catalog,
-    collection: referenceInput,
-    runtime: 'reference',
-  });
-  const sandbox = validateInventoryCollection({
-    catalog,
-    collection: sandboxInput,
-    runtime,
-  });
+  reference: InventoryCollection;
+  sandbox: InventoryCollection;
+  runtime: InventorySandboxRuntime;
+}): InventoryFinding[] => {
   const expectedMembers = new Map(
     reference.targets.flatMap(({ members }) =>
       members.map((member) => [member.id, member.observation] as const),
     ),
   );
 
-  return sandbox.targets.flatMap(({ target, members }) =>
-    members.map(({ id, observation }) => {
+  return sandbox.targets.flatMap((result): InventoryFinding[] => {
+    const targetId = getInventoryTargetId(result.target);
+    if (result.status !== 'collected') {
+      return [
+        {
+          scope: 'target',
+          id: targetId,
+          targetId,
+          runtimes: [runtime],
+          observation: result.status,
+          reason: result.reason,
+          memberCount: result.members.length,
+        },
+      ];
+    }
+    return result.members.map(({ id, observation }): InventoryFinding => {
       const expected = expectedMembers.get(id);
       if (isUndefined(expected)) {
         throw new Error(`Missing reference member: ${id}`);
@@ -47,10 +53,11 @@ export const compareInventoryCollections = ({
           ('writable' in observation &&
             'writable' in expected &&
             observation.writable !== expected.writable));
-      return inventoryFindingSchema.parse({
+      return {
+        scope: 'member',
         id,
-        targetId: getInventoryTargetId(target),
-        runtime,
+        targetId,
+        runtimes: [runtime],
         observation: getInventoryFindingObservation({
           reference: expected,
           sandbox: observation,
@@ -59,7 +66,7 @@ export const compareInventoryCollections = ({
         isPlacementDifferent:
           hasPlacement && observation.depth !== expected.depth,
         isDescriptorDifferent,
-      });
-    }),
-  );
+      };
+    });
+  });
 };

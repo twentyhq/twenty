@@ -1,34 +1,9 @@
-import { isFunction, isObject, isNull, isUndefined } from '@sniptt/guards';
+import { isFunction, isObject } from '@sniptt/guards';
 import { type z } from 'zod';
 
 import { type inventoryTargetSchema } from '../schemas/inventoryTargetSchema';
 import { type InventoryObjects } from '../types/InventoryObjects';
-
-const readDataProperty = ({
-  value,
-  name,
-}: {
-  value: object;
-  name: string;
-}): unknown => {
-  const visited = new Set<object>();
-  let current: object | null = value;
-  while (!isNull(current)) {
-    if (visited.has(current)) {
-      throw new Error(`Prototype cycle resolving ${name}`);
-    }
-    visited.add(current);
-    const descriptor = Object.getOwnPropertyDescriptor(current, name);
-    if (!isUndefined(descriptor)) {
-      if (!('value' in descriptor)) {
-        throw new Error(`Accessor not invoked while resolving ${name}`);
-      }
-      return descriptor.value;
-    }
-    current = Object.getPrototypeOf(current);
-  }
-  return undefined;
-};
+import { readInventoryDataProperty } from './readInventoryDataProperty';
 
 export const resolveInventoryTarget = ({
   target,
@@ -46,7 +21,7 @@ export const resolveInventoryTarget = ({
     const value =
       target.kind === 'factory'
         ? objects.factories[target.name]?.()
-        : readDataProperty({
+        : readInventoryDataProperty({
             value: objects[target.surface],
             name: target.name,
           });
@@ -59,7 +34,7 @@ export const resolveInventoryTarget = ({
     if (target.kind !== 'prototype') {
       return { status: 'collected', value };
     }
-    const prototype = readDataProperty({ value, name: 'prototype' });
+    const prototype = readInventoryDataProperty({ value, name: 'prototype' });
     if (!isObject(prototype) && !isFunction(prototype)) {
       return {
         status: 'missing',
