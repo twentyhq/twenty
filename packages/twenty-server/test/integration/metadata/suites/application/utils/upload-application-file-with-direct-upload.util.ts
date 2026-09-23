@@ -4,7 +4,6 @@ import { createApplicationFileUploadsQueryFactory } from 'test/integration/metad
 import { type CreateApplicationFileUploadsResult } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads.util';
 import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -14,13 +13,15 @@ type UploadedFile = {
   path: string;
 };
 
+type UploadApplicationFileError = Pick<BaseGraphQLError, 'message'>;
+
 type UploadApplicationFileResult = {
   data: { uploadApplicationFile: UploadedFile } | undefined;
-  errors: BaseGraphQLError[] | undefined;
+  errors: UploadApplicationFileError[] | undefined;
 };
 
-const toGraphqlErrors = (messages: string[]): BaseGraphQLError[] =>
-  messages.map((message) => ({ message }) as BaseGraphQLError);
+const toGraphqlErrors = (messages: string[]): UploadApplicationFileError[] =>
+  messages.map((message) => ({ message }));
 
 const runDirectUpload = async ({
   applicationUniversalIdentifier,
@@ -47,8 +48,11 @@ const runDirectUpload = async ({
     return { data: undefined, errors: createResponse.body.errors };
   }
 
-  const { targets, errors: reservationErrors } = createResponse.body.data
-    .createApplicationFileUploads as CreateApplicationFileUploadsResult;
+  const {
+    targets,
+    errors: reservationErrors,
+  }: CreateApplicationFileUploadsResult =
+    createResponse.body.data.createApplicationFileUploads;
 
   if (reservationErrors.length > 0 || targets.length === 0) {
     return {
@@ -85,8 +89,11 @@ const runDirectUpload = async ({
     return { data: undefined, errors: completeResponse.body.errors };
   }
 
-  const { files, errors: completionErrors } = completeResponse.body.data
-    .completeApplicationFileUploads as CompleteApplicationFileUploadsResult;
+  const {
+    files,
+    errors: completionErrors,
+  }: CompleteApplicationFileUploadsResult =
+    completeResponse.body.data.completeApplicationFileUploads;
 
   if (completionErrors.length > 0 || files.length === 0) {
     return {
@@ -114,9 +121,7 @@ export const uploadApplicationFileWithDirectUpload = async ({
   fileBuffer: Buffer;
   expectToFail?: boolean;
   token?: string;
-}): CommonResponseBody<{
-  uploadApplicationFile: UploadedFile;
-}> => {
+}): Promise<UploadApplicationFileResult> => {
   const { data, errors } = await runDirectUpload({
     applicationUniversalIdentifier,
     fileFolder,
@@ -127,19 +132,10 @@ export const uploadApplicationFileWithDirectUpload = async ({
 
   if (expectToFail) {
     expect(errors).toBeDefined();
-  }
-
-  if (!expectToFail) {
-    if (isDefined(errors)) {
-      expect(errors).toEqual(
-        'Upload application file has failed but should not',
-      );
-    }
+  } else {
+    expect(errors).toBeUndefined();
     expect(data).toBeDefined();
   }
 
-  return {
-    data: data as { uploadApplicationFile: UploadedFile },
-    errors: errors as BaseGraphQLError[],
-  };
+  return { data, errors };
 };

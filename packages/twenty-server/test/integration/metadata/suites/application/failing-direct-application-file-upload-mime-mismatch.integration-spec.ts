@@ -137,14 +137,14 @@ describe('Application file upload should fail at completion on mime/magic-byte m
     jest.useFakeTimers();
 
     expect(errors).toBeUndefined();
-    expect(data.uploadApplicationFile).toEqual({
+    expect(data?.uploadApplicationFile).toEqual({
       id: expect.any(String),
       path: `public-asset/${filePath}`,
     });
 
     const [row] = await globalThis.testDataSource.query(
       `SELECT "mimeType" FROM core."file" WHERE id = $1`,
-      [data.uploadApplicationFile.id],
+      [data?.uploadApplicationFile.id],
     );
 
     expect(row.mimeType).toBe('image/png');
