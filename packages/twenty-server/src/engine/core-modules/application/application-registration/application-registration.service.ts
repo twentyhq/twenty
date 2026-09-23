@@ -146,8 +146,8 @@ export class ApplicationRegistrationService {
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly workspaceQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
+    private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
@@ -238,7 +238,7 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string,
   ): Promise<void> {
     try {
-      await this.workspaceQueueService.add<UpgradeApplicationsJobData>(
+      await this.applicationUpgradeQueueService.add<UpgradeApplicationsJobData>(
         UPGRADE_APPLICATIONS_JOB_NAME,
         { applicationRegistrationId, onlyAutoUpgrade: true },
       );
