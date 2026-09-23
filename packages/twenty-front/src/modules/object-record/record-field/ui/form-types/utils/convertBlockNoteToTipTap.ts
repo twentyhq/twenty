@@ -80,6 +80,8 @@ const convertInlineContent = ({
   });
 };
 
+// Temporary bridge while record rich text is stored as BlockNote. Remove it
+// with the migration to TipTap storage: twentyhq/core-team-issues#2921
 export const convertBlockNoteToTipTap = ({
   blocks,
   enableVariables,

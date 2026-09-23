@@ -87,6 +87,7 @@ export const FormRichTextFieldInput = ({
   const handleChange = (value: string) => {
     onChange({
       // Workflow resolution requires semantic tags; record pages require BlockNote.
+      // Temporary until rich text is stored as TipTap: twentyhq/core-team-issues#2921
       blocknote: enableVariables
         ? serializeTipTapDocumentContent(value)
         : convertTipTapDocumentToBlockNote(value),
