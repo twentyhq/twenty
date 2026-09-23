@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadExceptionCode } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 
@@ -6,6 +7,11 @@ describe('FileCorePictureService.completeWorkspaceLogoUpload', () => {
   const previousLogoFileId = '20202020-0000-4000-8000-000000000002';
   const concurrentLogoFileId = '20202020-0000-4000-8000-000000000003';
   const logoFileId = '20202020-0000-4000-8000-000000000004';
+  const authContext = {
+    type: 'user',
+    workspace: { id: workspaceId },
+    userWorkspaceId: '20202020-0000-4000-8000-000000000005',
+  } as unknown as WorkspaceAuthContext;
 
   const buildService = ({
     logoFileIdUnderLock,
@@ -83,7 +89,11 @@ describe('FileCorePictureService.completeWorkspaceLogoUpload', () => {
     });
 
     await expect(
-      service.completeWorkspaceLogoUpload({ workspaceId, fileId: logoFileId }),
+      service.completeWorkspaceLogoUpload({
+        workspaceId,
+        fileId: logoFileId,
+        authContext,
+      }),
     ).rejects.toMatchObject({ code: FileUploadExceptionCode.BAD_REQUEST });
 
     expect(manager.update).not.toHaveBeenCalled();
@@ -98,7 +108,11 @@ describe('FileCorePictureService.completeWorkspaceLogoUpload', () => {
     });
 
     await expect(
-      service.completeWorkspaceLogoUpload({ workspaceId, fileId: logoFileId }),
+      service.completeWorkspaceLogoUpload({
+        workspaceId,
+        fileId: logoFileId,
+        authContext,
+      }),
     ).resolves.toMatchObject({ id: logoFileId });
 
     expect(manager.update).not.toHaveBeenCalled();

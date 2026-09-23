@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import bytes from 'bytes';
+import { type FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -127,8 +128,16 @@ export class ApplicationFileUploadService {
       applicationUniversalIdentifier,
     });
 
-    const files = await this.fileRepository.find(workspaceId, {
+    const applicationFiles = await this.fileRepository.find(workspaceId, {
       where: { id: In(fileIds), applicationId: application.id },
+    });
+
+    const files = applicationFiles.filter((file) => {
+      const [fileFolder] = file.path.split('/');
+
+      return ALLOWED_APPLICATION_FILE_FOLDERS.includes(
+        fileFolder as FileFolder,
+      );
     });
 
     const result: CompleteApplicationFileUploadsResultDTO = {

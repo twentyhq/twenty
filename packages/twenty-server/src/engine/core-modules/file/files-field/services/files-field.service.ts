@@ -4,16 +4,17 @@ import { extname } from 'path';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { type FileUploadPrincipal } from 'src/engine/core-modules/file/file-upload/types/file-upload-principal.type';
+import { buildFileUploadPrincipalFromAuthContext } from 'src/engine/core-modules/file/file-upload/utils/build-file-upload-principal-from-auth-context.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import {
   FilesFieldException,
@@ -21,6 +22,7 @@ import {
 } from 'src/engine/core-modules/file/files-field/files-field.exception';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
+import { findFilesFieldMetadataOrThrow } from 'src/engine/core-modules/file/utils/find-files-field-metadata-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -47,14 +49,14 @@ export class FilesFieldService {
     workspaceId,
     fieldMetadataId,
     fieldMetadataUniversalIdentifier,
-    principal,
+    authContext,
   }: {
     file: Buffer;
     filename: string;
     workspaceId: string;
     fieldMetadataId?: string;
     fieldMetadataUniversalIdentifier?: string;
-    principal?: FileUploadPrincipal;
+    authContext?: WorkspaceAuthContext;
   }): Promise<FileWithSignedUrlDTO> {
     if (!fieldMetadataId && !fieldMetadataUniversalIdentifier) {
       throw new FilesFieldException(
@@ -66,6 +68,21 @@ export class FilesFieldService {
       );
     }
 
+    const fieldMetadata = await findFilesFieldMetadataOrThrow({
+      fieldMetadataRepository: this.fieldMetadataRepository,
+      workspaceId,
+      fieldMetadataId,
+      fieldMetadataUniversalIdentifier,
+    });
+
+    if (isDefined(authContext)) {
+      await this.permissionsService.assertApplicationCanUpdateFieldOrThrow({
+        workspaceId,
+        authContext,
+        fieldMetadataId: fieldMetadata.id,
+      });
+    }
+
     const { ext } = await extractFileInfoOrThrow({
       file,
       filename,
@@ -73,47 +90,6 @@ export class FilesFieldService {
 
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
-
-    const fieldMetadata = await this.fieldMetadataRepository.findOne(
-      workspaceId,
-      {
-        select: [
-          'id',
-          'applicationId',
-          'universalIdentifier',
-          'type',
-          'objectMetadataId',
-        ],
-        where: {
-          ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
-          ...(fieldMetadataUniversalIdentifier
-            ? { universalIdentifier: fieldMetadataUniversalIdentifier }
-            : {}),
-        },
-      },
-    );
-
-    if (
-      !isDefined(fieldMetadata) ||
-      fieldMetadata.type !== FieldMetadataType.FILES
-    ) {
-      throw new FilesFieldException(
-        `Files field ${fieldMetadataId ?? fieldMetadataUniversalIdentifier} not found`,
-        FilesFieldExceptionCode.BAD_REQUEST,
-        {
-          userFriendlyMessage: msg`The target files field could not be found.`,
-        },
-      );
-    }
-
-    await this.permissionsService.assertApplicationPrincipalCanUpdateFieldOrThrow(
-      {
-        workspaceId,
-        objectMetadataId: fieldMetadata.objectMetadataId,
-        fieldMetadataId: fieldMetadata.id,
-        principal,
-      },
-    );
 
     const application = await this.applicationRepository.findOneOrFail(
       workspaceId,
@@ -134,7 +110,9 @@ export class FilesFieldService {
       settings: {
         isTemporaryFile: true,
         toDelete: false,
-        uploadPrincipal: principal,
+        uploadPrincipal: isDefined(authContext)
+          ? buildFileUploadPrincipalFromAuthContext(authContext)
+          : undefined,
       },
     });
 

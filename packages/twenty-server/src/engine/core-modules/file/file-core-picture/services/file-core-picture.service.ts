@@ -24,6 +24,12 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
+import {
+  type PendingActivationUserWorkspaceAuthContext,
+  type WorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildPendingActivationUserAuthContext } from 'src/engine/core-modules/auth/utils/build-pending-activation-user-auth-context.util';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
@@ -38,6 +44,7 @@ import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extra
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -269,9 +276,11 @@ export class FileCorePictureService {
   async completeWorkspaceLogoUpload({
     workspaceId,
     fileId,
+    authContext,
   }: {
     workspaceId: string;
     fileId: string;
+    authContext: WorkspaceAuthContext;
   }): Promise<FileWithSignedUrlDTO> {
     const file = await this.findCorePictureFileOrThrow({ workspaceId, fileId });
     const currentLogoFileId = await this.findCurrentLogoFileId(workspaceId);
@@ -284,6 +293,7 @@ export class FileCorePictureService {
       workspaceId,
       fileId,
       dedicatedFileFolder: FileFolder.CorePicture,
+      authContext,
     });
 
     await this.bindWorkspaceLogo({ workspaceId, fileId });
@@ -294,9 +304,11 @@ export class FileCorePictureService {
   async completeWorkspaceMemberProfilePictureUpload({
     workspaceId,
     fileId,
+    authContext,
   }: {
     workspaceId: string;
     fileId: string;
+    authContext: WorkspaceAuthContext;
   }): Promise<FileWithSignedUrlDTO> {
     await this.findCorePictureFileOrThrow({ workspaceId, fileId });
 
@@ -304,6 +316,7 @@ export class FileCorePictureService {
       workspaceId,
       fileId,
       dedicatedFileFolder: FileFolder.CorePicture,
+      authContext,
     });
 
     await this.workspaceRepository.manager.transaction((manager) =>
@@ -347,6 +360,45 @@ export class FileCorePictureService {
     userId: string;
     workspaceId: string;
   }): Promise<WorkspaceEntity> {
+    const { workspace } =
+      await this.findPendingWorkspaceWithUserWorkspaceOrThrow({
+        userId,
+        workspaceId,
+      });
+
+    return workspace;
+  }
+
+  async buildPendingWorkspaceLogoUploadAuthContextOrThrow({
+    user,
+    workspaceId,
+  }: {
+    user: FlatAuthContextUser;
+    workspaceId: string;
+  }): Promise<PendingActivationUserWorkspaceAuthContext> {
+    const { workspace, userWorkspace } =
+      await this.findPendingWorkspaceWithUserWorkspaceOrThrow({
+        userId: user.id,
+        workspaceId,
+      });
+
+    return buildPendingActivationUserAuthContext({
+      workspace: fromWorkspaceEntityToFlat(workspace),
+      userWorkspaceId: userWorkspace.id,
+      user,
+    });
+  }
+
+  private async findPendingWorkspaceWithUserWorkspaceOrThrow({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<{
+    workspace: WorkspaceEntity;
+    userWorkspace: UserWorkspaceEntity;
+  }> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
@@ -366,7 +418,7 @@ export class FileCorePictureService {
       );
     }
 
-    return workspace;
+    return { workspace, userWorkspace };
   }
 
   async uploadWorkspaceMemberProfilePicture({
