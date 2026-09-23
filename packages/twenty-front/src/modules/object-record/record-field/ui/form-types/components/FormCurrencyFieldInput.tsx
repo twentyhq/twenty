@@ -57,7 +57,7 @@ export const FormCurrencyFieldInput = ({
     });
   };
 
-  const AmountInput =
+  const FormAmountInput =
     amountUnit === 'units'
       ? FormCurrencyAmountFieldInput
       : FormNumberFieldInput;
@@ -74,7 +74,7 @@ export const FormCurrencyFieldInput = ({
           VariablePicker={VariablePicker}
           readonly={readonly}
         />
-        <AmountInput
+        <FormAmountInput
           label={amountUnit === 'units' ? t`Amount` : t`Amount Micros`}
           hint={
             amountUnit === 'micros'
