@@ -1,3 +1,5 @@
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
@@ -22,6 +24,30 @@ export type AgentHistoryStorageContext = {
 @Injectable()
 export class AgentHistoryStorageService {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+
+  async isEmptyUnprovisionedWorkspace(workspaceId: string): Promise<boolean> {
+    const runner = this.dataSource.createQueryRunner('master');
+    try {
+      await runner.connect();
+      if (await runner.hasSchema(getWorkspaceSchemaName(workspaceId))) {
+        return false;
+      }
+      const state = await this.readState(runner, workspaceId);
+      if (state.storage === 'workspace' || isDefined(state.migration)) {
+        return false;
+      }
+      const history = await runner.query(
+        `SELECT 1 WHERE ${AGENT_HISTORY_OBJECT_NAMES.map(
+          (name) =>
+            `EXISTS (SELECT 1 FROM core."${name}" WHERE "workspaceId" = $1)`,
+        ).join(' OR ')}`,
+        [workspaceId],
+      );
+      return !isNonEmptyArray(history);
+    } finally {
+      await runner.release();
+    }
+  }
 
   async run<TResult>(
     workspaceId: string,

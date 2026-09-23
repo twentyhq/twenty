@@ -43,6 +43,7 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
 
 const ensureKickoff = (service: AgentChatService) =>
   service.ensureHiddenKickoffMessage({
+    userWorkspaceId: 'user-workspace-id',
     threadId: THREAD_ID,
     workspaceId: WORKSPACE_ID,
     text: KICKOFF_TEXT,

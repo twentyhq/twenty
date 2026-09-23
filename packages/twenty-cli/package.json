@@ -1,10 +1,15 @@
 {
-  "name": "twenty-cli",
-  "version": "0.3.1",
-  "description": "[DEPRECATED] Use twenty-sdk instead: https://www.npmjs.com/package/twenty-sdk",
-  "scripts": {
-    "build": "echo 'use npx nx build'",
-    "start": "echo 'deprecated'"
+  "name": "twenty",
+  "version": "0.3.0",
+  "description": "The new command-line interface for Twenty is coming soon.",
+  "homepage": "https://twenty.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twentyhq/twenty.git",
+    "directory": "packages/twenty-cli"
+  },
+  "bugs": {
+    "url": "https://github.com/twentyhq/twenty/issues"
   },
   "license": "AGPL-3.0"
 }

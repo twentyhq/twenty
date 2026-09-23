@@ -21,7 +21,7 @@ import {
   UpsertObjectPermissionsDocument,
   UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
-import { getDirtyFields } from '~/utils/getDirtyFields';
+import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
 
 const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'label',
@@ -70,7 +70,10 @@ export const useSaveDraftRoleToDB = ({
     roleId,
   );
 
-  const dirtyFields = getDirtyFields(settingsDraftRole, settingsPersistedRole);
+  const dirtyFields = getRoleDirtyFields(
+    settingsDraftRole,
+    settingsPersistedRole,
+  );
 
   const fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless =
     settingsDraftRole.fieldPermissions?.filter((fieldPermissionToFilter) => {

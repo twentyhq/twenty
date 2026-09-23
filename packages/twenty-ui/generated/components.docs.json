@@ -5905,6 +5905,769 @@
     ]
   },
   {
+    "name": "Dropdown",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/dropdown",
+    "props": [],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "defaultPage",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "multiple",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "onOpenChange",
+            "type": "((open: boolean) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "type",
+            "type": "\"menu\" | \"panel\" | \"picker\"",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+          }
+        ]
+      },
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "closeDelay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0",
+            "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
+          },
+          {
+            "name": "delay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "300",
+            "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
+          },
+          {
+            "name": "handle",
+            "type": "PopoverHandle<unknown>",
+            "required": false,
+            "defaultValue": null,
+            "description": "A handle to associate the trigger with a popover."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+          },
+          {
+            "name": "openOnHover",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the popover should also open when the trigger is hovered."
+          },
+          {
+            "name": "payload",
+            "type": "unknown",
+            "required": false,
+            "defaultValue": null,
+            "description": "A payload to pass to the popover when it is opened."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
+      },
+      {
+        "name": "Content",
+        "props": [
+          {
+            "name": "align",
+            "type": "\"center\" | \"end\" | \"start\"",
+            "required": false,
+            "defaultValue": "start",
+            "description": "Alignment of the popup along the anchor."
+          },
+          {
+            "name": "alignOffset",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "Offset in pixels along the alignment axis."
+          },
+          {
+            "name": "anchor",
+            "type": "Element | VirtualElement | RefObject<Element | null> | (() => Element | VirtualElement | null) | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or position the popup is anchored to. Defaults to the trigger."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverPopupState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "container",
+            "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element the popup is portaled into. Defaults to the theme's portal\ncontainer."
+          },
+          {
+            "name": "finalFocus",
+            "type": "boolean | RefObject<HTMLElement | null> | ((closeType: InteractionType) => boolean | void | HTMLElement | null)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Determines the element to focus when the popover is closed.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (trigger or previously focused element).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing."
+          },
+          {
+            "name": "initialFocus",
+            "type": "boolean | RefObject<HTMLElement | null> | ((openType: InteractionType) => boolean | void | HTMLElement | null)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Determines the element to focus when the popover is opened.\nBy default, focus moves to the first tabbable element inside the popup, except when the popover\nis opened by touch — then the popup itself is focused to avoid opening the virtual keyboard.\n\n- `false`: Do not move focus.\n- `true`: Move focus based on the default behavior (first tabbable element or popup).\n- `RefObject`: Move focus to the ref element.\n- `function`: Called with the interaction type (`mouse`, `touch`, `pen`, or `keyboard`).\n  Return an element to focus, `true` to use the default behavior, `null` to fall back to the default behavior, or `false`/`undefined` to do nothing."
+          },
+          {
+            "name": "keepMounted",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keeps the popup mounted in the DOM while the popover is closed."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverPopupState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "side",
+            "type": "\"bottom\" | \"inline-end\" | \"inline-start\" | \"left\" | \"right\" | \"top\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Side of the anchor the popup is placed on."
+          },
+          {
+            "name": "sideOffset",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0",
+            "description": "Distance in pixels between the anchor and the popup."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverPopupState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "width",
+            "type": "Width<string | number>",
+            "required": false,
+            "defaultValue": "200",
+            "description": ""
+          }
+        ]
+      },
+      {
+        "name": "ActionItem",
+        "props": [
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "closeOnClick",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": ""
+          },
+          {
+            "name": "color",
+            "type": "\"danger\" | \"neutral\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Color of the text and icons. `danger` marks a destructive action."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Supporting text, placed according to `descriptionPlacement`."
+          },
+          {
+            "name": "descriptionPlacement",
+            "type": "\"end\" | \"inline\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered after the content."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "hasSubmenu",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a chevron indicating that the item opens a submenu."
+          },
+          {
+            "name": "hotkeys",
+            "type": "string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true when render is omitted; false otherwise",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "page",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered before the content."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          }
+        ]
+      },
+      {
+        "name": "OptionItem",
+        "props": [
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "closeOnSelect",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "color",
+            "type": "\"danger\" | \"neutral\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Color of the text and icons. `danger` marks a destructive action."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Supporting text, placed according to `descriptionPlacement`."
+          },
+          {
+            "name": "descriptionPlacement",
+            "type": "\"end\" | \"inline\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered after the content."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "hasSubmenu",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a chevron indicating that the item opens a submenu."
+          },
+          {
+            "name": "hotkeys",
+            "type": "string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true when render is omitted; false otherwise",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "onSelect",
+            "type": "(() => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "selected",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered before the content."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          }
+        ]
+      },
+      {
+        "name": "Search",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: InputState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | number | readonly string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "The default value of the input. Use when uncontrolled."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, InputState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: InputState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "value",
+            "type": "string | number | readonly string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "The value of the input. Use when controlled."
+          }
+        ]
+      },
+      {
+        "name": "Page",
+        "props": [
+          {
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "type",
+            "type": "\"menu\" | \"panel\" | \"picker\"",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          }
+        ]
+      },
+      {
+        "name": "Back",
+        "props": [
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "color",
+            "type": "\"danger\" | \"neutral\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Color of the text and icons. `danger` marks a destructive action."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Supporting text, placed according to `descriptionPlacement`."
+          },
+          {
+            "name": "descriptionPlacement",
+            "type": "\"end\" | \"inline\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered after the content."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "hasSubmenu",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows a chevron indicating that the item opens a submenu."
+          },
+          {
+            "name": "hotkeys",
+            "type": "string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true when render is omitted; false otherwise",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered before the content."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          }
+        ]
+      },
+      {
+        "name": "Submenu",
+        "props": [
+          {
+            "name": "defaultOpen",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "defaultPage",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "multiple",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "onOpenChange",
+            "type": "((open: boolean) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "type",
+            "type": "\"menu\" | \"panel\" | \"picker\"",
+            "required": false,
+            "defaultValue": "menu",
+            "description": ""
+          }
+        ]
+      },
+      {
+        "name": "SubmenuTrigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "closeDelay",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "color",
+            "type": "\"danger\" | \"neutral\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Color of the text and icons. `danger` marks a destructive action."
+          },
+          {
+            "name": "delay",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Supporting text, placed according to `descriptionPlacement`."
+          },
+          {
+            "name": "descriptionPlacement",
+            "type": "\"end\" | \"inline\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+          },
+          {
+            "name": "endIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered after the content."
+          },
+          {
+            "name": "focusableWhenDisabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the button should be focusable when disabled."
+          },
+          {
+            "name": "hasSubmenu",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Shows a chevron indicating that the item opens a submenu."
+          },
+          {
+            "name": "hotkeys",
+            "type": "string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true when render is omitted; false otherwise",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+          },
+          {
+            "name": "openOnHover",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": ""
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Icon rendered before the content."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          }
+        ]
+      },
+      {
+        "name": "Section",
+        "props": [
+          {
+            "name": "label",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "Section",
     "entryPoint": "twenty-ui/components",
     "slug": "components/section",

@@ -129,6 +129,7 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
   UI_ACCESSIBILITY: '/ui/accessibility',
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
+  UI_COMPONENTS_DROPDOWN: '/ui/components/dropdown',
   UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
   UI_COMPONENTS_INPUT_LIGHT_ICON_BUTTON:
@@ -181,6 +182,8 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/billing/capabilities/credits',
   USER_GUIDE_BILLING_CAPABILITIES_PRICING_PLANS:
     '/user-guide/billing/capabilities/pricing-plans',
+  USER_GUIDE_BILLING_CAPABILITIES_USAGE_LIMITS:
+    '/user-guide/billing/capabilities/usage-limits',
   USER_GUIDE_BILLING_HOW_TOS_BILLING_FAQ:
     '/user-guide/billing/how-tos/billing-faq',
   USER_GUIDE_BILLING_OVERVIEW: '/user-guide/billing/overview',
