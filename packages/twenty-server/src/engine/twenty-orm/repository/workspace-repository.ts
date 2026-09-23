@@ -1399,12 +1399,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       return result;
     } catch (error) {
-      if (error instanceof RecordValidationRuleException) {
-        await this.executeRaw(
-          `ROLLBACK TO SAVEPOINT ${VALIDATION_RULE_SAVEPOINT_NAME}`,
-          {},
-        );
-      }
+      await this.executeRaw(
+        `ROLLBACK TO SAVEPOINT ${VALIDATION_RULE_SAVEPOINT_NAME}`,
+        {},
+      );
 
       throw error;
     }
