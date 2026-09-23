@@ -4,7 +4,7 @@ import { clamp } from '@base-ui/utils/clamp';
 import { useControlled } from '@base-ui/utils/useControlled';
 import { clsx } from 'clsx';
 
-import { RESIZE_HANDLE_DEFAULTS } from './internal/ResizeHandleDefaults';
+import { RESIZE_HANDLE_DEFAULTS } from './internal/ResizeHandleDefaults.constant';
 import { useResizeHandleInteraction } from './internal/useResizeHandleInteraction';
 import styles from './ResizeHandle.module.scss';
 import { type ResizeHandleProps } from './types/ResizeHandleProps';
