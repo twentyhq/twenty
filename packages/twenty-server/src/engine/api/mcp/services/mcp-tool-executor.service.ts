@@ -8,6 +8,9 @@ import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-mo
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { MAX_INLINE_TOOL_OUTPUT_BYTES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/max-inline-tool-output-bytes.constant';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { buildTruncatedToolOutput } from 'src/engine/core-modules/tool/utils/truncate-tool-output-inline.util';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
@@ -21,6 +24,32 @@ import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-respo
 
 type McpToolDefinition = ToolSet[string] & {
   annotations?: McpToolAnnotations;
+};
+
+// MCP clients cannot reach search_output / extract_json_paths, so an oversized
+// result cannot be spilled to a file and paged over; it is bounded in place.
+const MCP_TRUNCATION_GUIDANCE =
+  'Narrow the call: pass a single category to get_tool_catalog, fewer names to learn_tools, or a filter and a lower limit to a record tool.';
+
+const boundToolOutput = (result: unknown): unknown => {
+  const serialized = JSON.stringify(result);
+
+  if (!isDefined(serialized)) {
+    return result;
+  }
+
+  const sizeBytes = Buffer.byteLength(serialized);
+
+  if (sizeBytes <= MAX_INLINE_TOOL_OUTPUT_BYTES) {
+    return result;
+  }
+
+  return buildTruncatedToolOutput({
+    output: (result ?? {}) as ToolOutput,
+    serialized,
+    sizeBytes,
+    guidance: MCP_TRUNCATION_GUIDANCE,
+  });
 };
 
 const unwrapJsonSchema = (schema: unknown) =>
@@ -91,11 +120,13 @@ export class McpToolExecutorService {
         unknown,
         undefined
       >;
-      const result = await execute(params.arguments, {
-        toolCallId: '1',
-        messages: [],
-        context: undefined,
-      });
+      const result = boundToolOutput(
+        await execute(params.arguments, {
+          toolCallId: '1',
+          messages: [],
+          context: undefined,
+        }),
+      );
 
       this.metricsService.recordHistogram({
         key: MetricsKeys.McpToolExecutionDurationMs,

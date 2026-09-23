@@ -12,7 +12,7 @@ import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { formatBytes } from 'src/engine/core-modules/tool/utils/format-bytes.util';
 import { jsonPreview } from 'src/engine/core-modules/tool/utils/json-preview.util';
-import { truncateHeadTail } from 'src/engine/core-modules/tool/utils/truncate-head-tail.util';
+import { buildTruncatedToolOutput } from 'src/engine/core-modules/tool/utils/truncate-tool-output-inline.util';
 
 type SpillContext = {
   workspaceId: string;
@@ -143,18 +143,11 @@ export class ToolOutputSpillService {
     sizeBytes: number,
     guidance: string,
   ): ToolOutput {
-    return {
-      success: output.success,
-      message: output.message,
-      result: {
-        truncated: true,
-        originalSizeBytes: sizeBytes,
-        content: truncateHeadTail({
-          text: serialized,
-          maxBytes: MAX_INLINE_TOOL_OUTPUT_BYTES,
-          guidance,
-        }),
-      },
-    };
+    return buildTruncatedToolOutput({
+      output,
+      serialized,
+      sizeBytes,
+      guidance,
+    });
   }
 }

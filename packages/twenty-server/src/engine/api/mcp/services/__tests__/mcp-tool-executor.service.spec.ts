@@ -5,6 +5,7 @@ import { type ToolSet } from 'ai';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { MAX_INLINE_TOOL_OUTPUT_BYTES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/max-inline-tool-output-bytes.constant';
 
 describe('McpToolExecutorService', () => {
   let service: McpToolExecutorService;
@@ -65,6 +66,54 @@ describe('McpToolExecutorService', () => {
           key: MetricsKeys.McpToolExecutionSucceeded,
         }),
       );
+    });
+
+    it('should bound an oversized tool output while keeping the payload parseable', async () => {
+      const toolOutput = {
+        success: true,
+        message: 'Found 215 tool(s)',
+        result: { catalog: 'x'.repeat(MAX_INLINE_TOOL_OUTPUT_BYTES * 2) },
+      };
+      const toolSet = buildToolSet(jest.fn().mockResolvedValue(toolOutput));
+
+      const response = await service.handleToolCall(1, toolSet, {
+        name: 'create_person',
+        arguments: {},
+      });
+
+      const text = response?.result.content[0].text as string;
+      const payload = JSON.parse(text);
+
+      expect(Buffer.byteLength(text)).toBeLessThan(
+        Buffer.byteLength(JSON.stringify(toolOutput)),
+      );
+      expect(payload).toEqual({
+        success: true,
+        message: 'Found 215 tool(s)',
+        result: {
+          truncated: true,
+          originalSizeBytes: Buffer.byteLength(JSON.stringify(toolOutput)),
+          content: expect.stringContaining('[TRUNCATED:'),
+        },
+      });
+      expect(payload.result.content).toContain('Narrow the call');
+      expect(response?.result.isError).toBe(false);
+    });
+
+    it('should leave a tool output under the inline budget untouched', async () => {
+      const toolOutput = {
+        success: true,
+        message: 'Created',
+        result: { id: 1 },
+      };
+      const toolSet = buildToolSet(jest.fn().mockResolvedValue(toolOutput));
+
+      const response = await service.handleToolCall(1, toolSet, {
+        name: 'create_person',
+        arguments: {},
+      });
+
+      expect(response?.result.content[0].text).toBe(JSON.stringify(toolOutput));
     });
 
     it('should return isError true and count a failure when the tool output resolves with success false', async () => {
