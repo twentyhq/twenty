@@ -45,6 +45,7 @@ import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import {
   EngineComponentKey,
+  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
@@ -153,7 +154,15 @@ const RecordCreationFlow = ({ commandOrigin }: RecordCreationFlowProps) => {
       );
     }
     applyChanges();
-    store.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    store.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        {
+          key: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
+          value: true,
+        },
+      ],
+    });
     store.set(currentWorkspaceMemberState.atom, (member) =>
       isDefined(member)
         ? { ...member, openRecordIn: OpenRecordIn.SIDE_PANEL }

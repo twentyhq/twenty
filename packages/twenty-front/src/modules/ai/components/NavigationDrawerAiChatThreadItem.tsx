@@ -7,9 +7,9 @@ import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActio
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 type NavigationDrawerAiChatThreadItemProps = {
@@ -36,15 +36,13 @@ export const NavigationDrawerAiChatThreadItem = ({
 
   const isArchived = Boolean(thread.deletedAt);
   const displayLabel = thread.title || t`New chat`;
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
-    thread.id,
-    AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
-  );
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    itemMenuDropdownId,
+    getAiChatThreadItemMenuDropdownId({
+      threadId: thread.id,
+      surface: AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
+    }),
   );
-
   if (isRenaming && isExpanded) {
     return (
       <NavigationDrawerInput
