@@ -1,12 +1,12 @@
 import { convertTipTapToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertTipTapToBlockNote';
-import { parseTipTapJsonDocument } from 'twenty-shared/utils';
+import { isDefined, parseTipTapJsonDocument } from 'twenty-shared/utils';
 
 export const convertTipTapDocumentToBlockNote = (
   serializedDocument: string,
 ): string => {
   const document = parseTipTapJsonDocument(serializedDocument);
 
-  return document === undefined
+  return !isDefined(document)
     ? serializedDocument
     : JSON.stringify(convertTipTapToBlockNote(document.content ?? []));
 };
