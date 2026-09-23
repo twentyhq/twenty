@@ -48,6 +48,7 @@ import {
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
   type UninstallLogicFunctionApplicationManifest,
+  type HealthCheckLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
@@ -128,6 +129,8 @@ export const buildManifest = async (
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
     [];
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
+    [];
+  const healthCheckLogicFunctions: HealthCheckLogicFunctionApplicationManifest[] =
     [];
   const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
@@ -355,6 +358,12 @@ export const buildManifest = async (
           targetFunctionName === TargetFunction.DefineUninstallLogicFunction
         ) {
           uninstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+          });
+        }
+
+        if (targetFunctionName === TargetFunction.DefineHealthCheck) {
+          healthCheckLogicFunctions.push({
             universalIdentifier: extract.config.universalIdentifier,
           });
         }
@@ -609,6 +618,10 @@ export const buildManifest = async (
     errors.push('Only one uninstall logic function is allowed per application');
   }
 
+  if (healthCheckLogicFunctions.length > 1) {
+    errors.push('Only one health check is allowed per application');
+  }
+
   if (settingsFrontComponentUniversalIdentifiers.length > 1) {
     errors.push('Only one settings front component is allowed per application');
   }
@@ -669,6 +682,9 @@ export const buildManifest = async (
               : {}),
             ...(uninstallLogicFunctions.length >= 1
               ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
+              : {}),
+            ...(healthCheckLogicFunctions.length >= 1
+              ? { healthCheckLogicFunction: healthCheckLogicFunctions[0] }
               : {}),
             ...(settingsFrontComponentUniversalIdentifiers.length >= 1
               ? {

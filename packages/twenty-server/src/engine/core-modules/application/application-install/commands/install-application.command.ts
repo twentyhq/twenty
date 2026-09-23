@@ -219,6 +219,7 @@ export class InstallApplicationCommand extends CommandRunner {
           appRegistrationId: registration.id,
           version: targetVersion ?? undefined,
           workspaceId,
+          hasUserApprovedCapabilities: true,
         });
       },
     });

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -28,7 +27,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     FeatureFlagModule,
     PermissionsModule,
     TwentyConfigModule,
-    WorkspaceIteratorModule,
     WorkspaceVersionModule,
   ],
   providers: [
