@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
-import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { type ApplicationDisplayData } from '@/applications/types/ApplicationDisplayData';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';

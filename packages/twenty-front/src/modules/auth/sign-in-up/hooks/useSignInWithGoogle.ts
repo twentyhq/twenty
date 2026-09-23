@@ -1,8 +1,8 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
-import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp.type';
+import { type BillingCheckoutSession } from '@/auth/types/BillingCheckoutSession';
+import { type SocialSsoSignInUpActionType } from '@/auth/types/SocialSsoSignInUpActionType';
 import {
   BillingPlanKey,
   SubscriptionInterval,

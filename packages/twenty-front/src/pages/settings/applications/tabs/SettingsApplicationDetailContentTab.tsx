@@ -1,4 +1,4 @@
-import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { type ApplicationDisplayData } from '@/applications/types/ApplicationDisplayData';
 import { getLogicFunctionTriggerLabel } from '@/logic-functions/utils/getLogicFunctionTriggerLabel';
 import { useComputeApplicationContentForLayoutAndLogic } from '@/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic';
 import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';

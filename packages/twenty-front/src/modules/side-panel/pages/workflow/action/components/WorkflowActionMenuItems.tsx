@@ -7,6 +7,8 @@ type Action = {
   defaultLabel: string;
   type: WorkflowActionType;
   icon: string;
+  disabled?: boolean;
+  contextualText?: string;
 };
 
 export const WorkflowActionMenuItems = ({
@@ -30,7 +32,9 @@ export const WorkflowActionMenuItems = ({
             LeftIcon={() => (
               <Icon color={getActionIconColorOrThrow(action.type)} size={16} />
             )}
+            disabled={action.disabled}
             text={action.defaultLabel}
+            contextualText={action.contextualText}
             onClick={() => onClick(action.type)}
           />
         );

@@ -906,7 +906,15 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` elem
 
 ### Media capture
 
-`navigator.mediaDevices.getUserMedia()` and `MediaRecorder` work inside front components through sandbox polyfills, so standard recording code runs unchanged and `MediaRecorder.isTypeSupported` answers for common container/codec combinations. Detailed `getUserMedia` constraint objects are accepted but not forwarded — the host captures with its defaults for the requested kinds — and only one capture can be live at a time across applications. Store a recorded `Blob` with the `uploadFile` host function.
+Declare `microphone`, `camera`, or both in the `requestedCapabilities` array passed to `defineApplication()` so these capabilities appear during installation. Approval is workspace-wide and requires a member who can manage apps.
+
+If an installed app calls `navigator.mediaDevices.getUserMedia()` without the required access, Twenty pauses capture and shows an approval dialog. This also supports older apps without capability declarations. Members who cannot manage apps must ask a workspace administrator to approve access. Cancelling the dialog rejects the request before browser or operating system permissions are requested.
+
+Package updates preserve existing workspace grants and do not automatically grant additional media access. Locally synced development apps receive the capabilities declared in their manifest. Once access is approved, Twenty does not ask again for each capture, but browser and operating system permissions still apply.
+
+An orange dot in the workspace header indicates active capture. Hover over or select the dot to see the apps using the microphone or camera and stop their capture. Pending requests appear as an outlined dot with a cancellation control.
+
+`getUserMedia()` and `MediaRecorder` run through sandbox polyfills, so standard recording code and `MediaRecorder.isTypeSupported()` work unchanged after approval. Detailed constraint objects are accepted but not forwarded. The host captures with its defaults for the requested kinds. Different applications can capture concurrently, and stopping an app affects only its own sessions. Each front component supports one pending or active capture at a time. Store a recorded `Blob` with the `uploadFile` host function.
 
 ### Other gaps
 

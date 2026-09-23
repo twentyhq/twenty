@@ -24,7 +24,6 @@ type WorkspaceAiModelSettingsChanges = Partial<
     | 'aiAgentModelTier'
     | 'isAutoModelSelectionEnabled'
     | 'aiModelIdByTier'
-    | 'aiEvaluationModelId'
   >
 >;
 
@@ -80,16 +79,10 @@ export const useSettingsAiModelsActions = () => {
     });
   };
 
-  // Null clears the pin, which puts the step back on whichever evaluation
-  // model the instance offers.
-  const handleEvaluationModelChange = (modelId: string | null) =>
-    updateAiModelSettings({ aiEvaluationModelId: modelId });
-
   return {
     handleChatTierChange,
     handleAgentTierChange,
     handleAutoModelSelectionToggle,
     handlePinnedModelChange,
-    handleEvaluationModelChange,
   };
 };

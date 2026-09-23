@@ -4,6 +4,8 @@ import { FrontComponentRendererProvider } from '@/front-components/components/Fr
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { FrontComponentMediaSessionRegistrationEffect } from '@/front-components/media-session/components/FrontComponentMediaSessionRegistrationEffect';
+import { FrontComponentMediaPermissionModal } from '@/front-components/media-session/components/FrontComponentMediaPermissionModal';
 import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
@@ -74,6 +76,7 @@ export const FrontComponentRenderer = ({
         unavailableFallback}
       {!loading && isDefined(frontComponent) && !isDefined(error) && (
         <FrontComponentRendererContent
+          key={frontComponent.id}
           frontComponent={frontComponent}
           commandMenuItemId={commandMenuItemId}
           selectedRecordIds={selectedRecordIds}
@@ -101,6 +104,7 @@ const FrontComponentRendererContent = ({
   const {
     id: frontComponentId,
     applicationId,
+    applicationName,
     usesSdkClient,
     frontComponentSharedDependenciesChecksum,
   } = frontComponent;
@@ -119,7 +123,17 @@ const FrontComponentRendererContent = ({
     colorScheme,
   });
 
-  const { mediaSessionHost } = useFrontComponentMediaSession();
+  const resolvedApplicationName = applicationName ?? frontComponent.name;
+  const {
+    activeSessions,
+    mediaSessionHost,
+    pendingStartMediaTypes,
+    stopMediaSession,
+    permissionModalInstanceId,
+    permissionRequest,
+  } = useFrontComponentMediaSession({
+    frontComponentId,
+  });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -175,6 +189,21 @@ const FrontComponentRendererContent = ({
 
   return (
     <>
+      {isDefined(permissionRequest) && (
+        <FrontComponentMediaPermissionModal
+          applicationId={applicationId}
+          applicationName={resolvedApplicationName}
+          modalInstanceId={permissionModalInstanceId}
+          request={permissionRequest}
+        />
+      )}
+      <FrontComponentMediaSessionRegistrationEffect
+        activeSessions={activeSessions}
+        applicationId={applicationId}
+        applicationName={resolvedApplicationName}
+        pendingStartMediaTypes={pendingStartMediaTypes}
+        onStop={stopMediaSession}
+      />
       <FrontComponentApplicationTokenPairEffect
         frontComponentId={frontComponentId}
         applicationTokenPair={applicationTokenPair}

@@ -1,4 +1,5 @@
 import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { type AggregateOperations, ViewKey } from 'twenty-shared/types';
 
 import { computeMissingInitialObjectViewOperations } from 'src/engine/metadata-modules/view/utils/compute-missing-initial-object-view-operations.util';
@@ -218,6 +219,29 @@ describe('computeMissingInitialObjectViewOperations', () => {
       expect(viewsToCreate).toHaveLength(0);
       expect(viewFieldsToCreate).toHaveLength(0);
     }
+  });
+
+  it('seeds nothing for an object whose standard view already plays that role', () => {
+    const { viewsToCreate, viewFieldsToCreate } =
+      computeMissingInitialObjectViewOperations({
+        ...buildMaps({
+          objects: [
+            {
+              ...PET_OBJECT,
+              universalIdentifier:
+                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+              labelPlural: 'Opportunities',
+            },
+          ],
+          views: [PET_INDEX_VIEW],
+          viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
+        }),
+        initialViewApplicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      });
+
+    expect(viewsToCreate).toHaveLength(0);
+    expect(viewFieldsToCreate).toHaveLength(0);
   });
 
   it('skips objects without a live INDEX view, remote objects and system objects', () => {

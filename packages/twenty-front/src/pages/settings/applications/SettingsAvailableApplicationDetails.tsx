@@ -247,6 +247,7 @@ export const SettingsAvailableApplicationDetails = () => {
         appDisplayName={displayName}
         appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
+        requestedCapabilities={detail?.requestedCapabilities}
         onAuthorize={install}
         isInstalling={isInstalling}
       />

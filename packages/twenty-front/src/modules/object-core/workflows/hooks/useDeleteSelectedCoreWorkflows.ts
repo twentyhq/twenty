@@ -11,7 +11,7 @@ import {
   coreWorkflowsSelectionState,
 } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
-import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
+import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/invalidateCoreWorkflowQueries';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -97,7 +97,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
       .map((deletedCoreWorkflow) => deletedCoreWorkflow.workspaceWorkflowId)
       .filter(isDefined);
 
-    void invalidateCoreWorkflowVersions(apolloCoreClient).catch(logError);
+    void invalidateCoreWorkflowQueries(apolloCoreClient).catch(logError);
 
     removeNavigationMenuItemsByTargetRecordIds(deletedWorkspaceWorkflowIds);
 

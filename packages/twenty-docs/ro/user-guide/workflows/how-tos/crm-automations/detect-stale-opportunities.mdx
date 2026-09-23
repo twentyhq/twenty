@@ -1,0 +1,136 @@
+---
+title: Detectați oportunitățile stagnante
+description: Notificați automat managerii când oportunitățile nu au fost actualizate.
+---
+
+Mențineți pipeline-ul sănătos alertând managerii când oportunitățile devin stagnante. Acest flux de lucru verifică oportunitățile care nu au fost actualizate într-un număr specificat de zile.
+
+## Problema
+
+Oportunitățile lăsate fără actualizări duc la:
+
+* Tranzacții care se răcesc
+* Previziuni nesigure
+* Venituri pierdute
+
+## Soluția
+
+Creați un flux de lucru programat care găsește oportunități stagnante și le trimite prin e-mail managerilor lor.
+
+## Configurare pas cu pas
+
+### Pasul 1: Creați fluxul de lucru
+
+1. Accesați **Setări → Fluxuri de lucru**
+2. Faceți clic pe **+ Flux de lucru nou**
+3. Denumiți-l "Alertă pentru oportunități stagnante"
+
+### Pasul 2: Configurați declanșatorul
+
+1. Selectați **On a Schedule**
+2. Setați să ruleze zilnic (de exemplu, în fiecare zi la 8 AM)
+
+### Pasul 3: Căutați oportunități stagnante
+
+1. Adăugați acțiunea **Search Records**
+2. Configurați:
+
+| Câmp       | Valoare                                             |
+| ---------- | --------------------------------------------------- |
+| **Obiect** | Oportunități                                        |
+| **Filtru** | Updated At este înainte de (astăzi - 7 zile)        |
+| **Filtru** | Stage nu este "Closed Won" ȘI nu este "Closed Lost" |
+| **Limită** | 100                                                 |
+
+### Pasul 4: Verificați dacă s-au găsit rezultate
+
+1. Adăugați acțiunea **Filter**
+2. Condiție: `{{searchRecords.length}}` este mai mare decât 0
+3. Dacă nu există oportunități stagnante, fluxul de lucru se oprește aici
+
+### Pasul 5: Formatați alerta (acțiune Code)
+
+Adăugați o acțiune **Code** pentru a formata e-mailul:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### Pasul 6: Trimiteți e-mailul de alertă
+
+Adăugați acțiunea **Send Email**:
+
+| Câmp        | Valoare                                                          |
+| ----------- | ---------------------------------------------------------------- |
+| **Către**   | sales-manager@yourcompany.com                                    |
+| **Subiect** | `🚨 {{code.totalCount}} oportunități stagnante necesită atenție` |
+| **Corp**    | `{{code.summary}}`                                               |
+
+### Pasul 7: Testați și activați
+
+1. Faceți clic pe **Test** pentru a rula fluxul de lucru
+2. Verificați că e-mailul conține datele corecte
+3. Activați când sunteți gata
+
+## Opțiuni de personalizare
+
+### Modificați pragul de stagnare
+
+Modificați filtrul Search Records pentru a schimba de la 7 zile la perioada preferată:
+
+* 3 zile pentru vânzări cu ritm ridicat
+* 14 zile pentru tranzacții enterprise
+* 30 de zile pentru cicluri de vânzări lungi
+
+### Alerte pentru reprezentanți individuali
+
+În loc de un singur e-mail către manager, folosiți **Iterator** pentru a trimite e-mailuri personalizate fiecărui reprezentant despre tranzacțiile lor stagnante.
+
+### Adăugați escaladare
+
+Creați mai multe fluxuri de lucru cu severitate în creștere:
+
+1. Ziua 7: E-mail către reprezentant
+2. Ziua 14: E-mail către reprezentant + manager
+3. Ziua 21: Creați o sarcină pentru ca managerul să intervină
+
+### Includeți în Slack
+
+Utilizați **HTTP Request** pentru a posta către un webhook Slack în locul sau pe lângă e-mail.
+
+## Conexe
+
+* [Acțiuni ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Trimiteți e-mailuri din fluxuri de lucru](/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
