@@ -50,7 +50,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '08d255bf-58cd-47a5-bd82-78c5c58592f1',
     label: i18nLabel(
       msg({
-        message: `Create new {objectLabelSingular}`,
+        message: `Create {objectLabelSingular}`,
         context: 'commandMenuItem.label',
       }),
     ),
@@ -59,7 +59,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 3,
     shortLabel: i18nLabel(
       msg({
-        message: `New {objectLabelSingular}`,
+        message: `Create`,
         context: 'commandMenuItem.shortLabel',
       }),
     ),

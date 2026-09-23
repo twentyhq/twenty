@@ -68,9 +68,9 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "pageLayoutId": null,
     "isActive": true,
     "frontComponent": null,
-    "label": "Create new {objectLabelSingular}",
+    "label": "Create {objectLabelSingular}",
     "icon": "IconPlus",
-    "shortLabel": "New {objectLabelSingular}",
+    "shortLabel": "Create",
     "navigationTargetObjectMetadataId": null
   },
   {
