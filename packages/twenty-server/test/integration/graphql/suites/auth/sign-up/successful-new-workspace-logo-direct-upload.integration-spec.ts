@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 
+import bytes from 'bytes';
 import gql from 'graphql-tag';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
@@ -7,6 +8,7 @@ import { putFileToUploadTarget } from 'test/integration/graphql/utils/upload-fil
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
+import { settings } from 'src/engine/constants/settings';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -74,8 +76,6 @@ describe('New workspace logo direct upload', () => {
     newWorkspaceId = signUpInNewWorkspaceData.signUpInNewWorkspace.workspace.id;
   }, 60000);
 
-  // The workspace never gets activated, so the deleteUser mutation cannot
-  // clean it up: it expects a provisioned workspace schema.
   afterAll(async () => {
     if (uploadedLogoFileId !== undefined) {
       await globalThis.testDataSource.query(
@@ -156,6 +156,24 @@ describe('New workspace logo direct upload', () => {
     );
 
     expect(workspace.logoFileId).toBe(uploadTarget.fileId);
+  }, 30000);
+
+  it('should refuse a logo larger than the core picture size limit', async () => {
+    const response = await makeMetadataAPIRequest(
+      {
+        query: createNewWorkspaceLogoUploadMutation,
+        variables: {
+          workspaceId: newWorkspaceId,
+          filename: 'logo.png',
+          size: (bytes(settings.storage.maxCorePictureFileSize) ?? 0) + 1,
+        },
+      },
+      userAccessToken,
+    );
+
+    expect(response.body.data).toBeNull();
+    expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
+    expect(response.body.errors[0].extensions.subCode).toBe('FILE_TOO_LARGE');
   }, 30000);
 
   it('should refuse a user who is not a member of the workspace being created', async () => {

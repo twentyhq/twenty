@@ -57,8 +57,6 @@ type DirectUploadedFile = {
   url: string;
 };
 
-// Integration tests run on the local storage driver, so the upload url
-// targets the server's streaming endpoint: replay it against the test app.
 export const putFileToUploadTarget = async ({
   uploadTarget,
   content,

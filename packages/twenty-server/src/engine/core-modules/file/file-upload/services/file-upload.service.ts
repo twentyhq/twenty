@@ -102,7 +102,7 @@ export class FileUploadService {
       );
     }
 
-    assertValidDirectUploadSize(size);
+    assertValidDirectUploadSize(size, fileFolder);
 
     const { ext } = buildFileInfo(filename);
 
@@ -391,9 +391,6 @@ export class FileUploadService {
       };
     }
 
-    // Read through the workspace row rather than the workspace cache: a
-    // workspace still pending creation has no cached applications yet, and its
-    // logo is reserved before it is activated.
     const { workspaceCustomApplicationId } =
       await this.workspaceRepository.findOneOrFail({
         select: ['id', 'workspaceCustomApplicationId'],

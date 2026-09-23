@@ -156,9 +156,6 @@ export class FileCorePictureService {
     return file;
   }
 
-  // The workspace attached to the request comes from the core entity cache,
-  // so the logo it carries may predate a previous upload: the current one is
-  // read from the database before it is replaced.
   private async findCurrentLogoFileId(
     workspaceId: string,
   ): Promise<string | null> {

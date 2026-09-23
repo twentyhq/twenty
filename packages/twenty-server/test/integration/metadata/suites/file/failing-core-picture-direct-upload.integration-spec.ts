@@ -1,3 +1,4 @@
+import bytes from 'bytes';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import {
   completeWorkspaceLogoUploadMutation,
@@ -11,6 +12,7 @@ import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/fil
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { v4 as uuidv4 } from 'uuid';
 
+import { settings } from 'src/engine/constants/settings';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -143,6 +145,22 @@ describe('Core picture direct upload should fail', () => {
     });
     expect(await findFileStatus(uploadTarget.fileId)).toBe(FILE_STATUS.PENDING);
     expect(await findWorkspaceLogoFileId()).not.toBe(uploadTarget.fileId);
+  }, 30000);
+
+  it('should refuse to reserve a picture larger than the core picture size limit', async () => {
+    const createResponse = await makeMetadataAPIRequest({
+      query: createFileUploadMutation,
+      variables: {
+        filename: 'logo.png',
+        size: (bytes(settings.storage.maxCorePictureFileSize) ?? 0) + 1,
+        fileFolder: 'CorePicture',
+      },
+    });
+
+    expect(createResponse.body.data).toBeNull();
+    expectOneNotInternalServerErrorSnapshot({
+      errors: createResponse.body.errors,
+    });
   }, 30000);
 
   it('should refuse to complete an unknown file', async () => {

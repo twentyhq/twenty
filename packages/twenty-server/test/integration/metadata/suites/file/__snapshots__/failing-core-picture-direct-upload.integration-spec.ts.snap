@@ -47,3 +47,15 @@ exports[`Core picture direct upload should fail should refuse to complete an unk
   "name": "NotFoundError",
 }
 `;
+
+exports[`Core picture direct upload should fail should refuse to reserve a picture larger than the core picture size limit 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "FILE_TOO_LARGE",
+    "userFriendlyMessage": "The file is empty or exceeds the maximum allowed size.",
+  },
+  "message": "Invalid file size 10485761 (max 10485760 bytes)",
+  "name": "UserInputError",
+}
+`;
