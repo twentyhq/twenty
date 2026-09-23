@@ -24,6 +24,8 @@ export enum ApplicationRegistrationExceptionCode {
   GITHUB_AUTH_FAILED = 'GITHUB_AUTH_FAILED',
   GITHUB_ORG_OWNERSHIP_REQUIRED = 'GITHUB_ORG_OWNERSHIP_REQUIRED',
   CLAIM_STATE_MISMATCH = 'CLAIM_STATE_MISMATCH',
+  TARBALL_UPLOAD_NOT_FOUND = 'TARBALL_UPLOAD_NOT_FOUND',
+  TARBALL_UPLOAD_COMPLETION_IN_PROGRESS = 'TARBALL_UPLOAD_COMPLETION_IN_PROGRESS',
 }
 
 const getExceptionUserFriendlyMessage = (
@@ -68,6 +70,10 @@ const getExceptionUserFriendlyMessage = (
       return msg`Your GitHub account does not own the organization that publishes this package. If you are an owner, make sure you granted this app access to the organization on GitHub's authorization screen (Organization access section).`;
     case ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH:
       return msg`This claim was started in another browser or has already been used. Start the claim again from this browser.`;
+    case ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_NOT_FOUND:
+      return msg`Tarball upload not found.`;
+    case ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_COMPLETION_IN_PROGRESS:
+      return msg`This upload is already being completed. Please wait for it to finish.`;
     default:
       assertUnreachable(code);
   }

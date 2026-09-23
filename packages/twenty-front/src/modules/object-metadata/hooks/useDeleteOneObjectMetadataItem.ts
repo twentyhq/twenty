@@ -9,7 +9,7 @@ import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequ
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 export const useDeleteOneObjectMetadataItem = () => {
   const [deleteOneObjectMetadataItemMutation] = useMutation(

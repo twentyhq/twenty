@@ -3,14 +3,14 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { NotificationCounter } from '@ui/primitives/data-display/NotificationCounter/NotificationCounter';
+import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 import { IconInfoCircle } from '@ui/icon';
 import { Input } from '@ui/primitives/input/Input/Input';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
-  type CatalogStory,
   ComponentDecorator,
+  type CatalogStory,
 } from '@ui/testing';
 
 import { Tabs } from '../Tabs';
@@ -138,15 +138,6 @@ export const AutomaticActivation: Story = {
   ),
 };
 
-export const WithIconAndBadge: Story = {
-  decorators: [ComponentDecorator],
-  parameters: { container: { width: 360 } },
-  args: {
-    startIcon: <IconInfoCircle />,
-    badge: <NotificationCounter count={3} variant="secondary" />,
-  },
-};
-
 export const Disabled: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },
@@ -244,7 +235,7 @@ const TABS_CATALOG_CONTENT_PROPS: Record<
   plain: {},
   icon: { startIcon: <IconInfoCircle /> },
   badge: {
-    badge: <NotificationCounter count={3} variant="secondary" />,
+    badge: <Tag color="gray">3</Tag>,
   },
 };
 

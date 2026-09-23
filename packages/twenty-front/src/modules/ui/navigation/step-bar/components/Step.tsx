@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
 
+import { AnimatedCheckmark } from '@/ui/navigation/step-bar/components/internal/AnimatedCheckmark/AnimatedCheckmark';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { AnimatedCheckmark } from 'twenty-ui/primitives/data-display';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,

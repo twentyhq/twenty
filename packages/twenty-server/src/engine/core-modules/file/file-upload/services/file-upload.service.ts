@@ -6,13 +6,11 @@ import { pipeline } from 'stream/promises';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import bytes from 'bytes';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { settings } from 'src/engine/constants/settings';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -27,6 +25,7 @@ import {
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { assertValidDirectUploadSize } from 'src/engine/core-modules/file/file-upload/utils/assert-valid-direct-upload-size.util';
 import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
@@ -44,6 +43,14 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.EmailAttachment,
   FileFolder.AgentChat,
   FileFolder.EmailImage,
+  FileFolder.AppTarball,
+] as const;
+
+// A tarball leaves quarantine through completeAppTarballUpload only, behind
+// the marketplace-apps permission: the generic completion, open to any member
+// allowed to upload files, must not persist bytes in that folder.
+export const DEDICATED_COMPLETION_FILE_FOLDERS = [
+  FileFolder.AppTarball,
 ] as const;
 
 @Injectable()
@@ -93,17 +100,7 @@ export class FileUploadService {
       );
     }
 
-    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
-
-    if (!Number.isInteger(size) || size <= 0 || size > maxFileSize) {
-      throw new FileUploadException(
-        `Invalid file size ${size} (max ${maxFileSize} bytes)`,
-        FileUploadExceptionCode.FILE_TOO_LARGE,
-        {
-          userFriendlyMessage: msg`The file is empty or exceeds the maximum allowed size.`,
-        },
-      );
-    }
+    assertValidDirectUploadSize(size);
 
     const { ext } = buildFileInfo(filename);
 
@@ -264,6 +261,20 @@ export class FileUploadService {
         FileUploadExceptionCode.FILE_NOT_FOUND,
         {
           userFriendlyMessage: msg`File not found.`,
+        },
+      );
+    }
+
+    if (
+      DEDICATED_COMPLETION_FILE_FOLDERS.includes(
+        fileFolder as (typeof DEDICATED_COMPLETION_FILE_FOLDERS)[number],
+      )
+    ) {
+      throw new FileUploadException(
+        `File ${fileId} in folder ${fileFolder} is completed by its dedicated mutation`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`This file must be completed with its dedicated mutation.`,
         },
       );
     }

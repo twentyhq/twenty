@@ -1,15 +1,13 @@
 import { z } from 'zod';
+import { parseJson } from 'twenty-shared/utils';
 
 export const spreadsheetImportParseMultiSelectOptionsOrThrow = (
   value: unknown,
 ) => {
-  try {
-    return JSON.parse(z.string().parse(value));
-  } catch {
-    return z
-      .string()
-      .parse(value)
-      .split(',')
-      .map((item) => item.trim());
-  }
+  const stringValue = z.string().parse(value);
+  const parsedValue = parseJson<unknown>(stringValue);
+
+  return Array.isArray(parsedValue)
+    ? parsedValue
+    : stringValue.split(',').map((item) => item.trim());
 };

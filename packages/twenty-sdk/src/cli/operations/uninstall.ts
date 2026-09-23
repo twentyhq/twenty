@@ -52,8 +52,6 @@ const innerAppUninstall = async (
   await configService.setConfig({
     appRegistrationId: undefined,
     appRegistrationClientId: undefined,
-    appAccessToken: undefined,
-    appRefreshToken: undefined,
   });
 
   return { success: true, data: undefined };

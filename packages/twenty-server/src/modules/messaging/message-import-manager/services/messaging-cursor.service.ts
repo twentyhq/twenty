@@ -7,6 +7,7 @@ import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { isSyncCursorNewer } from 'src/modules/messaging/message-import-manager/utils/is-sync-cursor-newer.util';
 
 @Injectable()
 export class MessagingCursorService {
@@ -35,11 +36,12 @@ export class MessagingCursorService {
               throttleFailureCount: 0,
               throttleRetryAfter: null,
               syncStageStartedAt: null,
-              syncCursor:
-                !messageChannel.syncCursor ||
-                nextSyncCursor > messageChannel.syncCursor
-                  ? nextSyncCursor
-                  : messageChannel.syncCursor,
+              syncCursor: isSyncCursorNewer(
+                nextSyncCursor,
+                messageChannel.syncCursor,
+              )
+                ? nextSyncCursor
+                : messageChannel.syncCursor,
             },
           );
         } else {

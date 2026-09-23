@@ -457,6 +457,40 @@ describe('buildRecordFromImportedStructuredRow', () => {
     });
   });
 
+  it('should keep the other phone sub-fields when the calling code is missing', () => {
+    const importedStructuredRow: ImportedStructuredRow = {
+      'Primary Phone Number (phoneField)': '0612345678',
+      'Primary Phone Country Code (phoneField)': 'FR',
+      'Additional Phones (phoneField)':
+        '[{"number": "0698765432", "callingCode": "+33", "countryCode": "FR"}]',
+    };
+
+    const result = buildRecordFromImportedStructuredRow({
+      importedStructuredRow,
+      fieldMetadataItems: fields,
+      spreadsheetImportFields: [],
+    });
+
+    expect(result).toEqual({
+      phoneField: {
+        primaryPhoneNumber: '+33612345678',
+        primaryPhoneCountryCode: 'FR',
+        primaryPhoneCallingCode: '+33',
+        additionalPhones: [
+          {
+            number: '0698765432',
+            callingCode: '+33',
+            countryCode: 'FR',
+          },
+        ],
+      },
+      createdBy: {
+        source: 'IMPORT',
+        context: {},
+      },
+    });
+  });
+
   it('should successfully build a record from imported structured row with relation composite subfield', () => {
     const importedStructuredRow: ImportedStructuredRow = {
       'emailField (relationField)': 'john.doe@example.com',

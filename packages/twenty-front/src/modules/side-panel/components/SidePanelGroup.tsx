@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import React from 'react';
-import { Label } from 'twenty-ui/primitives/typography';
 import { isDefined } from 'twenty-shared/utils';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledGroupHeadingContainer = styled.div`
@@ -31,9 +31,15 @@ export const SidePanelGroup = ({ heading, children }: SidePanelGroupProps) => {
   return (
     <>
       <StyledGroupHeadingContainer>
-        <Label>{heading}</Label>
+        <StyledDisplayLabel>{heading}</StyledDisplayLabel>
       </StyledGroupHeadingContainer>
       <StyledGroup>{children}</StyledGroup>
     </>
   );
 };
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;

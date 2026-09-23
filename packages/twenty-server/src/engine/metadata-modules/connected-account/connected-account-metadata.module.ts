@@ -16,6 +16,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     AppOAuthRefreshModule,
     ConnectionProviderModule,
     FeatureFlagModule,
+    WebhookSubscriptionModule,
     PermissionsModule,
     UserRoleModule,
     WorkspaceEventEmitterModule,
