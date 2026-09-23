@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { MetadataReadability, ObjectOpenRecordIn } from 'twenty-shared/types';
 import {
   IsBoolean,
   IsEnum,
@@ -89,6 +89,11 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field(() => ObjectOpenRecordIn, { nullable: true })
   openRecordIn?: ObjectOpenRecordIn;
+
+  @IsEnum(MetadataReadability)
+  @IsOptional()
+  @Field(() => MetadataReadability, { nullable: true })
+  readability?: MetadataReadability;
 
   @Type(() => MetadataTranslationOverrideInput)
   @ValidateNested({ each: true })

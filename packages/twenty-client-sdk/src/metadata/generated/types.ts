@@ -12264,6 +12264,9 @@ export default {
             "openRecordIn": [
                 24
             ],
+            "readability": [
+                25
+            ],
             "translations": [
                 490
             ],

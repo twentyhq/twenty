@@ -6493,6 +6493,7 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   openRecordIn?: InputMaybe<ObjectOpenRecordIn>;
+  readability?: InputMaybe<MetadataReadability>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
 };
