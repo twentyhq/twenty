@@ -80,11 +80,11 @@ jest.mock('@/object-record/record-card/components/RecordCard', () => ({
 jest.mock('twenty-ui/primitives/layout', () => ({
   AnimatedExpandableContainer: ({
     children,
-    isOpen,
+    isExpanded,
   }: {
     children: React.ReactNode;
-    isOpen: boolean;
-  }) => (isOpen ? children : null),
+    isExpanded: boolean;
+  }) => (isExpanded ? children : null),
 }));
 
 describe('RecordCalendarCard', () => {
