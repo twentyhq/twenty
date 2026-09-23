@@ -137,11 +137,11 @@ Each execution records `deferred-workspace-migration-action/duration-ms` with `a
 
 ### Guarding migrations against in-flight builds
 
-A migration and a concurrent index build on the same table deadlock: Postgres cancels one of them, and the loser can be the migration a user is waiting on. `InFlightDeferredWorkspaceMigrationActionsService`, called from `WorkspaceMigrationRunnerService.run` for workspaces with the flag on, refuses the migration with `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` while the workspace has `PENDING` or `IN_PROGRESS` rows for a deferred action that builds workspace schema objects.
+A migration and a concurrent index build on the same table deadlock: Postgres cancels one of them, and the loser can be the migration a user is waiting on. `InFlightDeferredWorkspaceMigrationActionsService`, called from `WorkspaceMigrationRunnerService.run` for workspaces with the flag on and migrations carrying at least one `objectMetadata`, `fieldMetadata` or `index` action (`SCHEMA_AFFECTING_WORKSPACE_MIGRATION_METADATA_NAMES`), refuses the migration with `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` while the workspace has `PENDING` or `IN_PROGRESS` rows for a deferred action that builds workspace schema objects.
 
 `SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS` lists which ones those are, today `create_index` and not `delete_logicFunction`. `FAILED` rows do not block, since they need a manual retry and would otherwise freeze the data model.
 
-The deferred action table is the whole state: an in-flight build is exactly a row in it, so nothing else has to be stored. Every migration is refused while such a row exists, including ones that only touch views or dashboards; the check is on what is already running, not on what the incoming migration does.
+The deferred action table is the whole state: an in-flight build is exactly a row in it, so nothing else has to be stored. Migrations that leave the workspace schema alone (views, dashboards, logic functions, page layouts, workflow sync) are not refused, which matters for the ones that write a workspace record first and sync it afterwards: a refusal there would leave the two copies out of sync with nothing retrying.
 
 Two metadata migrations started at the same moment are not serialized by this, which is unchanged from today: they meet on the `ACCESS EXCLUSIVE` locks their DDL takes, and one of them hits the runner's 8 second `lock_timeout`.
 
@@ -176,7 +176,7 @@ Tested in PR 1:
 
 Tested in PR 2, manually on the same data: two object creations with the worker stopped queue a single job; with the enqueue removed and rows left `IN_PROGRESS` two hours ago, nothing runs until the cron resets them (one to `PENDING`, the one at its last attempt to `FAILED`) and enqueues the workspace; the retry command builds the `FAILED` index; a broken column is retried after 30 then 60 seconds, and the actions behind it run at the next cron once it is `FAILED`.
 
-Tested in PR 3, manually on the same data: a second object creation is refused while the first one's index builds are pending, and accepted once they drain; a view creation is refused too; a pending logic function cleanup on its own refuses nothing; with the flag off nothing is refused. Integration: the deferred, index and object metadata suites pass.
+Tested in PR 3, manually on the same data: a second object creation is refused while the first one's index builds are pending, and accepted once they drain; a view is created while builds are pending; a pending logic function cleanup on its own refuses nothing; with the flag off nothing is refused. Integration: the deferred, index and object metadata suites pass.
 
 Known limitation until PR 4: the refusal reaches the client as `INTERNAL_SERVER_ERROR` with the right `userFriendlyMessage`, because the GraphQL error code overwrites `extensions.code`.
 
