@@ -16,7 +16,6 @@ export const useRedirectToDefaultDomain = () => {
   const redirectToDefaultDomain = (options?: {
     pathname?: string;
     searchParams?: Record<string, string>;
-    shouldStayOnDefaultDomain?: boolean;
   }) => {
     const url = new URL(window.location.href);
     if (url.hostname !== defaultDomain) {
@@ -24,9 +23,7 @@ export const useRedirectToDefaultDomain = () => {
 
       // Clearing the cookie above misses custom domains and never covered the
       // session resume, so mark the navigation as deliberate instead
-      if (options?.shouldStayOnDefaultDomain !== false) {
-        url.searchParams.set(STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM, 'true');
-      }
+      url.searchParams.set(STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM, 'true');
 
       const returnToPath = store.get(returnToPathState.atom);
       if (
