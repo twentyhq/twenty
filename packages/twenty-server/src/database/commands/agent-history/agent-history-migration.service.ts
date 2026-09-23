@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DataSource, type QueryRunner } from 'typeorm';
 
 import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-history/agent-history-migration-data.service';
@@ -45,10 +45,13 @@ export class AgentHistoryMigrationService {
     const runnerKey = `${AGENT_HISTORY_MIGRATION_STORAGE_KEY}:runner:${workspaceId}`;
     try {
       await runner.connect();
-      const [{ acquired }]: { acquired: boolean }[] = await runner.query(
+      const [acquiredRow]: { acquired: boolean }[] = await runner.query(
         'SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS acquired',
         [runnerKey],
       );
+      assertIsDefinedOrThrow(acquiredRow);
+
+      const { acquired } = acquiredRow;
       ownsRunnerLock = acquired;
       if (!acquired) {
         throw new Error(
@@ -165,6 +168,7 @@ export class AgentHistoryMigrationService {
               throw new Error('Migration state changed unexpectedly');
             }
             const table = AGENT_HISTORY_TABLES[progress.tableIndex];
+            assertIsDefinedOrThrow(table);
             const ids = isActiveAgentHistoryTable(table)
               ? await this.dataService.copyBatch({
                   runner,
@@ -185,7 +189,8 @@ export class AgentHistoryMigrationService {
                   ids.length < batchSize
                     ? progress.tableIndex + 1
                     : progress.tableIndex,
-                lastId: ids.length < batchSize ? null : ids[ids.length - 1],
+                lastId:
+                  ids.length < batchSize ? null : (ids[ids.length - 1] ?? null),
               },
             };
             await this.migrationStateService.writeState(
@@ -243,10 +248,13 @@ export class AgentHistoryMigrationService {
     let ownsLock = false;
     try {
       await runner.connect();
-      const [{ acquired }]: { acquired: boolean }[] = await runner.query(
+      const [acquiredRow]: { acquired: boolean }[] = await runner.query(
         'SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS acquired',
         [key],
       );
+      assertIsDefinedOrThrow(acquiredRow);
+
+      const { acquired } = acquiredRow;
       ownsLock = acquired;
       if (!acquired) {
         throw new Error('Stop the running migration before aborting');

@@ -4,6 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
@@ -141,6 +142,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
 
     const previousVersion =
       TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 1];
+    assertIsDefinedOrThrow(previousVersion);
 
     const lastWorkspaceCommand =
       this.upgradeCommandRegistryService.getLastWorkspaceCommandForVersion(

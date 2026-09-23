@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
   type ObjectLiteral,
   type Repository,
@@ -97,7 +97,11 @@ export class ColumnRotationSiteHandler<
         outcome.errors += rowOutcome.errors;
       }
 
-      cursor = rows[rows.length - 1].id;
+      const lastRow = rows[rows.length - 1];
+
+      assertIsDefinedOrThrow(lastRow);
+
+      cursor = lastRow.id;
     }
 
     return outcome;
