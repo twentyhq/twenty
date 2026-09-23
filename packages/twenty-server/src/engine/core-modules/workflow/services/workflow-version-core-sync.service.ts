@@ -5,7 +5,7 @@ import { toCoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/ut
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -498,9 +498,10 @@ export class WorkflowVersionCoreSyncService {
       transactionScope,
     });
 
-    const { flatWorkflowVersionMaps: flatWorkflowVersionMapsBeforeWrite } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
+    const [coreWorkflowVersionRowBeforeWrite] =
+      await transactionScope.executeRawQuery(
+        `SELECT * FROM core."workflowVersion" WHERE "id" = $1 AND "workspaceId" = $2`,
+        [coreWorkflowVersionId, workspaceId],
       );
 
     // The conflict target is the primary key alone, so without the workspaceId
@@ -517,7 +518,7 @@ export class WorkflowVersionCoreSyncService {
          "status" = EXCLUDED."status",
          "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId"),
          "updatedAt" = now()
-       WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId" RETURNING id`,
+       WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId" RETURNING *`,
       [
         coreWorkflowVersionId,
         workspaceId,
@@ -560,46 +561,18 @@ export class WorkflowVersionCoreSyncService {
         flatMapsKeys: ['flatWorkflowVersionMaps'],
       });
 
-      await this.emitMirroredWorkflowVersionMetadataEvents({
+      this.metadataEventEmitter.emitMetadataEvents({
         workspaceId,
-        coreWorkflowVersionId,
-        flatWorkflowVersionMapsBeforeWrite,
+        metadataEvents: buildMirroredWorkflowVersionMetadataEvents({
+          previousFlatWorkflowVersion: coreWorkflowVersionRowBeforeWrite as
+            | FlatWorkflowVersion
+            | undefined,
+          flatWorkflowVersion: mirroredRows[0] as FlatWorkflowVersion,
+        }),
       });
     });
 
     return { coreWorkflowVersionId };
-  }
-
-  private async emitMirroredWorkflowVersionMetadataEvents({
-    workspaceId,
-    coreWorkflowVersionId,
-    flatWorkflowVersionMapsBeforeWrite,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-    flatWorkflowVersionMapsBeforeWrite: AllFlatEntityMaps['flatWorkflowVersionMaps'];
-  }): Promise<void> {
-    const { flatWorkflowVersionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
-      );
-
-    const flatWorkflowVersion = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: coreWorkflowVersionId,
-      flatEntityMaps: flatWorkflowVersionMaps,
-    });
-
-    if (!isDefined(flatWorkflowVersion)) {
-      return;
-    }
-
-    this.metadataEventEmitter.emitMetadataEvents({
-      workspaceId,
-      metadataEvents: buildMirroredWorkflowVersionMetadataEvents({
-        flatWorkflowVersionMapsBeforeWrite,
-        flatWorkflowVersion,
-      }),
-    });
   }
 
   private async resolveCoreWorkflowIdByWorkflowId(

@@ -2,26 +2,22 @@ import isEmpty from 'lodash.isempty';
 import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-update.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 import { deriveMetadataEventsFromCreateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/derive-metadata-events-from-create-action.util';
 import { deriveMetadataEventsFromUpdateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/derive-metadata-events-from-update-action.util';
 
 export const buildMirroredWorkflowVersionMetadataEvents = ({
-  flatWorkflowVersionMapsBeforeWrite,
+  previousFlatWorkflowVersion,
   flatWorkflowVersion,
 }: {
-  flatWorkflowVersionMapsBeforeWrite: AllFlatEntityMaps['flatWorkflowVersionMaps'];
+  previousFlatWorkflowVersion: FlatWorkflowVersion | undefined;
   flatWorkflowVersion: FlatWorkflowVersion;
 }): MetadataEvent[] => {
-  const previousFlatWorkflowVersion = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: flatWorkflowVersion.id,
-    flatEntityMaps: flatWorkflowVersionMapsBeforeWrite,
-  });
-
   if (!isDefined(previousFlatWorkflowVersion)) {
     return deriveMetadataEventsFromCreateAction({
       type: 'create',
@@ -63,7 +59,10 @@ export const buildMirroredWorkflowVersionMetadataEvents = ({
       update,
     },
     allFlatEntityMaps: {
-      flatWorkflowVersionMaps: flatWorkflowVersionMapsBeforeWrite,
+      flatWorkflowVersionMaps: addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: previousFlatWorkflowVersion,
+        flatEntityMaps: createEmptyFlatEntityMaps(),
+      }),
     } as AllFlatEntityMaps,
   });
 };
