@@ -23,7 +23,7 @@
     "yarn": ">=4.0.2"
   },
   "license": "AGPL-3.0",
-  "name": "twenty",
+  "name": "twenty-monorepo",
   "packageManager": "yarn@4.13.0",
   "resolutions": {
     "@module-federation/dts-plugin/undici": "^7.29.0",
@@ -82,6 +82,7 @@
       "packages/twenty-sdk",
       "packages/twenty-front-component-renderer",
       "packages/twenty-client-sdk",
+      "packages/twenty-cli",
       "packages/twenty-cli-deprecated",
       "packages/create-twenty-app",
       "packages/twenty-agent-skills",

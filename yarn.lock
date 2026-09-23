@@ -50235,6 +50235,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-monorepo@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "twenty-monorepo@workspace:."
+  dependencies:
+    "@nx/jest": "npm:22.7.8"
+    "@nx/js": "npm:22.7.8"
+    "@nx/react": "npm:22.7.8"
+    "@nx/storybook": "npm:22.7.8"
+    "@nx/vite": "npm:22.7.8"
+    "@nx/web": "npm:22.7.8"
+    "@types/react": "npm:^19.2.0"
+    "@types/react-dom": "npm:^19.2.0"
+    "@yarnpkg/types": "npm:^4.0.0"
+    concurrently: "npm:^8.2.2"
+    http-server: "npm:^14.1.1"
+    nx: "npm:22.7.8"
+    oxfmt: "npm:0.50.0"
+    tsx: "npm:^4.17.0"
+    verdaccio: "npm:^6.3.1"
+  languageName: unknown
+  linkType: soft
+
 "twenty-oxlint-rules@workspace:*, twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules":
   version: 0.0.0-use.local
   resolution: "twenty-oxlint-rules@workspace:packages/twenty-oxlint-rules"
@@ -50711,25 +50733,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty@workspace:.":
+"twenty@workspace:packages/twenty-cli":
   version: 0.0.0-use.local
-  resolution: "twenty@workspace:."
-  dependencies:
-    "@nx/jest": "npm:22.7.8"
-    "@nx/js": "npm:22.7.8"
-    "@nx/react": "npm:22.7.8"
-    "@nx/storybook": "npm:22.7.8"
-    "@nx/vite": "npm:22.7.8"
-    "@nx/web": "npm:22.7.8"
-    "@types/react": "npm:^19.2.0"
-    "@types/react-dom": "npm:^19.2.0"
-    "@yarnpkg/types": "npm:^4.0.0"
-    concurrently: "npm:^8.2.2"
-    http-server: "npm:^14.1.1"
-    nx: "npm:22.7.8"
-    oxfmt: "npm:0.50.0"
-    tsx: "npm:^4.17.0"
-    verdaccio: "npm:^6.3.1"
+  resolution: "twenty@workspace:packages/twenty-cli"
   languageName: unknown
   linkType: soft
 
