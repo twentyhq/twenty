@@ -13,6 +13,10 @@ jest.mock('@/front-components/hooks/useRequestApplicationTokenRefresh', () => ({
   }),
 }));
 
+jest.mock('~/utils/sleep', () => ({
+  sleep: () => Promise.resolve(),
+}));
+
 const tokenPairAtom = atom<ApplicationTokenPair | null>(null);
 
 jest.mock(
@@ -79,13 +83,21 @@ const forbiddenPayload = {
   ],
 };
 
-type QueuedResponse = { status?: number; payload?: unknown };
+type QueuedResponse = {
+  status?: number;
+  payload?: unknown;
+  isNetworkError?: boolean;
+};
 
 const queueFetchResponses = (...responses: QueuedResponse[]) => {
   const queue = [...responses];
 
   global.fetch = jest.fn(() => {
-    const { status = 200, payload } = queue.shift() ?? {};
+    const { status = 200, payload, isNetworkError } = queue.shift() ?? {};
+
+    if (isNetworkError === true) {
+      return Promise.reject(new TypeError('Failed to fetch'));
+    }
 
     return Promise.resolve({
       ok: status >= 200 && status < 300,
@@ -254,6 +266,53 @@ describe('useFrontComponentFileUpload', () => {
 
     expect(getFetchCalls()).toHaveLength(1);
     expect(mockRequestAccessTokenRefresh).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {
+      label: 'the metadata endpoint cannot be reached',
+      response: { isNetworkError: true },
+    },
+    {
+      label: 'the metadata endpoint answers with a server error',
+      response: { status: 502, payload: null },
+    },
+  ])('should retry the request once when $label', async ({ response }) => {
+    const store = createStore();
+
+    store.set(tokenPairAtom, buildTokenPair(APPLICATION_ACCESS_TOKEN));
+    queueFetchResponses(
+      response,
+      { payload: createFileUploadPayload },
+      { status: 204 },
+      { payload: completeFileUploadPayload },
+    );
+
+    const { result } = renderUseFrontComponentFileUpload(store);
+
+    await expect(
+      result.current.uploadFileToFilesField(buildFile(), {
+        fieldMetadataId: FIELD_METADATA_ID,
+      }),
+    ).resolves.toEqual(completedFile);
+
+    expect(getFetchCalls()).toHaveLength(4);
+    expect(mockRequestAccessTokenRefresh).not.toHaveBeenCalled();
+  });
+
+  it('should keep the server error code of a refused upload target', async () => {
+    const store = createStore();
+
+    store.set(tokenPairAtom, buildTokenPair(APPLICATION_ACCESS_TOKEN));
+    queueFetchResponses({ payload: forbiddenPayload });
+
+    const { result } = renderUseFrontComponentFileUpload(store);
+
+    await expect(
+      result.current.uploadFileToFilesField(buildFile(), {
+        fieldMetadataId: FIELD_METADATA_ID,
+      }),
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
   });
 
   it('should refuse to upload before the application token pair is loaded', async () => {

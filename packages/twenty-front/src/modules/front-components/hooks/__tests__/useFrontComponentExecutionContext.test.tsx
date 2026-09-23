@@ -4,6 +4,7 @@ import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { type AppLocale } from 'twenty-shared/translations';
 import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { CustomError } from 'twenty-shared/utils';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -1119,6 +1120,27 @@ describe('useFrontComponentExecutionContext', () => {
       expect(uploadResult).toEqual({
         status: 'failed',
         reason: 'upload-failed',
+      });
+    });
+
+    it('should report an upload the server refused as permission-denied', async () => {
+      mockUploadFileToFilesField.mockRejectedValue(
+        new CustomError('User does not have permission.', 'FORBIDDEN'),
+      );
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const uploadResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: 'files-field-id' },
+        );
+
+      expect(uploadResult).toEqual({
+        status: 'failed',
+        reason: 'permission-denied',
       });
     });
   });

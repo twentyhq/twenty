@@ -1,5 +1,6 @@
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
+import { uploadFileThroughUploadTarget } from '@/file/utils/uploadFileThroughUploadTarget';
 import {
   CompleteFileUploadDocument,
   CreateFileUploadDocument,
@@ -22,49 +23,45 @@ export const useDirectFileUpload = () => {
     client: apolloClient,
   });
 
-  const uploadFile = async (
+  const uploadFile = (
     file: File,
     { fileFolder, fieldMetadataId, signal }: DirectFileUploadOptions,
-  ): Promise<FileWithSignedUrl> => {
-    const createResult = await createFileUpload({
-      variables: {
-        filename: file.name,
-        size: file.size,
-        fileFolder,
-        fieldMetadataId,
+  ): Promise<FileWithSignedUrl> =>
+    uploadFileThroughUploadTarget({
+      file,
+      signal,
+      createFileUpload: async () => {
+        const createResult = await createFileUpload({
+          variables: {
+            filename: file.name,
+            size: file.size,
+            fileFolder,
+            fieldMetadataId,
+          },
+        });
+
+        const uploadTarget = createResult?.data?.createFileUpload;
+
+        if (!isDefined(uploadTarget)) {
+          throw new Error('Failed to initiate file upload');
+        }
+
+        return uploadTarget;
+      },
+      completeFileUpload: async (fileId) => {
+        const completeResult = await completeFileUpload({
+          variables: { fileId },
+        });
+
+        const uploadedFile = completeResult?.data?.completeFileUpload;
+
+        if (!isDefined(uploadedFile)) {
+          throw new Error('Failed to finalize file upload');
+        }
+
+        return uploadedFile;
       },
     });
-
-    const uploadTarget = createResult?.data?.createFileUpload;
-
-    if (!isDefined(uploadTarget)) {
-      throw new Error('Failed to initiate file upload');
-    }
-
-    const putResponse = await fetch(uploadTarget.uploadUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': uploadTarget.contentType },
-      body: file,
-      credentials: 'omit',
-      signal,
-    });
-
-    if (!putResponse.ok) {
-      throw new Error(`File upload failed with status ${putResponse.status}`);
-    }
-
-    const completeResult = await completeFileUpload({
-      variables: { fileId: uploadTarget.fileId },
-    });
-
-    const uploadedFile = completeResult?.data?.completeFileUpload;
-
-    if (!isDefined(uploadedFile)) {
-      throw new Error('Failed to finalize file upload');
-    }
-
-    return uploadedFile;
-  };
 
   return { uploadFile };
 };

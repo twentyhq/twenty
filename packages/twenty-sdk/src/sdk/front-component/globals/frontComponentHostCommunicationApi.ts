@@ -135,7 +135,10 @@ export type UploadFileParams = {
   fileName?: string;
 };
 
-export type UploadFileFailureReason = 'invalid-params' | 'upload-failed';
+export type UploadFileFailureReason =
+  | 'invalid-params'
+  | 'permission-denied'
+  | 'upload-failed';
 
 export type UploadFileResult =
   | { status: 'uploaded'; file: UploadedFrontComponentFile }
