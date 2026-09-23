@@ -14,7 +14,6 @@ import {
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
 } from 'twenty-shared/workflow';
-
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
@@ -145,6 +144,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         break;
       }
     }
+  }
+
+  private async findFirstActiveObjectMetadata(workspaceId: string) {
+    return this.objectMetadataRepository.findOne(workspaceId, {
+      where: { isActive: true, isSystem: false },
+    });
   }
 
   async runStepCreationSideEffectsAndBuildStep({
@@ -373,9 +378,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.CREATE_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne(workspaceId, {
-            where: { isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -394,9 +397,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.UPDATE_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne(workspaceId, {
-            where: { isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -417,9 +418,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.DELETE_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne(workspaceId, {
-            where: { isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -438,9 +437,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.UPSERT_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne(workspaceId, {
-            where: { isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -460,9 +457,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.FIND_RECORDS: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne(workspaceId, {
-            where: { isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -482,9 +477,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.PICK_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne(workspaceId, {
-            where: { isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
