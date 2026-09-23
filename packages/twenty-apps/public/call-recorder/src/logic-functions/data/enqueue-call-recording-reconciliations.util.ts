@@ -6,7 +6,7 @@ import { MAX_PAYLOADS_PER_ENQUEUE_JOBS_CALL } from 'src/logic-functions/constant
 import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 
 // One job id per recording per recovery day, so an overlapping page or a
-// re-run cannot read the same bot from Recall twice in one night.
+// re-run is deduplicated for as long as the queue still retains the first job.
 export const enqueueCallRecordingReconciliations = async ({
   callRecordingIds,
   recoveryDate,
