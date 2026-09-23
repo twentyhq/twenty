@@ -3,9 +3,8 @@ import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, normalizeAllowedIframeOrigin } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconPlus, IconTrash } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

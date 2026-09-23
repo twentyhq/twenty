@@ -24,7 +24,8 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomState', () => ({
     useState({ id: 'workspace-id', allowedIframeOrigins: initialOrigins }),
 }));
 
-jest.mock('twenty-ui/primitives/feedback', () => ({
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
   useToast: () => ({ enqueueToast }),
 }));
 
