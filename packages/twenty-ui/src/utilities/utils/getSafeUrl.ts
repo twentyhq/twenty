@@ -1,8 +1,17 @@
 const SAFE_URL_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
 
+const SAME_ORIGIN_PROBE_BASE_URL = 'https://same-origin-probe.invalid';
+
 const isSafeUrl = (url: string): boolean => {
-  if (url.startsWith('/') && !url.startsWith('//')) {
-    return true;
+  if (url.startsWith('/')) {
+    try {
+      return (
+        new URL(url, SAME_ORIGIN_PROBE_BASE_URL).origin ===
+        SAME_ORIGIN_PROBE_BASE_URL
+      );
+    } catch {
+      return false;
+    }
   }
 
   try {
@@ -23,6 +32,10 @@ export const getSafeUrl = (
 
   if (isSafeUrl(url)) {
     return url;
+  }
+
+  if (url.startsWith('/')) {
+    return undefined;
   }
 
   const withScheme = `https://${url}`;
