@@ -9,7 +9,10 @@ import { type FileUploadTargetService } from 'src/engine/core-modules/file/file-
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { type FileUploadPrincipal } from 'src/engine/core-modules/file/file-upload/types/file-upload-principal.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 describe('FileUploadService.createFileUpload', () => {
@@ -102,7 +105,9 @@ describe('FileUploadService.createFileUpload', () => {
     } as unknown as jest.Mocked<Repository<FieldMetadataEntity>>;
 
     permissionsService = {
-      principalCanUpdateField: jest.fn().mockResolvedValue(true),
+      assertApplicationPrincipalCanUpdateFieldOrThrow: jest
+        .fn()
+        .mockResolvedValue(undefined),
     } as unknown as jest.Mocked<PermissionsService>;
   });
 
@@ -153,7 +158,12 @@ describe('FileUploadService.createFileUpload', () => {
     });
 
     it('should refuse an application whose permissions cannot update the object owning the field', async () => {
-      permissionsService.principalCanUpdateField.mockResolvedValue(false);
+      permissionsService.assertApplicationPrincipalCanUpdateFieldOrThrow.mockRejectedValue(
+        new PermissionsException(
+          'denied',
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        ),
+      );
 
       await expect(
         createUpload({ principal: applicationPrincipal }),
@@ -161,23 +171,15 @@ describe('FileUploadService.createFileUpload', () => {
         code: PermissionsExceptionCode.PERMISSION_DENIED,
       });
 
-      expect(permissionsService.principalCanUpdateField).toHaveBeenCalledWith({
+      expect(
+        permissionsService.assertApplicationPrincipalCanUpdateFieldOrThrow,
+      ).toHaveBeenCalledWith({
         workspaceId,
         objectMetadataId,
         fieldMetadataId,
-        userWorkspaceId: 'user-workspace-1',
-        applicationId: 'application-a',
+        principal: applicationPrincipal,
       });
       expect(fileStorageService.createPendingFile).not.toHaveBeenCalled();
-    });
-
-    it('should not consult object permissions for a principal without an application', async () => {
-      await expect(
-        createUpload({ principal: userPrincipal }),
-      ).resolves.toMatchObject({ fileId: 'file-id' });
-
-      expect(permissionsService.principalCanUpdateField).not.toHaveBeenCalled();
-      expect(fileStorageService.createPendingFile).toHaveBeenCalledTimes(1);
     });
 
     it('should let an application upload into a field owned by another application when it can update the object', async () => {
