@@ -35,11 +35,7 @@ export const EmailThreadMessageBody = ({
   isDisplayed,
 }: EmailThreadMessageBodyProps) => {
   return (
-    <AnimatedExpandableContainer
-      containAnimation={false}
-      isExpanded={isDisplayed}
-      duration="fast"
-    >
+    <AnimatedExpandableContainer isExpanded={isDisplayed} duration="fast">
       <StyledThreadMessageBody>
         <Linkify
           options={{

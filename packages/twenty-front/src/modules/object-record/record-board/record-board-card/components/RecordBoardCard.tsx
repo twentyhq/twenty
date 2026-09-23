@@ -194,7 +194,6 @@ export const RecordBoardCard = () => {
             >
               <RecordBoardCardHeader />
               <AnimatedExpandableContainer
-                containAnimation={false}
                 isExpanded={recordBoardCardIsExpanded || !isCompactModeActive}
                 initial={false}
               >

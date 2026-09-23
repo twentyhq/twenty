@@ -160,7 +160,6 @@ export const RecordCalendarCard = ({
               >
                 <RecordCalendarCardHeader recordId={recordId} />
                 <AnimatedExpandableContainer
-                  containAnimation={false}
                   isExpanded={!isCompactModeActive}
                   initial={false}
                 >
