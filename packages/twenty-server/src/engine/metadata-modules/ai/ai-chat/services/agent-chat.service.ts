@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -808,11 +809,11 @@ export class AgentChatService {
     const answerText = answers
       .map((answer) => {
         const question = questions[answer.questionIndex];
-        const value =
-          answer.freeText ||
-          (answer.selectedOptionIndices ?? [])
-            .map((optionIndex) => question.options[optionIndex].label)
-            .join(', ');
+        const value = isNonEmptyString(answer.freeText)
+          ? answer.freeText
+          : answer.selectedOptionIndices
+              .map((optionIndex) => question.options[optionIndex].label)
+              .join(', ');
         return `${question.question}\n${value}`;
       })
       .join('\n\n');

@@ -74,11 +74,15 @@ export class AgentChatActorService {
     }
     // Only pre-attribution messages inherit the original participant. Never use
     // a worker's caller or the participant whose preceding turn drained the queue.
-    const thread = await this.threads.findOneOrFail(workspaceId, {
-      where: { id: threadId },
-    });
+    const userWorkspaceId =
+      message.senderUserWorkspaceId ??
+      (
+        await this.threads.findOneOrFail(workspaceId, {
+          where: { id: threadId },
+        })
+      ).userWorkspaceId;
     const sender: AgentChatSender = {
-      userWorkspaceId: message.senderUserWorkspaceId ?? thread.userWorkspaceId,
+      userWorkspaceId,
       applicationId: message.senderApplicationId ?? null,
     };
     return { message, sender };
@@ -140,6 +144,44 @@ export class AgentChatActorService {
       );
     }
     return { authContext, rolePermissionConfig, roleId };
+  }
+
+  async authorizeQuestionAnswer({
+    workspaceId,
+    threadId,
+    messageId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    messageId: string;
+  }): Promise<void> {
+    const question = await this.messages.findOne(workspaceId, {
+      where: { id: messageId, threadId, role: AgentMessageRole.ASSISTANT },
+      select: ['turnId'],
+    });
+    if (!isDefined(question?.turnId)) {
+      throw new AiException(
+        'Question turn not found',
+        AiExceptionCode.MESSAGE_NOT_FOUND,
+      );
+    }
+    const { sender } = await this.resolveMessage({
+      workspaceId,
+      threadId,
+      turnId: question.turnId,
+    });
+    const request = workspaceAuthContextStorage.getStore();
+    if (
+      !isDefined(request) ||
+      !isUserAuthContext(request) ||
+      request.workspace.id !== workspaceId ||
+      (request.application?.id ?? null) !== sender.applicationId
+    ) {
+      throw new AiException(
+        'Answer requires the original application context',
+        AiExceptionCode.INVALID_QUESTION_ANSWER,
+      );
+    }
   }
 
   async authorizeRetry(args: {

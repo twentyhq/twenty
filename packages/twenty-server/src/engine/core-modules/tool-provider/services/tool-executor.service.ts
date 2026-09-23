@@ -64,9 +64,8 @@ export class ToolExecutorService {
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
     const safeArgs = args ?? {};
-    const executionContext = context.resolveExecutionContext
-      ? await context.resolveExecutionContext()
-      : context;
+    const executionContext = await (context.resolveExecutionContext?.() ??
+      context);
 
     return withResolvedToolAuthContext(
       {

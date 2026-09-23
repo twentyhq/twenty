@@ -5,7 +5,6 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
-import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-42/utils/is-empty-unprovisioned-agent-history-workspace.util';
 
 @RegisteredWorkspaceCommand('2.42.0', 1790087156008)
 @Command({
@@ -27,10 +26,7 @@ export class AttributeChatMessageSendersCommand extends ProvisionedWorkspaceComm
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
     if (
-      await isEmptyUnprovisionedAgentHistoryWorkspace({
-        ...args,
-        storage: this.storage,
-      })
+      await this.storage.isEmptyUnprovisionedWorkspace(args.workspaceId)
     ) {
       return;
     }

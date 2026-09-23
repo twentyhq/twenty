@@ -221,4 +221,48 @@ describe('Chat execution sender', () => {
       sender: { userWorkspaceId: 'sender', applicationId: 'original-app' },
     });
   });
+  it.each([null, 'other-app'])(
+    'rejects answering an application question from a different context (%s)',
+    async (applicationId) => {
+      const { service, message } = build();
+      message.senderApplicationId = 'original-app';
+      await expect(
+        withWorkspaceAuthContext(
+          {
+            type: 'user',
+            workspace: { id: workspaceId },
+            userWorkspaceId: 'sender',
+            application: applicationId ? { id: applicationId } : undefined,
+          } as never,
+          () => service.authorizeQuestionAnswer(job),
+        ),
+      ).rejects.toMatchObject({ code: 'INVALID_QUESTION_ANSWER' });
+    },
+  );
+
+  it.each([null, 'original-app'])(
+    'allows another participant to answer in the same application context (%s)',
+    async (applicationId) => {
+      const { service, message } = build();
+      message.senderApplicationId = applicationId;
+      await expect(
+        withWorkspaceAuthContext(
+          {
+            type: 'user',
+            workspace: { id: workspaceId },
+            userWorkspaceId: 'another-participant',
+            application: applicationId ? { id: applicationId } : undefined,
+          } as never,
+          () => service.authorizeQuestionAnswer(job),
+        ),
+      ).resolves.toBeUndefined();
+    },
+  );
+
+  it('rejects an answer without an authenticated request context', async () => {
+    const { service } = build();
+    await expect(service.authorizeQuestionAnswer(job)).rejects.toMatchObject({
+      code: 'INVALID_QUESTION_ANSWER',
+    });
+  });
 });

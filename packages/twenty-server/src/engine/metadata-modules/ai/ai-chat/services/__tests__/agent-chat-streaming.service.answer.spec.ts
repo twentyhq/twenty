@@ -25,6 +25,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const fileRepository = { find: jest.fn().mockResolvedValue([]) };
     const agentChatService = {
+      getThreadById: jest.fn().mockResolvedValue(undefined),
       resolvePendingQuestion: jest.fn().mockResolvedValue({
         turnId: 'turn-id',
         answerText: 'Which option?\nFirst option',
@@ -53,6 +54,9 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
 
     const metricsService = { incrementCounterBy: jest.fn() };
 
+    const actorService = {
+      authorizeQuestionAnswer: jest.fn().mockResolvedValue(undefined),
+    };
     const service = new AgentChatStreamingService(
       threadRepository as never,
       fileRepository as never,
@@ -68,21 +72,12 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
         eventPublisherService as never,
         metricsService as never,
       ),
-      {
-        authorizeJob: jest.fn().mockResolvedValue(undefined),
-        authorizeRetry: jest.fn().mockResolvedValue(undefined),
-        authorize: jest.fn().mockResolvedValue({}),
-        resolveMessage: jest.fn().mockResolvedValue({
-          sender: {
-            userWorkspaceId: 'user-workspace-id',
-            applicationId: null,
-          },
-        }),
-      } as never,
+      actorService as never,
     );
 
     return {
       service,
+      actorService,
       threadRepository,
       fileRepository,
       messageQueueService,
@@ -100,6 +95,55 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     userWorkspaceId: 'user-workspace-id',
     workspace,
   };
+
+  it.each([
+    { answers: [] },
+    {
+      answers: [
+        { questionIndex: 0, selectedOptionIndices: [], freeText: '  ' },
+      ],
+    },
+  ])(
+    'rejects an empty answer without changing the question or queue',
+    async ({ answers }) => {
+      const {
+        service,
+        agentChatService,
+        messageQueueService,
+        streamHeartbeatService,
+      } = buildService();
+      await expect(
+        service.answerPendingQuestionAndResumeStream({
+          ...answerArguments,
+          answers,
+        }),
+      ).rejects.toMatchObject({ code: 'INVALID_QUESTION_ANSWER' });
+      expect(agentChatService.resolvePendingQuestion).not.toHaveBeenCalled();
+      expect(agentChatService.addMessage).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+      expect(streamHeartbeatService.markClaimed).not.toHaveBeenCalled();
+    },
+  );
+
+  it('leaves the pending question untouched when application authorization fails', async () => {
+    const {
+      service,
+      actorService,
+      agentChatService,
+      messageQueueService,
+      streamHeartbeatService,
+    } = buildService();
+    actorService.authorizeQuestionAnswer.mockRejectedValue(
+      new Error('Application context changed'),
+    );
+    await expect(
+      service.answerPendingQuestionAndResumeStream(answerArguments),
+    ).rejects.toThrow('Application context changed');
+    expect(agentChatService.resolvePendingQuestion).not.toHaveBeenCalled();
+    expect(agentChatService.addMessage).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+    expect(streamHeartbeatService.markClaimed).not.toHaveBeenCalled();
+  });
 
   it('marks the heartbeat before the pending question claims the thread', async () => {
     const { service, agentChatService, streamHeartbeatService } =

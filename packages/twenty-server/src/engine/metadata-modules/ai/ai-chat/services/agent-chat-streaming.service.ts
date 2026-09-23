@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
@@ -541,6 +542,24 @@ export class AgentChatStreamingService {
     modelId?: string;
     fileAttachments?: AiChatFileAttachment[];
   }): Promise<{ streamId: string; turnId: string | null }> {
+    if (
+      !answers.some(
+        (answer) =>
+          isNonEmptyString(answer.freeText?.trim()) ||
+          answer.selectedOptionIndices.length > 0,
+      ) &&
+      !isNonEmptyArray(fileAttachments)
+    ) {
+      throw new AiException(
+        'Provide an answer or attachment',
+        AiExceptionCode.INVALID_QUESTION_ANSWER,
+      );
+    }
+    await this.actorService.authorizeQuestionAnswer({
+      workspaceId: workspace.id,
+      threadId,
+      messageId,
+    });
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId },
       select: ['id', 'activeStreamId'],

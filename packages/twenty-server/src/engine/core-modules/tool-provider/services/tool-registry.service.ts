@@ -37,9 +37,8 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options?: { categories?: ToolCategory[]; excludeTools?: Set<string> },
   ): Promise<ToolIndexEntry[]> {
-    const executionContext = context.resolveExecutionContext
-      ? await context.resolveExecutionContext()
-      : context;
+    const executionContext = await (context.resolveExecutionContext?.() ??
+      context);
     const categorySet = options?.categories
       ? new Set(options.categories)
       : undefined;
@@ -74,10 +73,10 @@ export class ToolRegistryService {
     context: ToolProviderContext;
     precomputedCatalog?: ToolIndexEntry[];
   }): Promise<Map<string, object>> {
-    const executionContext = context.resolveExecutionContext
-      ? await context.resolveExecutionContext()
-      : context;
-    const index = precomputedCatalog ?? (await this.getCatalog(context));
+    const executionContext = await (context.resolveExecutionContext?.() ??
+      context);
+    const index =
+      precomputedCatalog ?? (await this.getCatalog(executionContext));
     const nameSet = new Set(toolNames);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
