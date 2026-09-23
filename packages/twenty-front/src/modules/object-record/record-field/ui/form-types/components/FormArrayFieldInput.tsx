@@ -337,6 +337,7 @@ export const FormArrayFieldInput = ({
                   placeholder={t`Enter an item`}
                   value={newItemDraftValue}
                   copyButton={false}
+                  shouldPropagateUnhandledEscape
                   onChange={handleFirstItemInputChange}
                   onEnter={handleFirstItemInputEnter}
                   shouldTrim={false}

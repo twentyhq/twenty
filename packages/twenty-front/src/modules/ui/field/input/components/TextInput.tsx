@@ -46,6 +46,7 @@ export type TextInputProps = {
   shouldTrim?: boolean;
   disabled?: boolean;
   className?: string;
+  shouldPropagateUnhandledEscape?: boolean;
 };
 
 const getValue = (value: string, shouldTrim: boolean) => {
@@ -72,6 +73,7 @@ export const TextInput = ({
   shouldTrim = true,
   disabled,
   className,
+  shouldPropagateUnhandledEscape,
 }: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
@@ -96,6 +98,7 @@ export const TextInput = ({
     onClickOutside,
     onTab,
     onShiftTab,
+    shouldPropagateUnhandledEscape,
   });
 
   return (
