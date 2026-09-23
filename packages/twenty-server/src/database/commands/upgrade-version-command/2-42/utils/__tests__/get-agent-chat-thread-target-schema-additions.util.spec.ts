@@ -22,7 +22,9 @@ const createStandardMetadata = () =>
   }).allFlatEntityMaps;
 
 // A workspace that already carries agent history but not the target object.
-const createExistingWithoutTarget = () => {
+const createExistingWithoutTarget = ({
+  withoutObjectUniversalIdentifier,
+}: { withoutObjectUniversalIdentifier?: string } = {}) => {
   const standard = createStandardMetadata();
 
   const keepByUniversalIdentifier = <TFlatEntity>(
@@ -41,7 +43,9 @@ const createExistingWithoutTarget = () => {
       ...standard.flatObjectMetadataMaps,
       byUniversalIdentifier: keepByUniversalIdentifier(
         standard.flatObjectMetadataMaps.byUniversalIdentifier,
-        (identifier) => identifier !== TARGET_IDENTIFIER,
+        (identifier) =>
+          identifier !== TARGET_IDENTIFIER &&
+          identifier !== withoutObjectUniversalIdentifier,
       ),
     },
     flatFieldMetadataMaps: {
@@ -96,11 +100,9 @@ describe('getAgentChatThreadTargetSchemaAdditions', () => {
   });
 
   it('adds nothing when the workspace has no agent chat thread yet', () => {
-    const existing = createExistingWithoutTarget();
-
-    delete existing.flatObjectMetadataMaps.byUniversalIdentifier[
-      THREAD_IDENTIFIER
-    ];
+    const existing = createExistingWithoutTarget({
+      withoutObjectUniversalIdentifier: THREAD_IDENTIFIER,
+    });
 
     // Both legs resolve against agentChatThread; the agent history migration
     // skips a workspace with no workspace schema, so it may not be there yet.
