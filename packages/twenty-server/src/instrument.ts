@@ -45,6 +45,16 @@ const parseSampleRate = ({
     : fallback;
 };
 
+const parseExportIntervalMillis = (value: string | undefined) => {
+  const parsed = Number(value);
+
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : 30000;
+};
+
+const metricExportIntervalMillis = parseExportIntervalMillis(
+  process.env.OTEL_METRIC_EXPORT_INTERVAL,
+);
+
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
   const tracesSampleRate = parseSampleRate({
     value: process.env.SENTRY_TRACES_SAMPLE_RATE,
@@ -135,7 +145,7 @@ const meterProvider = new MeterProvider({
       ? [
           new PeriodicExportingMetricReader({
             exporter: new ConsoleMetricExporter(),
-            exportIntervalMillis: 10000,
+            exportIntervalMillis: metricExportIntervalMillis,
           }),
         ]
       : []),
@@ -146,7 +156,7 @@ const meterProvider = new MeterProvider({
               url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
               temporalityPreference: AggregationTemporality.DELTA,
             }),
-            exportIntervalMillis: 10000,
+            exportIntervalMillis: metricExportIntervalMillis,
           }),
         ]
       : []),
