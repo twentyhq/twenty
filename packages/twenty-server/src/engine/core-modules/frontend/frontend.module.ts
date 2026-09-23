@@ -1,7 +1,11 @@
 import { Module, type OnModuleInit } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 
-import express from 'express';
+import express, {
+  type Request,
+  type Response,
+  type NextFunction,
+} from 'express';
 import { join } from 'path';
 
 import { ClientConfigModule } from 'src/engine/core-modules/client-config/client-config.module';
@@ -29,25 +33,34 @@ export class FrontendModule implements OnModuleInit {
     // Register after API controllers, before Nest's not-found handler.
     const adapter = this.httpAdapterHost.httpAdapter;
 
+    const serveStatic = express.static(this.frontendService.frontPath, {
+      index: false,
+      redirect: false,
+      setHeaders: (response, filePath) => {
+        // Never let an alternate spelling of index.html bypass its dynamic policy.
+        if (filePath.toLowerCase().endsWith('.html')) {
+          response.setHeader('Cache-Control', 'no-store');
+          response.setHeader('CDN-Cache-Control', 'no-store');
+          response.setHeader('Cloudflare-CDN-Cache-Control', 'no-store');
+          response.setHeader(
+            'Content-Security-Policy',
+            "frame-ancestors 'none'",
+          );
+          response.setHeader('X-Frame-Options', 'DENY');
+        }
+      },
+    });
+
+    adapter.use((request: Request, response: Response, next: NextFunction) => {
+      // The canonical document needs request-specific configuration and headers.
+      if (request.path === '/index.html') {
+        next();
+
+        return;
+      }
+
+      serveStatic(request, response, next);
+    });
     adapter.use(this.frontendService.serveDocument.bind(this.frontendService));
-    adapter.use(
-      express.static(this.frontendService.frontPath, {
-        index: false,
-        redirect: false,
-        setHeaders: (response, filePath) => {
-          // Never let an alternate spelling of index.html bypass its dynamic policy.
-          if (filePath.toLowerCase().endsWith('.html')) {
-            response.setHeader('Cache-Control', 'no-store');
-            response.setHeader('CDN-Cache-Control', 'no-store');
-            response.setHeader('Cloudflare-CDN-Cache-Control', 'no-store');
-            response.setHeader(
-              'Content-Security-Policy',
-              "frame-ancestors 'none'",
-            );
-            response.setHeader('X-Frame-Options', 'DENY');
-          }
-        },
-      }),
-    );
   }
 }

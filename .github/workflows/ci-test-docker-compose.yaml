@@ -160,7 +160,7 @@ jobs:
       - name: Verify backend HTML bootstrap
         run: |
           for path in / /index.html /objects/people; do
-            curl --fail --silent --show-error --dump-header /tmp/twenty-headers \
+            curl --fail --silent --show-error --header "Accept: text/html" --dump-header /tmp/twenty-headers \
               "http://localhost:2020${path}" --output /tmp/twenty-document
             grep -qi '^cache-control: no-store' /tmp/twenty-headers
             grep -qi "^content-security-policy: frame-ancestors 'self';" /tmp/twenty-headers

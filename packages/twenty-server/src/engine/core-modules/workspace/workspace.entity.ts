@@ -300,9 +300,10 @@ export class WorkspaceEntity {
   @Column({ default: false })
   isInternalMessagesImportEnabled: boolean;
 
+  // Cached auth contexts from older replicas can omit this field during upgrades.
   @Field(() => [String], { nullable: true })
-  @Column({ type: 'varchar', array: true, nullable: true, default: '{}' })
-  allowedIframeOrigins: string[] | null;
+  @Column({ type: 'varchar', array: true, default: '{}' })
+  allowedIframeOrigins: string[];
 
   @Field(() => [String], { nullable: true })
   @Column({

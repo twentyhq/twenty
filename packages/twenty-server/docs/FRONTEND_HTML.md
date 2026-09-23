@@ -5,6 +5,10 @@ browser; this is HTML template delivery, not server-side React rendering. The
 template is read once from `dist/front/index.html`. Each document gets the public
 `ClientConfigService` response and the framing policy for the requested workspace.
 JavaScript, CSS, fonts and images can continue to be served from S3/CDN.
+Existing local static files take precedence over the SPA fallback. The fallback
+requires an explicit `Accept: text/html` and, when supplied, a document, iframe or
+frame `Sec-Fetch-Dest`. API paths and file extensions other than `/index.html`
+never fall back to the SPA. Use `Accept: text/html` in document smoke checks.
 
 ## Startup configuration
 
@@ -38,8 +42,9 @@ The response uses `Content-Security-Policy: frame-ancestors 'self' ...`.
 `X-Frame-Options: SAMEORIGIN` is kept only for the default policy; it is omitted
 when external origins are explicitly allowed. Other CSP directives remain in
 place. The policy is resolved from the request hostname, not `Origin`, `Referer`,
-query parameters or client-provided workspace identifiers. It is not stored in the
-flat workspace cache. Isolated public application domains never receive the CRM
+query parameters or client-provided workspace identifiers. HTML policy lookup
+reads the workspace directly. GraphQL uses the existing workspace cache, which is
+invalidated on updates. Isolated public application domains never receive the CRM
 shell. A failed workspace lookup returns 503 with the restrictive policy.
 
 HTML carries `Cache-Control`, `CDN-Cache-Control` and

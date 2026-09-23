@@ -204,6 +204,7 @@ import { AddHealthCheckToApplicationFastInstanceCommand } from 'src/database/com
 import { AddApplicationGrantedCapabilitiesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088525621-add-application-granted-capabilities';
 import { AddViewGroupLoadLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088647379-add-view-group-load-limit';
 import { AddWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790169773751-add-workspace-allowed-iframe-origins';
+import { RequireWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790173916519-require-workspace-allowed-iframe-origins';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -410,4 +411,5 @@ export const INSTANCE_COMMANDS = [
   AddApplicationGrantedCapabilitiesFastInstanceCommand,
   AddViewGroupLoadLimitFastInstanceCommand,
   AddWorkspaceAllowedIframeOriginsFastInstanceCommand,
+  RequireWorkspaceAllowedIframeOriginsFastInstanceCommand,
 ];

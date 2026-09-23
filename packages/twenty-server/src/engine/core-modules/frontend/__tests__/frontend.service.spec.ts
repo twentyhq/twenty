@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
@@ -98,6 +98,7 @@ describe('frontend HTML delivery', () => {
     async (pathname) => {
       const response = await request(app.getHttpServer())
         .get(pathname)
+        .set('Accept', 'text/html')
         .set('Host', 'customer.twenty.test')
         .set('X-Forwarded-Proto', 'https')
         .expect(200);
@@ -118,6 +119,7 @@ describe('frontend HTML delivery', () => {
   it('does not borrow a policy from another workspace or a supplied Origin header', async () => {
     const response = await request(app.getHttpServer())
       .get('/')
+      .set('Accept', 'text/html')
       .set('Host', 'other.twenty.test')
       .set('Origin', 'https://customer.twenty.test')
       .expect(200);
@@ -130,6 +132,7 @@ describe('frontend HTML delivery', () => {
   it('reads fresh policy and configuration on subsequent documents, even with a conditional request', async () => {
     await request(app.getHttpServer())
       .get('/')
+      .set('Accept', 'text/html')
       .set('Host', 'customer.twenty.test')
       .set('X-Forwarded-Proto', 'https');
     resolveWorkspaceAndPublicDomain.mockResolvedValue({
@@ -138,6 +141,7 @@ describe('frontend HTML delivery', () => {
     });
     const response = await request(app.getHttpServer())
       .get('/')
+      .set('Accept', 'text/html')
       .set('Host', 'customer.twenty.test')
       .set('If-None-Match', '*')
       .expect(200);
@@ -152,7 +156,10 @@ describe('frontend HTML delivery', () => {
       ...config,
       frontDomain: "</script><script>alert(1)</script>$&$'",
     });
-    const response = await request(app.getHttpServer()).get('/').expect(200);
+    const response = await request(app.getHttpServer())
+      .get('/')
+      .set('Accept', 'text/html')
+      .expect(200);
     expect(response.text).not.toContain('<script>alert(1)');
     const serializedConfig = response.text.match(
       /type="application\/json">(.*?)<\/script>/,
@@ -164,14 +171,20 @@ describe('frontend HTML delivery', () => {
     resolveWorkspaceAndPublicDomain.mockRejectedValue(
       WorkspaceNotFoundDefaultError,
     );
-    await request(app.getHttpServer()).get('/').expect(200);
+    await request(app.getHttpServer())
+      .get('/')
+      .set('Accept', 'text/html')
+      .expect(200);
   });
 
   it('fails closed when policy resolution fails', async () => {
     resolveWorkspaceAndPublicDomain.mockRejectedValue(
       new Error('Database unavailable'),
     );
-    const response = await request(app.getHttpServer()).get('/').expect(503);
+    const response = await request(app.getHttpServer())
+      .get('/')
+      .set('Accept', 'text/html')
+      .expect(503);
     expect(response.headers['content-security-policy']).toContain(
       "frame-ancestors 'self'",
     );
@@ -182,7 +195,10 @@ describe('frontend HTML delivery', () => {
       workspace: undefined,
       isIsolatedOrigin: true,
     });
-    await request(app.getHttpServer()).get('/').expect(404);
+    await request(app.getHttpServer())
+      .get('/')
+      .set('Accept', 'text/html')
+      .expect(404);
   });
 
   it.each([
@@ -190,16 +206,70 @@ describe('frontend HTML delivery', () => {
     '/rest/missing',
     '/auth/missing',
     '/assets/missing.js',
-    '/assets/missing',
     '/.well-known/missing',
   ])('does not turn %s into a successful HTML response', async (pathname) => {
-    await request(app.getHttpServer()).get(pathname).expect(404);
+    await request(app.getHttpServer())
+      .get(pathname)
+      .set('Accept', 'text/html')
+      .expect(404);
+    expect(getClientConfig).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    '*/*',
+    'application/json',
+    'image/avif,image/webp,*/*',
+    'text/html;q=0',
+  ])('does not serve a document for Accept: %s', async (accept) => {
+    await request(app.getHttpServer())
+      .get('/new-asset-directory/missing')
+      .set('Accept', accept)
+      .expect(404);
+    expect(getClientConfig).not.toHaveBeenCalled();
+  });
+
+  it.each(['script', 'style', 'image', 'font', 'empty'])(
+    'does not serve a document for Sec-Fetch-Dest: %s',
+    async (destination) => {
+      await request(app.getHttpServer())
+        .get('/new-asset-directory/missing')
+        .set('Accept', 'text/html')
+        .set('Sec-Fetch-Dest', destination)
+        .expect(404);
+      expect(getClientConfig).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(['document', 'iframe', 'frame'])(
+    'serves HTML navigation with Sec-Fetch-Dest: %s',
+    async (destination) => {
+      await request(app.getHttpServer())
+        .get('/objects/people')
+        .set('Accept', 'text/html,application/xhtml+xml,*/*;q=0.8')
+        .set('Sec-Fetch-Dest', destination)
+        .expect(200);
+      expect(getClientConfig).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it('serves extensionless static files in arbitrary directories before the SPA fallback', async () => {
+    mkdirSync(join(directory, 'new-asset-directory'));
+    writeFileSync(
+      join(directory, 'new-asset-directory', 'example'),
+      'static content',
+    );
+    const response = await request(app.getHttpServer())
+      .get('/new-asset-directory/example')
+      .set('Accept', 'text/html')
+      .expect(200);
+    expect(response.body.toString()).toBe('static content');
     expect(getClientConfig).not.toHaveBeenCalled();
   });
 
   it('preserves API controller routing', async () => {
     const response = await request(app.getHttpServer())
       .get('/healthz')
+      .set('Accept', 'text/html')
       .expect(200);
     expect(response.body).toEqual({ status: 'ok' });
     expect(getClientConfig).not.toHaveBeenCalled();
@@ -209,10 +279,12 @@ describe('frontend HTML delivery', () => {
     writeFileSync(join(directory, 'example.js'), 'console.log(1);');
     const asset = await request(app.getHttpServer())
       .get('/example.js')
+      .set('Accept', 'text/html')
       .expect(200);
     expect(asset.text).toBe('console.log(1);');
     const html = await request(app.getHttpServer())
       .get('/%69ndex.html')
+      .set('Accept', 'text/html')
       .expect(200);
     expect(html.headers['content-security-policy']).toBe(
       "frame-ancestors 'none'",
@@ -226,7 +298,10 @@ describe('frontend HTML delivery', () => {
   });
 
   it('returns the policy for HEAD requests without a response body', async () => {
-    const response = await request(app.getHttpServer()).head('/').expect(200);
+    const response = await request(app.getHttpServer())
+      .head('/')
+      .set('Accept', 'text/html')
+      .expect(200);
     expect(response.headers['content-security-policy']).toContain(
       "frame-ancestors 'self'",
     );

@@ -75,6 +75,15 @@ describe('Security permissions', () => {
       `;
 
       it('allows an administrator to normalize origins and revoke embedding', async () => {
+        await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send({
+            query:
+              '{ currentUser { currentWorkspace { allowedIframeOrigins } } }',
+          })
+          .expect(200);
+
         const response = await client
           .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -120,6 +129,21 @@ describe('Security permissions', () => {
         expect(revoked.body.data.updateWorkspace.allowedIframeOrigins).toEqual(
           [],
         );
+
+        const reloadedAfterRevocation = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send({
+            query:
+              '{ currentUser { currentWorkspace { allowedIframeOrigins } } }',
+          })
+          .expect(200);
+
+        expect(reloadedAfterRevocation.body.errors).toBeUndefined();
+        expect(
+          reloadedAfterRevocation.body.data.currentUser.currentWorkspace
+            .allowedIframeOrigins,
+        ).toEqual([]);
       });
 
       it('rejects updates from a member without Security permission', async () => {
