@@ -23,6 +23,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
@@ -50,6 +51,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   } = useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
+
+  const { canPersistChanges } = useCanPersistViewChanges();
 
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
@@ -178,10 +181,13 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           {shouldShowGroupLoadLimit && (
             <SelectableListItem
               itemId="LoadLimit"
-              onEnter={() => onContentChange('recordGroupLoadLimit')}
+              onEnter={() =>
+                canPersistChanges && onContentChange('recordGroupLoadLimit')
+              }
             >
               <ListItem
                 focused={selectedItemId === 'LoadLimit'}
+                disabled={!canPersistChanges}
                 onClick={() => onContentChange('recordGroupLoadLimit')}
                 startIcon={<IconArrowBarToDownDashed />}
                 description={String(recordIndexGroupLoadLimit)}
@@ -192,10 +198,13 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           )}
           <SelectableListItem
             itemId="HideEmptyGroups"
-            onEnter={() => handleHideEmptyRecordGroupChange()}
+            onEnter={() =>
+              canPersistChanges && handleHideEmptyRecordGroupChange()
+            }
           >
             <SettingsRow
               focused={selectedItemId === 'HideEmptyGroups'}
+              disabled={!canPersistChanges}
               startIcon={<IconCircleOff />}
               onCheckedChange={handleHideEmptyRecordGroupChange}
               checked={shouldHideEmptyGroups}

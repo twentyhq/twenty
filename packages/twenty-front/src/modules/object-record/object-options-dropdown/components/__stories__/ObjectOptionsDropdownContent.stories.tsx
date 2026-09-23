@@ -3,8 +3,11 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
+import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
@@ -21,15 +24,19 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewType } from '@/views/types/ViewType';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { useEffect, useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { ViewVisibility } from '~/generated-metadata/graphql';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const instanceId = 'entity-options-instance';
 
@@ -141,6 +148,28 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
   decorators: [createContentDecorator(contentId)],
 });
 
+// Unlisted since the mocked user lacks the VIEWS permission, and not the
+// index view, which hides the Group by and Sort rows
+const SAVABLE_VIEW: ViewWithRelations = {
+  ...mockedViews.find((view) => view.name === 'All Companies')!,
+  key: null,
+  visibility: ViewVisibility.UNLISTED,
+};
+
+const SavableCurrentViewDecorator: Decorator = (Story) => {
+  const setContextStoreCurrentViewId = useSetAtomComponentState(
+    contextStoreCurrentViewIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  useEffect(() => {
+    setTestViewsInMetadataStore(jotaiStore, [SAVABLE_VIEW]);
+    setContextStoreCurrentViewId(SAVABLE_VIEW.id);
+  }, [setContextStoreCurrentViewId]);
+
+  return <Story />;
+};
+
 // The Load limit row only renders on a grouped view, and seeding 25 rather than
 // the default 8 keeps the checked-option assertion from passing by accident.
 const GroupedViewWithLoadLimitSetterEffect = () => {
@@ -185,7 +214,12 @@ export const Fields = createStory('fields');
 
 export const HiddenFields = createStory('hiddenFields');
 
-export const RecordGroups = createStory('recordGroups');
+export const RecordGroups: Story = {
+  decorators: [
+    SavableCurrentViewDecorator,
+    createContentDecorator('recordGroups'),
+  ],
+};
 
 export const RecordGroupFields = createStory('recordGroupFields');
 
@@ -198,8 +232,20 @@ export const HiddenRecordGroups = createStory('hiddenRecordGroups');
 export const RecordGroupLoadLimitSelectionAction: Story = {
   decorators: [
     GroupedViewWithLoadLimitDecorator,
+    SavableCurrentViewDecorator,
     createContentDecorator('recordGroups'),
   ],
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.mutation('UpdateView', ({ variables }) =>
+          HttpResponse.json({
+            data: { updateView: { ...SAVABLE_VIEW, ...variables.input } },
+          }),
+        ),
+      ],
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
