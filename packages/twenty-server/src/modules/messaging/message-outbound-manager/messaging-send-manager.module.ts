@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
@@ -28,6 +31,9 @@ import { SentMessagePersistenceService } from 'src/modules/messaging/message-out
     MessagingImportManagerModule,
     MessagingMessageCleanerModule,
     EmailingModule,
+    BillingModule,
+    ThrottlerModule,
+    UsageLimitModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,
       MessageFolderEntity,

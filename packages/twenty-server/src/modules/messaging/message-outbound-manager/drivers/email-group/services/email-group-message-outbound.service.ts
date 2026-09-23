@@ -1,42 +1,58 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   MessageChannelException,
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { EMAIL_GROUP_SEND_THROTTLE } from 'src/modules/messaging/message-outbound-manager/drivers/email-group/constants/email-group-send-throttle.constant';
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { buildOutboundThreadingHeaders } from 'src/modules/messaging/message-outbound-manager/utils/build-outbound-threading-headers.util';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
-import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 
 @Injectable()
 export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
-  private readonly logger = new Logger(EmailGroupMessageOutboundService.name);
-
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
-    private readonly emailBillingService: EmailBillingService,
+    private readonly usageLimitSpeedService: UsageLimitSpeedService,
+    private readonly throttlerService: ThrottlerService,
+    private readonly billingService: BillingService,
   ) {}
 
   async sendMessage(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<SendMessageResult> {
+    const isPayingCustomer = await this.billingService.isPayingCustomer(
+      connectedAccount.workspaceId,
+    );
+
+    if (!isPayingCustomer) {
+      throw new MessageChannelException(
+        `Cannot send from ${connectedAccount.handle}: sending from an email group is available once your workspace is on a paid plan and has been billed.`,
+        MessageChannelExceptionCode.EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN,
+      );
+    }
+
     const emailingDomain = await this.resolveEmailingDomain(connectedAccount);
 
     if (emailingDomain.status !== EmailingDomainStatus.VERIFIED) {
@@ -46,9 +62,24 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       );
     }
 
-    await this.emailBillingService.validateEmailCreditsOrThrow(
-      connectedAccount.workspaceId,
+    const recipientCount =
+      this.toRecipientArray(sendMessageInput.to).length +
+      this.toRecipientArray(sendMessageInput.cc).length +
+      this.toRecipientArray(sendMessageInput.bcc).length;
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `email-group-send:throttler:${connectedAccount.workspaceId}`,
+      recipientCount,
+      EMAIL_GROUP_SEND_THROTTLE.maxRecipients,
+      EMAIL_GROUP_SEND_THROTTLE.windowMs,
     );
+
+    await this.usageLimitSpeedService.consumeOrThrow({
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+      authContext: buildSystemAuthContext(connectedAccount.workspaceId),
+      cost: recipientCount,
+    });
 
     const threadExternalId =
       sendMessageInput.threadExternalId ??
@@ -78,21 +109,6 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
         }),
       },
     );
-
-    // The provider has already accepted the mail, so surfacing a billing
-    // failure would invite a retry that sends it a second time.
-    await this.emailBillingService
-      .billSentEmails({
-        workspaceId: connectedAccount.workspaceId,
-        sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
-      })
-      .catch((error) => {
-        this.logger.error(
-          `Workspace ${connectedAccount.workspaceId} sent email ${result.messageId} but failed to bill it, so this send is unbilled: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-      });
 
     return {
       headerMessageId: result.headerMessageId ?? result.messageId,
