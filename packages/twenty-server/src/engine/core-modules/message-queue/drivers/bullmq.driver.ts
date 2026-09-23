@@ -446,6 +446,11 @@ export class BullMQDriver
 
     const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
 
+    // BullMQ hands back the job holding the deduplication key instead of the one we just built
+    if (isDefined(queueOptions.jobId) && job.id !== queueOptions.jobId) {
+      return;
+    }
+
     return job.id;
   }
 

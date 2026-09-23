@@ -402,11 +402,15 @@ export class CleanerWorkspaceService {
             );
 
             if (!dryRun) {
+              const destroyJobId = `destroy-soft-deleted-workspace-${workspace.id}`;
               const jobId =
                 await this.messageQueueService.add<DestroySoftDeletedWorkspaceJobData>(
                   DestroySoftDeletedWorkspaceJob.name,
                   { workspaceId: workspace.id },
-                  { id: `destroy-soft-deleted-workspace-${workspace.id}` },
+                  {
+                    id: destroyJobId,
+                    deduplication: { id: destroyJobId },
+                  },
                 );
 
               if (isDefined(jobId)) {

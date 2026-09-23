@@ -71,6 +71,23 @@ describe('BullMQDriver deduplication', () => {
         'install-application-ws-1-app-1-generated-uuid-000000000000000000000',
       );
     });
+
+    it('reports no job id when BullMQ deduplicated the add against a running job', async () => {
+      mockGetJobs.mockResolvedValue([]);
+      mockAdd.mockResolvedValue({ id: 'destroy-ws-1-already-running' });
+
+      const jobId = await driver.add(
+        MessageQueue.workspaceQueue,
+        'job',
+        {},
+        { id: 'destroy-ws-1', deduplication: { id: 'destroy-ws-1' } },
+      );
+
+      expect(jobId).toBeUndefined();
+      expect(mockAdd.mock.calls[0][2].deduplication).toEqual({
+        id: 'destroy-ws-1',
+      });
+    });
   });
 
   describe('bulkAdd', () => {

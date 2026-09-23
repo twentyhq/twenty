@@ -44,7 +44,14 @@ export class DestroySoftDeletedWorkspaceJob {
 
     this.logger.log(`Destroying workspace ${workspaceId}`);
 
-    await this.workspaceService.deleteWorkspace(workspaceId);
+    try {
+      await this.workspaceService.deleteWorkspace(workspaceId);
+    } catch (error) {
+      // The queue driver only counts a failed job in a metric, so without this the workspace and the cause are lost
+      this.logger.error(`Failed to destroy workspace ${workspaceId}`, error);
+
+      throw error;
+    }
 
     void this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.CronJobDeletedWorkspace,
