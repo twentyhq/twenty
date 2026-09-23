@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
@@ -15,11 +14,8 @@ import { UnpinCreationCommandsOnRecordSelectionCommand } from 'src/database/comm
 import { BackfillMissingSystemRelationIndexesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789663454000-backfill-missing-system-relation-indexes.command';
 import { RelinkWorkflowVersionsToCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789645879295-relink-workflow-versions-to-core-workflows.command';
 import { SyncMessageRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789757500000-sync-message-record-page.command';
-import { UpgradePeopleDataLabsApplicationToCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790090516746-upgrade-people-data-labs-application.command';
 import { SetMessageTextDisplayedMaxRowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789757500001-set-message-text-displayed-max-rows.command';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -29,12 +25,10 @@ import { GateWorkflowFavoritesByCoreIndexFlagCommand } from 'src/database/comman
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationEntity]),
     AgentHistoryMigrationModule,
     AgentChatStreamStateModule,
     AgentHistoryModule,
     ApplicationModule,
-    ApplicationUpgradeModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
@@ -55,7 +49,6 @@ import { GateWorkflowFavoritesByCoreIndexFlagCommand } from 'src/database/comman
     SyncMessageRecordPageCommand,
     SetMessageTextDisplayedMaxRowsCommand,
     PurgeSoftDeletedRowLevelPermissionPredicatesCommand,
-    UpgradePeopleDataLabsApplicationToCoreWorkflowsCommand,
   ],
   exports: [
     GateWorkflowFavoritesByCoreIndexFlagCommand,
