@@ -17,6 +17,7 @@ import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/fl
 import { type WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('Workspace cache concurrent publication', () => {
   let application: ApplicationWithVariable;
@@ -105,6 +106,8 @@ describe('Workspace cache concurrent publication', () => {
         'SELECT id, "universalIdentifier" FROM core."applicationVariable" WHERE "applicationId" = $1 AND key = $2',
         [application.id, application.variableKey],
       );
+
+    jestExpectToBeDefined(applicationVariable);
 
     applicationVariableId = applicationVariable.id;
     applicationVariableUniversalIdentifier =

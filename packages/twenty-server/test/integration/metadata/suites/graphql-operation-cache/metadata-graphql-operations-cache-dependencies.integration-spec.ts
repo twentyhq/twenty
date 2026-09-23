@@ -261,7 +261,7 @@ describe('metadata GraphQL operations cache dependencies', () => {
     baselineQuery: ASTNode;
   }): Promise<WorkspaceCacheOrDerivedCacheKeyName[]> => {
     const declaredDependencies = new Set<WorkspaceCacheOrDerivedCacheKeyName>(
-      METADATA_GRAPHQL_OPERATIONS_TO_CACHE[operationName].dependencies,
+      METADATA_GRAPHQL_OPERATIONS_TO_CACHE[operationName]?.dependencies,
     );
     const requestInfrastructureKeys =
       await recordAccessedCacheKeys(baselineQuery);

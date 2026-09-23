@@ -209,6 +209,7 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
         filter: ALL_RECORDS_FILTER,
       }),
     );
+
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {

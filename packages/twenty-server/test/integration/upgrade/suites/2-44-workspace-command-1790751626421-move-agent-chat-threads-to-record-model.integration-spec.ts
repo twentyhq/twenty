@@ -165,9 +165,9 @@ describe('2-44 workspace command 1790751626421 - MoveAgentChatThreadsToRecordMod
     const threads = await readThreads();
 
     // Trashed as of the upgrade, so trash cleanup does not purge old archives
-    expect(threads[archivedThreadId].archivedAt).toEqual(ARCHIVED_AT);
+    expect(threads[archivedThreadId]?.archivedAt).toEqual(ARCHIVED_AT);
     expect(
-      threads[archivedThreadId].deletedAt!.getTime(),
+      threads[archivedThreadId]?.deletedAt?.getTime(),
     ).toBeGreaterThanOrEqual(startedAt.getTime() - 1000);
     expect(threads[archivedAndDeletedThreadId]).toMatchObject({
       archivedAt: null,

@@ -354,9 +354,12 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
     });
 
     const createdPredicateId =
-      createData.upsertRowLevelPermissionPredicates.predicates[0]?.id!;
+      createData.upsertRowLevelPermissionPredicates.predicates[0]?.id;
+    jestExpectToBeDefined(createdPredicateId);
+
     const createdPredicateGroupId =
-      createData.upsertRowLevelPermissionPredicates.predicateGroups[0]?.id!;
+      createData.upsertRowLevelPermissionPredicates.predicateGroups[0]?.id;
+    jestExpectToBeDefined(createdPredicateGroupId);
 
     const deleteInput: UpsertRowLevelPermissionPredicatesInput = {
       roleId: createdRoleId,
@@ -376,6 +379,9 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
     expect(
       deleteData.upsertRowLevelPermissionPredicates.predicateGroups,
     ).toHaveLength(0);
+
+    jestExpectToBeDefined(createInput.predicates[0]);
+    jestExpectToBeDefined(createInput.predicateGroups[0]);
 
     const recreateInput: UpsertRowLevelPermissionPredicatesInput = {
       roleId: createdRoleId,

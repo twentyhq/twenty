@@ -141,7 +141,7 @@ describe('A delegated application holding the flag acts like the session', () =>
       });
 
       expect(errors).toBeDefined();
-      expect(errors[0].message).not.toBe(
+      expect(errors[0]?.message).not.toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
     });

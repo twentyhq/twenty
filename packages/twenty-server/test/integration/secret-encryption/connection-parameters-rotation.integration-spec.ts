@@ -9,6 +9,7 @@ import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/ut
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { type EncryptedImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const V2_ENVELOPE_REGEX = /^enc:v2:[0-9a-f]{8}:[A-Za-z0-9+/=]+$/;
 
@@ -35,6 +36,8 @@ const readConnectionParameters = async (
 
   expect(row).toBeDefined();
   expect(row?.connectionParameters).toBeDefined();
+
+  jestExpectToBeDefined(row);
 
   return row;
 };

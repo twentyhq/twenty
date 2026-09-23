@@ -19,6 +19,7 @@ import {
   type WorkflowWaitForEventAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -371,7 +372,11 @@ describe('Wait for event workflow (e2e)', () => {
 
     expect(scheduleSpy).toHaveBeenCalledTimes(1);
 
-    const [{ wakeUp, event }] = scheduleSpy.mock.calls[0];
+    const scheduleCall = scheduleSpy.mock.calls[0];
+
+    jestExpectToBeDefined(scheduleCall);
+
+    const [{ wakeUp, event }] = scheduleCall;
 
     scheduleSpy.mockRestore();
 
@@ -436,10 +441,14 @@ describe('Wait for event workflow (e2e)', () => {
       await arm();
       const [firstWait] = await findWaits();
 
+      jestExpectToBeDefined(firstWait);
+
       await arm();
       const waits = await findWaits();
 
       expect(waits).toHaveLength(1);
+      jestExpectToBeDefined(waits[0]);
+
       expect(waits[0].id).not.toBe(firstWait.id);
     } finally {
       await workflowStepWaitWorkspaceService.cancelRunWaits({

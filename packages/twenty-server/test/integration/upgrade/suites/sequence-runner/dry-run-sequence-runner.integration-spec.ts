@@ -18,12 +18,19 @@ import {
   WS_1,
   WS_2,
 } from 'test/integration/upgrade/utils/upgrade-sequence-runner-integration-test.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const DRY_RUN_OPTIONS = { ...DEFAULT_OPTIONS, dryRun: true };
 
 const getDryRunHumanMessages = (logSpy: jest.SpyInstance): string[] =>
   logSpy.mock.calls
-    .map(([message]) => String(message).split('\n')[0])
+    .map(([message]) => {
+      const firstSegment = String(message).split('\n')[0];
+
+      jestExpectToBeDefined(firstSegment);
+
+      return firstSegment;
+    })
     .filter((humanMessage) => humanMessage.startsWith('Dry run'));
 
 describe('UpgradeSequenceRunnerService - dry run (integration)', () => {

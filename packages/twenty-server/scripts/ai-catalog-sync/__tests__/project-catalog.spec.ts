@@ -59,7 +59,7 @@ describe('projectCatalog', () => {
       apiKey: '{{AZURE_FOUNDRY_API_KEY}}',
       baseUrl: '{{AZURE_FOUNDRY_BASE_URL}}',
     });
-    expect(projected['azure-foundry'].models?.[0]).toEqual({
+    expect(projected['azure-foundry']?.models?.[0]).toEqual({
       name: 'gpt-5.6-luna',
       label: 'GPT-5.6 Luna (Azure)',
       inputCostPerMillionTokens: 0.2,
@@ -91,11 +91,11 @@ describe('projectCatalog', () => {
 
     const projected = projectCatalog({ canonicalCatalog, spec });
 
-    expect(projected['amazon-bedrock'].models?.[0]).toMatchObject({
+    expect(projected['amazon-bedrock']?.models?.[0]).toMatchObject({
       name: 'eu.anthropic.claude-opus-4-7',
       label: 'Claude Opus 4.7',
     });
-    expect(projected['amazon-bedrock'].region).toBe('eu-central-1');
+    expect(projected['amazon-bedrock']?.region).toBe('eu-central-1');
   });
 
   it('takes a price the route negotiated and leaves the rest of the reading alone', () => {
@@ -113,7 +113,7 @@ describe('projectCatalog', () => {
 
     const projected = projectCatalog({ canonicalCatalog, spec });
 
-    expect(projected['azure-foundry'].models?.[0]).toMatchObject({
+    expect(projected['azure-foundry']?.models?.[0]).toMatchObject({
       cachedInputCostPerMillionTokens: 0.5,
       inputCostPerMillionTokens: 0.2,
       efforts: ['low', 'medium', 'high'],
@@ -133,7 +133,7 @@ describe('projectCatalog', () => {
 
     const projected = projectCatalog({ canonicalCatalog, spec });
 
-    expect(projected['amazon-bedrock'].models?.[0]).toMatchObject({
+    expect(projected['amazon-bedrock']?.models?.[0]).toMatchObject({
       maxOutputTokens: 64000,
     });
   });
@@ -152,10 +152,10 @@ describe('projectCatalog', () => {
 
     const projected = projectCatalog({ canonicalCatalog, spec });
 
-    expect(projected['openai'].models?.map((model) => model.name)).toEqual([
+    expect(projected['openai']?.models?.map((model) => model.name)).toEqual([
       'gpt-5.6-luna',
     ]);
-    expect(projected['openai'].models?.[0]).toMatchObject({
+    expect(projected['openai']?.models?.[0]).toMatchObject({
       efforts: ['low', 'medium', 'high'],
     });
   });
@@ -205,7 +205,7 @@ describe('projectCatalog', () => {
 
     const projected = projectCatalog({ canonicalCatalog, spec });
 
-    expect(projected['azure-foundry'].models?.[0]).toMatchObject({
+    expect(projected['azure-foundry']?.models?.[0]).toMatchObject({
       modalities: ['image', 'pdf'],
     });
   });
@@ -287,6 +287,6 @@ describe('projectCatalog', () => {
 
     const projected = projectCatalog({ canonicalCatalog, spec });
 
-    expect(projected['azure-foundry'].models?.[0]?.label).toBe('Luna (Azure)');
+    expect(projected['azure-foundry']?.models?.[0]?.label).toBe('Luna (Azure)');
   });
 });

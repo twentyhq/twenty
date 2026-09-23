@@ -17,6 +17,7 @@ import {
   type GreenmailServer,
   startGreenmailContainer,
 } from 'test/integration/utils/start-greenmail-container.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const PASSWORD = 'greenmail-password';
 const HANDLE = `imap-draft-email-action-${randomUUID()}@acme.test`;
@@ -29,11 +30,15 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
   const findDrafts = async (): Promise<
     { subject: string; source: string }[]
   > => {
+    const firstSegment = HANDLE.split('@')[0];
+
+    jestExpectToBeDefined(firstSegment);
+
     const client = new ImapFlow({
       host: greenmail.host,
       port: greenmail.imapPort,
       secure: false,
-      auth: { user: HANDLE.split('@')[0], pass: PASSWORD },
+      auth: { user: firstSegment, pass: PASSWORD },
       logger: false,
     });
 
@@ -78,6 +83,8 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
       password: PASSWORD,
     });
 
+    const secondSegment = HANDLE.split('@')[0];
+
     const { data } = await saveImapSmtpCaldavAccount({
       input: {
         handle: HANDLE,
@@ -85,14 +92,14 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
           IMAP: {
             host: greenmail.host,
             port: greenmail.imapPort,
-            username: HANDLE.split('@')[0],
+            username: secondSegment,
             password: PASSWORD,
             connectionSecurity: EmailConnectionSecurity.NONE,
           },
           SMTP: {
             host: greenmail.host,
             port: greenmail.smtpPort,
-            username: HANDLE.split('@')[0],
+            username: secondSegment,
             password: PASSWORD,
             connectionSecurity: EmailConnectionSecurity.NONE,
           },

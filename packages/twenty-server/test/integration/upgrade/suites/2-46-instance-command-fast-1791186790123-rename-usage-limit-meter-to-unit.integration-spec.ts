@@ -6,6 +6,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 jest.useRealTimers();
 
@@ -205,6 +206,8 @@ describe('2-46 fast instance command 1791186790123 - RenameUsageLimitMeterToUnit
        WHERE conname = 'UQ_USAGE_LIMIT_SCOPE'
          AND conrelid = '"core"."usageLimit"'::regclass`,
     );
+
+    jestExpectToBeDefined(row);
 
     return row.definition;
   };

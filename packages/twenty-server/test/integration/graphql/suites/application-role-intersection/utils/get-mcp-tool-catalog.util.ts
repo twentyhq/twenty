@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
 
 export const getMcpToolCatalog = async ({
@@ -8,6 +10,8 @@ export const getMcpToolCatalog = async ({
   const result = await callMcpTool({ toolName: 'get_tool_catalog', token });
 
   expect(result.isError).toBe(false);
+
+  assertIsDefinedOrThrow(result.content[0]);
 
   return JSON.parse(result.content[0].text).catalog;
 };

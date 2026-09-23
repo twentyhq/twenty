@@ -93,8 +93,8 @@ const mutationTestCases: EachTestingContext<MutationTestContext>[] = [
           expectToFail: false,
         }),
       expectStateChange: ({ stateBefore, stateAfter }) => {
-        expect(stateAfter.variables[0].encryptedValue).not.toBe(
-          stateBefore.variables[0].encryptedValue,
+        expect(stateAfter.variables[0]?.encryptedValue).not.toBe(
+          stateBefore.variables[0]?.encryptedValue,
         );
       },
     },

@@ -14,6 +14,7 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const getAgentChatThreadService = () =>
   getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
@@ -322,16 +323,21 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     );
 
     expect(positions).not.toContain(-1);
-    expect(positions[0]).toBeLessThan(positions[1]);
+    const [objectPosition, backfillPosition] = positions;
+
+    jestExpectToBeDefined(objectPosition);
+    jestExpectToBeDefined(backfillPosition);
+
+    expect(objectPosition).toBeLessThan(backfillPosition);
   });
 
   it('dates each thread by its last visible message, or its creation', async () => {
     const threads = await readThreads();
 
-    expect(threads[sharedThreadId].lastActivityAt).toEqual(
+    expect(threads[sharedThreadId]?.lastActivityAt).toEqual(
       LAST_VISIBLE_MESSAGE_AT,
     );
-    expect(threads[emptyThreadId].lastActivityAt).toEqual(CREATED_AT);
+    expect(threads[emptyThreadId]?.lastActivityAt).toEqual(CREATED_AT);
   });
 
   it('keeps the last visible message and who wrote in each thread', async () => {
@@ -342,7 +348,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
       lastMessageSenderWorkspaceMemberId: null,
     });
     expect(
-      [...threads[sharedThreadId].writerWorkspaceMemberIds!].sort(),
+      [...threads[sharedThreadId]?.writerWorkspaceMemberIds!].sort(),
     ).toEqual(
       [
         WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -388,7 +394,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
         archivedAt,
       }));
 
-    expect(threads[legacyArchivedThreadId].deletedAt).toBeNull();
+    expect(threads[legacyArchivedThreadId]?.deletedAt).toBeNull();
     expect(readers).toEqual(
       expect.arrayContaining([
         {
@@ -402,7 +408,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
       ]),
     );
     expect(readers).toHaveLength(2);
-    expect(threads[deletedThreadId].deletedAt).toEqual(ARCHIVED_AT);
+    expect(threads[deletedThreadId]?.deletedAt).toEqual(ARCHIVED_AT);
   });
 
   it('grants each participant row to its member, and only them', async () => {
@@ -418,7 +424,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   it('leaves a chat its owner deleted again after the 2.44 move in the trash', async () => {
     const threads = await readThreads();
 
-    expect(threads[deletedAgainThreadId].deletedAt).toEqual(DELETED_AGAIN_AT);
+    expect(threads[deletedAgainThreadId]?.deletedAt).toEqual(DELETED_AGAIN_AT);
   });
 
   it('changes nothing when it runs again', async () => {
@@ -438,13 +444,15 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
 
     const threads = await readThreads();
 
-    expect(threads[legacyArchivedThreadId].deletedAt).toEqual(MOVE_RECORDED_AT);
-    expect(threads[sharedThreadId].deletedAt).toBeNull();
+    expect(threads[legacyArchivedThreadId]?.deletedAt).toEqual(
+      MOVE_RECORDED_AT,
+    );
+    expect(threads[sharedThreadId]?.deletedAt).toBeNull();
     expect(await readOwnerShares()).toEqual([]);
 
     await runCommand(backfillCommand, 'up');
 
-    expect((await readThreads())[legacyArchivedThreadId].deletedAt).toBeNull();
+    expect((await readThreads())[legacyArchivedThreadId]?.deletedAt).toBeNull();
     expect(await readOwnerShares()).toHaveLength(
       (await readParticipants()).length,
     );

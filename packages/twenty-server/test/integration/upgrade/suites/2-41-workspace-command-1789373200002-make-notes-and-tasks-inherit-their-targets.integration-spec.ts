@@ -10,6 +10,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const authContext = buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID);
 
@@ -138,7 +139,9 @@ describe('2-41 workspace command 1789373200002 - MakeNotesAndTasksInheritTheirTa
     for (const [nameSingular, state] of Object.entries(LEGACY_STATE)) {
       const objectMetadataId = objectMetadataIdByNameSingular[nameSingular];
 
-      await objectMetadataRepository().update(objectMetadataId!, state);
+      jestExpectToBeDefined(objectMetadataId);
+
+      await objectMetadataRepository().update(objectMetadataId, state);
 
       const { errors } = await updateOneObjectMetadata({
         expectToFail: false,

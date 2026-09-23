@@ -16,6 +16,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const REFERENCE_APP_ID = randomUUID();
 const REFERENCE_ROLE_ID = randomUUID();
@@ -278,6 +279,8 @@ describe('application-owned core workflows', () => {
       getAppProviderByClassName<ApplicationManifestMigrationService>(
         'ApplicationManifestMigrationService',
       );
+    jestExpectToBeDefined(ownerFlatApplication);
+
     await migrationService.syncPreInstallLogicFunctionFromManifest({
       manifest: {
         ...MANIFEST,
@@ -310,7 +313,13 @@ describe('application-owned core workflows', () => {
     expect(JSON.stringify(deletion.body.errors)).toContain('read-only');
 
     const changed = structuredClone(MANIFEST);
-    const changedStep = changed.workflows![0].version.steps[0];
+    jestExpectToBeDefined(changed.workflows);
+
+    jestExpectToBeDefined(changed.workflows[0]);
+
+    const changedStep = changed.workflows[0].version.steps[0];
+    jestExpectToBeDefined(changedStep);
+
     if (changedStep.type !== 'LOGIC_FUNCTION') {
       throw new Error('Expected a function step');
     }

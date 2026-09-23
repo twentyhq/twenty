@@ -7,6 +7,7 @@ import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-
 import { isDefined } from 'twenty-shared/utils';
 
 import { MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const MESSAGE_THREAD_ID = MESSAGE_THREAD_DATA_SEED_IDS.ID_1;
 
@@ -17,6 +18,8 @@ const findMessageThread = async () => {
   }>('messageThread', 'messageThreads', 'subject category', {
     id: { eq: MESSAGE_THREAD_ID },
   });
+
+  jestExpectToBeDefined(messageThread);
 
   return messageThread;
 };

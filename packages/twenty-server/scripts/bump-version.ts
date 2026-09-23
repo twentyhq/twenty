@@ -38,7 +38,13 @@ const getCurrentVersion = (): string => {
     throw new Error('Could not extract current version');
   }
 
-  return match[1];
+  const [, currentVersion] = match;
+
+  if (currentVersion === undefined) {
+    throw new Error('Could not extract current version');
+  }
+
+  return currentVersion;
 };
 
 const getPreviousVersions = (): string[] => {
@@ -125,7 +131,11 @@ const resolveNewVersion = ({
     if (nextVersions.length > 0) {
       const highestNextVersion = nextVersions[nextVersions.length - 1];
 
-      if (semver.gt(newVersionArg, highestNextVersion!)) {
+      if (highestNextVersion === undefined) {
+        throw new Error('Could not resolve the highest next version');
+      }
+
+      if (semver.gt(newVersionArg, highestNextVersion)) {
         throw new Error(
           `New version '${newVersionArg}' cannot be greater than highest planned next version '${highestNextVersion}'`,
         );
@@ -145,11 +155,17 @@ const resolveNewVersion = ({
     return computed;
   }
 
+  const [firstNextVersion] = nextVersions;
+
+  if (firstNextVersion === undefined) {
+    throw new Error('TWENTY_NEXT_VERSIONS is empty');
+  }
+
   console.log(
-    `\nNo version provided, using TWENTY_NEXT_VERSIONS[0]: '${nextVersions[0]}'`,
+    `\nNo version provided, using TWENTY_NEXT_VERSIONS[0]: '${firstNextVersion}'`,
   );
 
-  return nextVersions[0];
+  return firstNextVersion;
 };
 
 const partitionNextVersions = ({

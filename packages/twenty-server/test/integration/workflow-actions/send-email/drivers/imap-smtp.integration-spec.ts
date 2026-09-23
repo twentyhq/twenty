@@ -35,6 +35,8 @@ describe('SEND_EMAIL workflow action on SMTP (integration)', () => {
       password: PASSWORD,
     });
 
+    const firstSegment = HANDLE.split('@')[0];
+
     const { data } = await saveImapSmtpCaldavAccount({
       input: {
         handle: HANDLE,
@@ -42,14 +44,14 @@ describe('SEND_EMAIL workflow action on SMTP (integration)', () => {
           IMAP: {
             host: greenmail.host,
             port: greenmail.imapPort,
-            username: HANDLE.split('@')[0],
+            username: firstSegment,
             password: PASSWORD,
             connectionSecurity: EmailConnectionSecurity.NONE,
           },
           SMTP: {
             host: greenmail.host,
             port: greenmail.smtpPort,
-            username: HANDLE.split('@')[0],
+            username: firstSegment,
             password: PASSWORD,
             connectionSecurity: EmailConnectionSecurity.NONE,
           },

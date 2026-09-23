@@ -25,6 +25,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
@@ -125,6 +126,8 @@ const readThreadActivity = async (threadId: string) => {
      FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
     [threadId],
   );
+
+  jestExpectToBeDefined(row);
 
   return row;
 };
@@ -490,6 +493,8 @@ describe('Chat thread participant state through the authenticated API', () => {
          WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
         [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
       );
+
+    jestExpectToBeDefined(row);
 
     // The snooze stays recorded, so the chat shows what brought it back
     expect(row.archivedAt).toBeNull();

@@ -13,6 +13,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type FailingTestCases = EachTestingContext<
   (args: {
@@ -439,10 +440,12 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
       expect(errors.length).toBe(1);
       const [firstError] = errors;
 
+      jestExpectToBeDefined(firstError);
+
       expect(firstError).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(firstError!),
+        extractRecordIdsAndDatesAsExpectAny(firstError),
       );
-      expect(firstError?.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     },
   );
 
@@ -496,10 +499,12 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
       expect(errors.length).toBe(1);
       const [firstError] = errors;
 
+      jestExpectToBeDefined(firstError);
+
       expect(firstError).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(firstError!),
+        extractRecordIdsAndDatesAsExpectAny(firstError),
       );
-      expect(firstError?.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     });
 
     it('it should fail to create a already existing morph relation with same field', async () => {
@@ -539,10 +544,12 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
       expect(errors.length).toBe(1);
       const [firstError] = errors;
 
+      jestExpectToBeDefined(firstError);
+
       expect(firstError).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(firstError!),
+        extractRecordIdsAndDatesAsExpectAny(firstError),
       );
-      expect(firstError?.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     });
   });
 });

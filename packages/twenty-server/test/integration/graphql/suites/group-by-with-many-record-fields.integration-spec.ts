@@ -13,6 +13,7 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JSONB_BUILD_OBJECT_MAX_PAIRS } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const OBJECT_NAME_SINGULAR = 'groupByManyFields';
 const OBJECT_NAME_PLURAL = 'groupByManyFieldsRecords';
@@ -49,11 +50,17 @@ const RECORDS = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((position) => ({
   ...ADDRESS_VALUES,
 }));
 const ORDERED_RECORDS = [...RECORDS].reverse();
-const ADDRESS_SUBFIELD_COUNT = Object.keys(
-  ADDRESS_VALUES[ADDRESS_FIELD_NAMES[0]!],
-).length;
+jestExpectToBeDefined(ADDRESS_FIELD_NAMES[0]);
+
+const firstAddressValue = ADDRESS_VALUES[ADDRESS_FIELD_NAMES[0]];
+
+jestExpectToBeDefined(firstAddressValue);
+
+const ADDRESS_SUBFIELD_COUNT = Object.keys(firstAddressValue).length;
+jestExpectToBeDefined(RECORDS[0]);
+
 const SCALAR_FIELD_COUNT =
-  Object.keys(RECORDS[0]!).length - ADDRESS_FIELD_NAMES.length;
+  Object.keys(RECORDS[0]).length - ADDRESS_FIELD_NAMES.length;
 const SELECTED_RECORD_COLUMN_COUNT =
   SCALAR_FIELD_COUNT + ADDRESS_FIELD_NAMES.length * ADDRESS_SUBFIELD_COUNT;
 const RECORD_GQL_FIELDS = `

@@ -10,6 +10,7 @@ import { isSuppressionBlockingSend } from 'src/engine/core-modules/emailing-doma
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const MESSAGE_SUPPRESSIONS = gql`
   query MessageSuppressions($input: FindMessageSuppressionsInput!) {
@@ -92,9 +93,14 @@ describe('tracking opt-out as a suppression (integration)', () => {
         emailAddresses: [emailAddress],
       });
 
-    expect(suppression.reason).toBe(MessageSuppressionReason.TRACKING);
+    expect(suppression?.reason).toBe(MessageSuppressionReason.TRACKING);
+    jestExpectToBeDefined(suppression);
+
     expect(
-      isSuppressionBlockingSend({ sendKind: 'MARKETING', suppression }),
+      isSuppressionBlockingSend({
+        sendKind: 'MARKETING',
+        suppression,
+      }),
     ).toBe(false);
 
     const listResponse = await makeMetadataApiRequest({

@@ -43,6 +43,7 @@ import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder
 import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
@@ -81,7 +82,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     triggerType = 'MANUAL',
     triggerSettings = {},
     steps = [emptyStep()],
-    triggerNextStepIds = steps.length > 0 ? [steps[0].id] : [],
+    triggerNextStepIds = steps.slice(0, 1).map((step) => step.id),
   }: {
     mirrorless?: boolean;
     triggerType?: string;
@@ -1265,9 +1266,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const threadId: string = firstRun.stepLogs[agent.id].details.threadId;
 
       expect(secondRun.stepLogs[agent.id].details.threadId).toBe(threadId);
-      expect(executeAgent.mock.calls[0][0].priorMessages).toEqual([]);
+      expect(executeAgent.mock.calls[0]?.[0]?.priorMessages).toEqual([]);
       expect(
-        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
+        JSON.stringify(executeAgent.mock.calls[1]?.[0]?.priorMessages),
       ).toContain('Quote sent');
     });
 
@@ -1411,11 +1412,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       expect(run.stepLogs[agent.id].details.threadId).toBe(threadId);
       expect(executeAgent).toHaveBeenCalledTimes(3);
-      expect(executeAgent.mock.calls[2][0].messages).toEqual([
+      expect(executeAgent.mock.calls[2]?.[0]?.messages).toEqual([
         { role: 'user', content: 'Draft the quote' },
       ]);
       expect(
-        JSON.stringify(executeAgent.mock.calls[2][0].priorMessages),
+        JSON.stringify(executeAgent.mock.calls[2]?.[0]?.priorMessages),
       ).toContain('Send it');
       expect(await getToolCalls(threadId)).toMatchObject({
         isWaiting: false,
@@ -1475,6 +1476,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         usage: { totalTokens: 4 },
       });
       expect(run.state.stepInfos[finalStep.id].status).toBe('SUCCESS');
+
+      jestExpectToBeDefined(executeAgent.mock.calls[1]);
 
       const resumedWith = executeAgent.mock.calls[1][0];
 
@@ -1597,9 +1600,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         result: { response: 'Quote sent' },
       });
       expect(executeAgent).toHaveBeenCalledTimes(2);
-      expect(executeAgent.mock.calls[1][0].messages).toEqual([]);
+      expect(executeAgent.mock.calls[1]?.[0]?.messages).toEqual([]);
       expect(
-        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
+        JSON.stringify(executeAgent.mock.calls[1]?.[0]?.priorMessages),
       ).toContain('The wait is over.');
       expect(
         await global.testDataSource.query(
@@ -1639,7 +1642,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         result: { response: 'Quote sent' },
       });
       expect(executeAgent).toHaveBeenCalledTimes(2);
-      expect(executeAgent.mock.calls[1][0].messages).toEqual([]);
+      expect(executeAgent.mock.calls[1]?.[0]?.messages).toEqual([]);
       expect(run.stepLogs[agent.id].details.usage.totalTokens).toBe(4);
     });
 
@@ -1709,6 +1712,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         result: { response: 'Quote sent' },
       });
       expect(executeAgent).toHaveBeenCalledTimes(2);
+      jestExpectToBeDefined(executeAgent.mock.calls[1]);
+
       expect(
         JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
       ).not.toContain('"pending"');
@@ -1767,8 +1772,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         .mockResolvedValueOnce(undefined);
 
       const response = await answer({ threadId });
-      const [[continueJobName, continueJobData, continueJobOptions]] =
-        enqueue.mock.calls;
+      const [continueJobCall] = enqueue.mock.calls;
+
+      jestExpectToBeDefined(continueJobCall);
+
+      const [continueJobName, continueJobData, continueJobOptions] =
+        continueJobCall;
 
       enqueue.mockRestore();
 
@@ -2468,27 +2477,34 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             },
           },
         ),
-      () =>
-        workflowGraphqlRequest(
+      () => {
+        const firstStepId = fixture.steps[0]?.id;
+
+        jestExpectToBeDefined(firstStepId);
+
+        return workflowGraphqlRequest(
           'mutation Edit($input: UpdateCoreWorkflowVersionPositionsInput!) { updateCoreWorkflowVersionPositions(input: $input) }',
           {
             input: {
               coreWorkflowVersionId: fixture.coreWorkflowVersionId,
-              positions: [
-                { id: fixture.steps[0]?.id!, position: { x: 321, y: 654 } },
-              ],
+              positions: [{ id: firstStepId, position: { x: 321, y: 654 } }],
             },
           },
-        ),
+        );
+      },
     ];
     const results = await Promise.all(edits.map((edit) => edit()));
     readSpy.mockRestore();
     expect(results.filter((response) => !response.body.errors)).toHaveLength(1);
     const failedIndex = results.findIndex((response) => response.body.errors);
-    expect(JSON.stringify(results[failedIndex]?.body.errors!)).toContain(
-      'changed',
-    );
-    expect((await edits[failedIndex]()).body.errors).toBeUndefined();
+    const errors = results[failedIndex]?.body.errors;
+
+    expect(JSON.stringify(errors)).toContain('changed');
+    const failedIndexEdit = edits[failedIndex];
+
+    jestExpectToBeDefined(failedIndexEdit);
+
+    expect((await failedIndexEdit()).body.errors).toBeUndefined();
     const [core] = await global.testDataSource.query(
       'SELECT triggers, steps FROM core."workflowVersion" WHERE id = $1',
       [fixture.coreWorkflowVersionId],

@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 export const readLruEntry = <Key, Value>({
   map,
@@ -63,7 +63,11 @@ export const evictLeastRecentlyUsed = <Key, Value>({
   );
 
   for (let index = 0; index < evictCount; index += 1) {
-    map.delete(candidates[index][0]!);
+    const candidate = candidates[index];
+
+    assertIsDefinedOrThrow(candidate);
+
+    map.delete(candidate[0]);
   }
 
   return evictCount;

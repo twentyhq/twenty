@@ -11,6 +11,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const RUN_ON_WORKSPACE_ARGS = {
   workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -144,6 +145,8 @@ describe('RenameCallRecordingTabsToTranscriptCommand (integration)', () => {
         position: 17,
       },
     };
+    jestExpectToBeDefined(originalTabs[0]);
+
     await tabRepository().update(originalTabs[0].id, { overrides });
     await refreshCache();
 
