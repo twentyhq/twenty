@@ -24,6 +24,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
+import { SettingsAdminWorkspaceUsageLimitsSection } from '@/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection';
 import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
@@ -152,6 +153,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
 
   const billing = data?.workspaceBillingAdminPanel ?? null;
 
+  // Limits are not billing data: they bind whether or not this workspace has a
+  // customer, so they render on both sides of this branch.
   if (!billing) {
     return (
       <StyledContainer>
@@ -161,6 +164,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
             description={t`No billing data is available for this workspace.`}
           />
         </Section.Root>
+        <SettingsAdminWorkspaceUsageLimitsSection workspaceId={workspaceId} />
       </StyledContainer>
     );
   }
@@ -403,6 +407,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
           />
         )}
       </Section.Root>
+
+      <SettingsAdminWorkspaceUsageLimitsSection workspaceId={workspaceId} />
 
       <SettingsAdminWorkspaceCreditGrantsTable
         workspaceId={workspaceId}

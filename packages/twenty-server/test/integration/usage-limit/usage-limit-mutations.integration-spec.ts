@@ -242,4 +242,101 @@ describe('Usage limit mutations', () => {
       expect(response.body.data?.deleteUsageLimit).toBe(false);
     });
   });
+
+  describe('instance defaults', () => {
+    const OPERATOR_ONLY_MESSAGE = 'only an operator can replace it';
+
+    const storageStockPayload = (overrides: Record<string, unknown> = {}) =>
+      buildPayload({
+        resourceType: UsageResourceType.STORAGE,
+        operationType: UsageOperationType.STORAGE_FILE,
+        spenderType: 'workspace',
+        spenderId: null,
+        limitKind: 'stock',
+        periodCount: 1,
+        periodUnit: 'lifetime',
+        meter: 'bytes',
+        limitValue: 1_000_000,
+        ...overrides,
+      });
+
+    const seedOperatorOverride = async () => {
+      await usageLimitRepository.insert({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        ...(storageStockPayload() as object),
+        spenderId: '',
+        burstValue: null,
+      });
+
+      const usageLimit = await usageLimitRepository.findOneBy({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        resourceType: UsageResourceType.STORAGE,
+      });
+
+      jestExpectToBeDefined(usageLimit);
+
+      return usageLimit;
+    };
+
+    it('refuses a workspace write that would replace a default', async () => {
+      const response = await makeMetadataAPIRequest({
+        query: CREATE_USAGE_LIMIT,
+        variables: { input: storageStockPayload() },
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ONLY_MESSAGE),
+      );
+      expect(
+        await usageLimitRepository.countBy({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
+
+    it('allows a workspace write on a meter no default covers', async () => {
+      const response = await makeMetadataAPIRequest({
+        query: CREATE_USAGE_LIMIT,
+        variables: { input: storageStockPayload({ meter: 'quantity' }) },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+    });
+
+    it('refuses moving an operator override off the default it replaces', async () => {
+      const usageLimit = await seedOperatorOverride();
+
+      const response = await makeMetadataAPIRequest({
+        query: UPDATE_USAGE_LIMIT,
+        variables: {
+          input: {
+            id: usageLimit.id,
+            payload: storageStockPayload({ meter: 'quantity' }),
+          },
+        },
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ONLY_MESSAGE),
+      );
+      expect(
+        (await usageLimitRepository.findOneByOrFail({ id: usageLimit.id }))
+          .meter,
+      ).toBe('bytes');
+    });
+
+    it('refuses deleting an operator override', async () => {
+      const usageLimit = await seedOperatorOverride();
+
+      const response = await makeMetadataAPIRequest({
+        query: DELETE_USAGE_LIMIT,
+        variables: { usageLimitId: usageLimit.id },
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ONLY_MESSAGE),
+      );
+      expect(await usageLimitRepository.countBy({ id: usageLimit.id })).toBe(1);
+    });
+  });
 });

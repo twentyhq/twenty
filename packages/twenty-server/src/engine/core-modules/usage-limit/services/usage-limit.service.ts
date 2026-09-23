@@ -17,6 +17,7 @@ import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/serv
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
+import { assertUsageLimitDefaultOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-default-override-is-allowed.util';
 import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
@@ -58,13 +59,17 @@ export class UsageLimitService {
   async create({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: CreateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<UsageLimitEntity> {
-    await this.validateInput({ workspaceId, input });
+    await this.validateInput({ workspaceId, input, isOperator });
 
     const scope = buildUsageLimitScope(input);
+
+    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator });
 
     await this.assertScopeIsFree({ workspaceId, scope });
 
@@ -92,12 +97,12 @@ export class UsageLimitService {
   async update({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: UpdateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<UsageLimitEntity> {
-    await this.validateInput({ workspaceId, input: input.payload });
-
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: input.id },
     });
@@ -109,7 +114,18 @@ export class UsageLimitService {
       );
     }
 
+    // An update rewrites the whole scope, so moving a row off a default is a
+    // deletion in disguise and needs the gate the leaving scope would get.
+    assertUsageLimitDefaultOverrideIsAllowed({
+      scope: buildUsageLimitScope(usageLimit),
+      isOperator,
+    });
+
+    await this.validateInput({ workspaceId, input: input.payload, isOperator });
+
     const scope = buildUsageLimitScope(input.payload);
+
+    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator });
 
     await this.assertScopeIsFree({
       workspaceId,
@@ -171,14 +187,19 @@ export class UsageLimitService {
   private async validateInput({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: CreateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<void> {
     validateUsageLimitAgainstDefinition(input);
     validateUsageLimitAgainstKindRule(input);
 
+    // The entitlement upsells the tenant on their own surface, so it has no say
+    // over what an operator sets on someone else's workspace.
     if (
+      !isOperator &&
       isIntraWorkspaceScoped(input.spenderType) &&
       !(await this.usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(
         workspaceId,
@@ -212,9 +233,11 @@ export class UsageLimitService {
   async delete({
     workspaceId,
     usageLimitId,
+    isOperator,
   }: {
     workspaceId: string;
     usageLimitId: string;
+    isOperator: boolean;
   }): Promise<boolean> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: usageLimitId },
@@ -223,6 +246,12 @@ export class UsageLimitService {
     if (!isDefined(usageLimit)) {
       return false;
     }
+
+    // Deleting an override hands the scope back to the looser config default.
+    assertUsageLimitDefaultOverrideIsAllowed({
+      scope: buildUsageLimitScope(usageLimit),
+      isOperator,
+    });
 
     const { affected } = await this.usageLimitRepository.delete(workspaceId, {
       id: usageLimitId,
