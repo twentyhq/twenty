@@ -232,6 +232,13 @@ describe('Sync application should succeed when App A declares a RELATION between
   }, 60000);
 
   it('re-syncs App A with the same manifest without error', async () => {
+    // Both syncs live here so the test does not depend on its sibling having
+    // run first when a single test is selected.
+    await syncApplication({
+      manifest: buildAppAManifest(),
+      expectToFail: false,
+    });
+
     const { errors } = await syncApplication({
       manifest: buildAppAManifest(),
       expectToFail: false,
