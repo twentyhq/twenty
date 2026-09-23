@@ -1,5 +1,6 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
@@ -337,6 +338,68 @@ describe('Manifest sync - settings menu items', () => {
     expect(settingsMenuItems).toHaveLength(1);
     expect(settingsMenuItems[0].universalIdentifier).toBe(
       SYNC_SETTINGS_MENU_ITEM_ID,
+    );
+  }, 60000);
+
+  it('exposes the items on findOneApplication, pointing at their front component', async () => {
+    await syncApplication({
+      manifest: buildManifest([
+        BILLING_SETTINGS_MENU_ITEM,
+        SYNC_SETTINGS_MENU_ITEM,
+      ]),
+      expectToFail: false,
+    });
+
+    const { data } = await findOneApplication({
+      input: { universalIdentifier: TEST_APP_ID },
+      gqlFields: `
+        id
+        frontComponents {
+          id
+          universalIdentifier
+        }
+        settingsMenuItems {
+          universalIdentifier
+          frontComponentId
+          title
+          icon
+          position
+          scope
+        }
+      `,
+    });
+
+    const frontComponentIdByUniversalIdentifier = new Map(
+      (data.findOneApplication.frontComponents ?? []).map((frontComponent) => [
+        frontComponent.universalIdentifier,
+        frontComponent.id,
+      ]),
+    );
+
+    expect(data.findOneApplication.settingsMenuItems).toHaveLength(2);
+    expect(data.findOneApplication.settingsMenuItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          universalIdentifier: SYNC_SETTINGS_MENU_ITEM_ID,
+          frontComponentId: frontComponentIdByUniversalIdentifier.get(
+            SYNC_FRONT_COMPONENT_ID,
+          ),
+          title: 'Sync',
+          icon: 'IconRefresh',
+          position: 1,
+          scope: 'WORKSPACE',
+        }),
+        expect.objectContaining({
+          universalIdentifier: BILLING_SETTINGS_MENU_ITEM_ID,
+          frontComponentId: frontComponentIdByUniversalIdentifier.get(
+            BILLING_FRONT_COMPONENT_ID,
+          ),
+          title: 'Billing',
+          icon: 'IconCreditCard',
+          position: 2,
+          scope: 'USER',
+        }),
+      ]),
     );
   }, 60000);
 });

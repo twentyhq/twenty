@@ -89,10 +89,6 @@ Beyond commands, you can embed a front component directly into a record page by 
 
 An app can add its own entries to the settings menu, each rendering a front component. Declare one with `defineSettingsMenuItem()` in its own file, pointing at the component that renders it:
 
-<Note>
-Declaring and syncing menu items works today, and the rows they create are what the rendering builds on. The settings menu itself does not display app-declared items yet — it still shows the single tab from the deprecated `defineSettingsFrontComponent()`. Until that follow-up lands, an item you declare is persisted but not visible.
-</Note>
-
 ```tsx src/settings-menu-items/sync-settings.ts
 import { defineSettingsMenuItem } from 'twenty-sdk/define';
 
@@ -106,6 +102,8 @@ export default defineSettingsMenuItem({
 ```
 
 The menu item points at the front component rather than the component declaring itself a settings entry. One component can therefore back several menu items, and an item can be repointed at a different component without touching either.
+
+Each item renders as a tab on the app's page under **Settings > Apps**, after **General**, in `position` order.
 
 Declare as many as you need. Twenty's own **General** item — auto-upgrade, App URL and connections — always comes first and cannot be overridden by an app; App URL only shows with **Advanced mode** on.
 
@@ -126,8 +124,12 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 
 `scope` says who an item is configured by:
 
-- **`WORKSPACE`** (default) — configured once for the whole workspace, alongside the other workspace settings.
+- **`WORKSPACE`** (default) — configured once for the whole workspace, alongside the other workspace settings. These are the items that render as tabs on the app's page.
 - **`USER`** — configured by each member for themselves, under their own user settings.
+
+<Note>
+`USER` items are not displayed yet. Their placement under the user's own settings lands with per-member variable values; until then a `USER` item is persisted and synced but nothing renders it.
+</Note>
 
 A `USER` item runs as the member viewing it. Note that `applicationVariables` are workspace-wide: one value shared by everyone. An item that stores something per person should persist it through the app's own objects rather than a variable, otherwise one member's value overwrites another's.
 

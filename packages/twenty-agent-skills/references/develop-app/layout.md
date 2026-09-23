@@ -45,8 +45,6 @@ Use `frontComponentUniversalIdentifier` for app-defined front components. A `fro
 
 ## Settings Menu Items
 
-Declared items are persisted but not yet displayed: the settings menu still renders the single tab from the deprecated `defineSettingsFrontComponent()` until the rendering follow-up lands. Say so when an app asks for a visible settings entry today, and reach for `defineSettingsFrontComponent()` when one is actually needed now.
-
 To add an entry to an app's settings menu, declare it with `defineSettingsMenuItem` and point it at the front component that renders it:
 
 ```ts
@@ -60,9 +58,9 @@ To add an entry to an app's settings menu, declare it with `defineSettingsMenuIt
 }
 ```
 
-The menu item points at the component, not the reverse, so one component can back several items. Declare as many as the app needs.
+The menu item points at the component, not the reverse, so one component can back several items. Declare as many as the app needs. Each renders as a tab on the app's page under Settings > Apps, after the built-in General tab, in `position` order.
 
-`scope` is `WORKSPACE` (configured once for the whole workspace, the default) or `USER` (configured by each member for themselves). Note that application variables are workspace-wide, so a `USER` item storing something per person must persist it through the app's own objects.
+`scope` is `WORKSPACE` (configured once for the whole workspace, the default) or `USER` (configured by each member for themselves). Only `WORKSPACE` items render today — a `USER` item is persisted and synced but nothing displays it until its placement under the member's own settings lands, so say so rather than declaring one for a settings entry an app needs visible now. Note that application variables are workspace-wide, so a `USER` item storing something per person must persist it through the app's own objects.
 
 Items sort by ascending `position`, which is a decimal so an item can be slotted between two existing ones. Two items of one app cannot share a position in the same scope, and `General` is reserved for the built-in item.
 
