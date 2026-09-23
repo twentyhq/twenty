@@ -50,12 +50,12 @@ export const parseJsonPath = (path: string): Accessor[] => {
     let match: RegExpExecArray | null;
 
     if ((match = KEY_DOT_REGEX.exec(rest))) {
-      accessors.push({ type: 'key', key: match[1] });
+      accessors.push({ type: 'key', key: match[1] ?? '' });
     } else if (
       (match = KEY_DOUBLE_QUOTE_REGEX.exec(rest)) ||
       (match = KEY_SINGLE_QUOTE_REGEX.exec(rest))
     ) {
-      accessors.push({ type: 'key', key: unescapeQuotedKey(match[1]) });
+      accessors.push({ type: 'key', key: unescapeQuotedKey(match[1] ?? '') });
     } else if ((match = WILDCARD_REGEX.exec(rest))) {
       accessors.push({ type: 'wildcard' });
     } else if ((match = SLICE_REGEX.exec(rest))) {

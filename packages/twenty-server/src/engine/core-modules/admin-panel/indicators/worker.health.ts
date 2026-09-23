@@ -22,7 +22,7 @@ export class WorkerHealthIndicator {
     private readonly healthIndicatorService: HealthIndicatorService,
   ) {}
 
-  async isHealthy(): Promise<HealthIndicatorResult> {
+  async isHealthy(): Promise<HealthIndicatorResult<'worker'>> {
     const indicator = this.healthIndicatorService.check('worker');
 
     try {

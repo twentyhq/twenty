@@ -20,7 +20,7 @@ export class RedisHealthIndicator {
     private readonly healthIndicatorService: HealthIndicatorService,
   ) {}
 
-  async isHealthy(): Promise<HealthIndicatorResult> {
+  async isHealthy(): Promise<HealthIndicatorResult<'redis'>> {
     const indicator = this.healthIndicatorService.check('redis');
 
     try {
@@ -58,26 +58,27 @@ export class RedisHealthIndicator {
           timestamp: new Date().toISOString(),
           version: infoData.redis_version,
           uptime:
-            Math.round(parseInt(infoData.uptime_in_seconds) / 3600) + ' hours',
+            Math.round(parseInt(infoData.uptime_in_seconds ?? '') / 3600) +
+            ' hours',
         },
         memory: {
           used: memoryData.used_memory_human,
           peak: memoryData.used_memory_peak_human,
-          fragmentation: parseFloat(memoryData.mem_fragmentation_ratio),
+          fragmentation: parseFloat(memoryData.mem_fragmentation_ratio ?? ''),
         },
         connections: {
-          current: parseInt(clientsData.connected_clients),
-          total: parseInt(statsData.total_connections_received),
-          rejected: parseInt(statsData.rejected_connections),
+          current: parseInt(clientsData.connected_clients ?? ''),
+          total: parseInt(statsData.total_connections_received ?? ''),
+          rejected: parseInt(statsData.rejected_connections ?? ''),
         },
         performance: {
-          opsPerSecond: parseInt(statsData.instantaneous_ops_per_sec),
+          opsPerSecond: parseInt(statsData.instantaneous_ops_per_sec ?? ''),
           hitRate:
             isDefined(statsData.keyspace_hits) &&
             isDefined(statsData.keyspace_misses)
               ? (() => {
-                  const hits = parseInt(statsData.keyspace_hits);
-                  const misses = parseInt(statsData.keyspace_misses);
+                  const hits = parseInt(statsData.keyspace_hits ?? '');
+                  const misses = parseInt(statsData.keyspace_misses ?? '');
                   const total = hits + misses;
 
                   return total > 0
@@ -85,8 +86,8 @@ export class RedisHealthIndicator {
                     : '0%';
                 })()
               : '0%',
-          evictedKeys: parseInt(statsData.evicted_keys),
-          expiredKeys: parseInt(statsData.expired_keys),
+          evictedKeys: parseInt(statsData.evicted_keys ?? ''),
+          expiredKeys: parseInt(statsData.expired_keys ?? ''),
         },
         replication: {
           role: infoData.role,

@@ -22,7 +22,7 @@ export class DatabaseHealthIndicator {
     private readonly healthIndicatorService: HealthIndicatorService,
   ) {}
 
-  async isHealthy(): Promise<HealthIndicatorResult> {
+  async isHealthy(): Promise<HealthIndicatorResult<'database'>> {
     const indicator = this.healthIndicatorService.check('database');
 
     try {
