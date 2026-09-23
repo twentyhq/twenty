@@ -1,11 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { SettingsRow } from 'twenty-ui/components';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
-import { IconCube } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
@@ -21,6 +13,12 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
+import { SettingsRow, TintedIconTile } from 'twenty-ui/components';
+import { IconCube } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 const ALL_OBJECTS_ITEM_ID = 'all-objects';
 

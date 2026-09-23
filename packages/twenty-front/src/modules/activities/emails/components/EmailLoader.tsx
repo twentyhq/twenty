@@ -1,20 +1,15 @@
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { t } from '@lingui/core/macro';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  Loader,
-} from 'twenty-ui/primitives/feedback';
+
+import { Loader } from 'twenty-ui/primitives/feedback';
 
 export const EmailLoader = ({ loadingText }: { loadingText?: string }) => (
-  <AnimatedPlaceholderEmptyContainer>
+  <EmptyState.Root>
     <AnimatedPlaceholder type="loadingMessages" />
-    <AnimatedPlaceholderEmptyTextContainer>
-      <AnimatedPlaceholderEmptyTitle>
-        {loadingText || t`Loading emails`}
-      </AnimatedPlaceholderEmptyTitle>
+    <EmptyState.Content>
+      <EmptyState.Title>{loadingText || t`Loading emails`}</EmptyState.Title>
       <Loader />
-    </AnimatedPlaceholderEmptyTextContainer>
-  </AnimatedPlaceholderEmptyContainer>
+    </EmptyState.Content>
+  </EmptyState.Root>
 );

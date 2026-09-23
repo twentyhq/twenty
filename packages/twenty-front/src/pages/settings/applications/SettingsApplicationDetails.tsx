@@ -25,14 +25,14 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
+import { InlineBanner } from 'twenty-ui/components';
 import {
-  IconAlertTriangle,
   IconAdjustments,
+  IconAlertTriangle,
   IconDeviceFloppy,
   IconSettings,
   IconVariable,
 } from 'twenty-ui/icon';
-import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import {
   FindMarketplaceAppDetailDocument,
@@ -40,12 +40,12 @@ import {
   IsApplicationStoppedDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
+import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
 import { useApplicationVariablesDraft } from '~/pages/settings/applications/hooks/useApplicationVariablesDraft';
-import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
-import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationCustomSettingsSection } from '~/pages/settings/applications/tabs/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
 import { SettingsApplicationDetailVariablesTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailVariablesTab';

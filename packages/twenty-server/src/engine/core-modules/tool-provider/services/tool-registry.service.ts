@@ -453,6 +453,7 @@ export class ToolRegistryService {
       roleId: context.roleId,
       rolePermissionConfig,
       authContext: context.authContext,
+      application: context.application,
       actorContext: context.actorContext,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,

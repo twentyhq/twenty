@@ -2,13 +2,13 @@ import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 
 import { useLingui } from '@lingui/react/macro';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { InlineBanner } from 'twenty-ui/primitives/feedback';
+import { InlineBanner } from 'twenty-ui/components';
 import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo';
 
 import { SettingsAdminApplicationRegistrationClaims } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims';
 import { SettingsAdminApplicationRegistrationDangerZone } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone';
-import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats';
 import { SettingsAdminApplicationRegistrationGeneralSwitches } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches';
+import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats';
 
 export const SettingsApplicationRegistrationGeneralTab = ({
   registration,

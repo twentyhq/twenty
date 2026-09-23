@@ -49,7 +49,6 @@ export type { MenuSide } from './Menu/types/MenuSide';
 export type { MenuSubmenuRootProps } from './Menu/types/MenuSubmenuRootProps';
 export type { MenuSubmenuTriggerProps } from './Menu/types/MenuSubmenuTriggerProps';
 export type { MenuTriggerProps } from './Menu/types/MenuTriggerProps';
-export { OverflowingTextWithTooltip } from './OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 export { Popover } from './Popover/Popover';
 export type { PopoverAlign } from './Popover/types/PopoverAlign';
 export type { PopoverCloseProps } from './Popover/types/PopoverCloseProps';

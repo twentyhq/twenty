@@ -93,4 +93,27 @@ export class ConnectedAccountResolver {
 
     return buildPublicConnectedAccount(deleted);
   }
+
+  @Mutation(() => ConnectedAccountPublicDTO)
+  @UseGuards(CustomPermissionGuard)
+  async disconnectConnectedAccount(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
+  ): Promise<ConnectedAccountPublicDTO> {
+    await this.connectedAccountMetadataService.verifyAdministrableByCaller({
+      id,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      applicationId: application?.id,
+    });
+
+    const disconnected = await this.connectedAccountMetadataService.disconnect({
+      id,
+      workspaceId: workspace.id,
+    });
+
+    return buildPublicConnectedAccount(disconnected);
+  }
 }

@@ -21,6 +21,7 @@ import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-acc
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { ReconcileCampaignStatsCronCommand } from 'src/modules/emailing/crons/commands/reconcile-campaign-stats.cron.command';
 import { TrashCleanupCronCommand } from 'src/engine/trash-cleanup/commands/trash-cleanup.cron.command';
+import { DeferredWorkspaceMigrationActionRecoveryCronCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/crons/commands/deferred-workspace-migration-action-recovery.cron.command';
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
 import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
@@ -79,6 +80,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly marketplaceCatalogSyncCronCommand: MarketplaceCatalogSyncCronCommand,
     private readonly staleRegistrationCleanupCronCommand: StaleRegistrationCleanupCronCommand,
     private readonly pendingFileCleanupCronCommand: PendingFileCleanupCronCommand,
+    private readonly deferredWorkspaceMigrationActionRecoveryCronCommand: DeferredWorkspaceMigrationActionRecoveryCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
     private readonly applicationRecurringChargeCronCommand: ApplicationRecurringChargeCronCommand,
     private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
@@ -218,6 +220,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'PendingFileCleanup',
         command: this.pendingFileCleanupCronCommand,
+      },
+      {
+        name: 'DeferredWorkspaceMigrationActionRecovery',
+        command: this.deferredWorkspaceMigrationActionRecoveryCronCommand,
       },
       {
         name: 'BillingReminder',

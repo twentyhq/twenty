@@ -1,15 +1,16 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { InputLabel, Button } from 'twenty-ui/primitives/input';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { AUTO_SET_HEADER_KEYS } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/AutoSetHeaderKeys';
 import { isAutoSetHeaderKey } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isReadOnlyHeaderKey';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
-import { v4 } from 'uuid';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
   display: flex;

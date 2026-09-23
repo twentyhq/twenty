@@ -12,11 +12,13 @@ export const enqueueCallRecordingArtifactsImport = async ({
   scopes,
   trigger = 'recording',
   requestedAt = new Date().toISOString(),
+  delayMs,
 }: {
   callRecordingIds: string[];
   scopes: CallRecordingArtifactImportScope[];
   trigger?: 'recording' | 'transcript-ready' | 'expired' | 'recovery';
   requestedAt?: string;
+  delayMs?: number;
 }): Promise<void> => {
   const isQueueStatusRequired = trigger === 'recovery' || trigger === 'expired';
   const recoveryDate = requestedAt.slice(0, 10);
@@ -104,6 +106,7 @@ export const enqueueCallRecordingArtifactsImport = async ({
           IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
         jobs,
         retryLimit: scope === 'video' ? 0 : ENQUEUED_JOB_RETRY_LIMIT,
+        delayMs,
       });
     }
   }

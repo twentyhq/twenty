@@ -64,14 +64,18 @@ export class MessagingMessageService {
         const messageChannelMessageAssociationRepository =
           transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
+            { shouldBypassPermissionChecks: true },
           );
 
         const messageRepository =
-          transactionScope.getRepository<MessageWorkspaceEntity>('message');
+          transactionScope.getRepository<MessageWorkspaceEntity>('message', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const messageThreadRepository =
           transactionScope.getRepository<MessageThreadWorkspaceEntity>(
             'messageThread',
+            { shouldBypassPermissionChecks: true },
           );
 
         const messageAccumulatorMap = new Map<string, MessageAccumulator>();

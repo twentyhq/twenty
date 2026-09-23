@@ -2,8 +2,8 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
+import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,

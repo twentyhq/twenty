@@ -18,8 +18,8 @@ const JOB_ID = `install-application.workspace-id.${UNIVERSAL_IDENTIFIER}`;
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/primitives/feedback', () => ({
-  ...jest.requireActual('twenty-ui/primitives/feedback'),
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 

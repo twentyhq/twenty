@@ -46,10 +46,9 @@ Replace `LightIconButtonGroup` with [ButtonGroup](/ui/primitives/input/button-gr
 `MenuItem`, `MenuItemDraggable`, and `MenuItemAvatar` accept JSX through `iconButtons`. Pass one `LightIconButton` directly, or use `ButtonGroup` for multiple buttons. The menu controls their placement and hover visibility; each button owns its accessible name, click handler, and disabled state. Wrap dropdown triggers directly around the button.
 
 ```tsx
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton, MenuItem } from 'twenty-ui/components';
 import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordMenuItem = () => (
   <MenuItem

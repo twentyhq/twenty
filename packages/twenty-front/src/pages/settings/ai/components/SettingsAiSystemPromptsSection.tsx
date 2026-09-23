@@ -1,3 +1,5 @@
+import { SettingsCard } from '@/settings/components/SettingsCard';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
@@ -5,9 +7,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { IconPrompt } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import { SettingsCard } from '@/settings/components/SettingsCard';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';
 
