@@ -1,6 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { type ApplicationBilling } from 'twenty-shared/application';
+import {
+  type ApplicationBilling,
+  type ApplicationCapability,
+} from 'twenty-shared/application';
 import {
   Column,
   CreateDateColumn,
@@ -26,6 +29,7 @@ import { ADD_HEALTH_CHECK_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/databa
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -127,6 +131,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
       '2.38.0_AddBillingToApplicationFastInstanceCommand_1788340843000',
   })
   billing: ApplicationBilling;
+
+  @Column({ type: 'varchar', array: true, nullable: false, default: '{}' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.42.0_AddApplicationGrantedCapabilitiesFastInstanceCommand_1790088525621',
+  })
+  grantedCapabilities: ApplicationCapability[];
 
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;
@@ -263,6 +274,15 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
     },
   )
   commandMenuItems: Relation<CommandMenuItemEntity[]>;
+
+  @OneToMany(
+    () => SettingsMenuItemEntity,
+    (settingsMenuItem) => settingsMenuItem.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  settingsMenuItems: Relation<SettingsMenuItemEntity[]>;
 
   @OneToMany(
     () => ApplicationVariableEntity,

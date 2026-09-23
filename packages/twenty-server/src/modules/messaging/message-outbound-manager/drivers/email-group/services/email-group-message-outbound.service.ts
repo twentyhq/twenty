@@ -1,42 +1,65 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
+import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   MessageChannelException,
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { EMAIL_GROUP_SEND_THROTTLE } from 'src/modules/messaging/message-outbound-manager/drivers/email-group/constants/email-group-send-throttle.constant';
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { buildOutboundThreadingHeaders } from 'src/modules/messaging/message-outbound-manager/utils/build-outbound-threading-headers.util';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
-import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 
 @Injectable()
 export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
-  private readonly logger = new Logger(EmailGroupMessageOutboundService.name);
-
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
-    private readonly emailBillingService: EmailBillingService,
+    private readonly usageLimitSpeedService: UsageLimitSpeedService,
+    private readonly billingService: BillingService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
+    private readonly cacheStorage: CacheStorageService,
   ) {}
 
   async sendMessage(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<SendMessageResult> {
+    const isPayingCustomer = await this.billingService.isPayingCustomer(
+      connectedAccount.workspaceId,
+    );
+
+    if (!isPayingCustomer) {
+      throw new MessageChannelException(
+        `Cannot send from ${connectedAccount.handle}: sending from an email group is available once your workspace is on a paid plan and has been billed.`,
+        MessageChannelExceptionCode.EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN,
+      );
+    }
+
     const emailingDomain = await this.resolveEmailingDomain(connectedAccount);
 
     if (emailingDomain.status !== EmailingDomainStatus.VERIFIED) {
@@ -46,8 +69,25 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       );
     }
 
-    await this.emailBillingService.validateEmailCreditsOrThrow(
+    const recipientCount =
+      this.toRecipientArray(sendMessageInput.to).length +
+      this.toRecipientArray(sendMessageInput.cc).length +
+      this.toRecipientArray(sendMessageInput.bcc).length;
+
+    await this.usageLimitSpeedService.consumeOrThrow({
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+      authContext: buildSystemAuthContext(connectedAccount.workspaceId),
+      cost: recipientCount,
+    });
+
+    const dailyRecipientCountKey = this.buildDailyRecipientCountKey(
       connectedAccount.workspaceId,
+    );
+
+    await this.consumeDailyRecipientAllowanceOrThrow(
+      dailyRecipientCountKey,
+      recipientCount,
     );
 
     const threadExternalId =
@@ -55,10 +95,8 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       sendMessageInput.inReplyTo ??
       `<${v4()}@${emailingDomain.domain}>`;
 
-    const result = await this.emailingDomainSenderService.sendEmail(
-      connectedAccount.workspaceId,
-      emailingDomain.id,
-      {
+    const result = await this.emailingDomainSenderService
+      .sendEmail(connectedAccount.workspaceId, emailingDomain.id, {
         sendKind: 'TRANSACTIONAL',
         to: this.toRecipientArray(sendMessageInput.to),
         cc: this.toRecipientArray(sendMessageInput.cc),
@@ -76,22 +114,11 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
           inReplyTo: sendMessageInput.inReplyTo,
           references: sendMessageInput.references,
         }),
-      },
-    );
-
-    // The provider has already accepted the mail, so surfacing a billing
-    // failure would invite a retry that sends it a second time.
-    await this.emailBillingService
-      .billSentEmails({
-        workspaceId: connectedAccount.workspaceId,
-        sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
       })
-      .catch((error) => {
-        this.logger.error(
-          `Workspace ${connectedAccount.workspaceId} sent email ${result.messageId} but failed to bill it, so this send is unbilled: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
+      .catch(async (error) => {
+        await this.cacheStorage.incrBy(dailyRecipientCountKey, -recipientCount);
+
+        throw error;
       });
 
     return {
@@ -143,6 +170,40 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     }
 
     return emailingDomain;
+  }
+
+  private buildDailyRecipientCountKey(workspaceId: string): string {
+    const windowIndex = Math.floor(
+      Date.now() / EMAIL_GROUP_SEND_THROTTLE.windowMs,
+    );
+
+    return `email-group-send:recipients:${workspaceId}:${windowIndex}`;
+  }
+
+  private async consumeDailyRecipientAllowanceOrThrow(
+    dailyRecipientCountKey: string,
+    recipientCount: number,
+  ): Promise<void> {
+    const recipientCountInWindow = await this.cacheStorage.incrBy(
+      dailyRecipientCountKey,
+      recipientCount,
+    );
+
+    await this.cacheStorage.expire(
+      dailyRecipientCountKey,
+      EMAIL_GROUP_SEND_THROTTLE.windowMs,
+    );
+
+    if (recipientCountInWindow <= EMAIL_GROUP_SEND_THROTTLE.maxRecipients) {
+      return;
+    }
+
+    await this.cacheStorage.incrBy(dailyRecipientCountKey, -recipientCount);
+
+    throw new ThrottlerException(
+      `Email group send limit reached: ${EMAIL_GROUP_SEND_THROTTLE.maxRecipients} recipients per day.`,
+      ThrottlerExceptionCode.LIMIT_REACHED,
+    );
   }
 
   private toRecipientArray(value: string | string[] | undefined): string[] {

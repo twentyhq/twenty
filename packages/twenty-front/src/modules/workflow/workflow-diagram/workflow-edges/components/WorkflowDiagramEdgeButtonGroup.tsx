@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { type ReactNode } from 'react';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonGroupContainer = styled.div`

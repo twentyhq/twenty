@@ -3,7 +3,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
 import { EMPTY_USAGE_LIMIT_FORM_VALUES } from '@/settings/billing/constants/EmptyUsageLimitFormValues';

@@ -158,7 +158,7 @@ export class PermissionsService {
     workspaceId: string;
     setting: PermissionFlagType;
     apiKeyId?: string;
-    applicationId?: string;
+    applicationId: string | undefined;
   }): Promise<boolean> {
     if (isDefined(apiKeyId)) {
       const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(

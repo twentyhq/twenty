@@ -1,6 +1,7 @@
 import { join } from 'path';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
+import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
@@ -50,12 +51,25 @@ export class AppGenerateClientCommand {
       process.exit(1);
     }
 
+    const manifest = await readManifestFromFile(appPath);
+
+    if (!manifest) {
+      console.error(
+        chalk.red('Manifest not found. Run `build` or `dev` first.'),
+      );
+      process.exit(1);
+    }
+
     console.log(chalk.blue('Generating API client...'));
 
     try {
-      const clientService = new ClientService({ skipAuth: false });
+      const clientService = new ClientService();
 
-      await clientService.generateCoreClient({ appPath });
+      await clientService.generateCoreClient({
+        appPath,
+        applicationUniversalIdentifier:
+          manifest.application.universalIdentifier,
+      });
     } catch (error) {
       console.error(
         chalk.red(`Failed to generate API client: ${serializeError(error)}`),

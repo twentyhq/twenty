@@ -3,11 +3,9 @@ import { NavigationMenuItemIconWithOverlay } from '@/navigation-menu-item/displa
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  Avatar,
-  getIconTileColorShades,
-} from 'twenty-ui/primitives/data-display';
+import { getIconTileColorShades } from 'twenty-ui/components';
 import { IconLink, IconPerspective, IconWorld, useIcons } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   FeatureFlagKey,

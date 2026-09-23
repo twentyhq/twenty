@@ -177,7 +177,6 @@ export class ApplicationApi {
         universalIdentifier: string;
         oAuthClientId: string;
       };
-      clientSecret: string;
     }>
   > {
     try {
@@ -189,7 +188,6 @@ export class ApplicationApi {
               universalIdentifier
               oAuthClientId
             }
-            clientSecret
           }
         }
       `;
@@ -227,23 +225,21 @@ export class ApplicationApi {
     }
   }
 
-  async rotateApplicationRegistrationClientSecret(
-    id: string,
-  ): Promise<ApiResponse<{ clientSecret: string }>> {
+  async getApplicationCoreGraphqlSchema(
+    applicationUniversalIdentifier: string,
+  ): Promise<ApiResponse<string>> {
     try {
-      const mutation = `
-        mutation RotateApplicationRegistrationClientSecret($id: String!) {
-          rotateApplicationRegistrationClientSecret(id: $id) {
-            clientSecret
-          }
+      const query = `
+        query ApplicationCoreGraphqlSchema($applicationUniversalIdentifier: String!) {
+          applicationCoreGraphqlSchema(applicationUniversalIdentifier: $applicationUniversalIdentifier)
         }
       `;
 
       const response = await this.client.post(
         '/metadata',
         {
-          query: mutation,
-          variables: { id },
+          query,
+          variables: { applicationUniversalIdentifier },
         },
         {
           headers: {
@@ -262,62 +258,7 @@ export class ApplicationApi {
 
       return {
         success: true,
-        data: response.data.data.rotateApplicationRegistrationClientSecret,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error,
-      };
-    }
-  }
-
-  async generateApplicationToken(applicationId: string): Promise<
-    ApiResponse<{
-      applicationAccessToken: { token: string; expiresAt: string };
-      applicationRefreshToken: { token: string; expiresAt: string };
-    }>
-  > {
-    try {
-      const mutation = `
-        mutation GenerateApplicationToken($applicationId: UUID!) {
-          generateApplicationToken(applicationId: $applicationId) {
-            applicationAccessToken {
-              token
-              expiresAt
-            }
-            applicationRefreshToken {
-              token
-              expiresAt
-            }
-          }
-        }
-      `;
-
-      const response = await this.client.post(
-        '/metadata',
-        {
-          query: mutation,
-          variables: { applicationId },
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-          },
-        },
-      );
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error: response.data.errors[0],
-        };
-      }
-
-      return {
-        success: true,
-        data: response.data.data.generateApplicationToken,
+        data: response.data.data.applicationCoreGraphqlSchema,
       };
     } catch (error) {
       return {

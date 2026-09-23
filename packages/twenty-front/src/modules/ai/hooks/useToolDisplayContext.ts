@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { type ToolDisplayContext } from '@/ai/types/tool-display-context.type';
+import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ToolCategory } from 'twenty-shared/ai';
 

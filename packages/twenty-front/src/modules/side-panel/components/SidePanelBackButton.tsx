@@ -8,9 +8,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { IconButton, MenuItem } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNavigationIcon = styled.div`

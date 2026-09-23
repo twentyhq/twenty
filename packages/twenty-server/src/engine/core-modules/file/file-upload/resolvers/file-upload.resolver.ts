@@ -23,9 +23,9 @@ import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usa
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
+  FileUploadGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   AuthGraphqlApiExceptionFilter,
-  FileUploadGraphqlApiExceptionFilter,
 )
 @MetadataResolver()
 export class FileUploadResolver {
