@@ -10,9 +10,7 @@ import { type Observable, catchError } from 'rxjs';
 import { validationRuleGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/validation-rule/utils/validation-rule-graphql-api-exception-handler.util';
 
 @Injectable()
-export class ValidationRuleGraphqlApiExceptionInterceptor
-  implements NestInterceptor
-{
+export class ValidationRuleGraphqlApiExceptionInterceptor implements NestInterceptor {
   intercept(
     _context: ExecutionContext,
     next: CallHandler,

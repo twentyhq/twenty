@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -25,11 +24,10 @@ export class UpdateValidationRuleActionHandlerService extends WorkspaceMigration
   ): Promise<FlatUpdateValidationRuleAction> {
     const { action, allFlatEntityMaps } = context;
 
-    const flatValidationRule =
-      findFlatEntityByUniversalIdentifierOrThrow({
-        flatEntityMaps: allFlatEntityMaps.flatValidationRuleMaps,
-        universalIdentifier: action.universalIdentifier,
-      });
+    const flatValidationRule = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatValidationRuleMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
 
     const update = resolveUniversalUpdateRelationIdentifiersToIds({
       metadataName: 'validationRule',

@@ -3223,13 +3223,26 @@ export interface TimelineActivityType {
     __typename: 'TimelineActivityType'
 }
 
+export interface ValidationRule {
+    id: Scalars['UUID']
+    objectMetadataId: Scalars['UUID']
+    errorFieldMetadataId?: Scalars['UUID']
+    expression: Scalars['String']
+    message: Scalars['String']
+    isActive: Scalars['Boolean']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'ValidationRule'
+}
+
 export interface CollectionHash {
     collectionName: AllMetadataName
     hash: Scalars['String']
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'settingsMenuItem' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'settingsMenuItem' | 'validationRule' | 'workflow' | 'workflowVersion'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -3370,6 +3383,7 @@ export interface Query {
     skills: Skill[]
     skill?: Skill
     agentTurns: AgentTurn[]
+    validationRules: ValidationRule[]
     timelineActivityTypes: TimelineActivityType[]
     metadataTranslations: MetadataTranslation[]
     checkUserExists: CheckUserExist
@@ -3606,6 +3620,9 @@ export interface Mutation {
     deactivateSkill: Skill
     evaluateAgentTurn: AgentTurnEvaluation
     runEvaluationInput: AgentTurn
+    createValidationRule: ValidationRule
+    updateValidationRule: ValidationRule
+    deleteValidationRule: ValidationRule
     updateTimelineActivityType: TimelineActivityType
     resetTimelineActivityType: TimelineActivityType
     getAuthorizationUrlForSSO: GetAuthorizationUrlForSSO
@@ -7034,6 +7051,20 @@ export interface TimelineActivityTypeGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ValidationRuleGenqlSelection{
+    id?: boolean | number
+    objectMetadataId?: boolean | number
+    errorFieldMetadataId?: boolean | number
+    expression?: boolean | number
+    message?: boolean | number
+    isActive?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CollectionHashGenqlSelection{
     collectionName?: boolean | number
     hash?: boolean | number
@@ -7195,6 +7226,7 @@ export interface QueryGenqlSelection{
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
+    validationRules?: (ValidationRuleGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
@@ -7468,6 +7500,9 @@ export interface MutationGenqlSelection{
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     evaluateAgentTurn?: (AgentTurnEvaluationGenqlSelection & { __args: {turnId: Scalars['UUID']} })
     runEvaluationInput?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID'], input: Scalars['String']} })
+    createValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: CreateValidationRuleInput} })
+    updateValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: UpdateValidationRuleInput} })
+    deleteValidationRule?: (ValidationRuleGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {input: UpdateTimelineActivityTypeInput} })
     resetTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAuthorizationUrlForSSO?: (GetAuthorizationUrlForSSOGenqlSelection & { __args: {input: GetAuthorizationUrlForSSOInput} })
@@ -7934,6 +7969,12 @@ export interface AgentChatQuestionAnswerInput {questionIndex: Scalars['Int'],sel
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
 export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
+
+export interface CreateValidationRuleInput {objectMetadataId: Scalars['UUID'],errorFieldMetadataId?: (Scalars['UUID'] | null),expression: Scalars['String'],message: Scalars['String'],isActive?: (Scalars['Boolean'] | null)}
+
+export interface UpdateValidationRuleInput {id: Scalars['UUID'],update: UpdateValidationRuleInputUpdates}
+
+export interface UpdateValidationRuleInputUpdates {errorFieldMetadataId?: (Scalars['UUID'] | null),expression?: (Scalars['String'] | null),message?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
 
 export interface UpdateTimelineActivityTypeInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
@@ -10372,6 +10413,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const ValidationRule_possibleTypes: string[] = ['ValidationRule']
+    export const isValidationRule = (obj?: { __typename?: any } | null): obj is ValidationRule => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isValidationRule"')
+      return ValidationRule_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const CollectionHash_possibleTypes: string[] = ['CollectionHash']
     export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
@@ -11286,6 +11335,7 @@ export const enumAllMetadataName = {
    searchFieldMetadata: 'searchFieldMetadata' as const,
    timelineActivityType: 'timelineActivityType' as const,
    settingsMenuItem: 'settingsMenuItem' as const,
+   validationRule: 'validationRule' as const,
    workflow: 'workflow' as const,
    workflowVersion: 'workflowVersion' as const
 }

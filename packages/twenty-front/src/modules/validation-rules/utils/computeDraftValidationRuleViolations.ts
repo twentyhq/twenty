@@ -54,7 +54,10 @@ const withRelationPresenceFromJoinColumns = ({
         return evaluationRecord;
       }
 
-      return { ...evaluationRecord, [relationField.name]: { id: joinColumnValue } };
+      return {
+        ...evaluationRecord,
+        [relationField.name]: { id: joinColumnValue },
+      };
     }, draftRecord);
 
 export const computeDraftValidationRuleViolations = ({

@@ -151,7 +151,9 @@ export const SettingsObjectDetailPage = () => {
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.LAYOUT:
         return <ObjectLayout objectMetadataItem={objectMetadataItem} />;
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.VALIDATION_RULES:
-        return <ObjectValidationRules objectMetadataItem={objectMetadataItem} />;
+        return (
+          <ObjectValidationRules objectMetadataItem={objectMetadataItem} />
+        );
       default:
         return <></>;
     }

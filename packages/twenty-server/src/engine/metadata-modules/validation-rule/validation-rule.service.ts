@@ -187,7 +187,8 @@ export class ValidationRuleService {
     } = await this.findExistingFlatValidationRuleOrThrow(input.id, workspaceId);
 
     const bindings = compileValidationRuleExpressionOrThrow({
-      expression: input.update.expression ?? existingFlatValidationRule.expression,
+      expression:
+        input.update.expression ?? existingFlatValidationRule.expression,
       objectMetadataId: existingFlatValidationRule.objectMetadataId,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -231,6 +232,8 @@ export class ValidationRuleService {
         'Multiple validation errors occurred while deleting validation rule',
     });
 
-    return fromFlatValidationRuleToValidationRuleDto(existingFlatValidationRule);
+    return fromFlatValidationRuleToValidationRuleDto(
+      existingFlatValidationRule,
+    );
   }
 }

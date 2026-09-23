@@ -20,13 +20,17 @@ export class WorkspaceMigrationValidationRuleActionsBuilderService extends Works
   }
 
   protected validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.validationRule>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.validationRule
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.validationRule,
     'create'
   > {
     const validationResult =
-      this.flatValidationRuleValidatorService.validateFlatValidationRuleCreation(args);
+      this.flatValidationRuleValidatorService.validateFlatValidationRuleCreation(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {
@@ -48,13 +52,17 @@ export class WorkspaceMigrationValidationRuleActionsBuilderService extends Works
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.validationRule>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.validationRule
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.validationRule,
     'delete'
   > {
     const validationResult =
-      this.flatValidationRuleValidatorService.validateFlatValidationRuleDeletion(args);
+      this.flatValidationRuleValidatorService.validateFlatValidationRuleDeletion(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {
@@ -76,13 +84,17 @@ export class WorkspaceMigrationValidationRuleActionsBuilderService extends Works
   }
 
   protected validateFlatEntityUpdate(
-    args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.validationRule>,
+    args: FlatEntityUpdateValidationArgs<
+      typeof ALL_METADATA_NAME.validationRule
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.validationRule,
     'update'
   > {
     const validationResult =
-      this.flatValidationRuleValidatorService.validateFlatValidationRuleUpdate(args);
+      this.flatValidationRuleValidatorService.validateFlatValidationRuleUpdate(
+        args,
+      );
 
     if (validationResult.errors.length > 0) {
       return {

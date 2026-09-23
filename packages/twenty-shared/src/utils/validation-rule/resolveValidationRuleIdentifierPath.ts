@@ -55,7 +55,10 @@ export const resolveValidationRuleIdentifierPath = ({
   const rootField = fields.find((field) => field.name === rootSegment);
 
   if (rootField === undefined) {
-    return { isResolved: false, errorMessage: `Unknown field "${rootSegment}"` };
+    return {
+      isResolved: false,
+      errorMessage: `Unknown field "${rootSegment}"`,
+    };
   }
 
   const isRelationField =

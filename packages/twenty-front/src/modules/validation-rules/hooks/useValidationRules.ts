@@ -7,10 +7,9 @@ export const useValidationRules = ({
 }: {
   objectMetadataId: string;
 }) => {
-  const { data, loading, refetch } = useQuery(
-    FindManyValidationRulesDocument,
-    { variables: { objectMetadataId } },
-  );
+  const { data, loading, refetch } = useQuery(FindManyValidationRulesDocument, {
+    variables: { objectMetadataId },
+  });
 
   return {
     validationRules: data?.validationRules ?? [],
