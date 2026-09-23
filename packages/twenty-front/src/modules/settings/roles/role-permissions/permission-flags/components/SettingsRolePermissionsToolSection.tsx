@@ -2,6 +2,7 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
+import { useRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useRolePermissionFlagConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -45,12 +46,17 @@ export const SettingsRolePermissionsToolSection = ({
     roleId,
   );
 
-  const toolPermissionsConfig = useActionRolePermissionFlagConfig({
+  const standardToolPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: {
       canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
       canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
       canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
     },
+  });
+
+  const toolPermissionsConfig = useRolePermissionFlagConfig({
+    permissionType: 'tool',
+    standardPermissionsConfig: standardToolPermissionsConfig,
   });
 
   const shouldShowAllAccessToggle =
@@ -59,14 +65,14 @@ export const SettingsRolePermissionsToolSection = ({
 
   return (
     <Section.Root>
-      <Section.Header title={t`Actions`} description={t`Actions permissions`} />
+      <Section.Header title={t`Logic`} description={t`Logic permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
           <Card rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconTool}
-              title={t`All Actions Access`}
-              description={t`Grants permission to perform all available actions without restriction`}
+              title={t`Logic All Access`}
+              description={t`Full access to logic permissions`}
               checked={settingsDraftRole.canAccessAllTools}
               disabled={!isEditable}
               onChange={() => {

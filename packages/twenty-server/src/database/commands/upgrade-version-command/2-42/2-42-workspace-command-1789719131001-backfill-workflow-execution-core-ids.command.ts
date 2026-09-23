@@ -199,6 +199,10 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
            LEFT JOIN core."workflowVersion" cv ON cv."workspaceId" = cw."workspaceId"
              AND cv."workspaceWorkflowVersionId" = cw."lastPublishedVersionId"
            WHERE cw."workspaceId" = $1 AND cw."lastPublishedVersionId" IS NOT NULL
+             AND EXISTS (
+               SELECT 1 FROM "${schema}"."workflow" w
+               WHERE (w."coreWorkflowId" = cw.id OR w.id = cw."workspaceWorkflowId") AND w."deletedAt" IS NULL
+             )
              AND (cv.id IS NULL OR cv."coreWorkflowId" <> cw.id OR
                (cw."lastPublishedCoreWorkflowVersionId" IS NOT NULL AND cw."lastPublishedCoreWorkflowVersionId" <> cv.id))
            LIMIT 10`,
