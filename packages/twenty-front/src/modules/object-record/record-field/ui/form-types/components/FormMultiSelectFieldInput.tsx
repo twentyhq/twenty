@@ -19,7 +19,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray } from '@sniptt/guards';
-import { useContext, useId, useRef, useState } from 'react';
+import { type FocusEvent, useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { IconChevronDown } from 'twenty-ui/icon';
@@ -171,14 +171,10 @@ export const FormMultiSelectFieldInput = ({
     onChange(value);
   };
 
-  const onCancel = () => {
+  const closeSelectInput = () => {
     if (draftValue.type !== 'static') {
       throw new Error('Can only be called when editing a static value');
     }
-
-    const isFocusInSelectInput =
-      isDefined(selectInputContainerRef.current) &&
-      selectInputContainerRef.current.contains(document.activeElement);
 
     setDraftValue({
       ...draftValue,
@@ -186,9 +182,31 @@ export const FormMultiSelectFieldInput = ({
     });
 
     removeFocusItemFromFocusStackById({ focusId: instanceId });
+  };
+
+  const onCancel = () => {
+    const isFocusInSelectInput =
+      isDefined(selectInputContainerRef.current) &&
+      selectInputContainerRef.current.contains(document.activeElement);
+
+    closeSelectInput();
 
     if (isFocusInSelectInput) {
       displayModeButtonRef.current?.focus({ preventScroll: true });
+    }
+  };
+
+  const handleRowBlur = (event: FocusEvent<HTMLDivElement>) => {
+    const isFocusMovingOutsideRow =
+      event.relatedTarget instanceof Node &&
+      !event.currentTarget.contains(event.relatedTarget);
+
+    if (
+      draftValue.type === 'static' &&
+      draftValue.editingMode === 'edit' &&
+      isFocusMovingOutsideRow
+    ) {
+      closeSelectInput();
     }
   };
 
@@ -231,7 +249,7 @@ export const FormMultiSelectFieldInput = ({
     <FormFieldInputContainer data-testid={testId}>
       {label ? <Field.Label>{label}</Field.Label> : null}
 
-      <StyledFormFieldInputRowContainer>
+      <StyledFormFieldInputRowContainer onBlur={handleRowBlur}>
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}

@@ -1,5 +1,6 @@
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
@@ -216,3 +217,29 @@ it.each([false, true])(
     expect(input).toHaveFocus();
   },
 );
+
+it('closes an open multi-select list when Tab moves to the next field', async () => {
+  const user = userEvent.setup();
+  render(
+    <I18nWrapper>
+      <FormMultiSelectFieldInput
+        label="Tags"
+        defaultValue={[]}
+        onChange={() => {}}
+        options={[
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' },
+        ]}
+      />
+      <button>Next</button>
+    </I18nWrapper>,
+  );
+  await user.tab();
+  await user.keyboard('{Enter}');
+  expect(await screen.findByText('Option B')).toBeInTheDocument();
+
+  await user.tab();
+
+  expect(screen.getByRole('button', { name: 'Next' })).toHaveFocus();
+  expect(screen.queryByText('Option B')).not.toBeInTheDocument();
+});
