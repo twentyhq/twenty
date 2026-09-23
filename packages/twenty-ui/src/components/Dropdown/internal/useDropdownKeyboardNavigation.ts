@@ -6,6 +6,7 @@ import { type DropdownType } from '../types/DropdownType';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { getDropdownTrigger } from './getDropdownTrigger';
+import { getNextDropdownItem } from './getNextDropdownItem';
 
 const TYPEAHEAD_RESET_DELAY = 500;
 
@@ -69,30 +70,13 @@ export const useDropdownKeyboardNavigation = ({
       (item) => !isDefined(search) || !item.hasAttribute('data-dropdown-back'),
     );
     const currentIndex = items.indexOf(target);
-    const lastIndex = items.length - 1;
-    let nextItem: HTMLElement | undefined;
-
-    if (event.key === 'ArrowDown') {
-      nextItem = items[currentIndex === lastIndex ? 0 : currentIndex + 1];
-    }
-
-    if (event.key === 'ArrowUp') {
-      if (currentIndex === 0 && isDefined(search)) {
-        event.preventDefault();
-        search.focus();
-        return;
-      }
-
-      nextItem = items[currentIndex <= 0 ? lastIndex : currentIndex - 1];
-    }
-
-    if (!isSearch && event.key === 'Home') {
-      nextItem = items[0];
-    }
-
-    if (!isSearch && event.key === 'End') {
-      nextItem = items[lastIndex];
-    }
+    const nextItem = getNextDropdownItem({
+      key: event.key,
+      items,
+      currentIndex,
+      search,
+      isSearch,
+    });
 
     if (isDefined(nextItem)) {
       event.preventDefault();
