@@ -1,5 +1,5 @@
-import { type SettingsBillingPlanCell } from '@/settings/billing/types/settingsBillingPlanCell.type';
-import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { type SettingsBillingPlanCell } from '@/settings/billing/types/SettingsBillingPlanCell';
+import { type SettingsBillingPlanInterval } from '@/settings/billing/types/SettingsBillingPlanComparison';
 import { type BillingPlanKey } from '~/generated-metadata/graphql';
 
 type GetBillingPlanCellParams = {
