@@ -100,6 +100,7 @@ export const FormUuidFieldInput = ({
               placeholder={placeholder ?? t`Enter a UUID`}
               value={draftValue.value}
               copyButton={false}
+              isNativeTabNavigationEnabled
               disabled={readonly}
               onChange={handleChange}
             />

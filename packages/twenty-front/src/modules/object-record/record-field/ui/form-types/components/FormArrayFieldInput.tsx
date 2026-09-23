@@ -25,7 +25,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
@@ -156,19 +156,38 @@ export const FormArrayFieldInput = ({
     setNewItemDraftValue(value);
   };
 
-  const handleFirstItemInputEnter = () => {
-    if (isLimitReached) {
-      return;
+  const commitFirstItemDraft = () => {
+    // Keep the item as typed: consumers decide whether whitespace matters
+    if (
+      isLimitReached ||
+      draftValue.type !== 'static' ||
+      !isNonEmptyString(newItemDraftValue.trim())
+    ) {
+      return false;
     }
+
+    const updatedItems = [...draftValue.value, newItemDraftValue];
 
     setDraftValue({
       type: 'static',
-      value: [...draftValue.value, newItemDraftValue],
+      value: updatedItems,
     });
 
-    onChange([...draftValue.value, newItemDraftValue]);
+    onChange(updatedItems);
 
     setNewItemDraftValue('');
+
+    return true;
+  };
+
+  const handleFirstItemInputBlur = () => {
+    commitFirstItemDraft();
+  };
+
+  const handleFirstItemInputEnter = () => {
+    if (!commitFirstItemDraft()) {
+      return;
+    }
 
     openDropdown({
       dropdownComponentInstanceIdFromProps: dropdownId,
@@ -331,12 +350,13 @@ export const FormArrayFieldInput = ({
                 )}
               </StyledDisplayModeReadonlyContainer>
             ) : draftValue.value.length === 0 ? (
-              <StyledInputContainer>
+              <StyledInputContainer onBlur={handleFirstItemInputBlur}>
                 <TextInput
                   instanceId={formFieldInputInstanceId}
                   placeholder={t`Enter an item`}
                   value={newItemDraftValue}
                   copyButton={false}
+                  isNativeTabNavigationEnabled
                   onChange={handleFirstItemInputChange}
                   onEnter={handleFirstItemInputEnter}
                   shouldTrim={false}
