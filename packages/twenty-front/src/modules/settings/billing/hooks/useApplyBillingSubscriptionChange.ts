@@ -2,7 +2,7 @@ import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/
 import { assertUnreachable } from 'twenty-shared/utils';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
-import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
+import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import { isBillingSubscriptionChangeImmediate } from '@/settings/billing/utils/isBillingSubscriptionChangeImmediate';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';

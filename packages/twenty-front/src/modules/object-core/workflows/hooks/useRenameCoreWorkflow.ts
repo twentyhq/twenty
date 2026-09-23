@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
+import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/invalidateCoreWorkflowQueries';
 import { UpdateCoreWorkflowDocument } from '~/generated/graphql';
 
 export const useRenameCoreWorkflow = ({
@@ -24,7 +24,7 @@ export const useRenameCoreWorkflow = ({
 
     try {
       await updateWorkflow({ variables: { input: { coreWorkflowId, name } } });
-      await invalidateCoreWorkflowVersions(client);
+      await invalidateCoreWorkflowQueries(client);
 
       return true;
     } catch (mutationError) {

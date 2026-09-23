@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ACTION_TOOL_STATUS_LABELS } from '@/ai/constants/action-tool-status-labels.constant';
 import { buildGenericToolStatusMessage } from '@/ai/utils/tool-display/build-generic-tool-status-message.util';
 import { pickStatusLabel } from '@/ai/utils/tool-display/pick-status-label.util';
-import { type ToolDisplayContext } from '@/ai/types/tool-display-context.type';
+import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 
 export const buildActionToolStatusMessage = ({
   toolName,

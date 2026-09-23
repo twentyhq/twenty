@@ -763,6 +763,7 @@ type View {
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean!
   kanbanColumnWidth: Int
+  groupLoadLimit: Int
   calendarFieldMetadataId: UUID
   calendarEndFieldMetadataId: UUID
   workspaceId: UUID!
@@ -4027,6 +4028,7 @@ type Mutation {
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchResourceCreditPrice: BillingUpdate!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
@@ -4357,6 +4359,7 @@ input CreateViewInput {
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   kanbanColumnWidth: Int
+  groupLoadLimit: Int = 8
 
   """
   Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
@@ -4394,6 +4397,7 @@ input UpdateViewInput {
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
   kanbanColumnWidth: Int
+  groupLoadLimit: Int
 }
 
 input UpsertViewWidgetInput {
