@@ -1,12 +1,15 @@
-import { type CalloutProps } from 'twenty-ui/feedback';
-
 import {
   SLACK_CONNECTION_HEALTH,
   type SlackConnectionHealth,
 } from 'src/logic-functions/constants/slack-connection-health';
 
-export const SLACK_CONNECTION_HEALTH_CALLOUTS: Partial<
-  Record<SlackConnectionHealth, Pick<CalloutProps, 'title' | 'description'>>
+type SlackConnectionHealthBanner = {
+  title: string;
+  description: string;
+};
+
+export const SLACK_CONNECTION_HEALTH_BANNERS: Partial<
+  Record<SlackConnectionHealth, SlackConnectionHealthBanner>
 > = {
   [SLACK_CONNECTION_HEALTH.TOKEN_REJECTED]: {
     title: 'Slack connection is no longer valid',
