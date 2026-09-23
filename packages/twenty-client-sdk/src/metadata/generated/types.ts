@@ -1479,6 +1479,9 @@ export default {
             "kanbanColumnWidth": [
                 28
             ],
+            "groupLoadLimit": [
+                28
+            ],
             "calendarFieldMetadataId": [
                 3
             ],
@@ -9019,6 +9022,15 @@ export default {
                     ]
                 }
             ],
+            "disconnectConnectedAccount": [
+                193,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "updateOneApplicationVariable": [
                 8,
                 {
@@ -11339,6 +11351,9 @@ export default {
             "kanbanColumnWidth": [
                 28
             ],
+            "groupLoadLimit": [
+                28
+            ],
             "openRecordIn": [
                 66
             ],
@@ -11420,6 +11435,9 @@ export default {
                 8
             ],
             "kanbanColumnWidth": [
+                28
+            ],
+            "groupLoadLimit": [
                 28
             ],
             "__typename": [
@@ -12263,6 +12281,9 @@ export default {
             ],
             "openRecordIn": [
                 24
+            ],
+            "readability": [
+                25
             ],
             "translations": [
                 490

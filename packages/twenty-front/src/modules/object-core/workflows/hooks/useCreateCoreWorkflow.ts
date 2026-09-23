@@ -6,7 +6,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CREATE_CORE_WORKFLOW } from '@/object-core/workflows/graphql/mutations/createCoreWorkflow';
-import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
+import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/invalidateCoreWorkflowQueries';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -85,7 +85,7 @@ export const useCreateCoreWorkflow = () => {
     }
 
     navigate(AppPath.WorkflowCoreShowPage, { coreWorkflowId });
-    await invalidateCoreWorkflowVersions(apolloCoreClient);
+    await invalidateCoreWorkflowQueries(apolloCoreClient);
   }, [
     canCreateCoreWorkflow,
     apolloCoreClient,
