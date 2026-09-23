@@ -250,6 +250,29 @@ it.each(['left', 'center', 'right'])(
   },
 );
 
+it('keeps an image caption the shared editor does not display', () => {
+  const blocks = [
+    {
+      type: 'image',
+      props: {
+        url: 'https://example.com/image.png',
+        textAlignment: 'left',
+        caption: 'Quarterly chart',
+        name: 'chart.png',
+        previewWidth: 320,
+      },
+      children: [],
+    },
+  ];
+  const document = parseLegacyRecordRichTextDocument({
+    serializedDocument: JSON.stringify(blocks),
+    enableVariables: false,
+  });
+  expect(
+    JSON.parse(convertTipTapDocumentToBlockNote(JSON.stringify(document))),
+  ).toEqual(blocks);
+});
+
 it('preserves literal mustache text when variables are disabled', () => {
   const blocks = [
     {

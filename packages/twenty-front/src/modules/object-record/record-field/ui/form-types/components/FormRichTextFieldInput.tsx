@@ -1,4 +1,5 @@
 import { parseLegacyRecordRichTextDocument } from '@/object-record/record-field/ui/form-types/utils/parseLegacyRecordRichTextDocument';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
 import { Field } from 'twenty-ui/primitives/input';
@@ -55,7 +56,7 @@ export const FormRichTextFieldInput = ({
   );
   const storedValue = defaultValue?.blocknote ?? defaultValue?.markdown;
   const hasUnsupportedContent = useMemo(() => {
-    if (!storedValue) {
+    if (!isNonEmptyString(storedValue)) {
       return false;
     }
     try {
