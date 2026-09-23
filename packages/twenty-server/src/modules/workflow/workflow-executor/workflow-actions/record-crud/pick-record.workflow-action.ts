@@ -171,12 +171,12 @@ export class PickRecordWorkflowAction implements WorkflowAction {
     }
 
     let leastLoadedIndex = 0;
-    let leastLoadedCount = countByCandidateId.get(candidateIds[0]) ?? 0;
+    let leastLoadedCount: number | undefined;
 
-    for (let index = 1; index < candidateIds.length; index++) {
-      const candidateCount = countByCandidateId.get(candidateIds[index]) ?? 0;
+    for (const [index, candidateId] of candidateIds.entries()) {
+      const candidateCount = countByCandidateId.get(candidateId) ?? 0;
 
-      if (candidateCount < leastLoadedCount) {
+      if (!isDefined(leastLoadedCount) || candidateCount < leastLoadedCount) {
         leastLoadedIndex = index;
         leastLoadedCount = candidateCount;
       }

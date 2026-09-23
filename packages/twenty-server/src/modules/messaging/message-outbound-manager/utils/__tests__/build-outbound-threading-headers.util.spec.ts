@@ -53,9 +53,9 @@ describe('buildOutboundThreadingHeaders', () => {
       references: [...middleIds, '<parent@mail.example.com>'],
     });
 
-    const keptIds = referencesHeader.value.split(' ');
+    const keptIds = referencesHeader?.value.split(' ') ?? [];
 
-    expect(`References${referencesHeader.value}`.length).toBeLessThanOrEqual(
+    expect(`References${referencesHeader?.value}`.length).toBeLessThanOrEqual(
       996,
     );
     expect(keptIds[0]).toBe('<token@acme.com>');

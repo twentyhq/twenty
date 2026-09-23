@@ -11,7 +11,7 @@ const windowFrom = (lines: string[], index: number): string[] =>
   lines.slice(index, index + QUOTE_HEADER_WINDOW_LINES).map(withoutCaretPrefix);
 
 const opensAnUnambiguousQuote = (lines: string[], index: number): boolean => {
-  const line = withoutCaretPrefix(lines[index]);
+  const line = withoutCaretPrefix(lines[index] ?? '');
   const window = windowFrom(lines, index).join('\n');
 
   return (
@@ -26,7 +26,9 @@ const opensAnUnambiguousQuote = (lines: string[], index: number): boolean => {
 
 const opensAHeaderBlock = (lines: string[], index: number): boolean => {
   if (
-    !QUOTE_HEADER_PATTERNS.headerField.test(withoutCaretPrefix(lines[index]))
+    !QUOTE_HEADER_PATTERNS.headerField.test(
+      withoutCaretPrefix(lines[index] ?? ''),
+    )
   ) {
     return false;
   }
@@ -53,7 +55,7 @@ const isPrecededOnlyByHeaderFields = (
 
 export const findQuoteHeaderIndex = (lines: string[]): number => {
   for (let index = 0; index < lines.length; index++) {
-    if (opensAForwardedMessage(lines[index])) {
+    if (opensAForwardedMessage(lines[index] ?? '')) {
       return NO_QUOTE_HEADER;
     }
 

@@ -23,7 +23,7 @@ describe('excludeNonAuditLoggedFieldsFromEvents', () => {
       nonAuditLoggedFieldNames: new Set(['lastContactAt']),
     });
 
-    expect(event.properties.diff).toEqual({
+    expect(event?.properties.diff).toEqual({
       name: { before: 'Acme', after: 'Acme Inc' },
     });
   });
@@ -38,7 +38,7 @@ describe('excludeNonAuditLoggedFieldsFromEvents', () => {
       nonAuditLoggedFieldNames: new Set(['lastContactAt']),
     });
 
-    expect(event.properties.diff).toEqual({});
+    expect(event?.properties.diff).toEqual({});
   });
 
   it('returns the very same events when none carries an excluded field', () => {
@@ -69,7 +69,7 @@ describe('excludeNonAuditLoggedFieldsFromEvents', () => {
       nonAuditLoggedFieldNames: new Set(['lastContactAt']),
     });
 
-    expect(event.properties.diff).toEqual({
+    expect(event?.properties.diff).toEqual({
       name: { before: 'Acme', after: 'Acme Inc' },
     });
     expect(untouchedEvent).toBe(eventWithoutDiff);
@@ -92,8 +92,8 @@ describe('excludeNonAuditLoggedFieldsFromEvents', () => {
       ]),
     });
 
-    expect(event.properties.updatedFields).toEqual(['name']);
-    expect(Object.keys(event.properties.diff ?? {})).toEqual(['name']);
+    expect(event?.properties.updatedFields).toEqual(['name']);
+    expect(Object.keys(event?.properties.diff ?? {})).toEqual(['name']);
   });
 
   it('filters an event whose only excluded field is in updatedFields', () => {
@@ -102,6 +102,6 @@ describe('excludeNonAuditLoggedFieldsFromEvents', () => {
       nonAuditLoggedFieldNames: new Set(['position']),
     });
 
-    expect(event.properties.updatedFields).toEqual(['positionId']);
+    expect(event?.properties.updatedFields).toEqual(['positionId']);
   });
 });

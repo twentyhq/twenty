@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 export type ParsedMessageId = {
   folder: string;
   uid: number;
@@ -15,7 +17,7 @@ export function parseMessageId(messageId: string): ParsedMessageId | null {
   const [, folder, uidStr] = match;
   const uid = Number(uidStr);
 
-  if (!Number.isInteger(uid)) {
+  if (!isDefined(folder) || !Number.isInteger(uid)) {
     return null;
   }
 

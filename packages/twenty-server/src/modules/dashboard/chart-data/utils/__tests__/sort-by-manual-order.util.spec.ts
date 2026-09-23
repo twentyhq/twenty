@@ -62,9 +62,9 @@ describe('sortByManualOrder', () => {
       getRawValue: (item) => item.label,
     });
 
-    expect(result[0].label).toBe('Beta');
-    expect(result[1].label).toBe('Alpha');
-    expect(result[2].label).toBeNull();
+    expect(result[0]?.label).toBe('Beta');
+    expect(result[1]?.label).toBe('Alpha');
+    expect(result[2]?.label).toBeNull();
   });
 
   it('should handle empty items array', () => {

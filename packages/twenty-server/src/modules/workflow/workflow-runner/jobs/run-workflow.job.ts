@@ -290,6 +290,13 @@ export class RunWorkflowJob {
     const lastExecutedStepOutput =
       workflowRun.state?.stepInfos[lastExecutedStepId];
 
+    if (!isDefined(lastExecutedStepOutput)) {
+      throw new WorkflowRunException(
+        `Step info not found for step ${lastExecutedStepId}`,
+        WorkflowRunExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const { nextStepIdsToExecute, nextStepIdsToSkip, nextStepIdsToFailSafely } =
       await this.workflowExecutorWorkspaceService.getNextStepIdsToExecute({
         executedStep: lastExecutedStep,

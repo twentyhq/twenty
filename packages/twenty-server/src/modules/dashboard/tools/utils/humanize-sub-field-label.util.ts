@@ -11,7 +11,7 @@ export const humanizeSubFieldLabel = (value: string) => {
     .split(' ')
     .map((part) =>
       part.length > 0
-        ? part[0].toUpperCase() + part.slice(1).toLowerCase()
+        ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
         : '',
     )
     .join(' ');

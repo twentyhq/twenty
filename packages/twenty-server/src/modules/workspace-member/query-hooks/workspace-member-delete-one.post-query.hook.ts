@@ -51,6 +51,11 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     }
 
     const deletedWorkspaceMember = payload[0];
+
+    if (!isDefined(deletedWorkspaceMember)) {
+      return;
+    }
+
     const targettedWorkspaceMemberId = deletedWorkspaceMember.id;
 
     const workspace = authContext.workspace;

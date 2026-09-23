@@ -64,7 +64,7 @@ describe('getWorkflowRecordStepMetadataIssues', () => {
     ]);
 
     expect(issues).toHaveLength(1);
-    expect(issues[0].code).toBe('OBJECT_NOT_FOUND');
+    expect(issues[0]?.code).toBe('OBJECT_NOT_FOUND');
   });
 
   it('flags a bare-string rich text value on a known object', () => {
@@ -76,7 +76,7 @@ describe('getWorkflowRecordStepMetadataIssues', () => {
     ]);
 
     expect(issues).toHaveLength(1);
-    expect(issues[0].code).toBe('INVALID_RICH_TEXT_FIELD');
+    expect(issues[0]?.code).toBe('INVALID_RICH_TEXT_FIELD');
   });
 
   it('returns no issues for a valid record step', () => {

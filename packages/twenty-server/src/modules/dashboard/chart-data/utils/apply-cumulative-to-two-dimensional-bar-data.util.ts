@@ -22,10 +22,10 @@ export const applyCumulativeToTwoDimensionalBarData = ({
       const value = datum[key];
 
       if (isNumber(value) && Number.isFinite(value)) {
-        runningTotalByKey[key] += value;
+        runningTotalByKey[key] = (runningTotalByKey[key] ?? 0) + value;
       }
 
-      cumulativeDatum[key] = runningTotalByKey[key];
+      cumulativeDatum[key] = runningTotalByKey[key] ?? 0;
     }
 
     result.push(cumulativeDatum);

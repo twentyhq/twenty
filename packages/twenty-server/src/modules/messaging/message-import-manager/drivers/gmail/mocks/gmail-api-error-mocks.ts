@@ -66,6 +66,10 @@ export const getGmailApiError = ({
 
   const config = statusMap[reason || ''] ?? statusMap.default;
 
+  if (!config) {
+    throw new Error(`Unknown error reason: ${reason}`);
+  }
+
   const errorMessage = message ?? config.message;
 
   return createMockGaxiosError({

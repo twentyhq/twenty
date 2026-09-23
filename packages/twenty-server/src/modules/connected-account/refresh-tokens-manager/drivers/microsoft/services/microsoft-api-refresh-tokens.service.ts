@@ -1,3 +1,4 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { Injectable } from '@nestjs/common';
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
@@ -58,6 +59,8 @@ export class MicrosoftApiRefreshAccessTokenService {
   ): PlaintextString {
     const tokenCache = JSON.parse(msalClient.getTokenCache().serialize());
     const refreshTokenKey = Object.keys(tokenCache.RefreshToken)[0];
+
+    assertIsDefinedOrThrow(refreshTokenKey);
 
     return tokenCache.RefreshToken[refreshTokenKey].secret;
   }

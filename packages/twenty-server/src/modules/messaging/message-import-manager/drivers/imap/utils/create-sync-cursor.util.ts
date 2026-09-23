@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type MailboxState } from './extract-mailbox-state.util';
 import { type ImapSyncCursor } from './parse-sync-cursor.util';
 
@@ -12,8 +13,10 @@ export const createSyncCursor = (
   let highestUid = lastSeenUid;
 
   for (let i = 0; i < messageUids.length; i++) {
-    if (messageUids[i] > highestUid) {
-      highestUid = messageUids[i];
+    const messageUid = messageUids[i];
+
+    if (isDefined(messageUid) && messageUid > highestUid) {
+      highestUid = messageUid;
     }
   }
 

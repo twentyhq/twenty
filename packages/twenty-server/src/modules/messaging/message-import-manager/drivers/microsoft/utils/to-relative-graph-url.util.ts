@@ -12,7 +12,7 @@ export const toRelativeGraphUrl = (url: string): string => {
 
   if (
     pathSegments.length > 0 &&
-    GRAPH_VERSION_SEGMENTS.includes(pathSegments[0])
+    GRAPH_VERSION_SEGMENTS.includes(pathSegments[0] ?? '')
   ) {
     pathSegments.shift();
   }

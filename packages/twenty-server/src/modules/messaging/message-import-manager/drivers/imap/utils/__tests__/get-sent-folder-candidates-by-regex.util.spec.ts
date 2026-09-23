@@ -152,7 +152,7 @@ describe('getSentFolderCandidatesByRegex', () => {
     const result = getImapSentFolderCandidatesByRegex(input);
 
     expect(result).toHaveLength(1);
-    expect(result[0].path).toBe('INBOX/Sent');
-    expect(result[0].name).toBe('Sent');
+    expect(result[0]?.path).toBe('INBOX/Sent');
+    expect(result[0]?.name).toBe('Sent');
   });
 });

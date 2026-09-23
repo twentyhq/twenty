@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
+import {
+  appendCopySuffix,
+  assertIsDefinedOrThrow,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -162,9 +166,11 @@ export class MessageListDuplicationService {
         authContext,
       });
 
+    assertIsDefinedOrThrow(messageListWithActor);
+
     const insertResult =
       await messageListRepository.insert(messageListWithActor);
-    const duplicatedMessageListId: string = insertResult.identifiers[0].id;
+    const duplicatedMessageListId: string = insertResult.identifiers[0]?.id;
 
     if (originalMembers.length > 0) {
       const membersWithActor =

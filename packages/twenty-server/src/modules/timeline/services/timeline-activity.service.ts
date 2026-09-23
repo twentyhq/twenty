@@ -199,7 +199,7 @@ export class TimelineActivityService {
       await this.timelineActivityRepository.upsertTimelineActivities({
         objectSingularName,
         workspaceId,
-        payloads: payloadsByObjectSingularName[objectSingularName],
+        payloads: payloadsByObjectSingularName[objectSingularName] ?? [],
       });
     }
   }

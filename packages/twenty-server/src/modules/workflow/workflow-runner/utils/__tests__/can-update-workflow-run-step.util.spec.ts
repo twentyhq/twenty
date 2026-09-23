@@ -9,6 +9,7 @@ import {
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { canUpdateWorkflowRunStep } from 'src/modules/workflow/workflow-runner/utils/can-update-workflow-run-step.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const ERROR_HANDLING_OPTIONS = {
   retryOnFailure: { value: 0 },
@@ -73,6 +74,8 @@ describe('canUpdateWorkflowRunStep', () => {
   });
 
   it('lets the values of a form step of an application-bound run be filled', () => {
+    jestExpectToBeDefined(FORM_STEP.settings.input[0]);
+
     expect(
       canUpdateWorkflowRunStep({
         workflowRun: buildWorkflowRun('installed-app-id'),
@@ -88,6 +91,8 @@ describe('canUpdateWorkflowRunStep', () => {
   });
 
   it('refuses a change to the fields of a form step of an application-bound run', () => {
+    jestExpectToBeDefined(FORM_STEP.settings.input[0]);
+
     const textFieldTurnedIntoRecordPicker: WorkflowFormAction = {
       ...FORM_STEP,
       settings: {

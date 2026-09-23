@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/constants/campaign-variable-pattern.constant';
 
 export const collectCampaignVariableNamesFromString = (
@@ -10,7 +11,11 @@ export const collectCampaignVariableNamesFromString = (
   }
 
   for (const match of value.matchAll(CAMPAIGN_VARIABLE_PATTERN)) {
-    names.add(match[1]);
+    const [, variableName] = match;
+
+    if (isDefined(variableName)) {
+      names.add(variableName);
+    }
   }
 
   return names;

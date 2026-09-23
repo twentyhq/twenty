@@ -33,7 +33,7 @@ describe('toMicrosoftRecipients', () => {
 
     const result = toMicrosoftRecipients([emailWithPlus, emailWithDots]);
 
-    expect(result[0].emailAddress.address).toBe(emailWithPlus);
-    expect(result[1].emailAddress.address).toBe(emailWithDots);
+    expect(result[0]?.emailAddress.address).toBe(emailWithPlus);
+    expect(result[1]?.emailAddress.address).toBe(emailWithDots);
   });
 });

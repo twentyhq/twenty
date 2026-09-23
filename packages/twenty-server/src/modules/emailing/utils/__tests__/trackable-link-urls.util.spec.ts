@@ -1,6 +1,7 @@
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { decodeHtmlAttributeUrl } from 'src/modules/emailing/utils/decode-html-attribute-url.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('collectTrackableLinkUrls', () => {
   it('collects http and https links only once each', () => {
@@ -89,6 +90,8 @@ describe('replaceTrackableLinkUrls', () => {
   it('matches the escaped href that collecting produced', () => {
     const html = `<a href="https://acme.com/?a=1&amp;b=2">Link</a>`;
     const [url] = collectTrackableLinkUrls(html);
+
+    jestExpectToBeDefined(url);
 
     const result = replaceTrackableLinkUrls({
       html,

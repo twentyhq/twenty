@@ -151,9 +151,9 @@ describe('fillDateGaps', () => {
       });
 
       expect(result.data).toHaveLength(3);
-      expect(result.data[0].aggregateValue).toBe(10);
-      expect(result.data[1].aggregateValue).toBe(20);
-      expect(result.data[2].aggregateValue).toBe(30);
+      expect(result.data[0]?.aggregateValue).toBe(10);
+      expect(result.data[1]?.aggregateValue).toBe(20);
+      expect(result.data[2]?.aggregateValue).toBe(30);
     });
 
     it('should handle descending order', () => {
@@ -169,9 +169,9 @@ describe('fillDateGaps', () => {
       });
 
       expect(result.data).toHaveLength(3);
-      expect(result.data[0].groupByDimensionValues[0]).toBe('2024-01-03');
-      expect(result.data[1].groupByDimensionValues[0]).toBe('2024-01-02');
-      expect(result.data[2].groupByDimensionValues[0]).toBe('2024-01-01');
+      expect(result.data[0]?.groupByDimensionValues[0]).toBe('2024-01-03');
+      expect(result.data[1]?.groupByDimensionValues[0]).toBe('2024-01-02');
+      expect(result.data[2]?.groupByDimensionValues[0]).toBe('2024-01-01');
     });
   });
 
@@ -189,10 +189,10 @@ describe('fillDateGaps', () => {
 
       expect(result.data).toHaveLength(4);
       expect(result.wasTruncated).toBe(false);
-      expect(result.data[0].groupByDimensionValues[0]).toBe('2024-01-01');
-      expect(result.data[1].groupByDimensionValues[0]).toBe('2024-02-01');
-      expect(result.data[2].groupByDimensionValues[0]).toBe('2024-03-01');
-      expect(result.data[3].groupByDimensionValues[0]).toBe('2024-04-01');
+      expect(result.data[0]?.groupByDimensionValues[0]).toBe('2024-01-01');
+      expect(result.data[1]?.groupByDimensionValues[0]).toBe('2024-02-01');
+      expect(result.data[2]?.groupByDimensionValues[0]).toBe('2024-03-01');
+      expect(result.data[3]?.groupByDimensionValues[0]).toBe('2024-04-01');
     });
   });
 
@@ -210,10 +210,10 @@ describe('fillDateGaps', () => {
 
       expect(result.data).toHaveLength(4);
       expect(result.wasTruncated).toBe(false);
-      expect(result.data[0].groupByDimensionValues[0]).toBe('2024-01-01');
-      expect(result.data[1].groupByDimensionValues[0]).toBe('2024-01-08');
-      expect(result.data[2].groupByDimensionValues[0]).toBe('2024-01-15');
-      expect(result.data[3].groupByDimensionValues[0]).toBe('2024-01-22');
+      expect(result.data[0]?.groupByDimensionValues[0]).toBe('2024-01-01');
+      expect(result.data[1]?.groupByDimensionValues[0]).toBe('2024-01-08');
+      expect(result.data[2]?.groupByDimensionValues[0]).toBe('2024-01-15');
+      expect(result.data[3]?.groupByDimensionValues[0]).toBe('2024-01-22');
     });
   });
 });
@@ -341,9 +341,9 @@ describe('fillDateGapsTwoDimensional', () => {
       });
 
       expect(result.data).toHaveLength(3);
-      expect(result.data[0].groupByDimensionValues[0]).toBe('2024-01-03');
-      expect(result.data[1].groupByDimensionValues[0]).toBe('2024-01-02');
-      expect(result.data[2].groupByDimensionValues[0]).toBe('2024-01-01');
+      expect(result.data[0]?.groupByDimensionValues[0]).toBe('2024-01-03');
+      expect(result.data[1]?.groupByDimensionValues[0]).toBe('2024-01-02');
+      expect(result.data[2]?.groupByDimensionValues[0]).toBe('2024-01-01');
     });
   });
 });

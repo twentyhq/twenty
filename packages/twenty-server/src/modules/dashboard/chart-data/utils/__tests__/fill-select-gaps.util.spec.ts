@@ -103,9 +103,9 @@ describe('fillSelectGaps', () => {
       });
 
       expect(result).toHaveLength(3);
-      expect(result[0].aggregateValue).toBe(10);
-      expect(result[1].aggregateValue).toBe(20);
-      expect(result[2].aggregateValue).toBe(30);
+      expect(result[0]?.aggregateValue).toBe(10);
+      expect(result[1]?.aggregateValue).toBe(20);
+      expect(result[2]?.aggregateValue).toBe(30);
     });
 
     it('should preserve selectOptions order', () => {
@@ -120,9 +120,9 @@ describe('fillSelectGaps', () => {
       });
 
       expect(result).toHaveLength(3);
-      expect(result[0].groupByDimensionValues[0]).toBe('A');
-      expect(result[1].groupByDimensionValues[0]).toBe('B');
-      expect(result[2].groupByDimensionValues[0]).toBe('C');
+      expect(result[0]?.groupByDimensionValues[0]).toBe('A');
+      expect(result[1]?.groupByDimensionValues[0]).toBe('B');
+      expect(result[2]?.groupByDimensionValues[0]).toBe('C');
     });
   });
 });

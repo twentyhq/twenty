@@ -16,11 +16,14 @@ export const workflowShouldKeepRunning = ({
   stepInfos: WorkflowRunStepInfos;
   steps: WorkflowAction[];
 }) => {
-  const runningOrPendingStepExists = steps.some((step) =>
-    [StepStatus.PENDING, StepStatus.RUNNING].includes(
-      stepInfos[step.id]?.status,
-    ),
-  );
+  const runningOrPendingStepExists = steps.some((step) => {
+    const status = stepInfos[step.id]?.status;
+
+    return (
+      isDefined(status) &&
+      [StepStatus.PENDING, StepStatus.RUNNING].includes(status)
+    );
+  });
 
   const terminalStepWithUnresolvedChildrenExists = steps.some((step) => {
     const status = stepInfos[step.id]?.status;

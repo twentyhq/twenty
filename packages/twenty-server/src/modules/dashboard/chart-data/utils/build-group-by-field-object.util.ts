@@ -7,6 +7,7 @@ import {
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 import {
+  assertIsDefinedOrThrow,
   convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
   isDefined,
   isFieldMetadataDateKind,
@@ -110,6 +111,8 @@ export const buildGroupByFieldObject = ({
         timeZone,
       });
 
+      assertIsDefinedOrThrow(nestedFieldName);
+
       return {
         [fieldMetadata.name]: {
           [nestedFieldName]: dateGroupByObject,
@@ -118,6 +121,8 @@ export const buildGroupByFieldObject = ({
     }
 
     if (isDefined(nestedSubFieldName)) {
+      assertIsDefinedOrThrow(nestedFieldName);
+
       return {
         [fieldMetadata.name]: {
           [nestedFieldName]: {
@@ -126,6 +131,8 @@ export const buildGroupByFieldObject = ({
         },
       };
     }
+
+    assertIsDefinedOrThrow(nestedFieldName);
 
     return {
       [fieldMetadata.name]: {

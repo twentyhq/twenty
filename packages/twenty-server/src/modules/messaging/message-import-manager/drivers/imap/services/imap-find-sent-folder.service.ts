@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNumber } from 'class-validator';
@@ -111,12 +113,14 @@ export class ImapFindSentFolderService {
       }
     }
 
-    if (regexCandidateFolders.length > 0) {
+    const firstRegexCandidateFolder = regexCandidateFolders[0];
+
+    if (isDefined(firstRegexCandidateFolder)) {
       this.logger.debug(
-        `Using first regex candidate sent folder: ${regexCandidateFolders[0].path} (no messages found in any regex candidate)`,
+        `Using first regex candidate sent folder: ${firstRegexCandidateFolder.path} (no messages found in any regex candidate)`,
       );
 
-      const folder = regexCandidateFolders[0];
+      const folder = firstRegexCandidateFolder;
 
       return {
         name: folder.name,

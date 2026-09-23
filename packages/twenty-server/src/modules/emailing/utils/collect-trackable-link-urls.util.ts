@@ -6,7 +6,7 @@ export const collectTrackableLinkUrls = (html: string): string[] => {
   const urls = new Set<string>();
 
   for (const [, , rawUrl] of html.matchAll(TRACKABLE_HREF_PATTERN)) {
-    const url = decodeHtmlAttributeUrl(rawUrl);
+    const url = decodeHtmlAttributeUrl(rawUrl ?? '');
 
     if (TRACKABLE_URL_PATTERN.test(url)) {
       urls.add(url);

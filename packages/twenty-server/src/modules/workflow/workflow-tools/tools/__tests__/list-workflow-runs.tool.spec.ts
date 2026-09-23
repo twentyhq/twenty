@@ -79,10 +79,10 @@ describe('list_workflow_runs tool', () => {
     }
 
     expect(result.workflowRuns).toHaveLength(2);
-    expect(result.workflowRuns[0].id).toBe('run-1');
-    expect(result.workflowRuns[0].coreWorkflowId).toBe('core-wf-1');
-    expect(result.workflowRuns[0].coreWorkflowVersionId).toBe('core-wfv-1');
-    expect(result.workflowRuns[1].error).toBe('Timeout');
+    expect(result.workflowRuns[0]?.id).toBe('run-1');
+    expect(result.workflowRuns[0]?.coreWorkflowId).toBe('core-wf-1');
+    expect(result.workflowRuns[0]?.coreWorkflowVersionId).toBe('core-wfv-1');
+    expect(result.workflowRuns[1]?.error).toBe('Timeout');
   });
 
   it('should apply filters when provided', async () => {

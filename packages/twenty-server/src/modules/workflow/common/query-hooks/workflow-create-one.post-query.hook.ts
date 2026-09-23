@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -35,6 +37,10 @@ export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookIns
     );
 
     const workflow = payload[0];
+
+    if (!isDefined(workflow)) {
+      return;
+    }
 
     await this.workflowVersionCoreSyncService.createInitialDraftVersionForWorkflow(
       workspace.id,

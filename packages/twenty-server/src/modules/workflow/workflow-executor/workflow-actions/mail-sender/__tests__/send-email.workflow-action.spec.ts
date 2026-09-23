@@ -12,6 +12,7 @@ import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const baseSettings: WorkflowActionSettings = {
   outputSchema: {},
@@ -114,10 +115,13 @@ describe('SendEmailWorkflowAction', () => {
       },
     });
 
-  const executedBodyDocument = () =>
-    JSON.parse(
-      mockSendEmailTool.execute.mock.calls[0][0].body as string,
-    ) as Record<string, unknown>;
+  const executedBodyDocument = () => {
+    const [firstCall] = mockSendEmailTool.execute.mock.calls;
+
+    jestExpectToBeDefined(firstCall);
+
+    return JSON.parse(firstCall[0].body as string) as Record<string, unknown>;
+  };
 
   describe('email body handling', () => {
     it('should prepare TipTap JSON for the shared email compiler', async () => {

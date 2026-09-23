@@ -82,7 +82,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
       ],
     });
 
-    expect(result[0].messageExternalIds.length).toBeGreaterThan(0);
+    expect(result[0]?.messageExternalIds.length).toBeGreaterThan(0);
   });
 
   // if you need to run this test, you need to manually update the syncCursor to a valid one
@@ -104,7 +104,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
       ],
     });
 
-    expect(result[0].nextSyncCursor).toBeTruthy();
+    expect(result[0]?.nextSyncCursor).toBeTruthy();
   });
 
   it('Should fail partial message if syncCursor is invalid', async () => {
@@ -238,8 +238,8 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
     });
 
     expect(result.length).toBe(1);
-    expect(result[0].folderId).toBe(inboxFolder.id);
-    expect(result[0].messageExternalIds.length).toBeGreaterThan(0);
+    expect(result[0]?.folderId).toBe(inboxFolder.id);
+    expect(result[0]?.messageExternalIds.length).toBeGreaterThan(0);
   });
 
   it('Should return an array of two items', async () => {

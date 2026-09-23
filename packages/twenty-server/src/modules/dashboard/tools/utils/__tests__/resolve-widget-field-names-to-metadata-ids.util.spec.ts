@@ -11,6 +11,7 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { type DashboardIdentifierMaps } from 'src/modules/dashboard/tools/types/dashboard-identifier-maps.type';
 import { type WidgetIdentifiersInput } from 'src/modules/dashboard/tools/types/widget-identifiers-input.type';
 import { resolveWidgetFieldNamesToIds } from 'src/modules/dashboard/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const OBJECT_ID = '11111111-1111-4111-8111-111111111111';
 const AMOUNT_FIELD_ID = '22222222-2222-4222-8222-222222222222';
@@ -122,6 +123,8 @@ describe('resolveWidgetFieldNamesToIds - chart filters', () => {
     const rootGroup = filter.recordFilterGroups[0];
 
     expect(rootGroup).toMatchObject({ logicalOperator: 'AND' });
+    jestExpectToBeDefined(rootGroup);
+
     expect(rootGroup.parentRecordFilterGroupId).toBeUndefined();
 
     expect(filter.recordFilters[0]).toMatchObject({
@@ -130,10 +133,10 @@ describe('resolveWidgetFieldNamesToIds - chart filters', () => {
       value: '["NEW"]',
       displayValue: '["NEW"]',
       type: 'SELECT',
-      recordFilterGroupId: rootGroup.id,
+      recordFilterGroupId: rootGroup?.id,
       positionInRecordFilterGroup: 0,
     });
-    expect(filter.recordFilters[0].id).toEqual(expect.any(String));
+    expect(filter.recordFilters[0]?.id).toEqual(expect.any(String));
   });
 
   it('preserves an explicit filter fieldMetadataId', () => {

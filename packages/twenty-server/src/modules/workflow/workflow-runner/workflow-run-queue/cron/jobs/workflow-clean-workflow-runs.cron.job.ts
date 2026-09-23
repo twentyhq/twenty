@@ -93,7 +93,7 @@ export class WorkflowCleanWorkflowRunsCronJob {
 
         if (result.status === 'rejected') {
           this.exceptionHandlerService.captureExceptions([result.reason], {
-            workspace: { id: batch[index].id },
+            workspace: { id: batch[index]?.id },
           });
         }
       }

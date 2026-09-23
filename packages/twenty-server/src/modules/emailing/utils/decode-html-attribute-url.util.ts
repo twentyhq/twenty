@@ -14,5 +14,6 @@ export const decodeHtmlAttributeUrl = (rawUrl: string): string =>
     .trim()
     .replace(
       /&(?:amp|#38|#x26|quot|#34|#x22|#39|#x27);/gi,
-      (entity) => HTML_ATTRIBUTE_URL_ENTITY_TO_CHARACTER[entity.toLowerCase()],
+      (entity) =>
+        HTML_ATTRIBUTE_URL_ENTITY_TO_CHARACTER[entity.toLowerCase()] ?? entity,
     );

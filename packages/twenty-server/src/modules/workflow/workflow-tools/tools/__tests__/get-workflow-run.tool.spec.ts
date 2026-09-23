@@ -87,7 +87,7 @@ describe('get_workflow_run tool', () => {
     expect(result.workflowRun.id).toBe(WORKFLOW_RUN_ID);
     expect(result.workflowRun.error).toBe('Something went wrong');
     expect(result.workflowRun.steps).toHaveLength(2);
-    expect(result.workflowRun.steps[1].error).toBe('Email failed');
+    expect(result.workflowRun.steps[1]?.error).toBe('Email failed');
     expect(result.workflowRun.failedStepLogs).toEqual({
       'step-2': [{ message: 'SMTP error' }],
     });

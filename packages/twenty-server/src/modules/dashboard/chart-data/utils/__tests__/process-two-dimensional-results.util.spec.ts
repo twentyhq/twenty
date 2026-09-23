@@ -56,10 +56,10 @@ describe('processTwoDimensionalResults', () => {
       });
 
     expect(processedDataPoints).toHaveLength(2);
-    expect(processedDataPoints[0].xFormatted).toBe('John Smith (1)');
-    expect(processedDataPoints[1].xFormatted).toBe('John Smith (2)');
-    expect(processedDataPoints[0].aggregateValue).toBe(12);
-    expect(processedDataPoints[1].aggregateValue).toBe(7);
+    expect(processedDataPoints[0]?.xFormatted).toBe('John Smith (1)');
+    expect(processedDataPoints[1]?.xFormatted).toBe('John Smith (2)');
+    expect(processedDataPoints[0]?.aggregateValue).toBe(12);
+    expect(processedDataPoints[1]?.aggregateValue).toBe(7);
     expect(formattedToRawLookup.size).toBe(2);
     expect(formattedToRawLookup.get('John Smith (1)')).toBe('agent-id-1');
     expect(formattedToRawLookup.get('John Smith (2)')).toBe('agent-id-2');
@@ -85,8 +85,8 @@ describe('processTwoDimensionalResults', () => {
         },
       });
 
-    expect(processedDataPoints[0].xFormatted).toBe('Open');
-    expect(processedDataPoints[0].yFormatted).toBe('Alice');
+    expect(processedDataPoints[0]?.xFormatted).toBe('Open');
+    expect(processedDataPoints[0]?.yFormatted).toBe('Alice');
     expect(secondaryFormattedToRawLookup.get('Alice')).toBe('agent-id-1');
   });
 
@@ -106,6 +106,6 @@ describe('processTwoDimensionalResults', () => {
       secondaryRelationLabelResolution: undefined,
     });
 
-    expect(processedDataPoints[0].xFormatted).toBe('agent-id-1');
+    expect(processedDataPoints[0]?.xFormatted).toBe('agent-id-1');
   });
 });

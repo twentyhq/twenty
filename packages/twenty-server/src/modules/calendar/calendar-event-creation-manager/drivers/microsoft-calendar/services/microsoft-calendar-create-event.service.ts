@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { Injectable } from '@nestjs/common';
 
 import { type Event } from '@microsoft/microsoft-graph-types';
@@ -38,7 +40,13 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
         .header('Prefer', 'outlook.timezone="UTC"')
         .post(toMicrosoftEventInput(input));
 
-      return formatMicrosoftCalendarEvents([createdEvent])[0];
+      const [formattedCalendarEvent] = formatMicrosoftCalendarEvents([
+        createdEvent,
+      ]);
+
+      assertIsDefinedOrThrow(formattedCalendarEvent);
+
+      return formattedCalendarEvent;
     } catch (error) {
       throw new CalendarEventCreationException(
         `Failed to create Microsoft calendar event: ${error instanceof Error ? error.message : 'unknown error'}`,

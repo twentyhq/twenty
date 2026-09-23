@@ -35,9 +35,11 @@ export const buildUniqueRelationLabels = ({
   for (const [rawLabel, recordIds] of recordIdsByRawLabel) {
     const isCollidingLabel = recordIds.length > 1 || takenLabels.has(rawLabel);
 
-    if (!isCollidingLabel) {
+    const [soleRecordId] = recordIds;
+
+    if (!isCollidingLabel && isDefined(soleRecordId)) {
       takenLabels.add(rawLabel);
-      labelByRecordId.set(recordIds[0], rawLabel);
+      labelByRecordId.set(soleRecordId, rawLabel);
       continue;
     }
 

@@ -427,7 +427,7 @@ export class MessagingMessageListFetchService {
       nextFirstBatchMessageChannelMessageAssociationId =
         existingMessageChannelMessageAssociations[
           existingMessageChannelMessageAssociations.length - 1
-        ].id;
+        ]?.id;
 
       batchIndex++;
     }

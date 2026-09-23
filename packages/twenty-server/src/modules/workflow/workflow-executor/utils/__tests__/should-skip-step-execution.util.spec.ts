@@ -7,6 +7,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('shouldSkipStepExecution', () => {
   it('should return true when all parent steps are skipped', () => {
@@ -20,6 +21,8 @@ describe('shouldSkipStepExecution', () => {
       'step-2': { status: StepStatus.SKIPPED },
       'step-3': { status: StepStatus.NOT_STARTED },
     };
+
+    jestExpectToBeDefined(steps[2]);
 
     const result = shouldSkipStepExecution({
       step: steps[2],
@@ -42,6 +45,8 @@ describe('shouldSkipStepExecution', () => {
       'step-3': { status: StepStatus.NOT_STARTED },
     };
 
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldSkipStepExecution({
       step: steps[2],
       steps,
@@ -62,6 +67,8 @@ describe('shouldSkipStepExecution', () => {
       'step-2': { status: StepStatus.STOPPED },
       'step-3': { status: StepStatus.NOT_STARTED },
     };
+
+    jestExpectToBeDefined(steps[2]);
 
     const result = shouldSkipStepExecution({
       step: steps[2],
@@ -84,6 +91,8 @@ describe('shouldSkipStepExecution', () => {
       'step-3': { status: StepStatus.NOT_STARTED },
     };
 
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldSkipStepExecution({
       step: steps[2],
       steps,
@@ -104,6 +113,8 @@ describe('shouldSkipStepExecution', () => {
       'step-2': { status: StepStatus.FAILED },
       'step-3': { status: StepStatus.NOT_STARTED },
     };
+
+    jestExpectToBeDefined(steps[2]);
 
     const result = shouldSkipStepExecution({
       step: steps[2],
@@ -126,6 +137,8 @@ describe('shouldSkipStepExecution', () => {
       'step-3': { status: StepStatus.NOT_STARTED },
     };
 
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldSkipStepExecution({
       step: steps[2],
       steps,
@@ -146,6 +159,8 @@ describe('shouldSkipStepExecution', () => {
       'step-2': { status: StepStatus.NOT_STARTED },
       'step-3': { status: StepStatus.NOT_STARTED },
     };
+
+    jestExpectToBeDefined(steps[2]);
 
     const result = shouldSkipStepExecution({
       step: steps[2],
@@ -168,6 +183,8 @@ describe('shouldSkipStepExecution', () => {
       'step-3': { status: StepStatus.NOT_STARTED },
     };
 
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldSkipStepExecution({
       step: steps[2],
       steps,
@@ -186,6 +203,8 @@ describe('shouldSkipStepExecution', () => {
       'step-1': { status: StepStatus.SKIPPED },
       'step-2': { status: StepStatus.NOT_STARTED },
     };
+
+    jestExpectToBeDefined(steps[1]);
 
     const result = shouldSkipStepExecution({
       step: steps[1],
@@ -207,6 +226,8 @@ describe('shouldSkipStepExecution', () => {
       'step-2': { status: StepStatus.NOT_STARTED },
     };
 
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldSkipStepExecution({
       step: steps[2],
       steps,
@@ -226,6 +247,8 @@ describe('shouldSkipStepExecution', () => {
       'step-2': { status: StepStatus.NOT_STARTED },
     };
 
+    jestExpectToBeDefined(steps[1]);
+
     const result = shouldSkipStepExecution({
       step: steps[1],
       steps,
@@ -242,6 +265,8 @@ describe('shouldSkipStepExecution', () => {
       createMockCodeStep('step-3', ['step-4']),
       createMockCodeStep('step-4', []),
     ];
+
+    jestExpectToBeDefined(steps[3]);
 
     expect(
       shouldSkipStepExecution({
@@ -351,6 +376,8 @@ describe('shouldSkipStepExecution', () => {
       'step-2': { status: StepStatus.SKIPPED },
       'step-3': { status: StepStatus.NOT_STARTED },
     };
+
+    jestExpectToBeDefined(steps[2]);
 
     const result = shouldSkipStepExecution({
       step: steps[2],
