@@ -243,3 +243,62 @@ it('closes an open multi-select list when Tab moves to the next field', async ()
   expect(screen.getByRole('button', { name: 'Next' })).toHaveFocus();
   expect(screen.queryByText('Option B')).not.toBeInTheDocument();
 });
+
+it('keeps the multi-select list open when an option is clicked', async () => {
+  const user = userEvent.setup();
+  const onChange = jest.fn();
+  render(
+    <I18nWrapper>
+      <FormMultiSelectFieldInput
+        label="Tags"
+        defaultValue={[]}
+        onChange={onChange}
+        options={[
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' },
+        ]}
+      />
+    </I18nWrapper>,
+  );
+  await user.click(screen.getByRole('button', { name: /Tags/ }));
+
+  await user.click(await screen.findByText('Option B'));
+
+  expect(onChange).toHaveBeenLastCalledWith(['b']);
+  expect(screen.getByText('Option A')).toBeInTheDocument();
+});
+
+it('forgets the highlighted multi-select option once Tab closes the list', async () => {
+  const user = userEvent.setup();
+  const onChange = jest.fn();
+  render(
+    <I18nWrapper>
+      <FormMultiSelectFieldInput
+        label="Tags"
+        defaultValue={[]}
+        onChange={onChange}
+        options={[
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' },
+        ]}
+      />
+      <button>Next</button>
+    </I18nWrapper>,
+  );
+  await user.tab();
+  await user.keyboard('{Enter}');
+  expect(await screen.findByText('Option B')).toBeInTheDocument();
+  await user.keyboard('{ArrowDown}');
+  await user.tab();
+  await user.tab({ shift: true });
+  await user.keyboard('{Enter}');
+  expect(await screen.findByText('Option B')).toBeInTheDocument();
+
+  await user.keyboard('{Enter}');
+
+  expect(onChange).not.toHaveBeenCalled();
+
+  await user.keyboard('{ArrowDown}{Enter}');
+
+  expect(onChange).toHaveBeenCalledWith(['a']);
+});

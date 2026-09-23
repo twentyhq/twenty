@@ -14,12 +14,20 @@ import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray } from '@sniptt/guards';
-import { type FocusEvent, useContext, useId, useRef, useState } from 'react';
+import {
+  type FocusEvent,
+  type KeyboardEvent,
+  useContext,
+  useId,
+  useState,
+} from 'react';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { IconChevronDown } from 'twenty-ui/icon';
@@ -130,8 +138,15 @@ export const FormMultiSelectFieldInput = ({
         },
   );
 
-  const displayModeButtonRef = useRef<HTMLButtonElement>(null);
-  const selectInputContainerRef = useRef<HTMLDivElement>(null);
+  const [displayModeButton, setDisplayModeButton] =
+    useState<HTMLButtonElement | null>(null);
+
+  const { resetSelectedItem } = useSelectableList(
+    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID,
+  );
+
+  const isSelectInputOpen =
+    draftValue.type === 'static' && draftValue.editingMode === 'edit';
 
   const handleDisplayModeClick = () => {
     if (draftValue.type !== 'static') {
@@ -182,17 +197,12 @@ export const FormMultiSelectFieldInput = ({
     });
 
     removeFocusItemFromFocusStackById({ focusId: instanceId });
+    resetSelectedItem();
   };
 
-  const onCancel = () => {
-    const isFocusInSelectInput =
-      isDefined(selectInputContainerRef.current) &&
-      selectInputContainerRef.current.contains(document.activeElement);
-
-    closeSelectInput();
-
-    if (isFocusInSelectInput) {
-      displayModeButtonRef.current?.focus({ preventScroll: true });
+  const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === Key.Escape && isSelectInputOpen) {
+      displayModeButton?.focus({ preventScroll: true });
     }
   };
 
@@ -201,11 +211,7 @@ export const FormMultiSelectFieldInput = ({
       event.relatedTarget instanceof Node &&
       !event.currentTarget.contains(event.relatedTarget);
 
-    if (
-      draftValue.type === 'static' &&
-      draftValue.editingMode === 'edit' &&
-      isFocusMovingOutsideRow
-    ) {
+    if (isSelectInputOpen && isFocusMovingOutsideRow) {
       closeSelectInput();
     }
   };
@@ -249,7 +255,10 @@ export const FormMultiSelectFieldInput = ({
     <FormFieldInputContainer data-testid={testId}>
       {label ? <Field.Label>{label}</Field.Label> : null}
 
-      <StyledFormFieldInputRowContainer onBlur={handleRowBlur}>
+      <StyledFormFieldInputRowContainer
+        onBlur={handleRowBlur}
+        onKeyDown={handleRowKeyDown}
+      >
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
@@ -276,7 +285,7 @@ export const FormMultiSelectFieldInput = ({
               </StyledDisplayModeReadonlyContainer>
             ) : (
               <StyledDisplayModeContainer
-                ref={displayModeButtonRef}
+                ref={setDisplayModeButton}
                 type="button"
                 data-open={draftValue.editingMode === 'edit'}
                 onClick={handleDisplayModeClick}
@@ -308,25 +317,24 @@ export const FormMultiSelectFieldInput = ({
             />
           )}
         </FormFieldInputInnerContainer>
-        <StyledSelectInputContainer ref={selectInputContainerRef}>
-          {draftValue.type === 'static' &&
-            draftValue.editingMode === 'edit' && (
-              <OverlayContainer>
-                <MultiSelectInput
-                  selectableListComponentInstanceId={
-                    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
-                  }
-                  focusId={instanceId}
-                  options={options}
-                  onCancel={onCancel}
-                  onOptionSelected={onOptionSelected}
-                  values={selectedNames}
-                  dropdownWidth={
-                    dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge
-                  }
-                />
-              </OverlayContainer>
-            )}
+        <StyledSelectInputContainer>
+          {isSelectInputOpen && (
+            <OverlayContainer>
+              <MultiSelectInput
+                selectableListComponentInstanceId={
+                  SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
+                }
+                focusId={instanceId}
+                options={options}
+                onCancel={closeSelectInput}
+                onOptionSelected={onOptionSelected}
+                values={selectedNames}
+                dropdownWidth={
+                  dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge
+                }
+              />
+            </OverlayContainer>
+          )}
         </StyledSelectInputContainer>
 
         {VariablePicker && !readonly && (
