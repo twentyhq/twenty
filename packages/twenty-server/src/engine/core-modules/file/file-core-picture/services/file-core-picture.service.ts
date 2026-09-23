@@ -81,12 +81,14 @@ export class FileCorePictureService {
     workspaceId,
     applicationUniversalIdentifier,
     queryRunner,
+    isTemporaryFile = false,
   }: {
     file: Buffer;
     filename: string;
     workspaceId: string;
     applicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
+    isTemporaryFile?: boolean;
   }): Promise<FileEntity> {
     const { ext } = await extractFileInfoOrThrow({ file, filename });
 
@@ -105,7 +107,7 @@ export class FileCorePictureService {
       workspaceId,
       fileId,
       settings: {
-        isTemporaryFile: false,
+        isTemporaryFile,
         toDelete: false,
       },
       queryRunner,
@@ -167,7 +169,7 @@ export class FileCorePictureService {
     return workspace.logoFileId;
   }
 
-  private async replaceWorkspaceLogoFileId({
+  private async claimFileAsWorkspaceLogo({
     workspaceId,
     fileId,
   }: {
@@ -181,6 +183,40 @@ export class FileCorePictureService {
         lock: { mode: 'pessimistic_write' },
       });
 
+      if (workspace.logoFileId === fileId) {
+        return null;
+      }
+
+      const transactionalFileRepository =
+        this.fileRepository.withManager(manager);
+
+      const file = await transactionalFileRepository.findOne(workspaceId, {
+        where: { id: fileId },
+      });
+
+      if (!isDefined(file)) {
+        throw new FileUploadException(
+          `File not found: ${fileId}`,
+          FileUploadExceptionCode.FILE_NOT_FOUND,
+          { userFriendlyMessage: msg`File not found.` },
+        );
+      }
+
+      if (file.settings?.isTemporaryFile !== true) {
+        throw new FileUploadException(
+          `File ${fileId} was already finalized and cannot become the workspace logo`,
+          FileUploadExceptionCode.BAD_REQUEST,
+          {
+            userFriendlyMessage: msg`This file upload has already been finalized.`,
+          },
+        );
+      }
+
+      await transactionalFileRepository.update(
+        workspaceId,
+        { id: fileId },
+        { settings: { isTemporaryFile: false, toDelete: false } },
+      );
       await manager.update(WorkspaceEntity, workspaceId, {
         logoFileId: fileId,
       });
@@ -196,22 +232,17 @@ export class FileCorePictureService {
     workspaceId: string;
     fileId: string;
   }): Promise<void> {
-    const replacedLogoFileId = await this.replaceWorkspaceLogoFileId({
+    const replacedLogoFileId = await this.claimFileAsWorkspaceLogo({
       workspaceId,
       fileId,
     });
 
-    await this.fileRepository.update(
-      workspaceId,
-      { id: fileId },
-      { settings: { isTemporaryFile: false, toDelete: false } },
-    );
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',
       workspaceId,
     );
 
-    if (isDefined(replacedLogoFileId) && replacedLogoFileId !== fileId) {
+    if (isDefined(replacedLogoFileId)) {
       await this.deleteCorePicture({ fileId: replacedLogoFileId, workspaceId });
     }
   }
@@ -249,7 +280,18 @@ export class FileCorePictureService {
   }): Promise<FileWithSignedUrlDTO> {
     await this.findCorePictureFileOrThrow({ workspaceId, fileId });
 
-    return this.fileUploadService.completeFileUpload({ workspaceId, fileId });
+    const completedFile = await this.fileUploadService.completeFileUpload({
+      workspaceId,
+      fileId,
+    });
+
+    await this.fileRepository.update(
+      workspaceId,
+      { id: fileId },
+      { settings: { isTemporaryFile: false, toDelete: false } },
+    );
+
+    return completedFile;
   }
 
   async uploadWorkspacePicture({
@@ -265,6 +307,7 @@ export class FileCorePictureService {
       file,
       filename,
       workspaceId: workspace.id,
+      isTemporaryFile: true,
     });
 
     await this.bindWorkspaceLogo({

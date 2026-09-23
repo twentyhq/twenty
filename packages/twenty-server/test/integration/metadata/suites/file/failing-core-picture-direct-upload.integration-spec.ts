@@ -3,6 +3,7 @@ import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphq
 import {
   completeWorkspaceLogoUploadMutation,
   createCorePictureUpload,
+  uploadWorkspaceMemberProfilePictureWithDirectUpload,
 } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
 import {
   createFileUploadMutation,
@@ -145,6 +146,31 @@ describe('Core picture direct upload should fail', () => {
     });
     expect(await findFileStatus(uploadTarget.fileId)).toBe(FILE_STATUS.PENDING);
     expect(await findWorkspaceLogoFileId()).not.toBe(uploadTarget.fileId);
+  }, 30000);
+
+  it('should refuse to bind a completed profile picture as the workspace logo', async () => {
+    const logoFileIdBefore = await findWorkspaceLogoFileId();
+    const profilePicture =
+      await uploadWorkspaceMemberProfilePictureWithDirectUpload({
+        filename: 'avatar.png',
+        content: ONE_BY_ONE_TRANSPARENT_PNG,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+    reservedFileIds.push(profilePicture.id);
+
+    const { data, errors } = await completeWorkspaceLogoUpload(
+      profilePicture.id,
+    );
+
+    expect(data).toBeNull();
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+      normalizeMessage: (message) =>
+        message.replace(profilePicture.id, '<fileId>'),
+    });
+    expect(await findWorkspaceLogoFileId()).toBe(logoFileIdBefore);
+    expect(await findFileStatus(profilePicture.id)).toBe(FILE_STATUS.UPLOADED);
   }, 30000);
 
   it('should refuse to reserve a picture larger than the core picture size limit', async () => {
