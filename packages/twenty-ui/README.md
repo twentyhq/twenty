@@ -122,4 +122,4 @@ Routing adapters, record formatting, product illustrations, and feature-specific
 
 Run `node --import tsx scripts/checkModuleOwnership.ts` from this package after changing the public interface. When intentionally adding or removing a public React component, regenerate `docs/module-ownership.json` with `node --import tsx scripts/checkModuleOwnership.ts --write` and review the snapshot diff. CI checks the committed snapshot and the dependency boundaries without updating them.
 
-`twenty-ui/testing` provides router-free story support. The package check rejects React Router dependencies in every published entry point and allows the optional Monaco peers only in `twenty-ui/components/code-editor`.
+`twenty-ui/testing` provides router-free story support. The ownership check rejects React Router imports. The package check allows the optional Monaco peers only in `twenty-ui/components/code-editor`.
