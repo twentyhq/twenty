@@ -3,6 +3,7 @@ import { useRef, type KeyboardEvent } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownKind } from '../types/DropdownKind';
+import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { getDropdownTrigger } from './getDropdownTrigger';
 
@@ -126,10 +127,7 @@ export const useDropdownKeyboardNavigation = ({
       ...items.slice(0, currentIndex + 1),
     ];
     const match = orderedItems.find((item) =>
-      (item.getAttribute('aria-label') ?? item.textContent ?? '')
-        .trim()
-        .toLocaleLowerCase()
-        .startsWith(query),
+      getDropdownItemLabel(item).trim().toLocaleLowerCase().startsWith(query),
     );
 
     if (isDefined(match)) {
