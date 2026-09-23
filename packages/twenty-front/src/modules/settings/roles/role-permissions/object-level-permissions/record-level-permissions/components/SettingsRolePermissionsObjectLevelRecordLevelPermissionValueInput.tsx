@@ -321,7 +321,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
       <StyledContainer>
         <StyledFormFieldInputWrapper>
           <FormFieldInput
-            currencyAmountUnit="micros"
             field={fieldDefinition}
             defaultValue={recordFilter.value}
             onChange={handleChange}

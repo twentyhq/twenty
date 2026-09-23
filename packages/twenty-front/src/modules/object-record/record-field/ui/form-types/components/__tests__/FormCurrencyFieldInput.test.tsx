@@ -1,5 +1,6 @@
 import { FormCurrencyAmountFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyAmountFieldInput';
 import { FormCurrencyFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput';
+import { type FormFieldCurrencyInputSettings } from '@/object-record/record-field/ui/form-types/types/FormFieldCurrencyInputSettings';
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -20,11 +21,15 @@ jest.mock(
   }),
 );
 
-const renderCurrencyInput = (
-  amountMicros: FormFieldCurrencyValue['amountMicros'],
+const renderCurrencyInput = ({
+  amountMicros,
   readonly = false,
-  amountUnit?: 'micros' | 'units',
-) => {
+  amountUnit,
+}: {
+  amountMicros: FormFieldCurrencyValue['amountMicros'];
+  readonly?: boolean;
+  amountUnit?: FormFieldCurrencyInputSettings['amountUnit'];
+}) => {
   const onChange = jest.fn();
   const store = createStore();
   const Form = () => {
@@ -62,7 +67,10 @@ it.each([
   [null, ''],
   ['', ''],
 ])('displays stored micros %s as amount %s', (storedValue, displayedValue) => {
-  const { onChange } = renderCurrencyInput(storedValue);
+  const { onChange } = renderCurrencyInput({
+    amountMicros: storedValue,
+    amountUnit: 'units',
+  });
   expect(screen.getByRole('textbox')).toHaveValue(displayedValue);
   expect(screen.getByText('Amount')).toBeInTheDocument();
   expect(screen.queryByText('Amount Micros')).not.toBeInTheDocument();
@@ -77,7 +85,10 @@ it.each([
   ['0.000249', 249],
 ])('stores entered amount %s as %s micros', async (amount, amountMicros) => {
   const user = userEvent.setup();
-  const { onChange } = renderCurrencyInput(null);
+  const { onChange } = renderCurrencyInput({
+    amountMicros: null,
+    amountUnit: 'units',
+  });
   await user.type(screen.getByRole('textbox'), amount);
   expect(onChange).toHaveBeenLastCalledWith({
     currencyCode: CurrencyCode.USD,
@@ -88,7 +99,10 @@ it.each([
 
 it('clears the amount to null', async () => {
   const user = userEvent.setup();
-  const { onChange } = renderCurrencyInput(3_210_000);
+  const { onChange } = renderCurrencyInput({
+    amountMicros: 3_210_000,
+    amountUnit: 'units',
+  });
   await user.clear(screen.getByRole('textbox'));
   expect(onChange).toHaveBeenLastCalledWith({
     currencyCode: CurrencyCode.USD,
@@ -98,7 +112,10 @@ it('clears the amount to null', async () => {
 
 it('preserves the stored amount when switching currency', async () => {
   const user = userEvent.setup();
-  const { onChange } = renderCurrencyInput(3_210_000);
+  const { onChange } = renderCurrencyInput({
+    amountMicros: 3_210_000,
+    amountUnit: 'units',
+  });
   await user.click(screen.getByText(/\(USD\)/));
   await user.click(await screen.findByText(/\(EUR\)/));
   expect(onChange).toHaveBeenLastCalledWith({
@@ -110,13 +127,20 @@ it('preserves the stored amount when switching currency', async () => {
 
 it('preserves workflow variable references', () => {
   const reference = '{{step.amount.amountMicros}}';
-  const { onChange } = renderCurrencyInput(reference);
+  const { onChange } = renderCurrencyInput({
+    amountMicros: reference,
+    amountUnit: 'units',
+  });
   expect(screen.getByText(reference)).toBeInTheDocument();
   expect(onChange).not.toHaveBeenCalled();
 });
 
 it('displays read-only amounts in currency units', () => {
-  renderCurrencyInput(44_000_000, true);
+  renderCurrencyInput({
+    amountMicros: 44_000_000,
+    readonly: true,
+    amountUnit: 'units',
+  });
   expect(screen.getByRole('textbox')).toHaveValue('44');
   expect(screen.getByRole('textbox')).toBeDisabled();
 });
@@ -140,9 +164,9 @@ it('passes selected workflow variables through without converting them', async (
   expect(onChange).toHaveBeenCalledWith(reference);
 });
 
-it('preserves raw micros for workflow currency forms', async () => {
+it('keeps raw micros by default for workflow currency forms', async () => {
   const user = userEvent.setup();
-  const { onChange } = renderCurrencyInput(3_210_000, false, 'micros');
+  const { onChange } = renderCurrencyInput({ amountMicros: 3_210_000 });
   const input = screen.getByRole('textbox');
   expect(input).toHaveValue('3210000');
   expect(screen.getByText('Amount Micros')).toBeInTheDocument();

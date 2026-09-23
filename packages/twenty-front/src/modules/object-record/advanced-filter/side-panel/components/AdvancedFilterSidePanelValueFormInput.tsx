@@ -241,7 +241,6 @@ export const AdvancedFilterSidePanelValueFormInput = ({
 
   return (
     <FormFieldInput
-      currencyAmountUnit="micros"
       field={field}
       defaultValue={recordFilter.value}
       onChange={handleChange}

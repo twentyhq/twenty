@@ -23,6 +23,7 @@ import { FormRichTextFieldInput } from '@/object-record/record-field/ui/form-typ
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { FormUuidFieldInput } from '@/object-record/record-field/ui/form-types/components/FormUuidFieldInput';
+import { type FormFieldInputSettings } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSettings';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
@@ -73,7 +74,7 @@ type FormFieldInputProps = {
   error?: string;
   onError?: (error: string | undefined) => void;
   timeZone?: string;
-  currencyAmountUnit?: 'micros' | 'units';
+  settings?: FormFieldInputSettings;
 };
 
 export const FormFieldInput = ({
@@ -87,7 +88,7 @@ export const FormFieldInput = ({
   error,
   onError,
   timeZone,
-  currencyAmountUnit,
+  settings,
 }: FormFieldInputProps) => {
   return isFieldNumber(field) || field.type === FieldMetadataType.NUMERIC ? (
     <FormNumberFieldInput
@@ -225,7 +226,11 @@ export const FormFieldInput = ({
     />
   ) : isFieldCurrency(field) ? (
     <FormCurrencyFieldInput
-      amountUnit={currencyAmountUnit}
+      amountUnit={
+        settings?.type === FieldMetadataType.CURRENCY
+          ? settings.amountUnit
+          : undefined
+      }
       label={field.label}
       defaultValue={defaultValue as FormFieldCurrencyValue | null}
       onChange={onChange}

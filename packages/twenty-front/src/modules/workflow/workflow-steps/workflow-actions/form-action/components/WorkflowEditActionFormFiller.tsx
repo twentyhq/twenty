@@ -159,7 +159,6 @@ export const WorkflowEditActionFormFiller = ({
 
           return (
             <FormFieldInput
-              currencyAmountUnit="micros"
               key={field.id}
               field={{
                 label: field.label,

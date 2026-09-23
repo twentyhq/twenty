@@ -3,6 +3,7 @@ import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputCon
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormCurrencyAmountFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyAmountFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { type FormFieldCurrencyInputSettings } from '@/object-record/record-field/ui/form-types/types/FormFieldCurrencyInputSettings';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
@@ -18,7 +19,7 @@ type FormCurrencyFieldInputProps = {
   onChange: (value: FormFieldCurrencyValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
-  amountUnit?: 'micros' | 'units';
+  amountUnit?: FormFieldCurrencyInputSettings['amountUnit'];
 };
 
 export const FormCurrencyFieldInput = ({
@@ -27,7 +28,7 @@ export const FormCurrencyFieldInput = ({
   onChange,
   VariablePicker,
   readonly,
-  amountUnit = 'units',
+  amountUnit = 'micros',
 }: FormCurrencyFieldInputProps) => {
   const currencies = useMemo(() => {
     return [
