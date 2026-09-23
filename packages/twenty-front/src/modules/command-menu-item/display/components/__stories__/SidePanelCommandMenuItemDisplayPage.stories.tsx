@@ -11,11 +11,15 @@ import { MemoryRouter } from 'react-router-dom';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -27,7 +31,9 @@ import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchem
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
@@ -37,7 +43,10 @@ import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const PINNED_ITEM_WIDTH = 100;
 
@@ -92,6 +101,56 @@ const NAVIGATION_ITEM = createCommandMenuItem({
   label: 'Go to People',
 });
 
+const SELECTION_ITEM = createCommandMenuItem({
+  id: 'story-update-records',
+  label: 'Update records',
+  icon: 'IconEdit',
+  engineComponentKey: EngineComponentKey.UPDATE_MULTIPLE_RECORDS,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+});
+
+const CURRENT_VIEW_ITEM = createCommandMenuItem({
+  id: 'story-export-view',
+  label: 'Export view',
+  icon: 'IconFileExport',
+  engineComponentKey: EngineComponentKey.EXPORT_VIEW,
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+});
+
+const PROSPECTS_VIEW: ViewWithRelations = {
+  ...mockedViews.find((view) => view.name === 'All Companies')!,
+  name: 'Prospects',
+};
+
+const SELECTED_COMPANIES = mockedCompanyRecords.slice(0, 2);
+
+const SelectedCompaniesInProspectsViewDecorator: Decorator = (Story) => {
+  for (const company of SELECTED_COMPANIES) {
+    jotaiStore.set(recordStoreFamilyState.atomFamily(company.id), company);
+  }
+
+  jotaiStore.set(
+    contextStoreTargetedRecordsRuleComponentState.atomFamily({
+      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    }),
+    {
+      mode: 'selection',
+      selectedRecordIds: SELECTED_COMPANIES.map((company) => company.id),
+    },
+  );
+
+  setTestViewsInMetadataStore(jotaiStore, [PROSPECTS_VIEW]);
+
+  jotaiStore.set(
+    contextStoreCurrentViewIdComponentState.atomFamily({
+      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    }),
+    PROSPECTS_VIEW.id,
+  );
+
+  return <Story />;
+};
+
 const FALLBACK_ITEM = createCommandMenuItem({
   id: 'story-search-records-fallback',
   label: 'Search records',
@@ -103,6 +162,7 @@ const FALLBACK_ITEM = createCommandMenuItem({
 type CreateDecoratorParams = {
   commandMenuItems: CommandMenuItemFieldsFragment[];
   sidePanelSearch: string;
+  commandMenuContextApi?: CommandMenuContextApi;
   pinnedItemsContainerWidth?: number;
   isNavigationDrawerExpanded?: boolean;
   isInPreviewMode?: boolean;
@@ -115,6 +175,7 @@ const createDecorator =
   ({
     commandMenuItems,
     sidePanelSearch,
+    commandMenuContextApi = EMPTY_COMMAND_MENU_CONTEXT_API,
     pinnedItemsContainerWidth = 1000,
     isNavigationDrawerExpanded = true,
     isInPreviewMode = false,
@@ -173,7 +234,7 @@ const createDecorator =
                   displayType: 'listItem',
                   containerType: CommandMenuItemContainerType.CommandMenuList,
                   commandMenuItems,
-                  commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+                  commandMenuContextApi,
                   isInPreviewMode,
                 }}
               >
@@ -329,15 +390,44 @@ export const NavigationSitsLastAtRest: Story = {
     expect(await canvas.findByText('Import records')).toBeVisible();
     expect(await canvas.findByText('Go to People')).toBeVisible();
 
-    const headings = canvas.getAllByText(
-      /^(Pinned|This object|Workspace|Go to)$/,
-    );
+    expect(await canvas.findByText('Companies')).toBeVisible();
+
+    const headings = canvas.getAllByText(/^(Pinned|Object|Workspace|Go to)$/);
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
       'Pinned',
-      'This object',
+      'Object',
       'Workspace',
       'Go to',
+    ]);
+  },
+};
+
+export const SectionHeadersShowTheirContext: Story = {
+  decorators: [
+    SelectedCompaniesInProspectsViewDecorator,
+    createDecorator({
+      commandMenuItems: [SELECTION_ITEM, CURRENT_VIEW_ITEM, OTHER_ITEM],
+      sidePanelSearch: '',
+      commandMenuContextApi: {
+        ...EMPTY_COMMAND_MENU_CONTEXT_API,
+        numberOfSelectedRecords: SELECTED_COMPANIES.length,
+      },
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('2 Companies')).toBeVisible();
+    expect(await canvas.findByText('Prospects')).toBeVisible();
+    expect(await canvas.findByText('Companies')).toBeVisible();
+
+    const headings = canvas.getAllByText(/^(Selection|Current view|Object)$/);
+
+    expect(headings.map((heading) => heading.textContent)).toEqual([
+      'Selection',
+      'Current view',
+      'Object',
     ]);
   },
 };
