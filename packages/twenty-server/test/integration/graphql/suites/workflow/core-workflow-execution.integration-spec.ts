@@ -1583,6 +1583,75 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
   });
 
+  it('re-derives run core ids whose core rows no longer exist', async () => {
+    const fixture = await createFixture();
+    const id = randomUUID();
+    try {
+      await global.testDataSource.query(
+        `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, position, state) VALUES ($1, 'B-Async stale', $2, $3, $4, $5, 'COMPLETED', 0, '{}')`,
+        [
+          id,
+          fixture.workflowId,
+          fixture.workflowVersionId,
+          randomUUID(),
+          randomUUID(),
+        ],
+      );
+      await backfill();
+      expect(await getRun(id)).toMatchObject({
+        coreWorkflowId: fixture.coreWorkflowId,
+        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+      });
+    } finally {
+      await global.testDataSource.query(
+        `DELETE FROM "${schema}"."workflowRun" WHERE id = $1`,
+        [id],
+      );
+    }
+  });
+
+  it('creates the missing core version of a live unlinked workspace version', async () => {
+    const fixture = await createFixture();
+    await global.testDataSource.query(
+      'DELETE FROM core."workflowVersion" WHERE id = $1',
+      [fixture.coreWorkflowVersionId],
+    );
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."workflowVersion" SET "coreWorkflowVersionId" = NULL WHERE id = $1`,
+      [fixture.workflowVersionId],
+    );
+    await global.testDataSource.query(
+      'UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = NULL WHERE id = $1',
+      [fixture.coreWorkflowId],
+    );
+
+    await backfill();
+
+    const [workspaceVersion] = await global.testDataSource.query(
+      `SELECT "coreWorkflowVersionId" FROM "${schema}"."workflowVersion" WHERE id = $1`,
+      [fixture.workflowVersionId],
+    );
+    const [coreVersion] = await global.testDataSource.query(
+      'SELECT "coreWorkflowId", "workspaceWorkflowVersionId", status, triggers, steps FROM core."workflowVersion" WHERE id = $1',
+      [workspaceVersion.coreWorkflowVersionId],
+    );
+    const [coreWorkflow] = await global.testDataSource.query(
+      'SELECT "lastPublishedCoreWorkflowVersionId" FROM core.workflow WHERE id = $1',
+      [fixture.coreWorkflowId],
+    );
+
+    expect(coreVersion).toEqual({
+      coreWorkflowId: fixture.coreWorkflowId,
+      workspaceWorkflowVersionId: fixture.workflowVersionId,
+      status: 'ACTIVE',
+      triggers: [fixture.trigger],
+      steps: fixture.steps,
+    });
+    expect(coreWorkflow.lastPublishedCoreWorkflowVersionId).toBe(
+      workspaceVersion.coreWorkflowVersionId,
+    );
+  });
+
   it('rejects an unmapped pending run without partially updating its ids', async () => {
     const id = randomUUID();
     try {
