@@ -42,9 +42,6 @@ export const WORKSPACE_SCOPED_EXEMPTIONS = [
   // repo to `super(...)`; the superclass type doesn't accept the wrapper.
   'FieldMetadataEntity',
   'ObjectMetadataEntity',
-  // Only injection lives in a frozen historical upgrade-version-command
-  // directory that CI's mutation-guard refuses to let us edit.
-  'DataSourceEntity',
   // The domain column is globally unique across workspaces, so duplicate
   // preflight checks must query cross-workspace; writes stay on the wrapper.
   'EmailingDomainEntity',
