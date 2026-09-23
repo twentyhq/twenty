@@ -1,3 +1,4 @@
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, fn, userEvent, within } from 'storybook/test';
 
@@ -191,4 +192,54 @@ export const PreventedEvents: Story = {
     await expect(handle).toHaveAttribute('aria-valuenow', '150');
     await expect(args.onValueChange).not.toHaveBeenCalled();
   },
+};
+
+export const RightToLeftHorizontal: Story = {
+  args: { axis: 'x', defaultValue: 100, min: 80, max: 120, step: 15 },
+  decorators: [
+    (Story) => (
+      <DirectionProvider direction="rtl">
+        <div dir="rtl">
+          <Story />
+        </div>
+      </DirectionProvider>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const handle = within(canvasElement).getByRole('separator');
+
+    handle.focus();
+    await userEvent.keyboard('{ArrowLeft}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '115');
+    await userEvent.keyboard('{ArrowRight}{ArrowDown}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '100');
+    await userEvent.keyboard('{Home}{ArrowRight}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '80');
+    await userEvent.keyboard('{End}{ArrowLeft}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '120');
+
+    const pointer = userEvent.setup();
+    await withMockPointerCapture({
+      handle,
+      run: async () => {
+        await pointer.pointer({
+          target: handle,
+          keys: '[MouseLeft>]',
+          coords: { x: 100 },
+        });
+        await pointer.pointer({ target: handle, coords: { x: 120 } });
+        await expect(handle).toHaveAttribute('aria-valuenow', '100');
+        await pointer.pointer({ target: handle, coords: { x: 200 } });
+        await expect(handle).toHaveAttribute('aria-valuenow', '80');
+        await pointer.pointer({ target: handle, coords: { x: 0 } });
+        await expect(handle).toHaveAttribute('aria-valuenow', '120');
+        await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
+      },
+    });
+  },
+};
+
+export const RightToLeftVertical: Story = {
+  ...Keyboard,
+  decorators: RightToLeftHorizontal.decorators,
 };

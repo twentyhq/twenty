@@ -1,3 +1,4 @@
+import { useDirection } from '@base-ui/react/direction-provider';
 import { clamp } from '@base-ui/utils/clamp';
 import { type KeyboardEvent, type PointerEvent, useRef } from 'react';
 
@@ -28,6 +29,8 @@ export const useResizeHandleInteraction = ({
   step,
   disabled,
 }: UseResizeHandleInteractionArgs) => {
+  const direction = useDirection();
+  const isHorizontalRtl = axis === 'x' && direction === 'rtl';
   const gestureRef = useRef<ResizeGesture | null>(null);
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
@@ -63,11 +66,9 @@ export const useResizeHandleInteraction = ({
     }
 
     const position = axis === 'y' ? event.clientY : event.clientX;
-    const nextValue = clamp(
-      gesture.startValue + position - gesture.startPosition,
-      min,
-      max,
-    );
+    const delta =
+      (position - gesture.startPosition) * (isHorizontalRtl ? -1 : 1);
+    const nextValue = clamp(gesture.startValue + delta, min, max);
 
     onValueChange(nextValue);
   };
@@ -89,8 +90,10 @@ export const useResizeHandleInteraction = ({
       return;
     }
 
-    const increaseKey = axis === 'y' ? 'ArrowDown' : 'ArrowRight';
-    const decreaseKey = axis === 'y' ? 'ArrowUp' : 'ArrowLeft';
+    const increaseKey =
+      axis === 'y' ? 'ArrowDown' : isHorizontalRtl ? 'ArrowLeft' : 'ArrowRight';
+    const decreaseKey =
+      axis === 'y' ? 'ArrowUp' : isHorizontalRtl ? 'ArrowRight' : 'ArrowLeft';
     const valueByKey = new Map([
       [increaseKey, value + step],
       [decreaseKey, value - step],
