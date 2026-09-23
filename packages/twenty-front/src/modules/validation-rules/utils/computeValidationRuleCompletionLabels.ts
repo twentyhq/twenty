@@ -2,6 +2,7 @@ import { VALIDATION_RULE_FUNCTION_NAMES } from '@/validation-rules/constants/Val
 import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 import {
   compositeTypeDefinitions,
+  FieldMetadataType,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,7 +35,13 @@ export const computeValidationRuleCompletionLabels = ({
   }
 
   if (isDefined(parentField.relationTargetFields)) {
-    return parentField.relationTargetFields.map((field) => field.name);
+    return parentField.relationTargetFields
+      .filter(
+        (field) =>
+          field.type !== FieldMetadataType.RELATION &&
+          field.type !== FieldMetadataType.MORPH_RELATION,
+      )
+      .map((field) => field.name);
   }
 
   return (

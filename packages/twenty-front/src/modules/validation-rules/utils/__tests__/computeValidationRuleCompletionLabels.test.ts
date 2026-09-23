@@ -18,6 +18,11 @@ const FIELDS = [
         type: FieldMetadataType.NUMBER,
         universalIdentifier: 'company-employees',
       },
+      {
+        name: 'people',
+        type: FieldMetadataType.RELATION,
+        universalIdentifier: 'company-people',
+      },
     ],
   },
 ];

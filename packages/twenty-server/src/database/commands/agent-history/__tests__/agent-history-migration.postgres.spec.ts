@@ -89,6 +89,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         flatIndexMaps: metadata.flatIndexMaps,
         flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
         flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
+        flatValidationRuleMaps: createEmptyFlatEntityMaps(),
         objectIdByNameSingular: buildObjectIdByNameMaps(
           metadata.flatObjectMetadataMaps,
         ).idByNameSingular,

@@ -100,6 +100,15 @@ describe('evaluateValidationRuleExpression', () => {
     });
   });
 
+  it('should never order a missing value against a defined one', () => {
+    expect(evaluate('company.employees < 10', { company: null })).toEqual({
+      status: 'passed',
+    });
+    expect(evaluate('closeDate < now', { closeDate: null })).toEqual({
+      status: 'passed',
+    });
+  });
+
   it('should read a related record', () => {
     expect(
       evaluate('company.industry == "SaaS"', {

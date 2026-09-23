@@ -58,6 +58,26 @@ export const validationRuleParser = new Parser({
 
 validationRuleParser.consts = { true: true, false: false };
 
+const compareDefinedValues =
+  (compare: (left: unknown, right: unknown) => boolean) =>
+  (left: unknown, right: unknown) =>
+    isValidationRuleValueDefined(left) &&
+    isValidationRuleValueDefined(right) &&
+    compare(left, right);
+
+validationRuleParser.binaryOps['<'] = compareDefinedValues(
+  (left, right) => (left as number) < (right as number),
+);
+validationRuleParser.binaryOps['<='] = compareDefinedValues(
+  (left, right) => (left as number) <= (right as number),
+);
+validationRuleParser.binaryOps['>'] = compareDefinedValues(
+  (left, right) => (left as number) > (right as number),
+);
+validationRuleParser.binaryOps['>='] = compareDefinedValues(
+  (left, right) => (left as number) >= (right as number),
+);
+
 validationRuleParser.functions = {
   isDefined: isValidationRuleValueDefined,
   isEmpty: isValidationRuleValueEmpty,

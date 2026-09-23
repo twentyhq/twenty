@@ -35,6 +35,11 @@ const StyledRow = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
+const StyledErrorFieldSelectContainer = styled.div`
+  flex-shrink: 0;
+  width: 220px;
+`;
+
 const StyledActions = styled.div`
   align-items: center;
   display: flex;
@@ -159,18 +164,21 @@ export const SettingsValidationRuleCard = ({
               onChange={setMessage}
               fullWidth
             />
-            <Select
-              dropdownId={`validation-rule-error-field-${validationRule?.id ?? 'new'}`}
-              label={t`Show error on`}
-              value={errorFieldMetadataId ?? RECORD_LEVEL_OPTION_VALUE}
-              options={errorFieldOptions}
-              onChange={(value: string) =>
-                setErrorFieldMetadataId(
-                  value === RECORD_LEVEL_OPTION_VALUE ? null : value,
-                )
-              }
-              withSearchInput
-            />
+            <StyledErrorFieldSelectContainer>
+              <Select
+                dropdownId={`validation-rule-error-field-${validationRule?.id ?? 'new'}`}
+                label={t`Show error on`}
+                value={errorFieldMetadataId ?? RECORD_LEVEL_OPTION_VALUE}
+                options={errorFieldOptions}
+                onChange={(value: string) =>
+                  setErrorFieldMetadataId(
+                    value === RECORD_LEVEL_OPTION_VALUE ? null : value,
+                  )
+                }
+                withSearchInput
+                fullWidth
+              />
+            </StyledErrorFieldSelectContainer>
           </StyledRow>
           <StyledActions>
             <StyledActiveToggle>
