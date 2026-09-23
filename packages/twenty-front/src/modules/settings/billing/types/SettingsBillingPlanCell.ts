@@ -1,4 +1,4 @@
-import { type BillingSubscriptionChange } from '@/settings/billing/types/billingSubscriptionChange.type';
+import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 
 export type SettingsBillingPlanCell =
   | { kind: 'current' }

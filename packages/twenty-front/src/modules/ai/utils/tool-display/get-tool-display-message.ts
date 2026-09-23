@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { z } from 'zod';
 
-import { type ToolDisplayContext } from '@/ai/types/tool-display-context.type';
+import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 import { type ToolInput } from '@/ai/types/ToolInput';
 import { buildNamedItemsStatusMessage } from '@/ai/utils/tool-display/build-named-items-status-message.util';
 import { buildToolStatusMessageByCategory } from '@/ai/utils/tool-display/build-tool-status-message-by-category.util';

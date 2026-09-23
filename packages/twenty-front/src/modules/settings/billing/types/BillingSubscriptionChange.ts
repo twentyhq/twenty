@@ -1,4 +1,4 @@
-import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { type SettingsBillingPlanInterval } from '@/settings/billing/types/SettingsBillingPlanComparison';
 import { type BillingPlanKey } from '~/generated-metadata/graphql';
 
 export type BillingSubscriptionChange =

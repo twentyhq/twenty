@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { msg } from '@lingui/core/macro';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -59,6 +60,11 @@ export class EmailingDomainService {
       throw new EmailingDomainException(
         'Emailing domain is already registered',
         EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED,
+        existingEmailingDomain.workspaceId === workspaceId
+          ? {
+              userFriendlyMessage: msg`Already registered in this workspace.`,
+            }
+          : {},
       );
     }
 
