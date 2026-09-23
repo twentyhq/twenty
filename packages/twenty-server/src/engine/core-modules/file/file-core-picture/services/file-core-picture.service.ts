@@ -8,7 +8,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Like, type QueryRunner, Repository } from 'typeorm';
+import {
+  type EntityManager,
+  Like,
+  type QueryRunner,
+  Repository,
+} from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -169,6 +174,48 @@ export class FileCorePictureService {
     return workspace.logoFileId;
   }
 
+  private async claimTemporaryFile({
+    manager,
+    workspaceId,
+    fileId,
+  }: {
+    manager: EntityManager;
+    workspaceId: string;
+    fileId: string;
+  }): Promise<void> {
+    const transactionalFileRepository =
+      this.fileRepository.withManager(manager);
+
+    const file = await transactionalFileRepository.findOne(workspaceId, {
+      where: { id: fileId },
+      lock: { mode: 'pessimistic_write' },
+    });
+
+    if (!isDefined(file)) {
+      throw new FileUploadException(
+        `File not found: ${fileId}`,
+        FileUploadExceptionCode.FILE_NOT_FOUND,
+        { userFriendlyMessage: msg`File not found.` },
+      );
+    }
+
+    if (file.settings?.isTemporaryFile !== true) {
+      throw new FileUploadException(
+        `File ${fileId} was already finalized`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`This file upload has already been finalized.`,
+        },
+      );
+    }
+
+    await transactionalFileRepository.update(
+      workspaceId,
+      { id: fileId },
+      { settings: { isTemporaryFile: false, toDelete: false } },
+    );
+  }
+
   private async claimFileAsWorkspaceLogo({
     workspaceId,
     fileId,
@@ -187,36 +234,8 @@ export class FileCorePictureService {
         return null;
       }
 
-      const transactionalFileRepository =
-        this.fileRepository.withManager(manager);
+      await this.claimTemporaryFile({ manager, workspaceId, fileId });
 
-      const file = await transactionalFileRepository.findOne(workspaceId, {
-        where: { id: fileId },
-      });
-
-      if (!isDefined(file)) {
-        throw new FileUploadException(
-          `File not found: ${fileId}`,
-          FileUploadExceptionCode.FILE_NOT_FOUND,
-          { userFriendlyMessage: msg`File not found.` },
-        );
-      }
-
-      if (file.settings?.isTemporaryFile !== true) {
-        throw new FileUploadException(
-          `File ${fileId} was already finalized and cannot become the workspace logo`,
-          FileUploadExceptionCode.BAD_REQUEST,
-          {
-            userFriendlyMessage: msg`This file upload has already been finalized.`,
-          },
-        );
-      }
-
-      await transactionalFileRepository.update(
-        workspaceId,
-        { id: fileId },
-        { settings: { isTemporaryFile: false, toDelete: false } },
-      );
       await manager.update(WorkspaceEntity, workspaceId, {
         logoFileId: fileId,
       });
@@ -287,10 +306,8 @@ export class FileCorePictureService {
       dedicatedFileFolder: FileFolder.CorePicture,
     });
 
-    await this.fileRepository.update(
-      workspaceId,
-      { id: fileId },
-      { settings: { isTemporaryFile: false, toDelete: false } },
+    await this.workspaceRepository.manager.transaction((manager) =>
+      this.claimTemporaryFile({ manager, workspaceId, fileId }),
     );
 
     return completedFile;
