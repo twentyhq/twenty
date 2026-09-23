@@ -4,7 +4,7 @@ import { formatShortcut } from '../utils/formatShortcut';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { IconButton } from '@ui/components/IconButton/IconButton';
+import { IconButton } from '@ui/components/input/IconButton/IconButton';
 import { useState } from 'react';
 import { IconCommand, IconRestore } from 'twenty-ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';

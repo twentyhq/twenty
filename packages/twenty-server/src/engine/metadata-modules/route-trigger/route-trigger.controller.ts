@@ -14,6 +14,8 @@ import {
 import { Request, Response } from 'express';
 import { ApiPath, HTTPMethod } from 'twenty-shared/types';
 
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
+import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { RouteTriggerRestApiExceptionFilter } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger-rest-api-exception-filter';
@@ -22,7 +24,11 @@ import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function
 
 @Controller(ApiPath.RouteTrigger)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-@UseFilters(RouteTriggerRestApiExceptionFilter)
+@UseFilters(
+  RouteTriggerRestApiExceptionFilter,
+  UsageLimitRestApiExceptionFilter,
+  BillingRestApiExceptionFilter,
+)
 export class RouteTriggerController {
   constructor(private readonly routeTriggerService: RouteTriggerService) {}
 

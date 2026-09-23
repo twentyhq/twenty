@@ -26,12 +26,12 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
 
   const status = computeSyncStatus(messageChannel, calendarChannel);
 
-  // Archived accounts are frozen (owner left the workspace): their synced data
-  // is kept but sync is disabled, so the live sync status is no longer relevant.
+  // Archived accounts retain their synced data but cannot be synced until they
+  // are reconnected, so the live sync status is no longer relevant.
   if (isArchived) {
     return (
       <StyledRowRightContainer>
-        <Status color="gray" weight="medium">{t`Archived`}</Status>
+        <Status color="gray" weight="medium">{t`Sync paused`}</Status>
         <SettingsAccountsRowDropdownMenu account={account} />
       </StyledRowRightContainer>
     );

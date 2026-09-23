@@ -1,8 +1,9 @@
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { useContext, useState } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -11,8 +12,7 @@ import {
   IconDownload,
   IconFile,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
-import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';

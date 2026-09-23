@@ -210,6 +210,7 @@ export class ApplicationUninstallService {
         logicFunctionId: application.uninstallLogicFunctionId,
         workspaceId,
         payload,
+        shouldEnforceUsageLimits: false,
         ...(isDefined(workspaceDeletionRequestTimestamp)
           ? { workspaceDeletionRequestTimestamp }
           : {}),

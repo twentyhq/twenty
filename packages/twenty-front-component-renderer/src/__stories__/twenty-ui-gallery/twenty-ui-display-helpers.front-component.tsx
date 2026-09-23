@@ -1,11 +1,4 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  EllipsisDisplay,
-  JsonDisplay,
-  NumberDisplay,
-  SelectDisplay,
-  TextDisplay,
-} from 'twenty-ui/primitives/data-display';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
@@ -19,13 +12,12 @@ const DisplayHelpers = () => (
       A longer account description that spans several lines and should be
       clamped to two lines.
     </Text>
-    <EllipsisDisplay maxWidth={120}>
+    <Text truncate style={{ maxWidth: 120 }}>
       An overflowing reference number
-    </EllipsisDisplay>
-    <NumberDisplay value={1234.5} />
-    <JsonDisplay text={'{"active":true}'} />
-    <TextDisplay text="Account description" />
-    <SelectDisplay color="green" label="Qualified" />
+    </Text>
+    <Text truncate>1234.5</Text>
+    <Text truncate>{'{"active":true}'}</Text>
+    <Text truncate>Account description</Text>
   </TwentyUiGalleryCard>
 );
 
