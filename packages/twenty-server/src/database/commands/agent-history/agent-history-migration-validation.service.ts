@@ -4,6 +4,7 @@ import { type QueryRunner } from 'typeorm';
 
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils/get-agent-history-column.util';
+import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
 import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -61,7 +62,10 @@ export class AgentHistoryMigrationValidationService {
     workspaceId: string;
   }): Promise<void> {
     for (const table of AGENT_HISTORY_TABLES) {
-      const columns = table.columns.map(escapeIdentifier).join(', ');
+      const coreColumns = await getAgentHistoryMigrationColumns({ runner, table });
+      const columns = table.columns.map((column) => coreColumns.includes(column)
+        ? escapeIdentifier(column)
+        : `NULL::uuid AS ${escapeIdentifier(column)}`).join(', ');
       const targetColumns = table.columns
         .map(
           (column) =>
@@ -97,7 +101,8 @@ export class AgentHistoryMigrationValidationService {
         'SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2',
         ['core', table.name],
       );
-      const expected = new Set<string>([...table.columns, 'workspaceId']);
+      const coreColumns = await getAgentHistoryMigrationColumns({ runner, table });
+      const expected = new Set<string>([...coreColumns, 'workspaceId']);
       if (
         rows.length !== expected.size ||
         rows.some((row) => !expected.has(row.column_name))
@@ -124,6 +129,15 @@ export class AgentHistoryMigrationValidationService {
         )
       ) {
         throw new Error(`Workspace ${table.name} schema is not prepared`);
+      }
+      const missingCoreColumns = table.columns.filter((column) => !coreColumns.includes(column));
+      if (isNonEmptyArray(missingCoreColumns)) {
+        const attributedMessages = await runner.query(
+          `SELECT 1 FROM ${getAgentHistoryTable({ workspaceId, storage: 'workspace', name: table.name })} WHERE ${missingCoreColumns.map((column) => `${escapeIdentifier(column)} IS NOT NULL`).join(' OR ')} LIMIT 1`,
+        );
+        if (isNonEmptyArray(attributedMessages)) {
+          throw new Error('Run the 2.43 instance upgrade before moving attributed chat history to core');
+        }
       }
     }
   }

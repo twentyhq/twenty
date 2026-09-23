@@ -6,9 +6,9 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 
-@RegisteredWorkspaceCommand('2.42.0', 1790149522160)
+@RegisteredWorkspaceCommand('2.43.0', 1790171503075)
 @Command({
-  name: 'upgrade:2-42:attribute-chat-message-senders',
+  name: 'upgrade:2-43:attribute-chat-message-senders',
   description: 'Persist the original participant on historical chat messages',
 })
 export class AttributeChatMessageSendersCommand extends ProvisionedWorkspaceCommandRunner {

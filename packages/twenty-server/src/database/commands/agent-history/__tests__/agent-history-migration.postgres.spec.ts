@@ -1,3 +1,4 @@
+import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-history/agent-history-migration-data.service';
 import { AgentHistoryMigrationValidationService } from 'src/database/commands/agent-history/agent-history-migration-validation.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
@@ -152,6 +153,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         `CREATE TABLE core."keyValuePair" ("key" text, "workspaceId" uuid, "userId" uuid, "applicationId" uuid, "type" text, "value" jsonb, "updatedAt" timestamptz DEFAULT now()); CREATE UNIQUE INDEX state_key ON core."keyValuePair" ("key", "workspaceId") WHERE "userId" IS NULL AND "applicationId" IS NULL`,
       );
       for (const ddl of AGENT_HISTORY_TEST_SCHEMA) await dataSource.query(ddl);
+      const senderRunner = dataSource.createQueryRunner();
+      try {
+        await senderRunner.connect();
+        await new AddChatMessageSenderFastInstanceCommand().up(senderRunner);
+      } finally {
+        await senderRunner.release();
+      }
       await dataSource.query(
         'CREATE TABLE core."userWorkspace" (id uuid PRIMARY KEY, "workspaceId" uuid, "userId" uuid); CREATE TABLE core.file (id uuid PRIMARY KEY, "workspaceId" uuid)',
       );
@@ -261,6 +269,34 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         `INSERT INTO core."agentTurnEvaluation" ("workspaceId", "turnId", score, comment) VALUES ($1, $2, 100, 'Evaluation')`,
         [WORKSPACE_ID, TURN_ID],
       );
+    });
+
+    it('can migrate and roll back 2.42 history before the sender columns exist', async () => {
+      await dataSource.query('ALTER TABLE core."agentMessage" DROP COLUMN "senderUserWorkspaceId", DROP COLUMN "senderApplicationId"');
+      await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' });
+      expect(await dataSource.query(`SELECT "senderUserWorkspaceId", "senderApplicationId" FROM "${SCHEMA}"."agentMessage"`)).toEqual([
+        { senderUserWorkspaceId: null, senderApplicationId: null },
+      ]);
+      await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'core' });
+      expect(await dataSource.query('SELECT id FROM core."agentMessage"')).toEqual([{ id: MESSAGE_ID }]);
+    });
+
+    it('preserves sender and application identity when moving attributed history in either direction', async () => {
+      await dataSource.query('UPDATE core."agentMessage" SET "senderUserWorkspaceId" = $1, "senderApplicationId" = $2', [OWNER_ID, THREAD_ID]);
+      await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' });
+      await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'core' });
+      expect(await dataSource.query('SELECT "senderUserWorkspaceId", "senderApplicationId" FROM core."agentMessage"')).toEqual([
+        { senderUserWorkspaceId: OWNER_ID, senderApplicationId: THREAD_ID },
+      ]);
+    });
+
+    it('refuses rollback before clearing data if the legacy schema would discard sender identity', async () => {
+      await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' });
+      await dataSource.query(`UPDATE "${SCHEMA}"."agentMessage" SET "senderUserWorkspaceId" = $1`, [OWNER_ID]);
+      await dataSource.query('ALTER TABLE core."agentMessage" DROP COLUMN "senderUserWorkspaceId", DROP COLUMN "senderApplicationId"');
+      await expect(migration.migrate({ workspaceId: WORKSPACE_ID, target: 'core' })).rejects.toThrow('Run the 2.43 instance upgrade');
+      expect(await dataSource.query('SELECT id FROM core."agentMessage"')).toEqual([{ id: MESSAGE_ID }]);
+      expect(await dataSource.query(`SELECT "senderUserWorkspaceId" FROM "${SCHEMA}"."agentMessage"`)).toEqual([{ senderUserWorkspaceId: OWNER_ID }]);
     });
 
     it('copies all five tables, exact credits and archive state before changing the route', async () => {
