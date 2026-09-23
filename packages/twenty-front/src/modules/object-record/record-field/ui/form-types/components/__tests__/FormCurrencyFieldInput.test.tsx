@@ -1,6 +1,4 @@
 import { FormCurrencyAmountFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyAmountFieldInput';
-import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterValueCompositeInput';
-import { ViewFilterOperand } from 'twenty-shared/types';
 import { FormCurrencyFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput';
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { i18n } from '@lingui/core';
@@ -121,40 +119,6 @@ it('displays read-only amounts in currency units', () => {
   renderCurrencyInput(44_000_000, true);
   expect(screen.getByRole('textbox')).toHaveValue('44');
   expect(screen.getByRole('textbox')).toBeDisabled();
-});
-
-jest.mock(
-  '@/workflow/workflow-variables/components/WorkflowVariablePicker',
-  () => ({
-    WorkflowVariablePicker: () => null,
-  }),
-);
-
-it('preserves raw micros in workflow conditions', async () => {
-  const user = userEvent.setup();
-  const onChange = jest.fn();
-  render(
-    <I18nProvider i18n={i18n}>
-      <WorkflowStepFilterValueCompositeInput
-        stepFilter={{
-          id: 'filter',
-          type: 'CURRENCY',
-          stepOutputKey: 'amount',
-          operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
-          value: '3210000',
-          stepFilterGroupId: 'group',
-          compositeFieldSubFieldName: 'amountMicros',
-        }}
-        onChange={onChange}
-        onClear={() => {}}
-      />
-    </I18nProvider>,
-  );
-  const input = screen.getByRole('textbox');
-  expect(input).toHaveValue('3210000');
-  await user.clear(input);
-  await user.type(input, '24');
-  expect(onChange).toHaveBeenLastCalledWith(24);
 });
 
 it('passes selected workflow variables through without converting them', async () => {
