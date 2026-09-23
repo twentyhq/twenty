@@ -27,6 +27,7 @@ Use these surfaces for different jobs:
 | Record page layout | Tabs and widgets for one object record | `RECORD_PAGE` page layout or page layout tab |
 | Dashboard | Metric and report composition from built-in widgets | `DASHBOARD` page layout |
 | Command or side panel | Short actions, focused forms, one selected record, or background commands | `defineFrontComponent` plus command menu item |
+| Settings menu item | Configuration the app's admins set up, as a tab on the app's page under Settings > Apps, see `layout.md` | `defineFrontComponent` plus `defineSettingsMenuItem` |
 
 ## Removing The Scaffolded Placeholder
 

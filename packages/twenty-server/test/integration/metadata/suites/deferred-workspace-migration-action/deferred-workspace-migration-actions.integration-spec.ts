@@ -73,16 +73,20 @@ describe('Deferred workspace migration actions', () => {
   });
 
   afterAll(async () => {
-    await updateOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: objectMetadataId,
-        updatePayload: { isActive: false },
-      },
+    await expectEventually(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: objectMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
     });
-    await deleteOneObjectMetadata({
-      expectToFail: false,
-      input: { idToDelete: objectMetadataId },
+    await expectEventually(async () => {
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: objectMetadataId },
+      });
     });
     await updateFeatureFlag({
       featureFlag:
