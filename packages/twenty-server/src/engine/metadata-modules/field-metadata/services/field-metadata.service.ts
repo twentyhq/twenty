@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOneOptions } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -474,17 +473,5 @@ export class FieldMetadataService {
         flatEntityMaps: recomputedFlatFieldMetadataMaps,
       },
     );
-  }
-
-  public async findOneWithinWorkspace(
-    workspaceId: string,
-    options: FindOneOptions<FieldMetadataEntity>,
-  ) {
-    const [fieldMetadata] = await this.fieldMetadataRepository.find(
-      workspaceId,
-      { ...options },
-    );
-
-    return fieldMetadata;
   }
 }
