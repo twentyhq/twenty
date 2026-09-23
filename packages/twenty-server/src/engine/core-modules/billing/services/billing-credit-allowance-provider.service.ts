@@ -28,8 +28,8 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
     super();
   }
 
-  async isCreditAllowanceEnabled(workspaceId: string): Promise<boolean> {
-    return this.billingUsageService.isAllowanceCounterEnabled(workspaceId);
+  async isCreditAllowanceEnabled(): Promise<boolean> {
+    return this.twentyConfigService.get('IS_BILLING_ENABLED');
   }
 
   async getCreditAllowancePeriod(
@@ -71,15 +71,19 @@ export class BillingCreditAllowanceProvider extends CreditAllowanceProvider {
         return null;
       }
 
-      const creditBalanceMicro =
-        await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId);
+      const { balanceMicro, earliestExpiryBefore } =
+        await this.billingCreditGrantService.getActiveCreditBalance({
+          workspaceId,
+          boundary: subscription.currentPeriodEnd,
+        });
 
       return {
         periodStart: subscription.currentPeriodStart,
         periodEnd: subscription.currentPeriodEnd,
         allowanceMicro:
           this.billingUsageService.getResourceUsageCap(subscription) +
-          creditBalanceMicro,
+          balanceMicro,
+        validUntil: earliestExpiryBefore ?? subscription.currentPeriodEnd,
       };
     } catch (error) {
       this.logger.error(

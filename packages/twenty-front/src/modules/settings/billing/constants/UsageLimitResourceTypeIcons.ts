@@ -1,4 +1,5 @@
 import {
+  IconAddressBook,
   IconApi,
   IconApps,
   IconFiles,
@@ -20,6 +21,7 @@ export const USAGE_LIMIT_RESOURCE_TYPE_ICONS: Record<
   [UsageResourceType.APP]: IconApps,
   [UsageResourceType.EMAIL]: IconMail,
   [UsageResourceType.LOGIC_FUNCTION]: IconSettingsAutomation,
+  [UsageResourceType.RECORD]: IconAddressBook,
   [UsageResourceType.STORAGE]: IconFiles,
   [UsageResourceType.WEBHOOK]: IconWebhook,
   [UsageResourceType.WORKFLOW]: IconSettingsAutomation,

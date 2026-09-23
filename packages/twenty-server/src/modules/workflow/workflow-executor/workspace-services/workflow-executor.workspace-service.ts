@@ -1,6 +1,7 @@
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
@@ -12,6 +13,7 @@ import {
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -66,6 +68,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -374,9 +377,13 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
   }) {
-    if (
-      !(await this.billingUsageService.isExecutionQuotaEnabled(workspaceId))
-    ) {
+    const isExecutionQuotaEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
+        workspaceId,
+      );
+
+    if (!isExecutionQuotaEnabled) {
       return;
     }
 

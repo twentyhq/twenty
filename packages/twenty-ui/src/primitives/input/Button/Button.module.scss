@@ -56,6 +56,19 @@
   }
   &[data-elevated] {
     box-shadow: var(--t-box-shadow-light);
+    backdrop-filter: var(--t-blur-medium);
+
+    &[data-color='neutral'][data-variant='outline'] {
+      --tw-button-background: var(--t-background-primary);
+      --tw-button-border: var(--t-border-color-strong);
+      --tw-button-color: var(--t-font-color-tertiary);
+      --tw-button-hover: var(--t-background-transparent-lighter);
+      --tw-button-active: var(--t-background-transparent-medium);
+
+      &[aria-pressed='true'] {
+        --tw-button-background: var(--tw-button-active);
+      }
+    }
   }
   &[data-variant='solid'] {
     --tw-button-background: var(--t-background-primary-inverted);

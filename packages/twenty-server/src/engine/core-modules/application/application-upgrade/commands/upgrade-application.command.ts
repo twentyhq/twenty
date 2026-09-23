@@ -10,6 +10,7 @@ import { askCommandConfirmation } from 'src/database/commands/utils/ask-command-
 import { parseBoundedPositiveInteger } from 'src/database/commands/utils/parse-bounded-positive-integer.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 type UpgradeApplicationCommandOptions = {
   applicationRegistrationUniversalIdentifier: string;
@@ -24,7 +25,7 @@ const MAX_WORKSPACE_COUNT_LIMIT = 50;
 @Command({
   name: 'application:upgrade',
   description:
-    'Upgrade an application to its latest available version on every workspace that already has it installed',
+    'Enqueue one upgrade job per workspace to bring an application to its latest available version everywhere it is installed',
 })
 export class UpgradeApplicationCommand extends CommandRunner {
   protected logger: CommandLogger;
@@ -117,7 +118,6 @@ export class UpgradeApplicationCommand extends CommandRunner {
       : undefined;
 
     const {
-      appRegistration,
       targetVersion,
       applicationsToUpgrade,
       skippedNonProvisionedWorkspaceIds,
@@ -148,11 +148,11 @@ export class UpgradeApplicationCommand extends CommandRunner {
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would upgrade "${registration.name}" (${registration.universalIdentifier}) to version ${targetVersion} on ${impactedWorkspaceIds.length} workspace(s)${
+        `[DRY RUN] Would enqueue an upgrade job for "${registration.name}" (${registration.universalIdentifier}) on ${impactedWorkspaceIds.length} workspace(s)${
           impactedWorkspaceIds.length > 0
             ? `: ${impactedWorkspaceIds.join(', ')}`
             : ''
-        }`,
+        }. Jobs install the latest available version when they run, currently ${targetVersion}`,
       );
 
       return;
@@ -172,30 +172,25 @@ export class UpgradeApplicationCommand extends CommandRunner {
         : `${impactedWorkspaceIds.length} workspace(s)`;
 
       const isConfirmed = await askCommandConfirmation(
-        `Confirm upgrading application ${registration.universalIdentifier} to version ${targetVersion} on ${confirmationTarget}`,
+        `Confirm enqueuing upgrade jobs for application ${registration.universalIdentifier} on ${confirmationTarget}. Jobs install the latest available version when they run, currently ${targetVersion}`,
       );
 
       if (!isConfirmed) {
-        this.logger.log('Aborted, no upgrade performed');
+        this.logger.log('Aborted, no upgrade enqueued');
 
         return;
       }
     }
 
-    this.logger.log(
-      `Upgrading "${registration.name}" (${registration.universalIdentifier}) to version ${targetVersion} on ${impactedWorkspaceIds.length} workspace(s)...`,
-    );
-
-    // Runs on the exact set shown at confirmation time, so installations
-    // created or versions published while the operator answered are excluded.
-    const report = await this.applicationUpgradeService.upgradeApplications({
-      appRegistration,
-      targetVersion,
-      applications: applicationsToUpgrade,
-    });
+    const enqueuedJobIds =
+      await this.applicationUpgradeService.enqueueWorkspaceApplicationUpgrades({
+        applicationRegistrationId: registration.id,
+        applications: applicationsToUpgrade,
+        onlyAutoUpgrade: false,
+      });
 
     this.logger.log(
-      `Upgraded ${report.success.length} workspace(s), ${report.fail.length} failed`,
+      `Enqueued ${enqueuedJobIds.length} upgrade job(s) on ${MessageQueue.applicationUpgradeQueue} for "${registration.name}" (${registration.universalIdentifier}) on ${impactedWorkspaceIds.length} workspace(s). Jobs install the latest available version when they run, currently ${targetVersion}`,
     );
 
     this.logger.log(chalk.blue('Command completed!'));

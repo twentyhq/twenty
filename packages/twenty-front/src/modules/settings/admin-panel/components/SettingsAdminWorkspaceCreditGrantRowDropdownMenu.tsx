@@ -1,7 +1,7 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -33,15 +33,14 @@ export const SettingsAdminWorkspaceCreditGrantRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Revoke`}
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={() => {
                 onRevoke();
                 closeDropdown(dropdownId);
               }}
-            />
+            >{t`Revoke`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
@@ -43,7 +44,6 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/primitives/layout';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
@@ -246,19 +246,17 @@ export const RecordDetailRelationRecordsListItem = ({
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconUnlink}
-                    text={t`Detach`}
+                  <ListItem
+                    startIcon={<IconUnlink />}
                     onClick={handleDetach}
-                  />
+                  >{t`Detach`}</ListItem>
                   {!isAccountOwnerRelation &&
                     relationObjectPermissions.canSoftDeleteObjectRecords && (
-                      <MenuItem
-                        LeftIcon={IconTrash}
-                        text={t`Delete`}
-                        accent="danger"
+                      <ListItem
+                        startIcon={<IconTrash />}
+                        color="danger"
                         onClick={handleDelete}
-                      />
+                      >{t`Delete`}</ListItem>
                     )}
                 </DropdownMenuItemsContainer>
               </DropdownContent>

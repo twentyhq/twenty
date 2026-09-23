@@ -148,6 +148,15 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.eventLogQueue]: {
+    priority: 1,
+    workerOptions: {
+      concurrency: 3,
+      lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.workflowQueue]: {
     priority: 2,
     workerOptions: {
@@ -189,6 +198,15 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     workerOptions: {
       concurrency: 1,
       lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
+  [MessageQueue.applicationUpgradeQueue]: {
+    priority: 6,
+    workerOptions: {
+      concurrency: 2,
+      lockDuration: 60_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
     },

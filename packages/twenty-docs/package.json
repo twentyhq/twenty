@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "mintlify dev",
     "validate": "mintlify validate",
-    "fix-links": "bash scripts/fix-translated-links.sh",
+    "fix-links": "tsx scripts/fix-translated-links.ts",
     "lint": "npx oxlint -c .oxlintrc.json ."
   },
   "dependencies": {

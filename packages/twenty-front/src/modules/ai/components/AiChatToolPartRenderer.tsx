@@ -4,7 +4,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
 import { ToolRecordsWidget } from '@/ai/components/ToolRecordsWidget';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
-import { type ToolWidget } from '@/ai/types/tool-widget.type';
+import { type ToolWidget } from '@/ai/types/ToolWidget';
 import { getToolRecordOutput } from '@/ai/utils/getToolRecordOutput';
 
 type AiChatToolPartRendererProps = {

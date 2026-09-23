@@ -7,7 +7,8 @@ export const BUTTON_PROP_DESCRIPTIONS = {
   fullWidth: 'Expands the button to fill its container width.',
   loading:
     'Shows a loading indicator and disables activation while preserving the button width.',
-  elevated: 'Adds a shadow to the button.',
+  elevated:
+    'Adds a shadow and backdrop blur. Neutral outline buttons also use elevated surface colors.',
   startIcon: 'Decorative content displayed before the label.',
   endIcon: 'Decorative content displayed after the label.',
   hotkeys: 'Keyboard shortcut hints displayed on non-mobile screens.',

@@ -12,7 +12,9 @@ const EXCLUDED_PATH_PREFIXES = [
 ].map(extractPathPrefix);
 
 export const isValidReturnToPath = (path: string): boolean => {
-  if (!isSafeInternalPath(path) || path === '/') {
+  // Redirecting after login needs a page to land on, so the hash-only paths
+  // isSafeInternalPath allows are not valid here.
+  if (!isSafeInternalPath(path) || !path.startsWith('/') || path === '/') {
     return false;
   }
 

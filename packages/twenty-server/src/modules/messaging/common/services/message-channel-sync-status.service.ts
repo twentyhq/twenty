@@ -193,6 +193,33 @@ export class MessageChannelSyncStatusService {
     );
   }
 
+  public async markAsMessagesListFetchScheduledIfPending(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ): Promise<string[]> {
+    if (!messageChannelIds.length) {
+      return [];
+    }
+
+    const updateResult = await this.messageChannelRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+        syncStageStartedAt: new Date(),
+      })
+      .where({
+        id: In(messageChannelIds),
+        workspaceId,
+        isSyncEnabled: true,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+      })
+      .returning('id')
+      .execute();
+
+    return updateResult.raw.map((row: { id: string }) => row.id);
+  }
+
   public async markAsMessagesListFetchOngoing(
     messageChannelIds: string[],
     workspaceId: string,

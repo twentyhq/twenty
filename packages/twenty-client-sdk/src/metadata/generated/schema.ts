@@ -45,6 +45,7 @@ export interface ApplicationVariable {
     label: Scalars['String']
     isSecret: Scalars['Boolean']
     isDeprecated: Scalars['Boolean']
+    isRequired: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
     __typename: 'ApplicationVariable'
@@ -98,6 +99,8 @@ export interface FrontComponent {
     applicationTokenPair?: ApplicationTokenPair
     applicationVariables?: Scalars['JSON']
     frontComponentSharedDependenciesChecksum?: Scalars['String']
+    applicationName?: Scalars['String']
+    applicationGrantedCapabilities?: Scalars['String'][]
     __typename: 'FrontComponent'
 }
 
@@ -362,6 +365,7 @@ export interface Application {
     autoUpgrade: Scalars['Boolean']
     defaultRoleId?: Scalars['String']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
+    healthCheckLogicFunctionId?: Scalars['UUID']
     defaultLogicFunctionRole?: Role
     agents: Agent[]
     frontComponents: FrontComponent[]
@@ -1235,9 +1239,9 @@ export interface UsageQuotaDefinition {
     __typename: 'UsageQuotaDefinition'
 }
 
-export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK'
+export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK' | 'RECORD'
 
-export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'SUBSCRIPTION'
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
 
 export interface UsageQuotaDefinitions {
     definitions: UsageQuotaDefinition[]
@@ -1610,7 +1614,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED'
+export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1981,6 +1985,22 @@ export interface DeletedWorkspaceMember {
     __typename: 'DeletedWorkspaceMember'
 }
 
+export interface ApplicationHealthCheckAction {
+    label: Scalars['String']
+    location?: Scalars['String']
+    __typename: 'ApplicationHealthCheckAction'
+}
+
+export interface ApplicationHealthCheckResult {
+    status: ApplicationHealthStatus
+    title?: Scalars['String']
+    description?: Scalars['String']
+    action?: ApplicationHealthCheckAction
+    __typename: 'ApplicationHealthCheckResult'
+}
+
+export type ApplicationHealthStatus = 'OK' | 'SUCCESS' | 'INFO' | 'WARNING' | 'ERROR' | 'NEUTRAL' | 'UNKNOWN'
+
 export interface MarketplaceApp {
     id: Scalars['String']
     name: Scalars['String']
@@ -2054,6 +2074,7 @@ export interface MarketplaceAppDetail {
     installCount: Scalars['Int']
     defaultRoleUniversalIdentifier?: Scalars['String']
     roles?: MarketplaceAppRole[]
+    requestedCapabilities: Scalars['String'][]
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: Scalars['JSON']
     __typename: 'MarketplaceAppDetail'
@@ -2067,6 +2088,12 @@ export interface TriggerInstallApplicationJobResult {
 export interface TriggerUninstallApplicationJobResult {
     jobId: Scalars['String']
     __typename: 'TriggerUninstallApplicationJobResult'
+}
+
+export interface ApplicationCapabilityGrant {
+    id: Scalars['UUID']
+    grantedCapabilities: Scalars['String'][]
+    __typename: 'ApplicationCapabilityGrant'
 }
 
 export interface WorkspaceCompanyEnrichmentResult {
@@ -3184,7 +3211,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'workflow' | 'workflowVersion'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -3476,6 +3503,7 @@ export interface Mutation {
     uploadAppTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
+    grantApplicationCapabilities: ApplicationCapabilityGrant
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
     installApplication: Application
@@ -3484,6 +3512,7 @@ export interface Mutation {
     updateApplication: Application
     uninstallApplication: Scalars['Boolean']
     syncMarketplaceCatalog: Scalars['Boolean']
+    runApplicationHealthCheck?: ApplicationHealthCheckResult
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
@@ -3669,6 +3698,7 @@ export interface ApplicationVariableGenqlSelection{
     label?: boolean | number
     isSecret?: boolean | number
     isDeprecated?: boolean | number
+    isRequired?: boolean | number
     type?: boolean | number
     options?: boolean | number
     __typename?: boolean | number
@@ -3726,6 +3756,8 @@ export interface FrontComponentGenqlSelection{
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     applicationVariables?: boolean | number
     frontComponentSharedDependenciesChecksum?: boolean | number
+    applicationName?: boolean | number
+    applicationGrantedCapabilities?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4005,6 +4037,7 @@ export interface ApplicationGenqlSelection{
     autoUpgrade?: boolean | number
     defaultRoleId?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
+    healthCheckLogicFunctionId?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection
     frontComponents?: FrontComponentGenqlSelection
@@ -5682,6 +5715,22 @@ export interface DeletedWorkspaceMemberGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationHealthCheckActionGenqlSelection{
+    label?: boolean | number
+    location?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationHealthCheckResultGenqlSelection{
+    status?: boolean | number
+    title?: boolean | number
+    description?: boolean | number
+    action?: ApplicationHealthCheckActionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MarketplaceAppGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -5759,6 +5808,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     installCount?: boolean | number
     defaultRoleUniversalIdentifier?: boolean | number
     roles?: MarketplaceAppRoleGenqlSelection
+    requestedCapabilities?: boolean | number
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: boolean | number
     __typename?: boolean | number
@@ -5773,6 +5823,13 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
 
 export interface TriggerUninstallApplicationJobResultGenqlSelection{
     jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationCapabilityGrantGenqlSelection{
+    id?: boolean | number
+    grantedCapabilities?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7288,6 +7345,7 @@ export interface MutationGenqlSelection{
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
+    grantApplicationCapabilities?: (ApplicationCapabilityGrantGenqlSelection & { __args: {input: GrantApplicationCapabilitiesInput} })
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
@@ -7296,6 +7354,7 @@ export interface MutationGenqlSelection{
     updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     syncMarketplaceCatalog?: boolean | number
+    runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
@@ -7688,6 +7747,8 @@ export interface CreateApplicationRegistrationVariableInput {applicationRegistra
 export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
 
 export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
+
+export interface GrantApplicationCapabilitiesInput {applicationId: Scalars['UUID'],capabilities: Scalars['String'][]}
 
 export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
 
@@ -9214,6 +9275,22 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const ApplicationHealthCheckAction_possibleTypes: string[] = ['ApplicationHealthCheckAction']
+    export const isApplicationHealthCheckAction = (obj?: { __typename?: any } | null): obj is ApplicationHealthCheckAction => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationHealthCheckAction"')
+      return ApplicationHealthCheckAction_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationHealthCheckResult_possibleTypes: string[] = ['ApplicationHealthCheckResult']
+    export const isApplicationHealthCheckResult = (obj?: { __typename?: any } | null): obj is ApplicationHealthCheckResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationHealthCheckResult"')
+      return ApplicationHealthCheckResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const MarketplaceApp_possibleTypes: string[] = ['MarketplaceApp']
     export const isMarketplaceApp = (obj?: { __typename?: any } | null): obj is MarketplaceApp => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceApp"')
@@ -9266,6 +9343,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isTriggerUninstallApplicationJobResult = (obj?: { __typename?: any } | null): obj is TriggerUninstallApplicationJobResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUninstallApplicationJobResult"')
       return TriggerUninstallApplicationJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationCapabilityGrant_possibleTypes: string[] = ['ApplicationCapabilityGrant']
+    export const isApplicationCapabilityGrant = (obj?: { __typename?: any } | null): obj is ApplicationCapabilityGrant => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationCapabilityGrant"')
+      return ApplicationCapabilityGrant_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10772,7 +10857,8 @@ export const enumUsageResourceType = {
    API: 'API' as const,
    LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
    EMAIL: 'EMAIL' as const,
-   WEBHOOK: 'WEBHOOK' as const
+   WEBHOOK: 'WEBHOOK' as const,
+   RECORD: 'RECORD' as const
 }
 
 export const enumUsageOperationType = {
@@ -10784,9 +10870,11 @@ export const enumUsageOperationType = {
    WEB_SEARCH: 'WEB_SEARCH' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
    EMAIL_SEND: 'EMAIL_SEND' as const,
+   MESSAGE_CAMPAIGN_SEND: 'MESSAGE_CAMPAIGN_SEND' as const,
    API_REQUEST: 'API_REQUEST' as const,
    WEBHOOK_CALL: 'WEBHOOK_CALL' as const,
    STORAGE_FILE: 'STORAGE_FILE' as const,
+   RECORD_WRITE: 'RECORD_WRITE' as const,
    SUBSCRIPTION: 'SUBSCRIPTION' as const
 }
 
@@ -10841,10 +10929,10 @@ export const enumFeatureFlagKey = {
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
    IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
    IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED: 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' as const,
-   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED: 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' as const,
    IS_RECORD_SHARING_ENABLED: 'IS_RECORD_SHARING_ENABLED' as const,
    IS_INITIAL_OBJECT_VIEW_ENABLED: 'IS_INITIAL_OBJECT_VIEW_ENABLED' as const,
    IS_WEBHOOK_RATE_LIMIT_ENABLED: 'IS_WEBHOOK_RATE_LIMIT_ENABLED' as const,
+   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
    IS_EXECUTION_QUOTA_ENABLED: 'IS_EXECUTION_QUOTA_ENABLED' as const
 }
 
@@ -10875,6 +10963,16 @@ export const enumSupportDriver = {
 export const enumCaptchaDriverType = {
    GOOGLE_RECAPTCHA: 'GOOGLE_RECAPTCHA' as const,
    TURNSTILE: 'TURNSTILE' as const
+}
+
+export const enumApplicationHealthStatus = {
+   OK: 'OK' as const,
+   SUCCESS: 'SUCCESS' as const,
+   INFO: 'INFO' as const,
+   WARNING: 'WARNING' as const,
+   ERROR: 'ERROR' as const,
+   NEUTRAL: 'NEUTRAL' as const,
+   UNKNOWN: 'UNKNOWN' as const
 }
 
 export const enumWorkspaceCompanyEnrichmentOutcome = {
@@ -11132,7 +11230,9 @@ export const enumAllMetadataName = {
    applicationVariable: 'applicationVariable' as const,
    connectionProvider: 'connectionProvider' as const,
    searchFieldMetadata: 'searchFieldMetadata' as const,
-   timelineActivityType: 'timelineActivityType' as const
+   timelineActivityType: 'timelineActivityType' as const,
+   workflow: 'workflow' as const,
+   workflowVersion: 'workflowVersion' as const
 }
 
 export const enumEventLogTable = {

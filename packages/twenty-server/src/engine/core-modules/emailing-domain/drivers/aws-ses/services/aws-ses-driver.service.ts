@@ -157,7 +157,10 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   async sendEmail(
     input: EmailingDomainSendEmailRequest,
   ): Promise<EmailingDomainSendEmailResult> {
-    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(input.emailingDomain);
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(
+      input.emailingDomain,
+      input.sendKind,
+    );
     const emailToSend = this.unsubscribeContentService.addTo(
       input,
       unsubscribeBaseUrl,
@@ -172,7 +175,10 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   async sendEmailBatch(
     input: EmailingDomainSendEmailBatchRequest,
   ): Promise<EmailingDomainSendEmailBatchResult> {
-    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(input.emailingDomain);
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(
+      input.emailingDomain,
+      input.sendKind,
+    );
     const batchToSend = this.unsubscribeContentService.addToBatch(
       input,
       unsubscribeBaseUrl,

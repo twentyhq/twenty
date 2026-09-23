@@ -8,7 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil, IconX } from 'twenty-ui/icon';
-import { AnimatedButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 export const CommandMenuItemEditButton = () => {
   const { t } = useLingui();
@@ -44,18 +44,20 @@ export const CommandMenuItemEditButton = () => {
   };
 
   return (
-    <AnimatedButton
-      animatedSvg={
+    <Button
+      startIcon={
         <AnimatedIconCrossfade
           isActive={isCommandMenuEditPageActive}
           ActiveIcon={IconX}
           InactiveIcon={IconPencil}
         />
       }
-      title={t`Edit actions`}
-      variant="secondary"
-      size="small"
+      variant="outline"
+      size="sm"
       onClick={handleClick}
-    />
+      aria-expanded={isCommandMenuEditPageActive}
+    >
+      {t`Edit actions`}
+    </Button>
   );
 };

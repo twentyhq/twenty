@@ -8,6 +8,7 @@ import { BackfillWorkspaceWorkflowVersionIdCommand } from 'src/database/commands
 import { BackfillWorkflowExecutionCoreIdsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789719131001-backfill-workflow-execution-core-ids.command';
 import { MakeWorkflowRunProjectionRelationsNullableCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789719131002-make-workflow-run-projection-relations-nullable.command';
 import { PurgeSoftDeletedViewsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789744500000-purge-soft-deleted-views.command';
+import { PurgeSoftDeletedRowLevelPermissionPredicatesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789978629000-purge-soft-deleted-row-level-permission-predicates.command';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { UnpinCreationCommandsOnRecordSelectionCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789634112046-unpin-creation-commands-on-record-selection.command';
 import { BackfillMissingSystemRelationIndexesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789663454000-backfill-missing-system-relation-indexes.command';
@@ -20,6 +21,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
+import { GateWorkflowFavoritesByCoreIndexFlagCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789981200000-gate-workflow-favorites-by-core-index-flag.command';
 
 @Module({
   imports: [
@@ -35,6 +37,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
   providers: [
+    GateWorkflowFavoritesByCoreIndexFlagCommand,
     MigrateAgentHistoryToWorkspaceCommand,
     UnpinCreationCommandsOnRecordSelectionCommand,
     RelinkWorkflowVersionsToCoreWorkflowsCommand,
@@ -45,7 +48,11 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     PurgeSoftDeletedViewsCommand,
     SyncMessageRecordPageCommand,
     SetMessageTextDisplayedMaxRowsCommand,
+    PurgeSoftDeletedRowLevelPermissionPredicatesCommand,
   ],
-  exports: [RelinkWorkflowVersionsToCoreWorkflowsCommand],
+  exports: [
+    GateWorkflowFavoritesByCoreIndexFlagCommand,
+    RelinkWorkflowVersionsToCoreWorkflowsCommand,
+  ],
 })
 export class V2_42_UpgradeVersionCommandModule {}

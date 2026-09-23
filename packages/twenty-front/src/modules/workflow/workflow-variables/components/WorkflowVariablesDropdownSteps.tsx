@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -21,7 +22,6 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconX, useIcons } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;
@@ -106,24 +106,18 @@ export const WorkflowVariablesDropdownSteps = ({
             aria-selected={false}
             selected={false}
             indicator="check"
-            hasSubmenu={true}
+            hasSubmenu
             startIcon={
               <SelectOptionIcon
                 Icon={item.icon ? getIcon(item.icon) : undefined}
               />
             }
           >
-            <OverflowingTextWithTooltip text={item.name} />
+            {item.name}
           </ListItem>
         ))}
         {matchingVariables.length === 0 && availableSteps.length === 0 && (
-          <MenuItem
-            key="no-steps"
-            onClick={() => {}}
-            text={t`No variables available`}
-            LeftIcon={undefined}
-            hasSubMenu={false}
-          />
+          <ListItem disabled>{t`No variables available`}</ListItem>
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>
