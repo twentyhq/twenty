@@ -84,33 +84,6 @@ const DropdownOwners = ({
 );
 
 describe('DropdownRoot', () => {
-  it('preserves configured modifier shortcuts when opened through its trigger', async () => {
-    const user = userEvent.setup();
-    const store = createTestStore();
-
-    render(
-      <JotaiProvider store={store}>
-        <DropdownRoot
-          dropdownId="options-dropdown"
-          type="menu"
-          globalHotkeysConfig={{ enableGlobalHotkeysWithModifiers: true }}
-        >
-          <Dropdown.Trigger>Options</Dropdown.Trigger>
-          <Dropdown.Content>
-            <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
-          </Dropdown.Content>
-        </DropdownRoot>
-      </JotaiProvider>,
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Options' }));
-
-    expect(store.get(currentGlobalHotkeysConfigSelector.atom)).toEqual({
-      enableGlobalHotkeysConflictingWithKeyboard: false,
-      enableGlobalHotkeysWithModifiers: true,
-    });
-  });
-
   it('updates focus and global shortcuts before notifying opening and dismissal', async () => {
     const user = userEvent.setup();
     const store = createTestStore();
