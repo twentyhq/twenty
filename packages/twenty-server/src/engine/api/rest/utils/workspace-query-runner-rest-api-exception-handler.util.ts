@@ -11,6 +11,8 @@ import { recordShareRestApiExceptionHandler } from 'src/engine/core-modules/reco
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { usageLimitToRestApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-rest-api-exception-handler.util';
+import { RecordValidationRuleHttpException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule-http.exception';
+import { RecordValidationRuleException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 
@@ -30,6 +32,8 @@ export const workspaceQueryRunnerRestApiExceptionHandler = (
       throw new BadRequestException(error.message);
     case error instanceof UsageLimitException:
       return usageLimitToRestApiExceptionHandler(error);
+    case error instanceof RecordValidationRuleException:
+      throw new RecordValidationRuleHttpException(error);
     case error instanceof ThrottlerException:
       return throttlerToRestApiExceptionHandler(error);
     case error instanceof TwentyOrmException &&

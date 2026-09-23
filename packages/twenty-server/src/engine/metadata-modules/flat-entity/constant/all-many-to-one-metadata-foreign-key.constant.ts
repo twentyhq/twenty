@@ -316,6 +316,16 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
+  validationRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    errorFieldMetadata: {
+      foreignKey: 'errorFieldMetadataId',
+    },
+  },
   searchFieldMetadata: {
     workspace: null,
     application: null,

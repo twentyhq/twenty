@@ -89,6 +89,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'workflow':
     case 'workflowVersion':
     case 'connectionProvider':
+    case 'validationRule':
     case 'timelineActivityType': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatAction.flatEntity,

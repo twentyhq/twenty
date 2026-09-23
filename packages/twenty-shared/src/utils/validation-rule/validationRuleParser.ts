@@ -1,0 +1,68 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { Parser } from 'expr-eval-fork';
+
+import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
+import { isValidationRuleValueEmpty } from '@/utils/validation-rule/isValidationRuleValueEmpty';
+
+export const validationRuleParser = new Parser({
+  allowMemberAccess: true,
+  operators: {
+    add: true,
+    subtract: true,
+    multiply: true,
+    divide: true,
+    remainder: true,
+    comparison: true,
+    concatenate: true,
+    conditional: true,
+    logical: true,
+    in: true,
+    length: true,
+    abs: true,
+    ceil: true,
+    floor: true,
+    round: true,
+    trunc: true,
+    power: false,
+    factorial: false,
+    assignment: false,
+    fndef: false,
+    random: false,
+    min: false,
+    max: false,
+    sin: false,
+    cos: false,
+    tan: false,
+    asin: false,
+    acos: false,
+    atan: false,
+    sinh: false,
+    cosh: false,
+    tanh: false,
+    asinh: false,
+    acosh: false,
+    atanh: false,
+    sqrt: false,
+    cbrt: false,
+    log: false,
+    log2: false,
+    ln: false,
+    lg: false,
+    log10: false,
+    expm1: false,
+    log1p: false,
+    exp: false,
+    sign: false,
+  },
+});
+
+validationRuleParser.consts = { true: true, false: false };
+
+validationRuleParser.functions = {
+  isDefined: isValidationRuleValueDefined,
+  isEmpty: isValidationRuleValueEmpty,
+  isNonEmptyString: (value: unknown) => isNonEmptyString(value),
+  includes: (array: unknown, value: unknown) =>
+    Array.isArray(array) && array.includes(value),
+  arrayLength: (value: unknown) => (Array.isArray(value) ? value.length : 0),
+};

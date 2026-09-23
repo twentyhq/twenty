@@ -305,6 +305,18 @@ export { normalizeUrl } from './url/normalizeUrl';
 export { normalizeUrlOrigin } from './url/normalizeUrlOrigin';
 export { safeDecodeURIComponent } from './url/safeDecodeURIComponent';
 export { uuidToBase36 } from './uuidToBase36';
+export { buildValidationRuleEvaluationContext } from './validation-rule/buildValidationRuleEvaluationContext';
+export { compileValidationRuleExpression } from './validation-rule/compileValidationRuleExpression';
+export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
+export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
+export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleValueEmpty';
+export { parseValidationRuleExpression } from './validation-rule/parseValidationRuleExpression';
+export { resolveValidationRuleIdentifierPath } from './validation-rule/resolveValidationRuleIdentifierPath';
+export { validationRuleParser } from './validation-rule/validationRuleParser';
+export {
+  validationRuleNullPlaceholders,
+  validationRuleCompositeFieldTypeByValue,
+} from './validation-rule/validationRuleValueRegistry';
 export { assertIsDefinedOrThrow } from './validation/assertIsDefinedOrThrow';
 export { emailSchema } from './validation/emailSchema';
 export { escapeForIlike } from './validation/escapeForIlike';

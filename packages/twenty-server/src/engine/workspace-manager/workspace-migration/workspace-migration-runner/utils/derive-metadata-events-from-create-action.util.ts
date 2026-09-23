@@ -102,6 +102,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'workflowVersion':
     case 'connectionProvider':
     case 'timelineActivityType':
+    case 'validationRule':
     case 'searchFieldMetadata': {
       return [
         {

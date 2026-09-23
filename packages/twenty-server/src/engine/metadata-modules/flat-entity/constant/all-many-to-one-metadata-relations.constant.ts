@@ -556,6 +556,24 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  validationRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    errorFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'errorFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'errorFieldMetadataUniversalIdentifier',
+    },
+  },
   searchFieldMetadata: {
     workspace: null,
     application: null,

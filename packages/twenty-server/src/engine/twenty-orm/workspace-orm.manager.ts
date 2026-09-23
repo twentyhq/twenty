@@ -34,6 +34,7 @@ export class WorkspaceOrmManager {
     repositoryOptions?: {
       useReplica?: boolean;
       shouldSkipEventEmission?: boolean;
+      shouldBypassValidationRules?: boolean;
     },
   ): WorkspaceRepository<T>;
 
@@ -43,6 +44,7 @@ export class WorkspaceOrmManager {
     repositoryOptions?: {
       useReplica?: boolean;
       shouldSkipEventEmission?: boolean;
+      shouldBypassValidationRules?: boolean;
     },
   ): WorkspaceRepository<T>;
 
@@ -52,6 +54,7 @@ export class WorkspaceOrmManager {
     repositoryOptions?: {
       useReplica?: boolean;
       shouldSkipEventEmission?: boolean;
+      shouldBypassValidationRules?: boolean;
     },
   ): WorkspaceRepository<T> {
     const objectMetadataName = this.resolveObjectMetadataName(
@@ -63,6 +66,8 @@ export class WorkspaceOrmManager {
       .getRepository<T>(objectMetadataName, permissionOptions, {
         shouldSkipEventEmission:
           repositoryOptions?.shouldSkipEventEmission ?? false,
+        shouldBypassValidationRules:
+          repositoryOptions?.shouldBypassValidationRules ?? false,
       });
   }
 
@@ -115,6 +120,7 @@ export class WorkspaceOrmManager {
       apiKeyRoleMap,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
+      flatValidationRuleMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
@@ -126,6 +132,7 @@ export class WorkspaceOrmManager {
       'apiKeyRoleMap',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
+      'flatValidationRuleMaps',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
@@ -138,6 +145,7 @@ export class WorkspaceOrmManager {
       flatIndexMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
+      flatValidationRuleMaps,
       objectIdByNameSingular,
       featureFlagsMap,
       billingEntitlements,
@@ -184,6 +192,11 @@ export class WorkspaceOrmManager {
         universalIdentifiersByApplicationId: {},
       },
       flatRowLevelPermissionPredicateGroupMaps: {
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      flatValidationRuleMaps: {
         byUniversalIdentifier: {},
         universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},

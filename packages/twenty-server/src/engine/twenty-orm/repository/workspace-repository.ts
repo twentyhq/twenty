@@ -56,6 +56,13 @@ import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/r
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
+import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
+import {
+  RecordValidationRuleException,
+  RecordValidationRuleExceptionCode,
+} from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
+import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
+import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -130,6 +137,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   // whose rows no subscriber cares about (campaign materialisation, backfills):
   // webhooks, workflow triggers and timeline activities will NOT fire.
   shouldSkipEventEmission: boolean;
+  shouldBypassValidationRules: boolean;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -909,11 +917,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  async runInsert({
-    records,
-    columnsToReturn,
-    onConflictDoNothing,
-  }: {
+  async runInsert(args: {
     records: Partial<ObjectRecord>[];
     columnsToReturn: string[];
     onConflictDoNothing?: boolean;
@@ -922,8 +926,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     generatedMaps: ObjectRecord[];
     raw: ObjectRecord[];
   }> {
+    const { records, columnsToReturn, onConflictDoNothing } = args;
+
     if (records.length === 0) {
       return { identifiers: [], generatedMaps: [], raw: [] };
+    }
+
+    if (this.shouldRunWriteInValidationRuleTransaction()) {
+      return this.options.runInNewTransaction((transactionalRepository) =>
+        transactionalRepository.runInsert(args),
+      );
     }
 
     const filesFieldDiff =
@@ -976,6 +988,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);
+    const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
+
+    await this.validateWrittenRecordsAgainstValidationRulesOrThrow({
+      recordIds: insertedIds,
+      inputIndexByRecordId: new Map(
+        rawRows.length === records.length
+          ? insertedIds.map((insertedId, inputIndex) => [
+              insertedId,
+              inputIndex,
+            ])
+          : records.flatMap((record, inputIndex) =>
+              isNonEmptyString(record.id) ? [[record.id, inputIndex]] : [],
+            ),
+      ),
+    });
 
     await this.acquireRecordStock(rawRows.length);
 
@@ -984,7 +1011,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
-    const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
     await this.emitCreateEvents(insertedIds);
 
@@ -995,10 +1021,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     };
   }
 
-  async runBatchUpdate({
-    inputs,
-    columnsToReturn,
-  }: {
+  async runBatchUpdate(args: {
     inputs: { id: string; data: Partial<ObjectRecord> }[];
     columnsToReturn: string[];
   }): Promise<{
@@ -1006,8 +1029,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     generatedMaps: ObjectRecord[];
     raw: ObjectRecord[];
   }> {
+    const { inputs, columnsToReturn } = args;
+
     if (inputs.length === 0) {
       return { identifiers: [], generatedMaps: [], raw: [] };
+    }
+
+    if (this.shouldRunWriteInValidationRuleTransaction()) {
+      return this.options.runInNewTransaction((transactionalRepository) =>
+        transactionalRepository.runBatchUpdate(args),
+      );
     }
 
     const writableRecordIds = await this.resolveWritableRecordIds({
@@ -1139,6 +1170,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         ),
       );
     }
+
+    await this.validateWrittenRecordsAgainstValidationRulesOrThrow({
+      recordIds: generatedMaps.map((record) => String(record.id)),
+      inputIndexByRecordId: new Map(
+        inputs.map((input, inputIndex) => [input.id, inputIndex]),
+      ),
+    });
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1279,6 +1317,172 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           event,
         );
       }
+    }
+  }
+
+  bindQueryBuilderToExecutor(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ): WorkspaceSelectQueryBuilder {
+    return queryBuilder.clone(this.options.executor);
+  }
+
+  async findLiveRecordsForValidationRules(
+    ids: string[],
+  ): Promise<ObjectRecord[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const rawRecords = await this.buildIdsEventSnapshotQueryBuilder(
+      ids,
+    ).getMany<ObjectRecord>({ noFormatting: true });
+
+    return this.formatResult<ObjectRecord[]>(
+      rawRecords.filter((rawRecord) => !isDefined(rawRecord.deletedAt)),
+    );
+  }
+
+  private getActiveFlatValidationRules(): FlatValidationRule[] {
+    if (this.options.shouldBypassValidationRules) {
+      return [];
+    }
+
+    return Object.values(
+      this.options.internalContext.flatValidationRuleMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (flatValidationRule) =>
+          flatValidationRule.isActive &&
+          flatValidationRule.objectMetadataId ===
+            this.options.flatObjectMetadata.id,
+      );
+  }
+
+  private shouldRunWriteInValidationRuleTransaction(): boolean {
+    return (
+      !this.options.isTransactional &&
+      this.getActiveFlatValidationRules().length > 0
+    );
+  }
+
+  private async attachRelatedRecordsForValidationRules({
+    writtenRecords,
+    rawWrittenRecords,
+    flatValidationRules,
+  }: {
+    writtenRecords: ObjectRecord[];
+    rawWrittenRecords: ObjectRecord[];
+    flatValidationRules: FlatValidationRule[];
+  }): Promise<ObjectRecord[]> {
+    const referencedRelationShapes = [
+      ...new Set(
+        flatValidationRules.flatMap((flatValidationRule) =>
+          Object.keys(flatValidationRule.bindings),
+        ),
+      ),
+    ]
+      .map(
+        (bindingPath) =>
+          this.options.tableShape.relationShapeByFieldName[bindingPath],
+      )
+      .filter(isDefined)
+      .filter(
+        (relationShape) =>
+          relationShape.relationType === RelationType.MANY_TO_ONE &&
+          isNonEmptyString(relationShape.joinColumnName),
+      );
+
+    let recordsWithRelatedRecords = writtenRecords;
+
+    for (const relationShape of referencedRelationShapes) {
+      const joinColumnName = relationShape.joinColumnName ?? '';
+
+      const relatedRecordIds = [
+        ...new Set(
+          rawWrittenRecords
+            .map((rawWrittenRecord) => rawWrittenRecord[joinColumnName])
+            .filter(isNonEmptyString),
+        ),
+      ];
+
+      const relatedRecords = await this.options
+        .getRepositoryForObjectMetadataId(relationShape.targetObjectMetadataId)
+        .findLiveRecordsForValidationRules(relatedRecordIds);
+
+      const relatedRecordById = new Map(
+        relatedRecords.map((relatedRecord) => [
+          String(relatedRecord.id),
+          relatedRecord,
+        ]),
+      );
+
+      recordsWithRelatedRecords = recordsWithRelatedRecords.map(
+        (record, recordIndex) => ({
+          ...record,
+          [relationShape.fieldName]:
+            relatedRecordById.get(
+              String(rawWrittenRecords[recordIndex]?.[joinColumnName]),
+            ) ?? null,
+        }),
+      );
+    }
+
+    return recordsWithRelatedRecords;
+  }
+
+  private async validateWrittenRecordsAgainstValidationRulesOrThrow({
+    recordIds,
+    inputIndexByRecordId = new Map(),
+  }: {
+    recordIds: string[];
+    inputIndexByRecordId?: Map<string, number>;
+  }): Promise<void> {
+    const flatValidationRules = this.getActiveFlatValidationRules();
+
+    if (flatValidationRules.length === 0 || recordIds.length === 0) {
+      return;
+    }
+
+    const rawWrittenRecords = await this.buildIdsEventSnapshotQueryBuilder(
+      recordIds,
+    ).getMany<ObjectRecord>({ noFormatting: true });
+
+    const records = await this.attachRelatedRecordsForValidationRules({
+      writtenRecords: this.formatResult<ObjectRecord[]>(rawWrittenRecords),
+      rawWrittenRecords,
+      flatValidationRules,
+    });
+
+    const { violations, evaluationErrors } =
+      computeRecordValidationRuleViolations({
+        records,
+        flatValidationRules,
+        fields: buildValidationRuleFieldDescriptors({
+          objectMetadataId: this.options.flatObjectMetadata.id,
+          flatObjectMetadataMaps:
+            this.options.internalContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps:
+            this.options.internalContext.flatFieldMetadataMaps,
+        }),
+        now: new Date().toISOString(),
+        inputIndexByRecordId,
+      });
+
+    if (evaluationErrors.length > 0) {
+      throw new RecordValidationRuleException(
+        'A validation rule could not be evaluated',
+        RecordValidationRuleExceptionCode.VALIDATION_RULE_EVALUATION_FAILED,
+        evaluationErrors,
+      );
+    }
+
+    if (violations.length > 0) {
+      throw new RecordValidationRuleException(
+        violations[0].message,
+        RecordValidationRuleExceptionCode.VALIDATION_RULE_VIOLATION,
+        violations,
+      );
     }
   }
 
@@ -1449,19 +1653,33 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(rows.map((row) => String(row.id)));
   }
 
-  async runMutation({
-    selectQueryBuilder,
-    rowLevelPermissionsApplied,
-    kind,
-    columnsToReturn,
-    data,
-  }: {
+  async runMutation(args: {
     selectQueryBuilder: WorkspaceSelectQueryBuilder;
     rowLevelPermissionsApplied: boolean;
     kind: MutationKind;
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
+    const {
+      selectQueryBuilder,
+      rowLevelPermissionsApplied,
+      kind,
+      columnsToReturn,
+      data,
+    } = args;
+
+    if (kind === 'update' && this.shouldRunWriteInValidationRuleTransaction()) {
+      return this.options.runInNewTransaction((transactionalRepository) =>
+        transactionalRepository.runMutation({
+          ...args,
+          selectQueryBuilder:
+            transactionalRepository.bindQueryBuilderToExecutor(
+              selectQueryBuilder,
+            ),
+        }),
+      );
+    }
+
     if (!rowLevelPermissionsApplied) {
       this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
     }
@@ -1577,6 +1795,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     if (kind === 'delete') {
       await this.releaseRecordStock(mutationResult.generatedMaps.length);
+    }
+
+    if (kind === 'update') {
+      await this.validateWrittenRecordsAgainstValidationRulesOrThrow({
+        recordIds: mutationResult.generatedMaps.map((record) =>
+          String(record.id),
+        ),
+      });
     }
 
     if (isDefined(filesFieldFileIds)) {
