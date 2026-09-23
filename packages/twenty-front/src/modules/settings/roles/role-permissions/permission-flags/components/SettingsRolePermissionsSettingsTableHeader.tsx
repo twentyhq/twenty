@@ -29,18 +29,22 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
     settingsDraftRoleFamilyState,
     roleId,
   );
+  const currentPermissions = settingsDraftRole.permissionFlags ?? [];
+  const permissionFlagsByKey = new Map(
+    currentPermissions.map((permissionFlag) => [
+      permissionFlag.flag,
+      permissionFlag,
+    ]),
+  );
+  const settingsPermissionKeys = new Set(
+    settingsPermissionsConfig.map((permission) => permission.key),
+  );
   const allSettingsPermissionsEnabled = settingsPermissionsConfig.every(
-    (permission) =>
-      settingsDraftRole.permissionFlags?.some(
-        (permissionFlag) => permissionFlag.flag === permission.key,
-      ),
+    (permission) => permissionFlagsByKey.has(permission.key),
   );
 
   const someSettingsPermissionsEnabled = settingsPermissionsConfig.some(
-    (permission) =>
-      settingsDraftRole.permissionFlags?.some(
-        (permissionFlag) => permissionFlag.flag === permission.key,
-      ),
+    (permission) => permissionFlagsByKey.has(permission.key),
   );
 
   return (
@@ -62,12 +66,9 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
           aria-label={t`Toggle all permissions`}
           onCheckedChange={() => {
             const newValue = !allSettingsPermissionsEnabled;
-            const currentPermissions = settingsDraftRole.permissionFlags ?? [];
             const otherPermissions = currentPermissions.filter(
               (permissionFlag) =>
-                !settingsPermissionsConfig.some(
-                  (permission) => permission.key === permissionFlag.flag,
-                ),
+                !settingsPermissionKeys.has(permissionFlag.flag),
             );
 
             setSettingsDraftRole({
@@ -77,10 +78,7 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
                 ...(newValue
                   ? settingsPermissionsConfig.map(
                       (permission) =>
-                        currentPermissions.find(
-                          (permissionFlag) =>
-                            permissionFlag.flag === permission.key,
-                        ) ?? {
+                        permissionFlagsByKey.get(permission.key) ?? {
                           id: v4(),
                           flag: permission.key,
                           roleId,

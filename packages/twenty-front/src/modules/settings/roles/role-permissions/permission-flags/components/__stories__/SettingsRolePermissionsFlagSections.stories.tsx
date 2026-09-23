@@ -1,5 +1,5 @@
 import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
-import { settingsPermissionFlagsState } from '@/settings/roles/states/settingsPermissionFlagsState';
+import { settingsPermissionFlagDefinitionsState } from '@/settings/roles/states/settingsPermissionFlagDefinitionsState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { graphql, HttpResponse } from 'msw';
@@ -79,7 +79,10 @@ const meta: Meta<typeof SettingsRolePermissionsFlagSections> = {
   decorators: [ComponentDecorator],
   args: { isEditable: true, assignment: 'users' },
   beforeEach: ({ args }) => {
-    jotaiStore.set(settingsPermissionFlagsState.atom, permissionFlags);
+    jotaiStore.set(
+      settingsPermissionFlagDefinitionsState.atom,
+      permissionFlags,
+    );
     const roleAtom = settingsDraftRoleFamilyState.atomFamily(ROLE_ID);
     jotaiStore.set(roleAtom, {
       ...jotaiStore.get(roleAtom),
@@ -233,7 +236,7 @@ export const InitialRolesLoading: Story = {
     await mockedApolloClient.clearStore();
     jotaiStore.set(settingsRolesIsLoadingState.atom, true);
     jotaiStore.set(settingsRoleIdsState.atom, []);
-    jotaiStore.set(settingsPermissionFlagsState.atom, []);
+    jotaiStore.set(settingsPermissionFlagDefinitionsState.atom, []);
     rolesReady = new Promise<void>((resolve) => {
       releaseRoles = resolve;
     });

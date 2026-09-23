@@ -16,7 +16,10 @@ export const getRoleDirtyFields = (
       persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
     )
   ) {
-    delete dirtyFields.permissionFlags;
+    const { permissionFlags: _permissionFlags, ...otherDirtyFields } =
+      dirtyFields;
+
+    return otherDirtyFields;
   }
 
   return dirtyFields;

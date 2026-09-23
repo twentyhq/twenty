@@ -1,4 +1,4 @@
-import { settingsPermissionFlagsState } from '@/settings/roles/states/settingsPermissionFlagsState';
+import { settingsPermissionFlagDefinitionsState } from '@/settings/roles/states/settingsPermissionFlagDefinitionsState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
@@ -20,8 +20,8 @@ export const SettingsRolesQueryEffect = () => {
     settingsRolesIsLoadingState,
   );
 
-  const setSettingsPermissionFlags = useSetAtomState(
-    settingsPermissionFlagsState,
+  const setSettingsPermissionFlagDefinitions = useSetAtomState(
+    settingsPermissionFlagDefinitionsState,
   );
 
   const store = useStore();
@@ -52,14 +52,14 @@ export const SettingsRolesQueryEffect = () => {
         return;
       }
 
-      setSettingsPermissionFlags(data.getPermissionFlags);
+      setSettingsPermissionFlagDefinitions(data.getPermissionFlags);
       populateRoles(data.getRoles);
     }
   }, [
     data,
     loading,
     populateRoles,
-    setSettingsPermissionFlags,
+    setSettingsPermissionFlagDefinitions,
     setSettingsRolesIsLoading,
   ]);
 
