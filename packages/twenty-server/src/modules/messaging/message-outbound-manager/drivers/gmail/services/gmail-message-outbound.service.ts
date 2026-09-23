@@ -24,10 +24,13 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
   ) {}
 
-  async sendMessage(
-    sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountEntity,
-  ): Promise<SendMessageResult> {
+  async sendMessage({
+    sendMessageInput,
+    connectedAccount,
+  }: {
+    sendMessageInput: SendMessageInput;
+    connectedAccount: ConnectedAccountEntity;
+  }): Promise<SendMessageResult> {
     const { gmailClient, encodedMessage, messageBuffer } =
       await this.composeGmailMessage(connectedAccount, sendMessageInput);
 
@@ -75,10 +78,10 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<SendMessageResult> {
-    const sendResult = await this.sendMessage(
+    const sendResult = await this.sendMessage({
       sendMessageInput,
       connectedAccount,
-    );
+    });
 
     try {
       await this.deleteDraftByMessageId(connectedAccount, draftExternalId);

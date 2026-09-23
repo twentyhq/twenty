@@ -34,11 +34,15 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     private readonly emailBillingService: EmailBillingService,
   ) {}
 
-  async sendMessage(
-    sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountEntity,
-    spenders: UsageSpenders = {},
-  ): Promise<SendMessageResult> {
+  async sendMessage({
+    sendMessageInput,
+    connectedAccount,
+    spenders = {},
+  }: {
+    sendMessageInput: SendMessageInput;
+    connectedAccount: ConnectedAccountEntity;
+    spenders?: UsageSpenders;
+  }): Promise<SendMessageResult> {
     const emailingDomain = await this.resolveEmailingDomain(connectedAccount);
 
     if (emailingDomain.status !== EmailingDomainStatus.VERIFIED) {

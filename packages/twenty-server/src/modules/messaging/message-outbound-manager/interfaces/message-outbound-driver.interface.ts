@@ -4,11 +4,11 @@ import { type SendMessageInput } from 'src/modules/messaging/message-outbound-ma
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 
 export type MessageOutboundDriver = {
-  sendMessage(
-    sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountEntity,
-    spenders?: UsageSpenders,
-  ): Promise<SendMessageResult>;
+  sendMessage(args: {
+    sendMessageInput: SendMessageInput;
+    connectedAccount: ConnectedAccountEntity;
+    spenders?: UsageSpenders;
+  }): Promise<SendMessageResult>;
 
   createDraft(
     sendMessageInput: SendMessageInput,

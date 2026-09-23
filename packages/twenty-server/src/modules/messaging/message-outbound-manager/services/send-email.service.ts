@@ -23,11 +23,11 @@ export class SendEmailService {
     data: ComposedEmail,
     spenders?: UsageSpenders,
   ): Promise<SendMessageResult> {
-    return this.messageOutboundService.sendMessage(
-      this.toSendMessageInput(data),
-      data.connectedAccount,
+    return this.messageOutboundService.sendMessage({
+      sendMessageInput: this.toSendMessageInput(data),
+      connectedAccount: data.connectedAccount,
       spenders,
-    );
+    });
   }
 
   async sendComposedDraft(

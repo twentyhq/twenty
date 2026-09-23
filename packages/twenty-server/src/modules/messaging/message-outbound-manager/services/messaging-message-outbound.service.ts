@@ -21,33 +21,37 @@ export class MessagingMessageOutboundService {
     private readonly emailGroupMessageOutboundService: EmailGroupMessageOutboundService,
   ) {}
 
-  public async sendMessage(
-    sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountEntity,
-    spenders?: UsageSpenders,
-  ): Promise<SendMessageResult> {
+  public async sendMessage({
+    sendMessageInput,
+    connectedAccount,
+    spenders,
+  }: {
+    sendMessageInput: SendMessageInput;
+    connectedAccount: ConnectedAccountEntity;
+    spenders?: UsageSpenders;
+  }): Promise<SendMessageResult> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
-        return this.gmailMessageOutboundService.sendMessage(
+        return this.gmailMessageOutboundService.sendMessage({
           sendMessageInput,
           connectedAccount,
-        );
+        });
       case ConnectedAccountProvider.MICROSOFT:
-        return this.microsoftMessageOutboundService.sendMessage(
+        return this.microsoftMessageOutboundService.sendMessage({
           sendMessageInput,
           connectedAccount,
-        );
+        });
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-        return this.imapSmtpMessageOutboundService.sendMessage(
+        return this.imapSmtpMessageOutboundService.sendMessage({
           sendMessageInput,
           connectedAccount,
-        );
+        });
       case ConnectedAccountProvider.EMAIL_GROUP:
-        return this.emailGroupMessageOutboundService.sendMessage(
+        return this.emailGroupMessageOutboundService.sendMessage({
           sendMessageInput,
           connectedAccount,
           spenders,
-        );
+        });
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.APP:

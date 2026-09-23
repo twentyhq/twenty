@@ -26,10 +26,13 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
   ) {}
 
-  async sendMessage(
-    sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountEntity,
-  ): Promise<SendMessageResult> {
+  async sendMessage({
+    sendMessageInput,
+    connectedAccount,
+  }: {
+    sendMessageInput: SendMessageInput;
+    connectedAccount: ConnectedAccountEntity;
+  }): Promise<SendMessageResult> {
     const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
       connectedAccount.id,
     );
@@ -73,10 +76,10 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<SendMessageResult> {
-    const sendResult = await this.sendMessage(
+    const sendResult = await this.sendMessage({
       sendMessageInput,
       connectedAccount,
-    );
+    });
 
     const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
       connectedAccount.id,
