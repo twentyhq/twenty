@@ -71,11 +71,10 @@ export class DeleteOrphanCoreWorkflowsCommand extends ProvisionedWorkspaceComman
          JOIN core."workspace" w ON w.id = c."workspaceId"
          WHERE c."workspaceId" = $1
            AND c."applicationId" = w."workspaceCustomApplicationId"
-           AND c."workspaceWorkflowId" IS NULL
            AND NOT EXISTS (
              SELECT 1
              FROM "${schema}"."workflow" ww
-             WHERE ww."coreWorkflowId" = c.id
+             WHERE (ww."coreWorkflowId" = c.id OR ww.id = c."workspaceWorkflowId")
                AND ww."deletedAt" IS NULL
            )`,
         [workspaceId],
