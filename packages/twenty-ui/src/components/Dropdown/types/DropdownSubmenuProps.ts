@@ -1,4 +1,4 @@
 import { type DropdownRootProps } from './DropdownRootProps';
 
-export type DropdownSubmenuProps = Omit<DropdownRootProps, 'kind'> &
-  Partial<Pick<DropdownRootProps, 'kind'>>;
+export type DropdownSubmenuProps = Omit<DropdownRootProps, 'type'> &
+  Partial<Pick<DropdownRootProps, 'type'>>;

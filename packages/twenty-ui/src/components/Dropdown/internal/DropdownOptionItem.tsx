@@ -28,8 +28,8 @@ export const DropdownOptionItem = ({
   id,
   ...props
 }: DropdownOptionItemProps) => {
-  const { kind, multiple, closeTree } = useDropdownContext();
-  const isMenu = kind === 'menu';
+  const { type, multiple, closeTree } = useDropdownContext();
+  const isMenu = type === 'menu';
   const generatedId = useId();
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId });

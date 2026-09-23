@@ -5921,13 +5921,6 @@
             "description": ""
           },
           {
-            "name": "kind",
-            "type": "\"menu\" | \"panel\" | \"picker\"",
-            "required": true,
-            "defaultValue": null,
-            "description": ""
-          },
-          {
             "name": "multiple",
             "type": "boolean",
             "required": false,
@@ -5945,6 +5938,13 @@
             "name": "open",
             "type": "boolean",
             "required": false,
+            "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "type",
+            "type": "\"menu\" | \"panel\" | \"picker\"",
+            "required": true,
             "defaultValue": null,
             "description": ""
           }
@@ -6357,7 +6357,7 @@
             "description": ""
           },
           {
-            "name": "kind",
+            "name": "type",
             "type": "\"menu\" | \"panel\" | \"picker\"",
             "required": false,
             "defaultValue": null,
@@ -6472,13 +6472,6 @@
             "description": ""
           },
           {
-            "name": "kind",
-            "type": "\"menu\" | \"panel\" | \"picker\"",
-            "required": false,
-            "defaultValue": "menu",
-            "description": ""
-          },
-          {
             "name": "multiple",
             "type": "boolean",
             "required": false,
@@ -6497,6 +6490,13 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
+            "description": ""
+          },
+          {
+            "name": "type",
+            "type": "\"menu\" | \"panel\" | \"picker\"",
+            "required": false,
+            "defaultValue": "menu",
             "description": ""
           }
         ]

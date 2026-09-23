@@ -18,7 +18,7 @@ const DropdownExample = () => {
 
   return (
     <TwentyUiGalleryCard title="Dropdown">
-      <Dropdown.Root kind="menu" open={open} onOpenChange={setOpen}>
+      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
         <Dropdown.Trigger render={<Button>Choose assignee</Button>} />
         <Dropdown.Content aria-label="Assignee actions">
           <Dropdown.Page id="root">
@@ -31,7 +31,7 @@ const DropdownExample = () => {
               </Dropdown.ActionItem>
             </Dropdown.Section>
           </Dropdown.Page>
-          <Dropdown.Page id="assignees" kind="picker">
+          <Dropdown.Page id="assignees" type="picker">
             <Dropdown.Back>People</Dropdown.Back>
             <Dropdown.Search
               aria-label="Search people"

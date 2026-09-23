@@ -35,7 +35,7 @@ export const DropdownContent = ({
 }: DropdownContentProps) => {
   const context = useDropdownContext();
   const {
-    kind,
+    type,
     pageId,
     isSubmenu,
     open,
@@ -49,7 +49,7 @@ export const DropdownContent = ({
   const mergedRef = useMergedRefs(contentRef, ref);
   const previousPageRef = useRef(pageId);
   const handleNavigation = useDropdownKeyboardNavigation({
-    kind,
+    type,
     isSubmenu,
     setOpen,
   });
@@ -65,10 +65,10 @@ export const DropdownContent = ({
     getDropdownFocusTarget({
       content: contentRef.current,
       target: focusTargetRef.current,
-      kind,
+      type,
     }).focus();
     focusTargetRef.current = undefined;
-  }, [pageId, open, focusTargetRef, kind]);
+  }, [pageId, open, focusTargetRef, type]);
 
   return (
     <PopoverPrimitive.Portal
@@ -86,9 +86,9 @@ export const DropdownContent = ({
         <PopoverPrimitive.Popup
           {...props}
           ref={mergedRef}
-          role={kind === 'menu' ? 'menu' : 'dialog'}
+          role={type === 'menu' ? 'menu' : 'dialog'}
           data-dropdown-content=""
-          data-kind={kind}
+          data-type={type}
           className={mergeClassNames(styles.content, className)}
           style={(state) => ({
             width,
@@ -103,7 +103,7 @@ export const DropdownContent = ({
                   ? getDropdownFocusTarget({
                       content: contentRef.current,
                       edge: initialFocusEdgeRef.current,
-                      kind,
+                      type,
                     })
                   : true)
           }

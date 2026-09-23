@@ -8,24 +8,24 @@ import { AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE } from '@/ai/constants/AiChatThread
 
 export const AiChatThreadFilterDropdownContent = () => (
   <>
-    <Dropdown.Page id={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.ROOT} kind="menu">
+    <Dropdown.Page id={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.ROOT} type="menu">
       <AiChatThreadFilterDropdownRootMenu />
     </Dropdown.Page>
     <Dropdown.Page
       id={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.STATUS}
-      kind="picker"
+      type="picker"
     >
       <AiChatThreadFilterDropdownStatusMenu />
     </Dropdown.Page>
     <Dropdown.Page
       id={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.GROUP_BY}
-      kind="picker"
+      type="picker"
     >
       <AiChatThreadFilterDropdownGroupByMenu />
     </Dropdown.Page>
     <Dropdown.Page
       id={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.LAST_ACTIVITY}
-      kind="picker"
+      type="picker"
     >
       <AiChatThreadFilterDropdownLastActivityMenu />
     </Dropdown.Page>

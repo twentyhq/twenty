@@ -67,7 +67,7 @@ export const AiChatThreadItemMenu = ({
   };
 
   return (
-    <DropdownRoot kind="menu" onOpenChange={onOpenChange}>
+    <DropdownRoot type="menu" onOpenChange={onOpenChange}>
       <Dropdown.Trigger
         render={
           trigger ?? (

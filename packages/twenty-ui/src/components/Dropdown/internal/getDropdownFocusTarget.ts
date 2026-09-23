@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type DropdownKind } from '../types/DropdownKind';
+import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
@@ -11,12 +11,12 @@ export const getDropdownFocusTarget = ({
   content,
   target,
   edge = 'first',
-  kind,
+  type,
 }: {
   content: HTMLElement;
   target?: DropdownFocusTarget;
   edge?: 'first' | 'last';
-  kind?: DropdownKind;
+  type?: DropdownType;
 }) => {
   const previousTrigger = isDefined(target?.id)
     ? content.ownerDocument.getElementById(target.id)
@@ -55,7 +55,7 @@ export const getDropdownFocusTarget = ({
     'input:not(:disabled):not([type="hidden"]),button:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]',
   );
 
-  if (kind === 'panel') {
+  if (type === 'panel') {
     return firstFormControl ?? content;
   }
 

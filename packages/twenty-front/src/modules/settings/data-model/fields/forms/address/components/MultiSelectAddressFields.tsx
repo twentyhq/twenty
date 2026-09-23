@@ -56,7 +56,7 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
 
   return (
     <DropdownRoot
-      kind="picker"
+      type="picker"
       multiple
       onOpenChange={(open) => {
         if (!open) {

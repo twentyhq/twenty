@@ -1,14 +1,14 @@
 import { type RefObject } from 'react';
 
-import { type DropdownKind } from '../types/DropdownKind';
+import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 
 export type DropdownContextValue = {
-  kind: DropdownKind;
+  type: DropdownType;
   open: boolean;
   multiple: boolean;
   isSubmenu: boolean;
-  parentKind?: DropdownKind;
+  parentType?: DropdownType;
   activeItemId?: string;
   parentActiveItemId?: string;
   setActiveItemId: (id: string) => void;
@@ -22,5 +22,5 @@ export type DropdownContextValue = {
   closeTree: () => void;
   goToPage: (page: { id: string; trigger: DropdownFocusTarget }) => void;
   goBack: () => void;
-  registerPage: (page: { id: string; kind?: DropdownKind }) => void;
+  registerPage: (page: { id: string; type?: DropdownType }) => void;
 };

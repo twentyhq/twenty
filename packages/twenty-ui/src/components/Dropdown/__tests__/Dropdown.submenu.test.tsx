@@ -15,7 +15,7 @@ describe('Dropdown submenu hover', () => {
       const user = userEvent.setup();
 
       render(
-        <Dropdown.Root kind="menu">
+        <Dropdown.Root type="menu">
           <Dropdown.Trigger>Record actions</Dropdown.Trigger>
           <Dropdown.Content aria-label="Record actions" style={{ direction }}>
             <Dropdown.Submenu>

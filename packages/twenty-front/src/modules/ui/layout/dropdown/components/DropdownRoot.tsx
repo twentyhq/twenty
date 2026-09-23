@@ -9,12 +9,12 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 
 type DropdownRootProps = Pick<
   ComponentProps<typeof Dropdown.Root>,
-  'children' | 'kind' | 'multiple' | 'defaultPage' | 'onOpenChange'
+  'children' | 'type' | 'multiple' | 'defaultPage' | 'onOpenChange'
 >;
 
 export const DropdownRoot = ({
   children,
-  kind,
+  type,
   multiple,
   defaultPage,
   onOpenChange,
@@ -56,7 +56,7 @@ export const DropdownRoot = ({
   return (
     <DropdownRootContext.Provider value={{ isOpen, closeDropdown }}>
       <Dropdown.Root
-        kind={kind}
+        type={type}
         multiple={multiple}
         defaultPage={defaultPage}
         open={isOpen}

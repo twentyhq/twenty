@@ -19,7 +19,7 @@ export const EditLinkPopover = ({
   const { t } = useLingui();
 
   return (
-    <DropdownRoot kind="panel">
+    <DropdownRoot type="panel">
       <Dropdown.Trigger
         render={
           <LightIconButton

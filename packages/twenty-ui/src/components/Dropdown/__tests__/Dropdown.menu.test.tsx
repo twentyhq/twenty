@@ -11,7 +11,7 @@ describe('Dropdown menu', () => {
     const user = userEvent.setup();
 
     render(
-      <Dropdown.Root kind="menu">
+      <Dropdown.Root type="menu">
         <Dropdown.Trigger render={<Button>Record actions</Button>} />
         <Dropdown.Content aria-label="Record actions">
           <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
@@ -42,7 +42,7 @@ describe('Dropdown menu', () => {
     const duplicate = vi.fn();
 
     render(
-      <Dropdown.Root kind="menu">
+      <Dropdown.Root type="menu">
         <Dropdown.Trigger>Record actions</Dropdown.Trigger>
         <Dropdown.Content aria-label="Record actions">
           <Dropdown.ActionItem disabled onClick={archive}>
@@ -70,7 +70,7 @@ describe('Dropdown menu', () => {
     const user = userEvent.setup();
 
     render(
-      <Dropdown.Root kind="menu">
+      <Dropdown.Root type="menu">
         <Dropdown.Trigger>Record actions</Dropdown.Trigger>
         <Dropdown.Content aria-label="Record actions">
           <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
@@ -98,7 +98,7 @@ describe('Dropdown menu', () => {
 
     render(
       <>
-        <Dropdown.Root kind="menu">
+        <Dropdown.Root type="menu">
           <Dropdown.Trigger>Record actions</Dropdown.Trigger>
           <Dropdown.Content aria-label="Record actions">
             <Dropdown.ActionItem closeOnClick={false} onClick={duplicate}>
@@ -128,7 +128,7 @@ describe('Dropdown menu', () => {
     const navigate = vi.fn();
 
     render(
-      <Dropdown.Root kind="menu">
+      <Dropdown.Root type="menu">
         <Dropdown.Trigger>Help</Dropdown.Trigger>
         <Dropdown.Content aria-label="Help">
           <Dropdown.ActionItem
@@ -159,7 +159,7 @@ describe('Dropdown menu', () => {
     const exportRecords = vi.fn();
 
     render(
-      <Dropdown.Root kind="menu">
+      <Dropdown.Root type="menu">
         <Dropdown.Trigger>Record actions</Dropdown.Trigger>
         <Dropdown.Content aria-label="Record actions">
           <Dropdown.Submenu>
@@ -211,10 +211,10 @@ describe('Dropdown menu', () => {
       const user = userEvent.setup();
 
       render(
-        <Dropdown.Root kind="menu">
+        <Dropdown.Root type="menu">
           <Dropdown.Trigger>Filters</Dropdown.Trigger>
           <Dropdown.Content aria-label="Filters" style={{ direction }}>
-            <Dropdown.Submenu kind="picker">
+            <Dropdown.Submenu type="picker">
               <Dropdown.SubmenuTrigger style={{ direction }}>
                 People
               </Dropdown.SubmenuTrigger>
@@ -269,7 +269,7 @@ describe('Dropdown menu', () => {
 
     render(
       <>
-        <Dropdown.Root kind="menu">
+        <Dropdown.Root type="menu">
           <Dropdown.Trigger>Record actions</Dropdown.Trigger>
           <Dropdown.Content aria-label="Record actions">
             <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
@@ -299,7 +299,7 @@ describe('Dropdown menu', () => {
 
     render(
       <div role="row" tabIndex={0} onKeyDown={activateRow}>
-        <Dropdown.Root kind="menu">
+        <Dropdown.Root type="menu">
           <Dropdown.Trigger>Record actions</Dropdown.Trigger>
           <Dropdown.Content aria-label="Record actions">
             <Dropdown.ActionItem onClick={duplicate}>

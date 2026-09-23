@@ -56,11 +56,11 @@ const DropdownOwners = ({
 }: {
   isInnerOwnerVisible: boolean;
 }) => (
-  <DropdownRoot kind="panel">
+  <DropdownRoot type="panel">
     <Dropdown.Trigger>Outer dropdown</Dropdown.Trigger>
     <Dropdown.Content aria-label="Outer dropdown">
       {isInnerOwnerVisible && (
-        <DropdownRoot kind="panel">
+        <DropdownRoot type="panel">
           <Dropdown.Trigger>Inner dropdown</Dropdown.Trigger>
           <Dropdown.Content aria-label="Inner dropdown">
             Inner content
@@ -83,7 +83,7 @@ describe('DropdownRoot', () => {
 
     render(
       <JotaiProvider store={store}>
-        <DropdownRoot kind="menu" onOpenChange={onOpenChange}>
+        <DropdownRoot type="menu" onOpenChange={onOpenChange}>
           <Dropdown.Trigger>Actions</Dropdown.Trigger>
           <Dropdown.Content aria-label="Actions">
             <Dropdown.ActionItem>Archive</Dropdown.ActionItem>
@@ -140,7 +140,7 @@ describe('DropdownRoot', () => {
 
     render(
       <JotaiProvider store={store}>
-        <DropdownRoot kind="panel">
+        <DropdownRoot type="panel">
           <Dropdown.Trigger>Edit record</Dropdown.Trigger>
           <DropdownOpenState />
           <Dropdown.Content aria-label="Edit record">

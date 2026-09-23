@@ -14,11 +14,11 @@ import DropdownReference from '/snippets/ui/generated/components/dropdown.mdx';
   height={380}
 />
 
-## Choose an interaction kind
+## Choose an interaction type
 
-Set `kind` on `Dropdown.Root` to match the popup's contents.
+Set `type` on `Dropdown.Root` to match the popup's contents.
 
-| Kind     | Content                                          | Interaction                                                                                        |
+| Type     | Content                                          | Interaction                                                                                        |
 | -------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
 | `menu`   | Commands and navigation links                    | Menu semantics with arrow navigation and typeahead.                                                |
 | `picker` | Search, selectable values, and optional commands | A dialog containing a search field and selectable toggle buttons. Arrow keys navigate result rows. |
@@ -48,7 +48,7 @@ import { IconCopy } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 export const RecordActions = ({ onDuplicate }: { onDuplicate: () => void }) => (
-  <Dropdown.Root kind="menu">
+  <Dropdown.Root type="menu">
     <Dropdown.Trigger render={<Button>Record actions</Button>} />
     <Dropdown.Content aria-label="Record actions">
       <Dropdown.Section>
@@ -86,7 +86,7 @@ export const PersonPicker = () => {
   );
 
   return (
-    <Dropdown.Root kind="picker">
+    <Dropdown.Root type="picker">
       <Dropdown.Trigger render={<Button>Choose person</Button>} />
       <Dropdown.Content aria-label="Choose person">
         <Dropdown.Search
@@ -123,7 +123,7 @@ Actions and single selection close by default. Set `multiple` on the root to kee
 
 Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row. Closing the dropdown resets its page history.
 
-A page can override the root's `kind`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page.
+A page can override the root's `type`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page.
 
 <StoryEmbed
   storyId="ui-components-dropdown--pages"
@@ -136,7 +136,7 @@ import { Dropdown } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 
 export const FilterMenu = () => (
-  <Dropdown.Root kind="menu">
+  <Dropdown.Root type="menu">
     <Dropdown.Trigger render={<Button>Filters</Button>} />
     <Dropdown.Content aria-label="Filters">
       <Dropdown.Page id="root">
@@ -144,7 +144,7 @@ export const FilterMenu = () => (
           <Dropdown.ActionItem page="status">Status</Dropdown.ActionItem>
         </Dropdown.Section>
       </Dropdown.Page>
-      <Dropdown.Page id="status" kind="picker">
+      <Dropdown.Page id="status" type="picker">
         <Dropdown.Back>Filters</Dropdown.Back>
         <Dropdown.Section>
           <Dropdown.OptionItem selected={false}>Active</Dropdown.OptionItem>
@@ -168,7 +168,7 @@ Dropdown.Content
 
 ## Panels and controlled state
 
-Use `kind="panel"` for form inputs. Input interaction keeps the panel open; a save action can close it. Own `open` and `onOpenChange` when another component or a shortcut needs to open the dropdown. Keep that state with the feature that coordinates the interaction.
+Use `type="panel"` for form inputs. Input interaction keeps the panel open; a save action can close it. Own `open` and `onOpenChange` when another component or a shortcut needs to open the dropdown. Keep that state with the feature that coordinates the interaction.
 
 <StoryEmbed
   storyId="ui-components-dropdown--panel"

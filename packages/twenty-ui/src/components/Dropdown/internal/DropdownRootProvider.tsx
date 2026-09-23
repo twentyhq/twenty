@@ -4,7 +4,7 @@ import { useCallback, useContext, useRef, useState } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownRootProps } from '../types/DropdownRootProps';
-import { type DropdownKind } from '../types/DropdownKind';
+import { type DropdownType } from '../types/DropdownType';
 import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 
@@ -12,7 +12,7 @@ type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
 export const DropdownRootProvider = ({
   children,
-  kind,
+  type,
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
@@ -27,7 +27,7 @@ export const DropdownRootProvider = ({
   const [pageHistory, setPageHistory] = useState<PageHistoryEntry[]>([
     { id: defaultPage },
   ]);
-  const [pageKinds, setPageKinds] = useState<Record<string, DropdownKind>>({});
+  const [pageTypes, setPageTypes] = useState<Record<string, DropdownType>>({});
   const [activeItemId, setActiveItemId] = useState<string>();
   const pageId = pageHistory[pageHistory.length - 1]?.id;
   const focusTargetRef = useRef<DropdownFocusTarget | undefined>(undefined);
@@ -82,16 +82,16 @@ export const DropdownRootProvider = ({
   };
 
   const registerPage = useCallback(
-    ({ id, kind: pageKind }: { id: string; kind?: DropdownKind }) => {
-      const resolvedKind = pageKind ?? kind;
+    ({ id, type: pageType }: { id: string; type?: DropdownType }) => {
+      const resolvedType = pageType ?? type;
 
-      setPageKinds((previousKinds) =>
-        previousKinds[id] === resolvedKind
-          ? previousKinds
-          : { ...previousKinds, [id]: resolvedKind },
+      setPageTypes((previousTypes) =>
+        previousTypes[id] === resolvedType
+          ? previousTypes
+          : { ...previousTypes, [id]: resolvedType },
       );
     },
-    [kind],
+    [type],
   );
 
   return (
@@ -104,11 +104,11 @@ export const DropdownRootProvider = ({
     >
       <DropdownContext.Provider
         value={{
-          kind: isDefined(pageId) ? (pageKinds[pageId] ?? kind) : kind,
+          type: isDefined(pageId) ? (pageTypes[pageId] ?? type) : type,
           open,
           multiple,
           isSubmenu,
-          parentKind: parent?.kind,
+          parentType: parent?.type,
           activeItemId,
           parentActiveItemId: parent?.activeItemId,
           setActiveItemId,

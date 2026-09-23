@@ -22,7 +22,7 @@ const SearchablePicker = ({
   );
 
   return (
-    <Dropdown.Root kind="picker" multiple={multiple}>
+    <Dropdown.Root type="picker" multiple={multiple}>
       <Dropdown.Trigger>Assignees</Dropdown.Trigger>
       <Dropdown.Content aria-label="Choose assignees">
         <Dropdown.Search
@@ -141,7 +141,7 @@ describe('Dropdown picker', () => {
     const selectActive = vi.fn();
 
     render(
-      <Dropdown.Root kind="picker">
+      <Dropdown.Root type="picker">
         <Dropdown.Trigger>Status</Dropdown.Trigger>
         <Dropdown.Content aria-label="Choose status">
           <Dropdown.OptionItem
@@ -174,7 +174,7 @@ describe('Dropdown picker', () => {
     const user = userEvent.setup();
 
     render(
-      <Dropdown.Root kind="picker">
+      <Dropdown.Root type="picker">
         <Dropdown.Trigger>People</Dropdown.Trigger>
         <Dropdown.Content aria-label="Choose a person">
           <Dropdown.Search

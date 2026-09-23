@@ -1,9 +1,9 @@
 import { type ReactNode } from 'react';
 
-import { type DropdownKind } from './DropdownKind';
+import { type DropdownType } from './DropdownType';
 
 export type DropdownPageProps = {
   id: string;
-  kind?: DropdownKind;
+  type?: DropdownType;
   children: ReactNode;
 };

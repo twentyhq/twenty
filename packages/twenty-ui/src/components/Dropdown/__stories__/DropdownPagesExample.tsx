@@ -10,7 +10,7 @@ export const DropdownPagesExample = () => {
   const [selectedPerson, setSelectedPerson] = useState('');
 
   return (
-    <Dropdown.Root kind="menu">
+    <Dropdown.Root type="menu">
       <Dropdown.Trigger
         render={<Button startIcon={<IconFilter />}>Filters</Button>}
       />
@@ -25,7 +25,7 @@ export const DropdownPagesExample = () => {
             </Dropdown.ActionItem>
           </Dropdown.Section>
         </Dropdown.Page>
-        <Dropdown.Page id="people" kind="picker">
+        <Dropdown.Page id="people" type="picker">
           <Dropdown.Back>Filters</Dropdown.Back>
           <Dropdown.Search
             aria-label="Search people"

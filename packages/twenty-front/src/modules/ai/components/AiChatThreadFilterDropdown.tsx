@@ -11,7 +11,7 @@ export const AiChatThreadFilterDropdown = () => {
 
   return (
     <DropdownRoot
-      kind="menu"
+      type="menu"
       defaultPage={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.ROOT}
     >
       <Dropdown.Trigger

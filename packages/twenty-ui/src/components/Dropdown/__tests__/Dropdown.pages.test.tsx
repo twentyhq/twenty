@@ -19,7 +19,7 @@ const FilterPages = ({
   const [search, setSearch] = useState('');
 
   return (
-    <Dropdown.Root kind="menu">
+    <Dropdown.Root type="menu">
       <Dropdown.Trigger>Filters</Dropdown.Trigger>
       <Dropdown.Content aria-label="Filters">
         <Dropdown.Page id="root">
@@ -29,7 +29,7 @@ const FilterPages = ({
             </Dropdown.ActionItem>
           ))}
         </Dropdown.Page>
-        <Dropdown.Page id="people" kind="picker">
+        <Dropdown.Page id="people" type="picker">
           <Dropdown.Back>Back to filters</Dropdown.Back>
           <Dropdown.Search
             aria-label="Search people"
@@ -46,7 +46,7 @@ const FilterPages = ({
 };
 
 describe('Dropdown pages', () => {
-  it('changes interaction kind in the same popup and restores the invoking row on back', async () => {
+  it('changes interaction type in the same popup and restores the invoking row on back', async () => {
     const user = userEvent.setup();
 
     render(<FilterPages />);

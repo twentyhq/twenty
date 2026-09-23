@@ -13,7 +13,7 @@ describe('Dropdown panel', () => {
     const user = userEvent.setup();
 
     render(
-      <Dropdown.Root kind="panel">
+      <Dropdown.Root type="panel">
         <Dropdown.Trigger render={<Button>Edit details</Button>} />
         <Dropdown.Content aria-label="Edit details">
           <Input aria-label="Name" defaultValue="Acme" />
@@ -45,7 +45,7 @@ describe('Dropdown panel', () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn();
     const { rerender } = render(
-      <Dropdown.Root kind="panel" open onOpenChange={onOpenChange}>
+      <Dropdown.Root type="panel" open onOpenChange={onOpenChange}>
         <Dropdown.Trigger>Details</Dropdown.Trigger>
         <Dropdown.Content aria-label="Details">
           <Input aria-label="Name" />
@@ -58,7 +58,7 @@ describe('Dropdown panel', () => {
     expect(onOpenChange).toHaveBeenCalledWith(false);
     expect(screen.getByRole('dialog')).toBeVisible();
     rerender(
-      <Dropdown.Root kind="panel" open={false} onOpenChange={onOpenChange}>
+      <Dropdown.Root type="panel" open={false} onOpenChange={onOpenChange}>
         <Dropdown.Trigger>Details</Dropdown.Trigger>
         <Dropdown.Content aria-label="Details">
           <Input aria-label="Name" />
@@ -78,7 +78,7 @@ describe('Dropdown panel', () => {
       return (
         <>
           <Button onClick={() => setOpen(true)}>Edit from toolbar</Button>
-          <Dropdown.Root kind="panel" open={open} onOpenChange={setOpen}>
+          <Dropdown.Root type="panel" open={open} onOpenChange={setOpen}>
             <Dropdown.Trigger>Details</Dropdown.Trigger>
             <Dropdown.Content aria-label="Details">
               <Input aria-label="Name" />
@@ -108,7 +108,7 @@ describe('Dropdown panel', () => {
     render(
       <>
         <Input aria-label="Editor" ref={editorRef} />
-        <Dropdown.Root kind="panel">
+        <Dropdown.Root type="panel">
           <Dropdown.Trigger>Insert link</Dropdown.Trigger>
           <Dropdown.Content aria-label="Insert link" finalFocus={editorRef}>
             <Input aria-label="Link address" />

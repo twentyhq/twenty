@@ -2,7 +2,7 @@ import { useRef, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type DropdownKind } from '../types/DropdownKind';
+import { type DropdownType } from '../types/DropdownType';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { getDropdownTrigger } from './getDropdownTrigger';
@@ -10,11 +10,11 @@ import { getDropdownTrigger } from './getDropdownTrigger';
 const TYPEAHEAD_RESET_DELAY = 500;
 
 export const useDropdownKeyboardNavigation = ({
-  kind,
+  type,
   isSubmenu,
   setOpen,
 }: {
-  kind: DropdownKind;
+  type: DropdownType;
   isSubmenu: boolean;
   setOpen: (open: boolean) => void;
 }) => {
@@ -53,7 +53,7 @@ export const useDropdownKeyboardNavigation = ({
       return;
     }
 
-    if (kind === 'panel') {
+    if (type === 'panel') {
       return;
     }
 

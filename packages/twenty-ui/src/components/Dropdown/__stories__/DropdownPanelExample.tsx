@@ -12,7 +12,7 @@ export const DropdownPanelExample = () => {
   const [name, setName] = useState('My view');
 
   return (
-    <Dropdown.Root kind="panel" open={open} onOpenChange={setOpen}>
+    <Dropdown.Root type="panel" open={open} onOpenChange={setOpen}>
       <Dropdown.Trigger render={<Button>Edit view</Button>} />
       <Dropdown.Content aria-label="Edit view" width={280}>
         <Dropdown.Section>

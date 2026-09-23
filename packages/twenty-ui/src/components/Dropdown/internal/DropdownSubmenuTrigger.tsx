@@ -27,7 +27,7 @@ export const DropdownSubmenuTrigger = ({
   id,
   ...props
 }: DropdownSubmenuTriggerProps) => {
-  const { kind, parentKind, open, setOpen, focusOnOpenRef } =
+  const { type, parentType, open, setOpen, focusOnOpenRef } =
     useDropdownContext();
   const generatedId = useId();
   const itemId = id ?? generatedId;
@@ -43,8 +43,8 @@ export const DropdownSubmenuTrigger = ({
       disabled={disabled}
       nativeButton={nativeButton}
       openOnHover={openOnHover}
-      role={parentKind === 'menu' ? 'menuitem' : undefined}
-      aria-haspopup={kind === 'menu' ? 'menu' : 'dialog'}
+      role={parentType === 'menu' ? 'menuitem' : undefined}
+      aria-haspopup={type === 'menu' ? 'menu' : 'dialog'}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
         itemFocus.activate();
@@ -72,7 +72,7 @@ export const DropdownSubmenuTrigger = ({
             : null;
 
           if (open && isDefined(content)) {
-            getDropdownFocusTarget({ content, kind }).focus();
+            getDropdownFocusTarget({ content, type }).focus();
             return;
           }
 

@@ -11,7 +11,7 @@ import { DropdownPanelExample } from './DropdownPanelExample';
 import { DropdownPickerExample } from './DropdownPickerExample';
 
 const DropdownMenuExample = () => (
-  <Dropdown.Root kind="menu">
+  <Dropdown.Root type="menu">
     <Dropdown.Trigger render={<Button>Record actions</Button>} />
     <Dropdown.Content aria-label="Record actions" width={240}>
       <Dropdown.Section>

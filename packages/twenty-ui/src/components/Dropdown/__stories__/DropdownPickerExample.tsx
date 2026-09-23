@@ -24,7 +24,7 @@ export const DropdownPickerExample = ({
   const hasSearch = isNonEmptyString(search.trim());
 
   return (
-    <Dropdown.Root kind="picker" multiple={multiple}>
+    <Dropdown.Root type="picker" multiple={multiple}>
       <Dropdown.Trigger render={<Button>Choose people</Button>} />
       <Dropdown.Content aria-label="Choose people" width={280}>
         <Dropdown.Search

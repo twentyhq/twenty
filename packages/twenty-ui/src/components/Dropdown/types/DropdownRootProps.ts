@@ -1,10 +1,10 @@
 import { type ReactNode } from 'react';
 
-import { type DropdownKind } from './DropdownKind';
+import { type DropdownType } from './DropdownType';
 
 export type DropdownRootProps = {
   children: ReactNode;
-  kind: DropdownKind;
+  type: DropdownType;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;

@@ -29,7 +29,7 @@ export const DropdownActionItem = ({
   id,
   ...props
 }: DropdownActionItemProps) => {
-  const { kind, closeTree, goToPage } = useDropdownContext();
+  const { type, closeTree, goToPage } = useDropdownContext();
   const generatedId = useId();
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId });
@@ -40,7 +40,7 @@ export const DropdownActionItem = ({
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
-      role={props.role ?? (kind === 'menu' ? 'menuitem' : undefined)}
+      role={props.role ?? (type === 'menu' ? 'menuitem' : undefined)}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
         itemFocus.activate();

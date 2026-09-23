@@ -8,7 +8,7 @@ export const useDropdownItemFocus = ({
   isSubmenuTrigger?: boolean;
 }) => {
   const context = useDropdownContext();
-  const kind = isSubmenuTrigger ? context.parentKind : context.kind;
+  const type = isSubmenuTrigger ? context.parentType : context.type;
   const activeItemId = isSubmenuTrigger
     ? context.parentActiveItemId
     : context.activeItemId;
@@ -17,7 +17,7 @@ export const useDropdownItemFocus = ({
     : context.setActiveItemId;
 
   return {
-    tabIndex: kind === 'menu' && activeItemId !== id ? -1 : 0,
+    tabIndex: type === 'menu' && activeItemId !== id ? -1 : 0,
     activate: () => setActiveItemId?.(id),
   };
 };

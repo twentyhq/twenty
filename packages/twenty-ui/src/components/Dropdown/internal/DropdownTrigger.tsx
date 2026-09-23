@@ -8,13 +8,13 @@ export const DropdownTrigger = ({
   onClick,
   ...props
 }: DropdownTriggerProps) => {
-  const { kind, setOpen, initialFocusEdgeRef, focusOnOpenRef } =
+  const { type, setOpen, initialFocusEdgeRef, focusOnOpenRef } =
     useDropdownContext();
 
   return (
     <PopoverPrimitive.Trigger
       {...props}
-      aria-haspopup={kind === 'menu' ? 'menu' : 'dialog'}
+      aria-haspopup={type === 'menu' ? 'menu' : 'dialog'}
       onClick={(event) => {
         event.stopPropagation();
         onClick?.(event);
@@ -22,7 +22,7 @@ export const DropdownTrigger = ({
       onKeyDown={(event) => {
         onKeyDown?.(event);
 
-        if (event.defaultPrevented || props.disabled || kind === 'panel') {
+        if (event.defaultPrevented || props.disabled || type === 'panel') {
           return;
         }
 
