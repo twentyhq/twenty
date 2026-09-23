@@ -63,7 +63,6 @@ export const NavigationDrawerAiChatThreadItem = ({
           isArchived={isArchived}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
           onRenameRequested={startRename}
-          open={isDropdownOpen}
           onOpenChange={setIsDropdownOpen}
         />
       }

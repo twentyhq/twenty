@@ -148,7 +148,6 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
           isArchived={isArchived}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
           onRenameRequested={startRename}
-          open={isDropdownOpen}
           onOpenChange={setIsDropdownOpen}
         />
       </StyledMenuTrigger>

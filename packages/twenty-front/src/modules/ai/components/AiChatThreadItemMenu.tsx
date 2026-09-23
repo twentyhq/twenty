@@ -13,8 +13,7 @@ import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsS
 import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteFamilyState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
-import { DropdownFocusCleanupEffect } from '@/ui/utilities/focus/components/DropdownFocusCleanupEffect';
-import { useDropdownFocus } from '@/ui/utilities/focus/hooks/useDropdownFocus';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
@@ -25,7 +24,6 @@ type AiChatThreadItemMenuProps = {
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
   trigger?: ReactElement;
-  open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
 
@@ -36,12 +34,10 @@ export const AiChatThreadItemMenu = ({
   surface,
   onRenameRequested,
   trigger,
-  open,
   onOpenChange,
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
-  const { focusId, updateDropdownFocus } = useDropdownFocus();
   const { archiveChatThread, unarchiveChatThread } =
     useChatThreadArchiveActions();
   const setAiChatThreadPendingDelete = useSetAtomFamilyState(
@@ -71,15 +67,7 @@ export const AiChatThreadItemMenu = ({
   };
 
   return (
-    <Dropdown.Root
-      kind="menu"
-      open={open}
-      onOpenChange={(nextOpen) => {
-        updateDropdownFocus(nextOpen);
-        onOpenChange?.(nextOpen);
-      }}
-    >
-      <DropdownFocusCleanupEffect focusId={focusId} />
+    <DropdownRoot kind="menu" onOpenChange={onOpenChange}>
       <Dropdown.Trigger
         render={
           trigger ?? (
@@ -112,6 +100,6 @@ export const AiChatThreadItemMenu = ({
           </Dropdown.ActionItem>
         </Dropdown.Section>
       </Dropdown.Content>
-    </Dropdown.Root>
+    </DropdownRoot>
   );
 };

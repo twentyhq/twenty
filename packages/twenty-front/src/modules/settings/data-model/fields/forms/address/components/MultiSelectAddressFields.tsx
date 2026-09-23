@@ -2,8 +2,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
-import { DropdownFocusCleanupEffect } from '@/ui/utilities/focus/components/DropdownFocusCleanupEffect';
-import { useDropdownFocus } from '@/ui/utilities/focus/hooks/useDropdownFocus';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type MouseEvent, useState } from 'react';
@@ -41,7 +40,6 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
   callToActionButton,
 }: MultiSelectAddressFieldsProps<TValue>) => {
   const [searchInputValue, setSearchInputValue] = useState('');
-  const { focusId, updateDropdownFocus } = useDropdownFocus();
   const filteredOptions = isNonEmptyString(searchInputValue)
     ? options.filter(({ label }) =>
         label.toLowerCase().includes(searchInputValue.toLowerCase()),
@@ -57,18 +55,15 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
   };
 
   return (
-    <Dropdown.Root
+    <DropdownRoot
       kind="picker"
       multiple
       onOpenChange={(open) => {
-        updateDropdownFocus(open);
-
         if (!open) {
           setSearchInputValue('');
         }
       }}
     >
-      <DropdownFocusCleanupEffect focusId={focusId} />
       <Dropdown.Trigger
         className={className}
         render={<div />}
@@ -128,6 +123,6 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
           </>
         )}
       </Dropdown.Content>
-    </Dropdown.Root>
+    </DropdownRoot>
   );
 };
