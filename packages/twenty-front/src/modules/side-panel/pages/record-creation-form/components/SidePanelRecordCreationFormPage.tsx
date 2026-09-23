@@ -9,7 +9,6 @@ import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/u
 import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
@@ -75,7 +74,6 @@ const SidePanelRecordCreationForm = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
-  const { goBackFromSidePanel } = useSidePanelHistory();
 
   const [recordCreationFormDraft, setRecordCreationFormDraft] =
     useAtomComponentState(recordCreationFormDraftComponentState);
@@ -103,21 +101,24 @@ const SidePanelRecordCreationForm = ({
     }));
   };
 
-  const handleCreateClick = () => {
+  const handleCreateClick = async () => {
     if (isSubmitting) {
       return;
     }
 
     setIsSubmitting(true);
-    settleRecordCreationDraft({
-      requestId,
-      draftRecord: computeRecordFormCreateRecordInput({
-        draftRecord,
-        fieldMetadataItems: recordFormFieldMetadataItems,
-        objectMetadataItems,
-      }),
-    });
-    goBackFromSidePanel();
+    try {
+      await settleRecordCreationDraft({
+        requestId,
+        draftRecord: computeRecordFormCreateRecordInput({
+          draftRecord,
+          fieldMetadataItems: recordFormFieldMetadataItems,
+          objectMetadataItems,
+        }),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const containerRef = useHotkeysOnFocusedElement({
@@ -145,7 +146,7 @@ const SidePanelRecordCreationForm = ({
             startIcon={<IconPlus />}
             size="sm"
             onClick={handleCreateClick}
-            disabled={isSubmitting}
+            loading={isSubmitting}
             hotkeys={[getOsControlSymbol(), '⏎']}
             data-testid="record-creation-form-create-button"
             variant="solid"
