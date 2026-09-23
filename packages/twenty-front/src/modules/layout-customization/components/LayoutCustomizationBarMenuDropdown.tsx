@@ -5,14 +5,13 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RESET_RECORD_PAGE_LAYOUT_MODAL_ID } from '@/layout-customization/constants/ResetRecordPageLayoutModalId';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-
-const LAYOUT_MENU_WIDTH = 240;
 
 const StyledInvertedIconButtonWrapper = styled.span`
   align-items: center;
@@ -52,7 +51,7 @@ export const LayoutCustomizationBarMenuDropdown = () => {
       </StyledInvertedIconButtonWrapper>
       <Dropdown.Content
         data-click-outside-id={parentClickOutsideId}
-        width={LAYOUT_MENU_WIDTH}
+        width={GenericDropdownContentWidth.Large}
       >
         <Dropdown.Section>
           <Dropdown.ActionItem

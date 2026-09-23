@@ -3,8 +3,7 @@ import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-
-const INACTIVE_SKILL_MENU_WIDTH = 160;
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type SettingsSkillInactiveMenuDropDownProps = {
   isCustomSkill: boolean;
@@ -33,7 +32,7 @@ export const SettingsSkillInactiveMenuDropDown = ({
         </LightIconButton>
       }
     />
-    <Dropdown.Content align="end" width={INACTIVE_SKILL_MENU_WIDTH}>
+    <Dropdown.Content align="end" width={GenericDropdownContentWidth.Narrow}>
       <Dropdown.Section>
         <Dropdown.ActionItem
           startIcon={<IconArchiveOff />}

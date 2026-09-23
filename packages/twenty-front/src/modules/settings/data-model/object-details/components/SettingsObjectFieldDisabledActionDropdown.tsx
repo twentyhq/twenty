@@ -9,9 +9,8 @@ import {
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
-
-const INACTIVE_FIELD_MENU_WIDTH = 160;
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
@@ -50,7 +49,7 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
           </LightIconButton>
         }
       />
-      <Dropdown.Content align="end" width={INACTIVE_FIELD_MENU_WIDTH}>
+      <Dropdown.Content align="end" width={GenericDropdownContentWidth.Narrow}>
         <Dropdown.Section>
           <Dropdown.ActionItem
             startIcon={isCustomField ? <IconPencil /> : <IconEye />}

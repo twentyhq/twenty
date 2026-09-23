@@ -9,8 +9,7 @@ import {
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-
-const INACTIVE_OBJECT_MENU_WIDTH = 160;
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type SettingsObjectInactiveMenuDropDownProps = {
   isCustomObject: boolean;
@@ -46,7 +45,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
           </LightIconButton>
         }
       />
-      <Dropdown.Content align="end" width={INACTIVE_OBJECT_MENU_WIDTH}>
+      <Dropdown.Content align="end" width={GenericDropdownContentWidth.Narrow}>
         <Dropdown.Section>
           <Dropdown.ActionItem
             startIcon={isEditable ? <IconPencil /> : <IconEye />}

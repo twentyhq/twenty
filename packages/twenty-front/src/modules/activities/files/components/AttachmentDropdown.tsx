@@ -8,9 +8,8 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
-
-const ATTACHMENT_MENU_WIDTH = 160;
 
 type AttachmentDropdownProps = {
   attachmentId: string;
@@ -45,7 +44,7 @@ export const AttachmentDropdown = ({
       <Dropdown.Content
         data-click-outside-id={parentClickOutsideId}
         align="end"
-        width={ATTACHMENT_MENU_WIDTH}
+        width={GenericDropdownContentWidth.Narrow}
       >
         <Dropdown.Section>
           {hasDownloadPermission && (
