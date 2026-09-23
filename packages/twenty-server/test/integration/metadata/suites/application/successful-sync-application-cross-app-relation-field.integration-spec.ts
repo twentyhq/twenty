@@ -214,9 +214,7 @@ describe('Sync application should succeed when App A declares a RELATION between
     expect(targetField).toBeDefined();
     expect(targetField?.applicationId).toBe(appAApplicationId);
     expect(targetField?.relation?.type).toBe(RelationType.MANY_TO_ONE);
-    expect(targetField?.relation?.targetObjectMetadata.id).toBe(
-      appBObject?.id,
-    );
+    expect(targetField?.relation?.targetObjectMetadata.id).toBe(appBObject?.id);
 
     const sourcesField = appBObject?.fieldsList.find(
       (field) => field.universalIdentifier === APP_A_SOURCES_RELATION_FIELD_ID,
