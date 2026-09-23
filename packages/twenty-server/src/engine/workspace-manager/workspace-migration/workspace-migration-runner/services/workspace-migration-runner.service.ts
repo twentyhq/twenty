@@ -26,6 +26,8 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+import { InFlightDeferredWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-migration-actions.service';
+import { isSchemaAffectingWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-schema-affecting-workspace-migration.util';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
@@ -47,6 +49,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
+    private readonly inFlightDeferredWorkspaceMigrationActionsService: InFlightDeferredWorkspaceMigrationActionsService,
   ) {}
 
   private getLegacyCacheInvalidation(
@@ -196,6 +199,8 @@ export class WorkspaceMigrationRunnerService {
   }> => {
     const runStart = performance.now();
 
+    await this.throwIfSchemaAffectingDeferredActionsAreInProgress(args);
+
     try {
       const result = await this.executeRun(args);
 
@@ -219,6 +224,30 @@ export class WorkspaceMigrationRunnerService {
 
       throw error;
     }
+  };
+
+  private throwIfSchemaAffectingDeferredActionsAreInProgress = async ({
+    workspaceMigration: { actions },
+    workspaceId,
+  }: {
+    workspaceMigration: WorkspaceMigration;
+    workspaceId: string;
+  }): Promise<void> => {
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+    if (
+      !featureFlagsMap[
+        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
+      ] ||
+      !isSchemaAffectingWorkspaceMigration(actions)
+    ) {
+      return;
+    }
+
+    await this.inFlightDeferredWorkspaceMigrationActionsService.throwIfSchemaAffectingActionsAreInProgress(
+      workspaceId,
+    );
   };
 
   private executeRun = async ({
