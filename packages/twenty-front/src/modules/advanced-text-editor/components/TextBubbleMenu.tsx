@@ -6,6 +6,7 @@ import { TurnIntoBlockDropdown } from '@/advanced-text-editor/components/TurnInt
 import { useTextBubbleState } from '@/advanced-text-editor/hooks/useTextBubbleState';
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { isTextSelected } from '@/advanced-text-editor/utils/isTextSelected';
+import { getEditLinkPopoverDropdownId } from '@/advanced-text-editor/utils/getEditLinkPopoverDropdownId';
 import { type Editor } from '@tiptap/core';
 import { NodeSelection } from '@tiptap/pm/state';
 import { BubbleMenu } from '@tiptap/react/menus';
@@ -105,7 +106,14 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
           );
         })}
         {hasEditorExtension(editor, 'link') && (
-          <EditLinkPopover defaultValue={state.linkHref} editor={editor} />
+          <EditLinkPopover
+            dropdownId={getEditLinkPopoverDropdownId({
+              editorInstanceId: editor.instanceId,
+              bubbleMenuType: 'text',
+            })}
+            defaultValue={state.linkHref}
+            editor={editor}
+          />
         )}
       </StyledBubbleMenuContainer>
     </BubbleMenu>

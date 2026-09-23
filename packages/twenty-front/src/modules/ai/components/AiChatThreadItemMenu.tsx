@@ -13,6 +13,7 @@ import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsS
 import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteFamilyState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
+import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -24,7 +25,6 @@ type AiChatThreadItemMenuProps = {
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
   trigger?: ReactElement;
-  onOpenChange?: (open: boolean) => void;
 };
 
 export const AiChatThreadItemMenu = ({
@@ -34,7 +34,6 @@ export const AiChatThreadItemMenu = ({
   surface,
   onRenameRequested,
   trigger,
-  onOpenChange,
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
@@ -67,7 +66,10 @@ export const AiChatThreadItemMenu = ({
   };
 
   return (
-    <DropdownRoot type="menu" onOpenChange={onOpenChange}>
+    <DropdownRoot
+      dropdownId={getAiChatThreadItemMenuDropdownId({ threadId, surface })}
+      type="menu"
+    >
       <Dropdown.Trigger
         render={
           trigger ?? (

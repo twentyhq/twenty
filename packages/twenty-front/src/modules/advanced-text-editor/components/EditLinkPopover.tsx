@@ -7,11 +7,13 @@ import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconLink, IconPencil } from 'twenty-ui/icon';
 
 type EditLinkPopoverProps = {
+  dropdownId: string;
   defaultValue: string | undefined;
   editor: Editor;
 };
 
 export const EditLinkPopover = ({
+  dropdownId,
   defaultValue = '',
   editor,
 }: EditLinkPopoverProps) => {
@@ -19,7 +21,7 @@ export const EditLinkPopover = ({
   const { t } = useLingui();
 
   return (
-    <DropdownRoot type="panel">
+    <DropdownRoot dropdownId={dropdownId} type="panel">
       <Dropdown.Trigger
         render={
           <LightIconButton

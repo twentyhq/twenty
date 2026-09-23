@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { IconMessage } from 'twenty-ui/icon';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
@@ -6,6 +5,9 @@ import { useLingui } from '@lingui/react/macro';
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
@@ -34,7 +36,13 @@ export const NavigationDrawerAiChatThreadItem = ({
 
   const isArchived = Boolean(thread.deletedAt);
   const displayLabel = thread.title || t`New chat`;
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    getAiChatThreadItemMenuDropdownId({
+      threadId: thread.id,
+      surface: AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
+    }),
+  );
   if (isRenaming && isExpanded) {
     return (
       <NavigationDrawerInput
@@ -63,7 +71,6 @@ export const NavigationDrawerAiChatThreadItem = ({
           isArchived={isArchived}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
           onRenameRequested={startRename}
-          onOpenChange={setIsDropdownOpen}
         />
       }
     />

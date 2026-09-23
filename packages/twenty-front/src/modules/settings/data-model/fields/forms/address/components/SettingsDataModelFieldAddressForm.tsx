@@ -111,6 +111,7 @@ export const SettingsDataModelFieldAddressForm = ({
               description={t`Decide which Sub-address fields you want to display`}
             >
               <MultiSelectAddressFields<string>
+                dropdownId="addressSubFieldsId"
                 options={DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES.map(
                   (option) => ({
                     ...option,

@@ -57,7 +57,11 @@ describe('EditLinkPopover', () => {
     const { store } = renderWithStore(
       <>
         <input aria-label="Editor" />
-        <EditLinkPopover editor={editor} defaultValue="" />
+        <EditLinkPopover
+          dropdownId="edit-link-test"
+          editor={editor}
+          defaultValue=""
+        />
       </>,
     );
 
@@ -91,7 +95,11 @@ describe('EditLinkPopover', () => {
       <>
         <input aria-label="Editor" />
         <button type="button">Outside</button>
-        <EditLinkPopover editor={editor} defaultValue="https://old.example" />
+        <EditLinkPopover
+          dropdownId="edit-link-test"
+          editor={editor}
+          defaultValue="https://old.example"
+        />
       </>,
     );
 
@@ -119,7 +127,11 @@ describe('EditLinkPopover', () => {
     renderWithStore(
       <>
         <input aria-label="Editor" />
-        <EditLinkPopover editor={editor} defaultValue="https://twenty.com" />
+        <EditLinkPopover
+          dropdownId="edit-link-test"
+          editor={editor}
+          defaultValue="https://twenty.com"
+        />
       </>,
     );
 
@@ -138,7 +150,11 @@ describe('EditLinkPopover', () => {
     const { rerender, store } = renderWithStore(
       <>
         <input aria-label="Editor" />
-        <EditLinkPopover editor={editor} defaultValue="https://old.example" />
+        <EditLinkPopover
+          dropdownId="edit-link-test"
+          editor={editor}
+          defaultValue="https://old.example"
+        />
       </>,
     );
 
@@ -158,7 +174,11 @@ describe('EditLinkPopover', () => {
     rerender(
       <>
         <input aria-label="Editor" />
-        <EditLinkPopover editor={editor} defaultValue="https://new.example" />
+        <EditLinkPopover
+          dropdownId="edit-link-test"
+          editor={editor}
+          defaultValue="https://new.example"
+        />
       </>,
     );
     await user.click(screen.getByRole('button', { name: 'Edit link' }));

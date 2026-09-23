@@ -19,6 +19,7 @@ type CallToActionButton = {
 };
 
 type MultiSelectAddressFieldsProps<TValue extends SelectValue> = {
+  dropdownId: string;
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
@@ -30,6 +31,7 @@ type MultiSelectAddressFieldsProps<TValue extends SelectValue> = {
 };
 
 export const MultiSelectAddressFields = <TValue extends SelectValue>({
+  dropdownId,
   className,
   disabled = false,
   selectSizeVariant,
@@ -56,6 +58,7 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
 
   return (
     <DropdownRoot
+      dropdownId={dropdownId}
       type="picker"
       multiple
       onOpenChange={(open) => {

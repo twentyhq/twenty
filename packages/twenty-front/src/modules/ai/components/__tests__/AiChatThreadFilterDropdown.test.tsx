@@ -8,6 +8,7 @@ import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDr
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER } from '@/ai/constants/AgentChatThreadLastActivityFilter';
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
@@ -28,7 +29,9 @@ const renderFilterDropdown = () => {
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={store}>
-        <AiChatThreadFilterDropdown />
+        <AiChatThreadFilterDropdown
+          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
+        />
       </Provider>
     </I18nProvider>,
   );

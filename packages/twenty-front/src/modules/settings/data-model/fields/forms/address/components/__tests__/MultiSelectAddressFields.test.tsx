@@ -24,6 +24,7 @@ const AddressFieldsPicker = () => {
 
   return (
     <MultiSelectAddressFields
+      dropdownId="address-fields-test"
       options={ADDRESS_FIELD_OPTIONS}
       values={values}
       onChange={setValues}

@@ -1,11 +1,21 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { useCloseDropdownRoot } from '@/ui/layout/dropdown/hooks/useCloseDropdownRoot';
-import { useIsDropdownRootOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownRootOpen';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { previousDropdownFocusIdStackState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdStackState';
 import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
-import { render, screen, waitFor } from '@testing-library/react';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import {
+  act,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { Dropdown } from 'twenty-ui/components';
@@ -36,7 +46,9 @@ const createTestStore = () => {
 };
 
 const DropdownOpenState = () => {
-  const isDropdownOpen = useIsDropdownRootOpen();
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+  );
 
   return (
     <output aria-label="Dropdown state">
@@ -46,9 +58,9 @@ const DropdownOpenState = () => {
 };
 
 const SaveButton = () => {
-  const { closeDropdown } = useCloseDropdownRoot();
+  const { closeDropdown } = useCloseDropdown();
 
-  return <button onClick={closeDropdown}>Save</button>;
+  return <button onClick={() => closeDropdown()}>Save</button>;
 };
 
 const DropdownOwners = ({
@@ -56,11 +68,11 @@ const DropdownOwners = ({
 }: {
   isInnerOwnerVisible: boolean;
 }) => (
-  <DropdownRoot type="panel">
+  <DropdownRoot dropdownId="outer-dropdown" type="panel">
     <Dropdown.Trigger>Outer dropdown</Dropdown.Trigger>
     <Dropdown.Content aria-label="Outer dropdown">
       {isInnerOwnerVisible && (
-        <DropdownRoot type="panel">
+        <DropdownRoot dropdownId="inner-dropdown" type="panel">
           <Dropdown.Trigger>Inner dropdown</Dropdown.Trigger>
           <Dropdown.Content aria-label="Inner dropdown">
             Inner content
@@ -83,7 +95,11 @@ describe('DropdownRoot', () => {
 
     render(
       <JotaiProvider store={store}>
-        <DropdownRoot type="menu" onOpenChange={onOpenChange}>
+        <DropdownRoot
+          dropdownId="actions-dropdown"
+          type="menu"
+          onOpenChange={onOpenChange}
+        >
           <Dropdown.Trigger>Actions</Dropdown.Trigger>
           <Dropdown.Content aria-label="Actions">
             <Dropdown.ActionItem>Archive</Dropdown.ActionItem>
@@ -104,10 +120,10 @@ describe('DropdownRoot', () => {
       focusStack: [
         BACKGROUND_FOCUS_ITEM,
         {
-          focusId: expect.any(String),
+          focusId: 'actions-dropdown',
           componentInstance: {
             componentType: FocusComponentType.DROPDOWN,
-            componentInstanceId: expect.any(String),
+            componentInstanceId: 'actions-dropdown',
           },
           globalHotkeysConfig: DROPDOWN_HOTKEYS_CONFIG,
         },
@@ -140,7 +156,7 @@ describe('DropdownRoot', () => {
 
     render(
       <JotaiProvider store={store}>
-        <DropdownRoot type="panel">
+        <DropdownRoot dropdownId="edit-record-dropdown" type="panel">
           <Dropdown.Trigger>Edit record</Dropdown.Trigger>
           <DropdownOpenState />
           <Dropdown.Content aria-label="Edit record">
@@ -218,5 +234,114 @@ describe('DropdownRoot', () => {
     expect(store.get(currentGlobalHotkeysConfigSelector.atom)).toEqual(
       BACKGROUND_FOCUS_ITEM.globalHotkeysConfig,
     );
+  });
+
+  it('opens and closes the declared dropdown through external hooks', async () => {
+    const store = createTestStore();
+    const onOpenChange = jest.fn();
+    const { result } = renderHook(
+      () => ({ ...useOpenDropdown(), ...useCloseDropdown() }),
+      {
+        wrapper: ({ children }) => (
+          <JotaiProvider store={store}>{children}</JotaiProvider>
+        ),
+      },
+    );
+
+    render(
+      <JotaiProvider store={store}>
+        <DropdownRoot
+          dropdownId="external-dropdown"
+          type="menu"
+          onOpenChange={onOpenChange}
+        >
+          <Dropdown.Trigger>External actions</Dropdown.Trigger>
+          <Dropdown.Content aria-label="External actions">
+            <Dropdown.ActionItem>Archive</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </DropdownRoot>
+        <DropdownRoot dropdownId="other-dropdown" type="menu">
+          <Dropdown.Trigger>Other actions</Dropdown.Trigger>
+          <Dropdown.Content aria-label="Other actions">
+            <Dropdown.ActionItem>Rename</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </DropdownRoot>
+      </JotaiProvider>,
+    );
+
+    act(() => {
+      result.current.openDropdown({
+        dropdownComponentInstanceIdFromProps: 'external-dropdown',
+      });
+    });
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('menu', { name: 'External actions' }),
+      ).toBeVisible(),
+    );
+    expect(
+      screen.queryByRole('menu', { name: 'Other actions' }),
+    ).not.toBeInTheDocument();
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    expect(store.get(activeDropdownFocusIdState.atom)).toBe(
+      'external-dropdown',
+    );
+
+    act(() => {
+      result.current.closeDropdown('external-dropdown');
+    });
+
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+  });
+
+  it('remounts a declared dropdown closed after its open owner unmounts', async () => {
+    const user = userEvent.setup();
+    const store = createTestStore();
+    const dropdown = (
+      <JotaiProvider store={store}>
+        <DropdownRoot dropdownId="remounted-dropdown" type="menu">
+          <Dropdown.Trigger>Actions</Dropdown.Trigger>
+          <Dropdown.Content aria-label="Actions">
+            <Dropdown.ActionItem>Archive</Dropdown.ActionItem>
+          </Dropdown.Content>
+        </DropdownRoot>
+      </JotaiProvider>
+    );
+    const { unmount } = render(dropdown);
+
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+
+    expect(screen.getByRole('menu', { name: 'Actions' })).toBeVisible();
+
+    unmount();
+
+    expect(
+      store.get(
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: 'remounted-dropdown',
+        }),
+      ),
+    ).toBe(false);
+    expect(store.get(activeDropdownFocusIdState.atom)).toBeNull();
+    expect(store.get(previousDropdownFocusIdStackState.atom)).toEqual([]);
+    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
+
+    render(dropdown);
+
+    expect(screen.getByRole('button', { name: 'Actions' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+
+    expect(screen.getByRole('menu', { name: 'Actions' })).toBeVisible();
+    expect(store.get(focusStackState.atom)).toHaveLength(2);
   });
 });

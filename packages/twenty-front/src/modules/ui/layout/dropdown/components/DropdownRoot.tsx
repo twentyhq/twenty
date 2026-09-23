@@ -1,70 +1,66 @@
-import { type ComponentProps, useId, useState } from 'react';
+import { type ComponentProps } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 
-import { DropdownRootContext } from '@/ui/layout/dropdown/contexts/DropdownRootContext';
-import { DropdownFocusCleanupEffect } from '@/ui/utilities/focus/components/DropdownFocusCleanupEffect';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { DropdownCleanupEffect } from '@/ui/layout/dropdown/components/DropdownCleanupEffect';
+import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/DropdownOnToggleEffect';
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type DropdownRootProps = Pick<
   ComponentProps<typeof Dropdown.Root>,
   'children' | 'type' | 'multiple' | 'defaultPage' | 'onOpenChange'
->;
+> & {
+  dropdownId: string;
+};
 
 export const DropdownRoot = ({
   children,
   type,
   multiple,
   defaultPage,
+  dropdownId,
   onOpenChange,
 }: DropdownRootProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const focusId = useId();
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
-
-  const openDropdown = () => {
-    setIsOpen(true);
-    pushFocusItemToFocusStack({
-      focusId,
-      component: { type: FocusComponentType.DROPDOWN, instanceId: focusId },
-      globalHotkeysConfig: {
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-        enableGlobalHotkeysWithModifiers: false,
-      },
-    });
-    onOpenChange?.(true);
-  };
-
-  const closeDropdown = () => {
-    setIsOpen(false);
-    removeFocusItemFromFocusStackById({ focusId });
-    onOpenChange?.(false);
-  };
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    dropdownId,
+  );
+  const { openDropdown } = useOpenDropdown();
+  const { closeDropdown } = useCloseDropdown();
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      closeDropdown();
+      closeDropdown(dropdownId);
       return;
     }
 
-    openDropdown();
+    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
 
   return (
-    <DropdownRootContext.Provider value={{ isOpen, closeDropdown }}>
+    <DropdownComponentInstanceContext.Provider
+      value={{ instanceId: dropdownId }}
+    >
       <Dropdown.Root
         type={type}
         multiple={multiple}
         defaultPage={defaultPage}
-        open={isOpen}
+        open={isDropdownOpen}
         onOpenChange={handleOpenChange}
       >
-        <DropdownFocusCleanupEffect focusId={focusId} />
+        <DropdownCleanupEffect dropdownId={dropdownId} />
+        {isDefined(onOpenChange) && (
+          <DropdownOnToggleEffect
+            onDropdownOpen={() => onOpenChange(true)}
+            onDropdownClose={() => onOpenChange(false)}
+          />
+        )}
         {children}
       </Dropdown.Root>
-    </DropdownRootContext.Provider>
+    </DropdownComponentInstanceContext.Provider>
   );
 };

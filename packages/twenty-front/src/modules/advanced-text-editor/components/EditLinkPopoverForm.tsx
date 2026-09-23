@@ -1,6 +1,7 @@
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useCloseDropdownRoot } from '@/ui/layout/dropdown/hooks/useCloseDropdownRoot';
-import { useIsDropdownRootOpen } from '@/ui/layout/dropdown/hooks/useIsDropdownRootOpen';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Editor } from '@tiptap/core';
@@ -18,15 +19,17 @@ export const EditLinkPopoverForm = ({
 }: EditLinkPopoverFormProps) => {
   const { t } = useLingui();
   const [value, setValue] = useState(defaultValue);
-  const isOpen = useIsDropdownRootOpen();
-  const { closeDropdown } = useCloseDropdownRoot();
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+  );
+  const { closeDropdown } = useCloseDropdown();
 
   const handleSubmit = (
     event: FormEvent<HTMLFormElement> | FocusEvent<HTMLInputElement>,
   ) => {
     event.preventDefault();
 
-    if (!isOpen) {
+    if (!isDropdownOpen) {
       return;
     }
 
