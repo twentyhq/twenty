@@ -4,9 +4,9 @@ import { IconHeart, IconStar } from 'twenty-ui/icon';
 import {
   AnimatedExpandableContainer,
   HorizontalSeparator,
-  ResizeHandle,
 } from 'twenty-ui/primitives/layout';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ResizeHandleExample } from './resize-handle-example';
 
 import {
   ComponentGallery,
@@ -39,7 +39,7 @@ const LAYOUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'ResizeHandle',
-    node: <ResizeHandle />,
+    node: <ResizeHandleExample />,
   },
 ];
 

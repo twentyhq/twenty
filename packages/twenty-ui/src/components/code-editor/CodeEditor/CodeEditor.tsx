@@ -3,14 +3,13 @@ import { Loader } from '@ui/primitives/feedback/Loader/Loader';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor/constants/BaseCodeEditorThemeId';
 import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/utils/getBaseCodeEditorTheme';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
-import { useResizeHandle } from '@ui/primitives/layout/ResizeHandle/hooks/useResizeHandle';
 import {
   useTheme,
   useThemeColorScheme,
   type ThemeType,
 } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
-import { type KeyboardEvent, useEffect, useState } from 'react';
+import { type KeyboardEvent, useEffect, useId, useState } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './CodeEditor.module.scss';
@@ -86,14 +85,8 @@ export const CodeEditor = ({
   >(undefined);
 
   const numericHeight = typeof height === 'number' ? height : 450;
-  const {
-    size: resizableHeight,
-    handleResizeStart,
-    handleResizeMove,
-    handleResizeEnd,
-  } = useResizeHandle({
-    initialSize: numericHeight,
-  });
+  const [resizableHeight, setResizableHeight] = useState(numericHeight);
+  const editorContainerId = useId();
 
   const shouldAutoHeight = autoHeight && !resizable;
   const codeEditorPadding =
@@ -214,6 +207,7 @@ export const CodeEditor = ({
         readOnly
       />
       <div
+        id={editorContainerId}
         className={styles.editorWrapper}
         data-variant={variant}
         data-transparent-background={transparentBackground || undefined}
@@ -271,9 +265,9 @@ export const CodeEditor = ({
       </div>
       {resizable && (
         <ResizeHandle
-          onPointerDown={handleResizeStart}
-          onPointerMove={handleResizeMove}
-          onPointerUp={handleResizeEnd}
+          aria-controls={editorContainerId}
+          value={resizableHeight}
+          onValueChange={setResizableHeight}
         />
       )}
     </div>
