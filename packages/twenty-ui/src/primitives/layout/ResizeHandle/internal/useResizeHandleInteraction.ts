@@ -41,8 +41,8 @@ export const useResizeHandleInteraction = ({
     }
 
     event.preventDefault();
-    event.currentTarget.focus();
-    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.focus?.();
+    event.currentTarget.setPointerCapture?.(event.pointerId);
     gestureRef.current = {
       pointerId: event.pointerId,
       startPosition: axis === 'y' ? event.clientY : event.clientX,
@@ -79,8 +79,8 @@ export const useResizeHandleInteraction = ({
 
     gestureRef.current = null;
 
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
     }
   };
 

@@ -1,4 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import 'twenty-ui/style.css';
 import { AnimatedIconCrossfade } from 'twenty-ui/components';
 import { IconHeart, IconStar } from 'twenty-ui/icon';
 import {
