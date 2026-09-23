@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
+import { DeferredWorkspaceMigrationActionRecoveryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-recovery.service';
 
 type RetryFailedDeferredWorkspaceMigrationActionsCommandOptions = {
   workspaceId?: string;
@@ -19,7 +19,7 @@ export class RetryFailedDeferredWorkspaceMigrationActionsCommand extends Command
   );
 
   constructor(
-    private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
+    private readonly deferredWorkspaceMigrationActionRecoveryService: DeferredWorkspaceMigrationActionRecoveryService,
   ) {
     super();
   }
@@ -38,7 +38,7 @@ export class RetryFailedDeferredWorkspaceMigrationActionsCommand extends Command
     options: RetryFailedDeferredWorkspaceMigrationActionsCommandOptions,
   ): Promise<void> {
     const retriedActionCount =
-      await this.deferredWorkspaceMigrationActionRunnerService.retryFailedActions(
+      await this.deferredWorkspaceMigrationActionRecoveryService.retryFailedActions(
         options.workspaceId,
       );
 

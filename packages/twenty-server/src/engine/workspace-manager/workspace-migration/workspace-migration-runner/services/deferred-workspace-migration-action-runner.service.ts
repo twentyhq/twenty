@@ -1,13 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
-import {
-  DataSource,
-  LessThan,
-  MoreThanOrEqual,
-  type QueryRunner,
-} from 'typeorm';
+import { DataSource, type QueryRunner } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -25,7 +19,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-max-attempts.constant';
 import { DEFERRED_WORKSPACE_MIGRATION_ACTION_RETRY_BACKOFF } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-retry-backoff.constant';
 import { DEFERRED_WORKSPACE_MIGRATION_ACTION_STATEMENT_TIMEOUT_MS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-statement-timeout-ms.constant';
-import { DEFERRED_WORKSPACE_MIGRATION_ACTION_STALE_THRESHOLD_MS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-stale-threshold-ms.constant';
 import { RUN_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_JOB_NAME } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/run-deferred-workspace-migration-actions-job-name.constant';
 import {
   DeferredWorkspaceMigrationActionException,
@@ -33,7 +26,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
 import { type RunDeferredWorkspaceMigrationActionsJobData } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-migration-actions.job';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { type DeferredWorkspaceMigrationActionStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-status.type';
 import {
   type DeferredWorkspaceMigrationAction,
   type PersistedDeferredWorkspaceMigrationAction,
@@ -158,86 +150,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     }
   }
 
-  async resetStaleInProgressActions(): Promise<number> {
-    const staleBefore = new Date(
-      Date.now() - DEFERRED_WORKSPACE_MIGRATION_ACTION_STALE_THRESHOLD_MS,
-    );
-    const lastError = 'Worker stopped while the action was in progress';
-
-    const failedResult = await this.deferredWorkspaceMigrationActionRepository
-      .createQueryBuilder()
-      .update()
-      .set({ status: 'FAILED', lastError })
-      .where({
-        status: 'IN_PROGRESS',
-        startedAt: LessThan(staleBefore),
-        attempts: MoreThanOrEqual(
-          DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS,
-        ),
-      })
-      .execute();
-
-    const pendingResult = await this.deferredWorkspaceMigrationActionRepository
-      .createQueryBuilder()
-      .update()
-      .set({ status: 'PENDING', lastError })
-      .where({
-        status: 'IN_PROGRESS',
-        startedAt: LessThan(staleBefore),
-      })
-      .execute();
-
-    return (failedResult.affected ?? 0) + (pendingResult.affected ?? 0);
-  }
-
-  async enqueueWorkspacesWithPendingActions(): Promise<number> {
-    const workspaceIds = await this.findWorkspaceIdsByStatus('PENDING');
-
-    for (const workspaceId of workspaceIds) {
-      await this.enqueue(workspaceId);
-    }
-
-    return workspaceIds.length;
-  }
-
-  async retryFailedActions(workspaceId?: string): Promise<number> {
-    const workspaceIds = isDefined(workspaceId)
-      ? [workspaceId]
-      : await this.findWorkspaceIdsByStatus('FAILED');
-
-    let retriedActionCount = 0;
-
-    for (const workspaceIdToRetry of workspaceIds) {
-      const { affected } =
-        await this.deferredWorkspaceMigrationActionRepository.update(
-          workspaceIdToRetry,
-          { status: 'FAILED' },
-          { status: 'PENDING', attempts: 0, startedAt: null },
-        );
-
-      if ((affected ?? 0) > 0) {
-        retriedActionCount += affected ?? 0;
-        await this.enqueue(workspaceIdToRetry);
-      }
-    }
-
-    return retriedActionCount;
-  }
-
-  private async findWorkspaceIdsByStatus(
-    status: DeferredWorkspaceMigrationActionStatus,
-  ): Promise<string[]> {
-    const rows = await this.deferredWorkspaceMigrationActionRepository
-      .createQueryBuilder('deferredWorkspaceMigrationAction')
-      .select('deferredWorkspaceMigrationAction.workspaceId', 'workspaceId')
-      .distinct(true)
-      .where('deferredWorkspaceMigrationAction.status = :status', { status })
-      .getRawMany<{ workspaceId: string }>();
-
-    return rows.map(({ workspaceId }) => workspaceId);
-  }
-
-  private async enqueue(workspaceId: string): Promise<void> {
+  async enqueue(workspaceId: string): Promise<void> {
     try {
       await this.messageQueueService.add<RunDeferredWorkspaceMigrationActionsJobData>(
         RUN_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_JOB_NAME,
@@ -368,7 +281,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
 
       await this.deferredWorkspaceMigrationActionRepository.delete(
         workspaceId,
-        { id },
+        { id, status: 'IN_PROGRESS', attempts: attempt },
       );
 
       this.recordExecutionDuration({
@@ -391,7 +304,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
 
       await this.deferredWorkspaceMigrationActionRepository.update(
         workspaceId,
-        { id },
+        { id, status: 'IN_PROGRESS', attempts: attempt },
         {
           status:
             attempt >= DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS

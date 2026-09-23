@@ -6,7 +6,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { DEFERRED_WORKSPACE_MIGRATION_ACTION_RECOVERY_CRON_PATTERN } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-recovery-cron-pattern.constant';
-import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
+import { DeferredWorkspaceMigrationActionRecoveryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-recovery.service';
 
 @Injectable()
 @Processor(MessageQueue.cronQueue)
@@ -16,7 +16,7 @@ export class DeferredWorkspaceMigrationActionRecoveryCronJob {
   );
 
   constructor(
-    private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
+    private readonly deferredWorkspaceMigrationActionRecoveryService: DeferredWorkspaceMigrationActionRecoveryService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -28,10 +28,10 @@ export class DeferredWorkspaceMigrationActionRecoveryCronJob {
   async handle(): Promise<void> {
     try {
       const resetActionCount =
-        await this.deferredWorkspaceMigrationActionRunnerService.resetStaleInProgressActions();
+        await this.deferredWorkspaceMigrationActionRecoveryService.resetStaleInProgressActions();
 
       const enqueuedWorkspaceCount =
-        await this.deferredWorkspaceMigrationActionRunnerService.enqueueWorkspacesWithPendingActions();
+        await this.deferredWorkspaceMigrationActionRecoveryService.enqueueWorkspacesWithPendingActions();
 
       if (resetActionCount > 0 || enqueuedWorkspaceCount > 0) {
         this.logger.log(
