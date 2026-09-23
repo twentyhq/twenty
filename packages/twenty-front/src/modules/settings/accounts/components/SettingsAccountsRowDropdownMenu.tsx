@@ -7,6 +7,7 @@ import {
   MessageChannelSyncStage,
   SettingsPath,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -24,10 +25,13 @@ import {
   IconPlayerPlay,
   IconRefresh,
   IconTrash,
+  IconUnlink,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
+import { DISCONNECT_CONNECTED_ACCOUNT } from '../graphql/mutations/disconnectConnectedAccount';
+import { isConnectedAccountEligibleForProviderReconnect } from '../constants/isConnectedAccountEligibleForProviderReconnect.const';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -38,6 +42,7 @@ export const SettingsAccountsRowDropdownMenu = ({
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
   const deleteAccountModalId = `delete-account-modal-${account.id}`;
+  const disconnectAccountModalId = `disconnect-account-modal-${account.id}`;
   const accountHandle = account.handle;
 
   const { t } = useLingui();
@@ -49,6 +54,9 @@ export const SettingsAccountsRowDropdownMenu = ({
   const apolloClient = useApolloClient();
   const [deleteConnectedAccountMutation] = useMutation(
     DELETE_CONNECTED_ACCOUNT,
+  );
+  const [disconnectConnectedAccountMutation] = useMutation(
+    DISCONNECT_CONNECTED_ACCOUNT,
   );
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
 
@@ -62,8 +70,18 @@ export const SettingsAccountsRowDropdownMenu = ({
         channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
     );
 
+  const isEligibleForProviderReconnect =
+    isConnectedAccountEligibleForProviderReconnect(account);
+
   const deleteAccount = async () => {
     await deleteConnectedAccountMutation({
+      variables: { id: account.id },
+    });
+    await apolloClient.refetchQueries({ include: 'active' });
+  };
+
+  const disconnectAccount = async () => {
+    await disconnectConnectedAccountMutation({
       variables: { id: account.id },
     });
     await apolloClient.refetchQueries({ include: 'active' });
@@ -119,14 +137,25 @@ export const SettingsAccountsRowDropdownMenu = ({
                   closeDropdown(dropdownId);
                 }}
               >{t`Calendar settings`}</ListItem>
-              {account.authFailedAt && (
+              {isEligibleForProviderReconnect && (
                 <ListItem
                   startIcon={<IconRefresh />}
                   onClick={() => {
-                    triggerProviderReconnect(account.provider, account.id);
+                    triggerProviderReconnect(account.provider, account.id, {
+                      loginHint: account.handle,
+                    });
                     closeDropdown(dropdownId);
                   }}
                 >{t`Reconnect`}</ListItem>
+              )}
+              {!isDefined(account.archivedAt) && (
+                <ListItem
+                  startIcon={<IconUnlink />}
+                  onClick={() => {
+                    closeDropdown(dropdownId);
+                    openDialog(disconnectAccountModalId);
+                  }}
+                >{t`Disconnect account`}</ListItem>
               )}
               <ListItem
                 color="danger"
@@ -135,22 +164,35 @@ export const SettingsAccountsRowDropdownMenu = ({
                   closeDropdown(dropdownId);
                   openDialog(deleteAccountModalId);
                 }}
-              >{t`Remove account`}</ListItem>
+              >{t`Delete account and synced data`}</ListItem>
             </DropdownMenuItemsContainer>
           </DropdownContent>
         }
       />
       <ConfirmationDialog
-        dialogId={deleteAccountModalId}
-        title={t`Data deletion`}
+        dialogId={disconnectAccountModalId}
+        title={t`Disconnect account`}
         subtitle={
           <Trans>
-            All emails and events linked to this account ({accountHandle}) will
-            be deleted
+            Syncing will stop and this account's credentials will be removed.
+            Your emails and events will be retained and available after you
+            reconnect.
+          </Trans>
+        }
+        onConfirmClick={disconnectAccount}
+        confirmButtonText={t`Disconnect account`}
+      />
+      <ConfirmationDialog
+        dialogId={deleteAccountModalId}
+        title={t`Delete account and synced data?`}
+        subtitle={
+          <Trans>
+            This permanently deletes {accountHandle} and all of its synced
+            emails and events. This action cannot be undone.
           </Trans>
         }
         onConfirmClick={deleteAccount}
-        confirmButtonText={t`Delete account`}
+        confirmButtonText={t`Delete account and data`}
       />
     </>
   );

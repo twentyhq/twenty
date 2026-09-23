@@ -14,8 +14,8 @@ error and can allow additional known errors without requiring them to occur.
 
 | Fixture | Components |
 | --- | --- |
-| `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea, InputLabel, InputHint |
-| `twenty-ui-display-helpers` | Text, EllipsisDisplay, NumberDisplay, JsonDisplay, TextDisplay, SelectDisplay |
+| `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
+| `twenty-ui-display-helpers` | Text |
 | `twenty-ui-list-item` | ListItem |
 | `twenty-ui-tabs` | Tabs |
 | `twenty-ui-popover` | Popover |

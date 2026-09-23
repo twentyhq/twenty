@@ -21,7 +21,7 @@ import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resol
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { logError } from '~/utils/logError';
 
 type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;

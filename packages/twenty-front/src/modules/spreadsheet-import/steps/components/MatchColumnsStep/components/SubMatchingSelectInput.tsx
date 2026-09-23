@@ -1,9 +1,9 @@
-import { isDefined } from 'twenty-shared/utils';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useMemo, useRef, useState, createElement } from 'react';
+import { createElement, useMemo, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type TagColor, Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';

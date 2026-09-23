@@ -566,13 +566,9 @@
                     "ui/primitives/surfaces/alert-dialog",
                     "ui/primitives/surfaces/dialog",
                     "ui/primitives/surfaces/menu",
-                    "ui/primitives/surfaces/popover"
+                    "ui/primitives/surfaces/popover",
+                    "ui/primitives/surfaces/tooltip"
                   ]
-                },
-                {
-                  "key": "uiFeedback",
-                  "label": "Feedback",
-                  "pages": ["ui/primitives/feedback/toast"]
                 },
                 {
                   "key": "uiTypography",
@@ -597,7 +593,8 @@
                 "ui/components/settings-row",
                 "ui/components/dropdown",
                 "ui/components/tab-button",
-                "ui/components/code-editor"
+                "ui/components/code-editor",
+                "ui/components/toast"
               ]
             }
           ]

@@ -9,6 +9,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement, useEffect, type ReactNode } from 'react';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -127,6 +128,7 @@ const buildCompanyView = (
   visibility: ViewVisibility.WORKSPACE,
   createdByUserWorkspaceId: null,
   shouldHideEmptyGroups: false,
+  groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   isActive: true,
 });
 
@@ -195,6 +197,7 @@ const renderHooks = ({
               visibility: ViewVisibility.WORKSPACE,
               createdByUserWorkspaceId: null,
               shouldHideEmptyGroups: false,
+              groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
               isActive: true,
             },
           ]);

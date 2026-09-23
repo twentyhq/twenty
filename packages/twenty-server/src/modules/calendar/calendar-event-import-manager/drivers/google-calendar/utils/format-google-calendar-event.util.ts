@@ -45,7 +45,7 @@ const formatGoogleCalendarEvent = (
     recurringEventExternalId: event.recurringEventId ?? '',
     participants:
       event.attendees?.map((attendee) => ({
-        handle: attendee.email ?? '',
+        handle: attendee.email?.toLowerCase() ?? '',
         displayName: attendee.displayName ?? '',
         isOrganizer: attendee.organizer === true,
         responseStatus: formatResponseStatus(attendee.responseStatus),

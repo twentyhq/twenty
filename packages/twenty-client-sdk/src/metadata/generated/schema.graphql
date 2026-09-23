@@ -763,6 +763,7 @@ type View {
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean!
   kanbanColumnWidth: Int
+  groupLoadLimit: Int
   calendarFieldMetadataId: UUID
   calendarEndFieldMetadataId: UUID
   workspaceId: UUID!
@@ -2008,6 +2009,7 @@ enum FeatureFlagKey {
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
+  IS_EXECUTION_QUOTA_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3842,6 +3844,7 @@ type Query {
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
   findManyPublicDomains: [PublicDomain!]!
   exportApplication(universalIdentifier: UUID!): ApplicationExport!
+  applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
@@ -4026,6 +4029,7 @@ type Mutation {
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchResourceCreditPrice: BillingUpdate!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
@@ -4219,7 +4223,6 @@ type Mutation {
   createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
-  generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
 
@@ -4356,6 +4359,7 @@ input CreateViewInput {
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   kanbanColumnWidth: Int
+  groupLoadLimit: Int = 8
 
   """
   Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
@@ -4393,6 +4397,7 @@ input UpdateViewInput {
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
   kanbanColumnWidth: Int
+  groupLoadLimit: Int
 }
 
 input UpsertViewWidgetInput {
@@ -4793,6 +4798,7 @@ input UpdateObjectPayload {
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
   openRecordIn: ObjectOpenRecordIn
+  readability: MetadataReadability
   translations: [MetadataTranslationOverrideInput!]
 }
 

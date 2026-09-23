@@ -2,6 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
   IconApps,
+  IconBrandTypescript,
   type IconComponent,
   IconKey,
   IconSettings,
@@ -35,6 +36,12 @@ export const USAGE_LIMIT_SPENDER_GROUPS: UsageLimitSpenderGroup[] = [
     label: msg`Application`,
     Icon: IconApps,
     spenderType: 'application',
+  },
+  {
+    id: 'logicFunction',
+    label: msg`Logic function`,
+    Icon: IconBrandTypescript,
+    spenderType: 'logicFunction',
   },
   {
     id: 'apiKey',

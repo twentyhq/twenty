@@ -5,9 +5,9 @@ import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-typ
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -20,9 +20,9 @@ import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/primitives/feedback';
-import { type SelectOption } from 'twenty-ui/primitives/input';
+import { Callout } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type WorkflowEditActionCreateCalendarEventProps = {

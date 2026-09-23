@@ -2,7 +2,7 @@ import request from 'supertest';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
@@ -146,14 +146,11 @@ describe('RouteTrigger suspended workspace (integration)', () => {
 
     expect(routeTriggerApplication).toBeDefined();
 
-    const { data: applicationTokenData } = await generateApplicationToken({
+    const applicationTokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId: routeTriggerApplication!.id,
-      expectToFail: false,
     });
 
-    applicationAccessToken =
-      applicationTokenData.generateApplicationToken.applicationAccessToken
-        .token;
+    applicationAccessToken = applicationTokenPair.applicationAccessToken.token;
 
     jest.useRealTimers();
   }, 60000);

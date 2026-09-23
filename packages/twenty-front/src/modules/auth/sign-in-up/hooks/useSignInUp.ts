@@ -25,7 +25,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 

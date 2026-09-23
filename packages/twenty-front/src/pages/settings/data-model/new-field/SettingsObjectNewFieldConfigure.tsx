@@ -23,8 +23,7 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { Section, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type z } from 'zod';

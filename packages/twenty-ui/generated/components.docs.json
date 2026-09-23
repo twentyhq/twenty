@@ -2388,6 +2388,13 @@
         "description": "Trailing content, such as buttons, rendered after the content."
       },
       {
+        "name": "actionsVisibility",
+        "type": "\"always\" | \"hover\"",
+        "required": false,
+        "defaultValue": "hover",
+        "description": "When trailing actions are visible: on hover and focus, or always."
+      },
+      {
         "name": "color",
         "type": "\"danger\" | \"neutral\"",
         "required": false,
@@ -5255,7 +5262,7 @@
   },
   {
     "name": "Toast",
-    "entryPoint": "twenty-ui/primitives/feedback",
+    "entryPoint": "twenty-ui/components",
     "slug": "feedback/toast",
     "props": [
       {
