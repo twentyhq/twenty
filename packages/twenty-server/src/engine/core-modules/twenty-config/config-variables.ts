@@ -1222,7 +1222,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description:
-      'Interval in milliseconds between two metric exports, for every meter driver. Read before the config store is available, so it cannot be overridden from the database.',
+      'Interval in milliseconds between two metric exports, for the drivers that push them: opentelemetry and console. The prometheus driver is scraped, so it is unaffected. Read before the config store is available, so it cannot be overridden from the database.',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
   })
