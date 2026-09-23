@@ -1228,7 +1228,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @IsOptional()
-  OTEL_METRIC_EXPORT_INTERVAL = 30000;
+  METER_EXPORT_INTERVAL_MS = 30_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
