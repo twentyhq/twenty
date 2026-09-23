@@ -51,6 +51,32 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
 
       await queryRunner.startTransaction();
 
+      await queryRunner.query(
+        `WITH "createdCoreVersions" AS (
+           INSERT INTO core."workflowVersion"
+             (id, "workspaceId", "universalIdentifier", "applicationId", triggers, steps, status, "workflowId", "coreWorkflowId", "workspaceWorkflowVersionId")
+           SELECT gen_random_uuid(), $1, gen_random_uuid(), workspace."workspaceCustomApplicationId",
+             CASE WHEN wv.trigger IS NULL THEN NULL ELSE jsonb_build_array(wv.trigger) END,
+             wv.steps, wv.status::text::core."workflowVersion_status_enum", wv."workflowId", cw.id, wv.id
+           FROM "${schema}"."workflowVersion" wv
+           JOIN core."workspace" workspace ON workspace.id = $1
+           LEFT JOIN "${schema}"."workflow" w ON w.id = wv."workflowId"
+           LEFT JOIN core."workflow" cw
+             ON cw.id = w."coreWorkflowId" AND cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = wv."workflowId"
+           WHERE wv."deletedAt" IS NULL AND wv."coreWorkflowVersionId" IS NULL
+             AND NOT EXISTS (
+               SELECT 1 FROM core."workflowVersion" existing
+               WHERE existing."workspaceId" = $1 AND existing."workspaceWorkflowVersionId" = wv.id
+             )
+           RETURNING id, "workspaceWorkflowVersionId"
+         )
+         UPDATE "${schema}"."workflowVersion" wv
+         SET "coreWorkflowVersionId" = "createdCoreVersions".id
+         FROM "createdCoreVersions"
+         WHERE wv.id = "createdCoreVersions"."workspaceWorkflowVersionId"`,
+        [workspaceId],
+      );
+
       const invalidMappings: { id: string; reason: string }[] =
         await queryRunner.query(
           `SELECT wv.id, CASE
@@ -63,7 +89,7 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
            FROM "${schema}"."workflowVersion" wv
            LEFT JOIN core."workflowVersion" cv ON cv.id = wv."coreWorkflowVersionId"
            LEFT JOIN core."workflow" cw ON cw.id = cv."coreWorkflowId"
-           WHERE wv."deletedAt" IS NULL AND (
+           WHERE (wv."deletedAt" IS NULL OR cv.id IS NOT NULL) AND (
              cv.id IS NULL OR cv."workspaceId" <> $1 OR
              cv."workflowId" IS DISTINCT FROM wv."workflowId" OR
              cw.id IS NULL OR cw."workspaceId" <> $1 OR
@@ -76,7 +102,6 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
         await queryRunner.query(
           `SELECT wv."coreWorkflowVersionId" FROM "${schema}"."workflowVersion" wv
            JOIN core."workflowVersion" cv ON cv.id = wv."coreWorkflowVersionId" AND cv."workspaceId" = $1
-           WHERE wv."deletedAt" IS NULL
            GROUP BY wv."coreWorkflowVersionId" HAVING count(*) > 1 LIMIT 10`,
           [workspaceId],
         );
@@ -205,6 +230,7 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
       } else {
         await queryRunner.commitTransaction();
         await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'flatWorkflowVersionMaps',
           'workflowAutomatedTriggerMaps',
         ]);
         this.logger.log(`Workflow execution mappings backfilled in workspace ${workspaceId}`);
