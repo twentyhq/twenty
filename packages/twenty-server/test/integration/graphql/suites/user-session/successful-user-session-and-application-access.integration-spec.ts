@@ -4,7 +4,7 @@ import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/g
 import { currentUserSessions } from 'test/integration/graphql/suites/user-session/utils/current-user-sessions.util';
 import { currentUser } from 'test/integration/graphql/suites/user-session/utils/current-user.util';
 import { generatePlaygroundToken } from 'test/integration/graphql/suites/user-session/utils/generate-playground-token.util';
-import { generateTransientToken } from 'test/integration/graphql/suites/user-session/utils/generate-transient-token.util';
+import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { sendInvitations } from 'test/integration/graphql/suites/user-session/utils/send-invitations.util';
 import { versionInfo } from 'test/integration/graphql/suites/user-session/utils/version-info.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
@@ -117,7 +117,7 @@ describe('User session operations and application access that must keep working'
     });
 
     it('should mint a transient token', async () => {
-      const { data, errors } = await generateTransientToken({
+      const { data, errors } = await generateTransientTokenResponse({
         token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
         expectToFail: false,
       });

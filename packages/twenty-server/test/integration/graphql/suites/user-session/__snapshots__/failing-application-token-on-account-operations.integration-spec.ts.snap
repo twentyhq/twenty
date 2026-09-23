@@ -20,6 +20,16 @@ exports[`Account operations with an application token should fail with an applic
 }
 `;
 
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse a timeline calendar query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
 exports[`Account operations with an application token should fail with an application token bound to nobody should refuse a timeline messaging query 1`] = `
 {
   "extensions": {
@@ -295,6 +305,18 @@ exports[`Account operations with an application token should fail with an applic
 `;
 
 exports[`Account operations with an application token should fail with an application token bound to the admin should refuse a company enrichment mutation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse a timeline calendar query 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

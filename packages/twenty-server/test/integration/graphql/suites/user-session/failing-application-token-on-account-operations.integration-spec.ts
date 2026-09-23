@@ -3,6 +3,7 @@ import { enrichWorkspaceCompany } from 'test/integration/graphql/suites/user-ses
 import { enterpriseSubscriptionStatus } from 'test/integration/graphql/suites/user-session/utils/enterprise-subscription-status.util';
 import { getAiProviders } from 'test/integration/graphql/suites/user-session/utils/get-ai-providers.util';
 import { getInviteSuggestions } from 'test/integration/graphql/suites/user-session/utils/get-invite-suggestions.util';
+import { getTimelineCalendarEventsFromPersonId } from 'test/integration/graphql/suites/user-session/utils/get-timeline-calendar-events-from-person-id.util';
 import { getTimelineThreadsFromPersonId } from 'test/integration/graphql/suites/user-session/utils/get-timeline-threads-from-person-id.util';
 import { isMaintenanceModeBannerDismissed } from 'test/integration/graphql/suites/user-session/utils/is-maintenance-mode-banner-dismissed.util';
 import { stopImpersonation } from 'test/integration/graphql/suites/user-session/utils/stop-impersonation.util';
@@ -11,7 +12,7 @@ import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-se
 import { currentUserSessions } from 'test/integration/graphql/suites/user-session/utils/current-user-sessions.util';
 import { currentUser } from 'test/integration/graphql/suites/user-session/utils/current-user.util';
 import { deleteTwoFactorAuthenticationMethod } from 'test/integration/graphql/suites/user-session/utils/delete-two-factor-authentication-method.util';
-import { generateTransientToken } from 'test/integration/graphql/suites/user-session/utils/generate-transient-token.util';
+import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { authorizeApp } from 'test/integration/graphql/suites/user-session/utils/authorize-app.util';
 import { revokeAllOtherUserSessions } from 'test/integration/graphql/suites/user-session/utils/revoke-all-other-user-sessions.util';
 import { revokeApplicationAuthorization } from 'test/integration/graphql/suites/user-session/utils/revoke-application-authorization.util';
@@ -324,7 +325,7 @@ describe('Account operations with an application token should fail', () => {
       });
 
       it('should refuse to mint a transient token', async () => {
-        const { errors } = await generateTransientToken({
+        const { errors } = await generateTransientTokenResponse({
           token: context.token(globalTestContext),
           expectToFail: true,
         });
@@ -420,6 +421,16 @@ describe('Account operations with an application token should fail', () => {
 
       it('should refuse a timeline messaging query', async () => {
         const { errors } = await getTimelineThreadsFromPersonId({
+          input: { personId: uuidv4() },
+          token: context.token(globalTestContext),
+          expectToFail: true,
+        });
+
+        expectOneNotInternalServerErrorSnapshot({ errors });
+      });
+
+      it('should refuse a timeline calendar query', async () => {
+        const { errors } = await getTimelineCalendarEventsFromPersonId({
           input: { personId: uuidv4() },
           token: context.token(globalTestContext),
           expectToFail: true,
