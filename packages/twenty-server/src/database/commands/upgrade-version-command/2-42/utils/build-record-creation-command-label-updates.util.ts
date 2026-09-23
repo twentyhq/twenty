@@ -15,14 +15,12 @@ const CURRENT_LABELS = {
 
 export const buildRecordCreationCommandLabelUpdates = ({
   flatCommandMenuItemByUniversalIdentifier,
-  direction,
   now,
 }: {
   flatCommandMenuItemByUniversalIdentifier: Record<
     string,
     FlatCommandMenuItem | undefined
   >;
-  direction: 'up' | 'down';
   now: string;
 }): FlatCommandMenuItem[] => {
   const existingCommandMenuItem =
@@ -34,13 +32,10 @@ export const buildRecordCreationCommandLabelUpdates = ({
     return [];
   }
 
-  const sourceLabels = direction === 'up' ? FORMER_LABELS : CURRENT_LABELS;
-  const targetLabels = direction === 'up' ? CURRENT_LABELS : FORMER_LABELS;
-
   const shouldUpdateLabel =
-    existingCommandMenuItem.label === sourceLabels.label;
+    existingCommandMenuItem.label === FORMER_LABELS.label;
   const shouldUpdateShortLabel =
-    existingCommandMenuItem.shortLabel === sourceLabels.shortLabel;
+    existingCommandMenuItem.shortLabel === FORMER_LABELS.shortLabel;
 
   if (!shouldUpdateLabel && !shouldUpdateShortLabel) {
     return [];
@@ -50,10 +45,10 @@ export const buildRecordCreationCommandLabelUpdates = ({
     {
       ...existingCommandMenuItem,
       label: shouldUpdateLabel
-        ? targetLabels.label
+        ? CURRENT_LABELS.label
         : existingCommandMenuItem.label,
       shortLabel: shouldUpdateShortLabel
-        ? targetLabels.shortLabel
+        ? CURRENT_LABELS.shortLabel
         : existingCommandMenuItem.shortLabel,
       updatedAt: now,
     },

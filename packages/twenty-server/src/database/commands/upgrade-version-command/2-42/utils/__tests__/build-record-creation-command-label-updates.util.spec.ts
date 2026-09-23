@@ -37,7 +37,6 @@ describe('buildRecordCreationCommandLabelUpdates', () => {
     const updates = buildRecordCreationCommandLabelUpdates({
       flatCommandMenuItemByUniversalIdentifier:
         buildExistingItems(FORMER_LABELS),
-      direction: 'up',
       now: NOW,
     });
 
@@ -54,8 +53,7 @@ describe('buildRecordCreationCommandLabelUpdates', () => {
           label: FORMER_LABELS.label,
           shortLabel,
         }),
-        direction: 'up',
-        now: NOW,
+          now: NOW,
       });
 
       expect(updates).toEqual([
@@ -70,7 +68,6 @@ describe('buildRecordCreationCommandLabelUpdates', () => {
         label: 'Add a customer',
         shortLabel: FORMER_LABELS.shortLabel,
       }),
-      direction: 'up',
       now: NOW,
     });
 
@@ -87,8 +84,7 @@ describe('buildRecordCreationCommandLabelUpdates', () => {
       buildRecordCreationCommandLabelUpdates({
         flatCommandMenuItemByUniversalIdentifier:
           buildExistingItems(CURRENT_LABELS),
-        direction: 'up',
-        now: NOW,
+          now: NOW,
       }),
     ).toEqual([]);
   });
@@ -97,22 +93,8 @@ describe('buildRecordCreationCommandLabelUpdates', () => {
     expect(
       buildRecordCreationCommandLabelUpdates({
         flatCommandMenuItemByUniversalIdentifier: {},
-        direction: 'up',
-        now: NOW,
+          now: NOW,
       }),
     ).toEqual([]);
-  });
-
-  it('restores the former labels when rolling back', () => {
-    const updates = buildRecordCreationCommandLabelUpdates({
-      flatCommandMenuItemByUniversalIdentifier:
-        buildExistingItems(CURRENT_LABELS),
-      direction: 'down',
-      now: NOW,
-    });
-
-    expect(updates).toEqual([
-      expect.objectContaining({ ...FORMER_LABELS, updatedAt: NOW }),
-    ]);
   });
 });

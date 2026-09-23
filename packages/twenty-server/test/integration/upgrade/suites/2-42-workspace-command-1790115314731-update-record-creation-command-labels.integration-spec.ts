@@ -31,16 +31,10 @@ describe('2-42 workspace command 1790115314731 - UpdateRecordCreationCommandLabe
   let command: UpdateRecordCreationCommandLabelsCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
 
-  const runCommand = ({
-    direction = 'up',
-    dryRun = false,
-  }: {
-    direction?: 'up' | 'down';
-    dryRun?: boolean;
-  } = {}) =>
+  const runCommand = ({ dryRun = false }: { dryRun?: boolean } = {}) =>
     workspaceOrmManager.executeInWorkspaceContext(
       () =>
-        command[direction]({
+        command.runOnWorkspace({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           options: { dryRun },
           index: 0,
@@ -113,13 +107,5 @@ describe('2-42 workspace command 1790115314731 - UpdateRecordCreationCommandLabe
       label: CURRENT_LABELS.label,
       shortLabel: 'Add',
     });
-  });
-
-  it('restores the former labels when rolled back', async () => {
-    await setLabels(CURRENT_LABELS);
-
-    await runCommand({ direction: 'down' });
-
-    expect(await findLabels()).toEqual(FORMER_LABELS);
   });
 });

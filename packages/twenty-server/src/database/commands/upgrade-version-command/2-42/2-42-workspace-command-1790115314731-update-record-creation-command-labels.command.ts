@@ -26,23 +26,10 @@ export class UpdateRecordCreationCommandLabelsCommand extends ProvisionedWorkspa
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.up(args);
-  }
-
-  async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.updateLabels({ ...args, direction: 'up' });
-  }
-
-  async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.updateLabels({ ...args, direction: 'down' });
-  }
-
-  private async updateLabels({
+  override async runOnWorkspace({
     workspaceId,
     options,
-    direction,
-  }: RunOnWorkspaceArgs & { direction: 'up' | 'down' }): Promise<void> {
+  }: RunOnWorkspaceArgs): Promise<void> {
     const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
@@ -51,7 +38,6 @@ export class UpdateRecordCreationCommandLabelsCommand extends ProvisionedWorkspa
     const commandMenuItemsToUpdate = buildRecordCreationCommandLabelUpdates({
       flatCommandMenuItemByUniversalIdentifier:
         flatCommandMenuItemMaps.byUniversalIdentifier,
-      direction,
       now: new Date().toISOString(),
     });
 

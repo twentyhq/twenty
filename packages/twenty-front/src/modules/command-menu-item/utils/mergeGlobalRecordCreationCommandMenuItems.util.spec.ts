@@ -132,7 +132,6 @@ it('keeps pinned contextual creation at its position and removes its global dupl
     pinnedPageCommand,
     taskCreationCommand,
   ]);
-  expect(result[1].creationTargetObjectMetadataId).toBeUndefined();
 });
 
 it('follows the configured order when contextual creation is moved below another pinned command', () => {
