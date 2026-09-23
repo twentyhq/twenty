@@ -49940,12 +49940,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-cli@workspace:packages/twenty-cli-deprecated":
-  version: 0.0.0-use.local
-  resolution: "twenty-cli@workspace:packages/twenty-cli-deprecated"
-  languageName: unknown
-  linkType: soft
-
 "twenty-client-sdk@workspace:*, twenty-client-sdk@workspace:packages/twenty-client-sdk":
   version: 0.0.0-use.local
   resolution: "twenty-client-sdk@workspace:packages/twenty-client-sdk"
