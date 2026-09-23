@@ -5,7 +5,7 @@ import { toCoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/ut
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -503,11 +503,6 @@ export class WorkflowVersionCoreSyncService {
         { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
       );
 
-    const previousFlatWorkflowVersion = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: coreWorkflowVersionId,
-      flatEntityMaps: flatWorkflowVersionMapsBeforeWrite,
-    });
-
     // The conflict target is the primary key alone, so without the workspaceId
     // predicate a core row owned by another workspace would have its triggers
     // and steps overwritten.
@@ -568,7 +563,7 @@ export class WorkflowVersionCoreSyncService {
       await this.emitMirroredWorkflowVersionMetadataEvents({
         workspaceId,
         coreWorkflowVersionId,
-        previousFlatWorkflowVersion,
+        flatWorkflowVersionMapsBeforeWrite,
       });
     });
 
@@ -578,11 +573,11 @@ export class WorkflowVersionCoreSyncService {
   private async emitMirroredWorkflowVersionMetadataEvents({
     workspaceId,
     coreWorkflowVersionId,
-    previousFlatWorkflowVersion,
+    flatWorkflowVersionMapsBeforeWrite,
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
-    previousFlatWorkflowVersion: FlatWorkflowVersion | undefined;
+    flatWorkflowVersionMapsBeforeWrite: AllFlatEntityMaps['flatWorkflowVersionMaps'];
   }): Promise<void> {
     const { flatWorkflowVersionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -601,7 +596,7 @@ export class WorkflowVersionCoreSyncService {
     this.metadataEventEmitter.emitMetadataEvents({
       workspaceId,
       metadataEvents: buildMirroredWorkflowVersionMetadataEvents({
-        previousFlatWorkflowVersion,
+        flatWorkflowVersionMapsBeforeWrite,
         flatWorkflowVersion,
       }),
     });

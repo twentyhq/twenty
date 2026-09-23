@@ -1,5 +1,8 @@
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { buildMirroredWorkflowVersionMetadataEvents } from 'src/engine/core-modules/workflow/utils/build-mirrored-workflow-version-metadata-events.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
 const FLAT_WORKFLOW_VERSION = {
@@ -15,10 +18,16 @@ const FLAT_WORKFLOW_VERSION = {
   steps: [],
 } as unknown as FlatWorkflowVersion;
 
+const FLAT_WORKFLOW_VERSION_MAPS_BEFORE_WRITE: FlatEntityMaps<FlatWorkflowVersion> =
+  addFlatEntityToFlatEntityMapsOrThrow({
+    flatEntity: FLAT_WORKFLOW_VERSION,
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  });
+
 describe('buildMirroredWorkflowVersionMetadataEvents', () => {
-  it('should emit a created event when the version was not in the cache before the write', () => {
+  it('should emit a created event when the version was not cached before the write', () => {
     const [event, ...otherEvents] = buildMirroredWorkflowVersionMetadataEvents({
-      previousFlatWorkflowVersion: undefined,
+      flatWorkflowVersionMapsBeforeWrite: createEmptyFlatEntityMaps(),
       flatWorkflowVersion: FLAT_WORKFLOW_VERSION,
     });
 
@@ -38,7 +47,8 @@ describe('buildMirroredWorkflowVersionMetadataEvents', () => {
 
   it('should emit an updated event carrying the status change of an activation', () => {
     const [event, ...otherEvents] = buildMirroredWorkflowVersionMetadataEvents({
-      previousFlatWorkflowVersion: FLAT_WORKFLOW_VERSION,
+      flatWorkflowVersionMapsBeforeWrite:
+        FLAT_WORKFLOW_VERSION_MAPS_BEFORE_WRITE,
       flatWorkflowVersion: {
         ...FLAT_WORKFLOW_VERSION,
         status: WorkflowVersionStatus.ACTIVE,
@@ -65,7 +75,8 @@ describe('buildMirroredWorkflowVersionMetadataEvents', () => {
 
   it('should emit an updated event carrying the steps change of a step write', () => {
     const [event] = buildMirroredWorkflowVersionMetadataEvents({
-      previousFlatWorkflowVersion: FLAT_WORKFLOW_VERSION,
+      flatWorkflowVersionMapsBeforeWrite:
+        FLAT_WORKFLOW_VERSION_MAPS_BEFORE_WRITE,
       flatWorkflowVersion: {
         ...FLAT_WORKFLOW_VERSION,
         steps: [{ id: 'step-id' }],
@@ -81,7 +92,8 @@ describe('buildMirroredWorkflowVersionMetadataEvents', () => {
   it('should emit nothing when the write left the compared properties unchanged', () => {
     expect(
       buildMirroredWorkflowVersionMetadataEvents({
-        previousFlatWorkflowVersion: FLAT_WORKFLOW_VERSION,
+        flatWorkflowVersionMapsBeforeWrite:
+          FLAT_WORKFLOW_VERSION_MAPS_BEFORE_WRITE,
         flatWorkflowVersion: { ...FLAT_WORKFLOW_VERSION, steps: [] },
       }),
     ).toEqual([]);

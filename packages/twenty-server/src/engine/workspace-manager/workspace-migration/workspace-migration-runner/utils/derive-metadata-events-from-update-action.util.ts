@@ -22,9 +22,7 @@ export type DeriveMetadataEventsFromUpdateActionArgs = {
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
-export const buildUpdateMetadataEvent = <
-  TMetadataName extends AllMetadataName,
->({
+const buildUpdateMetadataEvent = <TMetadataName extends AllMetadataName>({
   metadataName,
   before,
   after,
