@@ -144,6 +144,7 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'workflowVersion':
     case 'connectionProvider':
     case 'timelineActivityType':
+    case 'settingsMenuItem':
     case 'validationRule':
     case 'searchFieldMetadata': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(

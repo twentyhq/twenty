@@ -22,6 +22,7 @@ import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/messag
 import { MessageFolderMetadataModule } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.module';
 import { MetadataTranslationModule } from 'src/engine/metadata-modules/metadata-translation/metadata-translation.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
+import { SettingsMenuItemModule } from 'src/engine/metadata-modules/settings-menu-item/settings-menu-item.module';
 import { TimelineActivityTypeModule } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.module';
 import { ValidationRuleModule } from 'src/engine/metadata-modules/validation-rule/validation-rule.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -49,6 +50,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     CommandMenuItemModule,
     MetadataTranslationModule,
     NavigationMenuItemModule,
+    SettingsMenuItemModule,
     TimelineActivityTypeModule,
     ValidationRuleModule,
     AiAgentModule,

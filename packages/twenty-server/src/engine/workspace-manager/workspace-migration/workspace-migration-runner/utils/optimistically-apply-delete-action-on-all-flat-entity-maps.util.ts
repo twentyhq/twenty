@@ -50,6 +50,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
     case 'workflowVersion':
     case 'connectionProvider':
     case 'timelineActivityType':
+    case 'settingsMenuItem':
     case 'validationRule':
     case 'searchFieldMetadata': {
       const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<

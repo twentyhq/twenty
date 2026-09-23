@@ -386,6 +386,17 @@ import {
   type UniversalDeleteSearchFieldMetadataAction,
   type UniversalUpdateSearchFieldMetadataAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/search-field-metadata/types/workspace-migration-search-field-metadata-action.type';
+import { type FlatSettingsMenuItemMaps } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item-maps.type';
+import { type FlatSettingsMenuItem } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item.type';
+import { type UniversalFlatSettingsMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-settings-menu-item.type';
+import {
+  type FlatCreateSettingsMenuItemAction,
+  type FlatDeleteSettingsMenuItemAction,
+  type FlatUpdateSettingsMenuItemAction,
+  type UniversalCreateSettingsMenuItemAction,
+  type UniversalDeleteSettingsMenuItemAction,
+  type UniversalUpdateSettingsMenuItemAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/types/workspace-migration-settings-menu-item-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
@@ -903,6 +914,21 @@ export type AllFlatEntityTypesByMetadataName = {
     universalFlatEntity: UniversalFlatTimelineActivityType;
     entity: MetadataEntity<'timelineActivityType'>;
   };
+  settingsMenuItem: {
+    flatEntityMaps: FlatSettingsMenuItemMaps;
+    universalActions: {
+      create: UniversalCreateSettingsMenuItemAction;
+      update: UniversalUpdateSettingsMenuItemAction;
+      delete: UniversalDeleteSettingsMenuItemAction;
+    };
+    flatActions: {
+      create: FlatCreateSettingsMenuItemAction;
+      update: FlatUpdateSettingsMenuItemAction;
+      delete: FlatDeleteSettingsMenuItemAction;
+    };
+    flatEntity: FlatSettingsMenuItem;
+    universalFlatEntity: UniversalFlatSettingsMenuItem;
+    entity: MetadataEntity<'settingsMenuItem'>;
   validationRule: {
     flatEntityMaps: FlatValidationRuleMaps;
     universalActions: {

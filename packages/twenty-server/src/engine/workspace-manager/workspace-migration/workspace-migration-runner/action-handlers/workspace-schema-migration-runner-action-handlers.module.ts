@@ -104,6 +104,9 @@ import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspa
 import { CreateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/create-timeline-activity-type-action-handler.service';
 import { DeleteTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/delete-timeline-activity-type-action-handler.service';
 import { UpdateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/update-timeline-activity-type-action-handler.service';
+import { CreateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/create-settings-menu-item-action-handler.service';
+import { DeleteSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/delete-settings-menu-item-action-handler.service';
+import { UpdateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/update-settings-menu-item-action-handler.service';
 import { CreateValidationRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/validation-rule/services/create-validation-rule-action-handler.service';
 import { DeleteValidationRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/validation-rule/services/delete-validation-rule-action-handler.service';
 import { UpdateValidationRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/validation-rule/services/update-validation-rule-action-handler.service';
@@ -249,6 +252,9 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
     CreateTimelineActivityTypeActionHandlerService,
     UpdateTimelineActivityTypeActionHandlerService,
     DeleteTimelineActivityTypeActionHandlerService,
+    CreateSettingsMenuItemActionHandlerService,
+    UpdateSettingsMenuItemActionHandlerService,
+    DeleteSettingsMenuItemActionHandlerService,
     CreateValidationRuleActionHandlerService,
     UpdateValidationRuleActionHandlerService,
     DeleteValidationRuleActionHandlerService,

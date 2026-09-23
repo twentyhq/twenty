@@ -316,14 +316,11 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
-  validationRule: {
+  settingsMenuItem: {
     workspace: null,
     application: null,
-    objectMetadata: {
-      foreignKey: 'objectMetadataId',
-    },
-    errorFieldMetadata: {
-      foreignKey: 'errorFieldMetadataId',
+    frontComponent: {
+      foreignKey: 'frontComponentId',
     },
   },
   searchFieldMetadata: {
@@ -337,6 +334,16 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     tsVectorFieldMetadata: {
       foreignKey: 'tsVectorFieldMetadataId',
+    },
+  },
+  validationRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    errorFieldMetadata: {
+      foreignKey: 'errorFieldMetadataId',
     },
   },
   workflow: {

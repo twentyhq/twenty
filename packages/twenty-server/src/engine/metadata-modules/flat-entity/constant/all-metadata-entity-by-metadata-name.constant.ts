@@ -36,6 +36,7 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ValidationRuleEntity } from 'src/engine/metadata-modules/validation-rule/entities/validation-rule.entity';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
+import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
 
 export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   viewField: ViewFieldEntity,
@@ -70,6 +71,7 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   connectionProvider: ConnectionProviderEntity,
   searchFieldMetadata: SearchFieldMetadataEntity,
   timelineActivityType: TimelineActivityTypeEntity,
+  settingsMenuItem: SettingsMenuItemEntity,
   validationRule: ValidationRuleEntity,
   workflow: WorkflowEntity,
   workflowVersion: WorkflowVersionEntity,

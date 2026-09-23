@@ -56,6 +56,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   timelineActivityType: {},
   validationRule: {},
   searchFieldMetadata: {},
+  settingsMenuItem: {},
   workflow: {},
   workflowVersion: {},
 } as const satisfies MetadataSerializedRelationProperties;
