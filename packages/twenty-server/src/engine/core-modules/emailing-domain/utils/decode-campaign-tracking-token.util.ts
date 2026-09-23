@@ -1,4 +1,4 @@
-import { isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { CAMPAIGN_TRACKING_TOKEN_SEPARATOR } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-separator.constant';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
@@ -18,9 +18,10 @@ export const decodeCampaignTrackingToken = (
 
   if (
     rest.length > 0 ||
-    ![workspaceId, deliveryId, shortLinkId].every((identifier) =>
-      isValidUuid(identifier ?? ''),
-    )
+    !isDefined(workspaceId) ||
+    !isDefined(deliveryId) ||
+    !isDefined(shortLinkId) ||
+    ![workspaceId, deliveryId, shortLinkId].every(isValidUuid)
   ) {
     return null;
   }

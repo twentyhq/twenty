@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -98,9 +100,23 @@ export class BillingPriceService {
       );
     }
 
+    const [firstCandidate] = candidates;
+
+    if (!isDefined(firstCandidate)) {
+      throw new BillingException(
+        'No metered candidates found for mapping',
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
+
     return (
-      candidates.filter((p) => p.tiers[0].up_to <= refCap).pop() ??
-      candidates[0]
+      candidates
+        .filter((candidate) => {
+          const [firstTier] = candidate.tiers;
+
+          return isDefined(firstTier) && firstTier.up_to <= refCap;
+        })
+        .pop() ?? firstCandidate
     );
   }
 
@@ -184,10 +200,19 @@ export class BillingPriceService {
       );
     }
 
+    const [firstResourceCreditCandidate] = resourceCreditCandidates;
+
+    if (!isDefined(firstResourceCreditCandidate)) {
+      throw new BillingException(
+        'No RESOURCE_CREDIT price candidates found',
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
+
     return (
       resourceCreditCandidates
         .filter((p) => Number(p.metadata?.credit_amount ?? 0) <= scaledAmount)
-        .pop() ?? resourceCreditCandidates[0]
+        .pop() ?? firstResourceCreditCandidate
     );
   }
 }

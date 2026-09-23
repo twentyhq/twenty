@@ -5,7 +5,7 @@ import {
   type EnqueueJobResult,
   type EnqueueJobsResult,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
@@ -69,9 +69,7 @@ export class ApplicationJobService {
 
     const [jobId] = jobIds;
 
-    if (!isDefined(jobId)) {
-      throw new Error('Enqueueing the job returned no job id');
-    }
+    assertIsDefinedOrThrow(jobId);
 
     return { enqueued, logicFunctionUniversalIdentifier, jobId };
   }
@@ -114,11 +112,15 @@ export class ApplicationJobService {
       );
     }
 
-    const jobIds = jobItems.map((jobItem) => jobItem.jobId ?? v4());
+    const jobItemsWithIds = jobItems.map((jobItem) => ({
+      jobItem,
+      jobId: jobItem.jobId ?? v4(),
+    }));
+    const jobIds = jobItemsWithIds.map(({ jobId }) => jobId);
 
     await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
       LogicFunctionTriggerJob.name,
-      jobItems.map((jobItem, index) => ({
+      jobItemsWithIds.map(({ jobItem, jobId }) => ({
         data: {
           logicFunctionId: flatLogicFunction.id,
           workspaceId,
@@ -126,7 +128,7 @@ export class ApplicationJobService {
           ...(isDefined(userId) ? { userId } : {}),
           ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
         },
-        jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
+        jobId: buildQueueJobId({ workspaceId, jobId }),
       })),
       {
         retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,

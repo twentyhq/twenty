@@ -1,5 +1,6 @@
 import { parseAddressAutocompleteBanPlaceReference } from 'src/engine/core-modules/geo-map/drivers/ban/utils/parse-address-autocomplete-ban-place-reference.util';
 import { sanitizeAddressAutocompleteBanSuggestions } from 'src/engine/core-modules/geo-map/drivers/ban/utils/sanitize-address-autocomplete-ban-suggestions.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const BAN_FEATURES = [
   {
@@ -47,11 +48,15 @@ describe('sanitizeAddressAutocompleteBanSuggestions', () => {
     const [street, municipality] =
       sanitizeAddressAutocompleteBanSuggestions(BAN_FEATURES);
 
+    jestExpectToBeDefined(street);
+
     expect(parseAddressAutocompleteBanPlaceReference(street.placeId)).toEqual({
       label: '8 Boulevard du Port 80000 Amiens',
       citycode: '80021',
       type: 'housenumber',
     });
+    jestExpectToBeDefined(municipality);
+
     expect(
       parseAddressAutocompleteBanPlaceReference(municipality.placeId),
     ).toEqual({ label: 'Amiens', citycode: '80021', type: 'municipality' });

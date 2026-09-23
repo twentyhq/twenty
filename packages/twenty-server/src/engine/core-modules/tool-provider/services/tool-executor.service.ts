@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type AggregateOperations } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -165,9 +165,13 @@ export class ToolExecutorService {
             workspaceId: context.workspaceId,
           });
 
+        const [objectRecord] = records;
+
+        assertIsDefinedOrThrow(objectRecord);
+
         const output = await this.createRecordService.execute({
           objectName: ref.objectNameSingular,
-          objectRecord: records[0],
+          objectRecord,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
@@ -210,10 +214,14 @@ export class ToolExecutorService {
             workspaceId: context.workspaceId,
           });
 
+        const [resolvedObjectRecord] = records;
+
+        assertIsDefinedOrThrow(resolvedObjectRecord);
+
         const output = await this.updateRecordService.execute({
           objectName: ref.objectNameSingular,
           objectRecordId: id as string,
-          objectRecord: records[0],
+          objectRecord: resolvedObjectRecord,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           slimResponse: true,

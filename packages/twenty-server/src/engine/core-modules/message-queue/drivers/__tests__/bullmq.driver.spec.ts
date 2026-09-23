@@ -220,7 +220,7 @@ describe('BullMQDriver job change events', () => {
 
     const workerInstances = jest.mocked(Worker).mock.results;
     const worker = workerInstances[workerInstances.length - 1]
-      .value as unknown as { on: jest.Mock };
+      ?.value as unknown as { on: jest.Mock };
     const listener = worker.on.mock.calls.find(
       ([name]: [string, unknown]) => name === eventName,
     )?.[1];
@@ -298,7 +298,7 @@ describe('BullMQDriver queue wait metric', () => {
     jest.clearAllMocks();
     driver.work(MessageQueue.workflowQueue, jest.fn());
 
-    const processor = jest.mocked(Worker).mock.calls[0][1];
+    const processor = jest.mocked(Worker).mock.calls[0]?.[1];
 
     if (typeof processor !== 'function') {
       throw new Error('Worker processor was not registered');

@@ -753,9 +753,9 @@ export class EnterprisePlanService implements OnModuleInit {
       const [encodedHeader, encodedPayload, signature] = parts;
 
       if (
-        encodedHeader === undefined ||
-        encodedPayload === undefined ||
-        signature === undefined
+        !isDefined(encodedHeader) ||
+        !isDefined(encodedPayload) ||
+        !isDefined(signature)
       ) {
         return null;
       }

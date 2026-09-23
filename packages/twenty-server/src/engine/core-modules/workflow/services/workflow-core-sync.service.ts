@@ -327,7 +327,7 @@ export class WorkflowCoreSyncService {
               );
             }
 
-            const coreWorkflowId = coreWorkflows[0]?.id;
+            const coreWorkflowId = coreWorkflows[0].id;
             let coreWorkflowVersionId: string | null = null;
 
             if (isNonEmptyString(workflow.lastPublishedVersionId)) {
@@ -342,7 +342,7 @@ export class WorkflowCoreSyncService {
                 );
               }
 
-              coreWorkflowVersionId = versions[0]?.id;
+              coreWorkflowVersionId = versions[0]?.id ?? null;
             }
 
             coreWorkflowUpdates.push({

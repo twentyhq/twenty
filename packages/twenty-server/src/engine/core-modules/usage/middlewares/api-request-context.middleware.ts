@@ -12,7 +12,7 @@ import { getApiTypeFromPath } from 'src/engine/core-modules/usage/utils/get-api-
 export class ApiRequestContextMiddleware implements NestMiddleware {
   use(req: Request, _res: Response, next: NextFunction) {
     const [path] = req.originalUrl.split('?');
-    const apiType = getApiTypeFromPath(path);
+    const apiType = getApiTypeFromPath(path ?? '');
 
     if (!isDefined(apiType)) {
       next();

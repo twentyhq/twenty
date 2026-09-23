@@ -5,6 +5,7 @@ import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-exception-condition.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const OBJECT_METADATA_ID = 'object-metadata-1';
 const PRINCIPAL_IDS = ['principal-1', EVERYONE_PRINCIPAL_ID];
@@ -56,9 +57,11 @@ describe('buildRecordShareExceptionCondition', () => {
       accessLevels: [RecordShareAccessLevel.FULL],
     });
 
-    const aliases = [...sql.matchAll(/ AS "([^"]+)"/g)].map(([, alias]) =>
-      Buffer.from(alias).subarray(0, 63).toString(),
-    );
+    const aliases = [...sql.matchAll(/ AS "([^"]+)"/g)].map(([, alias]) => {
+      jestExpectToBeDefined(alias);
+
+      return Buffer.from(alias).subarray(0, 63).toString();
+    });
 
     expect(aliases).toHaveLength(2);
     expect(new Set(aliases).size).toBe(2);

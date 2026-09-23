@@ -253,7 +253,7 @@ export const getMockObjectMetadataInfo = (
 ): ObjectMetadataInfo => {
   const objectId = mockObjectIdByNameSingular[nameSingular];
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: objectId,
+    flatEntityId: objectId ?? '',
     flatEntityMaps: mockFlatObjectMetadataMaps,
   });
 

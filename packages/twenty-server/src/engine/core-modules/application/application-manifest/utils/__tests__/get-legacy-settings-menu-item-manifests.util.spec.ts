@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/application';
 
 import { getLegacySettingsMenuItemManifests } from 'src/engine/core-modules/application/application-manifest/utils/get-legacy-settings-menu-item-manifests.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = '39783023-bcac-41e3-b0d2-ff1944d8465d';
 const FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
@@ -67,9 +68,13 @@ describe('getLegacySettingsMenuItemManifests', () => {
         FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
     });
 
-    expect(
-      getLegacySettingsMenuItemManifests(manifest)[0].universalIdentifier,
-    ).toBe(getLegacySettingsMenuItemManifests(manifest)[0].universalIdentifier);
+    const [firstCall] = getLegacySettingsMenuItemManifests(manifest);
+    const [secondCall] = getLegacySettingsMenuItemManifests(manifest);
+
+    jestExpectToBeDefined(firstCall);
+    jestExpectToBeDefined(secondCall);
+
+    expect(firstCall.universalIdentifier).toBe(secondCall.universalIdentifier);
   });
 
   // The pre-install phase syncs manifest.application with its legacy pointer intact

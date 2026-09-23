@@ -43,7 +43,7 @@ const fillMergeFields = (
   values: Record<string, string>,
 ): string =>
   text.replace(MERGE_FIELD_PATTERN, (match, fieldName: string) =>
-    fieldName in values ? values[fieldName] : match,
+    fieldName in values ? (values[fieldName] ?? match) : match,
   );
 
 const buildExecutionBlocks = (

@@ -2,7 +2,11 @@
 
 import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isValidUuid,
+} from 'twenty-shared/utils';
 
 import {
   RecordShareException,
@@ -40,6 +44,8 @@ export const resolveRecordSharePrincipalOrThrow = ({
   }
 
   const [principal] = principals;
+
+  assertIsDefinedOrThrow(principal);
 
   if (!isValidUuid(principal.principalId)) {
     throw new RecordShareException(

@@ -10,7 +10,7 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -126,6 +126,8 @@ export class RecordSharingService {
       shareWith: [{ ...args.principal, accessLevel: args.accessLevel }],
       ...maps,
     });
+
+    assertIsDefinedOrThrow(principal);
 
     return this.changeSharing(
       args,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isPlainObject } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isPlainObject } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type PendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-event.type';
@@ -35,6 +35,8 @@ export class PendingWakeUpEventRecordService {
     onRecordReadGivenUp: (error?: string) => void;
   }): Promise<PendingWakeUpBeforeClaimDecision<TResolveContext>> {
     const [objectName, action] = event.eventName.split('.');
+
+    assertIsDefinedOrThrow(objectName);
 
     const { success, result, error } = await this.findRecordsService.execute({
       objectName,

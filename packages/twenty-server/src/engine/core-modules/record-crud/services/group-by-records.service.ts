@@ -128,7 +128,7 @@ export class GroupByRecordsService {
         result: {
           groups: results.map((item) => ({
             dimensions: item.groupByDimensionValues,
-            value: item[aggregateFieldKey],
+            value: item[aggregateFieldKey] ?? null,
           })),
           dimensionLabels,
           aggregation: aggregateOperation,

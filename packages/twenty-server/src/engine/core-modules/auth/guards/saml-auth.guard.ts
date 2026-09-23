@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -34,9 +35,11 @@ export class SamlAuthGuard extends AuthGuard('saml') {
       | null = null;
 
     try {
-      identityProvider = await this.ssoService.findSsoIdentityProviderById(
-        request.params.identityProviderId ?? '',
-      );
+      const { identityProviderId } = request.params;
+
+      identityProvider = isDefined(identityProviderId)
+        ? await this.ssoService.findSsoIdentityProviderById(identityProviderId)
+        : null;
 
       if (!identityProvider) {
         throw new AuthException(

@@ -28,7 +28,7 @@ export const validateFilePath = ({
   const segments = resourcePath.split('/');
   const filename = segments[segments.length - 1];
 
-  if (!filename.includes('.')) {
+  if (!filename?.includes('.')) {
     return {
       isValid: false,
       error: t`Filename must have an extension`,

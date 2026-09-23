@@ -315,7 +315,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
         counters: [allowanceCounter],
       });
 
-      return remaining;
+      return remaining ?? null;
     } catch (error) {
       return this.admitOnFailure({ error, workspaceId, admitted: null });
     }

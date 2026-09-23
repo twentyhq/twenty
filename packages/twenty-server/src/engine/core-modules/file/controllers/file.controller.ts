@@ -64,7 +64,7 @@ export class FileController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getApplicationRegistrationAsset(
     @Res() res: Response,
-    @Req() req: Request,
+    @Req() req: Request<{ path: string[] }>,
     @Param('applicationRegistrationId') applicationRegistrationId: string,
   ) {
     const filepath = join(...req.params.path);
@@ -124,7 +124,7 @@ export class FileController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getPublicAssets(
     @Res() res: Response,
-    @Req() req: Request,
+    @Req() req: Request<{ path: string[] }>,
     @Param('workspaceId') workspaceId: string,
     @Param('applicationId')
     applicationId: string,
