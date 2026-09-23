@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 
@@ -20,17 +21,17 @@ export class UpdateValidationRuleInputUpdates {
   errorFieldMetadataId?: string | null;
 
   @IsString()
-  @IsOptional()
+  @ValidateIf((_, value) => value !== undefined)
   @Field({ nullable: true })
   expression?: string;
 
   @IsString()
-  @IsOptional()
+  @ValidateIf((_, value) => value !== undefined)
   @Field({ nullable: true })
   message?: string;
 
   @IsBoolean()
-  @IsOptional()
+  @ValidateIf((_, value) => value !== undefined)
   @Field({ nullable: true })
   isActive?: boolean;
 }
