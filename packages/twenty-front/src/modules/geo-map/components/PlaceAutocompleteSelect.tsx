@@ -1,4 +1,3 @@
-import { Tag } from 'twenty-ui/primitives/data-display';
 import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -7,6 +6,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { useMemo, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`

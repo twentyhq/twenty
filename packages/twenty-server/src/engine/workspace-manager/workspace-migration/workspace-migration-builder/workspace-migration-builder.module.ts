@@ -36,6 +36,7 @@ import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
 import { WorkspaceMigrationTimelineActivityTypeActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/workspace-migration-timeline-activity-type-actions-builder.service';
+import { WorkspaceMigrationSettingsMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/workspace-migration-settings-menu-item-actions-builder.service';
 import { WorkspaceMigrationSearchFieldMetadataActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/search-field-metadata/workspace-migration-search-field-metadata-actions.builder.service';
 import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/workspace-migration-builder-validators.module';
 
@@ -80,6 +81,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationApplicationVariableActionsBuilderService,
     WorkspaceMigrationConnectionProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
+    WorkspaceMigrationSettingsMenuItemActionsBuilderService,
     WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
   ],
   exports: [
@@ -117,6 +119,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationApplicationVariableActionsBuilderService,
     WorkspaceMigrationConnectionProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
+    WorkspaceMigrationSettingsMenuItemActionsBuilderService,
     WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
   ],
 })

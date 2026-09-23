@@ -1,5 +1,4 @@
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
-import { styled } from '@linaria/react';
 import {
   type Decorator,
   type Meta,
@@ -7,7 +6,6 @@ import {
 } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
 import { HttpResponse, graphql } from 'msw';
-import { useState, type PropsWithChildren } from 'react';
 import { Context as ResponsiveContext } from 'react-responsive';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
@@ -21,7 +19,6 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
@@ -36,32 +33,13 @@ import {
   EngineComponentKey,
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
+import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 const PINNED_ITEM_WIDTH = 100;
-
-// CI zeroes animation durations, which would immediately dismiss toasts.
-const StyledStoryContainer = styled.div`
-  [role='status'] * {
-    animation: none !important;
-  }
-`;
-
-const ToastStoryContainer = ({ children }: PropsWithChildren) => {
-  const [toastContainer, setToastContainer] = useState<HTMLDivElement | null>(
-    null,
-  );
-
-  return (
-    <StyledStoryContainer ref={setToastContainer}>
-      <AppToaster container={toastContainer} />
-      {children}
-    </StyledStoryContainer>
-  );
-};
 
 const createCommandMenuItem = (
   overrides: Partial<CommandMenuItemFieldsFragment> &

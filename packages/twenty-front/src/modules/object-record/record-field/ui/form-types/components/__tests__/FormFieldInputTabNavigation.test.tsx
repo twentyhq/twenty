@@ -160,42 +160,6 @@ it('tabs through a links field and past its empty secondary links', async () => 
 });
 
 it.each([false, true])(
-  'preserves custom inline-edit Tab navigation (shift: %s)',
-  async (shift) => {
-    const user = userEvent.setup();
-    const onNavigate = jest.fn();
-    render(
-      <>
-        <button>Before</button>
-        <FormFieldInputInnerContainer
-          formFieldInputInstanceId="custom-input"
-          hasRightElement={false}
-        >
-          <TextInput
-            instanceId="custom-input"
-            value="Draft"
-            copyButton={false}
-            onTab={shift ? undefined : onNavigate}
-            onShiftTab={shift ? onNavigate : undefined}
-            isNativeTabNavigationEnabled
-          />
-        </FormFieldInputInnerContainer>
-        <button>After</button>
-      </>,
-    );
-    const input = screen.getByDisplayValue('Draft');
-    await user.click(input);
-    await user.tab({ shift });
-    expect(onNavigate).toHaveBeenCalledWith('Draft');
-    expect(input).toHaveFocus();
-    await user.tab({ shift: !shift });
-    expect(
-      screen.getByRole('button', { name: shift ? 'After' : 'Before' }),
-    ).toHaveFocus();
-  },
-);
-
-it.each([false, true])(
   'keeps Tab inside inputs that do not opt into native navigation (shift: %s)',
   async (shift) => {
     const user = userEvent.setup();

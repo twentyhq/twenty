@@ -99,6 +99,7 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.Agent]: 'Agents',
   [SyncableEntity.ConnectionProvider]: 'Connection providers',
   [SyncableEntity.TimelineActivityType]: 'Timeline activity types',
+  [SyncableEntity.SettingsMenuItem]: 'Settings menu items',
 };
 
 export const ENTITY_ORDER = Object.keys(ENTITY_LABELS) as SyncableEntity[];

@@ -46,7 +46,7 @@ export type TextInputProps = {
   shouldTrim?: boolean;
   disabled?: boolean;
   className?: string;
-  isNativeTabNavigationEnabled?: boolean;
+  isKeyboardAccessible?: boolean;
 };
 
 const getValue = (value: string, shouldTrim: boolean) => {
@@ -73,7 +73,7 @@ export const TextInput = ({
   shouldTrim = true,
   disabled,
   className,
-  isNativeTabNavigationEnabled,
+  isKeyboardAccessible,
 }: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
@@ -98,7 +98,7 @@ export const TextInput = ({
     onClickOutside,
     onTab,
     onShiftTab,
-    isNativeTabNavigationEnabled,
+    isKeyboardAccessible,
   });
 
   return (

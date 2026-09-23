@@ -1,15 +1,15 @@
-import { t } from '@lingui/core/macro';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
+import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { IconX } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
+import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledQueueContainer = styled(StyledAiChatContentContainer)`

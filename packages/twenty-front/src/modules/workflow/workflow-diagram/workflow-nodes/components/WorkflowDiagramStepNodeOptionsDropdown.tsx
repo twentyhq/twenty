@@ -10,8 +10,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDotsVertical } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
+import { IconDotsVertical } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOptionsButtonContainer = styled.div`

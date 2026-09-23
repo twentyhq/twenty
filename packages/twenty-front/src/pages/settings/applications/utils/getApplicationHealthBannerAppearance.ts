@@ -1,3 +1,4 @@
+import { type CalloutVariant } from 'twenty-ui/components';
 import {
   IconAlertCircle,
   IconAlertTriangle,
@@ -6,7 +7,6 @@ import {
   IconInfoCircle,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { type CalloutVariant } from 'twenty-ui/primitives/feedback';
 import { ApplicationHealthStatus } from '~/generated-metadata/graphql';
 
 type ApplicationHealthBannerAppearance = {

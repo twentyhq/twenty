@@ -6,11 +6,7 @@ import { useWorkflowRunStepInfo } from '@/workflow/workflow-steps/hooks/useWorkf
 import { getWorkflowRunStepInfoToDisplayAsOutput } from '@/workflow/workflow-steps/utils/getWorkflowRunStepInfoToDisplayAsOutput';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type GetJsonNodeHighlighting,
-  isTwoFirstDepths,
-  JsonTree,
-} from 'twenty-ui/primitives/json-visualizer';
+import { type GetJsonNodeHighlighting, JsonTree } from 'twenty-ui/components';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
@@ -52,7 +48,6 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
       <WorkflowRunStepJsonContainer>
         <JsonTree
           value={stepInfoToDisplay ?? t`No output available`}
-          shouldExpandNodeInitially={isTwoFirstDepths}
           emptyArrayLabel={t`Empty Array`}
           emptyObjectLabel={t`Empty Object`}
           emptyStringLabel={t`[empty string]`}

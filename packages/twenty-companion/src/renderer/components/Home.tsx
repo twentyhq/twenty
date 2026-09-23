@@ -1,4 +1,4 @@
-import { Section } from '@ui/components/Section/Section';
+import { Section } from '@ui/components/layout/Section/Section';
 import { useNow } from '../hooks/useNow';
 import { MeetingRow } from './MeetingRow';
 import { i18n } from '@lingui/core';

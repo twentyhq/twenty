@@ -9,6 +9,7 @@ import { type Repository } from 'typeorm';
 
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -47,6 +48,7 @@ export class AppBillingService {
 
   constructor(
     private readonly usageRecorderService: UsageRecorderService,
+    private readonly billingUsageService: BillingUsageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -76,6 +78,22 @@ export class AppBillingService {
         `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${operationType})`,
     );
 
+    const spenders = {
+      userWorkspaceId: attributedUserWorkspaceId,
+      applicationId,
+    };
+
+    await this.billingUsageService.consumeUsageQuota({
+      workspaceId,
+      resourceType: UsageResourceType.APP,
+      operationType,
+      spenders,
+      cost: {
+        creditsUsedMicro: charge.creditsUsedMicro,
+        quantity: charge.quantity,
+      },
+    });
+
     await this.usageRecorderService.record(workspaceId, [
       {
         resourceType: UsageResourceType.APP,
@@ -85,7 +103,7 @@ export class AppBillingService {
         unit,
         resourceId: applicationId,
         resourceContext: charge.operation ?? charge.resourceContext ?? null,
-        spenders: { userWorkspaceId: attributedUserWorkspaceId, applicationId },
+        spenders,
       },
     ]);
   }

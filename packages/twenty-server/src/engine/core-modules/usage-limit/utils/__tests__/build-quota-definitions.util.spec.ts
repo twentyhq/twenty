@@ -8,7 +8,11 @@ describe('buildQuotaDefinitions', () => {
         resourceType,
         limitKind,
       ]),
-    ).toEqual([[UsageResourceType.AI, 'quota']]);
+    ).toEqual([
+      [UsageResourceType.AI, 'quota'],
+      [UsageResourceType.WORKFLOW, 'quota'],
+      [UsageResourceType.LOGIC_FUNCTION, 'quota'],
+    ]);
   });
 
   it('carries the allow lists a form needs to offer a scope', () => {

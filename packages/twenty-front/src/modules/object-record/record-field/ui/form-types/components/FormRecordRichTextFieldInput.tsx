@@ -14,7 +14,7 @@ import {
 } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { Field } from 'twenty-ui/primitives/input';
 
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';

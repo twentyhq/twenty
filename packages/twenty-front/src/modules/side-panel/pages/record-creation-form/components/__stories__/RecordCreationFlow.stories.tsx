@@ -50,6 +50,7 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -349,6 +350,73 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
 export const SubmitWithButton: Story = {
   play: ({ canvasElement }) => submitCompany(canvasElement),
 };
+
+const REJECTED_COMPANY_NAME = 'Taken name';
+
+export const RetryAfterFailedCreation: Story = {
+  decorators: [
+    (Story) => (
+      <ToastStoryContainer>
+        <Story />
+      </ToastStoryContainer>
+    ),
+  ],
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.mutation('CreateOneCompany', ({ variables }) => {
+          if (variables.input.name !== REJECTED_COMPANY_NAME) {
+            return;
+          }
+          createCompanyRequest(variables.input);
+          return HttpResponse.json({
+            errors: [
+              {
+                message: 'Duplicate company name',
+                extensions: {
+                  userFriendlyMessage: 'This company name is already taken',
+                },
+              },
+            ],
+          });
+        }),
+        ...meta.parameters.msw.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: /Create company/ }),
+    );
+    const nameInput = await canvas.findByRole('textbox');
+    await userEvent.click(nameInput);
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, REJECTED_COMPANY_NAME);
+    const createButton = canvas.getByTestId(
+      'record-creation-form-create-button',
+    );
+    await userEvent.click(createButton);
+
+    await expect(
+      await canvas.findByText('This company name is already taken'),
+    ).toBeVisible();
+    await waitFor(() => expect(createButton).toBeEnabled());
+    await expect(nameInput).toHaveTextContent(REJECTED_COMPANY_NAME);
+    await expect(onRecordCreated).not.toHaveBeenCalled();
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'Acme');
+    await userEvent.click(createButton);
+
+    await expect(
+      await canvas.findByText('Created Acme with 10 employees'),
+    ).toBeVisible();
+    await expect(createCompanyRequest).toHaveBeenCalledTimes(2);
+    await expect(onRecordCreated).toHaveBeenCalledTimes(1);
+  },
+};
+
 export const Cancel: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

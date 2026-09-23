@@ -1,5 +1,8 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
 import { RecordCreationFormFocusEffect } from '@/object-record/record-form/components/RecordCreationFormFocusEffect';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -11,14 +14,13 @@ import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/u
 import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecordCreationFormFieldEscape } from '@/side-panel/pages/record-creation-form/hooks/useRecordCreationFormFieldEscape';
-import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
+import { useRecordCreationFormFieldEscape } from '@/side-panel/pages/record-creation-form/hooks/useRecordCreationFormFieldEscape';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -26,7 +28,7 @@ import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
@@ -76,10 +78,12 @@ const SidePanelRecordCreationForm = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const formFieldsRef = useRef<HTMLDivElement>(null);
+  const { theme } = useContext(ThemeContext);
+  const [formFieldsElement, setFormFieldsElement] =
+    useState<HTMLDivElement | null>(null);
+  const handleFieldEscape = useRecordCreationFormFieldEscape();
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
-  const { goBackFromSidePanel } = useSidePanelHistory();
 
   const [recordCreationFormDraft, setRecordCreationFormDraft] =
     useAtomComponentState(recordCreationFormDraftComponentState);
@@ -107,21 +111,24 @@ const SidePanelRecordCreationForm = ({
     }));
   };
 
-  const handleCreateClick = () => {
+  const handleCreateClick = async () => {
     if (isSubmitting) {
       return;
     }
 
     setIsSubmitting(true);
-    settleRecordCreationDraft({
-      requestId,
-      draftRecord: computeRecordFormCreateRecordInput({
-        draftRecord,
-        fieldMetadataItems: recordFormFieldMetadataItems,
-        objectMetadataItems,
-      }),
-    });
-    goBackFromSidePanel();
+    try {
+      await settleRecordCreationDraft({
+        requestId,
+        draftRecord: computeRecordFormCreateRecordInput({
+          draftRecord,
+          fieldMetadataItems: recordFormFieldMetadataItems,
+          objectMetadataItems,
+        }),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const containerRef = useHotkeysOnFocusedElement({
@@ -131,15 +138,27 @@ const SidePanelRecordCreationForm = ({
     dependencies: [currentFocusId, handleCreateClick],
   });
 
-  const handleFieldEscape = useRecordCreationFormFieldEscape();
-
   return (
     <StyledContainer ref={containerRef}>
-      <StyledContent ref={formFieldsRef}>
+      <PageCardHeader
+        title={
+          <HeaderIdentifier
+            icon={
+              <ObjectMetadataIcon
+                objectMetadataItem={objectMetadataItem}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
+            title={t`Create ${objectMetadataItem.labelSingular}`}
+          />
+        }
+      />
+      <StyledContent ref={setFormFieldsElement}>
         <RecordCreationFormFocusEffect
           requestId={requestId}
           fieldCount={recordFormFieldMetadataItems.length}
-          formFieldsRef={formFieldsRef}
+          containerElement={formFieldsElement}
         />
         <FormFieldEscapeContext.Provider value={handleFieldEscape}>
           <RecordFormFieldInputs
@@ -158,7 +177,7 @@ const SidePanelRecordCreationForm = ({
             startIcon={<IconPlus />}
             size="sm"
             onClick={handleCreateClick}
-            disabled={isSubmitting}
+            loading={isSubmitting}
             hotkeys={[getOsControlSymbol(), '⏎']}
             data-testid="record-creation-form-create-button"
             variant="solid"
