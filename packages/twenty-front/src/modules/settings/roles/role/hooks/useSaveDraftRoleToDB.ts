@@ -7,15 +7,18 @@ import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permi
 import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useStore } from 'jotai';
 import { getOperationName } from '~/utils/getOperationName';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
   type RowLevelPermissionPredicateGroupLogicalOperator,
   type RowLevelPermissionPredicateOperand,
   type Role,
   CreateOneRoleDocument,
+  GetRolesDocument,
   UpdateOneRoleDocument,
   UpsertFieldPermissionsDocument,
   UpsertObjectPermissionsDocument,
@@ -47,6 +50,9 @@ export const useSaveDraftRoleToDB = ({
   isCreateMode: boolean;
   onSuccess?: (savedRoleId: string) => void | Promise<void>;
 }) => {
+  const apolloClient = useApolloClient();
+  const store = useStore();
+  const routedFlowStateScopeId = useRoutedFlowStateScopeId();
   const [createRole] = useMutation(CreateOneRoleDocument);
   const [updateRole] = useMutation(UpdateOneRoleDocument);
   const [upsertPermissionFlags] = useMutation(UpsertPermissionFlagsDocument);
@@ -175,7 +181,6 @@ export const useSaveDraftRoleToDB = ({
               ) ?? [],
           },
         },
-        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
       });
     }
 
@@ -204,7 +209,6 @@ export const useSaveDraftRoleToDB = ({
             },
           },
         },
-        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
       });
     }
 
@@ -225,7 +229,6 @@ export const useSaveDraftRoleToDB = ({
               })) ?? [],
           },
         },
-        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
       });
     }
 
@@ -243,7 +246,6 @@ export const useSaveDraftRoleToDB = ({
               })) ?? [],
           },
         },
-        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
       });
     }
 
@@ -467,7 +469,32 @@ export const useSaveDraftRoleToDB = ({
     if (isCreateMode) {
       await createNewRole();
     } else {
+      const draftRoleAtom = settingsDraftRoleFamilyState.getAtom(
+        roleId,
+        routedFlowStateScopeId,
+      );
+      const submittedDraftRole = store.get(draftRoleAtom);
+
       await updateExistingRole();
+
+      const { data } = await apolloClient.query({
+        query: GetRolesDocument,
+        fetchPolicy: 'network-only',
+      });
+      const savedRole = data?.getRoles.find((role) => role.id === roleId);
+
+      if (isDefined(savedRole)) {
+        const unsavedChanges = getDirtyFields(
+          store.get(draftRoleAtom),
+          submittedDraftRole,
+        );
+
+        store.set(
+          settingsPersistedRoleFamilyState.atomFamily(roleId),
+          savedRole,
+        );
+        store.set(draftRoleAtom, { ...savedRole, ...unsavedChanges });
+      }
     }
   };
 

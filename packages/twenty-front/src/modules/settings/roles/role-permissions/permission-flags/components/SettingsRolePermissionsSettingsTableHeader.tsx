@@ -44,8 +44,9 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
   );
 
   return (
-    <TableRow gridAutoColumns="3fr 4fr 24px">
+    <TableRow gridAutoColumns="3fr 2fr 4fr 24px">
       <TableHeader>{t`Name`}</TableHeader>
+      <TableHeader>{t`App`}</TableHeader>
       <TableHeader>{t`Description`}</TableHeader>
       <TableHeader
         align="right"
@@ -58,19 +59,35 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
             someSettingsPermissionsEnabled && !allSettingsPermissionsEnabled
           }
           disabled={!isEditable}
-          aria-label={t`Toggle all settings permissions`}
+          aria-label={t`Toggle all permissions`}
           onCheckedChange={() => {
             const newValue = !allSettingsPermissionsEnabled;
+            const currentPermissions = settingsDraftRole.permissionFlags ?? [];
+            const otherPermissions = currentPermissions.filter(
+              (permissionFlag) =>
+                !settingsPermissionsConfig.some(
+                  (permission) => permission.key === permissionFlag.flag,
+                ),
+            );
 
             setSettingsDraftRole({
               ...settingsDraftRole,
-              permissionFlags: newValue
-                ? settingsPermissionsConfig.map((permission) => ({
-                    id: v4(),
-                    flag: permission.key,
-                    roleId,
-                  }))
-                : [],
+              permissionFlags: [
+                ...otherPermissions,
+                ...(newValue
+                  ? settingsPermissionsConfig.map(
+                      (permission) =>
+                        currentPermissions.find(
+                          (permissionFlag) =>
+                            permissionFlag.flag === permission.key,
+                        ) ?? {
+                          id: v4(),
+                          flag: permission.key,
+                          roleId,
+                        },
+                    )
+                  : []),
+              ],
             });
           }}
         />
