@@ -23,7 +23,7 @@ import {
   EnterpriseException,
   EnterpriseExceptionCode,
 } from 'src/engine/core-modules/enterprise/enterprise.exception';
-import { ENTERPRISE_VALIDITY_TOKEN_RELOAD_INTERVAL_MS } from 'src/engine/core-modules/enterprise/constants/enterprise-validity-token-reload-interval.constant';
+import { isValidityTokenReloadDue } from 'src/engine/core-modules/enterprise/utils/is-validity-token-reload-due.util';
 import {
   type EnterpriseInstanceMetadata,
   type EnterpriseKeyPayload,
@@ -46,7 +46,8 @@ export class EnterprisePlanService implements OnModuleInit {
   private cachedValidityPayload: EnterpriseValidityPayload | null = null;
   private cachedKeyPayload: EnterpriseKeyPayload | null = null;
   private lastRefreshRejectionCode: string | null = null;
-  private lastValidityTokenLoadStartedAt = 0;
+  private lastValidityTokenLoadStartedAt: number | null = null;
+  private didLastValidityTokenLoadFail = false;
 
   static readonly ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE =
     'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER';
@@ -118,11 +119,17 @@ export class EnterprisePlanService implements OnModuleInit {
       } else {
         this.cachedValidityPayload = null;
       }
+
+      this.didLastValidityTokenLoadFail = false;
     } catch (error) {
+      // A read that failed says nothing about the license, so the payload in
+      // hand stands until a later read succeeds: a database hiccup must not
+      // disable enterprise features, SSO included.
+      this.didLastValidityTokenLoadFail = true;
+
       this.logger.warn(
-        `Failed to load validity token: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to load validity token: ${error instanceof Error ? error.message : 'Unknown error'}. Keeping the token in hand.`,
       );
-      this.cachedValidityPayload = null;
     }
   }
 
@@ -169,15 +176,18 @@ export class EnterprisePlanService implements OnModuleInit {
   // included. Kept off the read path: the reload runs in the background and
   // the next read picks it up.
   private reloadValidityTokenIfStale(): void {
-    const millisecondsSinceLastLoad =
-      Date.now() - this.lastValidityTokenLoadStartedAt;
+    const isReloadDue = isValidityTokenReloadDue({
+      lastLoadStartedAt: this.lastValidityTokenLoadStartedAt,
+      didLastLoadFail: this.didLastValidityTokenLoadFail,
+      now: Date.now(),
+    });
 
-    if (
-      millisecondsSinceLastLoad < ENTERPRISE_VALIDITY_TOKEN_RELOAD_INTERVAL_MS
-    ) {
+    if (!isReloadDue) {
       return;
     }
 
+    // loadValidityToken stamps the clock before its first await, so a second
+    // synchronous caller cannot start a competing read.
     void this.loadValidityToken();
   }
 
