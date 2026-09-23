@@ -24,6 +24,24 @@ const StyledAppIconContainer = styled.span`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
+const getCommandMenuDropdownLoader = ({
+  shouldShowLoader,
+  progress,
+}: {
+  shouldShowLoader: boolean;
+  progress: number | undefined;
+}) => {
+  if (!shouldShowLoader) {
+    return undefined;
+  }
+
+  if (!isDefined(progress)) {
+    return <Loader />;
+  }
+
+  return <CommandListItemLoader progress={progress} />;
+};
+
 export const CommandMenuDropdownActionItem = ({
   item,
 }: {
@@ -45,14 +63,12 @@ export const CommandMenuDropdownActionItem = ({
   const { applicationChipData } = useApplicationChipData({
     applicationId: item.applicationId,
   });
-  const loaderComponent =
-    isAsyncCsvExportEnabled && disabled && showDisabledLoader ? (
-      isDefined(progress) ? (
-        <CommandListItemLoader progress={progress} />
-      ) : (
-        <Loader />
-      )
-    ) : undefined;
+  const shouldShowLoader =
+    isAsyncCsvExportEnabled && disabled && showDisabledLoader;
+  const loaderComponent = getCommandMenuDropdownLoader({
+    shouldShowLoader,
+    progress,
+  });
 
   return (
     <Dropdown.ActionItem
