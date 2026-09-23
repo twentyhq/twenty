@@ -23,6 +23,7 @@ import {
   EnterpriseException,
   EnterpriseExceptionCode,
 } from 'src/engine/core-modules/enterprise/enterprise.exception';
+import { ENTERPRISE_VALIDITY_TOKEN_RELOAD_INTERVAL_MS } from 'src/engine/core-modules/enterprise/constants/enterprise-validity-token-reload-interval.constant';
 import {
   type EnterpriseInstanceMetadata,
   type EnterpriseKeyPayload,
@@ -45,6 +46,7 @@ export class EnterprisePlanService implements OnModuleInit {
   private cachedValidityPayload: EnterpriseValidityPayload | null = null;
   private cachedKeyPayload: EnterpriseKeyPayload | null = null;
   private lastRefreshRejectionCode: string | null = null;
+  private lastValidityTokenLoadStartedAt = 0;
 
   static readonly ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE =
     'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER';
@@ -84,6 +86,10 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   private async loadValidityToken(): Promise<void> {
+    // Stamped before the first await so concurrent readers do not each start
+    // their own reload.
+    this.lastValidityTokenLoadStartedAt = Date.now();
+
     try {
       const dbToken = await this.appTokenRepository.findOne({
         where: {
@@ -156,7 +162,28 @@ export class EnterprisePlanService implements OnModuleInit {
     return isDefined(this.cachedKeyPayload);
   }
 
+  // The token is renewed by the cron running in the worker process, which
+  // writes it to the database. Without this reload the server process would
+  // keep the copy it read at boot, and treat a renewed license as expired once
+  // that copy reached its expiry - turning enterprise features off, SSO
+  // included. Kept off the read path: the reload runs in the background and
+  // the next read picks it up.
+  private reloadValidityTokenIfStale(): void {
+    const millisecondsSinceLastLoad =
+      Date.now() - this.lastValidityTokenLoadStartedAt;
+
+    if (
+      millisecondsSinceLastLoad < ENTERPRISE_VALIDITY_TOKEN_RELOAD_INTERVAL_MS
+    ) {
+      return;
+    }
+
+    void this.loadValidityToken();
+  }
+
   hasValidEnterpriseValidityToken(): boolean {
+    this.reloadValidityTokenIfStale();
+
     if (isDefined(this.cachedValidityPayload)) {
       const now = Math.floor(Date.now() / 1000);
 
