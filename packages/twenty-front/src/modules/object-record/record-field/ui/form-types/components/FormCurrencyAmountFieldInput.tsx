@@ -1,7 +1,6 @@
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
-import { isNumber } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { type ComponentProps } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import {
   convertCurrencyAmountToCurrencyMicros,
@@ -16,7 +15,11 @@ type FormCurrencyAmountFieldInputProps = Pick<
 const getAmountFromAmountMicros = (
   amountMicros: FormCurrencyAmountFieldInputProps['defaultValue'],
 ) => {
-  if (!isDefined(amountMicros) || amountMicros === '') {
+  if (isNumber(amountMicros)) {
+    return convertCurrencyMicrosToCurrencyAmount(amountMicros);
+  }
+
+  if (!isNonEmptyString(amountMicros)) {
     return '';
   }
 
