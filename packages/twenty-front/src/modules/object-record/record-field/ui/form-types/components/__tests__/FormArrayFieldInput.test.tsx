@@ -47,10 +47,22 @@ it.each([
 
     expect(screen.getByRole('button', { name: nextButtonName })).toHaveFocus();
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenCalledWith(['Draft item']);
+    expect(onChange).toHaveBeenCalledWith([' Draft item ']);
     expect(screen.getByText('Draft item')).toBeInTheDocument();
   },
 );
+
+it('keeps the surrounding whitespace of the first item added with Enter', async () => {
+  const user = userEvent.setup();
+  const { onChange, itemInput } = renderArrayField();
+  await user.click(itemInput);
+  await user.type(itemInput, '  Draft item ');
+
+  await user.keyboard('{Enter}');
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(['  Draft item ']);
+});
 
 it('adds the typed first item when the array field loses focus', async () => {
   const user = userEvent.setup();

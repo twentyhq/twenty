@@ -25,7 +25,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
@@ -157,17 +157,16 @@ export const FormArrayFieldInput = ({
   };
 
   const commitFirstItemDraft = () => {
-    const sanitizedDraft = newItemDraftValue.trim();
-
+    // Keep the item as typed: consumers decide whether whitespace matters
     if (
       isLimitReached ||
       draftValue.type !== 'static' ||
-      sanitizedDraft === ''
+      !isNonEmptyString(newItemDraftValue.trim())
     ) {
       return false;
     }
 
-    const updatedItems = [...draftValue.value, sanitizedDraft];
+    const updatedItems = [...draftValue.value, newItemDraftValue];
 
     setDraftValue({
       type: 'static',
