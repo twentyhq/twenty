@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
@@ -75,7 +75,7 @@ describe('recordShare object', () => {
         expectToFail: false,
       });
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         findManyOperationFactory({
           objectMetadataSingularName: 'recordShare',
           objectMetadataPluralName: 'recordShares',
@@ -89,7 +89,7 @@ describe('recordShare object', () => {
   );
 
   it('refuses creation through the GraphQL API even for an admin', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'recordShare',
         gqlFields: 'id',

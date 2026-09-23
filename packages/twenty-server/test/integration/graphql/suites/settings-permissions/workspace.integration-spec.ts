@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -37,7 +37,7 @@ describe('workspace permissions', () => {
       }
     `;
 
-    const response = await makeMetadataAPIRequest({ query });
+    const response = await makeMetadataApiRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
   });
@@ -59,7 +59,7 @@ describe('workspace permissions', () => {
       }
     `;
 
-    await makeMetadataAPIRequest({ query: restoreQuery });
+    await makeMetadataApiRequest({ query: restoreQuery });
   });
 
   describe('workspace permissions', () => {
@@ -369,7 +369,7 @@ describe('workspace permissions', () => {
           'base64',
         );
 
-        const uploadResponse = await makeMetadataAPIRequestWithFileUpload(
+        const uploadResponse = await makeMetadataApiRequestWithFileUpload(
           {
             query: uploadWorkspaceLogoMutation,
             variables: { file: null },
@@ -398,7 +398,7 @@ describe('workspace permissions', () => {
           }
         `;
 
-        const workspaceResponse = await makeMetadataAPIRequest({
+        const workspaceResponse = await makeMetadataApiRequest({
           query: getWorkspaceQuery,
         });
 
@@ -411,7 +411,7 @@ describe('workspace permissions', () => {
           'base64',
         );
 
-        const response = await makeMetadataAPIRequestWithFileUpload(
+        const response = await makeMetadataApiRequestWithFileUpload(
           {
             query: uploadWorkspaceLogoMutation,
             variables: { file: null },

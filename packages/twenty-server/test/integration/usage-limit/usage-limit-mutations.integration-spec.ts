@@ -1,4 +1,4 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
@@ -69,7 +69,7 @@ describe('Usage limit mutations', () => {
   let redis: Awaited<ReturnType<typeof createClient>>;
 
   const createUsageLimitRequest = (overrides: Record<string, unknown> = {}) =>
-    makeMetadataAPIRequest({
+    makeMetadataApiRequest({
       query: CREATE_USAGE_LIMIT,
       variables: { input: buildPayload(overrides) },
     });
@@ -78,13 +78,13 @@ describe('Usage limit mutations', () => {
     id: string,
     overrides: Record<string, unknown> = {},
   ) =>
-    makeMetadataAPIRequest({
+    makeMetadataApiRequest({
       query: UPDATE_USAGE_LIMIT,
       variables: { input: { id, payload: buildPayload(overrides) } },
     });
 
   const findQuotasWithConsumption = async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: USAGE_QUOTAS_WITH_CONSUMPTION,
     });
 
@@ -224,7 +224,7 @@ describe('Usage limit mutations', () => {
     it('removes the limit from the list', async () => {
       const usageLimitId = await createUsageLimit();
 
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: DELETE_USAGE_LIMIT,
         variables: { usageLimitId },
       });
@@ -234,7 +234,7 @@ describe('Usage limit mutations', () => {
     });
 
     it('reports nothing deleted for an unknown id', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: DELETE_USAGE_LIMIT,
         variables: { usageLimitId: '20202020-0000-4000-8000-000000000000' },
       });

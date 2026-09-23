@@ -1,5 +1,5 @@
 import { uploadWorkspaceLogoMutation } from 'test/integration/graphql/utils/upload-workspace-logo-mutation.util';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { makeMetadataApiRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -19,7 +19,7 @@ type SeededWorkspaceLogo = {
 };
 
 export const seedWorkspaceLogo = async (): Promise<SeededWorkspaceLogo> => {
-  const response = await makeMetadataAPIRequestWithFileUpload(
+  const response = await makeMetadataApiRequestWithFileUpload(
     {
       query: uploadWorkspaceLogoMutation,
       variables: { file: null },

@@ -5,9 +5,9 @@ import { randomUUID } from 'node:crypto';
 import gql from 'graphql-tag';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
@@ -239,7 +239,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
 
     await deleteRecordsByIds('recordShare', recordShareIds);
     await setObjectReadability(objectMetadataId, MetadataReadability.OPEN);
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -272,7 +272,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should give the creating member a FULL owner row when no shareWith is passed', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperation({ data: { id: recordId, name: 'owner only' } }),
       );
 
@@ -289,7 +289,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should drop the rows of a destroyed record whose id is reused', async () => {
       const recordId = trackRecordId();
 
-      const firstResponse = await makeGraphqlAPIRequest(
+      const firstResponse = await makeGraphqlApiRequest(
         createOneOperation({
           data: { id: recordId, name: 'first record with this id' },
           shareWith: [
@@ -301,7 +301,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       expect(firstResponse.body.errors).toBeUndefined();
       expect(await findRecordShares(recordId)).toHaveLength(2);
 
-      const destroyResponse = await makeGraphqlAPIRequest(
+      const destroyResponse = await makeGraphqlApiRequest(
         destroyManyOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           objectMetadataPluralName: OBJECT_PLURAL,
@@ -313,7 +313,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       expect(destroyResponse.body.errors).toBeUndefined();
       expect(await findRecordShares(recordId)).toHaveLength(2);
 
-      const secondResponse = await makeGraphqlAPIRequest(
+      const secondResponse = await makeGraphqlApiRequest(
         createOneOperation({
           data: { id: recordId, name: 'second record with this id' },
         }),
@@ -330,7 +330,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should treat a null shareWith as omitted for a member', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperation({
           data: { id: recordId, name: 'null shareWith' },
           shareWith: null,
@@ -348,7 +348,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should refuse a shareWith naming the same principal twice', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperation({
           data: { id: recordId, name: 'duplicate principal' },
           shareWith: [
@@ -367,7 +367,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should add a MANUAL role row next to the owner row', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperation({
           data: { id: recordId, name: 'shared with member role' },
           shareWith: [
@@ -399,7 +399,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should reject an api key create without shareWith', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
+      const response = await makeGraphqlApiRequestWithApiKey(
         createOneOperation({ data: { id: recordId, name: 'api key' } }),
       );
 
@@ -413,7 +413,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should write an EVERYONE row next to the api key role row for an api key create sharing with everyone', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
+      const response = await makeGraphqlApiRequestWithApiKey(
         createOneOperation({
           data: { id: recordId, name: 'api key shared with everyone' },
           shareWith: [
@@ -444,7 +444,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should keep the api key role at FULL when shareWith names it at a lower level', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
+      const response = await makeGraphqlApiRequestWithApiKey(
         createOneOperation({
           data: { id: recordId, name: 'api key shared with its own role' },
           shareWith: [
@@ -470,7 +470,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should let an api key that shared a record with a member only read and update it', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
+      const response = await makeGraphqlApiRequestWithApiKey(
         createOneOperation({
           data: { id: recordId, name: 'api key shared with jony only' },
           shareWith: [
@@ -500,7 +500,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       );
       expect(await findRecordShares(recordId)).toHaveLength(2);
 
-      const apiKeyReadResponse = await makeGraphqlAPIRequestWithApiKey(
+      const apiKeyReadResponse = await makeGraphqlApiRequestWithApiKey(
         findManyOperation(recordId),
       );
 
@@ -511,7 +511,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
         ),
       ).toEqual([recordId]);
 
-      const apiKeyUpdateResponse = await makeGraphqlAPIRequestWithApiKey(
+      const apiKeyUpdateResponse = await makeGraphqlApiRequestWithApiKey(
         updateOneOperationFactory({
           objectMetadataSingularName: OBJECT_SINGULAR,
           gqlFields: 'id name',
@@ -526,7 +526,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
         name: 'renamed by api key',
       });
 
-      const jonyReadResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const jonyReadResponse = await makeGraphqlApiRequestWithMemberRole(
         findManyOperation(recordId),
       );
 
@@ -544,7 +544,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
 
       createdPersonIds.push(personId);
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOnePersonWithNestedRecordOperation({
           personId,
           nestedRecord: { id: nestedRecordId, name: 'nested by member' },
@@ -569,7 +569,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
 
       createdPersonIds.push(personId);
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
+      const response = await makeGraphqlApiRequestWithApiKey(
         createOnePersonWithNestedRecordOperation({
           personId,
           nestedRecord: { id: nestedRecordId, name: 'nested by api key' },
@@ -605,7 +605,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should write the owner row and the shared row for every record of a createMany', async () => {
       const recordIds = [trackRecordId(), trackRecordId(), trackRecordId()];
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createManyOperation({
           data: recordIds.map((id, index) => ({ id, name: `batch ${index}` })),
           shareWith: [
@@ -643,7 +643,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should reject an entry targeting two principals', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperation({
           data: { id: recordId, name: 'two targets' },
           shareWith: [
@@ -675,7 +675,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should accept an api key create without shareWith and grant everyone FULL access', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
+      const response = await makeGraphqlApiRequestWithApiKey(
         createOneOperation({
           data: { id: recordId, name: 'api key without shareWith' },
         }),
@@ -699,7 +699,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should give the creating member the owner row and everyone FULL access, so the record stays open once the flag turns on', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperation({
           data: { id: recordId, name: 'member with flag off' },
         }),
@@ -731,7 +731,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     it('should ignore shareWith and write no row', async () => {
       const recordId = trackRecordId();
 
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperation({
           data: { id: recordId, name: 'open object' },
           shareWith: [

@@ -16,7 +16,7 @@ import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-f
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { isDefined } from 'twenty-shared/utils';
@@ -318,7 +318,7 @@ describe('enqueueJob (e2e)', () => {
   });
 
   it('rejects requests that do not carry an APPLICATION_ACCESS token', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: ENQUEUE_JOB,
       variables: { input: { logicFunctionUniversalIdentifier } },
     });
@@ -348,7 +348,7 @@ describe('enqueueJob (e2e)', () => {
 
     expect(buildData.executeOneLogicFunction.error).toBeNull();
 
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOB,
         variables: {
@@ -375,7 +375,7 @@ describe('enqueueJob (e2e)', () => {
   it('caps application-requested retries independently from the overall queue budget', async () => {
     const markerPath = join(MARKER_DIRECTORY, 'application-retry-cap.txt');
 
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOB,
         variables: {
@@ -406,7 +406,7 @@ describe('enqueueJob (e2e)', () => {
   it('uses a smaller overall queue budget as the application retry maximum', async () => {
     const markerPath = join(MARKER_DIRECTORY, 'queue-retry-cap.txt');
 
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOB,
         variables: {
@@ -433,7 +433,7 @@ describe('enqueueJob (e2e)', () => {
   }, 60_000);
 
   it('rejects a logic function that belongs to another application', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOB,
         variables: {
@@ -448,7 +448,7 @@ describe('enqueueJob (e2e)', () => {
   });
 
   it('rejects an unknown logic function', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOB,
         variables: {
@@ -468,7 +468,7 @@ describe('enqueueJob (e2e)', () => {
       join(MARKER_DIRECTORY, 'batch-1.txt'),
     ];
 
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOBS,
         variables: {
@@ -499,7 +499,7 @@ describe('enqueueJob (e2e)', () => {
   });
 
   it('rejects a batch targeting an unknown logic function', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOBS,
         variables: {
@@ -517,7 +517,7 @@ describe('enqueueJob (e2e)', () => {
   });
 
   it('rejects an empty batch', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOBS,
         variables: {
@@ -535,7 +535,7 @@ describe('enqueueJob (e2e)', () => {
     const markerPath = join(MARKER_DIRECTORY, 'job-status.txt');
     const jobId = `job-status-${uuidv4()}`;
 
-    const enqueueResponse = await makeMetadataAPIRequest(
+    const enqueueResponse = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOBS,
         variables: {
@@ -553,7 +553,7 @@ describe('enqueueJob (e2e)', () => {
 
     await waitForAllJobsToFinish();
 
-    const statusResponse = await makeMetadataAPIRequest(
+    const statusResponse = await makeMetadataApiRequest(
       { query: GET_JOBS, variables: { jobIds: [jobId] } },
       customApplicationToken,
     );
@@ -567,7 +567,7 @@ describe('enqueueJob (e2e)', () => {
   });
 
   it('omits unknown job ids instead of failing the whole read', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       { query: GET_JOBS, variables: { jobIds: [uuidv4()] } },
       customApplicationToken,
     );
@@ -587,7 +587,7 @@ describe('enqueueJob (e2e)', () => {
       },
     };
 
-    const firstResponse = await makeMetadataAPIRequest(
+    const firstResponse = await makeMetadataApiRequest(
       { query: ENQUEUE_JOBS, variables },
       customApplicationToken,
     );
@@ -601,7 +601,7 @@ describe('enqueueJob (e2e)', () => {
       expect(existsSync(markerPath)).toBe(true);
     });
 
-    const secondResponse = await makeMetadataAPIRequest(
+    const secondResponse = await makeMetadataApiRequest(
       { query: ENQUEUE_JOBS, variables },
       customApplicationToken,
     );
@@ -620,7 +620,7 @@ describe('enqueueJob (e2e)', () => {
     const markerPath = join(MARKER_DIRECTORY, 'cross-workspace.txt');
     const jobId = `cross-workspace-${uuidv4()}`;
 
-    const enqueueResponse = await makeMetadataAPIRequest(
+    const enqueueResponse = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOBS,
         variables: {
@@ -641,7 +641,7 @@ describe('enqueueJob (e2e)', () => {
       expect(existsSync(markerPath)).toBe(true);
     });
 
-    const ownWorkspaceResponse = await makeMetadataAPIRequest(
+    const ownWorkspaceResponse = await makeMetadataApiRequest(
       { query: GET_JOBS, variables: { jobIds: [jobId] } },
       customApplicationToken,
     );
@@ -652,7 +652,7 @@ describe('enqueueJob (e2e)', () => {
     const otherWorkspaceApplicationToken =
       await createOtherWorkspaceApplicationToken();
 
-    const otherWorkspaceResponse = await makeMetadataAPIRequest(
+    const otherWorkspaceResponse = await makeMetadataApiRequest(
       { query: GET_JOBS, variables: { jobIds: [jobId] } },
       otherWorkspaceApplicationToken,
     );
@@ -664,7 +664,7 @@ describe('enqueueJob (e2e)', () => {
   it('rejects a batch that repeats a caller-supplied job id', async () => {
     const jobId = `duplicate-${uuidv4()}`;
 
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOBS,
         variables: {
@@ -685,7 +685,7 @@ describe('enqueueJob (e2e)', () => {
   });
 
   it('rejects a batch that sets both payloads and jobs', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOBS,
         variables: {
@@ -704,7 +704,7 @@ describe('enqueueJob (e2e)', () => {
   });
 
   it('rejects job options outside of their allowed range', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: ENQUEUE_JOB,
         variables: {

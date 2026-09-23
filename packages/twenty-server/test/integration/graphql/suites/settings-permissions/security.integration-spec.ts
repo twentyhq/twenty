@@ -1,7 +1,7 @@
 import { gql } from 'graphql-tag';
 import request from 'supertest';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -36,7 +36,7 @@ describe('Security permissions', () => {
       }
     `;
 
-    const response = await makeMetadataAPIRequest({ query });
+    const response = await makeMetadataApiRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
   });
@@ -58,7 +58,7 @@ describe('Security permissions', () => {
         }
       `;
 
-    await makeMetadataAPIRequest({ query: restoreQuery });
+    await makeMetadataApiRequest({ query: restoreQuery });
   });
 
   describe('security permissions', () => {
@@ -528,7 +528,7 @@ describe('Security permissions', () => {
           'base64',
         );
 
-        const uploadResponse = await makeMetadataAPIRequestWithFileUpload(
+        const uploadResponse = await makeMetadataApiRequestWithFileUpload(
           {
             query: uploadWorkspaceLogoMutation,
             variables: { file: null },
@@ -557,7 +557,7 @@ describe('Security permissions', () => {
           }
         `;
 
-        const workspaceResponse = await makeMetadataAPIRequest({
+        const workspaceResponse = await makeMetadataApiRequest({
           query: getWorkspaceQuery,
         });
 
@@ -570,7 +570,7 @@ describe('Security permissions', () => {
           'base64',
         );
 
-        const response = await makeMetadataAPIRequestWithFileUpload(
+        const response = await makeMetadataApiRequestWithFileUpload(
           {
             query: uploadWorkspaceLogoMutation,
             variables: { file: null },

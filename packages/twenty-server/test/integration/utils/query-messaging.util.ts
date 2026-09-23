@@ -10,14 +10,14 @@ import { type ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-
 import { type MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { type MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
-type MetadataAPIResponse = {
+type MetadataApiResponse = {
   body: { data: Record<string, unknown>; errors?: { message: string }[] };
 };
 
-export const getDataOrThrow = (response: MetadataAPIResponse) => {
+export const getDataOrThrow = (response: MetadataApiResponse) => {
   if (response.body.errors?.length) {
     throw new Error(
       `Metadata API request failed: ${response.body.errors
@@ -93,7 +93,7 @@ const MESSAGE_CHANNEL_FIELDS = gql`
 `;
 
 export const queryMessageChannels = async (): Promise<MessageChannelDto[]> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query MessageChannelsForTest {
         myMessageChannels {
@@ -114,7 +114,7 @@ export const queryMessageChannel = async ({
   connectedAccountId: string;
   channelId: string;
 }): Promise<MessageChannelDto> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query MessageChannelForTest($connectedAccountId: UUID) {
         myMessageChannels(connectedAccountId: $connectedAccountId) {
@@ -140,7 +140,7 @@ export const queryMessageChannel = async ({
 export const queryMessageFolders = async (
   messageChannelId: string,
 ): Promise<MessageFolderDto[]> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query MessageFoldersForTest($messageChannelId: UUID) {
         myMessageFolders(messageChannelId: $messageChannelId) {
@@ -161,7 +161,7 @@ export const queryMessageFolders = async (
 export const queryCalendarChannels = async (
   connectedAccountId: string,
 ): Promise<CalendarChannelDto[]> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query CalendarChannelsForTest($connectedAccountId: UUID) {
         myCalendarChannels(connectedAccountId: $connectedAccountId) {
@@ -205,7 +205,7 @@ export const queryCalendarChannel = async ({
 export const queryConnectedAccount = async (
   connectedAccountId: string,
 ): Promise<ConnectedAccountDto> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query ConnectedAccountsForTest {
         myConnectedAccounts {
@@ -234,7 +234,7 @@ export const updateMessageChannel = async (
   messageChannelId: string,
   update: MessageChannelUpdate,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation UpdateMessageChannelForTest($input: UpdateMessageChannelInput!) {
         updateMessageChannel(input: $input) {
@@ -257,7 +257,7 @@ export const updateCalendarChannel = async (
   calendarChannelId: string,
   update: CalendarChannelUpdate,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation UpdateCalendarChannelForTest(
         $input: UpdateCalendarChannelInput!
@@ -281,7 +281,7 @@ export const updateCalendarChannel = async (
 export const startChannelSync = async (
   connectedAccountId: string,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation StartChannelSyncForTest($connectedAccountId: UUID!) {
         startChannelSync(connectedAccountId: $connectedAccountId) {
@@ -298,7 +298,7 @@ export const startChannelSync = async (
 export const deleteConnectedAccount = async (
   connectedAccountId: string,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation DeleteConnectedAccountForTest($id: UUID!) {
         deleteConnectedAccount(id: $id) {

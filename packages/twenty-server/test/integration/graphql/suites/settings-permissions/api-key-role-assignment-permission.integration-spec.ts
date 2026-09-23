@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -18,7 +18,7 @@ describe('API key role assignment permission', () => {
   let apiKeyId: string;
 
   const createApiKeyAsJony = (roleId: string) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       {
         query: gql`
           mutation CreateApiKey($input: CreateApiKeyInput!) {
@@ -42,7 +42,7 @@ describe('API key role assignment permission', () => {
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
     adminRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
 
-    const createRoleResponse = await makeMetadataAPIRequest({
+    const createRoleResponse = await makeMetadataApiRequest({
       query: gql`
         mutation CreateOneRole {
           createOneRole(
@@ -63,7 +63,7 @@ describe('API key role assignment permission', () => {
 
     customRoleId = createRoleResponse.body.data.createOneRole.id;
 
-    await makeMetadataAPIRequest({
+    await makeMetadataApiRequest({
       query: gql`
         mutation UpsertPermissionFlags {
           upsertPermissionFlags(
@@ -78,7 +78,7 @@ describe('API key role assignment permission', () => {
       `,
     });
 
-    const createApiKeyResponse = await makeMetadataAPIRequest({
+    const createApiKeyResponse = await makeMetadataApiRequest({
       query: gql`
         mutation CreateApiKey($input: CreateApiKeyInput!) {
           createApiKey(input: $input) {
@@ -134,7 +134,7 @@ describe('API key role assignment permission', () => {
   });
 
   it('denies assigning a role to an API key when the caller lacks ROLES permission', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: gql`
           mutation AssignRoleToApiKey($apiKeyId: UUID!, $roleId: UUID!) {

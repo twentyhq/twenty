@@ -5,7 +5,7 @@ import { generateApplicationToken } from 'test/integration/metadata/suites/appli
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type Manifest } from 'twenty-shared/application';
 import {
   ConnectedAccountProvider,
@@ -225,9 +225,9 @@ describe('app message channels API (e2e)', () => {
   };
 
   const request = (
-    operation: Parameters<typeof makeMetadataAPIRequest>[0],
+    operation: Parameters<typeof makeMetadataApiRequest>[0],
     token = owningApplicationToken,
-  ) => makeMetadataAPIRequest(operation, token);
+  ) => makeMetadataApiRequest(operation, token);
 
   const createChannel = ({
     connectedAccountId = ownConnectionId,

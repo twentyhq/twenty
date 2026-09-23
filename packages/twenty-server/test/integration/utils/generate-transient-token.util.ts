@@ -1,10 +1,10 @@
 import gql from 'graphql-tag';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getDataOrThrow } from 'test/integration/utils/query-messaging.util';
 
 export const generateTransientToken = async (): Promise<string> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation GenerateTransientToken {
         generateTransientToken {

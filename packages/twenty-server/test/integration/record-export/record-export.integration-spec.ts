@@ -21,7 +21,7 @@ import { Readable } from 'node:stream';
 import request from 'supertest';
 import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { upsertContainsRlsPredicate } from 'test/integration/graphql/utils/upsert-contains-rls-predicate.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
@@ -306,7 +306,7 @@ describe('record export lifecycle (integration)', () => {
       await deleteOneRole({ input: { idToDelete: roleId } });
     }
     for (let offset = 0; offset < companies.length; offset += 100) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyManyOperationFactory({
           objectMetadataSingularName: 'company',
           objectMetadataPluralName: 'companies',

@@ -12,8 +12,8 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 // End-to-end write path: creating a record fires an objectEvent through
@@ -33,7 +33,7 @@ describe('Object event write (integration)', () => {
 
     await deleteAllRecords('person');
 
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         query {
           objects(paging: { first: 1000 }) {
@@ -82,7 +82,7 @@ describe('Object event write (integration)', () => {
       );
 
   it('writes an objectEvent row to ClickHouse when a record is created', async () => {
-    const createResponse = await makeGraphqlAPIRequest(
+    const createResponse = await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',

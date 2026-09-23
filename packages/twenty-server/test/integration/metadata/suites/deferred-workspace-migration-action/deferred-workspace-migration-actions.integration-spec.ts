@@ -1,6 +1,6 @@
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -119,7 +119,7 @@ describe('Deferred workspace migration actions', () => {
     });
 
     await expectEventually(async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         findManyOperationFactory({
           objectMetadataSingularName: 'timelineActivity',
           objectMetadataPluralName: 'timelineActivities',

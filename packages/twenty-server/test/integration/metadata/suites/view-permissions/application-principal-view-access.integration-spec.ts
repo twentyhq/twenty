@@ -14,7 +14,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { createViewGroupQueryFactory } from 'test/integration/metadata/suites/view-group/utils/create-view-group-query-factory.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { createViewQueryFactory } from 'test/integration/metadata/suites/view/utils/create-view-query-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
@@ -124,7 +124,7 @@ const createViewAsApplication = ({
   name: string;
   objectMetadataId: string;
 }) =>
-  makeMetadataAPIRequest(
+  makeMetadataApiRequest(
     createViewQueryFactory({
       input: {
         name,
@@ -146,7 +146,7 @@ const createViewGroupAsApplication = ({
   viewId: string;
   fieldValue: string;
 }) =>
-  makeMetadataAPIRequest(
+  makeMetadataApiRequest(
     createViewGroupQueryFactory({
       input: { viewId, fieldValue },
     }),

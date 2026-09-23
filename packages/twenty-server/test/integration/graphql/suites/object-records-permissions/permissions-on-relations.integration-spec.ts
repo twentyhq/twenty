@@ -7,8 +7,8 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithMemberRole as makeGraphqlApiRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
@@ -58,7 +58,7 @@ describe('permissionsOnRelations', () => {
       },
     });
 
-    await makeGraphqlAPIRequest(graphqlOperationForCompanyCreation);
+    await makeGraphqlApiRequest(graphqlOperationForCompanyCreation);
 
     const graphqlOperationForPersonCreation = createOneOperationFactory({
       objectMetadataSingularName: 'person',
@@ -73,7 +73,7 @@ describe('permissionsOnRelations', () => {
       },
     });
 
-    await makeGraphqlAPIRequest(graphqlOperationForPersonCreation);
+    await makeGraphqlApiRequest(graphqlOperationForPersonCreation);
   });
 
   afterAll(async () => {
@@ -132,7 +132,7 @@ describe('permissionsOnRelations', () => {
         `,
     });
 
-    const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithJony(graphqlOperation);
 
     expect(response.body.errors[0].message).toBe(
       PermissionsExceptionMessage.PERMISSION_DENIED,
@@ -168,7 +168,7 @@ describe('permissionsOnRelations', () => {
         `,
     });
 
-    const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithJony(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.people).toBeDefined();
@@ -202,7 +202,7 @@ describe('permissionsOnRelations', () => {
     generatedPersonIds.push(nestedPersonId);
     generatedCompanyIds.push(nestedCompanyId);
 
-    const response = await makeGraphqlAPIRequestWithJony(
+    const response = await makeGraphqlApiRequestWithJony(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: 'id company { id }',
@@ -225,14 +225,14 @@ describe('permissionsOnRelations', () => {
     });
 
     const [personResponse, companyResponse] = await Promise.all([
-      makeGraphqlAPIRequest(
+      makeGraphqlApiRequest(
         findOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: 'id',
           filter: { id: { eq: nestedPersonId } },
         }),
       ),
-      makeGraphqlAPIRequest(
+      makeGraphqlApiRequest(
         findOneOperationFactory({
           objectMetadataSingularName: 'company',
           gqlFields: 'id',
@@ -285,7 +285,7 @@ describe('permissionsOnRelations', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithJony(graphqlOperation);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
