@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type PackageJson } from 'type-fest';
 
 const PACKAGE_VERSION_REGEX =
@@ -22,7 +23,7 @@ export const parseAvailablePackagesFromPackageJsonAndYarnLock = (
     const packageName = match[1];
     const version = match[2];
 
-    if (packageName === undefined || version === undefined) {
+    if (!isDefined(packageName) || !isDefined(version)) {
       continue;
     }
 

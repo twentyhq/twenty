@@ -15,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS } from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const mockS3Send = jest.fn();
 
@@ -365,7 +366,7 @@ describe('S3Driver.move', () => {
     const copyCommands = getCopyCommands();
 
     expect(copyCommands).toHaveLength(1);
-    expect(copyCommands[0].input).toMatchObject({
+    expect(copyCommands[0]?.input).toMatchObject({
       CopySource: 'test-bucket/pending/file.png',
       CopySourceIfMatch: '"etag"',
       Key: 'final/file.png',
@@ -399,8 +400,12 @@ describe('S3Driver.move', () => {
     const copyCommands = getCopyCommands();
 
     expect(copyCommands).toHaveLength(3);
-    expect(copyCommands[0].input.CopySourceIfMatch).toBe('"etag"');
+    expect(copyCommands[0]?.input.CopySourceIfMatch).toBe('"etag"');
+    jestExpectToBeDefined(copyCommands[1]);
+
     expect(copyCommands[1].input.CopySourceIfMatch).toBeUndefined();
+    jestExpectToBeDefined(copyCommands[2]);
+
     expect(copyCommands[2].input.CopySourceIfMatch).toBeUndefined();
   });
 

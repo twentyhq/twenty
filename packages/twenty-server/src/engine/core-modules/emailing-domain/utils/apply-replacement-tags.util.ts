@@ -6,6 +6,6 @@ export const applyReplacementTags = (
 ): string =>
   template.replace(REPLACEMENT_TAG_PATTERN, (match, tagName) =>
     Object.prototype.hasOwnProperty.call(replacements, tagName)
-      ? replacements[tagName]
+      ? (replacements[tagName] ?? match)
       : match,
   );

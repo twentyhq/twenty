@@ -384,11 +384,11 @@ describe('convertMarkdownToBlocknoteBlocks', () => {
 
   it('should give every block a unique id', () => {
     const blocks = convertMarkdownToBlocknoteBlocks('- a\n  - b\n\nc');
-    const nestedBlock = blocks[0].children?.[0];
+    const nestedBlock = blocks[0]?.children?.[0];
 
     expect(nestedBlock).toBeDefined();
 
-    const ids = [blocks[0].id, nestedBlock?.id, blocks[1].id];
+    const ids = [blocks[0]?.id, nestedBlock?.id, blocks[1]?.id];
 
     expect(ids.every((id) => typeof id === 'string')).toBe(true);
     expect(new Set(ids).size).toBe(3);

@@ -57,6 +57,12 @@ export const transformEventBatchToEventPayloads = ({
         eventsSharingAuthContext,
         MAX_EVENTS_PER_TRIGGER_JOB,
       )) {
+        const [firstEventInChunk] = eventsChunk;
+
+        if (!isDefined(firstEventInChunk)) {
+          continue;
+        }
+
         result.push({
           logicFunctionId: logicFunction.id,
           workspaceId: logicFunction.workspaceId,
@@ -64,7 +70,7 @@ export const transformEventBatchToEventPayloads = ({
             ...batchEventInfo,
             events: eventsChunk.map(omitInheritedReadabilityChildRecords),
           },
-          ...buildAuthContext(eventsChunk[0]),
+          ...buildAuthContext(firstEventInChunk),
         });
       }
     }

@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
@@ -59,8 +60,14 @@ export class SamlAuthStrategy extends PassportStrategy(
     super(
       {
         getSamlOptions: (req, callback) => {
+          const { identityProviderId } = req.params;
+
+          if (!isDefined(identityProviderId)) {
+            return callback(new Error('Invalid SAML identity provider'));
+          }
+
           this.ssoService
-            .findSsoIdentityProviderById(req.params.identityProviderId ?? '')
+            .findSsoIdentityProviderById(identityProviderId)
             .then((identityProvider) => {
               if (
                 identityProvider &&

@@ -348,7 +348,7 @@ export class BillingSubscriptionUpdateService {
           currentPhase: toPhaseUpdateParams(refreshedCurrentPhase),
           nextPhase: toPhaseUpdateParams(nextPhase),
           subscriptionCurrentPeriodEnd:
-            updatedStripeSubscription?.items.data[0].current_period_end ??
+            updatedStripeSubscription?.items.data[0]?.current_period_end ??
             Math.floor(subscription.currentPeriodEnd.getTime() / 1000),
         });
       }

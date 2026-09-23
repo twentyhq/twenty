@@ -163,7 +163,7 @@ export class ApplicationFileUploadService {
 
       if (batchResult.success) {
         result.files.push(batchResult.value);
-      } else {
+      } else if (isDefined(file)) {
         result.errors.push({ fileId: file.id, message: batchResult.error });
       }
     });

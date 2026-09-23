@@ -6,6 +6,7 @@ import {
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const WORKFLOW_ID = '11111111-1111-4111-8111-111111111111';
 const TRIGGER_ID = '33333333-3333-4333-8333-333333333333';
@@ -63,7 +64,7 @@ describe('application workflow definitions', () => {
     expect(workflow.workspaceWorkflowId).toBeNull();
     expect(version.workspaceWorkflowVersionId).toBeNull();
     expect(version.status).toBe('ACTIVE');
-    expect(version.steps?.[0].settings.input).toEqual({
+    expect(version.steps?.[0]?.settings.input).toEqual({
       logicFunctionId:
         options.logicFunctionIdByUniversalIdentifier.get(FUNCTION_ID),
       logicFunctionInput: { greeting: 'Before' },
@@ -84,6 +85,8 @@ describe('application workflow definitions', () => {
     };
     const changed = structuredClone(manifest);
     const changedStep = changed.version.steps[0];
+    jestExpectToBeDefined(changedStep);
+
     if (changedStep.type !== 'LOGIC_FUNCTION') {
       throw new Error('Expected a function step');
     }
@@ -96,11 +99,14 @@ describe('application workflow definitions', () => {
     });
     expect(after.workflow.id).toBe(before.workflow.id);
     expect(after.version.id).toBe(before.version.id);
-    expect(after.version.steps?.[0].id).toBe(before.version.steps?.[0].id);
-    expect(after.version.steps?.[0].settings.input).toMatchObject({
+    jestExpectToBeDefined(after.version.steps);
+    jestExpectToBeDefined(before.version.steps);
+
+    expect(after.version.steps[0]?.id).toBe(before.version.steps[0]?.id);
+    expect(after.version.steps?.[0]?.settings.input).toMatchObject({
       logicFunctionInput: { greeting: 'After' },
     });
-    expect(before.version.steps?.[0].settings.input).toMatchObject({
+    expect(before.version.steps?.[0]?.settings.input).toMatchObject({
       logicFunctionInput: { greeting: 'Before' },
     });
   });
@@ -113,8 +119,8 @@ describe('application workflow definitions', () => {
         [FUNCTION_ID, '88888888-8888-4888-8888-888888888888'],
       ]),
     });
-    expect(first.version.steps?.[0].settings.input).not.toEqual(
-      second.version.steps?.[0].settings.input,
+    expect(first.version.steps?.[0]?.settings.input).not.toEqual(
+      second.version.steps?.[0]?.settings.input,
     );
     expect(first.version.universalIdentifier).toBe(
       getWorkflowVersionUniversalIdentifier({
@@ -151,6 +157,8 @@ describe('application workflow definitions', () => {
 
 const BRANCH_ID = '77777777-7777-4777-8777-777777777777';
 const BODY_ID = '88888888-8888-4888-8888-888888888888';
+jestExpectToBeDefined(manifest.version.steps[0]);
+
 const FIRST_STEP_ID = manifest.version.steps[0].universalIdentifier;
 
 const branchingWorkflow = (type: 'IF_ELSE' | 'ITERATOR'): WorkflowManifest => ({

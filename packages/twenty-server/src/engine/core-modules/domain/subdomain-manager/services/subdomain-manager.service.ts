@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
+  assertIsDefinedOrThrow,
   capitalize,
   getSubdomainSlugFromDisplayName,
   isDefined,
@@ -65,9 +66,7 @@ export class SubdomainManagerService {
   async findAvailableSubdomain(desired: string): Promise<string> {
     const [availableSubdomain] = await this.findAvailableSubdomains(desired, 1);
 
-    if (!isDefined(availableSubdomain)) {
-      throw new Error(`No subdomain available for "${desired}"`);
-    }
+    assertIsDefinedOrThrow(availableSubdomain);
 
     return availableSubdomain;
   }
@@ -158,7 +157,7 @@ export class SubdomainManagerService {
     return {
       isValid,
       available,
-      suggestedSubdomain: suggestedSubdomains[0],
+      suggestedSubdomain: suggestedSubdomains[0] ?? subdomain,
       suggestedSubdomains,
     };
   }

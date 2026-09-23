@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type BlockList } from 'net';
 
 const fromLong = (ipl: number): string => {
@@ -26,26 +27,26 @@ const normalizeToLong = (addr: string): number => {
 
   switch (n) {
     case 1:
-      if (first === undefined) return -1;
+      if (!isDefined(first)) return -1;
       val = first;
       break;
     case 2:
-      if (first === undefined || second === undefined) return -1;
+      if (!isDefined(first) || !isDefined(second)) return -1;
       if (first > 0xff || second > 0xffffff) return -1;
       val = (first << 24) | (second & 0xffffff);
       break;
     case 3:
-      if (first === undefined || second === undefined || third === undefined)
+      if (!isDefined(first) || !isDefined(second) || !isDefined(third))
         return -1;
       if (first > 0xff || second > 0xff || third > 0xffff) return -1;
       val = (first << 24) | (second << 16) | (third & 0xffff);
       break;
     case 4:
       if (
-        first === undefined ||
-        second === undefined ||
-        third === undefined ||
-        fourth === undefined
+        !isDefined(first) ||
+        !isDefined(second) ||
+        !isDefined(third) ||
+        !isDefined(fourth)
       )
         return -1;
       if (parts.some((part) => part > 0xff)) return -1;
@@ -69,7 +70,7 @@ const extractIpv4FromHexMappedIpv6 = (addr: string): string | null => {
 
   const [, hiHex, loHex] = match;
 
-  if (hiHex === undefined || loHex === undefined) {
+  if (!isDefined(hiHex) || !isDefined(loHex)) {
     return null;
   }
 

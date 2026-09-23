@@ -330,7 +330,7 @@ export class ApplicationRegistrationClaimService {
       /(?:^|\/\/|@)github\.com[/:]([^/]+)\/[^/@]+/i,
     );
 
-    if (!isDefined(match)) {
+    if (!isDefined(match) || !isDefined(match[1])) {
       throw new ApplicationRegistrationException(
         `No GitHub source repository found in the provenance of ${params.packageName}@${version}`,
         ApplicationRegistrationExceptionCode.PROVENANCE_NOT_FOUND,

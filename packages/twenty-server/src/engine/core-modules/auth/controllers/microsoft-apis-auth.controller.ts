@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
 import { ApiPath, AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -112,7 +112,7 @@ export class MicrosoftAPIsAuthController {
 
       const primaryEmail = emails[0]?.value;
 
-      if (primaryEmail === undefined) {
+      if (!isDefined(primaryEmail)) {
         throw new AuthException(
           'No email found on the account',
           AuthExceptionCode.USER_NOT_FOUND,

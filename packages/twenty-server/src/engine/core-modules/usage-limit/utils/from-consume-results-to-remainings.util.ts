@@ -4,5 +4,7 @@ export const fromConsumeResultsToRemainings = (
   consumeResults: number[],
 ): (number | null)[] =>
   Array.from({ length: consumeResults.length / 2 }, (_, index) =>
-    consumeResults[2 * index] === 1 ? consumeResults[2 * index + 1] : null,
+    consumeResults[2 * index] === 1
+      ? (consumeResults[2 * index + 1] ?? null)
+      : null,
   );

@@ -87,6 +87,13 @@ export class LogicFunctionResourceService {
     const sourceFile = sourceFiles[0];
     const builtFile = builtFiles[0];
 
+    if (!isDefined(sourceFile) || !isDefined(builtFile)) {
+      throw new LogicFunctionException(
+        'Logic function seed project should have one index.ts file and one index.mjs file',
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT,
+      );
+    }
+
     await this.fileStorageService.writeFile({
       workspaceId,
       applicationUniversalIdentifier,

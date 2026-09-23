@@ -1,17 +1,17 @@
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 export const getGroupByDimensionLabel = (
   entry: ObjectRecordGroupBy[number],
 ): string => {
-  const fieldEntries = Object.entries(entry);
+  const [firstFieldEntry] = Object.entries(entry);
 
-  if (fieldEntries.length === 0) {
+  if (!isDefined(firstFieldEntry)) {
     return '';
   }
 
-  const [fieldName, fieldDefinition] = fieldEntries[0];
+  const [fieldName, fieldDefinition] = firstFieldEntry;
 
   if (fieldDefinition === true) {
     return fieldName;
@@ -21,13 +21,14 @@ export const getGroupByDimensionLabel = (
     return fieldName;
   }
 
-  const nestedEntries = Object.entries(fieldDefinition);
+  const [firstNestedEntry, ...otherNestedEntries] =
+    Object.entries(fieldDefinition);
 
-  if (nestedEntries.length !== 1) {
+  if (!isDefined(firstNestedEntry) || otherNestedEntries.length > 0) {
     return fieldName;
   }
 
-  const [nestedFieldName, nestedFieldDefinition] = nestedEntries[0];
+  const [nestedFieldName, nestedFieldDefinition] = firstNestedEntry;
 
   if (nestedFieldDefinition !== true) {
     return fieldName;

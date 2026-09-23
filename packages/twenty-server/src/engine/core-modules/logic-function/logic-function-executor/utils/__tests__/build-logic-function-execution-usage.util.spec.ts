@@ -4,6 +4,7 @@ import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const LOGIC_FUNCTION_ID = '9f1c2b3a-4d5e-4f60-8a71-b2c3d4e5f607';
 const APPLICATION_ID = '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
@@ -33,11 +34,16 @@ const buildExpectedUsageEvent = ({
 
 describe('buildLogicFunctionExecutionUsage', () => {
   it('counts the run of a billing-exempt app at no credits and no runtime', () => {
+    const [billingExemptUniversalIdentifier] =
+      MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS;
+
+    jestExpectToBeDefined(billingExemptUniversalIdentifier);
+
     expect(
       buildLogicFunctionExecutionUsage({
         durationMs: 5_000,
         isBillingExempt: isBillingExemptApplication(
-          MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS[0],
+          billingExemptUniversalIdentifier,
         ),
         resourceId: LOGIC_FUNCTION_ID,
         spenders: SPENDERS,

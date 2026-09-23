@@ -175,6 +175,16 @@ export class UsageLimitSpeedService {
         allowPartial,
       });
 
+    if (
+      !isDefined(admittedCount) ||
+      !isDefined(exhaustedIndex) ||
+      !isDefined(retryAfterMs)
+    ) {
+      this.logger.warn('try-consume-token-buckets returned a malformed result');
+
+      return { admitted: true, admittedCount: cost };
+    }
+
     if (admittedCount === cost) {
       return { admitted: true, admittedCount };
     }

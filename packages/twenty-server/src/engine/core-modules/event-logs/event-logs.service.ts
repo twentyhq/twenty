@@ -116,8 +116,10 @@ export class EventLogsService {
     const totalCount = countResult[0]?.totalCount ?? 0;
     const hasNextPage = records.length > limit;
     const lastRecordTimestamp = records[limit - 1]?.timestamp;
+    const firstRecordOfNextPage = records[limit];
     const hasMoreRecordsAtLastTimestamp =
-      hasNextPage && records[limit].timestamp === lastRecordTimestamp;
+      isDefined(firstRecordOfNextPage) &&
+      firstRecordOfNextPage.timestamp === lastRecordTimestamp;
 
     let pageRecords = records.slice(0, limit);
 

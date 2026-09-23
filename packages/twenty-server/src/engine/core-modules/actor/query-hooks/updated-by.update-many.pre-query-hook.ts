@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -41,9 +41,7 @@ export class UpdatedByUpdateManyPreQueryHook implements WorkspacePreQueryHookIns
         authContext,
       });
 
-    if (!isDefined(recordToUpdateData)) {
-      throw new Error('Actor field injection returned no record');
-    }
+    assertIsDefinedOrThrow(recordToUpdateData);
 
     return {
       ...payload,

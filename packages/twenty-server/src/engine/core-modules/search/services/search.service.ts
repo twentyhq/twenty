@@ -870,7 +870,7 @@ export class SearchService {
 
     return {
       edges: recordEdges,
-      pageInfo: { endCursor: lastRecordEdge?.cursor, hasNextPage },
+      pageInfo: { endCursor: lastRecordEdge?.cursor ?? null, hasNextPage },
     };
   }
 

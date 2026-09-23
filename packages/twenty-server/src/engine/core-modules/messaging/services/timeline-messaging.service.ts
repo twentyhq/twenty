@@ -364,7 +364,7 @@ export class TimelineMessagingService {
 
         if (!channelVisibility) continue;
 
-        threadVisibilityByThreadId[threadId] =
+        const widestVisibility =
           visibilityValues[
             Math.max(
               visibilityValues.indexOf(channelVisibility),
@@ -374,6 +374,10 @@ export class TimelineMessagingService {
               ),
             )
           ];
+
+        if (isDefined(widestVisibility)) {
+          threadVisibilityByThreadId[threadId] = widestVisibility;
+        }
       }
 
       return threadVisibilityByThreadId;

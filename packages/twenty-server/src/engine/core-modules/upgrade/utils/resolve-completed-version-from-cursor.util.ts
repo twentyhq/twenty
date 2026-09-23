@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { extractVersionFromCommandNameOrThrow } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name-or-throw.util';
 
@@ -22,7 +23,9 @@ export const resolveCompletedVersionFromCursor = ({
   const cursorVersion = extractVersionFromCommandNameOrThrow(cursor.name);
 
   const nextStepName =
-    cursorIndex < stepNames.length - 1 ? stepNames[cursorIndex + 1] : null;
+    cursorIndex < stepNames.length - 1
+      ? (stepNames[cursorIndex + 1] ?? null)
+      : null;
 
   const isCursorOnLastStepOfItsVersion =
     nextStepName === null ||
@@ -33,9 +36,13 @@ export const resolveCompletedVersionFromCursor = ({
   }
 
   for (let stepIndex = cursorIndex - 1; stepIndex >= 0; stepIndex--) {
-    const stepVersion = extractVersionFromCommandNameOrThrow(
-      stepNames[stepIndex],
-    );
+    const stepName = stepNames[stepIndex];
+
+    if (!isDefined(stepName)) {
+      continue;
+    }
+
+    const stepVersion = extractVersionFromCommandNameOrThrow(stepName);
 
     if (stepVersion !== cursorVersion) {
       return stepVersion;
