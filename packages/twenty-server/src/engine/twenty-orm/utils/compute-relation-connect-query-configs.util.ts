@@ -152,10 +152,14 @@ const computeRecordToConnectCondition = (
   uniqueConstraintFields: OrmFlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
-  const field = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: fieldMaps.fieldIdByName[connectFieldName],
-    flatEntityMaps: flatFieldMetadataMaps,
-  });
+  const connectFieldMetadataId = fieldMaps.fieldIdByName[connectFieldName];
+
+  const field = isDefined(connectFieldMetadataId)
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: connectFieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      })
+    : undefined;
 
   if (
     !isDefined(field) ||

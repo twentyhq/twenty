@@ -2,7 +2,7 @@ import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import {
@@ -43,6 +43,8 @@ export const resolveObjectRecordsPermissions = ({
         TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
+
+    assertIsDefinedOrThrow(rolePermissionConfig.unionOf[0]);
 
     return {
       objectRecordsPermissions:

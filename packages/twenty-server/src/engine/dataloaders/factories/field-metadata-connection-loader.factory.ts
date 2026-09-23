@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import {
@@ -47,7 +48,10 @@ export class FieldMetadataConnectionLoaderFactory {
       FieldMetadataConnectionLoaderPayload,
       CursorConnection<FieldMetadataDTO>
     >(async (dataLoaderParams: FieldMetadataConnectionLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const locale = dataLoaderParams[0].locale;
+
       const workspaceId = dataLoaderParams[0].workspaceId;
       const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(

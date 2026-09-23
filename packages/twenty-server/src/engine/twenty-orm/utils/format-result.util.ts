@@ -117,10 +117,12 @@ function formatResultRecursively<T>(
       fieldIdByJoinColumnName[key] ||
       fieldIdByName[compositePropertyArgs?.parentField ?? ''];
 
-    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMetadataId,
-      flatEntityMaps: cache.flatFieldMetadataMaps,
-    });
+    const fieldMetadata = isDefined(fieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: cache.flatFieldMetadataMaps,
+        })
+      : undefined;
 
     if (!isDefined(fieldMetadata)) {
       continue;

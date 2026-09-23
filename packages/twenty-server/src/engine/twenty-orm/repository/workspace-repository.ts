@@ -6,7 +6,11 @@ import {
   type ObjectRecord,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  assertUnreachable,
+  isDefined,
+} from 'twenty-shared/utils';
 import {
   DeleteResult,
   In,
@@ -1202,12 +1206,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     await this.validateInheritedParentsAreWritableOrThrow({
       writtenRecords,
-      affectedRecords: writtenRecords.flatMap((writtenRecord, index) =>
-        rawBeforeByInputIndex[index].flatMap((rawBefore) => [
+      affectedRecords: writtenRecords.flatMap((writtenRecord, index) => {
+        const rawRecordsBefore = rawBeforeByInputIndex[index];
+
+        assertIsDefinedOrThrow(rawRecordsBefore);
+
+        return rawRecordsBefore.flatMap((rawBefore) => [
           rawBefore,
           { ...rawBefore, ...writtenRecord },
-        ]),
-      ),
+        ]);
+      }),
     });
 
     const setColumnsByInputIndex = writtenRecords.map(
@@ -1223,16 +1231,22 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     await this.validateRLSPredicatesForUpdatedRecords(
-      setColumnsByInputIndex.flatMap((setColumns, index) =>
-        rawBeforeByInputIndex[index].map((rawRecordBefore) => ({
+      setColumnsByInputIndex.flatMap((setColumns, index) => {
+        const rawRecordsBefore = rawBeforeByInputIndex[index];
+
+        assertIsDefinedOrThrow(rawRecordsBefore);
+
+        return rawRecordsBefore.map((rawRecordBefore) => ({
           rawRecordBefore,
           setColumns,
-        })),
-      ),
+        }));
+      }),
     );
 
     for (const [index, input] of writableInputs.entries()) {
       const setColumns = setColumnsByInputIndex[index];
+      assertIsDefinedOrThrow(setColumns);
+
       const rawBeforeForInput = rawBeforeByInputIndex[index];
 
       const selectQueryBuilder = this.createQueryBuilder().where({
@@ -1253,6 +1267,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       if (result.generatedMaps.length === 0) {
         continue;
       }
+
+      assertIsDefinedOrThrow(rawBeforeForInput);
 
       recordsBefore.push(...rawBeforeForInput);
 
@@ -1861,7 +1877,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
         childRecordsByRecordId
           .get(recordId)
-          ?.[parent.childFlatObjectMetadata.nameSingular].push(childRecord);
+          ?.[parent.childFlatObjectMetadata.nameSingular]?.push(childRecord);
       }
     }
 
@@ -2502,6 +2518,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment &
     RowAccessCompilationEnvironment {
+    assertIsDefinedOrThrow(
+      this.options.internalContext.objectIdByNameSingular.recordShare,
+    );
+
     return {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:

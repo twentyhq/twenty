@@ -48,9 +48,9 @@ describe('attach-relations util', () => {
         targets,
       });
 
-      expect(records[0].company).toEqual({ id: 'c1', name: 'Twenty' });
-      expect(records[1].company).toBeNull();
-      expect(records[2].company).toBeNull();
+      expect(records[0]?.company).toEqual({ id: 'c1', name: 'Twenty' });
+      expect(records[1]?.company).toBeNull();
+      expect(records[2]?.company).toBeNull();
     });
   });
 
@@ -70,11 +70,11 @@ describe('attach-relations util', () => {
         children,
       });
 
-      expect(records[0].people).toEqual([
+      expect(records[0]?.people).toEqual([
         { id: 'p1', companyId: 'c1' },
         { id: 'p2', companyId: 'c1' },
       ]);
-      expect(records[1].people).toEqual([]);
+      expect(records[1]?.people).toEqual([]);
     });
   });
 });

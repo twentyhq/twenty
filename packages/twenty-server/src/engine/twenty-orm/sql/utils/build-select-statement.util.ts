@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -99,6 +99,9 @@ export const normaliseColumnExpression = (
   const parts = expression.split('.');
 
   if (parts.length === 2) {
+    assertIsDefinedOrThrow(parts[0]);
+    assertIsDefinedOrThrow(parts[1]);
+
     return quoteColumn(parts[0], parts[1]);
   }
 
@@ -616,9 +619,13 @@ const buildRelationValue = (leaves: RelationColumnLeaf[]): unknown => {
     const [propertyName, ...remainingSegments] = leaf.propertySegments;
 
     if (remainingSegments.length === 0) {
+      assertIsDefinedOrThrow(propertyName);
+
       relationValue[propertyName] = leaf.value;
       continue;
     }
+
+    assertIsDefinedOrThrow(propertyName);
 
     const nestedLeaves = nestedLeavesByProperty.get(propertyName) ?? [];
 
@@ -626,6 +633,7 @@ const buildRelationValue = (leaves: RelationColumnLeaf[]): unknown => {
       propertySegments: remainingSegments,
       value: leaf.value,
     });
+
     nestedLeavesByProperty.set(propertyName, nestedLeaves);
   }
 
@@ -642,6 +650,8 @@ export const createRowToEntityMapper = <TRecord extends ObjectLiteral>(
   const columns = Object.entries(columnNameByResultAlias).map(
     ([resultAlias, propertyPath]) => {
       const [propertyName, ...remainingSegments] = propertyPath.split('.');
+
+      assertIsDefinedOrThrow(propertyName);
 
       return { resultAlias, propertyName, remainingSegments };
     },

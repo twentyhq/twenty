@@ -1,6 +1,7 @@
 import { Not, type Repository } from 'typeorm';
 
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 type FakeEntity = {
   id: string;
   status: string;
@@ -138,7 +139,10 @@ describe('WorkspaceScopedRepository', () => {
         where: { id: 'a', status: 'queued' },
       });
 
+      jestExpectToBeDefined(repository.findOne.mock.calls[0]);
+
       const callArg = repository.findOne.mock.calls[0][0];
+
       const whereKeys = Object.keys(
         (callArg as { where: Record<string, unknown> }).where,
       );

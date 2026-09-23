@@ -225,7 +225,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
 
     expect(result.generatedMaps).toEqual([{ id: 'id-1' }, { id: 'id-2' }]);
     expect(executedStatements).toHaveLength(1);
-    expect(executedStatements[0].values).toEqual(['id-1', 'id-2']);
+    expect(executedStatements[0]?.values).toEqual(['id-1', 'id-2']);
   });
 
   it('should not overwrite a where parameter that collides with a set parameter name', () => {

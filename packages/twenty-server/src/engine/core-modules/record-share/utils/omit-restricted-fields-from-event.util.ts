@@ -35,10 +35,12 @@ const buildRestrictedFieldNames = ({
       continue;
     }
 
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const flatFieldMetadata = isDefined(fieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
 
     if (!isDefined(flatFieldMetadata)) {
       continue;

@@ -1,7 +1,11 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 export const createSqlWhereTupleInClause = (
   conditions: [string, string][][],
   tableName: string,
 ) => {
+  assertIsDefinedOrThrow(conditions[0]);
+
   const fieldNames = conditions[0].map(([field, _]) => field);
 
   const tupleClause = fieldNames

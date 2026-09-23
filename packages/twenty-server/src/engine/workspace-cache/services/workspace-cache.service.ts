@@ -12,7 +12,11 @@ import crypto from 'crypto';
 
 import { DataSource } from 'typeorm';
 
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isValidUuid,
+} from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { WorkspaceDerivedCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-derived-cache-provider.service';
@@ -740,8 +744,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         if (settled.status === 'fulfilled') {
           acc.computed.push(settled.value);
         } else {
+          const keyToRecompute = keysToRecompute[index];
+
+          assertIsDefinedOrThrow(keyToRecompute);
+
           acc.computeFailures.push({
-            keyName: keysToRecompute[index].keyName,
+            keyName: keyToRecompute.keyName,
             reason: settled.reason,
           });
         }
@@ -812,6 +820,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           `Failed to compute cache key '${keyName}': ${reason}`,
         ),
       );
+      assertIsDefinedOrThrow(computeFailures[0]);
+
       throw computeFailures[0].reason;
     }
 

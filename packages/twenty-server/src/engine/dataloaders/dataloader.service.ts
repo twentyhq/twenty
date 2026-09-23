@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
@@ -243,6 +243,8 @@ export class DataloaderService {
   private createRelationLoader() {
     return new DataLoader<RelationLoaderPayload, RelationDTO | null>(
       async (dataLoaderParams: RelationLoaderPayload[]) => {
+        assertIsDefinedOrThrow(dataLoaderParams[0]);
+
         const workspaceId = dataLoaderParams[0].workspaceId;
         const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -281,6 +283,8 @@ export class DataloaderService {
   private createMorphRelationLoader() {
     return new DataLoader<MorphRelationLoaderPayload, RelationDTO[] | null>(
       async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
+        assertIsDefinedOrThrow(dataLoaderParams[0]);
+
         const workspaceId = dataLoaderParams[0].workspaceId;
         const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -319,6 +323,8 @@ export class DataloaderService {
   private createIndexMetadataLoader() {
     return new DataLoader<IndexMetadataLoaderPayload, IndexMetadataDTO[]>(
       async (dataLoaderParams: IndexMetadataLoaderPayload[]) => {
+        assertIsDefinedOrThrow(dataLoaderParams[0]);
+
         const workspaceId = dataLoaderParams[0].workspaceId;
         const objectMetadataIds = dataLoaderParams.map(
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
@@ -369,6 +375,8 @@ export class DataloaderService {
       SearchFieldMetadataLoaderPayload,
       SearchFieldMetadataDTO[]
     >(async (dataLoaderParams: SearchFieldMetadataLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
       const objectMetadataIds = dataLoaderParams.map(
         (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
@@ -407,7 +415,10 @@ export class DataloaderService {
   private createFieldMetadataLoader() {
     return new DataLoader<FieldMetadataLoaderPayload, FieldMetadataDTO[]>(
       async (dataLoaderParams: FieldMetadataLoaderPayload[]) => {
+        assertIsDefinedOrThrow(dataLoaderParams[0]);
+
         const locale = dataLoaderParams[0].locale;
+
         const workspaceId = dataLoaderParams[0].workspaceId;
         const objectMetadataIds = dataLoaderParams.map(
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
@@ -507,6 +518,8 @@ export class DataloaderService {
       IndexFieldMetadataLoaderPayload,
       IndexFieldMetadataDTO[]
     >(async (dataLoaderParams: IndexFieldMetadataLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const { flatIndexMaps } =
@@ -552,6 +565,8 @@ export class DataloaderService {
       ObjectMetadataLoaderPayload,
       ObjectMetadataDTO | null
     >(async (dataLoaderParams: ObjectMetadataLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const { flatObjectMetadataMaps } =
@@ -582,6 +597,8 @@ export class DataloaderService {
       ViewFieldGroupsByViewIdLoaderPayload,
       ReturnType<typeof fromFlatViewFieldGroupToViewFieldGroupDto>[]
     >(async (dataLoaderParams: ViewFieldGroupsByViewIdLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const { flatViewMaps, flatViewFieldGroupMaps } =
@@ -625,6 +642,8 @@ export class DataloaderService {
       ViewFieldsByViewFieldGroupIdLoaderPayload,
       ReturnType<typeof fromFlatViewFieldToViewFieldDto>[]
     >(async (dataLoaderParams: ViewFieldsByViewFieldGroupIdLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const { flatViewFieldGroupMaps, flatViewFieldMaps } =
@@ -694,6 +713,8 @@ export class DataloaderService {
       ViewFieldsByViewIdLoaderPayload,
       ReturnType<typeof fromFlatViewFieldToViewFieldDto>[]
     >(async (dataLoaderParams: ViewFieldsByViewIdLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const { flatViewMaps, flatViewFieldMaps } =
@@ -737,6 +758,8 @@ export class DataloaderService {
       ViewFiltersByViewIdLoaderPayload,
       ReturnType<typeof fromFlatViewFilterToViewFilterDto>[]
     >(async (dataLoaderParams: ViewFiltersByViewIdLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const { flatViewMaps, flatViewFilterMaps } =
@@ -772,6 +795,8 @@ export class DataloaderService {
       ViewSortsByViewIdLoaderPayload,
       ReturnType<typeof fromFlatViewSortToViewSortDto>[]
     >(async (dataLoaderParams: ViewSortsByViewIdLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const { flatViewMaps, flatViewSortMaps } =
@@ -807,6 +832,8 @@ export class DataloaderService {
       ViewGroupsByViewIdLoaderPayload,
       ReturnType<typeof fromFlatViewGroupToViewGroupDto>[]
     >(async (dataLoaderParams: ViewGroupsByViewIdLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const { flatViewMaps, flatViewGroupMaps } =
@@ -842,6 +869,8 @@ export class DataloaderService {
       ViewFilterGroupsByViewIdLoaderPayload,
       ReturnType<typeof fromFlatViewFilterGroupToViewFilterGroupDto>[]
     >(async (dataLoaderParams: ViewFilterGroupsByViewIdLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const { flatViewMaps, flatViewFilterGroupMaps } =
@@ -896,6 +925,8 @@ export class DataloaderService {
       ApplicationAuthorIdentifiersLoaderPayload,
       ApplicationAuthorIdentifiers
     >(async (params: ApplicationAuthorIdentifiersLoaderPayload[]) => {
+      assertIsDefinedOrThrow(params[0]);
+
       const applicationAuthorIdentifiers =
         await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
           { workspaceId: params[0].workspaceId },
@@ -910,6 +941,8 @@ export class DataloaderService {
       ApplicationTranslationCatalogLoaderPayload,
       Record<string, string> | undefined
     >(async (params: ApplicationTranslationCatalogLoaderPayload[]) => {
+      assertIsDefinedOrThrow(params[0]);
+
       const { catalogByApplicationId } =
         await this.applicationTranslationCatalogService.getCatalogs({
           applicationIds: params.map((param) => param.applicationId),
@@ -928,6 +961,8 @@ export class DataloaderService {
       WorkspaceMembersByRoleIdLoaderPayload,
       FlatWorkspaceMember[]
     >(async (dataLoaderParams: WorkspaceMembersByRoleIdLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const [
@@ -979,6 +1014,8 @@ export class DataloaderService {
   private createAgentsByRoleIdLoader() {
     return new DataLoader<AgentsByRoleIdLoaderPayload, AgentDTO[]>(
       async (dataLoaderParams: AgentsByRoleIdLoaderPayload[]) => {
+        assertIsDefinedOrThrow(dataLoaderParams[0]);
+
         const workspaceId = dataLoaderParams[0].workspaceId;
 
         const {
@@ -1036,6 +1073,8 @@ export class DataloaderService {
   private createApiKeysByRoleIdLoader() {
     return new DataLoader<ApiKeysByRoleIdLoaderPayload, ApiKeyForRoleDTO[]>(
       async (dataLoaderParams: ApiKeysByRoleIdLoaderPayload[]) => {
+        assertIsDefinedOrThrow(dataLoaderParams[0]);
+
         const workspaceId = dataLoaderParams[0].workspaceId;
 
         const [{ flatRoleMaps, flatRoleTargetMaps }, { apiKeyMap }] =
@@ -1093,6 +1132,8 @@ export class DataloaderService {
         >
       >
     >(async (dataLoaderParams: RowLevelPermissionsByRoleIdLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
 
       const hasRowLevelPermissionFeature =

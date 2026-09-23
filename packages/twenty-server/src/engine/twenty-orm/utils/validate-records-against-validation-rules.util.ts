@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -238,6 +238,8 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
   }
 
   if (violations.length > 0) {
+    assertIsDefinedOrThrow(violations[0]);
+
     throw new RecordValidationRuleException(
       buildRecordValidationRuleViolationsMessage(violations),
       RecordValidationRuleExceptionCode.VALIDATION_RULE_VIOLATION,

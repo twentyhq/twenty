@@ -7,8 +7,8 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder
 const GUARDED_OR_CHAIN =
   '(("person"."id" = :a) OR ("person"."id" = :b)) AND ("person"."companyId" = :rowAccessCompanyId)';
 
-const countOccurrences = (text: string, searched: string): number =>
-  text.split(searched).length - 1;
+const countOccurrences = (text: string | undefined, searched: string): number =>
+  (text ?? '').split(searched).length - 1;
 
 const buildRowAccessQueryBuilder = () => {
   const built = buildQueryBuilder({ onBeforeExecute: applyRowAccessCondition });
@@ -27,10 +27,10 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
       .orWhere('"person"."id" = :b', { b: 2 })
       .getMany();
 
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       'WHERE ((("person"."id" = $1) OR ("person"."id" = $2)) AND ("person"."companyId" = $3)) AND "person"."deletedAt" IS NULL',
     );
-    expect(executedStatements[0].values).toEqual([1, 2, 'company-1']);
+    expect(executedStatements[0]?.values).toEqual([1, 2, 'company-1']);
   });
 
   it('should keep an orWhere added after the policy was applied inside the guarded expression', () => {
@@ -52,7 +52,7 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
       .orWhere('"person"."id" = :b', { b: 2 })
       .getCount();
 
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       '(("person"."id" = $1) OR ("person"."id" = $2)) AND ("person"."companyId" = $3)',
     );
   });
@@ -86,11 +86,11 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
       .orWhere('"person"."id" = :b', { b: 2 })
       .getMany();
 
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       '(("person"."id" = $1) OR ("person"."id" = $2)) AND ("person"."companyId" = $3)',
     );
     expect(
-      countOccurrences(executedStatements[0].text, '"person"."companyId"'),
+      countOccurrences(executedStatements[0]?.text, '"person"."companyId"'),
     ).toBe(1);
   });
 
@@ -103,11 +103,11 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
       .orWhere('"person"."id" = :c', { c: 3 })
       .getMany();
 
-    expect(executedStatements[1].text).toContain(
+    expect(executedStatements[1]?.text).toContain(
       '(("person"."id" = $1) OR ("person"."id" = $2)) AND ("person"."companyId" = $3)',
     );
     expect(
-      countOccurrences(executedStatements[1].text, '"person"."companyId"'),
+      countOccurrences(executedStatements[1]?.text, '"person"."companyId"'),
     ).toBe(1);
   });
 

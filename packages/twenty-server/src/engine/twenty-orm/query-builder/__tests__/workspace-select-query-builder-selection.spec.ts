@@ -186,8 +186,8 @@ describe('WorkspaceSelectQueryBuilder selection', () => {
     await queryBuilder.getMany();
 
     expect(executedStatements).toHaveLength(1);
-    expect(executedStatements[0].text).toContain('$1');
-    expect(executedStatements[0].values).toEqual(['Ada']);
+    expect(executedStatements[0]?.text).toContain('$1');
+    expect(executedStatements[0]?.values).toEqual(['Ada']);
   });
 
   it('should map take and skip to LIMIT and OFFSET parameters', () => {
@@ -279,7 +279,7 @@ describe('WorkspaceSelectQueryBuilder selection', () => {
       { companyId: 'c1', totalCount: '3' },
       { companyId: 'c2', totalCount: '1' },
     ]);
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       'GROUP BY "person"."companyId"',
     );
   });

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -37,6 +38,8 @@ export class IndexMetadataConnectionLoaderFactory {
       IndexMetadataConnectionLoaderPayload,
       CursorConnection<IndexMetadataDTO>
     >(async (dataLoaderParams: IndexMetadataConnectionLoaderPayload[]) => {
+      assertIsDefinedOrThrow(dataLoaderParams[0]);
+
       const workspaceId = dataLoaderParams[0].workspaceId;
       const { flatIndexMaps, flatObjectMetadataMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(

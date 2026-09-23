@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 export type FakeValueTypes =
   | string
@@ -37,6 +38,9 @@ const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
 
     properties.forEach((property) => {
       const [key, valueType] = property.split(':').map((s) => s.trim());
+
+      assertIsDefinedOrThrow(key);
+      assertIsDefinedOrThrow(valueType);
 
       objData[key] = generateFakeValue(valueType);
     });

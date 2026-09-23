@@ -173,7 +173,7 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
     ]);
     expect([...viewField.byFieldMetadataId.keys()]).toEqual(['field-1']);
 
-    expect(viewField.rows[0].fieldMetadataId).toBe('field-1');
+    expect(viewField.rows[0]?.fieldMetadataId).toBe('field-1');
     // @ts-expect-error an undeclared column is a compile error, not undefined
     void viewField.rows[0].isVisible;
   });
@@ -215,7 +215,7 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
       objectMetadata: ['id'],
     } as const);
 
-    expect(objectMetadata[0].id).toBe('object-row');
+    expect(objectMetadata[0]?.id).toBe('object-row');
     // @ts-expect-error an undeclared column is a compile error, not undefined
     void objectMetadata[0].nameSingular;
   });
@@ -239,7 +239,7 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
       objectMetadata: { columns: ['id'] },
     } as const);
 
-    expect(objectMetadata[0].id).toBe('object-row');
+    expect(objectMetadata[0]?.id).toBe('object-row');
     // @ts-expect-error an undeclared column is a compile error, not undefined
     void objectMetadata[0].nameSingular;
   });

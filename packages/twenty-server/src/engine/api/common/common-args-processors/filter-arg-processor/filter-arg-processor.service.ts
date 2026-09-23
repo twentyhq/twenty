@@ -289,11 +289,12 @@ export class FilterArgProcessorService {
       );
     }
 
-    const fieldMetadata =
-      findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
-        flatEntityId: fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
+    const fieldMetadata = isDefined(fieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
 
     if (!fieldMetadata) {
       throw new CommonQueryRunnerException(

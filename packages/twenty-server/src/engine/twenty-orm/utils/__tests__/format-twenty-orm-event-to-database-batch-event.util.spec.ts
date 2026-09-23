@@ -299,12 +299,12 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
         result?.events as ObjectRecordDeleteEvent[];
 
       expect(
-        (deleteEvent1.properties as InheritedReadabilityChildRecordsCarrier)
+        (deleteEvent1?.properties as InheritedReadabilityChildRecordsCarrier)
           .inheritedReadabilityChildRecords,
       ).toEqual({
         noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
       });
-      expect(deleteEvent2.properties).not.toHaveProperty(
+      expect(deleteEvent2?.properties).not.toHaveProperty(
         'inheritedReadabilityChildRecords',
       );
     });
@@ -326,10 +326,10 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
         result?.events as ObjectRecordDestroyEvent[];
 
       expect(
-        (destroyEvent1.properties as InheritedReadabilityChildRecordsCarrier)
+        (destroyEvent1?.properties as InheritedReadabilityChildRecordsCarrier)
           .inheritedReadabilityChildRecords,
       ).toEqual({ noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }] });
-      expect(destroyEvent2.properties).not.toHaveProperty(
+      expect(destroyEvent2?.properties).not.toHaveProperty(
         'inheritedReadabilityChildRecords',
       );
     });
