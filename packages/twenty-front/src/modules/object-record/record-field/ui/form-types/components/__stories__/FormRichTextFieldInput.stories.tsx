@@ -303,4 +303,10 @@ export const WithBulletList: Story = {
   args: {
     defaultValue: { blocknote: BLOCKNOTE_BULLET_LIST, markdown: null },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('First item');
+    await canvas.findByText('Second item');
+  },
 };

@@ -2,6 +2,7 @@ import { RECORD_RICH_TEXT_TEXT_STYLES } from '@/object-record/record-field/ui/fo
 import { TIPTAP_LIST_TYPE_TO_BLOCKNOTE_LIST_ITEM_TYPE } from '@/object-record/record-field/ui/form-types/constants/TipTapListTypeToBlockNoteListItemType';
 import { throwUnsupportedRecordRichTextContent } from '@/object-record/record-field/ui/form-types/utils/throwUnsupportedRecordRichTextContent';
 import { type JSONContent } from '@tiptap/core';
+import { isDefined } from 'twenty-shared/utils';
 
 const isSupportedTextStyle = (markType: string | undefined) =>
   RECORD_RICH_TEXT_TEXT_STYLES.some((style) => style === markType);
@@ -52,7 +53,7 @@ const convertInlineNodes = (nodes: JSONContent[]): Record<string, unknown>[] =>
     );
     const text = { type: 'text', text: node.text ?? '', styles };
     const link = marks.find((mark) => mark.type === 'link');
-    return link
+    return isDefined(link)
       ? { type: 'link', href: link.attrs?.href, content: [text] }
       : text;
   });

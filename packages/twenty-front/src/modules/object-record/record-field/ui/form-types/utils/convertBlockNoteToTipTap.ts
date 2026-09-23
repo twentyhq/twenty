@@ -44,13 +44,17 @@ const convertInlineContent = ({
       return convertInlineContent({
         content: item.content,
         enableVariables,
-      }).map((node) => ({
-        ...node,
-        marks: [
-          ...(node.marks ?? []),
-          { type: 'link', attrs: { href: item.href } },
-        ],
-      }));
+      }).map((node) =>
+        node.type === 'text'
+          ? {
+              ...node,
+              marks: [
+                ...(node.marks ?? []),
+                { type: 'link', attrs: { href: item.href } },
+              ],
+            }
+          : node,
+      );
     }
     if (item.type === 'text' && typeof item.text === 'string') {
       const styles = isPlainObject(item.styles) ? item.styles : {};

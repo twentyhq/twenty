@@ -229,14 +229,23 @@ describe('record rich-text document compatibility', () => {
     });
   });
 
-  it('keeps variables read from styled BlockNote text resolvable', () => {
+  it.each([
+    {
+      name: 'styled text',
+      inline: { ...text('{{step.name}}'), styles: { bold: true } },
+    },
+    {
+      name: 'a link',
+      inline: {
+        type: 'link',
+        href: 'https://example.com',
+        content: [text('{{step.name}}')],
+      },
+    },
+  ])('keeps variables read from $name resolvable', ({ inline }) => {
     const document = parseLegacyRecordRichTextDocument({
       serializedDocument: JSON.stringify([
-        {
-          type: 'paragraph',
-          props: {},
-          content: [{ ...text('{{step.name}}'), styles: { bold: true } }],
-        },
+        { type: 'paragraph', props: {}, content: [inline] },
       ]),
       enableVariables: true,
     });
