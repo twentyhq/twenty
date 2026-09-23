@@ -83,7 +83,7 @@ const expectForbidden = (response: {
   body: { data: unknown; errors?: { extensions: { code: string } }[] };
 }) => {
   expect(response.body.data).toBeNull();
-  expect(response.body.errors?.[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  expect(response.body.errors?.[0]?.extensions.code).toBe(ErrorCode.FORBIDDEN);
 };
 
 describe('Core picture direct upload permissions', () => {

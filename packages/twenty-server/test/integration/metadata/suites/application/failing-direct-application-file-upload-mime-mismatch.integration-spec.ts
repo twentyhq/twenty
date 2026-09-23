@@ -9,6 +9,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 import { v4 as uuidv4 } from 'uuid';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_APP_ID = uuidv4();
 
@@ -85,7 +86,8 @@ describe('Application file upload should fail at completion on mime/magic-byte m
 
       expect(createErrors).toBeUndefined();
 
-      const [uploadTarget] = createData.createApplicationFileUploads.targets;
+      const uploadTarget = createData.createApplicationFileUploads.targets[0];
+      jestExpectToBeDefined(uploadTarget);
 
       const putResponse = await putApplicationFileUploadTarget({
         uploadTarget,
@@ -108,8 +110,8 @@ describe('Application file upload should fail at completion on mime/magic-byte m
 
       expect(files).toEqual([]);
       expect(errors).toHaveLength(1);
-      expect(errors[0].fileId).toBe(uploadTarget.fileId);
-      expect(errors[0].message).toMatchSnapshot();
+      expect(errors[0]?.fileId).toBe(uploadTarget.fileId);
+      expect(errors[0]?.message).toMatchSnapshot();
 
       const [row] = await globalThis.testDataSource.query(
         `SELECT status FROM core."file" WHERE id = $1`,

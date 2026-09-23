@@ -265,12 +265,17 @@ describe('roles permissions', () => {
         expect(rowLevelPermissionErrors).toBeUndefined();
         jestExpectToBeDefined(rowLevelPermissionData);
 
-        relationsPredicateId =
+        const [relationsPredicate] =
+          rowLevelPermissionData.upsertRowLevelPermissionPredicates.predicates;
+        const [relationsPredicateGroup] =
           rowLevelPermissionData.upsertRowLevelPermissionPredicates
-            .predicates[0].id;
-        relationsPredicateGroupId =
-          rowLevelPermissionData.upsertRowLevelPermissionPredicates
-            .predicateGroups[0].id;
+            .predicateGroups;
+
+        jestExpectToBeDefined(relationsPredicate);
+        jestExpectToBeDefined(relationsPredicateGroup);
+
+        relationsPredicateId = relationsPredicate.id;
+        relationsPredicateGroupId = relationsPredicateGroup.id;
 
         const apiKeyResponse = await makeMetadataApiRequest({
           query: gql`

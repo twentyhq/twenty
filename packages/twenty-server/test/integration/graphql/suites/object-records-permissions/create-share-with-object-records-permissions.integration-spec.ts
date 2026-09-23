@@ -246,6 +246,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       input: { idToDelete: personRelationFieldMetadataId },
       expectToFail: false,
     });
+
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {

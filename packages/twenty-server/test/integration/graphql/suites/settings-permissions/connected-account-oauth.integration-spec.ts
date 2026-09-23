@@ -23,6 +23,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe.each([
   {
@@ -87,6 +88,8 @@ describe.each([
         .query({ transientToken })
         .expect(302);
 
+      jestExpectToBeDefined(response.headers.location);
+
       return new URL(response.headers.location);
     };
 
@@ -95,6 +98,8 @@ describe.each([
         .get(`${path}/get-access-token`)
         .query({ code: 'mock-authorization-code', state })
         .expect(302);
+
+      jestExpectToBeDefined(response.headers.location);
 
       return new URL(response.headers.location);
     };

@@ -16,16 +16,16 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 
 const expectImpersonationDenied = (errors: BaseGraphQLError[]) => {
   expect(errors).toHaveLength(1);
-  expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-  expect(errors[0].extensions.userFriendlyMessage).toBe(
+  expect(errors[0]?.extensions.code).toBe(ErrorCode.FORBIDDEN);
+  expect(errors[0]?.extensions.userFriendlyMessage).toBe(
     'You do not have permission to perform this action.',
   );
 };
 
 const expectImpersonationLoginTokenRejected = (errors: BaseGraphQLError[]) => {
   expect(errors).toHaveLength(1);
-  expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-  expect(errors[0].message).toContain('impersonation login token');
+  expect(errors[0]?.extensions.code).toBe(ErrorCode.FORBIDDEN);
+  expect(errors[0]?.message).toContain('impersonation login token');
 };
 
 const deleteScottTwoFactorAuthenticationMethods = async (): Promise<void> => {

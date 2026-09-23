@@ -1,4 +1,5 @@
 import { type Response } from 'supertest';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { buildWorkspaceOriginForSubdomain } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
@@ -123,9 +124,11 @@ export const extractSessionCookie = (
       continue;
     }
 
-    const sessionToken = rawCookie!
-      .split(';')[0]
-      .slice(`${candidateName}=`.length);
+    const firstSegment = rawCookie.split(';')[0];
+
+    assertIsDefinedOrThrow(firstSegment);
+
+    const sessionToken = firstSegment.slice(`${candidateName}=`.length);
 
     return {
       rawCookie,

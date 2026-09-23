@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 // Shared by the GraphQL aggregate builder and by both ORMs' permission checks, so it sits
 // below all three rather than in the layer that happens to generate the expressions.
@@ -10,10 +10,12 @@ export const extractColumnNamesFromAggregateExpression = (
 
   if (concatMatches) {
     const columnNames = selection.match(/"([^"]+)"/g)?.map((match) => {
-      const fullColumn = match.slice(1, -1);
-      const parts = fullColumn.split('.');
+      const parts = match.slice(1, -1).split('.');
+      const columnName = parts[parts.length - 1];
 
-      return parts[parts.length - 1];
+      assertIsDefinedOrThrow(columnName);
+
+      return columnName;
     });
 
     return columnNames || null;
@@ -41,7 +43,9 @@ export const extractColumnNamesFromAggregateExpression = (
   const singleColumnMatch = selection.match(/"([^".]+)"/);
 
   if (singleColumnMatch) {
-    return [singleColumnMatch[1]!];
+    assertIsDefinedOrThrow(singleColumnMatch[1]);
+
+    return [singleColumnMatch[1]];
   }
 
   return null;

@@ -2,6 +2,7 @@ import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/typ
 
 import { assertPayloadIsUsable } from '../utils/assert-payload-is-usable.util';
 import { buildCatalog } from '../utils/build-catalog.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const languageModel = {
   id: 'model',
@@ -37,6 +38,8 @@ describe('assertPayloadIsUsable', () => {
   it('names the providers that came back empty', () => {
     const data = payload();
 
+    jestExpectToBeDefined(data.anthropic);
+
     data.anthropic.models = {};
 
     expect(() => assertPayloadIsUsable({ data, vendors: VENDORS })).toThrow(
@@ -49,15 +52,23 @@ describe('buildCatalog', () => {
   it('prices long context from the standard output rate when none is quoted', () => {
     const data = payload();
 
+    jestExpectToBeDefined(data.openai);
+
+    jestExpectToBeDefined(data.openai.models['gpt-x']);
+
     data.openai.models['gpt-x'].cost = {
       input: 2,
       output: 6,
       context_over_200k: { input: 4 },
     };
 
-    const model = buildCatalog({ data, vendors: VENDORS }).openai.models[0];
+    const openai = buildCatalog({ data, vendors: VENDORS }).openai;
+
+    jestExpectToBeDefined(openai);
+
+    const model = openai.models[0];
 
     // A missing long-context rate is unknown, not free.
-    expect(model.longContextCost?.outputCostPerMillionTokens).toBe(6);
+    expect(model?.longContextCost?.outputCostPerMillionTokens).toBe(6);
   });
 });

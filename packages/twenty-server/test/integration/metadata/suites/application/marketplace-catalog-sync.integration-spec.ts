@@ -21,6 +21,7 @@ import { type ApplicationRegistrationLookupService } from 'src/engine/core-modul
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 
@@ -182,16 +183,20 @@ describe('Marketplace Catalog Sync (integration)', () => {
           getAppProviderByClassName<ApplicationRegistrationLookupService>(
             'ApplicationRegistrationLookupService',
           );
+        const [vettedApplication] = MARKETPLACE_VETTED_APPLICATIONS;
+
+        jestExpectToBeDefined(vettedApplication);
+
         const universalIdentifier = isVetted
           ? crypto.randomUUID()
-          : MARKETPLACE_VETTED_APPLICATIONS[0]?.universalIdentifier!;
+          : vettedApplication.universalIdentifier;
         const catalogParams = {
           universalIdentifier,
           name: 'Vetted catalog sync test',
           sourceType: ApplicationRegistrationSourceType.NPM,
           sourcePackage: isVetted
             ? '@test/vetted-catalog-sync'
-            : MARKETPLACE_VETTED_APPLICATIONS[0]?.sourcePackage!,
+            : vettedApplication.sourcePackage,
           latestAvailableVersion: '1.0.0',
           manifest: buildBaseManifest({
             appId: universalIdentifier,
@@ -363,6 +368,8 @@ describe('Marketplace Catalog Sync (integration)', () => {
     });
 
     it('does not register an official identifier from a non-official package', async () => {
+      jestExpectToBeDefined(OFFICIAL_APPLICATION);
+
       const { universalIdentifier } = OFFICIAL_APPLICATION;
 
       expect(
@@ -410,6 +417,8 @@ describe('Marketplace Catalog Sync (integration)', () => {
     ])(
       'does not register an official identifier spelled $variant from a non-official package',
       async ({ transform }) => {
+        jestExpectToBeDefined(OFFICIAL_APPLICATION);
+
         const { universalIdentifier } = OFFICIAL_APPLICATION;
 
         expect(
@@ -477,6 +486,8 @@ describe('Marketplace Catalog Sync (integration)', () => {
     });
 
     it('lets the official package take back an official identifier registered from another package', async () => {
+      jestExpectToBeDefined(OFFICIAL_APPLICATION);
+
       const { universalIdentifier, sourcePackage } = OFFICIAL_APPLICATION;
 
       expect(

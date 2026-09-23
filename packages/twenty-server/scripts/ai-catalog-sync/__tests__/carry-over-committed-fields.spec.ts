@@ -26,7 +26,7 @@ describe('carryOverCommittedFields', () => {
       ]),
     });
 
-    expect(catalog.openai.models[0]).toEqual({
+    expect(catalog.openai?.models[0]).toEqual({
       name: 'gpt-x',
       label: 'GPT X',
       supportsReasoning: true,
@@ -46,7 +46,7 @@ describe('carryOverCommittedFields', () => {
       ]),
     });
 
-    expect(catalog.openai.models[0]).toEqual({
+    expect(catalog.openai?.models[0]).toEqual({
       name: 'gpt-new',
       label: 'GPT New',
     });

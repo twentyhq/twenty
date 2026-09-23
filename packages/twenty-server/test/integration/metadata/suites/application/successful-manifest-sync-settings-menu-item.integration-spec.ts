@@ -254,7 +254,7 @@ describe('Manifest sync - settings menu items', () => {
     const settingsMenuItems = await findAppSettingsMenuItems();
 
     expect(settingsMenuItems).toHaveLength(1);
-    expect(settingsMenuItems[0].universalIdentifier).toBe(
+    expect(settingsMenuItems[0]?.universalIdentifier).toBe(
       SYNC_SETTINGS_MENU_ITEM_ID,
     );
   }, 60000);
@@ -336,7 +336,7 @@ describe('Manifest sync - settings menu items', () => {
     const settingsMenuItems = await findAppSettingsMenuItems();
 
     expect(settingsMenuItems).toHaveLength(1);
-    expect(settingsMenuItems[0].universalIdentifier).toBe(
+    expect(settingsMenuItems[0]?.universalIdentifier).toBe(
       SYNC_SETTINGS_MENU_ITEM_ID,
     );
   }, 60000);

@@ -9,6 +9,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { v4 as uuidv4 } from 'uuid';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_APP_UID = uuidv4();
 const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
@@ -81,22 +82,30 @@ describe('Direct application file upload', () => {
 
     expect(reservationErrors).toEqual([]);
     expect(targets).toHaveLength(2);
-    expect(targets[0]?.filePath!).toBe(HANDLER_PATH);
-    expect(targets[0]?.fileFolder!).toBe('BuiltLogicFunction');
-    expect(targets[1]?.filePath!).toBe(LOGO_PATH);
+    expect(targets[0]?.filePath).toBe(HANDLER_PATH);
+    expect(targets[0]?.fileFolder).toBe('BuiltLogicFunction');
+    expect(targets[1]?.filePath).toBe(LOGO_PATH);
+
+    const targetFileId = targets[0]?.fileId;
+
+    jestExpectToBeDefined(targetFileId);
 
     const [pendingRow] = await globalThis.testDataSource.query(
       `SELECT status, "mimeType" FROM core."file" WHERE id = $1`,
-      [targets[0]?.fileId!],
+      [targetFileId],
     );
 
     expect(pendingRow.status).toBe('PENDING');
     expect(pendingRow.mimeType).toBe('application/octet-stream');
 
+    jestExpectToBeDefined(targets[0]);
+
     const handlerResponse = await putApplicationFileUploadTarget({
       uploadTarget: targets[0],
       body: handlerBuffer,
     });
+    jestExpectToBeDefined(targets[1]);
+
     const logoResponse = await putApplicationFileUploadTarget({
       uploadTarget: targets[1],
       body: logoBuffer,
@@ -139,9 +148,13 @@ describe('Direct application file upload', () => {
       EXPECTED_SANITIZED_LOGO_CONTENT,
     );
 
-    const logoRow = rows.find(
-      (row: { id: string }) => row.id === targets[1]?.fileId!,
-    );
+    const logoRow = rows.find((row: { id: string }) => {
+      const secondFileId = targets[1]?.fileId;
+
+      jestExpectToBeDefined(secondFileId);
+
+      return row.id === secondFileId;
+    });
 
     expect(logoRow.mimeType).toBe('image/svg+xml');
   }, 60000);
@@ -162,10 +175,10 @@ describe('Direct application file upload', () => {
     const { targets, errors } = data!.createApplicationFileUploads;
 
     expect(targets).toHaveLength(1);
-    expect(targets[0]?.filePath!).toBe('src/valid.ts');
+    expect(targets[0]?.filePath).toBe('src/valid.ts');
     expect(errors).toHaveLength(1);
-    expect(errors[0]?.filePath!).toBe('note.pdf');
-    expect(errors[0]?.message!).toContain('Invalid fileFolder');
+    expect(errors[0]?.filePath).toBe('note.pdf');
+    expect(errors[0]?.message).toContain('Invalid fileFolder');
   }, 30000);
 
   it('should fail slow: report a path escaping the application folder as a per-file error', async () => {
@@ -188,7 +201,7 @@ describe('Direct application file upload', () => {
 
     expect(targets).toEqual([]);
     expect(errors).toHaveLength(1);
-    expect(errors[0]?.filePath!).toBe('../../../etc/passwd.ts');
+    expect(errors[0]?.filePath).toBe('../../../etc/passwd.ts');
   }, 30000);
 
   it('should fail slow: report a file whose bytes never reached storage as a per-file completion error', async () => {
@@ -201,11 +214,13 @@ describe('Direct application file upload', () => {
       ],
     });
 
-    const fileId = createData!.createApplicationFileUploads.targets[0]?.fileId;
+    const fileId = createData.createApplicationFileUploads.targets[0]?.fileId;
+
+    jestExpectToBeDefined(fileId);
 
     const { data: completeData } = await completeApplicationFileUploads({
       applicationUniversalIdentifier: TEST_APP_UID,
-      fileIds: [fileId!],
+      fileIds: [fileId],
     });
 
     jest.useFakeTimers();
@@ -214,7 +229,7 @@ describe('Direct application file upload', () => {
 
     expect(files).toEqual([]);
     expect(errors).toHaveLength(1);
-    expect(errors[0]?.fileId!).toBe(fileId);
-    expect(errors[0]?.message!).toContain('has not been uploaded to storage');
+    expect(errors[0]?.fileId).toBe(fileId);
+    expect(errors[0]?.message).toContain('has not been uploaded to storage');
   }, 30000);
 });

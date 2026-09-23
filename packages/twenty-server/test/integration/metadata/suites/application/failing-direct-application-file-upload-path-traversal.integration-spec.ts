@@ -215,7 +215,7 @@ describe('Application file upload reservation should fail', () => {
           message: expect.any(String),
         },
       ]);
-      expect(reservationErrors[0].message).toMatchSnapshot();
+      expect(reservationErrors[0]?.message).toMatchSnapshot();
     },
     60000,
   );

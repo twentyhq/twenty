@@ -12,11 +12,14 @@ import { disconnectConnectedAccount } from 'test/integration/utils/query-messagi
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'messaging-disconnection@apple.dev';
 
 describe('Messaging connected account disconnection (integration)', () => {
   const inbox = [gmailMessage()];
+  jestExpectToBeDefined(inbox[0]);
+
   const expectedSubject = getGmailMessageSubject(inbox[0]);
 
   setupGoogleMock({ handle: HANDLE, inbox });

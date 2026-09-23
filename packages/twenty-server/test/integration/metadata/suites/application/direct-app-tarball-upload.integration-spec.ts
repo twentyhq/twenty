@@ -438,8 +438,8 @@ describe('Direct app tarball upload', () => {
         expectToFail: true,
       });
 
-      expect(overlapping.errors?.[0].extensions.code).toBe('CONFLICT');
-      expect(overlapping.errors?.[0].message).toContain(
+      expect(overlapping.errors[0]?.extensions.code).toBe('CONFLICT');
+      expect(overlapping.errors[0]?.message).toContain(
         'already being completed',
       );
 
@@ -555,7 +555,7 @@ describe('Direct app tarball upload', () => {
         error.message.includes('has not been uploaded'),
       ),
     ).toBe(true);
-    expect(errors?.[0].extensions.code).toBe('BAD_USER_INPUT');
+    expect(errors[0]?.extensions.code).toBe('BAD_USER_INPUT');
   });
 
   it('rejects an unknown upload', async () => {
@@ -582,6 +582,6 @@ describe('Direct app tarball upload', () => {
         error.message.includes('Invalid file size'),
       ),
     ).toBe(true);
-    expect(errors?.[0].extensions.code).toBe('BAD_USER_INPUT');
+    expect(errors[0]?.extensions.code).toBe('BAD_USER_INPUT');
   });
 });

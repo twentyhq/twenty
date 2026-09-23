@@ -171,6 +171,7 @@ describe('upsertViewWidget view settings', () => {
       expectToFail: false,
       input: { id: pageLayoutId },
     });
+
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {

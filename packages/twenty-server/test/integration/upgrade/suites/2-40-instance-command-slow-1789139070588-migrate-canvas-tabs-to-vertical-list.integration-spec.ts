@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 
 import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 jest.useRealTimers();
 
@@ -233,6 +234,8 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
       widgetIsActiveValues: [true],
       ...widgetOptions,
     });
+    jestExpectToBeDefined(tab.widgetIds[0]);
+
     const originalState = await readTabAndWidgetState({
       tabId: tab.tabId,
       widgetId: tab.widgetIds[0],
@@ -266,17 +269,21 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
         },
       });
       const originalStates = await Promise.all(
-        [sourceTab, destinationTab].map((tab) =>
-          readTabAndWidgetState({
+        [sourceTab, destinationTab].map((tab) => {
+          jestExpectToBeDefined(tab.widgetIds[0]);
+
+          return readTabAndWidgetState({
             tabId: tab.tabId,
             widgetId: tab.widgetIds[0],
-          }),
-        ),
+          });
+        }),
       );
 
       await command.runDataMigration(dataSource);
 
       for (const [index, tab] of [sourceTab, destinationTab].entries()) {
+        jestExpectToBeDefined(tab.widgetIds[0]);
+
         expect(
           await readTabAndWidgetState({
             tabId: tab.tabId,
@@ -309,6 +316,8 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
       'flatPageLayoutTabMaps',
       'flatPageLayoutWidgetMaps',
     ]);
+    jestExpectToBeDefined(canvasTab.widgetIds[0]);
+
     expect(
       await readTabAndWidgetState({
         tabId: canvasTab.tabId,
@@ -345,6 +354,8 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
 
       await command.runDataMigration(dataSource);
       await command.runDataMigration(dataSource);
+
+      jestExpectToBeDefined(tab.widgetIds[0]);
 
       expect(
         await readTabAndWidgetState({
@@ -396,6 +407,8 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
           entity === 'pageLayoutTab' ? tab.tabId : tab.widgetIds[0],
         ],
       );
+      jestExpectToBeDefined(tab.widgetIds[0]);
+
       const originalState = await readTabAndWidgetState({
         tabId: tab.tabId,
         widgetId: tab.widgetIds[0],
@@ -432,6 +445,8 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
     );
     await command.runDataMigration(dataSource);
 
+    jestExpectToBeDefined(tab.widgetIds[0]);
+
     expect(
       await readTabAndWidgetState({
         tabId: tab.tabId,
@@ -452,6 +467,8 @@ describe('MigrateCanvasTabsToVerticalListSlowInstanceCommand (integration)', () 
     await command.runDataMigration(dataSource);
 
     expect(await readTabLayoutMode(tab.tabId)).toBe('VERTICAL_LIST');
+    jestExpectToBeDefined(tab.widgetIds[1]);
+
     expect(
       await readTabAndWidgetState({
         tabId: tab.tabId,

@@ -12,6 +12,7 @@ import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/
 import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 export type ApplicationWithAppConnection = {
   applicationUniversalIdentifier: string;
@@ -90,6 +91,8 @@ export const setupApplicationWithAppConnection = async ({
   const [connectionProvider] = await findConnectionProvidersByApplication(
     applicationUniversalIdentifier,
   );
+
+  jestExpectToBeDefined(connectionProvider);
 
   const connectedAccountId = uuidv4();
   const connectedAccountHandle = `${sourcePath}@slack.test`;

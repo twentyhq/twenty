@@ -25,6 +25,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const RUN_PREFIX = `App workflow permissions ${randomUUID()}`;
@@ -207,18 +208,22 @@ const buildManifest = ({
           },
         },
       ],
-      workflows: TEST_WORKFLOWS.map((workflow, index) => ({
-        universalIdentifier: workflow.universalIdentifier,
-        name: `${RUN_PREFIX} ${index}`,
-        version: {
-          trigger: {
-            universalIdentifier: randomUUID(),
-            type: 'MANUAL',
-            nextStepIds: [workflow.steps[0].universalIdentifier],
+      workflows: TEST_WORKFLOWS.map((workflow, index) => {
+        jestExpectToBeDefined(workflow.steps[0]);
+
+        return {
+          universalIdentifier: workflow.universalIdentifier,
+          name: `${RUN_PREFIX} ${index}`,
+          version: {
+            trigger: {
+              universalIdentifier: randomUUID(),
+              type: 'MANUAL',
+              nextStepIds: [workflow.steps[0].universalIdentifier],
+            },
+            steps: workflow.steps,
           },
-          steps: workflow.steps,
-        },
-      })),
+        };
+      }),
     },
   });
 
@@ -446,11 +451,12 @@ describe('application workflow execution permissions', () => {
     const workflowRun = await waitForRunToEnd(
       await runWorkflow(CREATE_OPPORTUNITY_WORKFLOW),
     );
-    const [createStep] = CREATE_OPPORTUNITY_WORKFLOW.steps;
+    const createStep = CREATE_OPPORTUNITY_WORKFLOW.steps[0];
+    jestExpectToBeDefined(createStep);
 
     expect(workflowRun.status).toBe('FAILED');
     expect(
-      workflowRun.state.stepInfos[createStep.universalIdentifier].status,
+      workflowRun.state.stepInfos[createStep.universalIdentifier]?.status,
     ).toBe('FAILED');
     expect(await countRecordsByName('opportunity', OPPORTUNITY_NAME)).toBe(0);
   }, 120000);
@@ -571,7 +577,8 @@ describe('application workflow execution permissions', () => {
 
   it('only lets the values of a form step change on an application workflow run', async () => {
     const workflowRunId = await runWorkflow(FORM_WORKFLOW);
-    const [formStep] = FORM_WORKFLOW.steps;
+    const formStep = FORM_WORKFLOW.steps[0];
+    jestExpectToBeDefined(formStep);
 
     const pendingRun = await waitForRun(
       workflowRunId,
@@ -614,6 +621,8 @@ describe('application workflow execution permissions', () => {
   it('reads the records picked in a form with the permissions of the run, keeping a refused form open', async () => {
     const [formStep] = FORM_WORKFLOW.steps;
 
+    jestExpectToBeDefined(formStep);
+
     const [opportunity] = await globalThis.testDataSource.query(
       `SELECT id FROM "${SCHEMA}"."opportunity" WHERE "deletedAt" IS NULL LIMIT 1`,
     );
@@ -638,7 +647,7 @@ describe('application workflow execution permissions', () => {
     expect(unreadableSelection.body.errors).toBeDefined();
     expect(
       (await findRun(formRunId)).state.stepInfos[formStep.universalIdentifier]
-        .status,
+        ?.status,
     ).toBe('PENDING');
 
     const malformedSelection = await submitFormStep({
@@ -661,16 +670,20 @@ describe('application workflow execution permissions', () => {
 
     expect(workflowRun.status).toBe('COMPLETED');
     expect(
-      workflowRun.state.stepInfos[formStep.universalIdentifier].result,
+      workflowRun.state.stepInfos[formStep.universalIdentifier]?.result,
     ).toMatchObject({ company: { id: company.id } });
     expect(
-      workflowRun.state.stepInfos[formStep.universalIdentifier].result,
+      workflowRun.state.stepInfos[formStep.universalIdentifier]?.result,
     ).not.toHaveProperty('opportunity');
   }, 120000);
 
   it('checks the current application permissions again when a delayed run resumes', async () => {
     const workflowRunId = await runWorkflow(DELAYED_CREATE_COMPANY_WORKFLOW);
-    const [delayStep, createStep] = DELAYED_CREATE_COMPANY_WORKFLOW.steps;
+    const delayStep = DELAYED_CREATE_COMPANY_WORKFLOW.steps[0];
+    jestExpectToBeDefined(delayStep);
+
+    const createStep = DELAYED_CREATE_COMPANY_WORKFLOW.steps[1];
+    jestExpectToBeDefined(createStep);
 
     await waitForRun(
       workflowRunId,
@@ -688,7 +701,7 @@ describe('application workflow execution permissions', () => {
 
     expect(workflowRun.status).toBe('FAILED');
     expect(
-      workflowRun.state.stepInfos[createStep.universalIdentifier].status,
+      workflowRun.state.stepInfos[createStep.universalIdentifier]?.status,
     ).toBe('FAILED');
     expect(await countRecordsByName('company', DELAYED_COMPANY_NAME)).toBe(0);
   }, 150000);

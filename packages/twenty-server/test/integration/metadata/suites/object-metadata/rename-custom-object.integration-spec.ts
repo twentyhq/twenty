@@ -8,6 +8,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type StandardObjectRelation = {
   objectMetadataId: string;
@@ -73,7 +74,11 @@ describe('Custom object renaming', () => {
   // @ts-expect-error legacy noImplicitAny
   const fillStandardObjectRelationsMapObjectMetadataId = (standardObjects) => {
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
-      standardObjectRelationsMap[relation].objectMetadataId =
+      const relationEntry = standardObjectRelationsMap[relation];
+
+      jestExpectToBeDefined(relationEntry);
+
+      relationEntry.objectMetadataId =
         standardObjects.body.data.objects.edges.find(
           // @ts-expect-error legacy noImplicitAny
           (object) =>
@@ -131,9 +136,13 @@ describe('Custom object renaming', () => {
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
       const relationFieldMetadata = relationFieldsMetadataForListing.find(
         // @ts-expect-error legacy noImplicitAny
-        (field) =>
-          field.object.id ===
-          standardObjectRelationsMap[relation].objectMetadataId,
+        (field) => {
+          const relationEntry = standardObjectRelationsMap[relation];
+
+          jestExpectToBeDefined(relationEntry);
+
+          return field.object.id === relationEntry.objectMetadataId;
+        },
       );
 
       const relationFieldMetadataId = relationFieldMetadata?.id;
@@ -146,11 +155,12 @@ describe('Custom object renaming', () => {
           : capitalize(CUSTOM_OBJECT.nameSingular),
       );
 
-      standardObjectRelationsMap[relation].relationFieldMetadataId =
-        relationFieldMetadataId;
-      standardObjectRelationsMap[
-        relation
-      ].relationFieldMetadataUniversalIdentifier =
+      const relationEntry = standardObjectRelationsMap[relation];
+
+      jestExpectToBeDefined(relationEntry);
+
+      relationEntry.relationFieldMetadataId = relationFieldMetadataId;
+      relationEntry.relationFieldMetadataUniversalIdentifier =
         relationFieldMetadata?.universalIdentifier;
     });
   });
@@ -191,6 +201,8 @@ describe('Custom object renaming', () => {
 
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
       const relationEntry = standardObjectRelationsMap[relation];
+      jestExpectToBeDefined(relationEntry);
+
       const relationFieldMetadataId = relationEntry.relationFieldMetadataId;
       const relationFieldMetadataUniversalIdentifier =
         relationEntry.relationFieldMetadataUniversalIdentifier;
@@ -215,6 +227,8 @@ describe('Custom object renaming', () => {
   it('3. should reject direct deletion of a system side-effect relation field', async () => {
     const timelineActivityRelation =
       standardObjectRelationsMap['timelineActivity'];
+    jestExpectToBeDefined(timelineActivityRelation);
+
     const relationFieldMetadataId =
       timelineActivityRelation.relationFieldMetadataId;
 
@@ -230,6 +244,8 @@ describe('Custom object renaming', () => {
   it('4. should reject direct edition of a system side-effect relation field', async () => {
     const timelineActivityRelation =
       standardObjectRelationsMap['timelineActivity'];
+    jestExpectToBeDefined(timelineActivityRelation);
+
     const relationFieldMetadataId =
       timelineActivityRelation.relationFieldMetadataId;
 
@@ -248,6 +264,8 @@ describe('Custom object renaming', () => {
   it('5. should reject a morph relations update payload on a system side-effect relation field', async () => {
     const timelineActivityRelation =
       standardObjectRelationsMap['timelineActivity'];
+    jestExpectToBeDefined(timelineActivityRelation);
+
     const relationFieldMetadataId =
       timelineActivityRelation.relationFieldMetadataId;
 

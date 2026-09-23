@@ -74,13 +74,10 @@ describe('Index metadata creation through object metadata creation v2', () => {
     const foundObject = await findObjectWithIndex({
       objectMetadataId: createdObjectId,
     });
-    const tsVectorField = foundObject.fieldsList.find(
-      (field) => field.type === FieldMetadataType.TS_VECTOR,
-    );
-
-    jestExpectToBeDefined(tsVectorField);
 
     expect(foundObject.indexMetadataList.length).toBe(1);
+    jestExpectToBeDefined(foundObject.indexMetadataList[0]);
+
     const { indexFieldMetadataList, ...index } =
       foundObject.indexMetadataList[0];
 
@@ -89,7 +86,9 @@ describe('Index metadata creation through object metadata creation v2', () => {
     expect(indexFieldMetadataList).toMatchObject([
       {
         id: expect.any(String),
-        fieldMetadataId: tsVectorField.id,
+        fieldMetadataId: foundObject.fieldsList.find(
+          (field) => field.type === FieldMetadataType.TS_VECTOR,
+        )?.id,
         order: 0,
       },
     ]);
@@ -101,6 +100,8 @@ describe('Index metadata creation through object metadata creation v2', () => {
     });
 
     expect(foundObject.indexMetadataList.length).toBe(1);
+    jestExpectToBeDefined(foundObject.indexMetadataList[0]);
+
     const { indexFieldMetadataList: _, ...index } =
       foundObject.indexMetadataList[0];
 
@@ -122,6 +123,8 @@ describe('Index metadata creation through object metadata creation v2', () => {
       });
 
       expect(foundObject.indexMetadataList.length).toBe(1);
+      jestExpectToBeDefined(foundObject.indexMetadataList[0]);
+
       const { indexFieldMetadataList: _, ...index } =
         foundObject.indexMetadataList[0];
 

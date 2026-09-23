@@ -10,6 +10,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const OBJECT_NAME_SINGULAR = 'deferredGadget';
 const SYSTEM_RELATION_OBJECT_NAMES = [
@@ -101,9 +102,12 @@ describe('Deferred workspace migration actions', () => {
       await findIndexNamesBySystemRelationObjectName();
 
     for (const systemRelationObjectName of SYSTEM_RELATION_OBJECT_NAMES) {
-      const newIndexNames = indexNamesAfterObjectCreation[
-        systemRelationObjectName
-      ].filter(
+      const systemRelationIndexNames =
+        indexNamesAfterObjectCreation[systemRelationObjectName];
+
+      jestExpectToBeDefined(systemRelationIndexNames);
+
+      const newIndexNames = systemRelationIndexNames.filter(
         (indexName) =>
           !indexNamesBeforeObjectCreation[systemRelationObjectName]?.includes(
             indexName,

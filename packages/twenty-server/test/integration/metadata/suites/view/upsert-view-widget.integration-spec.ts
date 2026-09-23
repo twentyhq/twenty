@@ -32,6 +32,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type ViewWidgetTestSetup = {
   pageLayoutId: string;
@@ -654,13 +655,15 @@ describe('upsertViewWidget', () => {
     it('should create a new filter', async () => {
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
 
+      jestExpectToBeDefined(fieldMetadataId);
+
       const { data, errors } = await upsertViewWidget({
         expectToFail: false,
         input: {
           widgetId: testSetup.widgetId,
           viewFilters: [
             {
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               operand: ViewFilterOperand.CONTAINS,
               value: 'test-value',
             },
@@ -691,6 +694,8 @@ describe('upsertViewWidget', () => {
       const filterId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
 
+      jestExpectToBeDefined(fieldMetadataId);
+
       await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -698,7 +703,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               operand: ViewFilterOperand.CONTAINS,
               value: 'initial',
             },
@@ -713,7 +718,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               operand: ViewFilterOperand.DOES_NOT_CONTAIN,
               value: 'updated',
             },
@@ -741,6 +746,8 @@ describe('upsertViewWidget', () => {
       const filterToRemoveId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
 
+      jestExpectToBeDefined(fieldMetadataId);
+
       await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -748,13 +755,13 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterToKeepId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               operand: ViewFilterOperand.CONTAINS,
               value: 'keep',
             },
             {
               id: filterToRemoveId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               operand: ViewFilterOperand.CONTAINS,
               value: 'remove',
             },
@@ -769,7 +776,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterToKeepId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               operand: ViewFilterOperand.CONTAINS,
               value: 'keep',
             },
@@ -801,6 +808,8 @@ describe('upsertViewWidget', () => {
       const filterId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
 
+      jestExpectToBeDefined(fieldMetadataId);
+
       await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -814,7 +823,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               operand: ViewFilterOperand.CONTAINS,
               value: 'grouped-filter',
               viewFilterGroupId: filterGroupId,
@@ -850,6 +859,8 @@ describe('upsertViewWidget', () => {
       const sortId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
 
+      jestExpectToBeDefined(fieldMetadataId);
+
       await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -857,7 +868,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               direction: ViewSortDirection.DESC,
             },
           ],
@@ -880,6 +891,8 @@ describe('upsertViewWidget', () => {
       const sortId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[1];
 
+      jestExpectToBeDefined(fieldMetadataId);
+
       await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -887,7 +900,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               direction: ViewSortDirection.ASC,
             },
           ],
@@ -901,7 +914,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               direction: ViewSortDirection.DESC,
             },
           ],
@@ -925,6 +938,9 @@ describe('upsertViewWidget', () => {
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
       const secondFieldMetadataId = testSetup.fieldMetadataIds[1];
 
+      jestExpectToBeDefined(fieldMetadataId);
+      jestExpectToBeDefined(secondFieldMetadataId);
+
       await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -932,7 +948,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortToKeepId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               direction: ViewSortDirection.ASC,
             },
             {
@@ -951,7 +967,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortToKeepId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               direction: ViewSortDirection.ASC,
             },
           ],
@@ -994,6 +1010,8 @@ describe('upsertViewWidget', () => {
           field.fieldMetadataId === testSetup.labelIdentifierFieldMetadataId,
       );
 
+      jestExpectToBeDefined(fieldMetadataId);
+
       const { data, errors } = await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -1025,7 +1043,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               operand: ViewFilterOperand.CONTAINS,
               value: 'combined-test',
               viewFilterGroupId: filterGroupId,
@@ -1034,7 +1052,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               direction: ViewSortDirection.DESC,
             },
           ],
@@ -1122,6 +1140,8 @@ describe('upsertViewWidget', () => {
       const filterId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
 
+      jestExpectToBeDefined(fieldMetadataId);
+
       await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -1129,7 +1149,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               operand: ViewFilterOperand.CONTAINS,
               value: 'to-be-removed',
             },
@@ -1174,6 +1194,8 @@ describe('upsertViewWidget', () => {
       const sortId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[3];
 
+      jestExpectToBeDefined(fieldMetadataId);
+
       await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -1181,7 +1203,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId: fieldMetadataId!,
+              fieldMetadataId,
               direction: ViewSortDirection.ASC,
             },
           ],

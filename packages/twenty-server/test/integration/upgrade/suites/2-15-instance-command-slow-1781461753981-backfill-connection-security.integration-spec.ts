@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { BackfillConnectionSecuritySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-15/2-15-instance-command-slow-1781461753981-backfill-connection-security';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 jest.useRealTimers();
 
@@ -120,12 +121,18 @@ describe('BackfillConnectionSecuritySlowInstanceCommand (integration)', () => {
 
     const params = await getConnectionParameters(id);
 
-    expect(params.IMAP!.connectionSecurity).toBe('SSL_TLS');
-    expect(params.SMTP!.connectionSecurity).toBe('STARTTLS');
-    expect(params.CALDAV!.connectionSecurity).toBe('SSL_TLS');
-    expect(params.IMAP!.secure).toBeUndefined();
-    expect(params.SMTP!.secure).toBeUndefined();
-    expect(params.CALDAV!.secure).toBeUndefined();
+    expect(params.IMAP?.connectionSecurity).toBe('SSL_TLS');
+    expect(params.SMTP?.connectionSecurity).toBe('STARTTLS');
+    expect(params.CALDAV?.connectionSecurity).toBe('SSL_TLS');
+    jestExpectToBeDefined(params.IMAP);
+
+    expect(params.IMAP.secure).toBeUndefined();
+    jestExpectToBeDefined(params.SMTP);
+
+    expect(params.SMTP.secure).toBeUndefined();
+    jestExpectToBeDefined(params.CALDAV);
+
+    expect(params.CALDAV.secure).toBeUndefined();
   });
 
   it('maps implicit-TLS SMTP (port 465) and opportunistic IMAP (secure:false) correctly', async () => {
@@ -149,10 +156,10 @@ describe('BackfillConnectionSecuritySlowInstanceCommand (integration)', () => {
     await command.runDataMigration(dataSource);
 
     expect(
-      (await getConnectionParameters(implicitSmtpId)).SMTP.connectionSecurity,
+      (await getConnectionParameters(implicitSmtpId)).SMTP?.connectionSecurity,
     ).toBe('SSL_TLS');
     expect(
-      (await getConnectionParameters(plaintextImapId)).IMAP.connectionSecurity,
+      (await getConnectionParameters(plaintextImapId)).IMAP?.connectionSecurity,
     ).toBe('STARTTLS');
   });
 
@@ -178,12 +185,12 @@ describe('BackfillConnectionSecuritySlowInstanceCommand (integration)', () => {
     await command.runDataMigration(dataSource);
 
     expect(
-      (await getConnectionParameters(legacyId)).SMTP.connectionSecurity,
+      (await getConnectionParameters(legacyId)).SMTP?.connectionSecurity,
     ).toBe('STARTTLS');
     // A pre-set connectionSecurity is never overwritten, even when it disagrees with the port.
     expect(
       (await getConnectionParameters(alreadyMigratedId)).SMTP
-        .connectionSecurity,
+        ?.connectionSecurity,
     ).toBe('STARTTLS');
   });
 });

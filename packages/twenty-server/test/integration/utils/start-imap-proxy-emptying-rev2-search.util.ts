@@ -1,6 +1,6 @@
 import { connect, createServer, type Socket } from 'node:net';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 const ENABLE_IMAP4REV2_COMMAND = /\bENABLE\b.*\bIMAP4rev2\b/i;
 const SEARCH_COMMAND = /^(\S+) (UID )?SEARCH\b/i;
@@ -55,6 +55,8 @@ export const startImapProxyEmptyingRev2Search = async ({
         const searchCommand = line.match(SEARCH_COMMAND);
 
         if (isDefined(searchCommand)) {
+          assertIsDefinedOrThrow(searchCommand[1]);
+
           lastSearchCommand = {
             tag: searchCommand[1],
             isUid: isDefined(searchCommand[2]),

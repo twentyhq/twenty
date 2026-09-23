@@ -27,7 +27,7 @@ describe('mergeEvaluationModels', () => {
     });
 
     expect(Object.keys(catalog)).toEqual(['openai', 'typesafe-ai']);
-    expect(catalog['typesafe-ai'].models.map(({ name }) => name)).toEqual([
+    expect(catalog['typesafe-ai']?.models.map(({ name }) => name)).toEqual([
       'jev',
     ]);
   });
@@ -43,7 +43,7 @@ describe('mergeEvaluationModels', () => {
       evaluationModels: { openai: { models: [evaluationModel('gpt-eval')] } },
     });
 
-    expect(catalog.openai.models.map(({ name }) => name)).toEqual([
+    expect(catalog.openai?.models.map(({ name }) => name)).toEqual([
       'gpt-5',
       'gpt-5-mini',
       'gpt-eval',
@@ -62,8 +62,8 @@ describe('mergeEvaluationModels', () => {
       },
     });
 
-    expect(catalog['typesafe-ai'].models).toHaveLength(1);
-    expect(catalog['typesafe-ai'].models[0].label).toBe('Jev (updated)');
+    expect(catalog['typesafe-ai']?.models).toHaveLength(1);
+    expect(catalog['typesafe-ai']?.models[0]?.label).toBe('Jev (updated)');
   });
 
   it('should leave the catalog alone when there is nothing to merge', () => {

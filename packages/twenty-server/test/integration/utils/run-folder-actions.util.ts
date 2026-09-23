@@ -1,4 +1,5 @@
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
@@ -105,6 +106,8 @@ export const runFolderActions = async ({
       if (messageFolder.id === failingFolder.id) {
         throw new Error('Folder import failed');
       }
+
+      assertIsDefinedOrThrow(MESSAGE_EXTERNAL_IDS[0]);
 
       return [...MESSAGE_EXTERNAL_IDS, MESSAGE_EXTERNAL_IDS[0]];
     });

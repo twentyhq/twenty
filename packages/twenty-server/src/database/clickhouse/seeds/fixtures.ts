@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-created';
 import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-delete';
 import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-updated';
@@ -191,13 +193,15 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
           continue;
         }
 
+        assertIsDefinedOrThrow(userWeight);
+
         const eventsCount = Math.max(
           1,
           Math.round(
             (1 + nextRandom() * 4) *
               dayMultiplier *
               recencyMultiplier *
-              userWeight!,
+              userWeight,
           ),
         );
 
@@ -221,6 +225,11 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
             ? op.modelIds[Math.floor(nextRandom() * op.modelIds.length)]
             : '';
 
+          const user = users[userIdx];
+
+          assertIsDefinedOrThrow(user);
+          assertIsDefinedOrThrow(resourceContext);
+
           fixtures.push({
             timestamp: formatDateTimeForClickHouse(eventDate),
             workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -233,14 +242,14 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
                 ),
               ),
             ),
-            userWorkspaceId: users[userIdx],
+            userWorkspaceId: user,
             resourceType: op.resourceType,
             operationType: op.operationType,
             quantity: Math.round(op.baseQuantity * jitter),
             unit: op.unit,
             creditsUsedMicro: Math.round(op.baseCreditsMicro * jitter),
             resourceId: '',
-            resourceContext: resourceContext!,
+            resourceContext,
             metadata: {},
           });
         }

@@ -120,6 +120,7 @@ describe('writabilityObjectRecordsPermissions', () => {
 
   afterAll(async () => {
     await setObjectWritability(objectMetadataId, MetadataWritability.OPEN);
+
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {

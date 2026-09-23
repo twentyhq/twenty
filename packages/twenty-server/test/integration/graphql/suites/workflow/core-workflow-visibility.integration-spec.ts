@@ -6,6 +6,7 @@ import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -185,7 +186,12 @@ const createActiveManualWorkflow = async (name: string) => {
       isDefined(coreWorkflowVersions?.[0]?.workspaceWorkflowVersionId),
   });
 
-  const workspaceWorkflowVersionId = versions![0].workspaceWorkflowVersionId!;
+  jestExpectToBeDefined(versions);
+
+  jestExpectToBeDefined(versions[0]);
+
+  const workspaceWorkflowVersionId = versions[0]?.workspaceWorkflowVersionId;
+  jestExpectToBeDefined(workspaceWorkflowVersionId);
 
   await updateWorkflowVersionTrigger({
     workflowVersionId: workspaceWorkflowVersionId,
@@ -337,7 +343,14 @@ describe('core workflow visibility (e2e)', () => {
         isDefined(coreWorkflowVersions?.[0]?.workspaceWorkflowVersionId),
     });
 
-    workspaceWorkflowVersionId = versions![0]?.workspaceWorkflowVersionId!;
+    jestExpectToBeDefined(versions);
+
+    const versionWorkspaceWorkflowVersionId =
+      versions[0]?.workspaceWorkflowVersionId;
+
+    jestExpectToBeDefined(versionWorkspaceWorkflowVersionId);
+
+    workspaceWorkflowVersionId = versionWorkspaceWorkflowVersionId;
   });
 
   afterAll(async () => {
