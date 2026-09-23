@@ -65,13 +65,17 @@ export const seedUnsubscribeTopics = async ({
     .orIgnore()
     .values(
       UNSUBSCRIBE_TOPIC_SEEDS.map(
-        ({ seedName, name, description, visibility }) => ({
-          id: topicIds[seedName],
-          workspaceId,
-          name,
-          description,
-          visibility,
-        }),
+        ({ seedName, name, description, visibility }) => {
+          const topicId = topicIds[seedName];
+
+          return {
+            id: topicId,
+            workspaceId,
+            name,
+            description,
+            visibility,
+          };
+        },
       ),
     )
     .execute();

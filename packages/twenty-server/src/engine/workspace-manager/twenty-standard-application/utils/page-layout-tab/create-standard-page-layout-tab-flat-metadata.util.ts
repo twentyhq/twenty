@@ -3,7 +3,7 @@ import {
   PageLayoutType,
   type WidgetType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
@@ -38,6 +38,8 @@ export const createStandardPageLayoutTabFlatMetadata = ({
   now,
 }: CreateStandardPageLayoutTabArgs): FlatPageLayoutTab => {
   const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
+  assertIsDefinedOrThrow(layoutIds);
+
   const layout = STANDARD_PAGE_LAYOUTS[
     layoutName as keyof typeof STANDARD_PAGE_LAYOUTS
   ] as {
@@ -60,21 +62,35 @@ export const createStandardPageLayoutTabFlatMetadata = ({
   }
 
   const tabIds = layoutIds.tabs[tabTitle];
+  assertIsDefinedOrThrow(tabIds);
+
   const widgetNames = Object.keys(tabDefinition.widgets).filter(
     (widgetName) => {
-      const widgetType = tabDefinition.widgets[widgetName].type;
+      const widget = tabDefinition.widgets[widgetName];
+
+      assertIsDefinedOrThrow(widget);
+
+      const widgetType = widget.type;
 
       return (
         !isDefined(widgetType) || !excludedWidgetTypes.includes(widgetType)
       );
     },
   );
-  const widgetIds = widgetNames.map(
-    (widgetName) => tabIds.widgets[widgetName].id,
-  );
-  const widgetUniversalIdentifiers = widgetNames.map(
-    (widgetName) => tabDefinition.widgets[widgetName].universalIdentifier,
-  );
+  const widgetIds = widgetNames.map((widgetName) => {
+    const widgetWidget = tabIds.widgets[widgetName];
+
+    assertIsDefinedOrThrow(widgetWidget);
+
+    return widgetWidget.id;
+  });
+  const widgetUniversalIdentifiers = widgetNames.map((widgetName) => {
+    const widgetDefinition = tabDefinition.widgets[widgetName];
+
+    assertIsDefinedOrThrow(widgetDefinition);
+
+    return widgetDefinition.universalIdentifier;
+  });
 
   return {
     id: tabIds.id,

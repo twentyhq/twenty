@@ -1,5 +1,5 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
@@ -105,7 +105,11 @@ export const topologicallySortUniversalFlatEntitiesForSelfReferentialFks = <
     accumulator.push(root);
 
     for (let i = accumulator.length - 1; i < accumulator.length; i++) {
-      const children = childrenByParent.get(accumulator[i]) ?? [];
+      const currentUniversalIdentifier = accumulator[i];
+
+      assertIsDefinedOrThrow(currentUniversalIdentifier);
+
+      const children = childrenByParent.get(currentUniversalIdentifier) ?? [];
 
       accumulator.push(...children);
     }

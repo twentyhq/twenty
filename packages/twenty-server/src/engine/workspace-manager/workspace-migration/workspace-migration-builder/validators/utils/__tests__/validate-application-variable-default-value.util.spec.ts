@@ -27,7 +27,7 @@ describe('validateApplicationVariableDefaultValue', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(
+    expect(errors[0]?.code).toBe(
       ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
     );
   });

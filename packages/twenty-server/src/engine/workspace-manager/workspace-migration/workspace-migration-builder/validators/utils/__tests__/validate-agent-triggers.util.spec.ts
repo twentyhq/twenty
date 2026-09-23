@@ -66,7 +66,7 @@ describe('validateAgentTriggers', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
+    expect(errors[0]?.code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
   });
 
   it('should reject watched fields on a non-update event', () => {
@@ -108,7 +108,7 @@ describe('validateAgentTriggers', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('DATABASE_EVENT, CRON');
+    expect(errors[0]?.message).toContain('DATABASE_EVENT, CRON');
   });
 
   it('should reject a trigger id that is not a UUID', () => {
@@ -125,7 +125,7 @@ describe('validateAgentTriggers', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('unique');
+    expect(errors[0]?.message).toContain('unique');
   });
 
   it('should not report missing ids as duplicated', () => {
@@ -173,7 +173,7 @@ describe('validateAgentTriggers', () => {
     const errors = validateAgentTriggers({ triggers: null });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('must be a list');
+    expect(errors[0]?.message).toContain('must be a list');
   });
 
   it('should report a null trigger without throwing', () => {

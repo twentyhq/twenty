@@ -48,12 +48,11 @@ describe('Message and calendar target standard metadata build', () => {
   ] as const)(
     'configures $parentObjectName targets for the generic junction relation path',
     ({ parentTargetField, targetField }) => {
-      const parentTargetFieldMetadata =
+      expect(
         allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
           parentTargetField.universalIdentifier
-        ];
-
-      expect(parentTargetFieldMetadata).toMatchObject({
+        ],
+      ).toMatchObject({
         universalSettings: {
           junctionTargetFieldUniversalIdentifier:
             targetField.universalIdentifier,

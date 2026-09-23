@@ -1,5 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -257,7 +257,11 @@ const findStandardViewIdByUniversalIdentifier = ({
       objectName as AllStandardObjectName
     ].views as Record<string, { id: string }>;
 
-    return views[viewName].id;
+    const view = views[viewName];
+
+    assertIsDefinedOrThrow(view);
+
+    return view.id;
   }
 
   throw new Error(
@@ -361,12 +365,8 @@ const computeRecordPageWidgets = ({
         standardObjectMetadataRelatedEntityIds[objectName]?.id ?? null;
     }
 
-    for (const tabTitle of Object.keys(layout.tabs)) {
-      const tab = layout.tabs[tabTitle];
-
-      for (const widgetName of Object.keys(tab.widgets)) {
-        const widget = tab.widgets[widgetName];
-
+    for (const [tabTitle, tab] of Object.entries(layout.tabs)) {
+      for (const [widgetName, widget] of Object.entries(tab.widgets)) {
         if (excludedWidgetTypes.includes(widget.type)) {
           continue;
         }

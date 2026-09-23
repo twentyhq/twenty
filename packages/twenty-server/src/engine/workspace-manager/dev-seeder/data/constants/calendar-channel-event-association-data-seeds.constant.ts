@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { CALENDAR_EVENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 
@@ -61,23 +63,40 @@ const GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_SEEDS =
       const CHANNEL_RAND = Math.random();
 
       if (CHANNEL_RAND < 0.3) {
+        assertIsDefinedOrThrow(CHANNEL_IDS[0]);
+
         CHANNEL_ID = CHANNEL_IDS[0]; // TIM
       } else if (CHANNEL_RAND < 0.45) {
+        assertIsDefinedOrThrow(CHANNEL_IDS[1]);
+
         CHANNEL_ID = CHANNEL_IDS[1]; // JONY
       } else if (CHANNEL_RAND < 0.6) {
+        assertIsDefinedOrThrow(CHANNEL_IDS[2]);
+
         CHANNEL_ID = CHANNEL_IDS[2]; // PHIL
       } else if (CHANNEL_RAND < 0.8) {
+        assertIsDefinedOrThrow(CHANNEL_IDS[3]);
+
         CHANNEL_ID = CHANNEL_IDS[3]; // COMPANY_MAIN
       } else {
+        assertIsDefinedOrThrow(CHANNEL_IDS[4]);
+
         CHANNEL_ID = CHANNEL_IDS[4]; // TEAM_CALENDAR
       }
 
       const ASSOCIATION_INDEX = index + 1;
 
-      ASSOCIATION_SEEDS.push({
-        id: CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_IDS[
+      assertIsDefinedOrThrow(eventId);
+
+      const calendarChannelEventAssociationDataSeedId =
+        CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_IDS[
           `ID_${ASSOCIATION_INDEX}`
-        ],
+        ];
+
+      assertIsDefinedOrThrow(calendarChannelEventAssociationDataSeedId);
+
+      ASSOCIATION_SEEDS.push({
+        id: calendarChannelEventAssociationDataSeedId,
         calendarChannelId: CHANNEL_ID,
         calendarEventId: eventId,
         eventExternalId: `external_event_${ASSOCIATION_INDEX}@calendar.com`,

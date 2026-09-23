@@ -743,7 +743,9 @@ export class TimelineActivitySeederService {
     );
 
     const missingMetadata = metadataResults
-      .map((result, index) => (result ? null : metadataQueries[index].name))
+      .map((result, index) =>
+        result ? null : (metadataQueries[index]?.name ?? null),
+      )
       .filter(Boolean);
 
     if (missingMetadata.length > 0) {

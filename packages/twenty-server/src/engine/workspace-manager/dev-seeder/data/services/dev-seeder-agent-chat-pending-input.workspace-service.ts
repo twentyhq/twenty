@@ -8,7 +8,7 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
@@ -404,7 +404,8 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
         };
       }),
     );
-    const [firstCall] = calls;
+    const firstCall = calls[0];
+    assertIsDefinedOrThrow(firstCall);
 
     await this.threadRepository.insert(workspaceId, {
       id: threadId,

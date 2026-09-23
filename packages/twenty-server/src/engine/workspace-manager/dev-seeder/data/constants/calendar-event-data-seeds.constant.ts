@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 type CalendarEventDataSeed = {
   id: string;
   title: string;
@@ -159,6 +161,7 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
   for (let INDEX = 1; INDEX <= 800; INDEX++) {
     const TEMPLATE_INDEX = (INDEX - 1) % EVENT_TEMPLATES.length;
     const TEMPLATE = EVENT_TEMPLATES[TEMPLATE_INDEX];
+    assertIsDefinedOrThrow(TEMPLATE);
 
     const NOW = new Date();
     const RANDOM_DAYS_OFFSET = Math.floor(Math.random() * 365) - 182; // -182 to +182 days
@@ -184,10 +187,13 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
 
     const LOCATION =
       TEMPLATE.locations[Math.floor(Math.random() * TEMPLATE.locations.length)];
+    assertIsDefinedOrThrow(LOCATION);
+
     const CONFERENCE_SOLUTION =
       TEMPLATE.conferenceSolutions[
         Math.floor(Math.random() * TEMPLATE.conferenceSolutions.length)
       ];
+    assertIsDefinedOrThrow(CONFERENCE_SOLUTION);
 
     const IS_CANCELLED = Math.random() < 0.05;
 
@@ -197,8 +203,12 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
       ? `https://${CONFERENCE_SOLUTION.toLowerCase().replace(' ', '')}.com/j/${Math.floor(Math.random() * 9000000000) + 1000000000}`
       : '';
 
+    const calendarEventDataSeedId = CALENDAR_EVENT_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(calendarEventDataSeedId);
+
     CALENDAR_EVENT_SEEDS.push({
-      id: CALENDAR_EVENT_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: calendarEventDataSeedId,
       title: TEMPLATE.title,
       isCanceled: IS_CANCELLED,
       isFullDay: TEMPLATE.isFullDay,

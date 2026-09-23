@@ -29,6 +29,7 @@ describe('Message standard record page build', () => {
       allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.message.universalIdentifier
       ];
+
     const pageLayout =
       allFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier[
         MESSAGE_RECORD_PAGE.universalIdentifier
@@ -60,13 +61,13 @@ describe('Message standard record page build', () => {
         STANDARD_OBJECTS.message.views.messageRecordPageFields
           .universalIdentifier
       ];
-    const fieldsWidget =
-      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        MESSAGE_RECORD_PAGE.tabs.home.widgets.fields.universalIdentifier
-      ];
 
     expect(fieldsView).toBeDefined();
-    expect(fieldsWidget).toMatchObject({
+    expect(
+      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
+        MESSAGE_RECORD_PAGE.tabs.home.widgets.fields.universalIdentifier
+      ],
+    ).toMatchObject({
       title: 'Fields',
       type: WidgetType.FIELDS,
       pageLayoutTabUniversalIdentifier:
@@ -124,18 +125,17 @@ describe('Message standard record page build', () => {
   });
 
   it('groups the message record page fields into General and System', () => {
-    const generalGroup =
+    expect(
       allFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.message.views.messageRecordPageFields.viewFieldGroups
           .general.universalIdentifier
-      ];
-    const systemGroup =
+      ],
+    ).toMatchObject({ position: 0, isVisible: true });
+    expect(
       allFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.message.views.messageRecordPageFields.viewFieldGroups
           .system.universalIdentifier
-      ];
-
-    expect(generalGroup).toMatchObject({ position: 0, isVisible: true });
-    expect(systemGroup).toMatchObject({ position: 1, isVisible: true });
+      ],
+    ).toMatchObject({ position: 1, isVisible: true });
   });
 });

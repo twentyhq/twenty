@@ -44,8 +44,8 @@ describe('validateAgentResponseFormat', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
-    expect(errors[0].message).toContain('meetings brief');
+    expect(errors[0]?.code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
+    expect(errors[0]?.message).toContain('meetings brief');
   });
 
   it('should return an error when a property name exceeds 64 characters', () => {
@@ -56,7 +56,7 @@ describe('validateAgentResponseFormat', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
+    expect(errors[0]?.code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
   });
 
   it('should return an error without throwing when a json schema is missing its properties', () => {
@@ -75,7 +75,7 @@ describe('validateAgentResponseFormat', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
+    expect(errors[0]?.code).toBe(AiExceptionCode.INVALID_AGENT_INPUT);
   });
 
   it('should report every invalid property name at once', () => {
@@ -87,7 +87,7 @@ describe('validateAgentResponseFormat', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('meetings brief');
-    expect(errors[0].message).toContain('sales rep');
+    expect(errors[0]?.message).toContain('meetings brief');
+    expect(errors[0]?.message).toContain('sales rep');
   });
 });

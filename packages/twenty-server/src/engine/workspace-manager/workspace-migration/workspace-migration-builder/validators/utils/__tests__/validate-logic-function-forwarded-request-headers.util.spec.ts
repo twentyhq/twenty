@@ -56,10 +56,10 @@ describe('validateLogicFunctionForwardedRequestHeaders', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(
+    expect(errors[0]?.code).toBe(
       LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
     );
-    expect(errors[0].message).toBe(
+    expect(errors[0]?.message).toBe(
       'forwardedRequestHeaders cannot include credential headers: authorization',
     );
   });
@@ -70,7 +70,7 @@ describe('validateLogicFunctionForwardedRequestHeaders', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toBe(
+    expect(errors[0]?.message).toBe(
       'forwardedRequestHeaders cannot include credential headers: cookie',
     );
   });
@@ -84,7 +84,7 @@ describe('validateLogicFunctionForwardedRequestHeaders', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('Cookie, PROXY-AUTHORIZATION');
+    expect(errors[0]?.message).toContain('Cookie, PROXY-AUTHORIZATION');
   });
 
   it.each([
@@ -108,10 +108,10 @@ describe('validateLogicFunctionForwardedRequestHeaders', () => {
       const errors = validate();
 
       expect(errors).toHaveLength(1);
-      expect(errors[0].code).toBe(
+      expect(errors[0]?.code).toBe(
         LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
       );
-      expect(errors[0].message).toBe(
+      expect(errors[0]?.message).toBe(
         'forwardedRequestHeaders must be an array of strings',
       );
     },
@@ -124,7 +124,7 @@ describe('validateLogicFunctionForwardedRequestHeaders', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toBe(
+    expect(errors[0]?.message).toBe(
       'forwardedRequestHeaders must be an array of strings',
     );
   });

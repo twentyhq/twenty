@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type TaskDataSeed = {
@@ -165,7 +167,11 @@ const GET_RANDOM_ASSIGNEE = (): string => {
     WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   ];
 
-  return MEMBERS[Math.floor(Math.random() * MEMBERS.length)];
+  const member = MEMBERS[Math.floor(Math.random() * MEMBERS.length)];
+
+  assertIsDefinedOrThrow(member);
+
+  return member;
 };
 
 const FORMAT_DUE_DATE = (daysFromNow: number | null): string | null => {
@@ -185,9 +191,14 @@ const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
     const TEMPLATE_INDEX = (INDEX - 1) % PERSON_TASK_TEMPLATES.length;
     const TEMPLATE = PERSON_TASK_TEMPLATES[TEMPLATE_INDEX];
+    assertIsDefinedOrThrow(TEMPLATE);
+
+    const taskDataSeedId = TASK_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(taskDataSeedId);
 
     TASK_SEEDS.push({
-      id: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: taskDataSeedId,
       position: INDEX,
       title: TEMPLATE.title,
       bodyV2Blocknote: JSON.stringify([
@@ -220,9 +231,14 @@ const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const TEMPLATE_INDEX = (INDEX - 1201) % COMPANY_TASK_TEMPLATES.length;
     const TEMPLATE = COMPANY_TASK_TEMPLATES[TEMPLATE_INDEX];
+    assertIsDefinedOrThrow(TEMPLATE);
+
+    const taskId = TASK_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(taskId);
 
     TASK_SEEDS.push({
-      id: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: taskId,
       position: INDEX,
       title: TEMPLATE.title,
       bodyV2Blocknote: JSON.stringify([

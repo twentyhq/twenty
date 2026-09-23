@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
@@ -77,8 +77,10 @@ export const createStandardPageLayoutFlatMetadata = ({
 }: CreateStandardPageLayoutArgs): FlatPageLayout => {
   const layout =
     STANDARD_PAGE_LAYOUTS[layoutName as keyof typeof STANDARD_PAGE_LAYOUTS];
+
   const universalIdentifier = layout.universalIdentifier;
   const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
+  assertIsDefinedOrThrow(layoutIds);
 
   let objectMetadataId: string | null = null;
 
@@ -104,7 +106,11 @@ export const createStandardPageLayoutFlatMetadata = ({
     );
 
     if (isDefined(tabKey)) {
-      defaultTabToFocusOnMobileAndSidePanelId = layoutIds.tabs[tabKey].id;
+      const tabTab = layoutIds.tabs[tabKey];
+
+      assertIsDefinedOrThrow(tabTab);
+
+      defaultTabToFocusOnMobileAndSidePanelId = tabTab.id;
     }
   }
 

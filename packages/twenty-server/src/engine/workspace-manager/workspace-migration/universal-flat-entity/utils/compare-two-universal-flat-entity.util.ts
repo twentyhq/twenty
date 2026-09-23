@@ -1,7 +1,7 @@
 import diff from 'microdiff';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
-import { parseJson } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, parseJson } from 'twenty-shared/utils';
 
 import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-universal-flat-entity-properties-to-compare-and-stringify.constant';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
@@ -35,6 +35,9 @@ export const compareTwoFlatEntity = <T extends AllMetadataName>({
         }),
     );
 
+  assertIsDefinedOrThrow(transformedFromUniversalFlatEntity);
+  assertIsDefinedOrThrow(transformedToUniversalFlatEntity);
+
   const flatEntityDifferences = diff(
     transformedFromUniversalFlatEntity,
     transformedToUniversalFlatEntity,
@@ -51,6 +54,8 @@ export const compareTwoFlatEntity = <T extends AllMetadataName>({
       case 'CHANGE': {
         const { path, value } = difference;
         const property = path[0];
+        assertIsDefinedOrThrow(property);
+
         const isJsonb = propertiesToStringify.includes(
           property as MetadataUniversalFlatEntityPropertiesToStringify<T>,
         );

@@ -56,6 +56,7 @@ const collectViewFieldNames = (
   viewName: keyof typeof MESSAGE_CAMPAIGN.views,
 ): string[] => {
   const view = MESSAGE_CAMPAIGN.views[viewName];
+
   const nameByUniversalIdentifier = new Map(
     Object.entries(view.viewFields).map(([fieldName, viewField]) => [
       viewField.universalIdentifier,

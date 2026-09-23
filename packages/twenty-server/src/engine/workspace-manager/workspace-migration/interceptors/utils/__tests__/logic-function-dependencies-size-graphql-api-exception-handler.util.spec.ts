@@ -33,10 +33,10 @@ describe('logicFunctionDependenciesSizeGraphqlApiExceptionHandler', () => {
 
     expect(extensions.summary).toEqual({ totalErrors: 1, logicFunction: 1 });
     expect(extensions.errors.logicFunction).toHaveLength(1);
-    expect(extensions.errors.logicFunction?.[0].errors[0].code).toBe(
+    expect(extensions.errors.logicFunction?.[0]?.errors[0]?.code).toBe(
       LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED,
     );
-    expect(extensions.errors.logicFunction?.[0].errors[0].value).toBe(
+    expect(extensions.errors.logicFunction?.[0]?.errors[0]?.value).toBe(
       exception.message,
     );
   });

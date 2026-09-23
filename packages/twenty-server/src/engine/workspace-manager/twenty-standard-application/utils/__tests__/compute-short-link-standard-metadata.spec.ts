@@ -56,7 +56,7 @@ describe('ShortLink standard metadata build', () => {
 
     expect(index).toMatchObject({ isUnique: true });
     expect(index?.flatIndexFieldMetadatas).toHaveLength(1);
-    expect(index?.flatIndexFieldMetadatas[0].fieldMetadataId).toBe(
+    expect(index?.flatIndexFieldMetadatas[0]?.fieldMetadataId).toBe(
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.shortLink.fields.templateAndResolvedUrlHash
           .universalIdentifier

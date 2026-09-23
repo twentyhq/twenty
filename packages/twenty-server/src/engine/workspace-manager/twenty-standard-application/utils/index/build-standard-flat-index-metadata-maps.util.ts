@@ -104,8 +104,11 @@ export const buildStandardFlatIndexMetadataMaps = (
       STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME,
     ) as (keyof typeof STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME)[]
   ).flatMap((objectName) => {
-    const builder: StandardIndexBuilder<typeof objectName> =
+    const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAMEItem =
       STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME[objectName];
+
+    const builder: StandardIndexBuilder<typeof objectName> =
+      STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAMEItem;
 
     const result = builder({
       ...args,

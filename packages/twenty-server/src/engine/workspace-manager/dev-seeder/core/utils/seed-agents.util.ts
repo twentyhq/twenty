@@ -1,5 +1,6 @@
 import uniqBy from 'lodash.uniqby';
 import { type QueryRunner } from 'typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import {
@@ -211,6 +212,10 @@ const seedChatMessages = async ({
       AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS.APPLE_MESSAGE_2_PART_1,
     ];
     const turnIds = ['20202020-0000-4000-8000-000000000061'];
+    assertIsDefinedOrThrow(messageIds[0]);
+    assertIsDefinedOrThrow(turnIds[0]);
+    assertIsDefinedOrThrow(messageIds[1]);
+
     messages = [
       {
         id: messageIds[0],
@@ -229,6 +234,9 @@ const seedChatMessages = async ({
         createdAt: new Date(baseTime.getTime() + 5 * 60 * 1000),
       },
     ];
+    assertIsDefinedOrThrow(partIds[0]);
+    assertIsDefinedOrThrow(partIds[1]);
+
     messageParts = [
       {
         id: partIds[0],
@@ -267,6 +275,13 @@ const seedChatMessages = async ({
       '20202020-0000-4000-8000-000000000071',
       '20202020-0000-4000-8000-000000000072',
     ];
+    assertIsDefinedOrThrow(messageIds[0]);
+    assertIsDefinedOrThrow(turnIds[0]);
+    assertIsDefinedOrThrow(messageIds[1]);
+    assertIsDefinedOrThrow(messageIds[2]);
+    assertIsDefinedOrThrow(turnIds[1]);
+    assertIsDefinedOrThrow(messageIds[3]);
+
     messages = [
       {
         id: messageIds[0],
@@ -301,6 +316,11 @@ const seedChatMessages = async ({
         createdAt: new Date(baseTime.getTime() + 12 * 60 * 1000),
       },
     ];
+    assertIsDefinedOrThrow(partIds[0]);
+    assertIsDefinedOrThrow(partIds[1]);
+    assertIsDefinedOrThrow(partIds[2]);
+    assertIsDefinedOrThrow(partIds[3]);
+
     messageParts = [
       {
         id: partIds[0],

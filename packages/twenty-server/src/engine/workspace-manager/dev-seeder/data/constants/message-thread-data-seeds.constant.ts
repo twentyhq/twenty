@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 type MessageThreadDataSeed = {
   id: string;
   createdAt: Date;
@@ -58,12 +60,19 @@ const GENERATE_MESSAGE_THREAD_SEEDS = (): MessageThreadDataSeed[] => {
 
     const TEMPLATE_INDEX = ((INDEX - 1) * 2) % EMAIL_SUBJECTS.length;
 
+    const messageThreadDataSeedId = MESSAGE_THREAD_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(messageThreadDataSeedId);
+    const emailSubject = EMAIL_SUBJECTS[TEMPLATE_INDEX];
+
+    assertIsDefinedOrThrow(emailSubject);
+
     THREAD_SEEDS.push({
-      id: MESSAGE_THREAD_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: messageThreadDataSeedId,
       createdAt: CREATED_DATE,
       updatedAt: UPDATED_DATE,
       deletedAt: null,
-      subject: EMAIL_SUBJECTS[TEMPLATE_INDEX],
+      subject: emailSubject,
     });
   }
 

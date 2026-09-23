@@ -2,6 +2,7 @@ import { enrichCreateWorkspaceMigrationActionsWithIds } from 'src/engine/workspa
 import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { type UniversalCreatePageLayoutTabAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type SpecMigrationAction =
   | UniversalCreateFieldAction
@@ -66,7 +67,7 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
     const [enrichedAction] =
       workspaceMigration.actions as UniversalCreateFieldAction[];
 
-    expect(enrichedAction.id).toEqual(expect.any(String));
+    expect(enrichedAction?.id).toEqual(expect.any(String));
   });
 
   it('should stamp a field id and a related field id consistently', () => {
@@ -83,8 +84,10 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
     const [enrichedAction] =
       workspaceMigration.actions as UniversalCreateFieldAction[];
 
-    expect(enrichedAction.id).toEqual(expect.any(String));
-    expect(enrichedAction.relatedFieldId).toEqual(expect.any(String));
+    expect(enrichedAction?.id).toEqual(expect.any(String));
+    expect(enrichedAction?.relatedFieldId).toEqual(expect.any(String));
+    jestExpectToBeDefined(enrichedAction);
+
     expect(enrichedAction.id).not.toBe(enrichedAction.relatedFieldId);
   });
 
@@ -108,8 +111,8 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
     const [enrichedJunctionAction, enrichedTargetAction] =
       workspaceMigration.actions as UniversalCreateFieldAction[];
 
-    expect(enrichedJunctionAction.fieldIdByUniversalIdentifier?.target).toBe(
-      enrichedTargetAction.id,
+    expect(enrichedJunctionAction?.fieldIdByUniversalIdentifier?.target).toBe(
+      enrichedTargetAction?.id,
     );
   });
 
@@ -133,6 +136,9 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
     const [enrichedTargetAction, enrichedJunctionAction] =
       workspaceMigration.actions as UniversalCreateFieldAction[];
 
+    jestExpectToBeDefined(enrichedTargetAction);
+    jestExpectToBeDefined(enrichedJunctionAction);
+
     expect(enrichedJunctionAction.relatedFieldId).toBe(enrichedTargetAction.id);
   });
 
@@ -149,7 +155,7 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
     const [enrichedAction] =
       workspaceMigration.actions as UniversalCreateFieldAction[];
 
-    expect(enrichedAction.id).toBe('external-id');
+    expect(enrichedAction?.id).toBe('external-id');
   });
 
   it('should mint an id for any create action so same-migration references can be preallocated', () => {
@@ -166,7 +172,7 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
     const [enrichedAction] =
       workspaceMigration.actions as UniversalCreatePageLayoutTabAction[];
 
-    expect(enrichedAction.id).toEqual(expect.any(String));
+    expect(enrichedAction?.id).toEqual(expect.any(String));
   });
 
   it('should use the provided id over a generated one for any create action', () => {
@@ -185,6 +191,6 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
     const [enrichedAction] =
       workspaceMigration.actions as UniversalCreatePageLayoutTabAction[];
 
-    expect(enrichedAction.id).toBe('external-tab-id');
+    expect(enrichedAction?.id).toBe('external-tab-id');
   });
 });

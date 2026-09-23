@@ -291,6 +291,7 @@ export class DevSeederWorkspaceService {
     const schemaName = 'core';
     const createWorkspaceStaticInput =
       SEEDER_CREATE_WORKSPACE_INPUT[workspaceId];
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();

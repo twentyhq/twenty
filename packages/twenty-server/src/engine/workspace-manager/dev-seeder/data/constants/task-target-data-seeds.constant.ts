@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import { TASK_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-data-seeds.constant';
@@ -46,13 +48,20 @@ const GENERATE_TASK_TARGET_SEEDS = (): TaskTargetDataSeed[] => {
   const TASK_TARGET_SEEDS: TaskTargetDataSeed[] = [];
 
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
+    const taskTargetDataSeedId = TASK_TARGET_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(taskTargetDataSeedId);
+    const taskDataSeedId = TASK_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(taskDataSeedId);
+
+    const PERSON_DATA_SEED_IDSItem =
+      PERSON_DATA_SEED_IDS[`ID_${INDEX}` as keyof typeof PERSON_DATA_SEED_IDS];
+
     TASK_TARGET_SEEDS.push({
-      id: TASK_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
-      taskId: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
-      targetPersonId:
-        PERSON_DATA_SEED_IDS[
-          `ID_${INDEX}` as keyof typeof PERSON_DATA_SEED_IDS
-        ],
+      id: taskTargetDataSeedId,
+      taskId: taskDataSeedId,
+      targetPersonId: PERSON_DATA_SEED_IDSItem,
       targetCompanyId: null,
       targetOpportunityId: null,
     });
@@ -61,14 +70,23 @@ const GENERATE_TASK_TARGET_SEEDS = (): TaskTargetDataSeed[] => {
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const COMPANY_INDEX = INDEX - 1200;
 
+    const taskTargetId = TASK_TARGET_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(taskTargetId);
+    const taskId = TASK_DATA_SEED_IDS[`ID_${INDEX}`];
+
+    assertIsDefinedOrThrow(taskId);
+
+    const COMPANY_DATA_SEED_IDSItem =
+      COMPANY_DATA_SEED_IDS[
+        `ID_${COMPANY_INDEX}` as keyof typeof COMPANY_DATA_SEED_IDS
+      ];
+
     TASK_TARGET_SEEDS.push({
-      id: TASK_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
-      taskId: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
+      id: taskTargetId,
+      taskId,
       targetPersonId: null,
-      targetCompanyId:
-        COMPANY_DATA_SEED_IDS[
-          `ID_${COMPANY_INDEX}` as keyof typeof COMPANY_DATA_SEED_IDS
-        ],
+      targetCompanyId: COMPANY_DATA_SEED_IDSItem,
       targetOpportunityId: null,
     });
   }

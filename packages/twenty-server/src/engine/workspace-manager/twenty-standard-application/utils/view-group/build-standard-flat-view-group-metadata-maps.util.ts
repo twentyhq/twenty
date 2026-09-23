@@ -26,8 +26,11 @@ export const buildStandardFlatViewGroupMetadataMaps = (
       STANDARD_FLAT_VIEW_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME,
     ) as (keyof typeof STANDARD_FLAT_VIEW_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME)[]
   ).flatMap((objectName) => {
-    const builder: StandardViewGroupBuilder<typeof objectName> =
+    const STANDARD_FLAT_VIEW_GROUP_METADATA_BUILDERS_BY_OBJECT_NAMEItem =
       STANDARD_FLAT_VIEW_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME[objectName];
+
+    const builder: StandardViewGroupBuilder<typeof objectName> =
+      STANDARD_FLAT_VIEW_GROUP_METADATA_BUILDERS_BY_OBJECT_NAMEItem;
 
     const result = builder({
       ...args,

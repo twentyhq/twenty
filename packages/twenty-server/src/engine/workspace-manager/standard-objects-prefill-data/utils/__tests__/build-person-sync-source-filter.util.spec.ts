@@ -42,7 +42,7 @@ describe('buildPersonSyncSourceFilter', () => {
 
   it('builds two ANDed source filters that reference the given field', () => {
     expect(filter.stepFilterGroups).toHaveLength(1);
-    expect(filter.stepFilterGroups[0].logicalOperator).toBe('AND');
+    expect(filter.stepFilterGroups[0]?.logicalOperator).toBe('AND');
 
     expect(filter.stepFilters).toHaveLength(2);
     expect(
@@ -51,7 +51,7 @@ describe('buildPersonSyncSourceFilter', () => {
           stepFilter.fieldMetadataId === 'created-by-field-id' &&
           stepFilter.operand === 'IS_NOT' &&
           stepFilter.compositeFieldSubFieldName === 'source' &&
-          stepFilter.stepFilterGroupId === filter.stepFilterGroups[0].id,
+          stepFilter.stepFilterGroupId === filter.stepFilterGroups[0]?.id,
       ),
     ).toBe(true);
   });
