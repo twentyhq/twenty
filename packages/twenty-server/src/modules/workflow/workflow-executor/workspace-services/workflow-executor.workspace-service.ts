@@ -1,6 +1,7 @@
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
@@ -10,7 +11,9 @@ import {
 } from 'twenty-shared/workflow';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -52,6 +55,11 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
 
+type WorkflowBillingSpenders = {
+  workflowId: string;
+  applicationId: string;
+};
+
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
   constructor(
@@ -60,6 +68,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -135,6 +144,11 @@ export class WorkflowExecutorWorkspaceService {
       );
     }
 
+    const billingSpenders = {
+      workflowId: workflow.workspaceWorkflowId ?? workflow.id,
+      applicationId: workflow.applicationId,
+    };
+
     let actionOutput: WorkflowActionOutput;
 
     if (
@@ -151,6 +165,7 @@ export class WorkflowExecutorWorkspaceService {
         stepInfos,
         workflowRunId,
         workspaceId,
+        billingSpenders,
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -173,7 +188,7 @@ export class WorkflowExecutorWorkspaceService {
         }
       }
 
-      if (isDefined(actionOutput.error)) {
+      if (isDefined(actionOutput.error) && !actionOutput.isUsageRefused) {
         const enclosingIterator = findEnclosingIteratorWithContinueOnFailure({
           failedStepId: stepId,
           steps,
@@ -218,9 +233,7 @@ export class WorkflowExecutorWorkspaceService {
       !actionOutput.shouldFailSafely &&
       !actionOutput.shouldSkipStepExecution
     ) {
-      const billingWorkflowId = workflow.workspaceWorkflowId ?? workflow.id;
-
-      await this.sendWorkflowNodeRunEvent(workspaceId, billingWorkflowId);
+      await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -355,15 +368,54 @@ export class WorkflowExecutorWorkspaceService {
     });
   }
 
+  private async getNodeRunRefusal({
+    workspaceId,
+    billingSpenders,
+  }: {
+    workspaceId: string;
+    billingSpenders: WorkflowBillingSpenders;
+  }): Promise<WorkflowActionOutput | undefined> {
+    const isExecutionQuotaEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
+        workspaceId,
+      );
+
+    if (!isExecutionQuotaEnabled) {
+      return undefined;
+    }
+
+    try {
+      await this.billingUsageService.assertUsageAllowed({
+        workspaceId,
+        resourceType: UsageResourceType.WORKFLOW,
+        operationType: UsageOperationType.WORKFLOW_EXECUTION,
+        spenders: billingSpenders,
+      });
+
+      return undefined;
+    } catch (error) {
+      if (!isUsageRefusedError(error)) {
+        throw error;
+      }
+
+      return {
+        error: error.message,
+        isUserError: true,
+        isUsageRefused: true,
+      };
+    }
+  }
+
   private async sendWorkflowNodeRunEvent(
     workspaceId: string,
-    workflowId: string,
+    billingSpenders: WorkflowBillingSpenders,
   ) {
     await this.billingUsageService.consumeUsageQuota({
       workspaceId,
       resourceType: UsageResourceType.WORKFLOW,
       operationType: UsageOperationType.WORKFLOW_EXECUTION,
-      spenders: { workflowId },
+      spenders: billingSpenders,
       cost: { creditsUsedMicro: 100, quantity: 1 },
     });
 
@@ -374,8 +426,8 @@ export class WorkflowExecutorWorkspaceService {
         creditsUsedMicro: 100,
         quantity: 1,
         unit: UsageUnit.INVOCATION,
-        resourceId: workflowId,
-        spenders: { workflowId },
+        resourceId: billingSpenders.workflowId,
+        spenders: billingSpenders,
       },
     ]);
   }
@@ -454,17 +506,15 @@ export class WorkflowExecutorWorkspaceService {
     stepInfos,
     workflowRunId,
     workspaceId,
+    billingSpenders,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
     stepInfos: WorkflowRunStepInfos;
     workflowRunId: string;
     workspaceId: string;
+    billingSpenders: WorkflowBillingSpenders;
   }) {
-    // Credit-cap enforcement lives at the AI entry points (chat resolver,
-    // executeAgent, generate-text controller, title generation). Cheap
-    // workflow steps (DB CRUD, branching, actions) are not gated here so a
-    // chat-driven cap exhaustion does not block non-AI automations.
     const stepId = step.id;
 
     const workflowAction = this.workflowActionFactory.get(step.type);
@@ -480,6 +530,15 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
+      const nodeRunRefusal = await this.getNodeRunRefusal({
+        workspaceId,
+        billingSpenders,
+      });
+
+      if (isDefined(nodeRunRefusal)) {
+        return nodeRunRefusal;
+      }
+
       return await workflowAction.execute({
         currentStepId: stepId,
         steps,

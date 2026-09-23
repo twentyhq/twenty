@@ -3,13 +3,13 @@ import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useContext, useMemo, useState } from 'react';
 import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { IconButton, LightIconButton } from 'twenty-ui/components';
 import {
   IconArrowUp,
   IconChevronLeft,
   IconChevronRightPipe,
-  IconInfoCircle,
   type IconComponent,
+  IconInfoCircle,
   IconSquareNumber1,
   IconSquareNumber2,
   IconSquareNumber3,
@@ -20,15 +20,14 @@ import {
   IconSquareNumber8,
   IconSquareNumber9,
 } from 'twenty-ui/icon';
-import { IconButton, LightIconButton } from 'twenty-ui/components';
-
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
+import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
-import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { useSubmitQuestionAnswer } from '@/ai/hooks/useSubmitQuestionAnswer';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { aiModelsState } from '@/client-config/states/aiModelsState';

@@ -7,4 +7,5 @@ export type WorkflowActionOutput = {
   shouldRemainRunning?: boolean;
   shouldSkipStepExecution?: boolean;
   shouldFailSafely?: boolean;
+  isUsageRefused?: boolean;
 };

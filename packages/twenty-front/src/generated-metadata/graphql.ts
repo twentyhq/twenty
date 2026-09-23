@@ -2109,6 +2109,7 @@ export enum FeatureFlagKey {
   IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
+  IS_EXECUTION_QUOTA_ENABLED = 'IS_EXECUTION_QUOTA_ENABLED',
   IS_INITIAL_OBJECT_VIEW_ENABLED = 'IS_INITIAL_OBJECT_VIEW_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
@@ -3147,7 +3148,6 @@ export type Mutation = {
   evaluateAgentTurn: AgentTurnEvaluation;
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
-  generateApplicationToken: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
   generateTransientToken: TransientToken;
   getAuthTokensFromLoginToken: AuthTokens;
@@ -3900,11 +3900,6 @@ export type MutationExecuteOneLogicFunctionArgs = {
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['UUID']['input'];
   expiresAt: Scalars['String']['input'];
-};
-
-
-export type MutationGenerateApplicationTokenArgs = {
-  applicationId: Scalars['UUID']['input'];
 };
 
 
@@ -5111,6 +5106,7 @@ export type Query = {
   appMessageChannels: Array<MessageChannel>;
   applicationConnectedAccounts: Array<ApplicationConnectedAccountDto>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
+  applicationCoreGraphqlSchema: Scalars['String']['output'];
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
@@ -5272,6 +5268,11 @@ export type QueryApplicationConnectedAccountsArgs = {
 
 export type QueryApplicationConnectionProvidersArgs = {
   applicationId: Scalars['UUID']['input'];
+};
+
+
+export type QueryApplicationCoreGraphqlSchemaArgs = {
+  applicationUniversalIdentifier: Scalars['String']['input'];
 };
 
 
@@ -6521,6 +6522,7 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   openRecordIn?: InputMaybe<ObjectOpenRecordIn>;
+  readability?: InputMaybe<MetadataReadability>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
 };

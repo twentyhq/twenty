@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -49,12 +49,11 @@ describe('application key-value store (e2e)', () => {
 
     expect(standardApplication).toBeDefined();
 
-    const { data: tokenData } = await generateApplicationToken({
+    const tokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId: standardApplication!.id,
-      expectToFail: false,
     });
 
-    appToken = tokenData.generateApplicationToken.applicationAccessToken.token;
+    appToken = tokenPair.applicationAccessToken.token;
   });
 
   afterAll(async () => {

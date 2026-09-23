@@ -11,7 +11,7 @@ import {
 import { type PlaygroundSchemas } from '@/settings/mcp-and-apis/types/PlaygroundSchemas';
 import { PlaygroundTypes } from '@/settings/mcp-and-apis/types/PlaygroundTypes';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { GeneratePlaygroundTokenDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

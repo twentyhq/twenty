@@ -8231,6 +8231,15 @@ export default {
                     ]
                 }
             ],
+            "applicationCoreGraphqlSchema": [
+                1,
+                {
+                    "applicationUniversalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "currentUserApplicationAuthorizations": [
                 303
             ],
@@ -11060,15 +11069,6 @@ export default {
                     ]
                 }
             ],
-            "generateApplicationToken": [
-                12,
-                {
-                    "applicationId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
             "renewApplicationToken": [
                 12,
                 {
@@ -12321,6 +12321,9 @@ export default {
             ],
             "openRecordIn": [
                 26
+            ],
+            "readability": [
+                25
             ],
             "translations": [
                 492
