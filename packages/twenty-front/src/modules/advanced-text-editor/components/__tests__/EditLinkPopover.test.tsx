@@ -3,16 +3,26 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type Editor } from '@tiptap/core';
-import { Provider } from 'jotai';
+import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <I18nProvider i18n={i18n}>
-    <Provider>{children}</Provider>
-  </I18nProvider>
-);
+const renderWithStore = (children: ReactNode) => {
+  const store = createStore();
+
+  return {
+    ...render(children, {
+      wrapper: ({ children }) => (
+        <I18nProvider i18n={i18n}>
+          <Provider store={store}>{children}</Provider>
+        </I18nProvider>
+      ),
+    }),
+    store,
+  };
+};
 
 const createEditor = () => {
   const commands = {
@@ -44,18 +54,25 @@ describe('EditLinkPopover', () => {
     const user = userEvent.setup();
     const { editor, commands } = createEditor();
 
-    render(
+    const { store } = renderWithStore(
       <>
         <input aria-label="Editor" />
         <EditLinkPopover editor={editor} defaultValue="" />
       </>,
-      { wrapper: Wrapper },
     );
 
     await user.click(screen.getByRole('button', { name: 'Add link' }));
+    expect(store.get(focusStackState.atom)).toHaveLength(1);
+    expect(store.get(focusStackState.atom).at(-1)?.globalHotkeysConfig).toEqual(
+      {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+        enableGlobalHotkeysWithModifiers: false,
+      },
+    );
     const input = screen.getByRole('textbox', { name: 'Enter link' });
     await user.type(input, 'https://twenty.com{Enter}');
 
+    expect(store.get(focusStackState.atom)).toEqual([]);
     expect(commands.setLink).toHaveBeenCalledWith({
       href: 'https://twenty.com',
     });
@@ -70,21 +87,22 @@ describe('EditLinkPopover', () => {
     const user = userEvent.setup();
     const { editor, commands } = createEditor();
 
-    render(
+    const { store } = renderWithStore(
       <>
         <input aria-label="Editor" />
         <button type="button">Outside</button>
         <EditLinkPopover editor={editor} defaultValue="https://old.example" />
       </>,
-      { wrapper: Wrapper },
     );
 
     await user.click(screen.getByRole('button', { name: 'Edit link' }));
+    expect(store.get(focusStackState.atom)).toHaveLength(1);
     const input = screen.getByRole('textbox', { name: 'Enter link' });
     await user.clear(input);
     await user.type(input, 'https://new.example');
     await user.click(screen.getByRole('button', { name: 'Outside' }));
 
+    expect(store.get(focusStackState.atom)).toEqual([]);
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     );
@@ -98,12 +116,11 @@ describe('EditLinkPopover', () => {
     const user = userEvent.setup();
     const { editor } = createEditor();
 
-    render(
+    renderWithStore(
       <>
         <input aria-label="Editor" />
         <EditLinkPopover editor={editor} defaultValue="https://twenty.com" />
       </>,
-      { wrapper: Wrapper },
     );
 
     await user.click(screen.getByRole('button', { name: 'Edit link' }));
@@ -118,17 +135,18 @@ describe('EditLinkPopover', () => {
   it('removes an empty link and reloads the current link when reopened', async () => {
     const user = userEvent.setup();
     const { editor, commands } = createEditor();
-    const { rerender } = render(
+    const { rerender, store } = renderWithStore(
       <>
         <input aria-label="Editor" />
         <EditLinkPopover editor={editor} defaultValue="https://old.example" />
       </>,
-      { wrapper: Wrapper },
     );
 
     await user.click(screen.getByRole('button', { name: 'Edit link' }));
+    expect(store.get(focusStackState.atom)).toHaveLength(1);
     await user.clear(screen.getByRole('textbox', { name: 'Enter link' }));
     await user.keyboard('{Enter}');
+    expect(store.get(focusStackState.atom)).toEqual([]);
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     );
@@ -144,6 +162,7 @@ describe('EditLinkPopover', () => {
       </>,
     );
     await user.click(screen.getByRole('button', { name: 'Edit link' }));
+    expect(store.get(focusStackState.atom)).toHaveLength(1);
     expect(screen.getByRole('textbox', { name: 'Enter link' })).toHaveValue(
       'https://new.example',
     );

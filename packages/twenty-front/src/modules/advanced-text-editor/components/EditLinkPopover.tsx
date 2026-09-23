@@ -1,5 +1,5 @@
 import { TextInput } from '@/ui/input/components/TextInput';
-import { DropdownFocusEffect } from '@/ui/utilities/focus/components/DropdownFocusEffect';
+import { useDropdownFocus } from '@/ui/utilities/focus/hooks/useDropdownFocus';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Editor } from '@tiptap/core';
@@ -21,6 +21,16 @@ export const EditLinkPopover = ({
   const { t } = useLingui();
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState(defaultValue);
+  const { updateDropdownFocus } = useDropdownFocus();
+
+  const handleOpenChange = (open: boolean) => {
+    updateDropdownFocus(open);
+    setIsOpen(open);
+
+    if (open) {
+      setValue(defaultValue);
+    }
+  };
 
   const handleSubmit = (
     event: FormEvent<HTMLFormElement> | FocusEvent<HTMLInputElement>,
@@ -32,7 +42,7 @@ export const EditLinkPopover = ({
     }
 
     if (!isNonEmptyString(value)) {
-      setIsOpen(false);
+      handleOpenChange(false);
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
       return;
     }
@@ -43,22 +53,12 @@ export const EditLinkPopover = ({
       return;
     }
 
-    setIsOpen(false);
+    handleOpenChange(false);
     editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
   };
 
   return (
-    <Dropdown.Root
-      kind="panel"
-      open={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open);
-
-        if (open) {
-          setValue(defaultValue);
-        }
-      }}
-    >
+    <Dropdown.Root kind="panel" open={isOpen} onOpenChange={handleOpenChange}>
       <Dropdown.Trigger
         render={
           <LightIconButton
@@ -79,7 +79,6 @@ export const EditLinkPopover = ({
         }
         aria-label={isActive ? t`Edit link` : t`Add link`}
       >
-        <DropdownFocusEffect />
         <Dropdown.Section>
           <form onSubmit={handleSubmit}>
             <TextInput

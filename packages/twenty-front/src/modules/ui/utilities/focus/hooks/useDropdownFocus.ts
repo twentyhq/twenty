@@ -4,13 +4,23 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
-export const DropdownFocusEffect = () => {
+export const useDropdownFocus = () => {
   const focusId = useId();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  useEffect(() => {
+  useEffect(
+    () => () => removeFocusItemFromFocusStackById({ focusId }),
+    [focusId, removeFocusItemFromFocusStackById],
+  );
+
+  const updateDropdownFocus = (open: boolean) => {
+    if (!open) {
+      removeFocusItemFromFocusStackById({ focusId });
+      return;
+    }
+
     pushFocusItemToFocusStack({
       focusId,
       component: { type: FocusComponentType.DROPDOWN, instanceId: focusId },
@@ -19,9 +29,7 @@ export const DropdownFocusEffect = () => {
         enableGlobalHotkeysWithModifiers: false,
       },
     });
+  };
 
-    return () => removeFocusItemFromFocusStackById({ focusId });
-  }, [focusId, pushFocusItemToFocusStack, removeFocusItemFromFocusStackById]);
-
-  return null;
+  return { updateDropdownFocus };
 };

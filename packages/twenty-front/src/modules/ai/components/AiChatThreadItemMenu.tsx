@@ -13,7 +13,7 @@ import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsS
 import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteFamilyState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
-import { DropdownFocusEffect } from '@/ui/utilities/focus/components/DropdownFocusEffect';
+import { useDropdownFocus } from '@/ui/utilities/focus/hooks/useDropdownFocus';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
@@ -40,6 +40,7 @@ export const AiChatThreadItemMenu = ({
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
+  const { updateDropdownFocus } = useDropdownFocus();
   const { archiveChatThread, unarchiveChatThread } =
     useChatThreadArchiveActions();
   const setAiChatThreadPendingDelete = useSetAtomFamilyState(
@@ -69,7 +70,14 @@ export const AiChatThreadItemMenu = ({
   };
 
   return (
-    <Dropdown.Root kind="menu" open={open} onOpenChange={onOpenChange}>
+    <Dropdown.Root
+      kind="menu"
+      open={open}
+      onOpenChange={(nextOpen) => {
+        updateDropdownFocus(nextOpen);
+        onOpenChange?.(nextOpen);
+      }}
+    >
       <Dropdown.Trigger
         render={
           trigger ?? (
@@ -80,7 +88,6 @@ export const AiChatThreadItemMenu = ({
         }
       />
       <Dropdown.Content align="end" aria-label={t`Chat actions`}>
-        <DropdownFocusEffect />
         <Dropdown.Section>
           <Dropdown.ActionItem
             startIcon={<IconPencil />}
