@@ -27,7 +27,7 @@ export const DropdownSubmenuTrigger = ({
   id,
   ...props
 }: DropdownSubmenuTriggerProps) => {
-  const { type, parentType, open, setOpen, focusOnOpenRef } =
+  const { type, parentType, open, setOpen, setFocusOnOpen } =
     useDropdownContext();
   const generatedId = useId();
   const itemId = id ?? generatedId;
@@ -65,7 +65,7 @@ export const DropdownSubmenuTrigger = ({
         if (event.key === forwardKey) {
           event.preventDefault();
           event.stopPropagation();
-          focusOnOpenRef.current = true;
+          setFocusOnOpen(true);
           const contentId = event.currentTarget.getAttribute('aria-controls');
           const content = isDefined(contentId)
             ? event.currentTarget.ownerDocument.getElementById(contentId)

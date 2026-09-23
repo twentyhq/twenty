@@ -8,7 +8,7 @@ export const DropdownTrigger = ({
   onClick,
   ...props
 }: DropdownTriggerProps) => {
-  const { type, setOpen, initialFocusEdgeRef, focusOnOpenRef } =
+  const { type, setOpen, setInitialFocusEdge, setFocusOnOpen } =
     useDropdownContext();
 
   return (
@@ -31,9 +31,8 @@ export const DropdownTrigger = ({
         }
 
         event.preventDefault();
-        focusOnOpenRef.current = true;
-        initialFocusEdgeRef.current =
-          event.key === 'ArrowUp' ? 'last' : 'first';
+        setFocusOnOpen(true);
+        setInitialFocusEdge(event.key === 'ArrowUp' ? 'last' : 'first');
         setOpen(true);
       }}
     />

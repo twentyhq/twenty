@@ -6,6 +6,8 @@ import { Button } from '@ui/primitives/input/Button/Button';
 
 import { Dropdown } from '../Dropdown';
 
+const TYPEAHEAD_PAUSE_IN_MS = 600;
+
 describe('Dropdown menu', () => {
   it('opens from the keyboard, navigates commands, and restores focus on Escape', async () => {
     const user = userEvent.setup();
@@ -34,6 +36,37 @@ describe('Dropdown menu', () => {
       expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
     );
     expect(trigger).toHaveFocus();
+  });
+
+  it('focuses the last item when first opened with ArrowUp and the first item when reopened by pointer', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+          <Dropdown.ActionItem>Export</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    const trigger = screen.getByRole('button', { name: 'Record actions' });
+
+    await user.tab();
+    await user.keyboard('{ArrowUp}');
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'Export' })).toHaveFocus(),
+    );
+    await user.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    expect(trigger).toHaveFocus();
+    await user.click(trigger);
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
+    );
   });
 
   it('prevents disabled commands and closes after an enabled command', async () => {
@@ -75,6 +108,7 @@ describe('Dropdown menu', () => {
         <Dropdown.Content aria-label="Record actions">
           <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
           <Dropdown.ActionItem>Export</Dropdown.ActionItem>
+          <Dropdown.ActionItem>Email</Dropdown.ActionItem>
           <Dropdown.ActionItem>Share</Dropdown.ActionItem>
         </Dropdown.Content>
       </Dropdown.Root>,
@@ -84,12 +118,52 @@ describe('Dropdown menu', () => {
     await waitFor(() =>
       expect(screen.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
     );
-    await user.keyboard('ex');
-    expect(screen.getByRole('menuitem', { name: 'Export' })).toHaveFocus();
+    await user.keyboard('em');
+    expect(screen.getByRole('menuitem', { name: 'Email' })).toHaveFocus();
     await user.keyboard('{End}');
     expect(screen.getByRole('menuitem', { name: 'Share' })).toHaveFocus();
     await user.keyboard('{Home}');
     expect(screen.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus();
+  });
+
+  it('cycles repeated typeahead letters and starts a fresh query after a pause', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+          <Dropdown.ActionItem>Export</Dropdown.ActionItem>
+          <Dropdown.ActionItem>Email</Dropdown.ActionItem>
+          <Dropdown.ActionItem>Share</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
+    );
+
+    const startTimestamp = Date.now();
+    const now = vi.spyOn(Date, 'now').mockReturnValue(startTimestamp);
+
+    try {
+      await user.keyboard('e');
+      expect(screen.getByRole('menuitem', { name: 'Export' })).toHaveFocus();
+      await user.keyboard('e');
+      expect(screen.getByRole('menuitem', { name: 'Email' })).toHaveFocus();
+      await user.keyboard('e');
+      expect(screen.getByRole('menuitem', { name: 'Export' })).toHaveFocus();
+
+      now.mockReturnValue(startTimestamp + TYPEAHEAD_PAUSE_IN_MS);
+
+      await user.keyboard('s');
+      expect(screen.getByRole('menuitem', { name: 'Share' })).toHaveFocus();
+    } finally {
+      now.mockRestore();
+    }
   });
 
   it('keeps repeated actions open and dismisses when clicking outside', async () => {

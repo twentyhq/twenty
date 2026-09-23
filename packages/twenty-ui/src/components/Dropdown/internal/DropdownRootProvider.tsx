@@ -1,5 +1,5 @@
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -30,18 +30,20 @@ export const DropdownRootProvider = ({
   const [pageTypes, setPageTypes] = useState<Record<string, DropdownType>>({});
   const [activeItemId, setActiveItemId] = useState<string>();
   const pageId = pageHistory[pageHistory.length - 1]?.id;
-  const focusTargetRef = useRef<DropdownFocusTarget | undefined>(undefined);
-  const initialFocusEdgeRef = useRef<'first' | 'last'>('first');
-  const focusOnOpenRef = useRef(true);
+  const [focusTarget, setFocusTarget] = useState<DropdownFocusTarget>();
+  const [initialFocusEdge, setInitialFocusEdge] = useState<'first' | 'last'>(
+    'first',
+  );
+  const [focusOnOpen, setFocusOnOpen] = useState(true);
 
   if (previousOpen !== open) {
     setPreviousOpen(open);
 
     if (!open) {
       setPageHistory([{ id: defaultPage }]);
-      focusTargetRef.current = undefined;
-      initialFocusEdgeRef.current = 'first';
-      focusOnOpenRef.current = true;
+      setFocusTarget(undefined);
+      setInitialFocusEdge('first');
+      setFocusOnOpen(true);
     }
   }
 
@@ -68,7 +70,7 @@ export const DropdownRootProvider = ({
     id: string;
     trigger: DropdownFocusTarget;
   }) => {
-    focusTargetRef.current = undefined;
+    setFocusTarget(undefined);
     setPageHistory((history) => [...history, { id, trigger }]);
   };
 
@@ -77,7 +79,7 @@ export const DropdownRootProvider = ({
       return;
     }
 
-    focusTargetRef.current = pageHistory[pageHistory.length - 1]?.trigger;
+    setFocusTarget(pageHistory[pageHistory.length - 1]?.trigger);
     setPageHistory((history) => history.slice(0, -1));
   };
 
@@ -98,7 +100,7 @@ export const DropdownRootProvider = ({
     <PopoverPrimitive.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
-        focusOnOpenRef.current = eventDetails.reason !== 'trigger-hover';
+        setFocusOnOpen(eventDetails.reason !== 'trigger-hover');
         setOpen(nextOpen);
       }}
     >
@@ -115,9 +117,11 @@ export const DropdownRootProvider = ({
           setParentActiveItemId: parent?.setActiveItemId,
           pageId,
           canGoBack: pageHistory.length > 1,
-          focusTargetRef,
-          initialFocusEdgeRef,
-          focusOnOpenRef,
+          focusTarget,
+          initialFocusEdge,
+          setInitialFocusEdge,
+          focusOnOpen,
+          setFocusOnOpen,
           setOpen,
           closeTree,
           goToPage,

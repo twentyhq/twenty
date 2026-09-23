@@ -1,4 +1,4 @@
-import { useRef, type KeyboardEvent } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -18,7 +18,7 @@ export const useDropdownKeyboardNavigation = ({
   isSubmenu: boolean;
   setOpen: (open: boolean) => void;
 }) => {
-  const typeaheadRef = useRef({ text: '', timestamp: 0 });
+  const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
   return (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.defaultPrevented) {
@@ -112,12 +112,11 @@ export const useDropdownKeyboardNavigation = ({
     }
 
     const now = Date.now();
-    const previous = typeaheadRef.current;
     const text =
-      now - previous.timestamp > TYPEAHEAD_RESET_DELAY
+      now - typeahead.timestamp > TYPEAHEAD_RESET_DELAY
         ? event.key
-        : previous.text + event.key;
-    typeaheadRef.current = { text, timestamp: now };
+        : typeahead.text + event.key;
+    setTypeahead({ text, timestamp: now });
     const isRepeatedCharacter = [...text].every(
       (character) => character === text[0],
     );
