@@ -41,12 +41,19 @@ export const CurrencyFieldInput = () => {
 
   const draftCurrencyCodeIsEmptyIsNotEmpty =
     isNonEmptyString(draftCurrencyCode);
+  const recordCurrencyCode = isFieldCurrencyValue(fieldValue)
+    ? fieldValue.currencyCode
+    : undefined;
+
+  const recordCurrencyCodeIsNotEmpty = isNonEmptyString(recordCurrencyCode);
 
   const currencyCode = draftCurrencyCodeIsEmptyIsNotEmpty
     ? draftCurrencyCode
-    : defaultCurrencyCodeIsNotEmpty
-      ? defaultCurrencyCodeWithoutSQLQuotes
-      : CurrencyCode.USD;
+    : recordCurrencyCodeIsNotEmpty
+      ? recordCurrencyCode
+      : defaultCurrencyCodeIsNotEmpty
+        ? defaultCurrencyCodeWithoutSQLQuotes
+        : CurrencyCode.USD;
 
   const getNewCurrencyValue = ({
     amountText,

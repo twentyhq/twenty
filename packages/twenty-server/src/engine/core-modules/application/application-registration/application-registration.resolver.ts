@@ -177,6 +177,7 @@ export class ApplicationRegistrationResolver {
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
   @Mutation(() => RotateClientSecretDTO)
   async rotateApplicationRegistrationClientSecret(

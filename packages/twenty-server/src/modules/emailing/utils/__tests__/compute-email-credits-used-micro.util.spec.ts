@@ -3,9 +3,9 @@ import { computeEmailCreditsUsedMicro } from 'src/modules/emailing/utils/compute
 describe('computeEmailCreditsUsedMicro', () => {
   it.each([
     [0, 0],
-    [1, 300],
-    [7, 2100],
-    [1000, 300_000],
+    [1, 900],
+    [7, 6300],
+    [1000, 900_000],
   ])('charges %i email(s) as %i micro-credits', (sentEmailCount, expected) => {
     expect(computeEmailCreditsUsedMicro(sentEmailCount)).toBe(expected);
   });

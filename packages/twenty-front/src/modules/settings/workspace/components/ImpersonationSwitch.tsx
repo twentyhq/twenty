@@ -9,7 +9,7 @@ import { IconLifebuoy } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 export const ImpersonationSwitch = () => {
   const { enqueueToast } = useToast();

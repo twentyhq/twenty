@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
+import { InlineBanner } from 'twenty-ui/components';
 import { IconAlertCircle } from 'twenty-ui/icon';
-import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { getApplicationVariableDisplayLabel } from '~/pages/settings/applications/utils/getApplicationVariableDisplayLabel';
 

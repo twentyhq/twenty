@@ -28,6 +28,7 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
       case MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT:
         throw new UserInputError(error);
       case MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION:
+      case MessageChannelExceptionCode.EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN:
         throw new ForbiddenError(error);
       case MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED:
         throw new InternalServerError(error);

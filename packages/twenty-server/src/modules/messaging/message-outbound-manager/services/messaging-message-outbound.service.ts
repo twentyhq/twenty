@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { EmailGroupMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service';
 import { GmailMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/drivers/gmail/services/gmail-message-outbound.service';
@@ -21,37 +20,31 @@ export class MessagingMessageOutboundService {
     private readonly emailGroupMessageOutboundService: EmailGroupMessageOutboundService,
   ) {}
 
-  public async sendMessage({
-    sendMessageInput,
-    connectedAccount,
-    spenders,
-  }: {
-    sendMessageInput: SendMessageInput;
-    connectedAccount: ConnectedAccountEntity;
-    spenders?: UsageSpenders;
-  }): Promise<SendMessageResult> {
+  public async sendMessage(
+    sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
-        return this.gmailMessageOutboundService.sendMessage({
+        return this.gmailMessageOutboundService.sendMessage(
           sendMessageInput,
           connectedAccount,
-        });
+        );
       case ConnectedAccountProvider.MICROSOFT:
-        return this.microsoftMessageOutboundService.sendMessage({
+        return this.microsoftMessageOutboundService.sendMessage(
           sendMessageInput,
           connectedAccount,
-        });
+        );
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-        return this.imapSmtpMessageOutboundService.sendMessage({
+        return this.imapSmtpMessageOutboundService.sendMessage(
           sendMessageInput,
           connectedAccount,
-        });
+        );
       case ConnectedAccountProvider.EMAIL_GROUP:
-        return this.emailGroupMessageOutboundService.sendMessage({
+        return this.emailGroupMessageOutboundService.sendMessage(
           sendMessageInput,
           connectedAccount,
-          spenders,
-        });
+        );
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.APP:

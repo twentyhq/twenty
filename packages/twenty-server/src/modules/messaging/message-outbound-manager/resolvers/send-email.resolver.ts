@@ -90,9 +90,7 @@ export class SendEmailResolver {
             input.draftMessageId,
             workspace.id,
           )
-        : await this.sendEmailService.sendComposedEmail(data, {
-            userWorkspaceId,
-          });
+        : await this.sendEmailService.sendComposedEmail(data);
 
       let messageThreadId: string | undefined;
 

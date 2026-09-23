@@ -1,8 +1,8 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
+import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import { isDefined, formatToShortNumber } from 'twenty-shared/utils';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -11,8 +11,8 @@ import {
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { EllipsisDisplay } from 'twenty-ui/primitives/data-display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 

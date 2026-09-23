@@ -1,12 +1,11 @@
-import { type QueryRunner } from 'typeorm';
+import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-
-export type DeferredWorkspaceMigrationActionExecutionArgs<TPayload> = {
-  workspaceId: string;
+export type DeferredWorkspaceMigrationActionExecutionArgs<TPayload> = Pick<
+  WorkspaceMigrationActionRunnerArgs<AllUniversalWorkspaceMigrationAction>,
+  'queryRunner' | 'allFlatEntityMaps' | 'workspaceId'
+> & {
   applicationUniversalIdentifier: string;
   payload: TPayload;
-  allFlatEntityMaps: AllFlatEntityMaps;
   attempt: number;
-  queryRunner: QueryRunner;
 };

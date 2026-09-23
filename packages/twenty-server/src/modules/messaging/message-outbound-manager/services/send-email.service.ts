@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ComposedEmail } from 'src/engine/core-modules/tool/tools/email-tool/types/composed-email.type';
-import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { MessagingDraftSendService } from 'src/modules/messaging/message-outbound-manager/services/messaging-draft-send.service';
 import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
 import { SentMessagePersistenceService } from 'src/modules/messaging/message-outbound-manager/services/sent-message-persistence.service';
@@ -19,15 +18,11 @@ export class SendEmailService {
     private readonly sentMessagePersistenceService: SentMessagePersistenceService,
   ) {}
 
-  async sendComposedEmail(
-    data: ComposedEmail,
-    spenders?: UsageSpenders,
-  ): Promise<SendMessageResult> {
-    return this.messageOutboundService.sendMessage({
-      sendMessageInput: this.toSendMessageInput(data),
-      connectedAccount: data.connectedAccount,
-      spenders,
-    });
+  async sendComposedEmail(data: ComposedEmail): Promise<SendMessageResult> {
+    return this.messageOutboundService.sendMessage(
+      this.toSendMessageInput(data),
+      data.connectedAccount,
+    );
   }
 
   async sendComposedDraft(

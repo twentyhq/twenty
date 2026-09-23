@@ -38,13 +38,10 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
     private readonly messageFolderRepository: Repository<MessageFolderEntity>,
   ) {}
 
-  async sendMessage({
-    sendMessageInput,
-    connectedAccount,
-  }: {
-    sendMessageInput: SendMessageInput;
-    connectedAccount: ConnectedAccountEntity;
-  }): Promise<SendMessageResult> {
+  async sendMessage(
+    sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult> {
     const { handle, connectionParameters } = connectedAccount;
 
     const smtpClient = await this.smtpClientProvider.getClient(
@@ -169,10 +166,10 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<SendMessageResult> {
-    const sendResult = await this.sendMessage({
+    const sendResult = await this.sendMessage(
       sendMessageInput,
       connectedAccount,
-    });
+    );
 
     try {
       await this.deleteDraft(draftExternalId, connectedAccount);

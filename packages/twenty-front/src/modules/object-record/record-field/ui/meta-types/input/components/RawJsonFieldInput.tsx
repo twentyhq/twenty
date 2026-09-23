@@ -1,24 +1,18 @@
-import { styled } from '@linaria/react';
-
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { useJsonField } from '@/object-record/record-field/ui/meta-types/hooks/useJsonField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconPencil } from 'twenty-ui/icon';
+import { IconButton, JsonTree } from 'twenty-ui/components';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
-import { IconButton } from 'twenty-ui/components';
-import {
-  JsonTree,
-  isTwoFirstDepths,
-} from 'twenty-ui/primitives/json-visualizer';
+import { IconPencil } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { useJsonField } from '@/object-record/record-field/ui/meta-types/hooks/useJsonField';
 
 const CONTAINER_HEIGHT = 300;
 
@@ -199,7 +193,6 @@ export const RawJsonFieldInput = () => {
               emptyStringLabel={t`[empty string]`}
               arrowButtonCollapsedLabel={t`Expand`}
               arrowButtonExpandedLabel={t`Collapse`}
-              shouldExpandNodeInitially={isTwoFirstDepths}
               onNodeValueClick={copyToClipboard}
             />
           </StyledJsonTreeContainer>

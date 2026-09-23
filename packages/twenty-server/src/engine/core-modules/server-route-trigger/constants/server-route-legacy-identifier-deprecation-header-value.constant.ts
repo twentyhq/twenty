@@ -1,0 +1,1 @@
+export const SERVER_ROUTE_LEGACY_IDENTIFIER_DEPRECATION_HEADER_VALUE = `@${Math.floor(new Date('2026-09-22T00:00:00Z').getTime() / 1000)}`;
