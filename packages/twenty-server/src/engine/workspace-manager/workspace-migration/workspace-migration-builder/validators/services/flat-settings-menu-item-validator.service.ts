@@ -109,6 +109,15 @@ export class FlatSettingsMenuItemValidatorService {
         message: t`Front component "${flatSettingsMenuItem.frontComponentUniversalIdentifier}" not found`,
         userFriendlyMessage: msg`The front component this settings menu item renders was not found.`,
       });
+    } else if (
+      frontComponent.applicationUniversalIdentifier !==
+      flatSettingsMenuItem.applicationUniversalIdentifier
+    ) {
+      validationResult.errors.push({
+        code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT,
+        message: t`Front component "${flatSettingsMenuItem.frontComponentUniversalIdentifier}" belongs to another application`,
+        userFriendlyMessage: msg`The front component this settings menu item renders belongs to another application.`,
+      });
     }
 
     if (!isSettingsMenuItemScope(flatSettingsMenuItem.scope)) {
@@ -220,6 +229,15 @@ export class FlatSettingsMenuItemValidatorService {
           code: SettingsMenuItemExceptionCode.SETTINGS_MENU_ITEM_FRONT_COMPONENT_NOT_FOUND,
           message: t`Front component "${updatedFrontComponentUniversalIdentifier}" not found`,
           userFriendlyMessage: msg`The front component this settings menu item renders was not found.`,
+        });
+      } else if (
+        frontComponent.applicationUniversalIdentifier !==
+        fromFlatSettingsMenuItem.applicationUniversalIdentifier
+      ) {
+        validationResult.errors.push({
+          code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT,
+          message: t`Front component "${updatedFrontComponentUniversalIdentifier}" belongs to another application`,
+          userFriendlyMessage: msg`The front component this settings menu item renders belongs to another application.`,
         });
       }
     }

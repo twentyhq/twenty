@@ -9,6 +9,9 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = '11111111-1111-4111-8111-111111111111';
 const FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   '22222222-2222-4222-8222-222222222222';
 
+const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '33333333-3333-4333-8333-333333333333';
+
 const buildSettingsMenuItem = ({
   universalIdentifier,
   position,
@@ -38,11 +41,13 @@ const buildArgs = ({
   optimisticItems,
   finalItems,
   remainingItems = [],
+  frontComponentApplicationUniversalIdentifier = APPLICATION_UNIVERSAL_IDENTIFIER,
 }: {
   itemToCreate: ReturnType<typeof buildSettingsMenuItem>;
   optimisticItems: ReturnType<typeof buildSettingsMenuItem>[];
   finalItems: ReturnType<typeof buildSettingsMenuItem>[];
   remainingItems?: ReturnType<typeof buildSettingsMenuItem>[];
+  frontComponentApplicationUniversalIdentifier?: string;
 }) =>
   ({
     flatEntityToValidate: itemToCreate,
@@ -53,7 +58,8 @@ const buildArgs = ({
         byUniversalIdentifier: {
           [FRONT_COMPONENT_UNIVERSAL_IDENTIFIER]: {
             universalIdentifier: FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-            applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+            applicationUniversalIdentifier:
+              frontComponentApplicationUniversalIdentifier,
           },
         },
       },
@@ -157,7 +163,30 @@ describe('settings menu item position collision on creation', () => {
 describe('settings menu item input validation on creation', () => {
   const service = new FlatSettingsMenuItemValidatorService();
 
-  it('should accept an item whose scope and position are both usable', () => {
+  it('should reject a front component owned by another application', () => {
+    const itemToCreate = buildSettingsMenuItem({
+      universalIdentifier: 'item-new',
+      position: 1,
+    });
+
+    const { errors } = service.validateFlatSettingsMenuItemCreation(
+      buildArgs({
+        itemToCreate,
+        optimisticItems: [],
+        finalItems: [itemToCreate],
+        frontComponentApplicationUniversalIdentifier:
+          OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      }),
+    );
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].code).toBe(
+      SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT,
+    );
+    expect(errors[0].message).toContain('belongs to another application');
+  });
+
+  it('should accept a front component owned by the same application', () => {
     const itemToCreate = buildSettingsMenuItem({
       universalIdentifier: 'item-new',
       position: 1,
