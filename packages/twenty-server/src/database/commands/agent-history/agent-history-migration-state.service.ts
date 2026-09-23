@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { type QueryRunner } from 'typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { AgentHistoryMigrationStateException } from 'src/database/commands/agent-history/agent-history-migration-state.exception';
 import {
@@ -67,6 +68,8 @@ export class AgentHistoryMigrationStateService {
           batch.map(({ workspaceId }) => workspaceId),
         );
         if (populated.length) {
+          assertIsDefinedOrThrow(populated[0]);
+
           throw new AgentHistoryMigrationStateException(
             'MISSING_STATE',
             `Agent history route is missing for ${populated[0].workspaceId}; restore its durable state before serving traffic`,

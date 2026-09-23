@@ -685,8 +685,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         where: { id: MESSAGE_ID },
         relations: { parts: true },
       });
-      expect(message.parts[0].textContent).toBe('Hidden setup context');
-      expect(message.parts[0].createdAt).toBeInstanceOf(Date);
+      expect(message.parts[0]?.textContent).toBe('Hidden setup context');
+      expect(message.parts[0]?.createdAt).toBeInstanceOf(Date);
       const created = await threads.insertAndReturnOne(WORKSPACE_ID, {
         userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
@@ -845,7 +845,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         { senderWorkspaceMemberId: MEMBER_ID },
         { senderWorkspaceMemberId: MEMBER_ID },
       ]);
-      expect(saved.parts[0].textContent).toBe('Live message after upgrade');
+      expect(saved.parts[0]?.textContent).toBe('Live message after upgrade');
       expect(
         await messages.findOneOrFail(WORKSPACE_ID, {
           where: { id: queued.id },
@@ -1024,7 +1024,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         laterId,
         MESSAGE_ID,
       ]);
-      expect(chronological[2].parts[0].textContent).toBe(
+      expect(chronological[2]?.parts[0]?.textContent).toBe(
         'Hidden setup context',
       );
       expect(
@@ -1493,7 +1493,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       const after = await support.getGlobalChatThreads(options);
       expect(after.totalCount).toBe(1);
-      expect(after.threads[0].messageCount).toBe(1);
+      expect(after.threads[0]?.messageCount).toBe(1);
       await dataSource.query(
         'UPDATE core.workspace SET "allowImpersonation" = false',
       );

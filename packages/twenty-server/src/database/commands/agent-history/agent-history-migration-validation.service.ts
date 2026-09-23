@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isNonEmptyArray } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
@@ -25,7 +25,7 @@ export class AgentHistoryMigrationValidationService {
   }): Promise<void> {
     const table = `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThreadTarget"`;
 
-    const [{ exists }]: { exists: boolean }[] = await runner.query(
+    const [{ exists }]: [{ exists: boolean }] = await runner.query(
       'SELECT to_regclass($1) IS NOT NULL AS exists',
       [table],
     );
@@ -112,12 +112,11 @@ export class AgentHistoryMigrationValidationService {
         )
         .join(', ');
       const targetColumns = table.columns
-        .map(
-          (column) =>
-            `${escapeIdentifier(getAgentHistoryColumn({ tableName: table.name, storage: 'workspace', columnName: column }))} AS ${escapeIdentifier(column)}`,
-        )
+        .map((column) => {
+          return `${escapeIdentifier(getAgentHistoryColumn({ tableName: table.name, storage: 'workspace', columnName: column }))} AS ${escapeIdentifier(column)}`;
+        })
         .join(', ');
-      const [{ mismatch }]: { mismatch: boolean }[] = await runner.query(
+      const [mismatchRow]: { mismatch: boolean }[] = await runner.query(
         `
         SELECT EXISTS (
           SELECT 1 FROM (SELECT ${columns} FROM core.${escapeIdentifier(table.name)} WHERE "workspaceId" = $1) source
@@ -126,6 +125,9 @@ export class AgentHistoryMigrationValidationService {
         ) AS mismatch`,
         [workspaceId],
       );
+      assertIsDefinedOrThrow(mismatchRow);
+
+      const { mismatch } = mismatchRow;
       if (mismatch) {
         throw new Error(
           `Agent history verification failed for ${table.name}; workspace remains fenced`,
@@ -221,6 +223,10 @@ export class AgentHistoryMigrationValidationService {
       ['agentChatThread', 'userWorkspaceId', 'userWorkspace'],
       ['agentMessagePart', 'fileId', 'file'],
     ]) {
+      assertIsDefinedOrThrow(child);
+      assertIsDefinedOrThrow(parent);
+      assertIsDefinedOrThrow(column);
+
       const [{ invalid }] = await runner.query(
         `SELECT EXISTS (
         SELECT 1 FROM ${getAgentHistoryTable({ workspaceId, storage, name: child })} child
@@ -252,7 +258,11 @@ export class AgentHistoryMigrationValidationService {
       ['agentMessage', 'turnId', 'agentTurn'],
       ['agentMessagePart', 'messageId', 'agentMessage'],
     ]) {
-      const [{ invalid }]: { invalid: boolean }[] = await runner.query(
+      assertIsDefinedOrThrow(child);
+      assertIsDefinedOrThrow(parent);
+      assertIsDefinedOrThrow(column);
+
+      const [invalidRow]: { invalid: boolean }[] = await runner.query(
         `SELECT EXISTS (
         SELECT 1 FROM ${getAgentHistoryTable({ workspaceId, storage, name: child })} child
         LEFT JOIN ${getAgentHistoryTable({ workspaceId, storage, name: parent })} parent ON parent.id = child.${escapeIdentifier(column)} ${storage === 'core' ? 'AND parent."workspaceId" = $1' : ''}
@@ -260,6 +270,9 @@ export class AgentHistoryMigrationValidationService {
       ) AS invalid`,
         storage === 'core' ? [workspaceId] : [],
       );
+      assertIsDefinedOrThrow(invalidRow);
+
+      const { invalid } = invalidRow;
       if (invalid) {
         throw new Error(
           `Invalid or cross-workspace ${child}.${column} reference`,

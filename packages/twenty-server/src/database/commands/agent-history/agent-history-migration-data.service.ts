@@ -105,10 +105,9 @@ export class AgentHistoryMigrationDataService {
         SELECT ${selection.join(', ')} FROM batch ORDER BY id
         ON CONFLICT (id) DO UPDATE SET ${targetColumns
           .filter((column) => !['id', 'workspaceId'].includes(column))
-          .map(
-            (column) =>
-              `${escapeIdentifier(column)} = EXCLUDED.${escapeIdentifier(column)}`,
-          )
+          .map((column) => {
+            return `${escapeIdentifier(column)} = EXCLUDED.${escapeIdentifier(column)}`;
+          })
           .join(', ')}
         ${target === 'core' ? 'WHERE destination."workspaceId" = $1' : ''}
         RETURNING id

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
 import {
@@ -118,7 +118,11 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
         outcome.rotated += 1;
       }
 
-      cursor = rows[rows.length - 1].id;
+      const lastRow = rows[rows.length - 1];
+
+      assertIsDefinedOrThrow(lastRow);
+
+      cursor = lastRow.id;
     }
 
     return outcome;
