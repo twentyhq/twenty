@@ -34,6 +34,7 @@ export const WorkflowFormFieldInput = ({
 
   return (
     <FormFieldInput
+      currencyAmountUnit="micros"
       key={fieldDefinition.metadata.fieldName}
       defaultValue={defaultValue}
       field={fieldDefinition}

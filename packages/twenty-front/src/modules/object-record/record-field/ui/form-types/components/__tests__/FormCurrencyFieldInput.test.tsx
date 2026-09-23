@@ -23,7 +23,7 @@ jest.mock(
 const renderCurrencyInput = (
   amountMicros: FormFieldCurrencyValue['amountMicros'],
   readonly = false,
-  amountUnit: 'micros' | 'units' | undefined = 'units',
+  amountUnit?: 'micros' | 'units',
 ) => {
   const onChange = jest.fn();
   const store = createStore();

@@ -230,6 +230,7 @@ export const WorkflowEditActionCreateRecord = ({
 
           return (
             <FormFieldInput
+              currencyAmountUnit="micros"
               key={fieldDefinition.metadata.fieldName}
               defaultValue={currentValue}
               field={fieldDefinition}

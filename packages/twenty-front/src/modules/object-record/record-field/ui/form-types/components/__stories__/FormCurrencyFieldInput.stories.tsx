@@ -9,7 +9,7 @@ import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 const meta: Meta<typeof FormCurrencyFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormCurrencyFieldInput',
   component: FormCurrencyFieldInput,
-  args: {},
+  args: { amountUnit: 'micros' },
   argTypes: {},
   decorators: [WorkflowStepDecorator],
 };

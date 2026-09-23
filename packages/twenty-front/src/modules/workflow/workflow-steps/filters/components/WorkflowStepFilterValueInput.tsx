@@ -277,6 +277,7 @@ export const WorkflowStepFilterValueInput = ({
 
   return (
     <FormFieldInput
+      currencyAmountUnit="micros"
       field={field}
       defaultValue={stepFilter.value}
       onChange={handleValueChange}

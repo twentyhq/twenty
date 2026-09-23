@@ -27,7 +27,7 @@ export const FormCurrencyFieldInput = ({
   onChange,
   VariablePicker,
   readonly,
-  amountUnit = 'micros',
+  amountUnit = 'units',
 }: FormCurrencyFieldInputProps) => {
   const currencies = useMemo(() => {
     return [
