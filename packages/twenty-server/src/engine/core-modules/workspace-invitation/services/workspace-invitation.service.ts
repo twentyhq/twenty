@@ -14,7 +14,6 @@ import {
   IsNull,
   LessThanOrEqual,
   MoreThan,
-  Not,
   Raw,
   Repository,
 } from 'typeorm';
@@ -505,17 +504,11 @@ export class WorkspaceInvitationService {
       'ONBOARDING_INVITE_TEAM_MAX_INVITES',
     );
 
-    const existingOnboardingInvitations = await this.appTokenRepository.count({
-      where: {
+    const existingOnboardingInvitations =
+      await this.onboardingService.countActiveOnboardingInvitations({
         workspaceId,
-        type: AppTokenType.OnboardingInvitationToken,
-        deletedAt: IsNull(),
-        expiresAt: MoreThan(new Date()),
-        ...(isDefined(excludedAppTokenId)
-          ? { id: Not(excludedAppTokenId) }
-          : {}),
-      },
-    });
+        excludedAppTokenId,
+      });
 
     if (
       existingOnboardingInvitations + requestedCount >

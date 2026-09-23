@@ -3,7 +3,9 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DataSource } from 'typeorm';
 
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -35,6 +37,8 @@ describe('OnboardingService', () => {
   };
 
   const grantCredits = jest.fn();
+  const listGrants = jest.fn();
+  const countAppTokens = jest.fn();
   const captureExceptions = jest.fn();
   const setIfNotExists = jest.fn();
   const getConfig = jest.fn();
@@ -55,6 +59,7 @@ describe('OnboardingService', () => {
         OnboardingService,
         { provide: BillingService, useValue: { isBillingEnabled: jest.fn() } },
         { provide: BillingCreditService, useValue: { grantCredits } },
+        { provide: BillingCreditGrantService, useValue: { listGrants } },
         {
           provide: ExceptionHandlerService,
           useValue: { captureExceptions },
@@ -71,6 +76,10 @@ describe('OnboardingService', () => {
         { provide: TwentyConfigService, useValue: { get: getConfig } },
         { provide: getRepositoryToken(WorkspaceEntity), useValue: {} },
         { provide: getRepositoryToken(UserWorkspaceEntity), useValue: {} },
+        {
+          provide: getRepositoryToken(AppTokenEntity),
+          useValue: { count: countAppTokens },
+        },
         {
           provide: getQueueToken(MessageQueue.workspaceQueue),
           useValue: { add: jest.fn() },
@@ -230,6 +239,40 @@ describe('OnboardingService', () => {
         });
 
       expect(hasQualified).toBe(false);
+    });
+  });
+
+  describe('getOnboardingCreditRewards', () => {
+    it('returns the onboarding rewards granted so far in display credits', async () => {
+      listGrants.mockResolvedValue([
+        {
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          amountMicro: 1_000_000,
+          idempotencyKey: `onboarding-import-contacts:${workspaceId}`,
+          revokedAt: null,
+        },
+        {
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          amountMicro: 500_000,
+          idempotencyKey: `onboarding-invite-team:${workspaceId}:${userId}`,
+          revokedAt: null,
+        },
+      ]);
+      countAppTokens.mockResolvedValue(2);
+
+      const rewards = await service.getOnboardingCreditRewards({
+        workspaceId,
+      });
+
+      expect(rewards).toEqual({
+        importContactsCredits: 1,
+        installAppsCredits: 0,
+        inviteTeamCredits: 0.5,
+        enrichmentQualificationCredits: 0,
+        totalCredits: 1.5,
+        joinedTeammatesCount: 1,
+        pendingInvitationsCount: 2,
+      });
     });
   });
 });

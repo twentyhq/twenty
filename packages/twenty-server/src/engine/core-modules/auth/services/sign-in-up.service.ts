@@ -58,6 +58,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TelemetryEventType } from 'src/engine/core-modules/telemetry/telemetry-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -260,7 +261,7 @@ export class SignInUpService {
           ),
           type: BillingCreditGrantType.ONBOARDING_REWARD,
           reason: 'Onboarding reward: invited teammate signed up',
-          idempotencyKey: `onboarding-invite-team:${invitationValidation.workspace.id}:${updatedUser.id}`,
+          idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${invitationValidation.workspace.id}:${updatedUser.id}`,
         });
       } catch (error) {
         this.logger.error(

@@ -7,10 +7,8 @@ import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicro
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEmailsAutoSkipEffect';
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback, useState } from 'react';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { ImportContacts } from '~/pages/onboarding/ImportContacts';
@@ -22,7 +20,6 @@ import {
 export const SyncEmails = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const [hasAutoSkipFailed, setHasAutoSkipFailed] = useState(false);
 
   const isGoogleMessagingEnabled = useAtomStateValue(
@@ -55,37 +52,16 @@ export const SyncEmails = () => {
     ? onboardingConfig?.importContactsCreditsReward
     : undefined;
 
-  const connectWithProvider = async (provider: ConnectedAccountProvider) => {
-    setOnboardingFreeCredits((current) => ({
-      ...current,
-      importContacts: creditsReward ?? 0,
-    }));
+  const connectWithProvider = (provider: ConnectedAccountProvider) =>
+    triggerApisOAuth(provider, {
+      redirectLocation: AppPath.Index,
+      messageVisibility: MessageChannelVisibility.METADATA,
+      calendarVisibility: CalendarChannelVisibility.METADATA,
+      skipMessageChannelConfiguration: true,
+    });
 
-    try {
-      await triggerApisOAuth(provider, {
-        redirectLocation: AppPath.Index,
-        messageVisibility: MessageChannelVisibility.METADATA,
-        calendarVisibility: CalendarChannelVisibility.METADATA,
-        skipMessageChannelConfiguration: true,
-      });
-    } catch (error) {
-      setOnboardingFreeCredits((current) => ({
-        ...current,
-        importContacts: 0,
-      }));
-
-      throw error;
-    }
-  };
-
-  const handleSkip = async () => {
-    await skipSyncEmailOnboardingStep({ isAutoSkipped: false });
-
-    setOnboardingFreeCredits((current) => ({
-      ...current,
-      importContacts: 0,
-    }));
-  };
+  const handleSkip = () =>
+    skipSyncEmailOnboardingStep({ isAutoSkipped: false });
 
   const handleAutoSkipError = useCallback(() => {
     setHasAutoSkipFailed(true);

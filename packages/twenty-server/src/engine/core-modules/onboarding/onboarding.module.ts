@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { OnboardingResolver } from 'src/engine/core-modules/onboarding/onboarding.resolver';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -14,7 +15,11 @@ import { OnboardingInviteSuggestionsModule } from 'src/modules/onboarding-invite
     BillingModule,
     UserVarsModule,
     OnboardingInviteSuggestionsModule,
-    TypeOrmModule.forFeature([WorkspaceEntity, UserWorkspaceEntity]),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      UserWorkspaceEntity,
+      AppTokenEntity,
+    ]),
   ],
   exports: [OnboardingService],
   providers: [OnboardingService, OnboardingResolver],

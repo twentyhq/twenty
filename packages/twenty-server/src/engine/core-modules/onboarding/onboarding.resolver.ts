@@ -5,6 +5,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { InviteSuggestionDTO } from 'src/engine/core-modules/onboarding/dtos/invite-suggestion.dto';
+import { OnboardingCreditRewardsDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-credit-rewards.dto';
 import { OnboardingStepNavigationDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-navigation.dto';
 import { OnboardingStepSuccessDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -42,6 +43,16 @@ export class OnboardingResolver {
       workspaceId: workspace.id,
       userId: user.id,
       userWorkspaceId,
+    });
+  }
+
+  @Query(() => OnboardingCreditRewardsDTO)
+  @UseGuards(NoPermissionGuard)
+  async getOnboardingCreditRewards(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<OnboardingCreditRewardsDTO> {
+    return this.onboardingService.getOnboardingCreditRewards({
+      workspaceId: workspace.id,
     });
   }
 

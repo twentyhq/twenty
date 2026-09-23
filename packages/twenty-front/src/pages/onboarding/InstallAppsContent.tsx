@@ -9,6 +9,7 @@ import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-conta
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInstallableApp';
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
@@ -143,8 +144,11 @@ export const InstallAppsContent = ({
           <OnboardingStepAnimatedItem index={2}>
             <StyledOnboardingStepTagsRow>
               <OnboardingCreditsRewardTag
-                amount={creditsRewardPerApp * apps.length}
-                suffix={t`free credits (${creditsRewardPerApp} per tool)`}
+                amount={creditsRewardPerApp}
+                suffix={plural(creditsRewardPerApp, {
+                  one: 'free credit per app installed',
+                  other: 'free credits per app installed',
+                })}
               />
             </StyledOnboardingStepTagsRow>
           </OnboardingStepAnimatedItem>

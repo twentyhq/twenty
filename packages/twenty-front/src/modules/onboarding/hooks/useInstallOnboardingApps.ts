@@ -1,13 +1,7 @@
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useTriggerInstallAppsOnboardingStep } from '@/onboarding/hooks/useTriggerInstallAppsOnboardingStep';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useState } from 'react';
 
 export const useInstallOnboardingApps = () => {
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const triggerInstallAppsOnboardingStep =
     useTriggerInstallAppsOnboardingStep();
 
@@ -34,14 +28,6 @@ export const useInstallOnboardingApps = () => {
         universalIdentifiers,
         isAutoSkipped: false,
       });
-
-      const creditsRewardPerApp =
-        onboardingConfig?.installAppsCreditsRewardPerApp ?? 0;
-
-      setOnboardingFreeCredits((current) => ({
-        ...current,
-        installApps: creditsRewardPerApp * universalIdentifiers.length,
-      }));
     } catch {
       setIsCompleting(false);
     }

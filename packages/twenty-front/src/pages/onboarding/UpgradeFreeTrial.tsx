@@ -10,7 +10,6 @@ import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardi
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
 import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanCard';
 import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-free-trial/OnboardingTrialExtensionTag';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
@@ -73,7 +72,6 @@ const StyledLinkGroup = styled.div`
 
 type UpgradeFreeTrialProps = {
   billing: Billing;
-  creditsReward?: number;
 };
 
 type UpgradeFreeTrialSubmitButtonProps = {
@@ -260,10 +258,7 @@ const UpgradeFreeTrialContent = ({
   );
 };
 
-export const UpgradeFreeTrial = ({
-  billing,
-  creditsReward,
-}: UpgradeFreeTrialProps) => {
+export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
   const { t } = useLingui();
 
   const { getBaseLicensedPriceByPlanKeyAndInterval } =
@@ -300,17 +295,14 @@ export const UpgradeFreeTrial = ({
         <OnboardingStepAnimatedItem index={1}>
           <StyledOnboardingStepSubtitle>
             {isDefined(trialDuration)
-              ? t`Insert your billing details to get a ${trialDuration}-day free trial and more AI credits`
-              : t`Insert your billing details to get a free trial and more AI credits`}
+              ? t`Insert your billing details to get a ${trialDuration}-day free trial and more credits`
+              : t`Insert your billing details to get a free trial and more credits`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
         <OnboardingStepAnimatedItem index={2}>
           <StyledOnboardingStepTagsRow>
             {isDefined(trialDuration) && (
               <OnboardingTrialExtensionTag duration={trialDuration} />
-            )}
-            {isDefined(creditsReward) && (
-              <OnboardingCreditsRewardTag amount={creditsReward} />
             )}
           </StyledOnboardingStepTagsRow>
         </OnboardingStepAnimatedItem>

@@ -1,14 +1,11 @@
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
-import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
-import {
-  MOBILE_VIEWPORT,
-  themeCssVariables,
-  useTheme,
-} from 'twenty-ui/theme-constants';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.div`
   align-items: flex-start;
@@ -65,66 +62,18 @@ const StyledLogo = styled.div`
   width: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledFreeCredits = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-`;
-
-const StyledCreditsTag = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  border-bottom-left-radius: ${themeCssVariables.border.radius.pill};
-  border-left: 1px solid ${themeCssVariables.border.color.light};
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  border-top-left-radius: ${themeCssVariables.border.radius.pill};
-  box-sizing: border-box;
-  corner-shape: round;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${themeCssVariables.spacing[6]};
-  padding: 0 ${themeCssVariables.spacing[2]} 0
-    ${themeCssVariables.spacing['1.5']};
-`;
-
-const StyledCreditsCount = styled.span`
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledCreditsLabel = styled.span`
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
-const StyledInfoTag = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-bottom-right-radius: ${themeCssVariables.border.radius.rounded};
-  border-top-right-radius: ${themeCssVariables.border.radius.rounded};
-  box-sizing: border-box;
-  corner-shape: round;
-  display: flex;
-  height: ${themeCssVariables.spacing[6]};
-  justify-content: center;
-  padding: 0 ${themeCssVariables.spacing['1.5']} 0
-    ${themeCssVariables.spacing[1]};
-`;
-
 type OnboardingHeaderProps = {
   onBack?: () => void;
   isBackDisabled?: boolean;
-  freeCredits?: number;
+  rightComponent?: ReactNode;
 };
 
 export const OnboardingHeader = ({
   onBack,
   isBackDisabled,
-  freeCredits,
+  rightComponent,
 }: OnboardingHeaderProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
 
   return (
     <StyledHeader>
@@ -144,26 +93,7 @@ export const OnboardingHeader = ({
       <StyledCenter>
         <StyledLogo />
       </StyledCenter>
-      <StyledRightSide>
-        {isDefined(freeCredits) && (
-          <StyledFreeCredits>
-            <StyledCreditsTag>
-              <IconCoins
-                size={theme.icon.size.md}
-                color={themeCssVariables.font.color.tertiary}
-              />
-              <StyledCreditsCount>{freeCredits}</StyledCreditsCount>
-              <StyledCreditsLabel>{t`free credits`}</StyledCreditsLabel>
-            </StyledCreditsTag>
-            <StyledInfoTag>
-              <IconInfoCircle
-                size={theme.icon.size.md}
-                color={themeCssVariables.font.color.tertiary}
-              />
-            </StyledInfoTag>
-          </StyledFreeCredits>
-        )}
-      </StyledRightSide>
+      <StyledRightSide>{rightComponent}</StyledRightSide>
     </StyledHeader>
   );
 };

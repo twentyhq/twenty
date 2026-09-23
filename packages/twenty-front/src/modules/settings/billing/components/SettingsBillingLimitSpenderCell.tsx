@@ -9,6 +9,7 @@ import { type UsageLimitRow } from '@/settings/billing/types/UsageLimitRow';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledContainer = styled.div`
@@ -55,6 +56,7 @@ export const SettingsBillingLimitSpenderCell = ({
       return (
         <Avatar
           name={name}
+          colorSeed={getWorkspaceAvatarColorSeed(name)}
           src={getAbsoluteImageUrl(
             currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
           )}

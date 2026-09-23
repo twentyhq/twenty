@@ -1,4 +1,6 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { IconCoins } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
@@ -41,6 +43,8 @@ export const OnboardingCreditsRewardTag = ({
 }: OnboardingCreditsRewardTagProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { formatNumber } = useNumberFormat();
+  const formattedAmount = formatNumber(amount, { decimals: 2 });
 
   return (
     <StyledTag>
@@ -48,8 +52,11 @@ export const OnboardingCreditsRewardTag = ({
         size={theme.icon.size.md}
         color={themeCssVariables.color.green9}
       />
-      <StyledLabel>{t`Earn +${amount}`}</StyledLabel>
-      <StyledSuffix>{suffix ?? t`free credits`}</StyledSuffix>
+      <StyledLabel>{t`Earn +${formattedAmount}`}</StyledLabel>
+      <StyledSuffix>
+        {suffix ??
+          plural(amount, { one: 'free credit', other: 'free credits' })}
+      </StyledSuffix>
     </StyledTag>
   );
 };

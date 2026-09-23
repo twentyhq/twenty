@@ -14,6 +14,7 @@ import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingM
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Controller } from 'react-hook-form';
@@ -76,7 +77,10 @@ export const InviteTeam = () => {
             <StyledOnboardingStepTagsRow>
               <OnboardingCreditsRewardTag
                 amount={creditsRewardPerUser}
-                suffix={t`free credits per user`}
+                suffix={plural(creditsRewardPerUser, {
+                  one: 'free credit per teammate who joins',
+                  other: 'free credits per teammate who joins',
+                })}
               />
             </StyledOnboardingStepTagsRow>
           </OnboardingStepAnimatedItem>

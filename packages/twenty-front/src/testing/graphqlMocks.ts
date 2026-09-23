@@ -573,6 +573,22 @@ export const graphqlMocks = {
         { status: 200 },
       );
     }),
+    metadataGraphql.query('GetOnboardingCreditRewards', () => {
+      return HttpResponse.json({
+        data: {
+          getOnboardingCreditRewards: {
+            __typename: 'OnboardingCreditRewards',
+            importContactsCredits: 0,
+            installAppsCredits: 0,
+            inviteTeamCredits: 0,
+            enrichmentQualificationCredits: 0,
+            totalCredits: 0,
+            joinedTeammatesCount: 0,
+            pendingInvitationsCount: 0,
+          },
+        },
+      });
+    }),
     metadataGraphql.query('GetApiKeys', () => {
       return HttpResponse.json({
         data: {

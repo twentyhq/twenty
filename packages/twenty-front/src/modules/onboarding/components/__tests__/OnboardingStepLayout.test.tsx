@@ -6,16 +6,18 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ToastProvider } from 'twenty-ui/components';
+import { GetOnboardingCreditRewardsDocument } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 jest.mock(
   '@/onboarding/effect-components/PrefetchPlanRequiredStepEffect',
@@ -33,47 +35,70 @@ i18n.activate(SOURCE_LOCALE);
 
 const onboardingConfig: OnboardingConfig = {
   importContactsCreditsReward: 2,
-  inviteTeamMaxCreditsReward: 9,
   inviteTeamCreditsRewardPerUser: 3,
-  upgradeCreditsReward: 5,
   installAppsCreditsRewardPerApp: 1,
 };
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={[]}>
-    <JotaiProvider store={jotaiStore}>
-      <ToastProvider>
-        <I18nProvider i18n={i18n}>{children}</I18nProvider>
-      </ToastProvider>
-    </JotaiProvider>
-  </MockedProvider>
-);
+const buildCreditRewardsMock = (totalCredits: number) => ({
+  request: { query: GetOnboardingCreditRewardsDocument },
+  result: {
+    data: {
+      getOnboardingCreditRewards: {
+        __typename: 'OnboardingCreditRewards',
+        importContactsCredits: totalCredits,
+        installAppsCredits: 0,
+        inviteTeamCredits: 0,
+        enrichmentQualificationCredits: 0,
+        totalCredits,
+        joinedTeammatesCount: 0,
+        pendingInvitationsCount: 0,
+      },
+    },
+  },
+});
+
+const renderOnboardingStepLayout = (totalCredits: number) =>
+  render(<OnboardingStepLayout />, {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <MockedProvider mocks={[buildCreditRewardsMock(totalCredits)]}>
+        <JotaiProvider store={jotaiStore}>
+          <ToastProvider>
+            <I18nProvider i18n={i18n}>{children}</I18nProvider>
+          </ToastProvider>
+        </JotaiProvider>
+      </MockedProvider>
+    ),
+  });
 
 describe('OnboardingStepLayout', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
-    jotaiStore.set(onboardingFreeCreditsState.atom, {
-      importContacts: 2,
-      inviteTeam: 3,
-      installApps: 1,
-    });
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
   });
 
-  it('should display the free credits pill when credits rewards are configured', () => {
+  it('should invite to earn free credits before any is granted', async () => {
     jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
 
-    render(<OnboardingStepLayout />, { wrapper: Wrapper });
+    renderOnboardingStepLayout(0);
 
+    expect(await screen.findByText('Earn free credits')).toBeInTheDocument();
+  });
+
+  it('should display the free credits granted so far', async () => {
+    jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
+
+    renderOnboardingStepLayout(1.5);
+
+    expect(await screen.findByText('1.5')).toBeInTheDocument();
     expect(screen.getByText('free credits')).toBeInTheDocument();
-    expect(screen.getByText('6')).toBeInTheDocument();
   });
 
   it('should hide the free credits pill when credits rewards are not configured', () => {
     jotaiStore.set(onboardingConfigState.atom, null);
 
-    render(<OnboardingStepLayout />, { wrapper: Wrapper });
+    renderOnboardingStepLayout(0);
 
-    expect(screen.queryByText('free credits')).not.toBeInTheDocument();
+    expect(screen.queryByText('Earn free credits')).not.toBeInTheDocument();
   });
 });
