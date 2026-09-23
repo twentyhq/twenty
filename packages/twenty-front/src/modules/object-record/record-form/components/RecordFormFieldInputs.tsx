@@ -6,6 +6,7 @@ import { FormFieldInput } from '@/object-record/record-field/ui/components/FormF
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
 import { type JsonValue } from 'type-fest';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldList = styled.div`
@@ -14,12 +15,19 @@ const StyledFieldList = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
+const StyledFieldErrorMessage = styled.div`
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.xs};
+  margin-top: ${themeCssVariables.spacing[1]};
+`;
+
 type RecordFormFieldInputsProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   fieldMetadataItems: FieldMetadataItem[];
   draftRecord: Partial<ObjectRecord>;
   onFieldValueChange: (gqlFieldName: string, value: JsonValue) => void;
   onFieldValueClear: (gqlFieldName: string) => void;
+  errorMessageByFieldMetadataId?: Record<string, string>;
 };
 
 export const RecordFormFieldInputs = ({
@@ -28,23 +36,30 @@ export const RecordFormFieldInputs = ({
   draftRecord,
   onFieldValueChange,
   onFieldValueClear,
+  errorMessageByFieldMetadataId = {},
 }: RecordFormFieldInputsProps) => (
   <StyledFieldList>
     {fieldMetadataItems.map((fieldMetadataItem) => {
       const gqlFieldName = getFieldMetadataItemGqlFieldName(fieldMetadataItem);
 
+      const errorMessage = errorMessageByFieldMetadataId[fieldMetadataItem.id];
+
       return (
-        <FormFieldInput
-          key={fieldMetadataItem.id}
-          field={formatFieldMetadataItemAsFieldDefinition({
-            field: fieldMetadataItem,
-            objectMetadataItem,
-            showLabel: true,
-          })}
-          defaultValue={draftRecord[gqlFieldName]}
-          onChange={(value) => onFieldValueChange(gqlFieldName, value)}
-          onClear={() => onFieldValueClear(gqlFieldName)}
-        />
+        <div key={fieldMetadataItem.id}>
+          <FormFieldInput
+            field={formatFieldMetadataItemAsFieldDefinition({
+              field: fieldMetadataItem,
+              objectMetadataItem,
+              showLabel: true,
+            })}
+            defaultValue={draftRecord[gqlFieldName]}
+            onChange={(value) => onFieldValueChange(gqlFieldName, value)}
+            onClear={() => onFieldValueClear(gqlFieldName)}
+          />
+          {isDefined(errorMessage) && (
+            <StyledFieldErrorMessage>{errorMessage}</StyledFieldErrorMessage>
+          )}
+        </div>
       );
     })}
   </StyledFieldList>
