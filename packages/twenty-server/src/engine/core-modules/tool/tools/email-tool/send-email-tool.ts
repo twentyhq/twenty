@@ -41,7 +41,9 @@ export class SendEmailTool implements Tool {
 
       const { data } = result;
 
-      const sendResult = await this.sendEmailService.sendComposedEmail(data);
+      const sendResult = await this.sendEmailService.sendComposedEmail(data, {
+        userWorkspaceId: context.userWorkspaceId,
+      });
 
       const persistedMessage = data.shouldPersistMessage
         ? await this.sendEmailService.persistSentMessage(

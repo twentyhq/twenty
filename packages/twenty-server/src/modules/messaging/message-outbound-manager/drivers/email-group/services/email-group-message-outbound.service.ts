@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -36,6 +37,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
   async sendMessage(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
+    spenders: UsageSpenders = {},
   ): Promise<SendMessageResult> {
     const emailingDomain = await this.resolveEmailingDomain(connectedAccount);
 
@@ -48,7 +50,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
 
     await this.emailBillingService.validateEmailSendOrThrow({
       workspaceId: connectedAccount.workspaceId,
-      spenders: {},
+      spenders,
     });
 
     const threadExternalId =
@@ -85,7 +87,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     await this.emailBillingService
       .billSentEmails({
         workspaceId: connectedAccount.workspaceId,
-        spenders: {},
+        spenders,
         sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
       })
       .catch((error) => {
