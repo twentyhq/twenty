@@ -1,5 +1,3 @@
-import { Pill } from '@ui/primitives/data-display/internal/Pill/Pill';
-
 import styles from './ButtonSoon.module.scss';
 
 type ButtonSoonProps = {
@@ -8,6 +6,6 @@ type ButtonSoonProps = {
 
 export const ButtonSoon = ({ label = 'Soon' }: ButtonSoonProps) => (
   <span className={styles.soonPillContainer}>
-    <Pill label={label} />
+    <span className={styles.soonPill}>{label}</span>
   </span>
 );
