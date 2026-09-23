@@ -1,7 +1,17 @@
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { RecordCreationFormFocusEffect } from '@/object-record/record-form/components/RecordCreationFormFocusEffect';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createStore, Provider } from 'jotai';
 import { type ReactNode, useRef } from 'react';
+
+const OPTIONS = [
+  { label: 'Option A', value: 'a' },
+  { label: 'Option B', value: 'b' },
+];
 
 const Form = ({
   requestId = 'creation',
@@ -25,6 +35,12 @@ const Form = ({
     </div>
   );
 };
+
+const FieldWrapper = ({ children }: { children: ReactNode }) => (
+  <I18nProvider i18n={i18n}>
+    <Provider store={createStore()}>{children}</Provider>
+  </I18nProvider>
+);
 
 const NameFields = ({ contentEditable = false }) => (
   <>
@@ -63,26 +79,38 @@ it.each([false, true])(
 it('focuses a leading select trigger instead of skipping to a later field', async () => {
   render(
     <Form>
-      <div role="combobox" aria-label="Stage" tabIndex={0} />
+      <FormSelectFieldInput
+        label="Stage"
+        defaultValue="a"
+        onChange={jest.fn()}
+        options={OPTIONS}
+      />
       <input aria-label="Name" />
     </Form>,
+    { wrapper: FieldWrapper },
   );
 
   await waitFor(() =>
-    expect(screen.getByRole('combobox', { name: 'Stage' })).toHaveFocus(),
+    expect(screen.getByRole('button', { name: 'Option A' })).toHaveFocus(),
   );
 });
 
 it('focuses a leading multi-select button', async () => {
   render(
     <Form>
-      <button type="button">Tags</button>
+      <FormMultiSelectFieldInput
+        label="Tags"
+        defaultValue={[]}
+        onChange={jest.fn()}
+        options={OPTIONS}
+      />
       <input aria-label="Name" />
     </Form>,
+    { wrapper: FieldWrapper },
   );
 
   await waitFor(() =>
-    expect(screen.getByRole('button', { name: 'Tags' })).toHaveFocus(),
+    expect(screen.getByRole('button', { name: /Tags/ })).toHaveFocus(),
   );
 });
 

@@ -49,7 +49,6 @@ jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
   useFindOneRecord: () => ({ record: undefined }),
 }));
 
-// The app layout always binds the side panel's own Escape hotkey
 const SidePanelHotkeysEffect = () => {
   useCommandMenuHotKeys();
   return null;
@@ -107,21 +106,37 @@ const renderForm = ({
 
 beforeEach(() => jest.clearAllMocks());
 
-it('ignores Escape in a field outside the creation form', async () => {
+it('leaves the creation form on Escape from its own fields only', async () => {
   renderForm({
+    field: (
+      <FormNumberFieldInput
+        label="Employees"
+        placeholder="Employees"
+        defaultValue={undefined}
+        onChange={jest.fn()}
+      />
+    ),
     outsideField: (
       <FormNumberFieldInput
         label="Outside"
+        placeholder="Outside"
         defaultValue={undefined}
         onChange={jest.fn()}
       />
     ),
   });
-  await userEvent.click(screen.getByPlaceholderText('Enter a number'));
+  await userEvent.click(screen.getByPlaceholderText('Outside'));
 
   await userEvent.keyboard('{Escape}');
 
   expect(mockHandleSidePanelEscape).not.toHaveBeenCalled();
+
+  await userEvent.click(screen.getByPlaceholderText('Employees'));
+  await userEvent.keyboard('{Escape}');
+
+  await waitFor(() =>
+    expect(mockHandleSidePanelEscape).toHaveBeenCalledTimes(1),
+  );
 });
 
 it.each([
@@ -193,6 +208,35 @@ it('leaves the creation form when Escape is pressed in a text editor field', asy
   );
 });
 
+it('keeps the creation form open when Escape only dismisses a text composition', async () => {
+  const { container } = renderForm({
+    field: (
+      <FormTextFieldInput
+        label="Company name"
+        defaultValue={undefined}
+        onChange={jest.fn()}
+      />
+    ),
+  });
+  const editor = container.querySelector<HTMLElement>(
+    '[contenteditable="true"]',
+  );
+  if (!isDefined(editor)) {
+    throw new Error('Text editor not rendered');
+  }
+  act(() => editor.focus());
+
+  fireEvent.keyDown(editor, { key: 'Escape', keyCode: 229, isComposing: true });
+
+  expect(mockHandleSidePanelEscape).not.toHaveBeenCalled();
+
+  fireEvent.keyDown(editor, { key: 'Escape', code: 'Escape', keyCode: 27 });
+
+  await waitFor(() =>
+    expect(mockHandleSidePanelEscape).toHaveBeenCalledTimes(1),
+  );
+});
+
 it('leaves the creation form from a date field once its picker is closed', async () => {
   const user = userEvent.setup();
   renderForm({
@@ -212,32 +256,6 @@ it('leaves the creation form from a date field once its picker is closed', async
   await waitFor(() =>
     expect(mockHandleSidePanelEscape).toHaveBeenCalledTimes(1),
   );
-});
-
-it('closes only the open select dropdown when Escape is pressed in it', async () => {
-  renderForm({
-    field: (
-      <FormSelectFieldInput
-        label="Stage"
-        defaultValue="a"
-        onChange={jest.fn()}
-        options={[
-          { label: 'Option A', value: 'a' },
-          { label: 'Option B', value: 'b' },
-        ]}
-      />
-    ),
-  });
-  await userEvent.click(screen.getByText('Option A'));
-  expect(await screen.findByText('Option B')).toBeInTheDocument();
-
-  await userEvent.keyboard('{Escape}');
-
-  await waitFor(() =>
-    expect(screen.queryByText('Option B')).not.toBeInTheDocument(),
-  );
-  await new Promise((resolve) => setTimeout(resolve));
-  expect(mockHandleSidePanelEscape).not.toHaveBeenCalled();
 });
 
 const SELECT_OPTIONS = [
