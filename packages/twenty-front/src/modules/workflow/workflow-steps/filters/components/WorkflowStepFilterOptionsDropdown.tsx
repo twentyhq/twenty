@@ -1,3 +1,4 @@
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useRemoveStepFilter } from '@/workflow/workflow-steps/filters/hooks/useRemoveStepFilter';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
@@ -6,8 +7,6 @@ import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { Dropdown, IconButton } from 'twenty-ui/components';
-
-const FILTER_MENU_SIDE_OFFSET = 2;
 
 type WorkflowStepFilterOptionsDropdownProps = {
   stepFilterId: string;
@@ -41,7 +40,7 @@ export const WorkflowStepFilterOptionsDropdown = ({
       <Dropdown.Content
         data-click-outside-id={parentClickOutsideId}
         align="start"
-        sideOffset={FILTER_MENU_SIDE_OFFSET}
+        sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET.y}
       >
         <Dropdown.Section>
           <Dropdown.ActionItem
