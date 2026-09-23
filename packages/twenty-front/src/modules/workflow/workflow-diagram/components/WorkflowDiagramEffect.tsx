@@ -13,7 +13,11 @@ import {
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
-import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
+import { isWorkflowDiagramSeedCurrent } from '@/workflow/workflow-diagram/utils/isWorkflowDiagramSeedCurrent';
+import {
+  useWorkflowVersionContent,
+  type WorkflowVersionContent,
+} from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
@@ -58,6 +62,7 @@ export const WorkflowDiagramEffect = () => {
   const [seededVersionId, setSeededVersionId] = useState<string>();
   const [seededVersionUpdatedAt, setSeededVersionUpdatedAt] =
     useState<string>();
+  const [seededContent, setSeededContent] = useState<WorkflowVersionContent>();
   const [previousDiagramUpdatedAt, setPreviousDiagramUpdatedAt] =
     useState<string>();
   const [previousDiagramVersionId, setPreviousDiagramVersionId] =
@@ -138,8 +143,13 @@ export const WorkflowDiagramEffect = () => {
     }
 
     if (
-      seededVersionId === currentVersion.id &&
-      seededVersionUpdatedAt === contentUpdatedAt
+      isWorkflowDiagramSeedCurrent({
+        seededVersionId,
+        seededVersionUpdatedAt,
+        seededContent,
+        content,
+        contentUpdatedAt,
+      })
     ) {
       return;
     }
@@ -155,6 +165,7 @@ export const WorkflowDiagramEffect = () => {
     }
     setSeededVersionId(currentVersion.id);
     setSeededVersionUpdatedAt(contentUpdatedAt);
+    setSeededContent(content);
 
     setFlow({
       workflowVersionId: currentVersion.id,
@@ -166,6 +177,7 @@ export const WorkflowDiagramEffect = () => {
     currentVersion,
     seededVersionId,
     seededVersionUpdatedAt,
+    seededContent,
     contentUpdatedAt,
     setFlow,
     deleteStepsOutputSchema,
