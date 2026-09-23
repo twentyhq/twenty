@@ -80,19 +80,10 @@ export const RecordCreationFormProvider = ({
         ),
       );
 
+      let createdRecord: ObjectRecord;
+
       try {
-        const createdRecord =
-          await pendingRecordCreation.createRecord(draftRecord);
-
-        removePageFromSidePanelHistory(requestId);
-
-        pendingRecordCreation.resolve(createdRecord);
-
-        setPendingRecordCreations((previousPendingRecordCreations) =>
-          previousPendingRecordCreations.filter(
-            (candidate) => candidate.requestId !== requestId,
-          ),
-        );
+        createdRecord = await pendingRecordCreation.createRecord(draftRecord);
       } catch (error) {
         setPendingRecordCreations((previousPendingRecordCreations) =>
           previousPendingRecordCreations.map((candidate) =>
@@ -103,7 +94,19 @@ export const RecordCreationFormProvider = ({
         );
 
         enqueueToast(getToastOptionsFromError({ error }));
+
+        return;
       }
+
+      removePageFromSidePanelHistory(requestId);
+
+      pendingRecordCreation.resolve(createdRecord);
+
+      setPendingRecordCreations((previousPendingRecordCreations) =>
+        previousPendingRecordCreations.filter(
+          (candidate) => candidate.requestId !== requestId,
+        ),
+      );
     },
     [enqueueToast, pendingRecordCreations, removePageFromSidePanelHistory],
   );
