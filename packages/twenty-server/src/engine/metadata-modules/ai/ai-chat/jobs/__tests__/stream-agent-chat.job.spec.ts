@@ -147,7 +147,6 @@ describe('StreamAgentChatJob', () => {
     messages: [],
     browsingContext: null,
     lastUserMessageText: 'hello',
-    lastUserMessageParts: [{ type: 'text', text: 'hello' }],
     hasTitle: true,
     conversationSizeTokens: 0,
     existingTurnId: 'turn-id',

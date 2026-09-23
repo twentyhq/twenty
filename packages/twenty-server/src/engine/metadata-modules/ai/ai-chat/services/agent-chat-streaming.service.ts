@@ -233,7 +233,6 @@ export class AgentChatStreamingService {
           browsingContext,
           modelId,
           lastUserMessageText: text,
-          lastUserMessageParts: userMessageParts,
           hasTitle: !!thread.title,
           conversationSizeTokens: thread.conversationSize,
           existingTurnId: savedUserMessage.turnId ?? undefined,
@@ -343,7 +342,6 @@ export class AgentChatStreamingService {
           browsingContext: null,
           modelId,
           lastUserMessageText: text,
-          lastUserMessageParts: [{ type: 'text' as const, text }],
           hasTitle: !!thread.title,
           conversationSizeTokens: thread.conversationSize,
           existingTurnId: turnId,
@@ -493,7 +491,6 @@ export class AgentChatStreamingService {
           browsingContext: null,
           modelId,
           lastUserMessageText: textPart?.text ?? '',
-          lastUserMessageParts: retriedMessage.parts,
           hasTitle: !!thread.title,
           conversationSizeTokens: thread.conversationSize,
           existingTurnId: lastUserMessage.turnId,
@@ -696,11 +693,9 @@ export class AgentChatStreamingService {
         browsingContext: null,
         modelId,
         lastUserMessageText: '',
-        lastUserMessageParts: [],
         hasTitle: !!thread.title,
         conversationSizeTokens: thread.conversationSize,
         existingTurnId: turnId ?? undefined,
-        isResume: true,
         messageId,
       },
     );
@@ -777,19 +772,11 @@ export class AgentChatStreamingService {
 
     const textPart = nextQueued.parts?.find((part) => part.type === 'text');
     const messageText = textPart?.textContent ?? '';
-    const fileParts = (nextQueued.parts ?? [])
-      .filter((part) => part.type === 'file')
-      .map(
-        (part): ExtendedFileUIPart => ({
-          type: 'file',
-          mediaType: part.file?.mimeType ?? 'application/octet-stream',
-          filename: part.fileFilename ?? '',
-          url: '',
-          fileId: part.fileId ?? '',
-        }),
-      );
+    const hasFileAttachment = (nextQueued.parts ?? []).some(
+      (part) => part.type === 'file',
+    );
 
-    if (messageText === '' && fileParts.length === 0) {
+    if (messageText === '' && !hasFileAttachment) {
       await this.agentChatService.deleteQueuedMessage({
         messageId: nextQueued.id,
         workspaceId,
@@ -843,13 +830,6 @@ export class AgentChatStreamingService {
         }),
       ]);
 
-      const lastUserMessageParts: ExtendedUIMessagePart[] = [
-        ...(messageText !== ''
-          ? [{ type: 'text' as const, text: messageText }]
-          : []),
-        ...fileParts,
-      ];
-
       await this.messageQueueService.add<StreamAgentChatJobData>(
         STREAM_AGENT_CHAT_JOB_NAME,
         {
@@ -860,7 +840,6 @@ export class AgentChatStreamingService {
           messages: uiMessages,
           browsingContext: null,
           lastUserMessageText: messageText,
-          lastUserMessageParts,
           hasTitle,
           conversationSizeTokens: thread.conversationSize,
           existingTurnId: turnId,

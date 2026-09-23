@@ -184,7 +184,6 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
       expect.objectContaining({
         threadId: 'thread-id',
         existingTurnId: 'answer-turn-id',
-        isResume: true,
       }),
     );
   });

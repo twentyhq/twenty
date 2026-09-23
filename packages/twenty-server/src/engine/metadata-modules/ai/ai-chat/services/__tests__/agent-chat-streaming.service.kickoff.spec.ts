@@ -173,7 +173,6 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
         browsingContext: null,
         modelId: 'default-fast-model',
         lastUserMessageText: kickoffText,
-        lastUserMessageParts: [{ type: 'text', text: kickoffText }],
         hasTitle: true,
         existingTurnId: 'kickoff-turn-id',
       }),
