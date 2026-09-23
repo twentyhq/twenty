@@ -48,8 +48,6 @@ const getRoleLevelGrantsNotCoveredBy = ({
     : []),
 ];
 
-// A tool flag is covered by canAccessAllTools and a settings flag by
-// canUpdateAllSettings, the same way the server resolves them at runtime.
 const getPermissionFlagGrantsNotCoveredBy = ({
   role,
   superset,
@@ -86,9 +84,6 @@ const getPermissionFlagGrantsNotCoveredBy = ({
     }));
 };
 
-// A superset row-level restriction is only treated as covered when the role
-// carries the exact same one on that object, since two different predicate
-// sets cannot be proven to select the same rows.
 const getObjectGrantsNotCoveredBy = ({
   role,
   superset,
@@ -212,8 +207,6 @@ const getFieldGrantsNotCoveredBy = ({
     },
   );
 
-// Lists what `role` may do that `superset` may not. An empty result means the
-// superset covers the role.
 export const getRoleManifestGrantsNotCoveredBy = ({
   role,
   superset,

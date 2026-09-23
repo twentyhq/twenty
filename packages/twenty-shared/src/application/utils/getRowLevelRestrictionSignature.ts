@@ -16,8 +16,6 @@ const stringifyWithSortedKeys = (value: unknown): string =>
       : nestedValue,
   );
 
-// Two roles name their predicate groups with their own identifiers, so the only
-// comparable part of a group is the chain of logical operators up to the root.
 const getGroupOperatorPath = ({
   groupsByUniversalIdentifier,
   predicateGroupUniversalIdentifier,
@@ -54,8 +52,6 @@ const getGroupOperatorPath = ({
   return operatorPath;
 };
 
-// Two row-level restrictions are only known to select the same rows when their
-// predicates match exactly, including how their groups nest.
 export const getRowLevelRestrictionSignature = ({
   role,
   objectUniversalIdentifier,

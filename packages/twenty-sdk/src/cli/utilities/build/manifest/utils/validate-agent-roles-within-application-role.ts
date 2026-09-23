@@ -77,8 +77,6 @@ const describeGrant = ({
   }
 };
 
-// The application role is what a workspace reviews when installing the app,
-// so a role an agent runs with must not reach beyond it.
 export const validateAgentRolesWithinApplicationRole = ({
   agents,
   roles,
