@@ -27,15 +27,15 @@ export class DeferredWorkspaceMigrationActionRecoveryCronJob {
   )
   async handle(): Promise<void> {
     try {
-      const recoveredActionCount =
-        await this.deferredWorkspaceMigrationActionRunnerService.recoverStrandedActions();
+      const resetActionCount =
+        await this.deferredWorkspaceMigrationActionRunnerService.resetStaleInProgressActions();
 
       const enqueuedWorkspaceCount =
         await this.deferredWorkspaceMigrationActionRunnerService.enqueueWorkspacesWithPendingActions();
 
-      if (recoveredActionCount > 0 || enqueuedWorkspaceCount > 0) {
+      if (resetActionCount > 0 || enqueuedWorkspaceCount > 0) {
         this.logger.log(
-          `Recovered ${recoveredActionCount} stranded deferred action(s), enqueued ${enqueuedWorkspaceCount} workspace(s) with pending actions`,
+          `Reset ${resetActionCount} stale in-progress deferred action(s), enqueued ${enqueuedWorkspaceCount} workspace(s) with pending actions`,
         );
       }
     } catch (error) {

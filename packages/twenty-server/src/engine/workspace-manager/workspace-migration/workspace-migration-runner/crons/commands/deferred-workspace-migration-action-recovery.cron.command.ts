@@ -9,7 +9,7 @@ import { DeferredWorkspaceMigrationActionRecoveryCronJob } from 'src/engine/work
 @Command({
   name: 'cron:deferred-workspace-migration-action-recovery',
   description:
-    'Starts a cron job to recover stranded deferred workspace migration actions and run pending ones',
+    'Starts a cron job to recover stale deferred workspace migration actions and run pending ones',
 })
 export class DeferredWorkspaceMigrationActionRecoveryCronCommand extends CommandRunner {
   constructor(

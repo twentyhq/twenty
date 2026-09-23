@@ -25,7 +25,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-max-attempts.constant';
 import { DEFERRED_WORKSPACE_MIGRATION_ACTION_RETRY_BACKOFF } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-retry-backoff.constant';
 import { DEFERRED_WORKSPACE_MIGRATION_ACTION_STATEMENT_TIMEOUT_MS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-statement-timeout-ms.constant';
-import { DEFERRED_WORKSPACE_MIGRATION_ACTION_STRANDED_THRESHOLD_MS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-stranded-threshold-ms.constant';
+import { DEFERRED_WORKSPACE_MIGRATION_ACTION_STALE_THRESHOLD_MS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-stale-threshold-ms.constant';
 import { RUN_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_JOB_NAME } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/run-deferred-workspace-migration-actions-job-name.constant';
 import {
   DeferredWorkspaceMigrationActionException,
@@ -158,9 +158,9 @@ export class DeferredWorkspaceMigrationActionRunnerService {
     }
   }
 
-  async recoverStrandedActions(): Promise<number> {
-    const strandedBefore = new Date(
-      Date.now() - DEFERRED_WORKSPACE_MIGRATION_ACTION_STRANDED_THRESHOLD_MS,
+  async resetStaleInProgressActions(): Promise<number> {
+    const staleBefore = new Date(
+      Date.now() - DEFERRED_WORKSPACE_MIGRATION_ACTION_STALE_THRESHOLD_MS,
     );
     const lastError = 'Worker stopped while the action was in progress';
 
@@ -170,7 +170,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       .set({ status: 'FAILED', lastError })
       .where({
         status: 'IN_PROGRESS',
-        startedAt: LessThan(strandedBefore),
+        startedAt: LessThan(staleBefore),
         attempts: MoreThanOrEqual(
           DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS,
         ),
@@ -183,7 +183,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       .set({ status: 'PENDING', lastError })
       .where({
         status: 'IN_PROGRESS',
-        startedAt: LessThan(strandedBefore),
+        startedAt: LessThan(staleBefore),
       })
       .execute();
 
