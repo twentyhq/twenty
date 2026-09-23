@@ -38,7 +38,10 @@ const describeGrant = ({
 }: {
   grant: RoleManifestGrant;
   objects: Pick<ObjectManifest, 'universalIdentifier' | 'nameSingular'>[];
-  permissionFlags: PermissionFlagManifest[];
+  permissionFlags: Pick<
+    PermissionFlagManifest,
+    'universalIdentifier' | 'key' | 'permissionType'
+  >[];
 }): string => {
   const describeObject = (objectUniversalIdentifier: string) =>
     objects.find(
@@ -87,7 +90,10 @@ export const validateAgentRolesWithinApplicationRole = ({
   agents: AgentManifest[];
   roles: RoleManifest[];
   objects: Pick<ObjectManifest, 'universalIdentifier' | 'nameSingular'>[];
-  permissionFlags: PermissionFlagManifest[];
+  permissionFlags: Pick<
+    PermissionFlagManifest,
+    'universalIdentifier' | 'key' | 'permissionType'
+  >[];
   defaultRoleUniversalIdentifier: string;
 }): string[] => {
   const errors: string[] = [];
@@ -102,7 +108,7 @@ export const validateAgentRolesWithinApplicationRole = ({
   }
 
   const toolPermissionFlagUniversalIdentifiers = permissionFlags
-    .filter((flag) => flag.permissionType === 'tool')
+    .filter((flag) => (flag.permissionType ?? 'tool') === 'tool')
     .map((flag) => flag.universalIdentifier);
 
   const agentNamesByRoleUniversalIdentifier = new Map<string, string[]>();

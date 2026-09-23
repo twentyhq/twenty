@@ -117,6 +117,69 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     ]);
   });
 
+  it('treats a custom permission flag without a permission type as a tool flag, like the server does', () => {
+    const customToolFlagUniversalIdentifier = 'custom-tool-flag';
+
+    const errors = validateAgentRolesWithinApplicationRole({
+      agents: [buildAgent()],
+      roles: [
+        buildRole({
+          universalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+          label: 'Application role',
+          canAccessAllTools: true,
+        }),
+        buildRole({
+          permissionFlagUniversalIdentifiers: [
+            customToolFlagUniversalIdentifier,
+          ],
+        }),
+      ],
+      objects: [],
+      permissionFlags: [
+        {
+          universalIdentifier: customToolFlagUniversalIdentifier,
+          key: 'CUSTOM_TOOL',
+        },
+      ],
+      defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(errors).toEqual([]);
+  });
+
+  it('reports a custom settings flag that access to all tools does not cover', () => {
+    const customSettingsFlagUniversalIdentifier = 'custom-settings-flag';
+
+    const errors = validateAgentRolesWithinApplicationRole({
+      agents: [buildAgent()],
+      roles: [
+        buildRole({
+          universalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+          label: 'Application role',
+          canAccessAllTools: true,
+        }),
+        buildRole({
+          permissionFlagUniversalIdentifiers: [
+            customSettingsFlagUniversalIdentifier,
+          ],
+        }),
+      ],
+      objects: [],
+      permissionFlags: [
+        {
+          universalIdentifier: customSettingsFlagUniversalIdentifier,
+          key: 'CUSTOM_SETTINGS',
+          permissionType: 'settings',
+        },
+      ],
+      defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(errors).toEqual([
+      'Role "Agent role" used by agent "assistant" grants more than the application role "Application role": permission flag CUSTOM_SETTINGS. The application role must cover every permission an agent role grants.',
+    ]);
+  });
+
   it('reports an agent role that is not defined by the application', () => {
     const errors = validateAgentRolesWithinApplicationRole({
       agents: [buildAgent({ roleUniversalIdentifier: 'missing-role' })],
