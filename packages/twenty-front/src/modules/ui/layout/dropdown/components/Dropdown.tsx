@@ -35,6 +35,7 @@ import {
 import { flushSync } from 'react-dom';
 import { type Keys } from 'react-hotkeys-hook';
 import { isDefined } from 'twenty-shared/utils';
+import { handleClickableElementKeyDown } from 'twenty-ui/primitives/accessibility';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type Width = `${string}px` | `${number}%` | 'auto' | number;
@@ -199,7 +200,7 @@ export const Dropdown = ({
   }, [positionReference, refs]);
 
   const handleClickableComponentClick = useCallback(
-    (event: MouseEvent | KeyboardEvent) => {
+    async (event: MouseEvent) => {
       if (disableClickForClickableComponent) return;
       event.stopPropagation();
       event.preventDefault();
@@ -217,7 +218,9 @@ export const Dropdown = ({
     ],
   );
 
-  const handleClickableComponentKeyDown = (event: KeyboardEvent) => {
+  const handleClickableComponentKeyDown = (
+    event: KeyboardEvent<HTMLDivElement>,
+  ) => {
     if (
       !isDefined(clickableComponentTabIndex) ||
       event.target !== event.currentTarget ||
@@ -226,15 +229,16 @@ export const Dropdown = ({
       return;
     }
 
-    if (isDropdownOpen && event.key === ' ') {
-      event.preventDefault();
-    }
-
     if (isDropdownOpen) {
+      if (event.key === ' ') {
+        event.preventDefault();
+      }
+
       return;
     }
 
-    handleClickableComponentClick(event);
+    event.stopPropagation();
+    handleClickableElementKeyDown(event);
   };
 
   return (
