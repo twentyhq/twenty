@@ -18,6 +18,18 @@ export const completeWorkspaceLogoUploadMutation = gql`
   }
 `;
 
+export const completeWorkspaceMemberProfilePictureUploadMutation = gql`
+  mutation CompleteWorkspaceMemberProfilePictureUpload($fileId: String!) {
+    completeWorkspaceMemberProfilePictureUpload(fileId: $fileId) {
+      id
+      path
+      size
+      createdAt
+      url
+    }
+  }
+`;
+
 export type UploadedCorePicture = {
   id: string;
   path: string;
@@ -75,4 +87,33 @@ export const uploadWorkspaceLogoWithDirectUpload = async ({
   expect(completeResponse.body.errors).toBeUndefined();
 
   return completeResponse.body.data.completeWorkspaceLogoUpload;
+};
+
+export const uploadWorkspaceMemberProfilePictureWithDirectUpload = async ({
+  filename,
+  content,
+  token,
+}: {
+  filename: string;
+  content: Buffer;
+  token?: string;
+}): Promise<UploadedCorePicture> => {
+  const { fileId } = await createFileUploadAndPutFile({
+    filename,
+    content,
+    fileFolder: 'CorePicture',
+    token,
+  });
+
+  const completeResponse = await makeMetadataAPIRequest(
+    {
+      query: completeWorkspaceMemberProfilePictureUploadMutation,
+      variables: { fileId },
+    },
+    token,
+  );
+
+  expect(completeResponse.body.errors).toBeUndefined();
+
+  return completeResponse.body.data.completeWorkspaceMemberProfilePictureUpload;
 };

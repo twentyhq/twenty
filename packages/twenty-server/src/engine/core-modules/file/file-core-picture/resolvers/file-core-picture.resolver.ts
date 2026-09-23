@@ -66,7 +66,7 @@ export class FileCorePictureResolver {
 
   @Mutation(() => FileWithSignedUrlDTO, {
     deprecationReason:
-      'Use createFileUpload with the CorePicture folder and completeFileUpload, which send the picture straight to file storage.',
+      'Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.',
   })
   @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
   async uploadWorkspaceMemberProfilePicture(
@@ -102,5 +102,20 @@ export class FileCorePictureResolver {
       workspaceId,
       fileId,
     });
+  }
+
+  @Mutation(() => FileWithSignedUrlDTO)
+  @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
+  async completeWorkspaceMemberProfilePictureUpload(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args({ name: 'fileId', type: () => String })
+    fileId: string,
+  ): Promise<FileWithSignedUrlDTO> {
+    return this.fileCorePictureService.completeWorkspaceMemberProfilePictureUpload(
+      {
+        workspaceId,
+        fileId,
+      },
+    );
   }
 }

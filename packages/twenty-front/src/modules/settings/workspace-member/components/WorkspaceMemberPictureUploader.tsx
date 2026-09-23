@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
+import { useUploadWorkspaceMemberProfilePicture } from '@/settings/members/hooks/useUploadWorkspaceMemberProfilePicture';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { ImageInput } from '@/ui/input/components/ImageInput';
@@ -12,7 +12,6 @@ import { FileFolder as FileFolderPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { FileFolder } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type WorkspaceMemberPictureUploaderProps = {
@@ -39,7 +38,8 @@ export const WorkspaceMemberPictureUploader = ({
     currentWorkspaceMemberState,
   );
 
-  const { uploadFile } = useDirectFileUpload();
+  const { uploadWorkspaceMemberProfilePicture } =
+    useUploadWorkspaceMemberProfilePicture();
 
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
@@ -61,10 +61,10 @@ export const WorkspaceMemberPictureUploader = ({
 
     let newAvatarUrl: string | null = null;
     try {
-      const uploadedFile = await uploadFile(file, {
-        fileFolder: FileFolder.CorePicture,
-        signal: controller.signal,
-      });
+      const uploadedFile = await uploadWorkspaceMemberProfilePicture(
+        file,
+        controller.signal,
+      );
 
       newAvatarUrl = `${REACT_APP_SERVER_BASE_URL}/file/${FileFolderPath.CorePicture}/${uploadedFile.id}`;
       await updateWorkspaceMemberSettings({

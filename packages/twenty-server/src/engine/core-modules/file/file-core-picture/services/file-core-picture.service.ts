@@ -167,16 +167,40 @@ export class FileCorePictureService {
     return workspace.logoFileId;
   }
 
-  private async bindWorkspaceLogo({
+  private async replaceWorkspaceLogoFileId({
     workspaceId,
     fileId,
-    currentLogoFileId,
   }: {
     workspaceId: string;
     fileId: string;
-    currentLogoFileId: string | null;
+  }): Promise<string | null> {
+    return this.workspaceRepository.manager.transaction(async (manager) => {
+      const workspace = await manager.findOneOrFail(WorkspaceEntity, {
+        where: { id: workspaceId },
+        select: ['id', 'logoFileId'],
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      await manager.update(WorkspaceEntity, workspaceId, {
+        logoFileId: fileId,
+      });
+
+      return workspace.logoFileId;
+    });
+  }
+
+  private async bindWorkspaceLogo({
+    workspaceId,
+    fileId,
+  }: {
+    workspaceId: string;
+    fileId: string;
   }): Promise<void> {
-    await this.workspaceRepository.update(workspaceId, { logoFileId: fileId });
+    const replacedLogoFileId = await this.replaceWorkspaceLogoFileId({
+      workspaceId,
+      fileId,
+    });
+
     await this.fileRepository.update(
       workspaceId,
       { id: fileId },
@@ -187,8 +211,8 @@ export class FileCorePictureService {
       workspaceId,
     );
 
-    if (isDefined(currentLogoFileId) && currentLogoFileId !== fileId) {
-      await this.deleteCorePicture({ fileId: currentLogoFileId, workspaceId });
+    if (isDefined(replacedLogoFileId) && replacedLogoFileId !== fileId) {
+      await this.deleteCorePicture({ fileId: replacedLogoFileId, workspaceId });
     }
   }
 
@@ -211,9 +235,21 @@ export class FileCorePictureService {
       fileId,
     });
 
-    await this.bindWorkspaceLogo({ workspaceId, fileId, currentLogoFileId });
+    await this.bindWorkspaceLogo({ workspaceId, fileId });
 
     return completedFile;
+  }
+
+  async completeWorkspaceMemberProfilePictureUpload({
+    workspaceId,
+    fileId,
+  }: {
+    workspaceId: string;
+    fileId: string;
+  }): Promise<FileWithSignedUrlDTO> {
+    await this.findCorePictureFileOrThrow({ workspaceId, fileId });
+
+    return this.fileUploadService.completeFileUpload({ workspaceId, fileId });
   }
 
   async uploadWorkspacePicture({
@@ -225,8 +261,6 @@ export class FileCorePictureService {
     filename: string;
     workspace: WorkspaceEntity;
   }): Promise<FileWithSignedUrlDTO> {
-    const currentLogoFileId = await this.findCurrentLogoFileId(workspace.id);
-
     const savedFile = await this.uploadCorePicture({
       file,
       filename,
@@ -236,7 +270,6 @@ export class FileCorePictureService {
     await this.bindWorkspaceLogo({
       workspaceId: workspace.id,
       fileId: savedFile.id,
-      currentLogoFileId,
     });
 
     return this.toFileWithSignedUrl({

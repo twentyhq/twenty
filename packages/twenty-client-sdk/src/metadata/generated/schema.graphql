@@ -3999,8 +3999,9 @@ type Mutation {
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl! @deprecated(reason: "Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage.")
-  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl! @deprecated(reason: "Use createFileUpload with the CorePicture folder and completeFileUpload, which send the picture straight to file storage.")
+  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl! @deprecated(reason: "Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.")
   completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
+  completeWorkspaceMemberProfilePictureUpload(fileId: String!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   createUsageLimit(input: CreateUsageLimitInput!): UsageLimit!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!

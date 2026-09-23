@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
+import { useUploadWorkspaceMemberProfilePicture } from '@/settings/members/hooks/useUploadWorkspaceMemberProfilePicture';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -13,7 +13,6 @@ import { useToast } from 'twenty-ui/components';
 import { IconUserCircle } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { FileFolder } from '~/generated-metadata/graphql';
 
 const StyledUploader = styled.button`
   align-items: center;
@@ -58,14 +57,13 @@ export const OnboardingProfilePictureUploader = ({
     currentWorkspaceMemberState,
   );
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
-  const { uploadFile } = useDirectFileUpload();
+  const { uploadWorkspaceMemberProfilePicture } =
+    useUploadWorkspaceMemberProfilePicture();
   const hiddenFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (file: File) => {
     try {
-      const uploadedFile = await uploadFile(file, {
-        fileFolder: FileFolder.CorePicture,
-      });
+      const uploadedFile = await uploadWorkspaceMemberProfilePicture(file);
 
       const newAvatarUrl = `${REACT_APP_SERVER_BASE_URL}/file/${FileFolderPath.CorePicture}/${uploadedFile.id}`;
 

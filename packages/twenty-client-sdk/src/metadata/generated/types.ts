@@ -8645,6 +8645,15 @@ export default {
                     ]
                 }
             ],
+            "completeWorkspaceMemberProfilePictureUpload": [
+                161,
+                {
+                    "fileId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "uploadFilesFieldFileByUniversalIdentifier": [
                 161,
                 {

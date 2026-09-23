@@ -2,8 +2,9 @@ import gql from 'graphql-tag';
 import {
   completeWorkspaceLogoUploadMutation,
   uploadWorkspaceLogoWithDirectUpload,
+  uploadWorkspaceMemberProfilePictureWithDirectUpload,
 } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
-import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
+import { createFileUploadAndPutFile } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
@@ -110,6 +111,54 @@ describe('Core picture direct upload should succeed', () => {
     });
   }, 30000);
 
+  it('should keep one logo and delete the other when two uploads complete concurrently', async () => {
+    const previousLogo = await uploadWorkspaceLogoWithDirectUpload({
+      filename: 'previous-logo.png',
+      content: ONE_BY_ONE_TRANSPARENT_PNG,
+    });
+    const firstUpload = await createFileUploadAndPutFile({
+      filename: 'first-logo.png',
+      content: ONE_BY_ONE_TRANSPARENT_PNG,
+      fileFolder: 'CorePicture',
+    });
+    const secondUpload = await createFileUploadAndPutFile({
+      filename: 'second-logo.png',
+      content: ONE_BY_ONE_TRANSPARENT_PNG,
+      fileFolder: 'CorePicture',
+    });
+
+    uploadedFileIds.push(
+      previousLogo.id,
+      firstUpload.fileId,
+      secondUpload.fileId,
+    );
+
+    const completeResponses = await Promise.all(
+      [firstUpload.fileId, secondUpload.fileId].map((fileId) =>
+        makeMetadataAPIRequest({
+          query: completeWorkspaceLogoUploadMutation,
+          variables: { fileId },
+        }),
+      ),
+    );
+
+    for (const completeResponse of completeResponses) {
+      expect(completeResponse.body.errors).toBeUndefined();
+    }
+
+    const boundLogoFileId = await findWorkspaceLogoFileId();
+    const replacedLogoFileId =
+      boundLogoFileId === firstUpload.fileId
+        ? secondUpload.fileId
+        : firstUpload.fileId;
+
+    expect([firstUpload.fileId, secondUpload.fileId]).toContain(
+      boundLogoFileId,
+    );
+    expect(await findFileRow(replacedLogoFileId)).toBeUndefined();
+    expect(await findFileRow(previousLogo.id)).toBeUndefined();
+  }, 30000);
+
   it('should return the bound logo again when its completion is retried', async () => {
     const uploadedLogo = await uploadWorkspaceLogoWithDirectUpload({
       filename: 'logo.png',
@@ -134,12 +183,12 @@ describe('Core picture direct upload should succeed', () => {
   it('should upload a workspace member profile picture without touching the workspace logo', async () => {
     const logoFileIdBefore = await findWorkspaceLogoFileId();
 
-    const uploadedPicture = await uploadFileWithDirectUpload({
-      filename: 'avatar.png',
-      content: ONE_BY_ONE_TRANSPARENT_PNG,
-      fileFolder: 'CorePicture',
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
+    const uploadedPicture =
+      await uploadWorkspaceMemberProfilePictureWithDirectUpload({
+        filename: 'avatar.png',
+        content: ONE_BY_ONE_TRANSPARENT_PNG,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
 
     uploadedFileIds.push(uploadedPicture.id);
 

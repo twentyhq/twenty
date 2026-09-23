@@ -56,6 +56,7 @@ export const useDirectFileUpload = () => {
 
     const completeResult = await completeFileUpload({
       variables: { fileId },
+      context: { fetchOptions: { signal: options.signal } },
     });
 
     const uploadedFile = completeResult?.data?.completeFileUpload;
