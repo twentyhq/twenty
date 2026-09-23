@@ -3271,6 +3271,7 @@ export type Mutation = {
   uploadAppTarball: ApplicationRegistration;
   /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
   uploadApplicationFile: File;
+  /** @deprecated Use createFileUpload with the FilesField folder and the fieldMetadataUniversalIdentifier, then completeFileUpload, which send the file straight to file storage. */
   uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl;
   uploadNewWorkspaceLogo: FileWithSignedUrl;
   uploadWorkspaceLogo: FileWithSignedUrl;
