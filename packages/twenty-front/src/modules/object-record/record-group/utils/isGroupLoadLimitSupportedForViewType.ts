@@ -3,16 +3,13 @@ import { getViewLayoutFromViewType } from 'twenty-shared/utils';
 
 type ViewTypeValue = `${ViewType}`;
 
-// Only these layouts page their groups through useFindManyRecordIndexTableParams.
-// A board pages on RECORD_BOARD_QUERY_PAGE_SIZE, which also drives its
-// end-of-list detection, so the per-view load limit would not reach it.
+// Boards page on RECORD_BOARD_QUERY_PAGE_SIZE, so the limit cannot reach them
 const VIEW_LAYOUTS_WITH_GROUP_LOAD_LIMIT: ViewTypeValue[] = [
   ViewType.TABLE,
   ViewType.LIST,
 ];
 
-// A widget view keeps its own type (TABLE_WIDGET, LIST_WIDGET, ...) while
-// rendering the same table or list, so the layout decides here, not the type.
+// Widget views keep their own type, so this matches on layout, not type
 export const isGroupLoadLimitSupportedForViewType = (viewType: ViewType) =>
   VIEW_LAYOUTS_WITH_GROUP_LOAD_LIMIT.includes(
     getViewLayoutFromViewType(viewType),

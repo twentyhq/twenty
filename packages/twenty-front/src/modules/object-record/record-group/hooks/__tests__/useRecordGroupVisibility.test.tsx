@@ -1,6 +1,5 @@
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
-import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
@@ -37,11 +36,6 @@ const getWrapper =
 const groupLoadLimitAtom = recordIndexGroupLoadLimitComponentState.atomFamily({
   instanceId: INSTANCE_ID,
 });
-
-const shouldHideEmptyGroupsAtom =
-  recordIndexShouldHideEmptyRecordGroupsComponentState.atomFamily({
-    instanceId: INSTANCE_ID,
-  });
 
 const createDeferredViewUpdate = () => {
   let resolveViewUpdate!: () => void;
@@ -175,68 +169,5 @@ describe('useRecordGroupVisibility', () => {
     });
 
     expect(store.get(groupLoadLimitAtom)).toBe(50);
-  });
-
-  it('should keep the newest hide-empty-groups state when an older request fails afterwards', async () => {
-    const store = createStore();
-    store.set(shouldHideEmptyGroupsAtom, false);
-
-    const firstViewUpdate = createDeferredViewUpdate();
-    const secondViewUpdate = createDeferredViewUpdate();
-    const thirdViewUpdate = createDeferredViewUpdate();
-
-    updateCurrentViewMock
-      .mockImplementationOnce(() => firstViewUpdate.promise)
-      .mockImplementationOnce(() => secondViewUpdate.promise)
-      .mockImplementationOnce(() => thirdViewUpdate.promise);
-
-    const { result } = renderHook(() => useRecordGroupVisibility(), {
-      wrapper: getWrapper(store),
-    });
-
-    let firstCall!: Promise<void>;
-    let secondCall!: Promise<void>;
-    let thirdCall!: Promise<void>;
-
-    act(() => {
-      firstCall = result.current.handleHideEmptyRecordGroupChange();
-      secondCall = result.current.handleHideEmptyRecordGroupChange();
-      thirdCall = result.current.handleHideEmptyRecordGroupChange();
-    });
-
-    const firstCallAssertion =
-      expect(firstCall).rejects.toThrow('Network error');
-
-    await act(async () => {
-      thirdViewUpdate.resolveViewUpdate();
-      secondViewUpdate.resolveViewUpdate();
-
-      await Promise.all([thirdCall, secondCall]);
-    });
-
-    await act(async () => {
-      firstViewUpdate.rejectViewUpdate(new Error('Network error'));
-      await firstCallAssertion;
-    });
-
-    expect(store.get(shouldHideEmptyGroupsAtom)).toBe(true);
-  });
-
-  it('should restore the previous hide-empty-groups state when the view update fails', async () => {
-    const store = createStore();
-    store.set(shouldHideEmptyGroupsAtom, false);
-    updateCurrentViewMock.mockRejectedValue(new Error('Network error'));
-
-    const { result } = renderHook(() => useRecordGroupVisibility(), {
-      wrapper: getWrapper(store),
-    });
-
-    await act(async () => {
-      await expect(
-        result.current.handleHideEmptyRecordGroupChange(),
-      ).rejects.toThrow('Network error');
-    });
-
-    expect(store.get(shouldHideEmptyGroupsAtom)).toBe(false);
   });
 });

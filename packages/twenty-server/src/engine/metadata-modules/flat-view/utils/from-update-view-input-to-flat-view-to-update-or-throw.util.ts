@@ -69,8 +69,7 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     );
   }
 
-  // The column is NOT NULL, so an explicit null would otherwise reach the merge
-  // and fail on the database constraint; create and the manifest read null as the default too
+  // NOT NULL column: null means the default, as on create and in manifests
   const { groupLoadLimit, ...updateViewInputWithoutGroupLoadLimit } =
     rawUpdateViewInput;
 

@@ -3,7 +3,6 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import {
   IsBoolean,
   IsEnum,
-  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -12,7 +11,6 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { VIEW_GROUP_LOAD_LIMIT_OPTIONS } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   ViewCalendarLayout,
@@ -122,7 +120,6 @@ export class UpdateViewInput {
   kanbanColumnWidth?: number | null;
 
   @IsOptional()
-  @IsIn(VIEW_GROUP_LOAD_LIMIT_OPTIONS)
   @Field(() => Int, { nullable: true })
   groupLoadLimit?: number | null;
 }

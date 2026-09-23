@@ -28,7 +28,7 @@ export const ObjectOptionsDropdownRecordGroupLoadLimitContent = () => {
     dropdownId,
   );
 
-  // SelectableList addresses items by string id, the load limit options are numbers
+  // SelectableList ids are strings, the limits are numbers
   const selectableItemIdArray = VIEW_GROUP_LOAD_LIMIT_OPTIONS.map(String);
 
   return (

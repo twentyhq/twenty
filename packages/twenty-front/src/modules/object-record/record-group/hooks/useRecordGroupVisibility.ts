@@ -13,10 +13,7 @@ import { useCallback, useRef } from 'react';
 export const useRecordGroupVisibility = () => {
   const store = useStore();
 
-  // Request tokens, not rendered state: they only decide whether a settling
-  // mutation is still the most recent one, so they must not trigger a render.
-  // oxlint-disable-next-line twenty/no-state-useref
-  const latestHideEmptyRecordGroupsRequestIdRef = useRef(0);
+  // A request counter, not rendered state
   // oxlint-disable-next-line twenty/no-state-useref
   const latestGroupLoadLimitRequestIdRef = useRef(0);
 
@@ -44,35 +41,20 @@ export const useRecordGroupVisibility = () => {
     [saveViewGroup, store],
   );
 
-  // These atoms drive what the grouped index renders and fetches, so a rejected
-  // mutation has to put the previous value back: the menu would otherwise keep
-  // showing a setting the view never took. The error is rethrown so failures
-  // stay as visible as they were before the rollback.
-  // The dropdown stays open after a choice, so a second change can be made while
-  // the first is still in flight: only the latest request may write the atom,
-  // otherwise a late rollback would undo a choice the user has since replaced.
   const handleHideEmptyRecordGroupChange = useCallback(async () => {
-    const previousHideState = store.get(recordIndexShouldHideEmptyRecordGroups);
+    const currentHideState = store.get(recordIndexShouldHideEmptyRecordGroups);
 
-    const newHideState = !previousHideState;
-
-    const requestId = ++latestHideEmptyRecordGroupsRequestIdRef.current;
+    const newHideState = !currentHideState;
 
     store.set(recordIndexShouldHideEmptyRecordGroups, newHideState);
 
-    try {
-      await updateCurrentView({
-        shouldHideEmptyGroups: newHideState,
-      });
-    } catch (error) {
-      if (latestHideEmptyRecordGroupsRequestIdRef.current === requestId) {
-        store.set(recordIndexShouldHideEmptyRecordGroups, previousHideState);
-      }
-
-      throw error;
-    }
+    await updateCurrentView({
+      shouldHideEmptyGroups: newHideState,
+    });
   }, [store, recordIndexShouldHideEmptyRecordGroups, updateCurrentView]);
 
+  // A failed save restores the previous limit, since it drives what groups fetch.
+  // Only the latest request may roll back: the menu stays open during a save.
   const handleGroupLoadLimitChange = useCallback(
     async (limit: number) => {
       const previousLimit = store.get(recordIndexGroupLoadLimit);
