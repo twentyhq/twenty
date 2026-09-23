@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
 
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -25,19 +24,12 @@ const findIndex = (
 const getIndexedFieldUniversalIdentifiers = (
   indexName: keyof typeof STANDARD_OBJECTS.agentChatThreadTarget.indexes,
 ) =>
-  findIndex(indexName)
-    ?.flatIndexFieldMetadatas.map((indexField) =>
-      Object.values(
-        allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-      )
-        .filter(isDefined)
-        .find(
-          (flatFieldMetadata) =>
-            flatFieldMetadata.id === indexField.fieldMetadataId,
-        ),
-    )
-    .filter(isDefined)
-    .map((flatFieldMetadata) => flatFieldMetadata.universalIdentifier);
+  findIndex(indexName)?.flatIndexFieldMetadatas.map(
+    (indexField) =>
+      allFlatEntityMaps.flatFieldMetadataMaps.universalIdentifierById[
+        indexField.fieldMetadataId
+      ],
+  );
 
 const fields = STANDARD_OBJECTS.agentChatThreadTarget.fields;
 
