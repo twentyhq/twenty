@@ -26,7 +26,7 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import { SchemaAffectingDeferredActionsGuardService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/schema-affecting-deferred-actions-guard.service';
+import { InFlightDeferredWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-migration-actions.service';
 import { isSchemaAffectingWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-schema-affecting-workspace-migration.util';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
@@ -49,7 +49,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
-    private readonly schemaAffectingDeferredActionsGuardService: SchemaAffectingDeferredActionsGuardService,
+    private readonly inFlightDeferredWorkspaceMigrationActionsService: InFlightDeferredWorkspaceMigrationActionsService,
   ) {}
 
   private getLegacyCacheInvalidation(
@@ -245,7 +245,7 @@ export class WorkspaceMigrationRunnerService {
       return;
     }
 
-    await this.schemaAffectingDeferredActionsGuardService.throwIfDeferredActionsAreInProgress(
+    await this.inFlightDeferredWorkspaceMigrationActionsService.throwIfSchemaAffectingActionsAreInProgress(
       workspaceId,
     );
   };

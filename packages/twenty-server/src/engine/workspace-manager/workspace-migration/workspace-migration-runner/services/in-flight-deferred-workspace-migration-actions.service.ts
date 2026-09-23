@@ -14,14 +14,14 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 import { isSchemaAffectingMetadataName } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-schema-affecting-metadata-name.util';
 
 @Injectable()
-export class SchemaAffectingDeferredActionsGuardService {
+export class InFlightDeferredWorkspaceMigrationActionsService {
   constructor(
     @InjectWorkspaceScopedRepository(DeferredWorkspaceMigrationActionEntity)
     private readonly deferredWorkspaceMigrationActionRepository: WorkspaceScopedRepository<DeferredWorkspaceMigrationActionEntity>,
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
   ) {}
 
-  async throwIfDeferredActionsAreInProgress(
+  async throwIfSchemaAffectingActionsAreInProgress(
     workspaceId: string,
   ): Promise<void> {
     const inProgressActionCount =
