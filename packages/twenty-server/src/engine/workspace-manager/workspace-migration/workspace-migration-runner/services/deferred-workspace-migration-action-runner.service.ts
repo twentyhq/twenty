@@ -6,7 +6,7 @@ import { DataSource, type QueryRunner } from 'typeorm';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
+import { DEFERRED_WORKSPACE_MIGRATION_ACTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/deferred-workspace-migration-action-duration-ms-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -339,7 +339,8 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       value: durationMs,
       unit: 'ms',
       attributes: { actionHandlerKey, status },
-      bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      bucketBoundaries:
+        DEFERRED_WORKSPACE_MIGRATION_ACTION_DURATION_MS_BUCKET_BOUNDARIES,
     });
   }
 
