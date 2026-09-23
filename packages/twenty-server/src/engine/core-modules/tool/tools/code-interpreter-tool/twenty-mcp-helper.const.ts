@@ -36,6 +36,9 @@ class TwentyMCP:
         'learn_tools',
         'load_skills',
         'search_help_center',
+        'get_tool_catalog',
+        'list_object_metadata_names',
+        'list_skills',
     })
 
     def __init__(self):
