@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { assertComponentSourceMatchesChecksum } from '@/host/component-source/utils/assertComponentSourceMatchesChecksum';
 import { computeComponentSourceChecksum } from '@/host/component-source/utils/computeComponentSourceChecksum';
 import { deleteComponentSourceFromCache } from '@/host/component-source/utils/deleteComponentSourceFromCache';
 import { evictStaleComponentSourceCacheEntries } from '@/host/component-source/utils/evictStaleComponentSourceCacheEntries';
@@ -42,13 +43,15 @@ export const fetchComponentSource = async ({
 
   const source = await fetchComponentSourceFromNetwork({ url, headers });
 
-  if (isDefined(cache) && isDefined(expectedChecksum)) {
-    const sourceChecksum = await computeComponentSourceChecksum({ source });
+  if (!isDefined(expectedChecksum)) {
+    return source;
+  }
 
-    if (sourceChecksum === expectedChecksum) {
-      writeComponentSourceToCache({ cache, url, source });
-      evictStaleComponentSourceCacheEntries({ cache, url });
-    }
+  await assertComponentSourceMatchesChecksum({ url, source, expectedChecksum });
+
+  if (isDefined(cache)) {
+    writeComponentSourceToCache({ cache, url, source });
+    evictStaleComponentSourceCacheEntries({ cache, url });
   }
 
   return source;
