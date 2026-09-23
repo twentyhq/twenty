@@ -12323,7 +12323,7 @@ export default {
                 26
             ],
             "readability": [
-                25
+                27
             ],
             "translations": [
                 492
