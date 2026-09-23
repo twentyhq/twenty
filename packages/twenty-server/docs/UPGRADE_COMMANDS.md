@@ -106,9 +106,6 @@ export class BackfillStandardSkillsCommand
 
 The base class `ActiveOrSuspendedWorkspaceCommandRunner` handles workspace iteration and provides `--dry-run`, `--verbose`, and workspace filter options automatically.
 
-For a 2.42 upgrade blocked by missing `message.createdBy` metadata, see
-[the standard system-field recovery procedure](./UPGRADE_2_42_MISSING_SYSTEM_FIELDS.md).
-
 ### Applying a migration matrix: side-effect vs legacy path
 
 Commands that build a metadata migration go through `WorkspaceMigrationValidateBuildAndRunService`. Two entry points exist:
