@@ -8,7 +8,6 @@ import {
   type AiModelTier,
 } from 'twenty-shared/ai';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type WorkspaceSchemaMigrationStatus } from 'src/engine/core-modules/workspace/types/workspace-schema-migration-status.type';
 import {
   Check,
   Column,
@@ -201,12 +200,6 @@ export class WorkspaceEntity {
 
   @Column({ type: 'timestamptz', nullable: true })
   suspendedAt: Date | null;
-
-  @Column({ type: 'varchar', default: 'IDLE' })
-  schemaMigrationStatus: WorkspaceSchemaMigrationStatus;
-
-  @Column({ type: 'timestamptz', nullable: true })
-  schemaMigrationStartedAt: Date | null;
 
   @OneToMany(
     () => WorkspaceSsoIdentityProviderEntity,

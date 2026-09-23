@@ -8,6 +8,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DeferredWorkspaceMigrationActionEntity } from 'src/engine/metadata-modules/deferred-workspace-migration-action/deferred-workspace-migration-action.entity';
+import { WorkspaceSchemaMigrationLockEntity } from 'src/engine/metadata-modules/workspace-schema-migration-lock/workspace-schema-migration-lock.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -37,6 +38,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     TypeOrmModule.forFeature([
       WorkspaceEntity,
       DeferredWorkspaceMigrationActionEntity,
+      WorkspaceSchemaMigrationLockEntity,
     ]),
     WorkspaceIteratorModule,
     MetricsModule,
@@ -48,6 +50,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     DeferredWorkspaceMigrationActionRecoveryService,
     WorkspaceSchemaMigrationLockService,
     provideWorkspaceScopedRepository(DeferredWorkspaceMigrationActionEntity),
+    provideWorkspaceScopedRepository(WorkspaceSchemaMigrationLockEntity),
     DeferredWorkspaceMigrationActionGaugeService,
     FlatCacheInvalidateCommand,
     RetryFailedDeferredWorkspaceMigrationActionsCommand,

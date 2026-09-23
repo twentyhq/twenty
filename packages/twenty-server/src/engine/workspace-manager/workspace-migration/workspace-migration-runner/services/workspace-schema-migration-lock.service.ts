@@ -1,10 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { In, LessThan } from 'typeorm';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DeferredWorkspaceMigrationActionEntity } from 'src/engine/metadata-modules/deferred-workspace-migration-action/deferred-workspace-migration-action.entity';
+import { WorkspaceSchemaMigrationLockEntity } from 'src/engine/metadata-modules/workspace-schema-migration-lock/workspace-schema-migration-lock.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/schema-affecting-deferred-workspace-migration-actions.constant';
@@ -21,8 +20,8 @@ export class WorkspaceSchemaMigrationLockService {
   );
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectWorkspaceScopedRepository(WorkspaceSchemaMigrationLockEntity)
+    private readonly workspaceSchemaMigrationLockRepository: WorkspaceScopedRepository<WorkspaceSchemaMigrationLockEntity>,
     @InjectWorkspaceScopedRepository(DeferredWorkspaceMigrationActionEntity)
     private readonly deferredWorkspaceMigrationActionRepository: WorkspaceScopedRepository<DeferredWorkspaceMigrationActionEntity>,
   ) {}
@@ -56,10 +55,10 @@ export class WorkspaceSchemaMigrationLockService {
     try {
       // Scoped to the stamp this run took: a migration that overran the
       // takeover timeout must not release the lock of the run that replaced it.
-      const { affected } = await this.workspaceRepository.update(
-        { id: workspaceId, schemaMigrationStartedAt: lockedAt },
-        { schemaMigrationStatus: 'IDLE', schemaMigrationStartedAt: null },
-      );
+      const { affected } =
+        await this.workspaceSchemaMigrationLockRepository.delete(workspaceId, {
+          startedAt: lockedAt,
+        });
 
       if (affected !== 1) {
         this.logger.warn(
@@ -79,21 +78,32 @@ export class WorkspaceSchemaMigrationLockService {
       lockedAt.getTime() - WORKSPACE_SCHEMA_MIGRATION_LOCK_TAKEOVER_TIMEOUT_MS,
     );
 
-    const { affected } = await this.workspaceRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        schemaMigrationStatus: 'MIGRATING',
-        schemaMigrationStartedAt: lockedAt,
-      })
-      .where('id = :workspaceId', { workspaceId })
-      .andWhere(
-        '("schemaMigrationStatus" = :idle OR "schemaMigrationStartedAt" < :takeoverBefore)',
-        { idle: 'IDLE', takeoverBefore },
-      )
-      .execute();
+    const { affected: takenOverCount } =
+      await this.workspaceSchemaMigrationLockRepository.update(
+        workspaceId,
+        { startedAt: LessThan(takeoverBefore) },
+        { startedAt: lockedAt },
+      );
 
-    if (affected !== 1) {
+    if (takenOverCount === 1) {
+      this.logger.warn(
+        `Took over the schema migration lock of workspace ${workspaceId}, the run holding it started more than ${WORKSPACE_SCHEMA_MIGRATION_LOCK_TAKEOVER_TIMEOUT_MS}ms ago`,
+      );
+
+      return lockedAt;
+    }
+
+    const { raw: insertedLocks } =
+      await this.workspaceSchemaMigrationLockRepository
+        .createQueryBuilder()
+        .insert()
+        .into(WorkspaceSchemaMigrationLockEntity)
+        .values({ workspaceId, startedAt: lockedAt })
+        .orIgnore()
+        .returning('"workspaceId"')
+        .execute();
+
+    if (insertedLocks.length !== 1) {
       throw new WorkspaceMigrationRunnerException({
         message: `Another schema migration is already running on workspace ${workspaceId}`,
         code: WorkspaceMigrationRunnerExceptionCode.SCHEMA_MIGRATION_IN_PROGRESS,
