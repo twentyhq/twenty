@@ -1073,6 +1073,7 @@ Key points:
 - Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
 - The MIME type is detected from the file contents once uploaded, so there is nothing to declare.
 - The returned `url` is a signed URL you can use to access the uploaded file.
+- Your app's role needs the `UPLOAD_FILE` permission flag and update access to the object owning the field, the same access it needs to attach the file to a record. System objects such as `attachment` and `callRecording` are exempt from the object check.
 
 </Accordion>
 </AccordionGroup>

@@ -1,4 +1,4 @@
-import { defineRole } from 'twenty-sdk/define';
+import { defineRole, SystemPermissionFlag } from 'twenty-sdk/define';
 import { MEDIA_NOTE_UNIVERSAL_IDENTIFIER } from '../objects/media-note.object';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -16,6 +16,7 @@ export default defineRole({
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
   objectPermissions: [
     {
       objectUniversalIdentifier: MEDIA_NOTE_UNIVERSAL_IDENTIFIER,

@@ -26,7 +26,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
   The returned `{ id, path, size, createdAt, url }` is unchanged. `uploadFile` now requires a Twenty server that exposes the `createFileUpload` and `completeFileUpload` mutations.
 
+- **Uploading into a files field with an application token needs the same access as attaching the file to a record.** This covers `uploadFile` in `twenty-sdk/front-component`, which now runs as the application acting for the viewer instead of with the viewer's session alone, as well as `MetadataApiClient.uploadFile` in logic functions and direct `createFileUpload` or `uploadFilesFieldFileByUniversalIdentifier` calls. The application's role needs `UPLOAD_FILE` and must be able to update the object owning the field, intersected with the viewer's role when the application acts for one. System objects such as `attachment` and `callRecording` stay exempt, as they are when attaching. A direct upload started by an application can only be completed by that application. Apps whose role lacks either grant now get their uploads refused: add `UPLOAD_FILE` and the object permission to the role.
+
 ### Added
+
+- **`uploadFile` in `twenty-sdk/front-component` can fail with `permission-denied`.** The result's `reason` is `permission-denied` when the server refuses the upload because the application or the viewer lacks access, so a component can tell it apart from `upload-failed`.
 
 - **`enqueueJobs` in `twenty-sdk/logic-function`.** Enqueues one run per payload of a single logic function in one call (up to 200 payloads per batch). `retryLimit` and `delayMs` apply to every run in the batch.
 
@@ -44,8 +48,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
 
 ### Changed
-
-- **`uploadFile` in `twenty-sdk/front-component` runs as the application acting for the viewer.** The host no longer uploads with the viewer's session alone: the application's role needs `UPLOAD_FILE` and update access to the object owning the target files field, on top of the viewer's own access, exactly as when the file is later attached to a record. The signature and the result are unchanged.
 
 - **`twenty-client-sdk` should now be a dev dependency too.** Although app code imports it (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), Twenty provides it at runtime — logic functions get it from a generated SDK layer and front components resolve it from server-served modules — so the installed copy is only needed for typechecking and the deploy-time build. Newly scaffolded apps now place it under `devDependencies`. Moving it is recommended (not required: the server already strips it from the deployed runtime), and keeps the installed app leaner:
 
