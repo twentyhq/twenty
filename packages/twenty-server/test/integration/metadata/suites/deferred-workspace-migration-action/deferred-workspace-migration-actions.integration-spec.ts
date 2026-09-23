@@ -73,16 +73,22 @@ describe('Deferred workspace migration actions', () => {
   });
 
   afterAll(async () => {
-    await updateOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: objectMetadataId,
-        updatePayload: { isActive: false },
-      },
+    // Schema migrations are refused while the deferred index builds of the
+    // object are still running, so teardown retries until they have drained.
+    await expectEventually(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: objectMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
     });
-    await deleteOneObjectMetadata({
-      expectToFail: false,
-      input: { idToDelete: objectMetadataId },
+    await expectEventually(async () => {
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: objectMetadataId },
+      });
     });
     await updateFeatureFlag({
       featureFlag:

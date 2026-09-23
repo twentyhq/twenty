@@ -26,6 +26,8 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+import { WorkspaceSchemaMigrationLockService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-schema-migration-lock.service';
+import { isSchemaAffectingWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-schema-affecting-workspace-migration.util';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
@@ -47,6 +49,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
+    private readonly workspaceSchemaMigrationLockService: WorkspaceSchemaMigrationLockService,
   ) {}
 
   private getLegacyCacheInvalidation(
@@ -195,6 +198,8 @@ export class WorkspaceMigrationRunnerService {
     hasSchemaMetadataChanged: boolean;
   }> => {
     const runStart = performance.now();
+    const hasTakenSchemaMigrationLock =
+      await this.acquireSchemaMigrationLockIfNeeded(args);
 
     try {
       const result = await this.executeRun(args);
@@ -218,7 +223,37 @@ export class WorkspaceMigrationRunnerService {
       });
 
       throw error;
+    } finally {
+      if (hasTakenSchemaMigrationLock) {
+        await this.workspaceSchemaMigrationLockService.release(
+          args.workspaceId,
+        );
+      }
     }
+  };
+
+  private acquireSchemaMigrationLockIfNeeded = async ({
+    workspaceMigration: { actions },
+    workspaceId,
+  }: {
+    workspaceMigration: WorkspaceMigration;
+    workspaceId: string;
+  }): Promise<boolean> => {
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+    if (
+      !featureFlagsMap[
+        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
+      ] ||
+      !isSchemaAffectingWorkspaceMigration(actions)
+    ) {
+      return false;
+    }
+
+    await this.workspaceSchemaMigrationLockService.acquireOrThrow(workspaceId);
+
+    return true;
   };
 
   private executeRun = async ({

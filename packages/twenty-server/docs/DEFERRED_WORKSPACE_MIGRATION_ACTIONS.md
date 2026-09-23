@@ -32,7 +32,7 @@ Goals:
 Non-goals (this doc and PR 1):
 
 - Unique indexes, enum migrations, index updates (drop and rebuild), search vector rebuilds. Each can become a deferrable action later with the same contract.
-- Serializing concurrent metadata migrations, blocking changes while work is pending, and surfacing that state to users (PRs 3 and 4 below).
+- Surfacing the blocked state to users through the API and the front end (PR 4 below).
 
 ## Design
 
@@ -135,6 +135,18 @@ Each execution records `deferred-workspace-migration-action/duration-ms` with `a
 
 `workspace:retry-failed-deferred-migration-actions [-w <workspaceId>]` resets `FAILED` rows to `PENDING` with no attempts, for one workspace or all of them, and enqueues them.
 
+### Workspace migration lock
+
+A migration and a concurrent index build on the same table deadlock: Postgres cancels one of them, and the loser can be the migration a user is waiting on. Two migrations running at once on one workspace have the same problem. `WorkspaceSchemaMigrationLockService`, called from `WorkspaceMigrationRunnerService.run`, guards both, for workspaces with the flag on and for migrations carrying at least one `objectMetadata`, `fieldMetadata` or `index` action:
+
+1. a migration is refused with `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` while the workspace has `PENDING` or `IN_PROGRESS` rows for a schema-affecting deferred action (`create_index`, not `delete_logicFunction`). `FAILED` rows do not block, since they need a manual retry and would otherwise freeze the data model;
+2. `core.workspace.schemaMigrationStatus` goes from `IDLE` to `MIGRATING` with a conditional update, stamping `schemaMigrationStartedAt`. A migration that cannot take it is refused with `SCHEMA_MIGRATION_IN_PROGRESS`;
+3. the lock is released in a `finally`. A lock older than the statement timeout plus 30 minutes is taken over, so a pod that dies mid-migration does not freeze the workspace, and a failed release only delays the next migration by that much.
+
+Both columns are in `WORKSPACE_ENTITY_NON_CACHED_PROPERTIES`: lock state is read and written through Postgres, never from the workspace cache.
+
+Everything else (views, dashboards, logic functions, page layouts) is unaffected: those migrations do not touch the workspace schema and run while index builds are in flight.
+
 ## Alternatives considered
 
 - **Keep deferred work on `afterCommitSideEffects`.** It is in-process and fire-and-forget: a crash after commit loses the work and leaves metadata describing an index that does not exist. Lost because the work must be durable.
@@ -151,12 +163,12 @@ Delivery, each PR merged on its own behind the flag:
 | --- | --- |
 | 1 | Table, `DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS`, handler contract, runner persistence, deferred action runner and job with retries and timeout; `create_index` and `delete_logicFunction`; `afterCommitSideEffects` removed. |
 | 2 | Recovery: cron resetting `IN_PROGRESS` rows past the timeout and enqueueing workspaces with `PENDING` rows; CLI retry of `FAILED` rows; job deduplication per workspace and retry backoff; metrics on duration and on rows by status. |
-| 3 | Workspace migration lock: `schemaMigrationStatus` (`IDLE`, `MIGRATING`) and `schemaMigrationStartedAt` on `core.workspace`, taken with a conditional update before migrations touching objects, fields or indexes, released in `finally` with a takeover timeout. While taken, or while schema-affecting deferred actions are pending (`create_index`, not `delete_logicFunction`), such migrations fail with `SCHEMA_MIGRATION_IN_PROGRESS` or `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS`. `FAILED` rows do not block. |
+| 3 | Workspace migration lock: see above. |
 | 4 | Error surfacing and admin retry of `FAILED` rows from the admin panel: runner codes sent as `subCode` (today `extensions.code` is overwritten by the GraphQL error code), object and field exception handlers map the new codes to `ConflictError`, dedicated front message with the pending count, SDK CLI reads `subCode` and `userFriendlyMessage`. |
 | 5 | Foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns created in the same action, plus a deferrable `create_fieldMetadata` action running `VALIDATE CONSTRAINT` with the constraint name in its payload. |
 | 6 | Enable the flag for the affected self-hosted workspace, then cloud, then default on and remove the flag. |
 
-Migration: one fast instance command in 2.42 creating the table. No backfill.
+Migrations: one fast instance command in 2.42 creating the table, one adding the two lock columns to `core.workspace`. No backfill.
 
 Tested in PR 1:
 
@@ -166,7 +178,9 @@ Tested in PR 1:
 
 Tested in PR 2, manually on the same data: two object creations with the worker stopped queue a single job; with the enqueue removed and rows left `IN_PROGRESS` two hours ago, nothing runs until the cron resets them (one to `PENDING`, the one at its last attempt to `FAILED`) and enqueues the workspace; the retry command builds the `FAILED` index; a broken column is retried after 30 then 60 seconds, and the actions behind it run at the next cron once it is `FAILED`.
 
-Known limitation until PR 3: metadata changes are not blocked while actions are pending. A deletion racing an in-flight build can leave a physical index without metadata, and a migration altering a table while its index builds concurrently can deadlock with it; Postgres then cancels one of them (observed locally: the index build was cancelled and retried).
+Tested in PR 3, manually on the same data: a second object creation is refused while the first one's index builds are pending, and accepted once they drain; a migration is refused while the lock is held, and takes it over once it is older than the takeover timeout; a view is created while index builds are pending; with the flag off the lock is neither taken nor honoured. Integration: the deferred, index and object metadata suites pass.
+
+Known limitation until PR 4: the refusal reaches the client as `INTERNAL_SERVER_ERROR` with the right `userFriendlyMessage`, because the GraphQL error code overwrites `extensions.code`.
 
 ## Open questions
 

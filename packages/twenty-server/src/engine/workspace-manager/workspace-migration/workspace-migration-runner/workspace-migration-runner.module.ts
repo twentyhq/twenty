@@ -21,6 +21,7 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 import { DeferredWorkspaceMigrationActionRecoveryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-recovery.service';
 import { DeferredWorkspaceMigrationActionGaugeService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-gauge.service';
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
+import { WorkspaceSchemaMigrationLockService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-schema-migration-lock.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @Module({
@@ -45,6 +46,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     WorkspaceMigrationRunnerActionHandlerRegistryService,
     DeferredWorkspaceMigrationActionRunnerService,
     DeferredWorkspaceMigrationActionRecoveryService,
+    WorkspaceSchemaMigrationLockService,
     provideWorkspaceScopedRepository(DeferredWorkspaceMigrationActionEntity),
     DeferredWorkspaceMigrationActionGaugeService,
     FlatCacheInvalidateCommand,

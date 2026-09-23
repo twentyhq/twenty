@@ -23,4 +23,6 @@ export const WORKSPACE_ENTITY_NON_CACHED_PROPERTIES = [
   'defaultRole',
   'workspaceCustomApplication',
   'applications',
+  'schemaMigrationStatus',
+  'schemaMigrationStartedAt',
 ] as const satisfies ReadonlyArray<keyof WorkspaceEntity>;
