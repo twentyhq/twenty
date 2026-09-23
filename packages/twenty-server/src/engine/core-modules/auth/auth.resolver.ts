@@ -660,7 +660,7 @@ export class AuthResolver {
 
     const buffer = await streamToBuffer(
       createReadStream(),
-      bytes(settings.storage.maxFileSize) ?? undefined,
+      bytes(settings.storage.maxMultipartFileSize) ?? undefined,
     );
 
     return this.fileCorePictureService.uploadWorkspacePicture({

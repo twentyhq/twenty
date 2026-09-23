@@ -49,7 +49,7 @@ export class FileCorePictureResolver {
   ): Promise<FileWithSignedUrlDTO> {
     const buffer = await streamToBuffer(
       createReadStream(),
-      bytes(settings.storage.maxFileSize) ?? undefined,
+      bytes(settings.storage.maxMultipartFileSize) ?? undefined,
     );
 
     return await this.fileCorePictureService.uploadWorkspacePicture({
@@ -68,7 +68,7 @@ export class FileCorePictureResolver {
   ): Promise<FileWithSignedUrlDTO> {
     const buffer = await streamToBuffer(
       createReadStream(),
-      bytes(settings.storage.maxFileSize) ?? undefined,
+      bytes(settings.storage.maxMultipartFileSize) ?? undefined,
     );
 
     return await this.fileCorePictureService.uploadWorkspaceMemberProfilePicture(

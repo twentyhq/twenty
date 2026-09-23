@@ -52,7 +52,7 @@ export class FilesFieldResolver {
     const stream = createReadStream();
     const buffer = await streamToBuffer(
       stream,
-      bytes(settings.storage.maxFileSize) ?? undefined,
+      bytes(settings.storage.maxMultipartFileSize) ?? undefined,
     );
 
     return await this.filesFieldService.uploadFile({

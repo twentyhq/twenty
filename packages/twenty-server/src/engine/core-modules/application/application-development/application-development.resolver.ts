@@ -113,7 +113,7 @@ export class ApplicationDevelopmentResolver {
       getFileBuffer: () =>
         streamToBuffer(
           createReadStream(),
-          bytes(settings.storage.maxFileSize) ?? undefined,
+          bytes(settings.storage.maxMultipartFileSize) ?? undefined,
         ),
     });
   }
