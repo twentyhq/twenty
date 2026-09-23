@@ -27,7 +27,11 @@ export const DropdownPage = ({ id, type, children }: DropdownPageProps) => {
     <DropdownContext.Provider
       value={{ ...context, type: type ?? context.rootType }}
     >
-      <div ref={registerPageType} className={styles.page}>
+      <div
+        ref={registerPageType}
+        className={styles.page}
+        data-dropdown-page-type={type ?? context.rootType}
+      >
         {children}
       </div>
     </DropdownContext.Provider>

@@ -55,7 +55,13 @@ export const getDropdownFocusTarget = ({
     'input:not(:disabled):not([type="hidden"]),button:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]',
   );
 
-  if ((type ?? content.dataset.type) === 'panel') {
+  const activePage = Array.from(
+    content.querySelectorAll<HTMLElement>('[data-dropdown-page-type]'),
+  ).find((page) => page.closest('[data-dropdown-content]') === content);
+  const resolvedType =
+    activePage?.dataset.dropdownPageType ?? type ?? content.dataset.type;
+
+  if (resolvedType === 'panel') {
     return firstFormControl ?? content;
   }
 

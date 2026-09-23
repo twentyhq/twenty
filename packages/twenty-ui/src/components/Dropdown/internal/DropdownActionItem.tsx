@@ -68,7 +68,6 @@ export const DropdownActionItem = ({
 
           goToPage({
             id: page,
-            content,
             trigger: {
               id,
               index,

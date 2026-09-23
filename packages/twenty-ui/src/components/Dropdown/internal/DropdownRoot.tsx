@@ -7,7 +7,7 @@ import { type DropdownRootProps } from '../types/DropdownRootProps';
 import { type DropdownType } from '../types/DropdownType';
 import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
-import { scheduleDropdownPageFocus } from './scheduleDropdownPageFocus';
+import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -34,6 +34,8 @@ export const DropdownRoot = ({
   }>();
   const [activeItemId, setActiveItemId] = useState<string>();
   const pageId = pageHistory[pageHistory.length - 1]?.id;
+  const [pageFocusRequest, setPageFocusRequest] =
+    useState<DropdownPageFocusRequest>();
   const [initialFocusEdge, setInitialFocusEdge] = useState<'first' | 'last'>(
     'first',
   );
@@ -45,6 +47,7 @@ export const DropdownRoot = ({
     if (!open) {
       setPageHistory([{ id: defaultPage }]);
       setActivePage(undefined);
+      setPageFocusRequest(undefined);
       setInitialFocusEdge('first');
       setFocusOnOpen(true);
     }
@@ -69,18 +72,15 @@ export const DropdownRoot = ({
   const goToPage = ({
     id,
     trigger,
-    content,
   }: {
     id: string;
     trigger: DropdownFocusTarget;
-    content: HTMLElement;
   }) => {
-    content.focus({ preventScroll: true });
+    setPageFocusRequest({ pageId: id });
     setPageHistory((history) => [...history, { id, trigger }]);
-    scheduleDropdownPageFocus({ content, pageId: id });
   };
 
-  const goBack = (content: HTMLElement) => {
+  const goBack = () => {
     if (pageHistory.length < 2) {
       return;
     }
@@ -88,13 +88,11 @@ export const DropdownRoot = ({
     const previousPage = pageHistory[pageHistory.length - 2];
     const trigger = pageHistory[pageHistory.length - 1]?.trigger;
 
-    content.focus({ preventScroll: true });
-    setPageHistory((history) => history.slice(0, -1));
-    scheduleDropdownPageFocus({
-      content,
+    setPageFocusRequest({
       pageId: previousPage.id,
       target: trigger,
     });
+    setPageHistory((history) => history.slice(0, -1));
   };
 
   const registerPage = useCallback(
@@ -138,6 +136,8 @@ export const DropdownRoot = ({
           setActiveItemId,
           setParentActiveItemId: parent?.setActiveItemId,
           pageId,
+          pageFocusRequest,
+          setPageFocusRequest,
           canGoBack: pageHistory.length > 1,
           initialFocusEdge,
           setInitialFocusEdge,

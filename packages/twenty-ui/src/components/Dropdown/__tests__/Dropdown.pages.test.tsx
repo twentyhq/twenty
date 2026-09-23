@@ -110,13 +110,43 @@ describe('Dropdown pages', () => {
     const content = screen.getByRole('menu', { name: 'Record actions' });
 
     await waitFor(() => expect(content).toHaveFocus());
-    await new Promise<void>((resolve) => {
-      requestAnimationFrame(() => resolve());
-    });
     rerender(<DeferredPages isLoaded />);
 
     expect(screen.getByRole('textbox', { name: 'Name' })).toBeVisible();
     expect(content).toHaveFocus();
+  });
+
+  it('does not repeat navigation focus when the active page remounts', async () => {
+    const user = userEvent.setup();
+    const EditPages = ({ revision }: { revision: number }) => (
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.Page id="root">
+            <Dropdown.ActionItem page="edit">Edit</Dropdown.ActionItem>
+          </Dropdown.Page>
+          <Dropdown.Page key={revision} id="edit" type="panel">
+            <Input aria-label="Name" />
+          </Dropdown.Page>
+          <Input aria-label="Notes" />
+        </Dropdown.Content>
+      </Dropdown.Root>
+    );
+    const { rerender } = render(<EditPages revision={0} />);
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Edit' }));
+    await waitFor(() =>
+      expect(screen.getByRole('textbox', { name: 'Name' })).toHaveFocus(),
+    );
+    await user.tab();
+    const notes = screen.getByRole('textbox', { name: 'Notes' });
+
+    expect(notes).toHaveFocus();
+    rerender(<EditPages revision={1} />);
+
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeVisible();
+    expect(notes).toHaveFocus();
   });
 
   it('uses the default page type and preserves the initial keyboard focus edge', async () => {
