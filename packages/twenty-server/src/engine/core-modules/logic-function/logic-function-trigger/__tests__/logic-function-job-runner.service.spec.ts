@@ -97,7 +97,7 @@ describe('LogicFunctionJobRunnerService', () => {
     expect(persistRetryCount).not.toHaveBeenCalled();
   });
 
-  it('does not fail the job when the usage engine refused the execution', async () => {
+  it('does not fail the job when usage was refused', async () => {
     const execute = jest
       .fn()
       .mockRejectedValue(

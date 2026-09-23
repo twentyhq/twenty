@@ -11,7 +11,7 @@ import {
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 
 describe('isUsageRefusedError', () => {
-  it('recognises an exhausted credit allowance', () => {
+  it('recognizes an exhausted credit allowance', () => {
     expect(
       isUsageRefusedError(
         new BillingException(
@@ -22,7 +22,7 @@ describe('isUsageRefusedError', () => {
     ).toBe(true);
   });
 
-  it('recognises an exhausted quota', () => {
+  it('recognizes an exhausted quota', () => {
     expect(
       isUsageRefusedError(
         new UsageLimitException(
@@ -33,7 +33,7 @@ describe('isUsageRefusedError', () => {
     ).toBe(true);
   });
 
-  it('recognises an inactive subscription', () => {
+  it('recognizes an inactive subscription', () => {
     expect(
       isUsageRefusedError(
         new BillingException(
@@ -44,7 +44,7 @@ describe('isUsageRefusedError', () => {
     ).toBe(true);
   });
 
-  it('recognises an exhausted stock', () => {
+  it('recognizes an exhausted stock', () => {
     expect(
       isUsageRefusedError(
         new UsageLimitException(
