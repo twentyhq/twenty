@@ -18,7 +18,7 @@ export const computeAutomatedTriggerFromWorkflowVersion = ({
 }): CachedWorkflowAutomatedTrigger | null => {
   const trigger = workflowVersion.triggers?.[0] ?? null;
 
-  if (trigger === null) {
+  if (trigger === null || workflowVersion.coreWorkflowId === null) {
     return null;
   }
 

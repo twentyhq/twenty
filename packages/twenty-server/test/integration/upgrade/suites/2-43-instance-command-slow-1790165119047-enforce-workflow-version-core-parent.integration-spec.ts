@@ -15,19 +15,15 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
 
   const workspaceCacheService = { flush: jest.fn() };
 
-  const seedCoreWorkflow = async ({
-    workspaceWorkflowId,
-    createdAt,
-  }: {
-    workspaceWorkflowId: string;
-    createdAt: string;
-  }): Promise<string> => {
+  const seedCoreWorkflow = async (
+    workspaceWorkflowId: string,
+  ): Promise<string> => {
     const coreWorkflowId = v4();
 
     await dataSource.query(
       `INSERT INTO core."workflow"
-         ("id", "workspaceId", "name", "workspaceWorkflowId", "universalIdentifier", "applicationId", "createdAt")
-       VALUES ($1, $2, $3, $4, $5, $6, $7::timestamptz)`,
+         ("id", "workspaceId", "name", "workspaceWorkflowId", "universalIdentifier", "applicationId")
+       VALUES ($1, $2, $3, $4, $5, $6)`,
       [
         coreWorkflowId,
         SEED_APPLE_WORKSPACE_ID,
@@ -35,7 +31,6 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
         workspaceWorkflowId,
         v4(),
         applicationId,
-        createdAt,
       ],
     );
 
@@ -130,31 +125,7 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
     await dataSource?.destroy();
   });
 
-  it('relinks an unlinked version to the oldest core workflow mirroring its workspace workflow', async () => {
-    const workspaceWorkflowId = v4();
-    const oldestCoreWorkflowId = await seedCoreWorkflow({
-      workspaceWorkflowId,
-      createdAt: '2020-01-01T00:00:00.000Z',
-    });
-
-    await seedCoreWorkflow({
-      workspaceWorkflowId,
-      createdAt: '2021-01-01T00:00:00.000Z',
-    });
-
-    const coreVersionId = await seedCoreVersion({
-      workflowId: workspaceWorkflowId,
-      coreWorkflowId: null,
-    });
-
-    await command.runDataMigration(dataSource);
-
-    expect(await findCoreVersion(coreVersionId)).toEqual({
-      coreWorkflowId: oldestCoreWorkflowId,
-    });
-  });
-
-  it('deletes an unlinked version that no core workflow mirrors', async () => {
+  it('deletes a version without a core workflow', async () => {
     const coreVersionId = await seedCoreVersion({
       workflowId: v4(),
       coreWorkflowId: null,
@@ -165,32 +136,21 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
     expect(await findCoreVersion(coreVersionId)).toBeUndefined();
   });
 
-  it('leaves a linked version on its current parent', async () => {
+  it('keeps a linked version', async () => {
     const workspaceWorkflowId = v4();
-
-    await seedCoreWorkflow({
-      workspaceWorkflowId,
-      createdAt: '2020-01-01T00:00:00.000Z',
-    });
-
-    const linkedCoreWorkflowId = await seedCoreWorkflow({
-      workspaceWorkflowId,
-      createdAt: '2021-01-01T00:00:00.000Z',
-    });
+    const coreWorkflowId = await seedCoreWorkflow(workspaceWorkflowId);
 
     const coreVersionId = await seedCoreVersion({
       workflowId: workspaceWorkflowId,
-      coreWorkflowId: linkedCoreWorkflowId,
+      coreWorkflowId,
     });
 
     await command.runDataMigration(dataSource);
 
-    expect(await findCoreVersion(coreVersionId)).toEqual({
-      coreWorkflowId: linkedCoreWorkflowId,
-    });
+    expect(await findCoreVersion(coreVersionId)).toEqual({ coreWorkflowId });
   });
 
-  it('flushes the workflow version and trigger caches of a repaired workspace', async () => {
+  it('flushes the workflow version and trigger caches of a cleaned workspace', async () => {
     await seedCoreVersion({ workflowId: v4(), coreWorkflowId: null });
 
     await command.runDataMigration(dataSource);
@@ -211,10 +171,7 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
   });
 
   it('rejects a second active version of the same core workflow once applied', async () => {
-    const coreWorkflowId = await seedCoreWorkflow({
-      workspaceWorkflowId: v4(),
-      createdAt: '2020-01-01T00:00:00.000Z',
-    });
+    const coreWorkflowId = await seedCoreWorkflow(v4());
 
     await command.runDataMigration(dataSource);
     await command.up(queryRunner);

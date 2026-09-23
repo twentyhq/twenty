@@ -208,21 +208,14 @@ export class WorkflowVersionCoreSyncService {
         );
       }
 
-      const coreWorkflowId =
-        coreRow.coreWorkflowId ?? existingFlatWorkflowVersion?.coreWorkflowId;
-
-      if (!isNonEmptyString(coreWorkflowId)) {
-        throw new CoreWorkflowMetadataException(
-          `Core workflow for workflow ${coreRow.workflowId} not found in workspace ${workspaceId}`,
-          CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_MISSING_WORKFLOW,
-        );
-      }
-
       const flatWorkflowVersion: UniversalFlatWorkflowVersion & {
         id: string;
       } = {
         ...coreRow,
-        coreWorkflowId,
+        coreWorkflowId:
+          coreRow.coreWorkflowId ??
+          existingFlatWorkflowVersion?.coreWorkflowId ??
+          null,
         universalIdentifier:
           existingFlatWorkflowVersion?.universalIdentifier ??
           coreRow.universalIdentifier,
@@ -266,7 +259,7 @@ export class WorkflowVersionCoreSyncService {
   private async resolveOwnedCoreVersions(
     workspaceId: string,
     workflowVersions: WorkflowVersionWorkspaceEntity[],
-  ): Promise<Map<string, string>> {
+  ): Promise<Map<string, string | null>> {
     const candidateIds = workflowVersions
       .map((workflowVersion) => workflowVersion.coreWorkflowVersionId)
       .filter(isNonEmptyString);
@@ -283,7 +276,9 @@ export class WorkflowVersionCoreSyncService {
       },
     );
 
-    return new Map(ownedRows.map((row) => [row.id, row.coreWorkflowId]));
+    return new Map(
+      ownedRows.map((row) => [row.id, row.coreWorkflowId ?? null]),
+    );
   }
 
   async deleteFromCore(
@@ -489,8 +484,10 @@ export class WorkflowVersionCoreSyncService {
       );
     }
 
+    const existingCoreRow = reverseRows[0] ?? candidate;
+
     const coreWorkflowVersionId =
-      reverseRows[0]?.id ?? candidateCoreVersionId ?? uuidv4();
+      existingCoreRow?.id ?? candidateCoreVersionId ?? uuidv4();
     const isNewLink =
       workflowVersion.coreWorkflowVersionId !== coreWorkflowVersionId;
 
@@ -499,7 +496,7 @@ export class WorkflowVersionCoreSyncService {
         workspaceId,
         workflowId: workflowVersion.workflowId,
         transactionScope,
-      })) ?? (reverseRows[0] ?? candidate)?.coreWorkflowId;
+      })) ?? existingCoreRow?.coreWorkflowId;
 
     if (!isNonEmptyString(coreWorkflowId)) {
       throw new CoreWorkflowMetadataException(

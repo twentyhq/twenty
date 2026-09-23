@@ -15,21 +15,6 @@ export class EnforceWorkflowVersionCoreParentSlowInstanceCommand implements Slow
 
     for (const { workspaceId } of workspaces) {
       await dataSource.query(
-        `UPDATE "core"."workflowVersion" version
-         SET "coreWorkflowId" = parent."id"
-         FROM (
-           SELECT DISTINCT ON ("workspaceWorkflowId") "workspaceWorkflowId", "id"
-           FROM "core"."workflow"
-           WHERE "workspaceId" = $1 AND "workspaceWorkflowId" IS NOT NULL
-           ORDER BY "workspaceWorkflowId", "createdAt" ASC, "id" ASC
-         ) parent
-         WHERE version."workspaceId" = $1
-           AND version."coreWorkflowId" IS NULL
-           AND version."workflowId" = parent."workspaceWorkflowId"`,
-        [workspaceId],
-      );
-
-      await dataSource.query(
         `DELETE FROM "core"."workflowVersion" WHERE "workspaceId" = $1 AND "coreWorkflowId" IS NULL`,
         [workspaceId],
       );

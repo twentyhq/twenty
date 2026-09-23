@@ -70,7 +70,7 @@ export class WorkflowVersionEntity extends SyncableEntity {
       ADD_CORE_WORKFLOW_ID_TO_WORKFLOW_VERSION_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'uuid', nullable: false })
-  coreWorkflowId: string;
+  coreWorkflowId: string | null;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
