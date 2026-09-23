@@ -21,6 +21,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     WorkspaceExportService,
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
     provideWorkspaceScopedRepository(FieldMetadataEntity),
+    provideWorkspaceScopedRepository(SearchFieldMetadataEntity),
   ],
 })
 export class WorkspaceExportModule {}

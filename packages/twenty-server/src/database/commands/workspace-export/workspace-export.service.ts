@@ -1,15 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { once } from 'events';
 import { type WriteStream, createWriteStream, mkdirSync } from 'fs';
 import { finished } from 'stream/promises';
 
-import {
-  DataSource,
-  type EntityMetadata,
-  type QueryRunner,
-  Repository,
-} from 'typeorm';
+import { DataSource, type EntityMetadata, type QueryRunner } from 'typeorm';
 
 import { buildInsertPrefix } from 'src/database/commands/workspace-export/utils/build-insert-prefix.util';
 import { buildWorkspaceTableColumnSets } from 'src/database/commands/workspace-export/utils/build-workspace-table-column-sets.util';
@@ -60,9 +55,8 @@ export class WorkspaceExportService {
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     @InjectWorkspaceScopedRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- Ignored
-    @InjectRepository(SearchFieldMetadataEntity)
-    private readonly searchFieldMetadataRepository: Repository<SearchFieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(SearchFieldMetadataEntity)
+    private readonly searchFieldMetadataRepository: WorkspaceScopedRepository<SearchFieldMetadataEntity>,
   ) {}
 
   async exportWorkspace({
@@ -99,9 +93,8 @@ export class WorkspaceExportService {
       fieldsByObjectId.set(fieldMetadata.objectMetadataId, objectFields);
     }
 
-    const searchFieldMetadatas = await this.searchFieldMetadataRepository.find({
-      where: { workspaceId },
-    });
+    const searchFieldMetadatas =
+      await this.searchFieldMetadataRepository.find(workspaceId);
 
     const searchFieldMetadatasByObjectId = new Map<
       string,
