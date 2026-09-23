@@ -16,17 +16,58 @@ describe('getWorkflowCurrentVersion', () => {
     const draftVersion = buildVersion('DRAFT', '2026-09-18T10:00:00.000Z');
 
     expect(
-      getWorkflowCurrentVersion([
-        draftVersion,
-        activeVersion,
-        deactivatedVersion,
-      ]),
+      getWorkflowCurrentVersion({
+        versions: [draftVersion, activeVersion, deactivatedVersion],
+        lastPublishedVersionId: activeVersion.id,
+      }),
     ).toEqual(draftVersion);
     expect(
-      getWorkflowCurrentVersion([activeVersion, deactivatedVersion]),
+      getWorkflowCurrentVersion({
+        versions: [activeVersion, deactivatedVersion],
+        lastPublishedVersionId: deactivatedVersion.id,
+      }),
     ).toEqual(activeVersion);
-    expect(getWorkflowCurrentVersion([deactivatedVersion])).toEqual(
-      deactivatedVersion,
+    expect(
+      getWorkflowCurrentVersion({
+        versions: [deactivatedVersion],
+        lastPublishedVersionId: null,
+      }),
+    ).toEqual(deactivatedVersion);
+  });
+
+  it('prefers the last published version over a newer archived version', () => {
+    const deactivatedVersion = buildVersion(
+      'DEACTIVATED',
+      '2026-09-18T10:00:00.000Z',
     );
+    const archivedVersion = buildVersion(
+      'ARCHIVED',
+      '2026-09-18T11:00:00.000Z',
+    );
+
+    expect(
+      getWorkflowCurrentVersion({
+        versions: [archivedVersion, deactivatedVersion],
+        lastPublishedVersionId: deactivatedVersion.id,
+      }),
+    ).toEqual(deactivatedVersion);
+  });
+
+  it('falls back to the newest version when the last published version is unknown', () => {
+    const olderArchivedVersion = buildVersion(
+      'ARCHIVED',
+      '2026-09-18T10:00:00.000Z',
+    );
+    const newerArchivedVersion = buildVersion(
+      'ARCHIVED',
+      '2026-09-18T11:00:00.000Z',
+    );
+
+    expect(
+      getWorkflowCurrentVersion({
+        versions: [olderArchivedVersion, newerArchivedVersion],
+        lastPublishedVersionId: 'missing-version-id',
+      }),
+    ).toEqual(newerArchivedVersion);
   });
 });
