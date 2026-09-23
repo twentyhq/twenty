@@ -250,4 +250,57 @@ describe('useRecordGroupVisibility', () => {
 
     expect(store.get(groupLoadLimitAtom)).toBe(25);
   });
+
+  it('should roll back to the last saved group load limit when the menu remounts during a save', async () => {
+    const store = createStore();
+    store.set(groupLoadLimitAtom, 8);
+
+    const olderViewUpdate = createDeferredViewUpdate();
+    const newerViewUpdate = createDeferredViewUpdate();
+
+    updateCurrentViewMock
+      .mockImplementationOnce(() => olderViewUpdate.promise)
+      .mockImplementationOnce(() => newerViewUpdate.promise);
+
+    const firstMount = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let olderCall!: Promise<void>;
+
+    act(() => {
+      olderCall = firstMount.result.current.handleGroupLoadLimitChange(25);
+    });
+
+    firstMount.unmount();
+
+    const secondMount = renderHook(() => useRecordGroupVisibility(), {
+      wrapper: getWrapper(store),
+    });
+
+    let newerCall!: Promise<void>;
+
+    act(() => {
+      newerCall = secondMount.result.current.handleGroupLoadLimitChange(50);
+    });
+
+    const olderCallAssertion =
+      expect(olderCall).rejects.toThrow('Network error');
+    const newerCallAssertion =
+      expect(newerCall).rejects.toThrow('Network error');
+
+    await act(async () => {
+      olderViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await olderCallAssertion;
+    });
+
+    expect(store.get(groupLoadLimitAtom)).toBe(50);
+
+    await act(async () => {
+      newerViewUpdate.rejectViewUpdate(new Error('Network error'));
+      await newerCallAssertion;
+    });
+
+    expect(store.get(groupLoadLimitAtom)).toBe(8);
+  });
 });
