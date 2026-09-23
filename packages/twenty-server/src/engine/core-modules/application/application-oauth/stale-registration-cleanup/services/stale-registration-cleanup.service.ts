@@ -40,7 +40,7 @@ export class StaleRegistrationCleanupService {
       }
 
       lastCreatedAt =
-        staleRegistrations[staleRegistrations.length - 1].createdAt;
+        staleRegistrations[staleRegistrations.length - 1]?.createdAt;
 
       const staleIds = staleRegistrations.map(
         (registration) => registration.id,

@@ -12,5 +12,5 @@ export const getSoleEnvelopeRecipient = ({
 }: GetSoleEnvelopeRecipientArgs): string | null => {
   const recipients = [...to, ...(cc ?? []), ...(bcc ?? [])];
 
-  return recipients.length === 1 ? recipients[0] : null;
+  return recipients.length === 1 ? (recipients[0] ?? null) : null;
 };

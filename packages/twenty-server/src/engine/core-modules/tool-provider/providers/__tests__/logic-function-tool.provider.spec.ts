@@ -7,6 +7,7 @@ import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/me
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const workspaceId = 'workspace-id';
 const roleId = 'role-id';
@@ -86,14 +87,16 @@ describe('LogicFunctionToolProvider', () => {
       }),
     ]);
 
-    expect(descriptor.name).toBe('app_generate_invoice');
-    expect(descriptor.frontComponentId).toBe(FRONT_COMPONENT_ID);
+    expect(descriptor?.name).toBe('app_generate_invoice');
+    expect(descriptor?.frontComponentId).toBe(FRONT_COMPONENT_ID);
   });
 
   it('should leave the front component unset when the app declares none', async () => {
     const [descriptor] = await generateDescriptors([
       createFlatLogicFunction({ name: 'generate-invoice' }),
     ]);
+
+    jestExpectToBeDefined(descriptor);
 
     expect(descriptor.frontComponentId).toBeUndefined();
   });
@@ -107,6 +110,8 @@ describe('LogicFunctionToolProvider', () => {
         },
       }),
     ]);
+
+    jestExpectToBeDefined(descriptor);
 
     expect(descriptor.frontComponentId).toBeUndefined();
   });

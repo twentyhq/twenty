@@ -36,7 +36,7 @@ describe('buildMcpServerCard', () => {
       version: '1.0.0',
     });
 
-    expect(card.remotes[0].headers).toEqual([
+    expect(card.remotes[0]?.headers).toEqual([
       expect.objectContaining({
         name: 'Authorization',
         isRequired: false,

@@ -22,8 +22,8 @@ describe('VerifyTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('otp');
-    expect(errors[0].constraints).toHaveProperty('isNotEmpty');
+    expect(errors[0]?.property).toBe('otp');
+    expect(errors[0]?.constraints).toHaveProperty('isNotEmpty');
   });
 
   it('should fail validation with non-string OTP', async () => {
@@ -34,8 +34,8 @@ describe('VerifyTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('otp');
-    expect(errors[0].constraints).toHaveProperty('isString');
+    expect(errors[0]?.property).toBe('otp');
+    expect(errors[0]?.constraints).toHaveProperty('isString');
   });
 
   it('should fail validation with non-numeric string OTP', async () => {
@@ -46,8 +46,8 @@ describe('VerifyTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('otp');
-    expect(errors[0].constraints).toHaveProperty('isNumberString');
+    expect(errors[0]?.property).toBe('otp');
+    expect(errors[0]?.constraints).toHaveProperty('isNumberString');
   });
 
   it('should fail validation with OTP shorter than 6 digits', async () => {
@@ -58,9 +58,9 @@ describe('VerifyTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('otp');
-    expect(errors[0].constraints).toHaveProperty('isLength');
-    expect(errors[0].constraints?.isLength).toBe(
+    expect(errors[0]?.property).toBe('otp');
+    expect(errors[0]?.constraints).toHaveProperty('isLength');
+    expect(errors[0]?.constraints?.isLength).toBe(
       'OTP must be exactly 6 digits',
     );
   });
@@ -73,9 +73,9 @@ describe('VerifyTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('otp');
-    expect(errors[0].constraints).toHaveProperty('isLength');
-    expect(errors[0].constraints?.isLength).toBe(
+    expect(errors[0]?.property).toBe('otp');
+    expect(errors[0]?.constraints).toHaveProperty('isLength');
+    expect(errors[0]?.constraints?.isLength).toBe(
       'OTP must be exactly 6 digits',
     );
   });
@@ -88,8 +88,8 @@ describe('VerifyTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('otp');
-    expect(errors[0].constraints).toHaveProperty('isNotEmpty');
+    expect(errors[0]?.property).toBe('otp');
+    expect(errors[0]?.constraints).toHaveProperty('isNotEmpty');
   });
 
   it('should fail validation with undefined OTP', async () => {
@@ -98,8 +98,8 @@ describe('VerifyTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('otp');
-    expect(errors[0].constraints).toHaveProperty('isNotEmpty');
+    expect(errors[0]?.property).toBe('otp');
+    expect(errors[0]?.constraints).toHaveProperty('isNotEmpty');
   });
 
   it('should pass validation with numeric string OTP containing leading zeros', async () => {

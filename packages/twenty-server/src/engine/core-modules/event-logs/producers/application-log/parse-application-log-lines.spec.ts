@@ -61,12 +61,12 @@ describe('parseApplicationLogLines', () => {
     const result = parseApplicationLogLines(raw);
 
     expect(result).toHaveLength(1);
-    expect(result[0].level).toBe('INFO');
-    expect(result[0].message).toBe(
+    expect(result[0]?.level).toBe('INFO');
+    expect(result[0]?.message).toBe(
       'some plain text without timestamp or level',
     );
-    expect(result[0].timestamp.getTime()).toBeGreaterThanOrEqual(now);
-    expect(result[0].timestamp.getTime()).toBeLessThanOrEqual(now + 1000);
+    expect(result[0]?.timestamp.getTime()).toBeGreaterThanOrEqual(now);
+    expect(result[0]?.timestamp.getTime()).toBeLessThanOrEqual(now + 1000);
   });
 
   it('should skip empty lines', () => {
@@ -102,8 +102,8 @@ describe('parseApplicationLogLines', () => {
       level: 'INFO',
       message: 'structured line',
     });
-    expect(result[1].level).toBe('INFO');
-    expect(result[1].message).toBe('plain unstructured line');
+    expect(result[1]?.level).toBe('INFO');
+    expect(result[1]?.message).toBe('plain unstructured line');
     expect(result[2]).toEqual({
       timestamp: new Date('2024-01-01T00:00:01.000Z'),
       level: 'ERROR',
@@ -140,6 +140,6 @@ describe('parseApplicationLogLines', () => {
     const result = parseApplicationLogLines(raw);
 
     expect(result).toHaveLength(1);
-    expect(result[0].message).toBe('fatal something bad');
+    expect(result[0]?.message).toBe('fatal something bad');
   });
 });

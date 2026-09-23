@@ -8,5 +8,5 @@ export const getSubdomainFromEmail = (email?: string) => {
 
   const domain = getDomainFromEmailOrThrow(email);
 
-  return domain.split('.')[0].toLowerCase();
+  return (domain.split('.')[0] ?? domain).toLowerCase();
 };

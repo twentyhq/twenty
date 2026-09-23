@@ -36,8 +36,8 @@ const isMeteredTiersSchema = (
 
   if (
     tiers.length !== 2 ||
-    typeof tiers[0].up_to !== 'number' ||
-    tiers[1].up_to !== null
+    typeof tiers[0]?.up_to !== 'number' ||
+    tiers[1]?.up_to !== null
   ) {
     return false;
   }

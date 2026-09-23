@@ -359,14 +359,14 @@ describe('transformEventBatchToEventPayloads', () => {
       );
 
       expect(function1Payloads).toHaveLength(1);
-      expect((function1Payloads[0].payload as ObjectRecordEvent).recordId).toBe(
-        'record-1',
-      );
+      expect(
+        (function1Payloads[0]?.payload as ObjectRecordEvent).recordId,
+      ).toBe('record-1');
 
       expect(function2Payloads).toHaveLength(1);
-      expect((function2Payloads[0].payload as ObjectRecordEvent).recordId).toBe(
-        'record-2',
-      );
+      expect(
+        (function2Payloads[0]?.payload as ObjectRecordEvent).recordId,
+      ).toBe('record-2');
     });
   });
 
@@ -542,7 +542,7 @@ describe('transformEventBatchToEventPayloads', () => {
 
       expect(result).toHaveLength(1);
       expect(
-        getBatchedEvents(result[0].payload).map((event) => event.recordId),
+        getBatchedEvents(result[0]?.payload).map((event) => event.recordId),
       ).toEqual([
         'record-1',
         'record-2',
@@ -551,7 +551,7 @@ describe('transformEventBatchToEventPayloads', () => {
         'record-5',
         'record-6',
       ]);
-      expect(result[0].payload).toMatchObject({
+      expect(result[0]?.payload).toMatchObject({
         name: 'company.updated',
         workspaceId: 'workspace-1',
       });
@@ -649,7 +649,7 @@ describe('transformEventBatchToEventPayloads', () => {
         userWorkspaceId: 'user-workspace-1',
       });
       expect(
-        getBatchedEvents(result[0].payload).map((event) => event.recordId),
+        getBatchedEvents(result[0]?.payload).map((event) => event.recordId),
       ).toEqual(['record-1', 'record-3']);
 
       expect(result[1]).toMatchObject({
@@ -657,13 +657,13 @@ describe('transformEventBatchToEventPayloads', () => {
         userWorkspaceId: 'user-workspace-2',
       });
       expect(
-        getBatchedEvents(result[1].payload).map((event) => event.recordId),
+        getBatchedEvents(result[1]?.payload).map((event) => event.recordId),
       ).toEqual(['record-2']);
 
       expect(result[2]).not.toHaveProperty('userId');
       expect(result[2]).not.toHaveProperty('userWorkspaceId');
       expect(
-        getBatchedEvents(result[2].payload).map((event) => event.recordId),
+        getBatchedEvents(result[2]?.payload).map((event) => event.recordId),
       ).toEqual(['record-4']);
     });
 
@@ -708,7 +708,7 @@ describe('transformEventBatchToEventPayloads', () => {
 
       expect(result).toHaveLength(1);
       expect(
-        getBatchedEvents(result[0].payload).map((event) => event.recordId),
+        getBatchedEvents(result[0]?.payload).map((event) => event.recordId),
       ).toEqual(['record-1', 'record-3', 'record-5']);
     });
 
@@ -731,7 +731,7 @@ describe('transformEventBatchToEventPayloads', () => {
       });
 
       expect(result).toHaveLength(1);
-      expect(getBatchedEvents(result[0].payload)).toHaveLength(3);
+      expect(getBatchedEvents(result[0]?.payload)).toHaveLength(3);
     });
 
     it('should batch per logic function so an unbatched one keeps one job per event', () => {
@@ -762,7 +762,7 @@ describe('transformEventBatchToEventPayloads', () => {
       );
 
       expect(batchedJobs).toHaveLength(1);
-      expect(getBatchedEvents(batchedJobs[0].payload)).toHaveLength(4);
+      expect(getBatchedEvents(batchedJobs[0]?.payload)).toHaveLength(4);
     });
 
     it('should emit no job when every event is filtered out', () => {
@@ -845,7 +845,7 @@ describe('transformEventBatchToEventPayloads with a deletion capture', () => {
     });
 
     expect(
-      (jobData.payload as { properties: object }).properties,
+      (jobData?.payload as { properties: object }).properties,
     ).not.toHaveProperty('inheritedReadabilityChildRecords');
   });
 });

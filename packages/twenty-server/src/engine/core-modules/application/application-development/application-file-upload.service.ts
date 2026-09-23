@@ -93,6 +93,10 @@ export class ApplicationFileUploadService {
     batchResults.forEach((batchResult, index) => {
       const file = validFiles[index];
 
+      if (!isDefined(file)) {
+        return;
+      }
+
       if (batchResult.success) {
         result.targets.push({
           ...batchResult.value,

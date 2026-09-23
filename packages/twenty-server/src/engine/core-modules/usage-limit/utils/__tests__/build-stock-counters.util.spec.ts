@@ -4,6 +4,7 @@ import { buildStockCounters } from 'src/engine/core-modules/usage-limit/utils/bu
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const WORKSPACE_ID = 'workspace-1';
 
@@ -120,6 +121,9 @@ describe('buildStockCounters', () => {
     const [before] = build({ limits: [buildLimit({ limitValue: 500 })] });
     const [after] = build({ limits: [buildLimit({ limitValue: 2_000 })] });
 
+    jestExpectToBeDefined(before);
+    jestExpectToBeDefined(after);
+
     expect(before.key).not.toBe(after.key);
   });
 
@@ -128,6 +132,9 @@ describe('buildStockCounters', () => {
     const [after] = build({
       stockLimitDefaults: [buildDefault({ limitValue: 2_000 })],
     });
+
+    jestExpectToBeDefined(before);
+    jestExpectToBeDefined(after);
 
     expect(before.key).not.toBe(after.key);
   });

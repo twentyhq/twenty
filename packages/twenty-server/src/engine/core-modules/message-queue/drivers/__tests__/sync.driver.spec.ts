@@ -1,6 +1,7 @@
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.driver';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const QUEUE = MessageQueue.workspaceQueue;
 
@@ -24,13 +25,16 @@ describe('SyncDriver job snapshots', () => {
       });
       const [id] = await driver.bulkAdd(QUEUE, 'job', [{ data: {} }]);
 
-      expect((await driver.getJobs(QUEUE, [id]))[id]).toMatchObject({
+      jestExpectToBeDefined(id);
+
+      expect((await driver.getJobs(QUEUE, [id]))[id!]).toMatchObject({
         state: 'completed',
         data: { cursor: 'next-page' },
         progress,
         attemptsMade: 1,
         finishedOn: expect.any(Number),
       });
+
       expect(await driver.getJobs(MessageQueue.emailQueue, [id])).toEqual({});
       expect(await driver.getJobs(QUEUE, ['missing-job'])).toEqual({});
     },
@@ -96,8 +100,14 @@ describe('SyncDriver job snapshots', () => {
     expect(Object.keys(snapshots)).toHaveLength(
       QUEUE_RETENTION.completedMaxCount,
     );
+    jestExpectToBeDefined(ids[0]);
+
     expect(snapshots[ids[0]]).toBeUndefined();
-    expect(snapshots[ids[ids.length - 1]]?.state).toBe('completed');
+    const lastId = ids[ids.length - 1];
+
+    jestExpectToBeDefined(lastId);
+
+    expect(snapshots[lastId]?.state).toBe('completed');
     expect(snapshots['active-job']).toMatchObject({
       state: 'active',
       progress: 25,
@@ -113,9 +123,13 @@ describe('SyncDriver job snapshots', () => {
     const [oldId] = await driver.bulkAdd(QUEUE, 'job', [{ data: {} }]);
     jest.setSystemTime(Date.now() + QUEUE_RETENTION.completedMaxAge * 1000 + 1);
     const [newId] = await driver.bulkAdd(QUEUE, 'job', [{ data: {} }]);
+    jestExpectToBeDefined(oldId);
+    jestExpectToBeDefined(newId);
+
     const jobs = await driver.getJobs(QUEUE, [oldId, newId]);
 
     expect(jobs[oldId]).toBeUndefined();
+
     expect(jobs[newId]?.state).toBe('completed');
   });
 });

@@ -106,19 +106,23 @@ export const generateRandomFieldValue = ({
     }
 
     case FieldMetadataType.SELECT: {
-      if (!isDefined(field.options) || !isDefined(field.options[0].value)) {
+      const selectOptionValue = field.options?.[0]?.value;
+
+      if (!isDefined(selectOptionValue)) {
         return null;
       }
 
-      return field.options[0].value;
+      return selectOptionValue;
     }
 
     case FieldMetadataType.MULTI_SELECT: {
-      if (!isDefined(field.options) || !isDefined(field.options[0].value)) {
+      const multiSelectOptionValue = field.options?.[0]?.value;
+
+      if (!isDefined(multiSelectOptionValue)) {
         return [];
       }
 
-      return [field.options[0].value];
+      return [multiSelectOptionValue];
     }
 
     case FieldMetadataType.RELATION:

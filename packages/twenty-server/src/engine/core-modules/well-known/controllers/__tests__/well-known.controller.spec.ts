@@ -40,7 +40,7 @@ describe('WellKnownController', () => {
         buildMockRequest('workspace.twenty.com'),
       );
 
-      expect(card.remotes[0].url).toBe('https://workspace.twenty.com/mcp');
+      expect(card.remotes[0]?.url).toBe('https://workspace.twenty.com/mcp');
       expect(card.version).toBe('1.2.3');
     });
 

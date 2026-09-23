@@ -24,6 +24,7 @@ import { RecordShareStorageService } from 'src/engine/core-modules/record-share/
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const WORKSPACE_ID = 'workspace-id';
 const OBJECT_METADATA_ID = 'company-object-id';
@@ -261,11 +262,15 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
   });
 
   it('should not enqueue events for an application without a role', async () => {
-    (
+    const firstById = (
       cacheData.flatApplicationMaps as {
         byId: Record<string, { defaultRoleId: string | null }>;
       }
-    ).byId[APPLICATION_ID].defaultRoleId = null;
+    ).byId[APPLICATION_ID];
+
+    jestExpectToBeDefined(firstById);
+
+    firstById.defaultRoleId = null;
 
     await job.handle(
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
@@ -326,7 +331,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
     );
 
-    expect(enqueuedPayloads()[0].properties).toEqual({
+    expect(enqueuedPayloads()[0]?.properties).toEqual({
       updatedFields: ['name'],
       before: { id: 'record-1', name: 'Old' },
       after: { id: 'record-1', name: 'New' },

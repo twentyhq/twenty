@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   BillingException,
   BillingExceptionCode,
@@ -35,16 +37,20 @@ export const findProductPriceForIntervalOrThrow = <
     );
   }
 
-  if (intervalPrices.length === 1) {
-    return intervalPrices[0];
+  const [soleIntervalPrice] = intervalPrices;
+
+  if (intervalPrices.length === 1 && isDefined(soleIntervalPrice)) {
+    return soleIntervalPrice;
   }
 
   const currentPrices = intervalPrices.filter(
     (billingPrice) => billingPrice.metadata?.isLegacy !== 'true',
   );
 
-  if (currentPrices.length === 1) {
-    return currentPrices[0];
+  const [soleCurrentPrice] = currentPrices;
+
+  if (currentPrices.length === 1 && isDefined(soleCurrentPrice)) {
+    return soleCurrentPrice;
   }
 
   throw new BillingException(

@@ -84,7 +84,7 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
       now,
     });
 
-    expect(result.universalFlatIndexFieldMetadatas[0].subFieldName).toBe(
+    expect(result.universalFlatIndexFieldMetadatas[0]?.subFieldName).toBe(
       'addressCity',
     );
   });

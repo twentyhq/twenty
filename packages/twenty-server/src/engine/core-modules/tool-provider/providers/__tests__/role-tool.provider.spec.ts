@@ -215,10 +215,10 @@ describe('RoleToolProvider', () => {
         }[];
       };
 
-      expect(roles[0].rowLevelPermissionPredicates).toEqual([
+      expect(roles[0]?.rowLevelPermissionPredicates).toEqual([
         { id: 'predicate-1', roleId: 'role-1' },
       ]);
-      expect(roles[0].rowLevelPermissionPredicateGroups).toEqual([
+      expect(roles[0]?.rowLevelPermissionPredicateGroups).toEqual([
         { id: 'group-1', roleId: 'role-1' },
       ]);
     });

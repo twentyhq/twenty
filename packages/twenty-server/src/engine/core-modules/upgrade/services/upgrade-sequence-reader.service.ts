@@ -8,7 +8,7 @@ import {
   UpgradeCommandRegistryService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 export type FastInstanceUpgradeStep = {
   kind: 'fast-instance';
@@ -104,7 +104,7 @@ export class UpgradeSequenceReaderService {
 
     let startCursor = workspaceCommandCursor;
 
-    while (startCursor > 0 && sequence[startCursor - 1].kind === 'workspace') {
+    while (startCursor > 0 && sequence[startCursor - 1]?.kind === 'workspace') {
       startCursor--;
     }
 
@@ -112,7 +112,7 @@ export class UpgradeSequenceReaderService {
 
     while (
       endCursor < sequence.length - 1 &&
-      sequence[endCursor + 1].kind === 'workspace'
+      sequence[endCursor + 1]?.kind === 'workspace'
     ) {
       endCursor++;
     }
@@ -137,7 +137,7 @@ export class UpgradeSequenceReaderService {
     for (let cursor = fromCursor; cursor < sequence.length; cursor++) {
       const step = sequence[cursor];
 
-      if (step.kind !== 'workspace') {
+      if (!isDefined(step) || step.kind !== 'workspace') {
         break;
       }
 
@@ -212,6 +212,10 @@ export class UpgradeSequenceReaderService {
       fromWorkspaceCommand: firstWorkspaceCommand,
     });
 
-    return segment[segment.length - 1];
+    const lastWorkspaceCommand = segment[segment.length - 1];
+
+    assertIsDefinedOrThrow(lastWorkspaceCommand);
+
+    return lastWorkspaceCommand;
   }
 }

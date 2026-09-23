@@ -4,6 +4,7 @@ import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const OBJECT_METADATA_ID = 'object-metadata-1';
 const PRINCIPAL_IDS = ['principal-1', 'principal-2'];
@@ -39,6 +40,10 @@ describe('buildRecordShareCondition', () => {
     expect(sql).toBe(
       `EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "company_recordShare" WHERE "company_recordShare"."recordId" = "company"."id" AND "company_recordShare"."objectMetadataId" = :${objectMetadataIdParameterName} AND "company_recordShare"."principalId" = ANY(:${principalIdsParameterName}) AND "company_recordShare"."accessLevel" IN (:...${accessLevelsParameterName}) AND "company_recordShare"."deletedAt" IS NULL)`,
     );
+    jestExpectToBeDefined(objectMetadataIdParameterName);
+    jestExpectToBeDefined(principalIdsParameterName);
+    jestExpectToBeDefined(accessLevelsParameterName);
+
     expect(parameters).toEqual({
       [objectMetadataIdParameterName]: OBJECT_METADATA_ID,
       [principalIdsParameterName]: PRINCIPAL_IDS,

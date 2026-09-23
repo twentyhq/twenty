@@ -24,8 +24,8 @@ describe('DeleteTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('twoFactorAuthenticationMethodId');
-    expect(errors[0].constraints).toHaveProperty('isNotEmpty');
+    expect(errors[0]?.property).toBe('twoFactorAuthenticationMethodId');
+    expect(errors[0]?.constraints).toHaveProperty('isNotEmpty');
   });
 
   it('should fail validation with invalid UUID format', async () => {
@@ -36,8 +36,8 @@ describe('DeleteTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('twoFactorAuthenticationMethodId');
-    expect(errors[0].constraints).toHaveProperty('isUuid');
+    expect(errors[0]?.property).toBe('twoFactorAuthenticationMethodId');
+    expect(errors[0]?.constraints).toHaveProperty('isUuid');
   });
 
   it('should fail validation with non-string ID', async () => {
@@ -48,8 +48,8 @@ describe('DeleteTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('twoFactorAuthenticationMethodId');
-    expect(errors[0].constraints).toHaveProperty('isUuid');
+    expect(errors[0]?.property).toBe('twoFactorAuthenticationMethodId');
+    expect(errors[0]?.constraints).toHaveProperty('isUuid');
   });
 
   it('should fail validation with null ID', async () => {
@@ -60,8 +60,8 @@ describe('DeleteTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('twoFactorAuthenticationMethodId');
-    expect(errors[0].constraints).toHaveProperty('isNotEmpty');
+    expect(errors[0]?.property).toBe('twoFactorAuthenticationMethodId');
+    expect(errors[0]?.constraints).toHaveProperty('isNotEmpty');
   });
 
   it('should fail validation with undefined ID', async () => {
@@ -70,8 +70,8 @@ describe('DeleteTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('twoFactorAuthenticationMethodId');
-    expect(errors[0].constraints).toHaveProperty('isNotEmpty');
+    expect(errors[0]?.property).toBe('twoFactorAuthenticationMethodId');
+    expect(errors[0]?.constraints).toHaveProperty('isNotEmpty');
   });
 
   it('should fail validation with UUID v1 format', async () => {
@@ -94,8 +94,8 @@ describe('DeleteTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('twoFactorAuthenticationMethodId');
-    expect(errors[0].constraints).toHaveProperty('isUuid');
+    expect(errors[0]?.property).toBe('twoFactorAuthenticationMethodId');
+    expect(errors[0]?.constraints).toHaveProperty('isUuid');
   });
 
   it('should fail validation with UUID containing invalid characters', async () => {
@@ -106,7 +106,7 @@ describe('DeleteTwoFactorAuthenticationMethodInput', () => {
     const errors = await validate(input);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe('twoFactorAuthenticationMethodId');
-    expect(errors[0].constraints).toHaveProperty('isUuid');
+    expect(errors[0]?.property).toBe('twoFactorAuthenticationMethodId');
+    expect(errors[0]?.constraints).toHaveProperty('isUuid');
   });
 });
