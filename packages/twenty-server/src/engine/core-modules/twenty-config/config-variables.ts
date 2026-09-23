@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  Matches,
   Max,
   ValidateIf,
   type ValidationError,
@@ -299,6 +300,23 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.MICROSOFT_AUTH,
+    isSensitive: false,
+    description:
+      'Microsoft Entra tenant ID. Use a directory (tenant) GUID for single-tenant app registrations. Defaults to "common" for multi-tenant.',
+    type: ConfigVariableType.STRING,
+  })
+  @Matches(
+    /^(common|organizations|consumers|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i,
+    {
+      message:
+        'AUTH_MICROSOFT_TENANT_ID must be "common", "organizations", "consumers", or a valid UUID (tenant GUID)',
+    },
+  )
+  @IsOptional()
+  AUTH_MICROSOFT_TENANT_ID = 'common';
 
   /**
    * @deprecated Use is now GA - record page layouts are always seeded
