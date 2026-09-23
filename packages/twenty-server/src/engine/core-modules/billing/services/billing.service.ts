@@ -101,21 +101,9 @@ export class BillingService {
         'currentBillingSubscription',
       ]);
 
-    if (
-      currentBillingSubscription === NO_BILLING_SUBSCRIPTION ||
-      currentBillingSubscription.status !== SubscriptionStatus.Active
-    ) {
-      return false;
-    }
-
-    const { billingCustomerPaymentStatus } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingCustomerPaymentStatus',
-      ]);
-
     return (
-      billingCustomerPaymentStatus.hasPaymentMethod &&
-      billingCustomerPaymentStatus.hasReceivedPayment
+      currentBillingSubscription !== NO_BILLING_SUBSCRIPTION &&
+      currentBillingSubscription.status === SubscriptionStatus.Active
     );
   }
 

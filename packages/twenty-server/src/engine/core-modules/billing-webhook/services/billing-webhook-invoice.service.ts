@@ -26,7 +26,6 @@ import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/ser
 import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
 import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
 
@@ -48,7 +47,6 @@ export class BillingWebhookInvoiceService {
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async processStripeEvent(
@@ -216,11 +214,6 @@ export class BillingWebhookInvoiceService {
 
     if (isDefined(billingCustomer)) {
       await this.delaySuspendedWorkspaceCleanup(billingCustomer);
-
-      await this.workspaceCacheService.invalidateAndRecompute(
-        billingCustomer.workspaceId,
-        ['billingCustomerPaymentStatus'],
-      );
 
       void this.eventLogEmitterService
         .createContext({ workspaceId: billingCustomer.workspaceId })

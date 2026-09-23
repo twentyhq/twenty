@@ -13,7 +13,6 @@ import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/appli
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
-import { type BillingCustomerPaymentStatus } from 'src/engine/core-modules/billing/types/billing-customer-payment-status.type';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type WorkflowAutomatedTriggerMaps } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
@@ -41,7 +40,6 @@ export type AdditionalCacheDataMaps = {
   graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
   currentBillingSubscription: CurrentBillingSubscription;
   billingEntitlements: BillingEntitlements;
-  billingCustomerPaymentStatus: BillingCustomerPaymentStatus;
   workflowAutomatedTriggerMaps: WorkflowAutomatedTriggerMaps;
   usageLimits: UsageLimits;
 };

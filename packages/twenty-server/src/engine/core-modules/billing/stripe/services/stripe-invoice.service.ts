@@ -41,16 +41,6 @@ export class StripeInvoiceService {
     return invoices.data;
   }
 
-  async hasPaidNonZeroInvoice(stripeCustomerId: string): Promise<boolean> {
-    const paidInvoices = await this.stripe.invoices.list({
-      customer: stripeCustomerId,
-      status: 'paid',
-      limit: 100,
-    });
-
-    return paidInvoices.data.some((invoice) => invoice.amount_paid > 0);
-  }
-
   async finalizeInvoice(invoiceId: string): Promise<Stripe.Invoice> {
     return this.stripe.invoices.finalizeInvoice(invoiceId, {
       auto_advance: true,
