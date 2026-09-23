@@ -7,14 +7,16 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-const isEveryReferencedRelationLoaded = ({
+const canEvaluateOnDraft = ({
   expression,
   fields,
   draftRecord,
+  serverFilledFieldNames,
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
   draftRecord: Record<string, unknown>;
+  serverFilledFieldNames: string[];
 }): boolean => {
   const compilationResult = compileValidationRuleExpression({
     expression,
@@ -25,7 +27,9 @@ const isEveryReferencedRelationLoaded = ({
     return false;
   }
 
-  return Object.keys(compilationResult.bindings)
+  const bindingPaths = Object.keys(compilationResult.bindings);
+
+  const isEveryReferencedRelationLoaded = bindingPaths
     .filter((bindingPath) => bindingPath.includes('.'))
     .map((bindingPath) => bindingPath.split('.')[0])
     .every((relationFieldName) => {
@@ -33,6 +37,13 @@ const isEveryReferencedRelationLoaded = ({
 
       return typeof relatedRecord === 'object' && isDefined(relatedRecord);
     });
+
+  const isEveryServerFilledFieldInDraft = bindingPaths
+    .map((bindingPath) => bindingPath.split('.')[0])
+    .filter((fieldName) => serverFilledFieldNames.includes(fieldName))
+    .every((fieldName) => fieldName in draftRecord);
+
+  return isEveryReferencedRelationLoaded && isEveryServerFilledFieldInDraft;
 };
 
 const withRelationPresenceFromJoinColumns = ({
@@ -64,20 +75,23 @@ export const computeDraftValidationRuleViolations = ({
   validationRules,
   draftRecord,
   fields,
+  serverFilledFieldNames,
   now,
 }: {
   validationRules: ValidationRule[];
   draftRecord: Record<string, unknown>;
   fields: ValidationRuleFieldDescriptor[];
+  serverFilledFieldNames: string[];
   now: string;
 }): DraftValidationRuleViolation[] =>
   validationRules
     .filter((validationRule) => validationRule.isActive)
     .filter((validationRule) =>
-      isEveryReferencedRelationLoaded({
+      canEvaluateOnDraft({
         expression: validationRule.expression,
         fields,
         draftRecord,
+        serverFilledFieldNames,
       }),
     )
     .filter(

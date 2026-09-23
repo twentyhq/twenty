@@ -1,7 +1,10 @@
+import { type Expression } from 'expr-eval-fork';
+
 import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRuleExpressionMaxLength';
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValidationRuleBracketAccess';
 import { evaluateValidationRuleExpression } from '@/utils/validation-rule/evaluateValidationRuleExpression';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
@@ -24,18 +27,25 @@ export const compileValidationRuleExpression = ({
     };
   }
 
-  let identifierPaths: string[];
+  let parsedExpression: Expression;
 
   try {
-    identifierPaths = parseValidationRuleExpression(expression).variables({
-      withMembers: true,
-    });
+    parsedExpression = parseValidationRuleExpression(expression);
   } catch (error) {
     return {
       isValid: false,
       errorMessage: error instanceof Error ? error.message : String(error),
     };
   }
+
+  if (hasValidationRuleBracketAccess(parsedExpression.tokens)) {
+    return {
+      isValid: false,
+      errorMessage: 'Bracket access is not supported, use dot access instead',
+    };
+  }
+
+  const identifierPaths = parsedExpression.variables({ withMembers: true });
 
   let bindings: ValidationRuleBindings = {};
 

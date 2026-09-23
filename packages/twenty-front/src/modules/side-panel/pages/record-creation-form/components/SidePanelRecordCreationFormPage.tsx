@@ -116,6 +116,13 @@ const SidePanelRecordCreationForm = ({
         objectMetadataItem,
         objectMetadataItems,
       }),
+      serverFilledFieldNames: objectMetadataItem.fields
+        .filter(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.isSystem === true ||
+            isDefined(fieldMetadataItem.defaultValue),
+        )
+        .map((fieldMetadataItem) => fieldMetadataItem.name),
       now: new Date().toISOString(),
     });
 

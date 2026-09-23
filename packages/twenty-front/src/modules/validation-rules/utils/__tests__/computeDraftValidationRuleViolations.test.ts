@@ -48,11 +48,13 @@ const COMPANY_RULE = {
 const compute = (
   draftRecord: Record<string, unknown>,
   validationRules = [AMOUNT_RULE],
+  serverFilledFieldNames: string[] = [],
 ) =>
   computeDraftValidationRuleViolations({
     validationRules,
     draftRecord,
     fields: FIELDS,
+    serverFilledFieldNames,
     now: '2026-09-23T10:00:00.000Z',
   });
 
@@ -79,6 +81,32 @@ describe('computeDraftValidationRuleViolations', () => {
         amount: { amountMicros: 1000000, currencyCode: 'USD' },
       }),
     ).toEqual([]);
+  });
+
+  it('should leave a rule to the server when it reads an absent field the server fills', () => {
+    const draftWithoutStage = {
+      amount: { amountMicros: null, currencyCode: 'USD' },
+    };
+
+    expect(
+      compute(draftWithoutStage, [
+        { ...AMOUNT_RULE, expression: 'stage != "WON" and isEmpty(amount)' },
+      ]).map((violation) => violation.ruleId),
+    ).toEqual(['amount-rule']);
+    expect(
+      compute(
+        draftWithoutStage,
+        [{ ...AMOUNT_RULE, expression: 'stage != "WON" and isEmpty(amount)' }],
+        ['stage'],
+      ),
+    ).toEqual([]);
+    expect(
+      compute(
+        { ...draftWithoutStage, stage: 'CUSTOMER' },
+        [AMOUNT_RULE],
+        ['stage'],
+      ).map((violation) => violation.ruleId),
+    ).toEqual(['amount-rule']);
   });
 
   it('should skip inactive rules', () => {

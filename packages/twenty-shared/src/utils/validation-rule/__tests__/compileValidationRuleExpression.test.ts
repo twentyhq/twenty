@@ -116,6 +116,20 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('amount.amountMicros + 1').isValid).toBe(false);
   });
 
+  it('should reject bracket access on fields and related records', () => {
+    expect(compile('company["industry"] == "SaaS"')).toEqual({
+      isValid: false,
+      errorMessage: 'Bracket access is not supported, use dot access instead',
+    });
+    expect(
+      compile('stage == "WON" and amount["amountMicros"] > 0').isValid,
+    ).toBe(false);
+  });
+
+  it('should keep array literals', () => {
+    expect(compile('stage in ["WON", "LOST"]').isValid).toBe(true);
+  });
+
   it('should reject assignments', () => {
     expect(compile('stage = "WON"').isValid).toBe(false);
   });

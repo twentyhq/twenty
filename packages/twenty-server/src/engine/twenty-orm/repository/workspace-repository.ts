@@ -113,6 +113,7 @@ import {
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
+const VALIDATION_RULE_SAVEPOINT_NAME = 'validation_rule_write';
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   MutationKind,
   DatabaseEventAction[]
@@ -926,18 +927,28 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     generatedMaps: ObjectRecord[];
     raw: ObjectRecord[];
   }> {
-    const { records, columnsToReturn, onConflictDoNothing } = args;
-
-    if (records.length === 0) {
+    if (args.records.length === 0) {
       return { identifiers: [], generatedMaps: [], raw: [] };
     }
 
-    if (this.shouldRunWriteInValidationRuleTransaction()) {
-      return this.options.runInNewTransaction((transactionalRepository) =>
-        transactionalRepository.runInsert(args),
-      );
-    }
+    return this.runWithValidationRuleAtomicity((repository) =>
+      repository.performInsert(args),
+    );
+  }
 
+  private async performInsert({
+    records,
+    columnsToReturn,
+    onConflictDoNothing,
+  }: {
+    records: Partial<ObjectRecord>[];
+    columnsToReturn: string[];
+    onConflictDoNothing?: boolean;
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
     const filesFieldDiff =
       this.filesFieldSync.computeFilesFieldDiffBeforeInsert(
         records,
@@ -1027,18 +1038,26 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     generatedMaps: ObjectRecord[];
     raw: ObjectRecord[];
   }> {
-    const { inputs, columnsToReturn } = args;
-
-    if (inputs.length === 0) {
+    if (args.inputs.length === 0) {
       return { identifiers: [], generatedMaps: [], raw: [] };
     }
 
-    if (this.shouldRunWriteInValidationRuleTransaction()) {
-      return this.options.runInNewTransaction((transactionalRepository) =>
-        transactionalRepository.runBatchUpdate(args),
-      );
-    }
+    return this.runWithValidationRuleAtomicity((repository) =>
+      repository.performBatchUpdate(args),
+    );
+  }
 
+  private async performBatchUpdate({
+    inputs,
+    columnsToReturn,
+  }: {
+    inputs: { id: string; data: Partial<ObjectRecord> }[];
+    columnsToReturn: string[];
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
     const writableRecordIds = await this.resolveWritableRecordIds({
       ids: inputs.map((input) => input.id),
       operationType: 'update',
@@ -1357,11 +1376,38 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
   }
 
-  private shouldRunWriteInValidationRuleTransaction(): boolean {
-    return (
-      !this.options.isTransactional &&
-      this.getActiveFlatValidationRules().length > 0
-    );
+  private async runWithValidationRuleAtomicity<T>(
+    work: (repository: WorkspaceRepository<TEntity>) => Promise<T>,
+  ): Promise<T> {
+    if (this.getActiveFlatValidationRules().length === 0) {
+      return work(this);
+    }
+
+    if (!this.options.isTransactional) {
+      return this.options.runInNewTransaction(work);
+    }
+
+    await this.executeRaw(`SAVEPOINT ${VALIDATION_RULE_SAVEPOINT_NAME}`, {});
+
+    try {
+      const result = await work(this);
+
+      await this.executeRaw(
+        `RELEASE SAVEPOINT ${VALIDATION_RULE_SAVEPOINT_NAME}`,
+        {},
+      );
+
+      return result;
+    } catch (error) {
+      if (error instanceof RecordValidationRuleException) {
+        await this.executeRaw(
+          `ROLLBACK TO SAVEPOINT ${VALIDATION_RULE_SAVEPOINT_NAME}`,
+          {},
+        );
+      }
+
+      throw error;
+    }
   }
 
   private async attachRelatedRecordsForValidationRules({
@@ -1658,26 +1704,34 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
-    const {
-      selectQueryBuilder,
-      rowLevelPermissionsApplied,
-      kind,
-      columnsToReturn,
-      data,
-    } = args;
-
-    if (kind === 'update' && this.shouldRunWriteInValidationRuleTransaction()) {
-      return this.options.runInNewTransaction((transactionalRepository) =>
-        transactionalRepository.runMutation({
-          ...args,
-          selectQueryBuilder:
-            transactionalRepository.bindQueryBuilderToExecutor(
-              selectQueryBuilder,
-            ),
-        }),
-      );
+    if (args.kind !== 'update') {
+      return this.performMutation(args);
     }
 
+    return this.runWithValidationRuleAtomicity((repository) =>
+      repository.performMutation({
+        ...args,
+        selectQueryBuilder:
+          repository === this
+            ? args.selectQueryBuilder
+            : repository.bindQueryBuilderToExecutor(args.selectQueryBuilder),
+      }),
+    );
+  }
+
+  private async performMutation({
+    selectQueryBuilder,
+    rowLevelPermissionsApplied,
+    kind,
+    columnsToReturn,
+    data,
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    rowLevelPermissionsApplied: boolean;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
+  }): Promise<ObjectRecord[]> {
     if (!rowLevelPermissionsApplied) {
       this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
     }

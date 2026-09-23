@@ -79,7 +79,13 @@ declare module 'expr-eval-fork' {
     static evaluate(expression: string, values?: EvaluationContext): number;
   }
 
+  export type Instruction = {
+    type: string;
+    value: unknown;
+  };
+
   export interface Expression {
+    tokens: Instruction[];
     simplify(values?: EvaluationContext): Expression;
     evaluate(values?: EvaluationContext): any;
     substitute(
