@@ -30,6 +30,7 @@ export const DropdownOptionItem = ({
 }: DropdownOptionItemProps) => {
   const { type, multiple, closeTree } = useDropdownContext();
   const isMenu = type === 'menu';
+  const menuOptionRole = multiple ? 'menuitemcheckbox' : 'menuitemradio';
   const generatedId = useId();
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId });
@@ -40,9 +41,7 @@ export const DropdownOptionItem = ({
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
-      role={
-        isMenu ? (multiple ? 'menuitemcheckbox' : 'menuitemradio') : undefined
-      }
+      role={isMenu ? menuOptionRole : undefined}
       aria-checked={isMenu ? selected : undefined}
       aria-pressed={isMenu ? undefined : selected}
       tabIndex={itemFocus.tabIndex}
