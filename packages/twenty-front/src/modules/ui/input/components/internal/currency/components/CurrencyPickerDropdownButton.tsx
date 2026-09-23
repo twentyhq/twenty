@@ -1,15 +1,17 @@
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { styled } from '@linaria/react';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { CurrencyCode } from 'twenty-shared/constants';
+import { Dropdown } from 'twenty-ui/components';
 
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
@@ -48,15 +50,11 @@ export const CurrencyPickerDropdownButton = ({
   selectedCurrencyCode: string;
   onChange: (currency: Currency) => void;
 }) => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const { theme } = useContext(ThemeContext);
   const dropdownId = 'currency-picker-dropdown-id';
-
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleChange = (currency: Currency) => {
-    onChange(currency);
-    closeDropdown(dropdownId);
-  };
 
   const currency = CURRENCIES.find(
     ({ value }) => value === selectedCurrencyCode,
@@ -65,24 +63,29 @@ export const CurrencyPickerDropdownButton = ({
   const currencyCode = currency?.value ?? CurrencyCode.USD;
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
+    <DropdownRoot dropdownId={dropdownId} type="picker">
+      <Dropdown.Trigger render={<div />} nativeButton={false}>
         <StyledDropdownButtonContainer>
           <StyledIconContainer>
             {currencyCode}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
-      }
-      dropdownComponents={
-        <CurrencyPickerDropdownSelect
-          selectedCurrency={currency}
-          onChange={handleChange}
-        />
-      }
-      dropdownPlacement="bottom-start"
-      dropdownOffset={{ x: 0, y: 4 }}
-    />
+      </Dropdown.Trigger>
+      <Dropdown.Content
+        side="bottom"
+        align="start"
+        sideOffset={4}
+        alignOffset={0}
+        data-click-outside-id={excludedClickOutsideId}
+      >
+        <div data-click-outside-id={parentClickOutsideId}>
+          <CurrencyPickerDropdownSelect
+            selectedCurrency={currency}
+            onChange={onChange}
+          />
+        </div>
+      </Dropdown.Content>
+    </DropdownRoot>
   );
 };

@@ -1,13 +1,15 @@
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { type Country } from '@/ui/input/components/internal/types/Country';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useState } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 
 import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSelect';
 
 import { PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID } from '@/ui/input/components/internal/phone/constants/PhoneCountryCodePickerDropdownId';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import 'react-phone-number-input/style.css';
@@ -74,19 +76,15 @@ export const PhoneCountryPickerDropdownButton = ({
   value: string;
   onChange: (countryCode: string) => void;
 }) => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID,
   );
-
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleChange = (countryCode: string) => {
-    closeDropdown(PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID);
-    onChange(countryCode);
-  };
 
   const countries = useCountries();
   const { theme } = useContext(ThemeContext);
@@ -99,9 +97,11 @@ export const PhoneCountryPickerDropdownButton = ({
   }, [countries, value]);
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID}
-      clickableComponent={
+      type="picker"
+    >
+      <Dropdown.Trigger render={<div />} nativeButton={false}>
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>
             {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
@@ -110,16 +110,22 @@ export const PhoneCountryPickerDropdownButton = ({
             </StyledCheveronIconContainer>
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
-      }
-      dropdownComponents={
-        <PhoneCountryPickerDropdownSelect
-          countries={countries}
-          selectedCountry={selectedCountry}
-          onChange={handleChange}
-        />
-      }
-      dropdownPlacement="bottom-start"
-      dropdownOffset={{ x: 0, y: 4 }}
-    />
+      </Dropdown.Trigger>
+      <Dropdown.Content
+        side="bottom"
+        align="start"
+        sideOffset={4}
+        alignOffset={0}
+        data-click-outside-id={excludedClickOutsideId}
+      >
+        <div data-click-outside-id={parentClickOutsideId}>
+          <PhoneCountryPickerDropdownSelect
+            countries={countries}
+            selectedCountry={selectedCountry}
+            onChange={onChange}
+          />
+        </div>
+      </Dropdown.Content>
+    </DropdownRoot>
   );
 };

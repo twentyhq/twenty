@@ -1,7 +1,7 @@
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
+import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';

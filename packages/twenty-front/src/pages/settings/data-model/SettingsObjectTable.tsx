@@ -14,9 +14,7 @@ import {
   StyledStickyFirstCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -24,13 +22,15 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useContext, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { SearchInput, SettingsRow } from 'twenty-ui/components';
+import { Dropdown, SearchInput, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
 import {
   MOBILE_VIEWPORT,
@@ -70,6 +70,9 @@ export const SettingsObjectTable = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   withSearchBar?: boolean;
 }) => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
@@ -166,15 +169,21 @@ export const SettingsObjectTable = ({
             placeholder={t`Search for an object...`}
             value={searchTerm}
             onChange={setSearchTerm}
-            filterDropdown={(filterButton: ReactNode) => (
-              <Dropdown
+            filterDropdown={(filterButton) => (
+              <DropdownRoot
                 dropdownId="settings-objects-filter-dropdown"
-                dropdownPlacement="bottom-end"
-                dropdownOffset={{ x: 0, y: 8 }}
-                clickableComponent={filterButton}
-                dropdownComponents={
-                  <LegacyDropdownContent>
-                    <DropdownMenuItemsContainer>
+                type="panel"
+              >
+                <Dropdown.Trigger render={filterButton} />
+                <Dropdown.Content
+                  side="bottom"
+                  align="end"
+                  sideOffset={8}
+                  alignOffset={0}
+                  data-click-outside-id={excludedClickOutsideId}
+                >
+                  <div data-click-outside-id={parentClickOutsideId}>
+                    <Dropdown.Section>
                       <SettingsRow
                         startIcon={<IconArchive />}
                         onCheckedChange={() =>
@@ -191,10 +200,10 @@ export const SettingsObjectTable = ({
                           checked={showSystemObjects}
                         >{t`System objects`}</SettingsRow>
                       )}
-                    </DropdownMenuItemsContainer>
-                  </LegacyDropdownContent>
-                }
-              />
+                    </Dropdown.Section>
+                  </div>
+                </Dropdown.Content>
+              </DropdownRoot>
             )}
           />
         </StyledSearchInputContainer>

@@ -1,20 +1,21 @@
-import { t } from '@lingui/core/macro';
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { Field, type SelectOption } from 'twenty-ui/primitives/input';
-import { type CallToActionButton, Select } from '@/ui/input/components/Select';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { Select } from '@/ui/input/components/Select';
+import { type SelectCallToActionButton } from '@/ui/input/types/SelectCallToActionButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { isStandaloneVariableString } from 'twenty-shared/workflow';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { IconCircleOff } from 'twenty-ui/icon';
+import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type FormSelectFieldInputProps = {
@@ -26,7 +27,7 @@ type FormSelectFieldInputProps = {
   options: SelectOption[];
   readonly?: boolean;
   isNullable?: boolean;
-  callToActionButton?: CallToActionButton;
+  callToActionButton?: SelectCallToActionButton;
 };
 
 export const FormSelectFieldInput = ({

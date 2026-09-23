@@ -1,16 +1,16 @@
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { t } from '@lingui/core/macro';
-import { type ReactNode } from 'react';
-import { SettingsRow } from 'twenty-ui/components';
+import { useContext, type ReactElement } from 'react';
+import { Dropdown, SettingsRow } from 'twenty-ui/components';
 
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
 
 import { type AdminChatsFilterState } from '@/settings/admin-panel/chats/types/AdminChatsFilterState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
 type SettingsAdminChatsFilterDropdownProps = {
-  filterButton: ReactNode;
+  filterButton: ReactElement;
   filters: AdminChatsFilterState;
   onFiltersChange: (filters: AdminChatsFilterState) => void;
 };
@@ -20,15 +20,24 @@ export const SettingsAdminChatsFilterDropdown = ({
   filters,
   onFiltersChange,
 }: SettingsAdminChatsFilterDropdownProps) => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId="settings-admin-chats-filter-dropdown"
-      dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 0, y: 8 }}
-      clickableComponent={filterButton}
-      dropdownComponents={
-        <LegacyDropdownContent>
-          <DropdownMenuItemsContainer>
+      type="panel"
+    >
+      <Dropdown.Trigger render={filterButton} />
+      <Dropdown.Content
+        side="bottom"
+        align="end"
+        sideOffset={8}
+        alignOffset={0}
+        data-click-outside-id={excludedClickOutsideId}
+      >
+        <div data-click-outside-id={parentClickOutsideId}>
+          <Dropdown.Section>
             <SettingsRow
               startIcon={<IconSparkles />}
               onCheckedChange={() =>
@@ -59,9 +68,9 @@ export const SettingsAdminChatsFilterDropdown = ({
               }
               checked={filters.userNeverEngagedOnly}
             >{t`No user reply`}</SettingsRow>
-          </DropdownMenuItemsContainer>
-        </LegacyDropdownContent>
-      }
-    />
+          </Dropdown.Section>
+        </div>
+      </Dropdown.Content>
+    </DropdownRoot>
   );
 };

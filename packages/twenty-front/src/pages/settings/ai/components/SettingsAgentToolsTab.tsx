@@ -1,11 +1,16 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { SearchInput, Section, SettingsRow } from 'twenty-ui/components';
+import {
+  Dropdown,
+  SearchInput,
+  Section,
+  SettingsRow,
+} from 'twenty-ui/components';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
@@ -19,6 +24,9 @@ const StyledSearchContainer = styled.div`
 `;
 
 export const SettingsAgentToolsTab = () => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const { t } = useLingui();
   const {
     allTools,
@@ -82,15 +90,21 @@ export const SettingsAgentToolsTab = () => {
           placeholder={t`Search a tool...`}
           value={searchTerm}
           onChange={setSearchTerm}
-          filterDropdown={(filterButton: ReactNode) => (
-            <Dropdown
+          filterDropdown={(filterButton) => (
+            <DropdownRoot
               dropdownId="settings-tools-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <LegacyDropdownContent>
-                  <DropdownMenuItemsContainer>
+              type="panel"
+            >
+              <Dropdown.Trigger render={filterButton} />
+              <Dropdown.Content
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+                data-click-outside-id={excludedClickOutsideId}
+              >
+                <div data-click-outside-id={parentClickOutsideId}>
+                  <Dropdown.Section>
                     <SettingsRow
                       startIcon={<IconTool />}
                       onCheckedChange={setShowCustomTools}
@@ -106,10 +120,10 @@ export const SettingsAgentToolsTab = () => {
                       onCheckedChange={setShowStandardTools}
                       checked={showStandardTools}
                     >{t`Standard`}</SettingsRow>
-                  </DropdownMenuItemsContainer>
-                </LegacyDropdownContent>
-              }
-            />
+                  </Dropdown.Section>
+                </div>
+              </Dropdown.Content>
+            </DropdownRoot>
           )}
         />
       </StyledSearchContainer>

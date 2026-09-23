@@ -4,9 +4,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -16,14 +14,16 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { SettingsRow } from 'twenty-ui/components';
+import { Dropdown, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -106,6 +106,9 @@ const getMorphRelationFieldLabel = (field: FieldMetadataItem) => {
 export const SettingsObjectRelationsTable = ({
   objectMetadataItem,
 }: SettingsObjectRelationsTableProps) => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(true);
@@ -201,30 +204,38 @@ export const SettingsObjectRelationsTable = ({
             onChange={setSearchTerm}
           />
         </StyledSearchInputContainer>
-        <Dropdown
+        <DropdownRoot
           dropdownId="settings-relations-filter-dropdown"
-          dropdownPlacement="bottom-end"
-          dropdownOffset={{ x: 0, y: 8 }}
-          clickableComponent={
-            <Button
-              startIcon={<IconFilter />}
-              size="md"
-              aria-label={t`Filter`}
-              variant="outline"
-            />
-          }
-          dropdownComponents={
-            <LegacyDropdownContent>
-              <DropdownMenuItemsContainer>
+          type="panel"
+        >
+          <Dropdown.Trigger
+            render={
+              <Button
+                startIcon={<IconFilter />}
+                size="md"
+                aria-label={t`Filter`}
+                variant="outline"
+              />
+            }
+          />
+          <Dropdown.Content
+            side="bottom"
+            align="end"
+            sideOffset={8}
+            alignOffset={0}
+            data-click-outside-id={excludedClickOutsideId}
+          >
+            <div data-click-outside-id={parentClickOutsideId}>
+              <Dropdown.Section>
                 <SettingsRow
                   startIcon={<IconArchive />}
                   onCheckedChange={() => setShowInactive(!showInactive)}
                   checked={showInactive}
                 >{t`Inactive`}</SettingsRow>
-              </DropdownMenuItemsContainer>
-            </LegacyDropdownContent>
-          }
-        />
+              </Dropdown.Section>
+            </div>
+          </Dropdown.Content>
+        </DropdownRoot>
       </StyledSearchAndFilterContainer>
       <Table>
         <TableRow

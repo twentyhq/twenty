@@ -1,11 +1,12 @@
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { useContext, useState } from 'react';
 import {
+  Dropdown,
   InlineBanner,
   SearchInput,
   Section,
@@ -51,6 +52,9 @@ const StyledHintLink = styled.button`
 `;
 
 export const SettingsApplicationsAvailableTab = () => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showVettedOnly, setShowVettedOnly] = useState(true);
@@ -99,24 +103,27 @@ export const SettingsApplicationsAvailableTab = () => {
           placeholder={t`Search an application`}
           value={searchTerm}
           onChange={setSearchTerm}
-          filterDropdown={(filterButton: ReactNode) => (
-            <Dropdown
-              dropdownId="marketplace-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <LegacyDropdownContent>
-                  <DropdownMenuItemsContainer>
+          filterDropdown={(filterButton) => (
+            <DropdownRoot dropdownId="marketplace-filter-dropdown" type="panel">
+              <Dropdown.Trigger render={filterButton} />
+              <Dropdown.Content
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+                data-click-outside-id={excludedClickOutsideId}
+              >
+                <div data-click-outside-id={parentClickOutsideId}>
+                  <Dropdown.Section>
                     <SettingsRow
                       startIcon={<IconSparkles />}
                       onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
                       checked={showVettedOnly}
                     >{t`Vetted only`}</SettingsRow>
-                  </DropdownMenuItemsContainer>
-                </LegacyDropdownContent>
-              }
-            />
+                  </Dropdown.Section>
+                </div>
+              </Dropdown.Content>
+            </DropdownRoot>
           )}
         />
       </StyledSearchInputContainer>

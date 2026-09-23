@@ -7,9 +7,7 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { useMostlyEmptyFieldMetadataIds } from '@/settings/data-model/object-details/hooks/useMostlyEmptyFieldMetadataIds';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -18,15 +16,17 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { SearchInput, SettingsRow } from 'twenty-ui/components';
+import { Dropdown, SearchInput, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
@@ -78,6 +78,9 @@ export const SettingsObjectFieldTable = ({
   mode,
   excludeRelations = false,
 }: SettingsObjectFieldTableProps) => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(true);
@@ -174,14 +177,20 @@ export const SettingsObjectFieldTable = ({
           value={searchTerm}
           onChange={setSearchTerm}
           filterDropdown={(filterButton) => (
-            <Dropdown
+            <DropdownRoot
               dropdownId="settings-fields-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <LegacyDropdownContent>
-                  <DropdownMenuItemsContainer>
+              type="panel"
+            >
+              <Dropdown.Trigger render={filterButton} />
+              <Dropdown.Content
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+                data-click-outside-id={excludedClickOutsideId}
+              >
+                <div data-click-outside-id={parentClickOutsideId}>
+                  <Dropdown.Section>
                     <SettingsRow
                       startIcon={<IconArchive />}
                       onCheckedChange={() => setShowInactive(!showInactive)}
@@ -206,10 +215,10 @@ export const SettingsObjectFieldTable = ({
                         checked={showSystemFields}
                       >{t`System fields`}</SettingsRow>
                     )}
-                  </DropdownMenuItemsContainer>
-                </LegacyDropdownContent>
-              }
-            />
+                  </Dropdown.Section>
+                </div>
+              </Dropdown.Content>
+            </DropdownRoot>
           )}
         />
       </StyledSearchContainer>

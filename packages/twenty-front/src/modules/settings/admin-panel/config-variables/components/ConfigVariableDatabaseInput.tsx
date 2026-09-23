@@ -1,19 +1,20 @@
+import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ConfigVariableType } from '~/generated-admin/graphql';
-import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 
 const StyledJsonEditorContainer = styled.div`
   display: flex;
@@ -48,6 +49,9 @@ export const ConfigVariableDatabaseInput = ({
   disabled,
   placeholder,
 }: ConfigVariableDatabaseInputProps) => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const selectOptions =
     options && Array.isArray(options)
       ? options.map((option) => ({
@@ -114,13 +118,16 @@ export const ConfigVariableDatabaseInput = ({
       return (
         <>
           {options && Array.isArray(options) ? (
-            <Dropdown
+            <DropdownRoot
               dropdownId="config-variable-array-dropdown"
-              dropdownPlacement="bottom-start"
-              dropdownOffset={{
-                y: 8,
-              }}
-              clickableComponent={
+              type="picker"
+              multiple
+            >
+              <Dropdown.Trigger
+                render={<div />}
+                nativeButton={false}
+                disabled={disabled}
+              >
                 <SelectControl
                   selectedOption={{
                     value: '',
@@ -133,28 +140,29 @@ export const ConfigVariableDatabaseInput = ({
                   hasRightElement={false}
                   selectSizeVariant="default"
                 />
-              }
-              dropdownComponents={
-                <LegacyDropdownContent>
-                  <DropdownMenuItemsContainer isMultiSelect>
+              </Dropdown.Trigger>
+              <Dropdown.Content
+                side="bottom"
+                align="start"
+                sideOffset={8}
+                data-click-outside-id={excludedClickOutsideId}
+              >
+                <div data-click-outside-id={parentClickOutsideId}>
+                  <Dropdown.Section>
                     {selectOptions.map((option) => (
-                      <ListItem
-                        render={<button type="button" />}
+                      <Dropdown.OptionItem
                         key={option.value}
                         className="config-variable-array-menu-item-multi-select"
-                        role="option"
-                        aria-selected={isValueSelected(option.value)}
                         selected={isValueSelected(option.value)}
-                        indicator="checkbox"
-                        onClick={() => handleMultiSelectChange(option.value)}
+                        onSelect={() => handleMultiSelectChange(option.value)}
                       >
                         {option.label}
-                      </ListItem>
+                      </Dropdown.OptionItem>
                     ))}
-                  </DropdownMenuItemsContainer>
-                </LegacyDropdownContent>
-              }
-            />
+                  </Dropdown.Section>
+                </div>
+              </Dropdown.Content>
+            </DropdownRoot>
           ) : (
             <TextArea
               textAreaId={jsonArrayTextAreaId}

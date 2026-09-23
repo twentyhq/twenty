@@ -1,17 +1,18 @@
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  Dropdown,
   SearchInput,
   Section,
   SettingsRow,
@@ -34,6 +35,9 @@ const StyledSearchContainer = styled.div`
 `;
 
 export const SettingsAgentSkillsTab = () => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
@@ -132,14 +136,20 @@ export const SettingsAgentSkillsTab = () => {
           value={searchTerm}
           onChange={setSearchTerm}
           filterDropdown={(filterButton) => (
-            <Dropdown
+            <DropdownRoot
               dropdownId="settings-skills-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <LegacyDropdownContent>
-                  <DropdownMenuItemsContainer>
+              type="panel"
+            >
+              <Dropdown.Trigger render={filterButton} />
+              <Dropdown.Content
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+                data-click-outside-id={excludedClickOutsideId}
+              >
+                <div data-click-outside-id={parentClickOutsideId}>
+                  <Dropdown.Section>
                     <SettingsRow
                       startIcon={<IconArchive />}
                       onCheckedChange={setShowDeactivated}
@@ -152,10 +162,10 @@ export const SettingsAgentSkillsTab = () => {
                         checked={showSystemSkills}
                       >{t`System skills`}</SettingsRow>
                     )}
-                  </DropdownMenuItemsContainer>
-                </LegacyDropdownContent>
-              }
-            />
+                  </Dropdown.Section>
+                </div>
+              </Dropdown.Content>
+            </DropdownRoot>
           )}
         />
       </StyledSearchContainer>

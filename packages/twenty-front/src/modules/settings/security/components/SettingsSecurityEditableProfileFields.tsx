@@ -3,15 +3,16 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constants/EditableProfileFields.constants';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { Dropdown, useToast } from 'twenty-ui/components';
 import {
   IconMail,
   IconPhoto,
@@ -20,7 +21,6 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
@@ -37,6 +37,9 @@ type ProfileFieldOption = {
 };
 
 export const SettingsSecurityEditableProfileFields = () => {
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
@@ -115,39 +118,45 @@ export const SettingsSecurityEditableProfileFields = () => {
 
   return (
     <StyledDropdownContainer>
-      <Dropdown
+      <DropdownRoot
         dropdownId={EDITABLE_PROFILE_FIELDS_DROPDOWN_ID}
-        dropdownPlacement="bottom-start"
-        dropdownOffset={{ y: 8 }}
-        clickableComponent={
+        type="picker"
+        multiple
+      >
+        <Dropdown.Trigger
+          render={<div />}
+          nativeButton={false}
+          disabled={!isDefined(currentWorkspace)}
+        >
           <SelectControl
             selectedOption={selectedOption}
             isDisabled={!currentWorkspace}
             hasRightElement={false}
           />
-        }
-        dropdownComponents={
-          <LegacyDropdownContent>
-            <DropdownMenuItemsContainer isMultiSelect>
+        </Dropdown.Trigger>
+        <Dropdown.Content
+          side="bottom"
+          align="start"
+          sideOffset={8}
+          data-click-outside-id={excludedClickOutsideId}
+        >
+          <div data-click-outside-id={parentClickOutsideId}>
+            <Dropdown.Section>
               {profileFieldOptions.map((option) => (
-                <ListItem
-                  render={<button type="button" />}
+                <Dropdown.OptionItem
                   key={option.value}
                   className="settings-security-editable-profile-fields-menu-item"
-                  role="option"
-                  aria-selected={selectedFields.includes(option.value)}
                   selected={selectedFields.includes(option.value)}
-                  indicator="checkbox"
-                  onClick={() => toggleField(option.value)}
+                  onSelect={() => toggleField(option.value)}
                   startIcon={<SelectOptionIcon Icon={option.Icon} />}
                 >
                   {option.label}
-                </ListItem>
+                </Dropdown.OptionItem>
               ))}
-            </DropdownMenuItemsContainer>
-          </LegacyDropdownContent>
-        }
-      />
+            </Dropdown.Section>
+          </div>
+        </Dropdown.Content>
+      </DropdownRoot>
     </StyledDropdownContainer>
   );
 };
