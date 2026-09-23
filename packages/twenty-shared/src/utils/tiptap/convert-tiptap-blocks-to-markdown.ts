@@ -27,6 +27,7 @@ const TIPTAP_ONLY_NODE_TYPES: string[] = [
 
 // BlockNote keeps formatting in `props` and `styles`, so `attrs` and `marks`
 // only ever come from TipTap, even in a body made of plain paragraphs.
+// Temporary until rich text is stored as TipTap: twentyhq/core-team-issues#2921
 const containsTipTapOnlyContent = (node: TipTapNode): boolean =>
   TIPTAP_ONLY_NODE_TYPES.includes(node.type) ||
   isDefined(node.attrs) ||
