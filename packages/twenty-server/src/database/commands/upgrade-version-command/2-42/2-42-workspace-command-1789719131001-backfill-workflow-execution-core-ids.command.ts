@@ -51,7 +51,7 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
 
       await queryRunner.startTransaction();
 
-      await queryRunner.query(
+      const [, createdCoreVersionCount] = await queryRunner.query(
         `WITH "createdCoreVersions" AS (
            INSERT INTO core."workflowVersion"
              (id, "workspaceId", "universalIdentifier", "applicationId", triggers, steps, status, "workflowId", "coreWorkflowId", "workspaceWorkflowVersionId")
@@ -60,8 +60,8 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
              wv.steps, wv.status::text::core."workflowVersion_status_enum", wv."workflowId", cw.id, wv.id
            FROM "${schema}"."workflowVersion" wv
            JOIN core."workspace" workspace ON workspace.id = $1
-           LEFT JOIN "${schema}"."workflow" w ON w.id = wv."workflowId"
-           LEFT JOIN core."workflow" cw
+           JOIN "${schema}"."workflow" w ON w.id = wv."workflowId"
+           JOIN core."workflow" cw
              ON cw.id = w."coreWorkflowId" AND cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = wv."workflowId"
            WHERE wv."deletedAt" IS NULL AND wv."coreWorkflowVersionId" IS NULL
              AND NOT EXISTS (
@@ -77,27 +77,25 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
         [workspaceId],
       );
 
-      const invalidMappings: { id: string; reason: string }[] =
-        await queryRunner.query(
-          `SELECT wv.id, CASE
-             WHEN cv.id IS NULL OR cv."workspaceId" <> $1 THEN 'missing core version'
-             WHEN cv."workspaceWorkflowVersionId" IS DISTINCT FROM wv.id THEN 'version alias mismatch'
-             WHEN cv."workflowId" IS DISTINCT FROM wv."workflowId" THEN 'workflow mismatch'
-             WHEN cw.id IS NULL OR cw."workspaceId" <> $1 THEN 'missing core workflow'
-             ELSE 'core workflow mismatch'
-           END AS reason
-           FROM "${schema}"."workflowVersion" wv
-           LEFT JOIN core."workflowVersion" cv ON cv.id = wv."coreWorkflowVersionId"
-           LEFT JOIN core."workflow" cw ON cw.id = cv."coreWorkflowId"
-           WHERE (wv."deletedAt" IS NULL OR cv.id IS NOT NULL) AND (
-             cv.id IS NULL OR cv."workspaceId" <> $1 OR
-             cv."workflowId" IS DISTINCT FROM wv."workflowId" OR
-             cw.id IS NULL OR cw."workspaceId" <> $1 OR
-             cw."workspaceWorkflowId" IS DISTINCT FROM wv."workflowId" OR
-             cv."workspaceWorkflowVersionId" IS DISTINCT FROM wv.id
-           ) LIMIT 10`,
-          [workspaceId],
+      if (createdCoreVersionCount > 0) {
+        this.logger.log(
+          `${options.dryRun ? '[DRY RUN] Would create' : 'Created'} ${createdCoreVersionCount} missing core workflow version(s) in workspace ${workspaceId}`,
         );
+      }
+
+      const invalidMappings: { id: string }[] = await queryRunner.query(
+        `SELECT wv.id FROM "${schema}"."workflowVersion" wv
+         LEFT JOIN core."workflowVersion" cv ON cv.id = wv."coreWorkflowVersionId"
+         LEFT JOIN core."workflow" cw ON cw.id = cv."coreWorkflowId"
+         WHERE (wv."deletedAt" IS NULL OR cv.id IS NOT NULL) AND (
+           cv.id IS NULL OR cv."workspaceId" <> $1 OR
+           cv."workflowId" IS DISTINCT FROM wv."workflowId" OR
+           cw.id IS NULL OR cw."workspaceId" <> $1 OR
+           cw."workspaceWorkflowId" IS DISTINCT FROM wv."workflowId" OR
+           cv."workspaceWorkflowVersionId" IS DISTINCT FROM wv.id
+         ) LIMIT 10`,
+        [workspaceId],
+      );
       const duplicates: { coreWorkflowVersionId: string }[] =
         await queryRunner.query(
           `SELECT wv."coreWorkflowVersionId" FROM "${schema}"."workflowVersion" wv
@@ -109,10 +107,10 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
       if (invalidMappings.length > 0 || duplicates.length > 0) {
         throw new Error(
           `Missing or conflicting workflow version mapping in workspace ${workspaceId}: ${[
-            ...invalidMappings.map(({ id, reason }) => `${id} (${reason})`),
+            ...invalidMappings.map(({ id }) => `workspace version ${id}`),
             ...duplicates.map(
               ({ coreWorkflowVersionId }) =>
-                `${coreWorkflowVersionId} (shared core version)`,
+                `shared core version ${coreWorkflowVersionId}`,
             ),
           ].join(', ')}`,
         );
@@ -125,9 +123,9 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          LEFT JOIN core."workflow" cw
            ON cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = r."workflowId"
          LEFT JOIN core."workflowVersion" "storedVersion"
-           ON "storedVersion"."workspaceId" = $1 AND "storedVersion".id = r."coreWorkflowVersionId"
+           ON "storedVersion".id = r."coreWorkflowVersionId"
          LEFT JOIN core."workflow" "storedWorkflow"
-           ON "storedWorkflow"."workspaceId" = $1 AND "storedWorkflow".id = r."coreWorkflowId"
+           ON "storedWorkflow".id = r."coreWorkflowId"
          WHERE ("storedVersion".id IS NOT NULL AND cv.id IS NOT NULL AND "storedVersion".id <> cv.id)
             OR ("storedWorkflow".id IS NOT NULL AND cw.id IS NOT NULL AND "storedWorkflow".id <> cw.id)
             OR (cv.id IS NOT NULL AND cw.id IS NOT NULL AND cv."coreWorkflowId" <> cw.id)
@@ -150,7 +148,7 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          WHERE cv."workspaceId" = $1 AND cv."workspaceWorkflowVersionId" = r."workflowVersionId"
            AND NOT EXISTS (
              SELECT 1 FROM core."workflowVersion" "storedVersion"
-             WHERE "storedVersion"."workspaceId" = $1 AND "storedVersion".id = r."coreWorkflowVersionId"
+             WHERE "storedVersion".id = r."coreWorkflowVersionId"
            )`,
         [workspaceId],
       );
@@ -161,7 +159,7 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          WHERE cv."workspaceId" = $1 AND cv.id = r."coreWorkflowVersionId"
            AND NOT EXISTS (
              SELECT 1 FROM core."workflow" "storedWorkflow"
-             WHERE "storedWorkflow"."workspaceId" = $1 AND "storedWorkflow".id = r."coreWorkflowId"
+             WHERE "storedWorkflow".id = r."coreWorkflowId"
            )`,
         [workspaceId],
       );
@@ -172,7 +170,7 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
          WHERE cw."workspaceId" = $1 AND cw."workspaceWorkflowId" = r."workflowId"
            AND NOT EXISTS (
              SELECT 1 FROM core."workflow" "storedWorkflow"
-             WHERE "storedWorkflow"."workspaceId" = $1 AND "storedWorkflow".id = r."coreWorkflowId"
+             WHERE "storedWorkflow".id = r."coreWorkflowId"
            )`,
         [workspaceId],
       );
@@ -230,6 +228,7 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
       } else {
         await queryRunner.commitTransaction();
         await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'flatWorkflowMaps',
           'flatWorkflowVersionMaps',
           'workflowAutomatedTriggerMaps',
         ]);
