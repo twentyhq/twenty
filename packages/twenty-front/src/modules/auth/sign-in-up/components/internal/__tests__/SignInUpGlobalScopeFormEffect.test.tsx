@@ -1,7 +1,8 @@
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -24,10 +25,6 @@ jest.mock('@/auth/hooks/useAuth', () => ({
   }),
 }));
 
-jest.mock('@/auth/hooks/useIsLogged', () => ({
-  useIsLogged: () => true,
-}));
-
 jest.mock('@/users/hooks/useLoadCurrentUser', () => ({
   useLoadCurrentUser: () => ({
     loadCurrentUser: async () => ({
@@ -39,27 +36,51 @@ jest.mock('@/users/hooks/useLoadCurrentUser', () => ({
   }),
 }));
 
+const renderEffect = () =>
+  render(
+    <JotaiProvider store={jotaiStore}>
+      <SignInUpGlobalScopeFormEffect />
+    </JotaiProvider>,
+  );
+
 describe('SignInUpGlobalScopeFormEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
+    jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
   });
 
   it('resumes an existing session as a resumed session', async () => {
-    jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
+    jotaiStore.set(isCookieAuthActiveState.atom, true);
 
-    render(
-      <JotaiProvider store={jotaiStore}>
-        <SignInUpGlobalScopeFormEffect />
-      </JotaiProvider>,
-    );
+    renderEffect();
 
     await waitFor(() => {
-      expect(navigateAfterMultiWorkspaceSignInUpMock).toHaveBeenCalledWith(
-        availableWorkspaces,
-        'person@example.com',
-        { isResumingSession: true },
-      );
+      expect(navigateAfterMultiWorkspaceSignInUpMock).toHaveBeenCalledTimes(1);
     });
+    expect(navigateAfterMultiWorkspaceSignInUpMock).toHaveBeenCalledWith(
+      availableWorkspaces,
+      'person@example.com',
+      { isResumingSession: true },
+    );
+  });
+
+  it('treats a session that social SSO starts on the page as a sign-in', async () => {
+    jotaiStore.set(isCookieAuthActiveState.atom, false);
+
+    renderEffect();
+
+    act(() => {
+      jotaiStore.set(isCookieAuthActiveState.atom, true);
+    });
+
+    await waitFor(() => {
+      expect(navigateAfterMultiWorkspaceSignInUpMock).toHaveBeenCalledTimes(1);
+    });
+    expect(navigateAfterMultiWorkspaceSignInUpMock).toHaveBeenCalledWith(
+      availableWorkspaces,
+      'person@example.com',
+      { isResumingSession: false },
+    );
   });
 });
