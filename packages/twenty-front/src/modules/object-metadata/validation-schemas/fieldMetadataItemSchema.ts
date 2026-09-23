@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
-import { themeColorSchema } from 'twenty-ui/utilities';
 import {
   FieldMetadataType,
   MetadataWritability,
   RelationType,
 } from '~/generated-metadata/graphql';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
+import { themeColorSchema } from '~/utils/validation-schemas/themeColorSchema';
 
 export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
   const relationObjectSchema = z.object({

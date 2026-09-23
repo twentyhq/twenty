@@ -79,8 +79,7 @@
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
     "react-responsive": "^9.0.2",
-    "type-fest": "^4.10.1",
-    "zod": "^4.1.11"
+    "type-fest": "^4.10.1"
   },
   "peerDependencies": {
     "@monaco-editor/react": "^4.7.0",

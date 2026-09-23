@@ -1,10 +1,20 @@
-import { DEFAULT_THEME_COLOR_FALLBACK, type ThemeColor } from '@ui/theme';
+import { isString } from '@sniptt/guards';
 
-import { themeColorSchema } from './themeColorSchema';
+import {
+  DEFAULT_THEME_COLOR_FALLBACK,
+  MAIN_COLOR_NAMES,
+  type ThemeColor,
+} from '@ui/theme';
 
 export const parseThemeColor = (
   color: string | null | undefined,
 ): ThemeColor => {
-  const result = themeColorSchema.safeParse(color ?? '');
-  return result.success ? result.data : DEFAULT_THEME_COLOR_FALLBACK;
+  if (!isString(color)) {
+    return DEFAULT_THEME_COLOR_FALLBACK;
+  }
+
+  return (
+    MAIN_COLOR_NAMES.find((themeColor) => themeColor === color) ??
+    DEFAULT_THEME_COLOR_FALLBACK
+  );
 };

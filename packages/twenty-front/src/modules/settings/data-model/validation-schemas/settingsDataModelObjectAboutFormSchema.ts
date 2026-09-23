@@ -1,10 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { t } from '@lingui/core/macro';
-import { themeColorSchema } from 'twenty-ui/utilities';
 import { type ZodType, z } from 'zod';
 import { type ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
+import { themeColorSchema } from '~/utils/validation-schemas/themeColorSchema';
 
 type ZodTypeSettingsDataModelFormFields = ZodType<
   Pick<
