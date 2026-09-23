@@ -7,14 +7,12 @@ describe('Code interpreter sender credentials', () => {
     'preserves application scope %s in the sandbox token and session identity',
     async (applicationId) => {
       const interpreter = {
-        execute: jest
-          .fn()
-          .mockResolvedValue({
-            exitCode: 0,
-            stdout: '',
-            stderr: '',
-            files: [],
-          }),
+        execute: jest.fn().mockResolvedValue({
+          exitCode: 0,
+          stdout: '',
+          stderr: '',
+          files: [],
+        }),
       };
       const jwt = {
         signAsyncOrThrow: jest.fn().mockResolvedValue('scoped-token'),
