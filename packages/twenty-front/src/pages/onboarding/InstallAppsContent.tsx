@@ -1,15 +1,14 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
-import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
+import { OnboardingFreeCreditsCtaTag } from '@/onboarding/components/free-credits/OnboardingFreeCreditsCtaTag';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInstallableApp';
 import { styled } from '@linaria/react';
-import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
@@ -121,8 +120,18 @@ export const InstallAppsContent = ({
 }: InstallAppsContentProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { formatNumber } = useNumberFormat();
 
   const hasApps = isNonEmptyArray(apps);
+
+  const getCreditsTagLabel = (rewardPerApp: number) => {
+    const selectedAppsCount = selectedUniversalIdentifiers.length;
+    const formattedRewardPerApp = formatNumber(rewardPerApp, { decimals: 2 });
+
+    return selectedAppsCount > 0
+      ? `+${formatNumber(rewardPerApp * selectedAppsCount, { decimals: 2 })}`
+      : t`+${formattedRewardPerApp} each`;
+  };
 
   return (
     <StyledOnboardingStepPage>
@@ -140,23 +149,10 @@ export const InstallAppsContent = ({
               : t`No apps are available to install right now`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsRewardPerApp) && hasApps && (
-          <OnboardingStepAnimatedItem index={2}>
-            <StyledOnboardingStepTagsRow>
-              <OnboardingCreditsRewardTag
-                amount={creditsRewardPerApp}
-                suffix={plural(creditsRewardPerApp, {
-                  one: 'free credit per app installed',
-                  other: 'free credits per app installed',
-                })}
-              />
-            </StyledOnboardingStepTagsRow>
-          </OnboardingStepAnimatedItem>
-        )}
       </StyledOnboardingStepHeading>
 
       {hasApps && (
-        <OnboardingStepAnimatedItem index={3}>
+        <OnboardingStepAnimatedItem index={2}>
           <StyledCard>
             {apps.map((app) => {
               const labelText = t(app.label);
@@ -204,7 +200,7 @@ export const InstallAppsContent = ({
         </OnboardingStepAnimatedItem>
       )}
 
-      <OnboardingStepAnimatedItem index={4}>
+      <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
           {hasApps && (
             <StyledInstallButton>
@@ -214,7 +210,14 @@ export const InstallAppsContent = ({
                   isCompleting || !isNonEmptyArray(selectedUniversalIdentifiers)
                 }
                 fullWidth
-              >{t`Install`}</MainButton>
+              >
+                {t`Install`}
+                {isDefined(creditsRewardPerApp) && (
+                  <OnboardingFreeCreditsCtaTag
+                    label={getCreditsTagLabel(creditsRewardPerApp)}
+                  />
+                )}
+              </MainButton>
             </StyledInstallButton>
           )}
           <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />

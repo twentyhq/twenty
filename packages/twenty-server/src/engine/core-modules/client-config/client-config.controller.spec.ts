@@ -93,6 +93,7 @@ describe('ClientConfigController', () => {
           importContactsCreditsReward: 2,
           inviteTeamCreditsRewardPerUser: 3,
           installAppsCreditsRewardPerApp: 1,
+          inviteTeamMaxInvites: 10,
         },
         isAttachmentPreviewEnabled: true,
         analyticsEnabled: false,

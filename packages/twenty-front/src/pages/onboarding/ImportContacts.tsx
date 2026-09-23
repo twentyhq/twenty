@@ -1,11 +1,11 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
-import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
+import { OnboardingFreeCreditsCtaTag } from '@/onboarding/components/free-credits/OnboardingFreeCreditsCtaTag';
 import { OnboardingImportPreview } from '@/onboarding/components/import-contacts/OnboardingImportPreview';
 import { OnboardingTrustBadges } from '@/onboarding/components/import-contacts/OnboardingTrustBadges';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
@@ -63,6 +63,13 @@ export const ImportContacts = ({
 }: ImportContactsProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { formatNumber } = useNumberFormat();
+
+  const creditsTag = isDefined(creditsReward) ? (
+    <OnboardingFreeCreditsCtaTag
+      label={`+${formatNumber(creditsReward, { decimals: 2 })}`}
+    />
+  ) : null;
 
   return (
     <StyledOnboardingStep>
@@ -75,23 +82,16 @@ export const ImportContacts = ({
             {t`Connect your email and calendar to see your entire network instantly. Takes only 30 seconds.`}
           </StyledSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsReward) && (
-          <OnboardingStepAnimatedItem index={2}>
-            <StyledOnboardingStepTagsRow>
-              <OnboardingCreditsRewardTag amount={creditsReward} />
-            </StyledOnboardingStepTagsRow>
-          </OnboardingStepAnimatedItem>
-        )}
       </StyledOnboardingStepHeading>
 
-      <OnboardingStepAnimatedItem index={3}>
+      <OnboardingStepAnimatedItem index={2}>
         <StyledMiddle>
           <OnboardingTrustBadges />
           <OnboardingImportPreview />
         </StyledMiddle>
       </OnboardingStepAnimatedItem>
 
-      <OnboardingStepAnimatedItem index={4}>
+      <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
           <StyledButtons>
             {isDefined(onContinueWithMicrosoft) && (
@@ -99,14 +99,20 @@ export const ImportContacts = ({
                 fullWidth
                 onClick={onContinueWithMicrosoft}
                 startIcon={<IconMicrosoft size={theme.icon.size.md} />}
-              >{t`Continue with Microsoft`}</MainButton>
+              >
+                {t`Continue with Microsoft`}
+                {creditsTag}
+              </MainButton>
             )}
             {isDefined(onContinueWithGoogle) && (
               <MainButton
                 fullWidth
                 onClick={onContinueWithGoogle}
                 startIcon={<IconGoogle size={theme.icon.size.md} />}
-              >{t`Continue with Google`}</MainButton>
+              >
+                {t`Continue with Google`}
+                {creditsTag}
+              </MainButton>
             )}
           </StyledButtons>
           {isDefined(onSkip) && <OnboardingSkipButton onClick={onSkip} />}

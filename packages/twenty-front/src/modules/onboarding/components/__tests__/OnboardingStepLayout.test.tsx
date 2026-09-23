@@ -6,6 +6,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
@@ -15,7 +16,10 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ToastProvider } from 'twenty-ui/components';
-import { GetOnboardingCreditRewardsDocument } from '~/generated-metadata/graphql';
+import {
+  GetOnboardingCreditRewardsDocument,
+  OnboardingStatus,
+} from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
@@ -37,6 +41,7 @@ const onboardingConfig: OnboardingConfig = {
   importContactsCreditsReward: 2,
   inviteTeamCreditsRewardPerUser: 3,
   installAppsCreditsRewardPerApp: 1,
+  inviteTeamMaxInvites: 2,
 };
 
 const buildCreditRewardsMock = (totalCredits: number) => ({
@@ -70,6 +75,12 @@ const renderOnboardingStepLayout = (totalCredits: number) =>
     ),
   });
 
+const setOnboardingStatus = (onboardingStatus: OnboardingStatus) =>
+  jotaiStore.set(currentUserState.atom, {
+    id: 'user-id',
+    onboardingStatus,
+  } as never);
+
 describe('OnboardingStepLayout', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -77,28 +88,32 @@ describe('OnboardingStepLayout', () => {
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
   });
 
-  it('should invite to earn free credits before any is granted', async () => {
+  it('should invite to earn the email reward on the first step', async () => {
     jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
+    setOnboardingStatus(OnboardingStatus.SYNC_EMAIL);
 
     renderOnboardingStepLayout(0);
 
-    expect(await screen.findByText('Earn free credits')).toBeInTheDocument();
+    expect(await screen.findByText('Earn 2')).toBeInTheDocument();
   });
 
-  it('should display the free credits granted so far', async () => {
+  it('should display the free credits granted so far out of the setup total', async () => {
     jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
+    setOnboardingStatus(OnboardingStatus.PROFILE_CREATION);
 
     renderOnboardingStepLayout(1.5);
 
-    expect(await screen.findByText('1.5')).toBeInTheDocument();
+    expect(await screen.findByText('1.5/11')).toBeInTheDocument();
     expect(screen.getByText('free credits')).toBeInTheDocument();
   });
 
   it('should hide the free credits pill when credits rewards are not configured', () => {
     jotaiStore.set(onboardingConfigState.atom, null);
 
+    setOnboardingStatus(OnboardingStatus.SYNC_EMAIL);
+
     renderOnboardingStepLayout(0);
 
-    expect(screen.queryByText('Earn free credits')).not.toBeInTheDocument();
+    expect(screen.queryByText('Earn 2')).not.toBeInTheDocument();
   });
 });

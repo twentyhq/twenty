@@ -251,6 +251,9 @@ export class ClientConfigService {
                 'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
               ),
             ),
+            inviteTeamMaxInvites: this.twentyConfigService.get(
+              'ONBOARDING_INVITE_TEAM_MAX_INVITES',
+            ),
           }
         : null,
       isAttachmentPreviewEnabled: this.twentyConfigService.get(

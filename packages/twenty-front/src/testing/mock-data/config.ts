@@ -50,6 +50,7 @@ export const mockedClientConfig: ClientConfig = {
     importContactsCreditsReward: 2,
     inviteTeamCreditsRewardPerUser: 3,
     installAppsCreditsRewardPerApp: 1,
+    inviteTeamMaxInvites: 10,
   },
   canManageFeatureFlags: true,
   publicFeatureFlags: [],
