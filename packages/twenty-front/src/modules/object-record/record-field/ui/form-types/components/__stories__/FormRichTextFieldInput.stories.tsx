@@ -44,6 +44,7 @@ export const WithLabel: Story = {
 
 export const WithVariable: Story = {
   args: {
+    enableVariables: true,
     label: 'Rich Text',
     placeholder: 'Rich Text field...',
     defaultValue: { blocknote: null, markdown: '## Title\nVariable: ' },
@@ -99,6 +100,7 @@ export const WithVariable: Story = {
 
 export const WithDeletableVariable: Story = {
   args: {
+    enableVariables: true,
     label: 'Text',
     placeholder: 'Text field...',
     defaultValue: {
@@ -185,6 +187,7 @@ export const Disabled: Story = {
 
 export const DisabledWithVariable: Story = {
   args: {
+    enableVariables: true,
     label: 'Text',
     defaultValue: {
       blocknote: null,
@@ -214,6 +217,7 @@ export const DisabledWithVariable: Story = {
 
 export const HasHistory: Story = {
   args: {
+    enableVariables: true,
     label: 'Text',
     placeholder: 'Text field...',
     VariablePicker: ({ onVariableSelect }) => {
@@ -277,5 +281,32 @@ export const HasHistory: Story = {
         '[{"type":"paragraph","content":[{"type":"text","text":"Hello World "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
       markdown: null,
     });
+  },
+};
+
+const BLOCKNOTE_BULLET_LIST = JSON.stringify([
+  {
+    id: 'block-1',
+    type: 'bulletListItem',
+    props: {},
+    content: [{ type: 'text', text: 'First item', styles: {} }],
+  },
+  {
+    id: 'block-2',
+    type: 'bulletListItem',
+    props: {},
+    content: [{ type: 'text', text: 'Second item', styles: {} }],
+  },
+]);
+
+export const WithBulletList: Story = {
+  args: {
+    defaultValue: { blocknote: BLOCKNOTE_BULLET_LIST, markdown: null },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('First item');
+    await canvas.findByText('Second item');
   },
 };

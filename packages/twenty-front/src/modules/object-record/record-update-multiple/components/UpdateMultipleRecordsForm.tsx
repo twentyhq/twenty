@@ -85,6 +85,7 @@ export const UpdateMultipleRecordsForm = ({
               defaultValue={value}
               onChange={handleValueChange}
               onClear={() => onChange(fieldNameOrRelationIdName, undefined)}
+              formSubmitsOnModEnter
             />
           );
         })}

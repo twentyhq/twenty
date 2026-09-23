@@ -2,15 +2,20 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter';
 import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
 import { useUpdateMultipleRecordsActions } from '@/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -92,6 +97,31 @@ export const UpdateMultipleRecordsContainer = ({
     (value) => value !== undefined,
   );
 
+  const isUpdateDisabled = !hasChanges || !hasSelectedRecords;
+
+  const currentFocusId = useAtomStateValue(currentFocusIdSelector);
+
+  // A focused field owns the focus stack, so the footer hotkey bound to the
+  // side panel focus never sees Mod+Enter typed inside the form. Side panel
+  // focus stays with the footer, so the event must keep bubbling up to it.
+  const formContainerRef = useHotkeysOnFocusedElement({
+    keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
+    callback: () => {
+      if (
+        currentFocusId !== SIDE_PANEL_FOCUS_ID &&
+        !isUpdating &&
+        !isUpdateDisabled
+      ) {
+        handleUpdateClick();
+      }
+    },
+    focusId: currentFocusId ?? SIDE_PANEL_FOCUS_ID,
+    dependencies: [currentFocusId, isUpdating, isUpdateDisabled],
+    options: {
+      preventDefault: false,
+    },
+  });
+
   const handleFieldChange = (fieldName: string, value: any) => {
     setFieldUpdates((prevState) => ({
       ...prevState,
@@ -103,7 +133,7 @@ export const UpdateMultipleRecordsContainer = ({
     <SidePanelProvider value={{ isInSidePanel: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
-          <StyledContentContainer>
+          <StyledContentContainer ref={formContainerRef}>
             <UpdateMultipleRecordsForm
               disabled={isUpdating}
               values={fieldUpdates}
@@ -116,7 +146,7 @@ export const UpdateMultipleRecordsContainer = ({
             progress={progress}
             onUpdate={handleUpdateClick}
             onCancel={handleCancel}
-            isUpdateDisabled={!hasChanges || !hasSelectedRecords}
+            isUpdateDisabled={isUpdateDisabled}
           />
         </StyledShowPageRightContainer>
       </ShowPageContainer>

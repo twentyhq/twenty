@@ -18,7 +18,6 @@ import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types
 import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormRelationToOneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRelationToOneFieldInput';
-import { FormRecordRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput';
 import { FormRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRichTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -73,6 +72,7 @@ type FormFieldInputProps = {
   error?: string;
   onError?: (error: string | undefined) => void;
   timeZone?: string;
+  formSubmitsOnModEnter?: boolean;
 };
 
 export const FormFieldInput = ({
@@ -86,6 +86,7 @@ export const FormFieldInput = ({
   error,
   onError,
   timeZone,
+  formSubmitsOnModEnter,
 }: FormFieldInputProps) => {
   return isFieldNumber(field) || field.type === FieldMetadataType.NUMERIC ? (
     <FormNumberFieldInput
@@ -230,24 +231,16 @@ export const FormFieldInput = ({
       readonly={readonly}
     />
   ) : isFieldRichText(field) ? (
-    isDefined(VariablePicker) ? (
-      <FormRichTextFieldInput
-        label={field.label}
-        defaultValue={defaultValue as FieldRichTextValue | undefined}
-        onChange={onChange}
-        VariablePicker={VariablePicker}
-        readonly={readonly}
-        placeholder={placeholder}
-      />
-    ) : (
-      <FormRecordRichTextFieldInput
-        label={field.label}
-        defaultValue={defaultValue as FieldRichTextValue | undefined}
-        onChange={onChange}
-        readonly={readonly}
-        placeholder={placeholder}
-      />
-    )
+    <FormRichTextFieldInput
+      enableVariables={isDefined(VariablePicker)}
+      formSubmitsOnModEnter={formSubmitsOnModEnter}
+      label={field.label}
+      defaultValue={defaultValue as FieldRichTextValue | undefined}
+      onChange={onChange}
+      VariablePicker={VariablePicker}
+      readonly={readonly}
+      placeholder={placeholder}
+    />
   ) : isFieldRelationManyToOne(field) ? (
     <FormRelationToOneFieldInput
       label={field.label}

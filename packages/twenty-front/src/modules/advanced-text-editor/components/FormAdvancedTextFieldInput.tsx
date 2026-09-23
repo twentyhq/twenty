@@ -1,3 +1,4 @@
+import { useAdvancedTextEditorFocus } from '@/advanced-text-editor/hooks/useAdvancedTextEditorFocus';
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
@@ -8,9 +9,6 @@ import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputCon
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
@@ -63,18 +61,25 @@ const StyledAdvancedTextFieldInnerContainer = styled.div<{
   flex-grow: 1;
   overflow: auto;
   width: 100%;
+
+  /* Centers the first line of text on the action icons. */
+  &[data-has-actions='true'] .tiptap {
+    padding-top: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledEditorActionButtonContainer = styled.div<{
   hasVariablePicker?: boolean;
 }>`
-  margin-top: ${themeCssVariables.spacing[1]};
+  align-items: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[7]};
   position: absolute;
   right: ${({ hasVariablePicker }) =>
     hasVariablePicker
       ? `calc(${themeCssVariables.spacing[7]} + ${themeCssVariables.spacing[2]})`
       : themeCssVariables.spacing[1]};
-  top: ${themeCssVariables.spacing[0]};
+  top: ${themeCssVariables.spacing[1]};
   z-index: 1;
 `;
 
@@ -129,15 +134,15 @@ export const FormAdvancedTextFieldInput = ({
 
   const editorMinHeight = minHeight ?? profileMinHeight;
   const isFullScreenEnabled = enableFullScreen ?? profile.enableFullScreen;
+  const hasActions =
+    !readonly && (isFullScreenEnabled || isDefined(VariablePicker));
 
   const instanceId = useId();
   const isMobile = useIsMobile();
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const { t } = useLingui();
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
+  const { onFocus, onBlur } = useAdvancedTextEditorFocus(instanceId);
 
   const editor = useAdvancedTextEditor({
     profile,
@@ -147,21 +152,8 @@ export const FormAdvancedTextFieldInput = ({
     onUpdate: (editor) => {
       onChange?.(serializeAdvancedTextEditorDocument(editor));
     },
-    onFocus: () => {
-      pushFocusItemToFocusStack({
-        focusId: instanceId,
-        component: {
-          type: FocusComponentType.FORM_FIELD_INPUT,
-          instanceId: instanceId,
-        },
-        globalHotkeysConfig: {
-          enableGlobalHotkeysConflictingWithKeyboard: false,
-        },
-      });
-    },
-    onBlur: () => {
-      removeFocusItemFromFocusStackById({ focusId: instanceId });
-    },
+    onFocus,
+    onBlur,
     onImageUpload,
     onImageUploadError,
   });
@@ -236,6 +228,7 @@ export const FormAdvancedTextFieldInput = ({
           <StyledAdvancedTextFieldFieldContainer>
             <StyledAdvancedTextFieldInnerContainer
               hasFieldChrome={chrome === 'field'}
+              data-has-actions={hasActions}
             >
               {!isFullScreen && (
                 <EditorComponent
