@@ -31,6 +31,7 @@ describe('slackHealthCheckHandler', () => {
   it('should bound the Slack call so a hanging Slack cannot exhaust the check budget', async () => {
     await slackHealthCheckHandler();
 
+    expect(getSlackClient).toHaveBeenCalledTimes(1);
     expect(getSlackClient).toHaveBeenCalledWith({
       timeout: SLACK_CONNECTION_STATUS_TIMEOUT_MS,
       retryConfig: { retries: 0 },
