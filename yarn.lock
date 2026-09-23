@@ -50601,7 +50601,6 @@ __metadata:
     react-docgen-typescript: "npm:^2.2.2"
     react-dom: "npm:^19.2.0"
     react-responsive: "npm:^9.0.2"
-    react-router-dom: "npm:^7.18.4"
     sass: "npm:^1.83.0"
     sass-embedded: "npm:^1.83.0"
     size-limit: "npm:^12.1.0"
@@ -50621,13 +50620,10 @@ __metadata:
     monaco-editor: ">= 0.25.0 < 1"
     react: ^19.0.0
     react-dom: ^19.0.0
-    react-router-dom: ^7.18.4
   peerDependenciesMeta:
     "@monaco-editor/react":
       optional: true
     monaco-editor:
-      optional: true
-    react-router-dom:
       optional: true
   languageName: unknown
   linkType: soft

@@ -18,14 +18,18 @@ const PACKAGE_PATH = path.resolve(
   '..',
 );
 const ALLOWED_OPTIONAL_PEERS_BY_ENTRY_POINT: Record<string, string[]> = {
-  './testing': ['react-router-dom'],
   './components/code-editor': ['@monaco-editor/react', 'monaco-editor'],
 };
+const ROUTING_DEPENDENCY_NAMES = ['react-router', 'react-router-dom'];
 const OPTIONAL_PEER_DEPENDENCY_NAMES = Object.entries(
   packageJson.peerDependenciesMeta,
 )
   .filter(([, { optional }]) => optional)
   .map(([dependencyName]) => dependencyName);
+const RESTRICTED_DEPENDENCY_NAMES = [
+  ...OPTIONAL_PEER_DEPENDENCY_NAMES,
+  ...ROUTING_DEPENDENCY_NAMES,
+];
 const BARE_IMPORT_PATH_PATTERN = /^[^./]/;
 const DECLARATION_FILE_SUFFIXES = ['.d.ts', '/index.d.ts'];
 
@@ -42,21 +46,21 @@ const matchesDependencyImportPath = ({
       importPath.startsWith(`${dependencyName}/`),
   );
 
-const createOptionalPeerDependenciesPlugin = (
+const createRestrictedDependenciesPlugin = (
   allowedOptionalPeers: string[],
 ): Plugin => ({
-  name: 'reject-optional-peer-dependencies',
+  name: 'reject-restricted-dependencies',
   setup: (build) => {
     build.onResolve({ filter: BARE_IMPORT_PATH_PATTERN }, ({ path }) =>
       matchesDependencyImportPath({
         importPath: path,
-        dependencyNames: OPTIONAL_PEER_DEPENDENCY_NAMES,
+        dependencyNames: RESTRICTED_DEPENDENCY_NAMES,
       }) &&
       !matchesDependencyImportPath({
         importPath: path,
         dependencyNames: allowedOptionalPeers,
       })
-        ? { errors: [{ text: `Unexpected optional peer dependency: ${path}` }] }
+        ? { errors: [{ text: `Unexpected dependency: ${path}` }] }
         : undefined,
     );
   },
@@ -113,6 +117,21 @@ const collectBareDeclarationImports = ({
   );
 };
 
+const declaredRoutingDependencies = Object.keys({
+  ...packageJson.dependencies,
+  ...packageJson.devDependencies,
+  ...packageJson.peerDependencies,
+  ...packageJson.peerDependenciesMeta,
+}).filter((dependencyName) =>
+  ROUTING_DEPENDENCY_NAMES.includes(dependencyName),
+);
+
+if (isNonEmptyArray(declaredRoutingDependencies)) {
+  throw new Error(
+    `Unexpected routing dependencies: ${declaredRoutingDependencies.join(', ')}`,
+  );
+}
+
 for (const [entryName, entryPoint] of Object.entries(packageJson.exports)) {
   if (isString(entryPoint)) {
     continue;
@@ -128,7 +147,7 @@ for (const [entryName, entryPoint] of Object.entries(packageJson.exports)) {
       packages: 'external',
       write: false,
       logLevel: 'error',
-      plugins: [createOptionalPeerDependenciesPlugin(allowedOptionalPeers)],
+      plugins: [createRestrictedDependenciesPlugin(allowedOptionalPeers)],
     });
   }
 
@@ -139,7 +158,7 @@ for (const [entryName, entryPoint] of Object.entries(packageJson.exports)) {
     ({ importPath }) =>
       matchesDependencyImportPath({
         importPath,
-        dependencyNames: OPTIONAL_PEER_DEPENDENCY_NAMES,
+        dependencyNames: RESTRICTED_DEPENDENCY_NAMES,
       }) &&
       !matchesDependencyImportPath({
         importPath,
@@ -152,7 +171,7 @@ for (const [entryName, entryPoint] of Object.entries(packageJson.exports)) {
       unexpectedDeclarationImports
         .map(
           ({ declarationFilePath, importPath }) =>
-            `Unexpected optional peer dependency: ${importPath} in ${entryName}: ${path.relative(PACKAGE_PATH, declarationFilePath)}`,
+            `Unexpected dependency: ${importPath} in ${entryName}: ${path.relative(PACKAGE_PATH, declarationFilePath)}`,
         )
         .join('\n'),
     );
@@ -160,5 +179,5 @@ for (const [entryName, entryPoint] of Object.entries(packageJson.exports)) {
 }
 
 process.stdout.write(
-  'All entry points build with only their declared optional peer dependencies.\n',
+  'All entry points are router-free and use only their allowed optional peer dependencies.\n',
 );

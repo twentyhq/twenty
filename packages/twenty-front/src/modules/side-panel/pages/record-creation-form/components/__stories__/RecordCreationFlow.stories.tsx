@@ -41,7 +41,7 @@ import {
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import {
   EngineComponentKey,
@@ -56,6 +56,7 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const createCompanyRequest = fn();
 const onRecordCreated = fn();
@@ -271,7 +272,7 @@ const meta = {
   decorators: [
     ObjectMetadataItemsDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     ComponentDecorator,
   ],
   parameters: {
