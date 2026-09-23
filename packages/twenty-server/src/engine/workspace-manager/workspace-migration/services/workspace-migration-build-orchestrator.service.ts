@@ -1,3 +1,4 @@
+import { WorkspaceMigrationSettingsMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/workspace-migration-settings-menu-item-actions-builder.service';
 import { WorkspaceMigrationWorkflowVersionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow-version/workspace-migration-workflow-version-actions-builder.service';
 import { WorkspaceMigrationWorkflowActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow/workspace-migration-workflow-actions-builder.service';
 import { Injectable } from '@nestjs/common';
@@ -165,6 +166,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationSearchFieldMetadataActionsBuilderService: WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
     workspaceMigrationWorkflowActionsBuilderService: WorkspaceMigrationWorkflowActionsBuilderService,
     workspaceMigrationWorkflowVersionActionsBuilderService: WorkspaceMigrationWorkflowVersionActionsBuilderService,
+    workspaceMigrationSettingsMenuItemActionsBuilderService: WorkspaceMigrationSettingsMenuItemActionsBuilderService,
   ) {
     // The order of this array defines the execution order of the per-entity
     // builders. Each builder may mutate `optimisticAllFlatEntityMaps`, so
@@ -308,6 +310,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.workflowVersion,
         workspaceMigrationWorkflowVersionActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.settingsMenuItem,
+        workspaceMigrationSettingsMenuItemActionsBuilderService,
       ),
     ];
   }

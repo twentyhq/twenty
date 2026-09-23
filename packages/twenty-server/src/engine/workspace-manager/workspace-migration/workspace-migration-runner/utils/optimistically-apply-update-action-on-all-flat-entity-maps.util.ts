@@ -71,6 +71,7 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
     case 'workflowVersion':
     case 'connectionProvider':
     case 'timelineActivityType':
+    case 'settingsMenuItem':
     case 'searchFieldMetadata': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,
