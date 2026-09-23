@@ -1,5 +1,6 @@
 import { kv, listConnections } from 'twenty-sdk/logic-function';
 
+import { clearSlackInstalledTeamIdCache } from 'src/logic-functions/utils/clear-slack-installed-team-id-cache';
 import { getSlackConnectedAccountTeam } from 'src/logic-functions/utils/get-slack-connected-account-team';
 import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
@@ -39,6 +40,8 @@ export const releaseSlackTeamOnInstallRevoked = async ({
       kv.delete(getSlackConnectedAccountTeamKvKey(connectedAccountId)),
     ),
   );
+
+  await clearSlackInstalledTeamIdCache();
 
   return {
     ok: true,

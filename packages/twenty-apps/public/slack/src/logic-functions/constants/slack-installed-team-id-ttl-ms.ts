@@ -1,0 +1,1 @@
+export const SLACK_INSTALLED_TEAM_ID_TTL_MS = 7 * 24 * 60 * 60 * 1000;
