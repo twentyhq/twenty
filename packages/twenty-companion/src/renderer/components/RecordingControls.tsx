@@ -1,4 +1,4 @@
-import { Section } from '@ui/components/Section/Section';
+import { Section } from '@ui/components/layout/Section/Section';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { i18n } from '@lingui/core';

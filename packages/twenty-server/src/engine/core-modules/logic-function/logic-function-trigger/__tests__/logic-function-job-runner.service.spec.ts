@@ -6,6 +6,10 @@ import {
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionJobRunnerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-job-runner.service';
 import {
+  UsageLimitException,
+  UsageLimitExceptionCode,
+} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
@@ -86,6 +90,26 @@ describe('LogicFunctionJobRunnerService', () => {
         ...logicFunctionPayload,
         applicationRetryCount: 3,
       },
+      retryLimit: 3,
+      persistRetryCount,
+    });
+
+    expect(persistRetryCount).not.toHaveBeenCalled();
+  });
+
+  it('does not fail the job when usage was refused', async () => {
+    const execute = jest
+      .fn()
+      .mockRejectedValue(
+        new UsageLimitException(
+          'Usage limit reached for workspace',
+          UsageLimitExceptionCode.QUOTA_EXHAUSTED,
+        ),
+      );
+    const { service, persistRetryCount } = buildService(execute);
+
+    await service.run({
+      logicFunctionPayload,
       retryLimit: 3,
       persistRetryCount,
     });

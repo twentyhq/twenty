@@ -526,6 +526,7 @@ export interface View {
     mainGroupByFieldMetadataId?: Scalars['UUID']
     shouldHideEmptyGroups: Scalars['Boolean']
     kanbanColumnWidth?: Scalars['Int']
+    groupLoadLimit?: Scalars['Int']
     calendarFieldMetadataId?: Scalars['UUID']
     calendarEndFieldMetadataId?: Scalars['UUID']
     workspaceId: Scalars['UUID']
@@ -1614,7 +1615,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED'
+export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3372,6 +3373,7 @@ export interface Query {
     getAddressDetails: PlaceDetailsResult
     findManyPublicDomains: PublicDomain[]
     exportApplication: ApplicationExport
+    applicationCoreGraphqlSchema: Scalars['String']
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
@@ -3443,6 +3445,7 @@ export interface Mutation {
     endSubscriptionTrialPeriod: BillingEndTrialPeriod
     cancelSwitchResourceCreditPrice: BillingUpdate
     deleteConnectedAccount: ConnectedAccountPublicDTO
+    disconnectConnectedAccount: ConnectedAccountPublicDTO
     updateOneApplicationVariable: Scalars['Boolean']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     completeBookCallOnboardingStep: OnboardingStepSuccess
@@ -3500,6 +3503,8 @@ export interface Mutation {
     createApplicationRegistrationVariable: ApplicationRegistrationVariable
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
+    completeAppTarballUpload: ApplicationRegistration
+    /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
@@ -3638,7 +3643,6 @@ export interface Mutation {
     createApplicationFileUploads: CreateApplicationFileUploadsResult
     completeApplicationFileUploads: CompleteApplicationFileUploadsResult
     revokeApplicationAuthorization: Scalars['Boolean']
-    generateApplicationToken: ApplicationTokenPair
     renewApplicationToken: ApplicationTokenPair
     __typename: 'Mutation'
 }
@@ -4197,6 +4201,7 @@ export interface ViewGenqlSelection{
     mainGroupByFieldMetadataId?: boolean | number
     shouldHideEmptyGroups?: boolean | number
     kanbanColumnWidth?: boolean | number
+    groupLoadLimit?: boolean | number
     calendarFieldMetadataId?: boolean | number
     calendarEndFieldMetadataId?: boolean | number
     workspaceId?: boolean | number
@@ -7177,6 +7182,7 @@ export interface QueryGenqlSelection{
     getAddressDetails?: (PlaceDetailsResultGenqlSelection & { __args: {placeId: Scalars['String'], token: Scalars['String']} })
     findManyPublicDomains?: PublicDomainGenqlSelection
     exportApplication?: (ApplicationExportGenqlSelection & { __args: {universalIdentifier: Scalars['UUID']} })
+    applicationCoreGraphqlSchema?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     currentUserApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7285,6 +7291,7 @@ export interface MutationGenqlSelection{
     endSubscriptionTrialPeriod?: BillingEndTrialPeriodGenqlSelection
     cancelSwitchResourceCreditPrice?: BillingUpdateGenqlSelection
     deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
+    disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId?: (Scalars['UUID'] | null)} }
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
     completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
@@ -7342,6 +7349,8 @@ export interface MutationGenqlSelection{
     createApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: CreateApplicationRegistrationVariableInput} })
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
+    completeAppTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['UUID']} })
+    /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
@@ -7480,7 +7489,6 @@ export interface MutationGenqlSelection{
     createApplicationFileUploads?: (CreateApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], files: ApplicationFileUploadRequestInput[]} })
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
-    generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7526,13 +7534,13 @@ export interface DestroyViewFilterInput {
 /** The id of the view filter to destroy. */
 id: Scalars['UUID']}
 
-export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),
+export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),groupLoadLimit?: (Scalars['Int'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
 
 export interface UpdateViewInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),type?: (ViewType | null),icon?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null)}
+openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),groupLoadLimit?: (Scalars['Int'] | null)}
 
 export interface UpsertViewWidgetInput {
 /** The id of the view widget (page layout widget). */
@@ -7684,7 +7692,7 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),translations?: (MetadataTranslationOverrideInput[] | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),readability?: (MetadataReadability | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
 export interface MetadataTranslationOverrideInput {locale: Scalars['String'],property: Scalars['String'],value?: (Scalars['String'] | null)}
 
@@ -10932,7 +10940,8 @@ export const enumFeatureFlagKey = {
    IS_RECORD_SHARING_ENABLED: 'IS_RECORD_SHARING_ENABLED' as const,
    IS_INITIAL_OBJECT_VIEW_ENABLED: 'IS_INITIAL_OBJECT_VIEW_ENABLED' as const,
    IS_WEBHOOK_RATE_LIMIT_ENABLED: 'IS_WEBHOOK_RATE_LIMIT_ENABLED' as const,
-   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const
+   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
+   IS_EXECUTION_QUOTA_ENABLED: 'IS_EXECUTION_QUOTA_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

@@ -27,7 +27,7 @@ import { Temporal } from 'temporal-polyfill';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
 export const useCalendarEventComposer = ({

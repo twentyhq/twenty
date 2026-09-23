@@ -6,33 +6,25 @@ import { replaceCoreClient } from 'twenty-client-sdk/generate';
 export class ClientService {
   private apiService: ApiService;
 
-  constructor(options?: {
-    serverUrl?: string;
-    token?: string;
-    skipAuth?: boolean;
-  }) {
-    this.apiService = new ApiService({
-      disableInterceptors: true,
-      serverUrl: options?.serverUrl,
-      skipAuth: options?.skipAuth ?? true,
-      token: options?.token,
-    });
+  constructor() {
+    this.apiService = new ApiService({ disableInterceptors: true });
   }
 
   async generateCoreClient({
     appPath,
-    appAccessToken,
+    applicationUniversalIdentifier,
   }: {
     appPath: string;
-    appAccessToken?: string;
+    applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const coreSchemaResponse = await this.apiService.getSchema({
-      appAccessToken,
-    });
+    const coreSchemaResponse =
+      await this.apiService.getApplicationCoreGraphqlSchema(
+        applicationUniversalIdentifier,
+      );
 
     if (!coreSchemaResponse.success) {
       throw new Error(
-        `Failed to introspect core schema: ${JSON.stringify(coreSchemaResponse.error)}`,
+        `Failed to load the application schema: ${JSON.stringify(coreSchemaResponse.error)}`,
       );
     }
 

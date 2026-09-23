@@ -7,7 +7,7 @@ import { ResetPageLayoutWidgetToDefaultDocument } from '~/generated-metadata/gra
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 export const useResetPageLayoutWidgetToDefault = (
   pageLayoutIdFromProps: string,

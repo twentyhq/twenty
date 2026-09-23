@@ -159,6 +159,7 @@ const FIND_ALL_VIEWS_QUERY = gql`
       mainGroupByFieldMetadataId
       shouldHideEmptyGroups
       kanbanColumnWidth
+      groupLoadLimit
       anyFieldFilterValue
       calendarFieldMetadataId
       calendarEndFieldMetadataId

@@ -1,6 +1,6 @@
 import { decodeJwtCompleteOrThrow } from 'test/integration/graphql/utils/decode-jwt-complete-or-throw.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { renewApplicationToken } from 'test/integration/metadata/suites/application/utils/renew-application-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -25,13 +25,11 @@ describe('Application token renewal should succeed', () => {
 
     applicationId = application.id;
 
-    const { data } = await generateApplicationToken({
+    const tokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId,
-      expectToFail: false,
     });
 
-    sessionBoundRefreshToken =
-      data.generateApplicationToken.applicationRefreshToken.token;
+    sessionBoundRefreshToken = tokenPair.applicationRefreshToken.token;
   });
 
   afterEach(() => {

@@ -67,6 +67,7 @@ type Assertions = [
       | 'mainGroupByFieldMetadataUniversalIdentifier'
       | 'shouldHideEmptyGroups'
       | 'kanbanColumnWidth'
+      | 'groupLoadLimit'
       | 'anyFieldFilterValue'
       | 'visibility'
       | 'createdByUserWorkspaceId'

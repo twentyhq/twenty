@@ -1,19 +1,18 @@
-import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
-import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
 import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
 import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionForm';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
+import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
-import { CodeEditor } from 'twenty-ui/components/code-editor';
-import { InputLabel } from 'twenty-ui/primitives/input';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -31,6 +30,7 @@ import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-s
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
 
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';

@@ -21,6 +21,7 @@ import {
 } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
+import { isString } from '@sniptt/guards';
 import {
   ContextStorePageType,
   CoreObjectNameSingular,
@@ -144,6 +145,9 @@ export const CommandMenuContextProviderContent = ({
 
     return mergeGlobalRecordCreationCommandMenuItems({
       commandMenuItems: contextCommandMenuItems,
+      contextObjectMetadataId: isString(currentObjectMetadataItemId)
+        ? currentObjectMetadataItemId
+        : undefined,
       globalRecordCreationCommandMenuItems,
       shouldDisplayGlobalRecordCreationCommands,
     });

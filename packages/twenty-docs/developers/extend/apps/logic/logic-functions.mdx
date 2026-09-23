@@ -178,7 +178,7 @@ The status code must be a valid HTTP status code (between 100 and 599). Response
 
 #### Platform error responses
 
-Beyond your handler's own responses, the platform answers route calls directly in some situations: `404` when the route or function does not exist, `403` when the application is stopped, `429` when the execution rate limit is hit, and `422` when the application's production `dependencies` are too large to install — see [dependencies size limits](/developers/extend/apps/getting-started/project-structure#dependencies).
+Beyond your handler's own responses, the platform answers route calls directly in some situations: `404` when the route or function does not exist, `403` when the application is stopped, `402` when the workspace has exhausted its credit allowance or has no active subscription, `409` when a storage limit is reached, `429` when an execution rate limit or a usage limit is hit, and `422` when the application's production `dependencies` are too large to install — see [dependencies size limits](/developers/extend/apps/getting-started/project-structure#dependencies).
 
 #### Server route trigger
 
@@ -281,10 +281,24 @@ export default defineLogicFunction({
 The endpoint is reachable at:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
 ```
 
-The identifier is the resolver's `universalIdentifier` from your manifest. Register that URL with the provider.
+The identifier is the resolver's `id`: the primary key the server assigns when the app is first synced into the owner workspace, not the `universalIdentifier` from your manifest. Read it back from the `/metadata` API of the owner workspace, then register that URL with the provider:
+
+```graphql
+query {
+  findManyLogicFunctions {
+    id
+    name
+    universalIdentifier
+  }
+}
+```
+
+<Note>
+A URL carrying the resolver's `universalIdentifier` still resolves for now, and the response carries a `Deprecation` header. A `universalIdentifier` is unique per workspace, not globally: if another registration owned by a different workspace declares the same one, the platform answers `404` for that URL instead of choosing between them. Move the URLs registered with your providers to the `id` form.
+</Note>
 
 **Answering a verification GET.** Some providers verify an endpoint before they deliver to it, by sending a `GET` carrying a challenge to the same URL they will later `POST` events to — Meta's WhatsApp Cloud API is one. A server route answers `POST` only unless you say otherwise, so declare both methods:
 
@@ -338,6 +352,8 @@ The resolver example above already shows the GitHub HMAC-SHA256 flow — adapt t
 
 <Note>
 When the resolver returns a dispatch object, the route responds `202 { queued: true }` and the target runs on the worker queue — the caller never observes the target's latency, result, or failures (those are recorded in execution logs). This keeps sender redeliveries from amplifying processing slowdowns, which is what you want for webhook ingestion.
+
+The resolver runs in the owner workspace and spends its credits, so the route answers `402` when that workspace has exhausted its allowance or has no active subscription, and `429` when a usage limit is hit. Senders that retry on `5xx` will not retry these, which is what you want: the refusal will not clear on the next attempt.
 
 When the caller must read the response body on the same request (challenge handshakes, interactive acknowledgements), return a `Response` from the **resolver** instead. The platform echoes it synchronously and skips the queue; its headers go through the same allow-list as HTTP route responses. Keep the resolver fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
 </Note>

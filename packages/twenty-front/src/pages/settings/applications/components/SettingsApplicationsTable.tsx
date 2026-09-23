@@ -1,22 +1,21 @@
-import { Section } from 'twenty-ui/components';
-import { IconChevronRight } from 'twenty-ui/icon';
+import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
-import { useLingui } from '@lingui/react/macro';
-import { Table } from '@/ui/layout/table/components/Table';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { useContext, useState } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { SearchInput, Section } from 'twenty-ui/components';
+import { IconChevronRight } from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import {
   APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
-import { useContext, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
 const StyledTableRowsContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};

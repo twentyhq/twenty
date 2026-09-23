@@ -14,7 +14,7 @@ import { Trans } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsSecuritySsoIdentifyProvider = () => {
