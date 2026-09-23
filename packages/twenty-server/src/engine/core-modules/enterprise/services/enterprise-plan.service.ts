@@ -23,13 +23,13 @@ import {
   EnterpriseException,
   EnterpriseExceptionCode,
 } from 'src/engine/core-modules/enterprise/enterprise.exception';
-import { isValidityTokenReloadDue } from 'src/engine/core-modules/enterprise/utils/is-validity-token-reload-due.util';
 import {
   type EnterpriseInstanceMetadata,
   type EnterpriseKeyPayload,
   type EnterpriseLicenseInfo,
   type EnterpriseValidityPayload,
 } from 'src/engine/core-modules/enterprise/types/organization-key-payload.type';
+import { isValidityTokenReloadDue } from 'src/engine/core-modules/enterprise/utils/is-validity-token-reload-due.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import {
   ConfigVariableException,
@@ -87,8 +87,6 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   private async loadValidityToken(): Promise<void> {
-    // Stamped before the first await so concurrent readers do not each start
-    // their own reload.
     this.lastValidityTokenLoadStartedAt = Date.now();
 
     try {
@@ -122,9 +120,6 @@ export class EnterprisePlanService implements OnModuleInit {
 
       this.didLastValidityTokenLoadFail = false;
     } catch (error) {
-      // A read that failed says nothing about the license, so the payload in
-      // hand stands until a later read succeeds: a database hiccup must not
-      // disable enterprise features, SSO included.
       this.didLastValidityTokenLoadFail = true;
 
       this.logger.warn(
@@ -171,10 +166,7 @@ export class EnterprisePlanService implements OnModuleInit {
 
   // The token is renewed by the cron running in the worker process, which
   // writes it to the database. Without this reload the server process would
-  // keep the copy it read at boot, and treat a renewed license as expired once
-  // that copy reached its expiry - turning enterprise features off, SSO
-  // included. Kept off the read path: the reload runs in the background and
-  // the next read picks it up.
+  // keep the copy it read at boot
   private reloadValidityTokenIfStale(): void {
     const isReloadDue = isValidityTokenReloadDue({
       lastLoadStartedAt: this.lastValidityTokenLoadStartedAt,
@@ -186,8 +178,6 @@ export class EnterprisePlanService implements OnModuleInit {
       return;
     }
 
-    // loadValidityToken stamps the clock before its first await, so a second
-    // synchronous caller cannot start a competing read.
     void this.loadValidityToken();
   }
 
