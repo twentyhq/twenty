@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -33,6 +33,10 @@ export const validateNoDuplicateUniqueIndexOrThrow = ({
 
   const [proposedField] = proposed.fields;
 
+  if (!isDefined(proposedField)) {
+    return;
+  }
+
   const duplicate = Object.values(
     existingFlatIndexMaps.byUniversalIdentifier,
   ).find((flatIndex) => {
@@ -43,6 +47,7 @@ export const validateNoDuplicateUniqueIndexOrThrow = ({
     if (flatIndex.flatIndexFieldMetadatas.length !== 1) return false;
 
     const existingField = flatIndex.flatIndexFieldMetadatas[0];
+    assertIsDefinedOrThrow(existingField);
 
     return (
       existingField.fieldMetadataId === proposedField.fieldMetadataId &&

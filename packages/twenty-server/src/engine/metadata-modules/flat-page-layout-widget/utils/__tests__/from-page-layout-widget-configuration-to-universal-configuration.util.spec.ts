@@ -108,7 +108,7 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
     ]);
 
     expect(
-      recordFilters?.[0].relationTargetFieldMetadataUniversalIdentifier,
+      recordFilters?.[0]?.relationTargetFieldMetadataUniversalIdentifier,
     ).toBeNull();
   });
 

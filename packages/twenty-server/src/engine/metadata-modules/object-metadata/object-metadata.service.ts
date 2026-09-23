@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  fromArrayToUniqueKeyRecord,
+  isDefined,
+} from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -290,6 +294,8 @@ export class ObjectMetadataService {
       ownerFlatApplication,
     });
 
+    assertIsDefinedOrThrow(updatedFlatObjectMetadata);
+
     return updatedFlatObjectMetadata;
   }
 
@@ -319,6 +325,8 @@ export class ObjectMetadataService {
     }
 
     const [deletedObjectMetadataDto] = deletedObjectMetadataDtos;
+
+    assertIsDefinedOrThrow(deletedObjectMetadataDto);
 
     return deletedObjectMetadataDto;
   }

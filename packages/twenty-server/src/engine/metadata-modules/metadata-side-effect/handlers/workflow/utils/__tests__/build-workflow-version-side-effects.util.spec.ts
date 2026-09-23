@@ -11,6 +11,7 @@ import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/e
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const APPLICATION_ID = '11111111-1111-4111-8111-111111111111';
 const WORKFLOW_ID = '22222222-2222-4222-8222-222222222222';
@@ -138,6 +139,8 @@ describe('application workflow version side effects', () => {
   it('updates the same version for a graph-only change without mutating the previous definition', () => {
     const before = convert();
     const changed = structuredClone(manifest);
+    jestExpectToBeDefined(changed.version.steps[0]);
+
     changed.version.steps[0].name = 'Updated step';
     const after = convert(changed, persisted(before));
     const operations = expand(after.workflow, persisted(before));
@@ -153,7 +156,7 @@ describe('application workflow version side effects', () => {
     expect(
       diff(after.workflow, persisted(before)).workflowVersion,
     ).toBeUndefined();
-    expect(before.version.steps?.[0].name).toBe('Finish');
+    expect(before.version.steps?.[0]?.name).toBe('Finish');
   });
 
   it('does not generate operations when only sync timestamps change', () => {
@@ -210,6 +213,8 @@ describe('managed workflow version validation', () => {
     expect(validate(definition.version).errors).toEqual([]);
     const invalid = structuredClone(manifest);
     invalid.version.trigger.nextStepIds = [APPLICATION_ID];
+    jestExpectToBeDefined(invalid.version.steps[0]);
+
     invalid.version.steps[0].nextStepIds = [STEP_ID];
     const { version } = convert(invalid);
     expect(validate(version).errors.length).toBeGreaterThan(1);

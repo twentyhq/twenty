@@ -9,6 +9,7 @@ import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-c
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type PublishedEvent = { type: string } & Record<string, unknown>;
 
@@ -431,9 +432,15 @@ describe('StreamAgentChatJob', () => {
       }),
       streamClaim: { threadId: 'thread-id', streamId: 'stream-id' },
     });
-    expect(
-      turnRecorderService.markRunning.mock.invocationCallOrder[0],
-    ).toBeLessThan(chatExecutionService.streamChat.mock.invocationCallOrder[0]);
+    const markRunningCallOrder =
+      turnRecorderService.markRunning.mock.invocationCallOrder[0];
+    const streamChatCallOrder =
+      chatExecutionService.streamChat.mock.invocationCallOrder[0];
+
+    jestExpectToBeDefined(markRunningCallOrder);
+    jestExpectToBeDefined(streamChatCallOrder);
+
+    expect(markRunningCallOrder).toBeLessThan(streamChatCallOrder);
   });
 
   it('does not stream a turn whose stream was stopped while starting', async () => {

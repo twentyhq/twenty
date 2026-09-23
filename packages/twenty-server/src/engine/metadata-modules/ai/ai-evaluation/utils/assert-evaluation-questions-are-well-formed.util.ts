@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
@@ -22,7 +23,7 @@ export const assertEvaluationQuestionsAreWellFormed = (
   for (const questionId of questionIds) {
     const question = questions[questionId];
 
-    if (!isNonEmptyString(questionId)) {
+    if (!isNonEmptyString(questionId) || !isDefined(question)) {
       throw new AiException(
         'Every question needs a non-empty id',
         AiExceptionCode.INVALID_EVALUATION_REQUEST,

@@ -184,6 +184,6 @@ describe('finalizeDanglingToolParts round-trip', () => {
       'message-1',
     );
 
-    expect(dbPart.toolInput).toEqual({});
+    expect(dbPart?.toolInput).toEqual({});
   });
 });

@@ -15,13 +15,14 @@ describe('injectMessageTimestamps', () => {
 
     const [message] = injectMessageTimestamps(messages, 'UTC');
 
-    expect(message.parts).toHaveLength(2);
-    expect(message.parts[0]).toEqual({
+    expect(message?.parts).toHaveLength(2);
+    expect(message?.parts[0]).toEqual({
       type: 'text',
       text: expect.stringContaining('<message_timestamp>Sent: '),
     });
-    expect((message.parts[0] as { text: string }).text).toContain('UTC');
-    expect(message.parts[1]).toEqual({
+
+    expect((message?.parts[0] as { text: string }).text).toContain('UTC');
+    expect(message?.parts[1]).toEqual({
       type: 'text',
       text: 'What happened yesterday?',
     });
@@ -39,8 +40,8 @@ describe('injectMessageTimestamps', () => {
 
     const [message] = injectMessageTimestamps(messages, 'UTC');
 
-    expect(message.parts).toHaveLength(1);
-    expect(message.parts[0]).toEqual({ type: 'text', text: 'response' });
+    expect(message?.parts).toHaveLength(1);
+    expect(message?.parts[0]).toEqual({ type: 'text', text: 'response' });
   });
 
   it('does not throw and still injects a timestamp when the timezone is the "system" sentinel', () => {
@@ -55,8 +56,8 @@ describe('injectMessageTimestamps', () => {
 
     const [message] = injectMessageTimestamps(messages, 'system');
 
-    expect(message.parts).toHaveLength(2);
-    expect(message.parts[0]).toEqual({
+    expect(message?.parts).toHaveLength(2);
+    expect(message?.parts[0]).toEqual({
       type: 'text',
       text: expect.stringContaining('<message_timestamp>Sent: '),
     });
@@ -79,7 +80,7 @@ describe('injectMessageTimestamps', () => {
 
     const result = injectMessageTimestamps(messages, 'UTC');
 
-    expect(result[0].parts).toHaveLength(1);
-    expect(result[1].parts).toHaveLength(1);
+    expect(result[0]?.parts).toHaveLength(1);
+    expect(result[1]?.parts).toHaveLength(1);
   });
 });

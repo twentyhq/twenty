@@ -287,7 +287,7 @@ describe('transformEventBatchToWebhookEvents', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].record).toEqual({
+    expect(result[0]?.record).toEqual({
       id: 'recordId-1',
       nameSingular: 'nameSingular-1',
     });
@@ -330,15 +330,15 @@ describe('transformEventBatchToWebhookEvents', () => {
     });
 
     expect(result).toHaveLength(2);
-    expect(result[0].record).toEqual({
+    expect(result[0]?.record).toEqual({
       id: 'id-1',
       nameSingular: 'nameSingular-1',
     });
-    expect(result[0].updatedFields).toEqual(['position']);
-    expect(result[1].record).toEqual({
+    expect(result[0]?.updatedFields).toEqual(['position']);
+    expect(result[1]?.record).toEqual({
       id: 'id-2',
       nameSingular: 'nameSingular-2',
     });
-    expect(result[1].updatedFields).toEqual(['nameSingular', 'position']);
+    expect(result[1]?.updatedFields).toEqual(['nameSingular', 'position']);
   });
 });

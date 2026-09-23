@@ -122,7 +122,7 @@ describe('validatePageLayoutWidgetGridPosition', () => {
       );
 
       expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].code).toBe(
+      expect(errors[0]?.code).toBe(
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       );
     });
@@ -156,7 +156,7 @@ describe('validatePageLayoutWidgetGridPosition', () => {
       );
 
       expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].code).toBe(
+      expect(errors[0]?.code).toBe(
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       );
     });

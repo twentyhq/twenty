@@ -44,6 +44,7 @@ import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-m
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import {
   toLegacyFieldMetadataCreateResponse,
   toLegacyFieldMetadataDeleteResponse,
@@ -179,6 +180,8 @@ export class FieldMetadataController {
       locale,
       workspaceId,
     });
+
+    assertIsDefinedOrThrow(result);
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result

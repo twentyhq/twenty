@@ -4,7 +4,11 @@ import {
   type AskQuestionsToolInput,
   type AskQuestionsToolResult,
 } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
@@ -142,11 +146,22 @@ const buildAnswerText = ({
   answers
     .flatMap((answer) => {
       const question = questions[answer.questionIndex];
+
+      if (!isDefined(question)) {
+        return [];
+      }
+
       const freeText = answer.freeText?.trim();
       const value = isNonEmptyString(freeText)
         ? freeText
         : answer.selectedOptionIndices
-            .map((optionIndex) => question.options[optionIndex].label)
+            .map((optionIndex) => {
+              const option = question.options[optionIndex];
+
+              assertIsDefinedOrThrow(option);
+
+              return option.label;
+            })
             .join(', ');
 
       return isNonEmptyString(value) ? [`${question.question}\n${value}`] : [];

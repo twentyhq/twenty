@@ -24,7 +24,7 @@ describe('replaceUnsupportedFileParts', () => {
 
     const result = replaceUnsupportedFileParts(messages, ['image'], false);
 
-    expect(result[0].parts[0]).toEqual(buildFilePart('image/png'));
+    expect(result[0]?.parts[0]).toEqual(buildFilePart('image/png'));
   });
 
   it('keeps code-interpreter file parts when the interpreter is enabled', () => {
@@ -32,7 +32,7 @@ describe('replaceUnsupportedFileParts', () => {
 
     const result = replaceUnsupportedFileParts(messages, [], true);
 
-    expect(result[0].parts[0]).toMatchObject({ type: 'file' });
+    expect(result[0]?.parts[0]).toMatchObject({ type: 'file' });
   });
 
   it('downgrades code-interpreter file parts when the interpreter is disabled', () => {
@@ -42,7 +42,7 @@ describe('replaceUnsupportedFileParts', () => {
 
     const result = replaceUnsupportedFileParts(messages, [], false);
 
-    expect(result[0].parts[0]).toMatchObject({ type: 'text' });
+    expect(result[0]?.parts[0]).toMatchObject({ type: 'text' });
   });
 
   it('replaces unsupported file parts with a text note', () => {
@@ -52,7 +52,7 @@ describe('replaceUnsupportedFileParts', () => {
 
     const result = replaceUnsupportedFileParts(messages, [], true);
 
-    expect(result[0].parts[0]).toEqual({
+    expect(result[0]?.parts[0]).toEqual({
       type: 'text',
       text: '[Attached file: clip.mp4 (type: video/mp4) — file type is not supported for direct analysis]',
     });
@@ -63,7 +63,7 @@ describe('replaceUnsupportedFileParts', () => {
 
     const result = replaceUnsupportedFileParts(messages, [], true);
 
-    expect(result[0].parts[0]).toMatchObject({ type: 'text' });
+    expect(result[0]?.parts[0]).toMatchObject({ type: 'text' });
   });
 
   it('does not touch non-user messages', () => {

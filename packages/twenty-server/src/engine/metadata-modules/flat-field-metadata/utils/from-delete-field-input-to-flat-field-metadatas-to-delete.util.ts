@@ -1,4 +1,5 @@
 import {
+  assertIsDefinedOrThrow,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
@@ -106,6 +107,8 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     ) {
       return false;
     }
+
+    assertIsDefinedOrThrow(flatIndexMetadata.flatIndexFieldMetadatas[0]);
 
     const backingFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId:

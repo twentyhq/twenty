@@ -307,43 +307,43 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
         const [sourceFieldMetadata, targetFieldMetadata] =
           result.flatFieldMetadatas;
 
-        expect(sourceFieldMetadata.type).toBe(expectedSourceFieldType);
-        expect(sourceFieldMetadata.name).toBe(input.createFieldInput.name);
-        expect(sourceFieldMetadata.label).toBe(input.createFieldInput.label);
-        expect(sourceFieldMetadata.objectMetadataUniversalIdentifier).toBe(
+        expect(sourceFieldMetadata?.type).toBe(expectedSourceFieldType);
+        expect(sourceFieldMetadata?.name).toBe(input.createFieldInput.name);
+        expect(sourceFieldMetadata?.label).toBe(input.createFieldInput.label);
+        expect(sourceFieldMetadata?.objectMetadataUniversalIdentifier).toBe(
           input.sourceFlatObjectMetadata.universalIdentifier,
         );
         expect(
-          sourceFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+          sourceFieldMetadata?.relationTargetObjectMetadataUniversalIdentifier,
         ).toBe(input.targetFlatObjectMetadata.universalIdentifier);
         const sourceSettings =
-          sourceFieldMetadata.universalSettings as FieldMetadataSettingsMapping['RELATION'];
+          sourceFieldMetadata?.universalSettings as FieldMetadataSettingsMapping['RELATION'];
         const targetSettings =
-          targetFieldMetadata.universalSettings as FieldMetadataSettingsMapping['RELATION'];
+          targetFieldMetadata?.universalSettings as FieldMetadataSettingsMapping['RELATION'];
 
         expect(sourceSettings.relationType).toBe(expectedSourceRelationType);
 
         if (shouldSourceHaveMorphId) {
-          expect(sourceFieldMetadata.morphId).toBe(input.morphId);
+          expect(sourceFieldMetadata?.morphId).toBe(input.morphId);
         } else {
-          expect(sourceFieldMetadata.morphId).toBeNull();
+          expect(sourceFieldMetadata?.morphId).toBeNull();
         }
 
-        expect(targetFieldMetadata.type).toBe(expectedTargetFieldType);
-        expect(targetFieldMetadata.objectMetadataUniversalIdentifier).toBe(
+        expect(targetFieldMetadata?.type).toBe(expectedTargetFieldType);
+        expect(targetFieldMetadata?.objectMetadataUniversalIdentifier).toBe(
           input.targetFlatObjectMetadata.universalIdentifier,
         );
         expect(
-          targetFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+          targetFieldMetadata?.relationTargetObjectMetadataUniversalIdentifier,
         ).toBe(input.sourceFlatObjectMetadata.universalIdentifier);
         expect(targetSettings.relationType).toBe(expectedTargetRelationType);
 
         expect(
-          sourceFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
-        ).toBe(targetFieldMetadata.universalIdentifier);
+          sourceFieldMetadata?.relationTargetFieldMetadataUniversalIdentifier,
+        ).toBe(targetFieldMetadata?.universalIdentifier);
         expect(
-          targetFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
-        ).toBe(sourceFieldMetadata.universalIdentifier);
+          targetFieldMetadata?.relationTargetFieldMetadataUniversalIdentifier,
+        ).toBe(sourceFieldMetadata?.universalIdentifier);
 
         if (expectedSourceRelationType === RelationType.MANY_TO_ONE) {
           expect(sourceSettings.joinColumnName).toBe(
@@ -395,12 +395,12 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
       const [sourceFieldMetadata, targetFieldMetadata] =
         result.flatFieldMetadatas;
 
-      expect(sourceFieldMetadata.universalIdentifier).toBe(
+      expect(sourceFieldMetadata?.universalIdentifier).toBe(
         sourceUniversalIdentifier,
       );
 
-      expect(targetFieldMetadata.universalIdentifier).toBeDefined();
-      expect(targetFieldMetadata.universalIdentifier).not.toBe(
+      expect(targetFieldMetadata?.universalIdentifier).toBeDefined();
+      expect(targetFieldMetadata?.universalIdentifier).not.toBe(
         sourceUniversalIdentifier,
       );
     });

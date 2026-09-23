@@ -14,8 +14,8 @@ export const findWebhooksMatchingEventName = ({
   const [nameSingular, operation] = eventName.split('.');
 
   const operationsToMatch = computeWebhookOperationsToMatch({
-    nameSingular,
-    operation,
+    nameSingular: nameSingular ?? '',
+    operation: operation ?? '',
   });
 
   return Object.values(flatWebhookMaps.byUniversalIdentifier)

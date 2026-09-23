@@ -6,6 +6,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-to-update-and-related-flat-field-to-update.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const CUSTOM = '20202020-aaaa-4aaa-8aaa-000000000001';
 const STANDARD = TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
@@ -75,7 +76,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
     });
     expect(relatedFlatFieldMetadatasFromTo).toHaveLength(1);
     expect(
-      relatedFlatFieldMetadatasFromTo[0].toFlatFieldMetadata,
+      relatedFlatFieldMetadatasFromTo[0]?.toFlatFieldMetadata,
     ).toMatchObject({
       id: 'target-id',
       isActive: true,
@@ -109,7 +110,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
       overrides: null,
     });
     expect(
-      relatedFlatFieldMetadatasFromTo[0].toFlatFieldMetadata,
+      relatedFlatFieldMetadatasFromTo[0]?.toFlatFieldMetadata,
     ).toMatchObject({ id: 'target-id', isActive: false, overrides: null });
   });
 
@@ -139,7 +140,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
       overrides: null,
     });
     expect(
-      relatedFlatFieldMetadatasFromTo[0].toFlatFieldMetadata,
+      relatedFlatFieldMetadatasFromTo[0]?.toFlatFieldMetadata,
     ).toMatchObject({ id: 'target-id', isActive: false, overrides: null });
   });
 
@@ -164,8 +165,12 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       });
 
-    expect(relatedFlatFieldMetadatasFromTo[0].toFlatFieldMetadata).toEqual(
-      relatedFlatFieldMetadatasFromTo[0].fromFlatFieldMetadata,
+    const [relatedFlatFieldMetadataFromTo] = relatedFlatFieldMetadatasFromTo;
+
+    jestExpectToBeDefined(relatedFlatFieldMetadataFromTo);
+
+    expect(relatedFlatFieldMetadataFromTo.toFlatFieldMetadata).toEqual(
+      relatedFlatFieldMetadataFromTo.fromFlatFieldMetadata,
     );
   });
 });

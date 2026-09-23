@@ -60,10 +60,7 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
     const ascSortedViewFieldPositions = flatViewFields
       .map(({ position }) => position)
       .sort((a, b) => a - b);
-    const lowestViewFieldPosition =
-      ascSortedViewFieldPositions.length > 0
-        ? ascSortedViewFieldPositions[0]
-        : 0;
+    const lowestViewFieldPosition = ascSortedViewFieldPositions[0] ?? 0;
 
     if (!isDefined(labelMetadataIdentifierViewField)) {
       const viewFieldId = v4();

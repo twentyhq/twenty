@@ -39,7 +39,7 @@ describe('validateTsVectorFlatFieldMetadata', () => {
     );
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toBe(
+    expect(errors[0]?.message).toBe(
       'Field type TS_VECTOR must have SYSTEM writability',
     );
   });
@@ -51,7 +51,7 @@ describe('validateTsVectorFlatFieldMetadata', () => {
     );
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toBe(
+    expect(errors[0]?.message).toBe(
       'Field type TS_VECTOR must have SYSTEM writability',
     );
   });

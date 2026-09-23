@@ -4,6 +4,7 @@ import benchmarkOverlay from 'src/engine/metadata-modules/ai/ai-models/ai-model-
 import defaultAiProviders from 'src/engine/metadata-modules/ai/ai-models/ai-providers.json';
 import { aiModelBenchmarkSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.schema';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type OverlayReading = { aliases: string[] } & Record<string, unknown>;
 
@@ -35,12 +36,12 @@ describe('ai-model-benchmarks.json integrity', () => {
   });
 
   it('should pass Zod schema validation for every entry and per-effort reading', () => {
-    Object.values(OVERLAY_MODELS).forEach((entry) => {
+    Object.values(OVERLAY_MODELS).forEach((overlayModel) => {
       expect(() =>
-        aiModelBenchmarkSchema.parse(toBenchmark(entry)),
+        aiModelBenchmarkSchema.parse(toBenchmark(overlayModel)),
       ).not.toThrow();
 
-      Object.entries(entry.benchmarkByEffort ?? {}).forEach(
+      Object.entries(overlayModel.benchmarkByEffort ?? {}).forEach(
         ([effort, reading]) => {
           expect(isAiModelEffort(effort)).toBe(true);
           expect(() =>
@@ -54,13 +55,15 @@ describe('ai-model-benchmarks.json integrity', () => {
   it('should agree with the benchmark merged into the catalog', () => {
     // the overlay is empty until the sync runs with an API key, so check drift rather than a count
     SCORED_CATALOG_MODELS.forEach((model) => {
-      const entry = OVERLAY_MODELS[model.name];
+      const overlayModel = OVERLAY_MODELS[model.name];
 
-      expect(toBenchmark(entry)).toEqual(model.benchmark);
-      expect(entry.aliases).toContain(model.name);
+      jestExpectToBeDefined(overlayModel);
+
+      expect(toBenchmark(overlayModel)).toEqual(model.benchmark);
+      expect(overlayModel.aliases).toContain(model.name);
 
       const overlayReadings = Object.fromEntries(
-        Object.entries(entry.benchmarkByEffort ?? {}).map(
+        Object.entries(overlayModel.benchmarkByEffort ?? {}).map(
           ([effort, reading]) => [effort, withoutAliases(reading)],
         ),
       );

@@ -5,7 +5,7 @@ import {
   ValidatorConstraint,
   type ValidatorConstraintInterface,
 } from 'class-validator';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 @ValidatorConstraint({ async: false })
 export class AtLeastOneOfConstraint implements ValidatorConstraintInterface {
@@ -28,6 +28,8 @@ export const AtLeastOneOf = (
   validationOptions?: ValidationOptions,
 ): ClassDecorator => {
   return (target) => {
+    assertIsDefinedOrThrow(properties[0]);
+
     registerDecorator({
       target,
       propertyName: properties[0],

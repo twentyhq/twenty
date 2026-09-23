@@ -1,5 +1,5 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 // matches only the id prefix of [[skill:<uuid>:<label>]] so brackets in a label cannot break it
 const SKILL_REFERENCE_REGEX =
@@ -26,6 +26,8 @@ export const collectReferencedSkillIds = (
       }
 
       for (const match of part.text.matchAll(SKILL_REFERENCE_REGEX)) {
+        assertIsDefinedOrThrow(match[1]);
+
         skillIds.add(match[1]);
       }
     }

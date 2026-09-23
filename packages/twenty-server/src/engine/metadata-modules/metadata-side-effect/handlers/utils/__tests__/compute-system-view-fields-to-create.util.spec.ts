@@ -65,8 +65,8 @@ describe('computeSystemViewFieldsToCreate', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].fieldMetadataUniversalIdentifier).toBe(
-      fields[0].universalIdentifier,
+    expect(result[0]?.fieldMetadataUniversalIdentifier).toBe(
+      fields[0]?.universalIdentifier,
     );
   });
 
@@ -90,8 +90,8 @@ describe('computeSystemViewFieldsToCreate', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].fieldMetadataUniversalIdentifier).toBe(
-      fields[0].universalIdentifier,
+    expect(result[0]?.fieldMetadataUniversalIdentifier).toBe(
+      fields[0]?.universalIdentifier,
     );
   });
 
@@ -119,8 +119,8 @@ describe('computeSystemViewFieldsToCreate', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].fieldMetadataUniversalIdentifier).toBe(
-      fields[0].universalIdentifier,
+    expect(result[0]?.fieldMetadataUniversalIdentifier).toBe(
+      fields[0]?.universalIdentifier,
     );
   });
 
@@ -144,8 +144,8 @@ describe('computeSystemViewFieldsToCreate', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].fieldMetadataUniversalIdentifier).toBe(
-      fields[0].universalIdentifier,
+    expect(result[0]?.fieldMetadataUniversalIdentifier).toBe(
+      fields[0]?.universalIdentifier,
     );
   });
 
@@ -169,14 +169,14 @@ describe('computeSystemViewFieldsToCreate', () => {
     });
 
     expect(result).toHaveLength(2);
-    expect(result[0].fieldMetadataUniversalIdentifier).toBe(
+    expect(result[0]?.fieldMetadataUniversalIdentifier).toBe(
       labelField.universalIdentifier,
     );
-    expect(result[0].position).toBe(0);
-    expect(result[1].fieldMetadataUniversalIdentifier).toBe(
+    expect(result[0]?.position).toBe(0);
+    expect(result[1]?.fieldMetadataUniversalIdentifier).toBe(
       otherField.universalIdentifier,
     );
-    expect(result[1].position).toBe(1);
+    expect(result[1]?.position).toBe(1);
   });
 
   it('should exclude label identifier when excludeLabelIdentifier is true', () => {
@@ -199,7 +199,7 @@ describe('computeSystemViewFieldsToCreate', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].fieldMetadataUniversalIdentifier).toBe(
+    expect(result[0]?.fieldMetadataUniversalIdentifier).toBe(
       otherField.universalIdentifier,
     );
   });
@@ -217,13 +217,13 @@ describe('computeSystemViewFieldsToCreate', () => {
       labelIdentifierFieldMetadataUniversalIdentifier: null,
     });
 
-    expect(result[0].universalIdentifier).toBe(
+    expect(result[0]?.universalIdentifier).toBe(
       getViewFieldUniversalIdentifier({
         applicationUniversalIdentifier,
         viewUniversalIdentifier,
         fieldMetadataUniversalIdentifier: field.universalIdentifier,
       }),
     );
-    expect(result[0].isSystemSideEffect).toBe(true);
+    expect(result[0]?.isSystemSideEffect).toBe(true);
   });
 });

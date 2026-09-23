@@ -49,10 +49,10 @@ describe('mergeCustomProvidersIntoCatalog', () => {
       } as unknown as AiProvidersConfig,
     });
 
-    expect(merged.openai.label).toBe('OpenAI (gateway)');
-    expect(merged.openai.apiKey).toBe('sk-custom');
-    expect(merged.openai.models).toHaveLength(1);
-    expect(merged.openai.models?.[0]).toMatchObject({
+    expect(merged.openai?.label).toBe('OpenAI (gateway)');
+    expect(merged.openai?.apiKey).toBe('sk-custom');
+    expect(merged.openai?.models).toHaveLength(1);
+    expect(merged.openai?.models?.[0]).toMatchObject({
       name: 'gpt-5.6-luna',
       label: 'Luna via gateway',
       efforts: ['low', 'medium', 'high'],
@@ -98,7 +98,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
       } as unknown as AiProvidersConfig,
     });
 
-    expect(merged.openai.models?.[0]).toMatchObject({
+    expect(merged.openai?.models?.[0]).toMatchObject({
       efforts: ['low', 'high'],
       benchmark: {
         intelligenceIndex: 37.5,
@@ -125,7 +125,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
       } as unknown as AiProvidersConfig,
     });
 
-    expect(merged.openai.models).toEqual([{ name: 'gpt-7', label: 'GPT-7' }]);
+    expect(merged.openai?.models).toEqual([{ name: 'gpt-7', label: 'GPT-7' }]);
   });
 
   it('gives a route outside the catalog the readings of the model it serves, never its prices', () => {
@@ -148,7 +148,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
       } as unknown as AiProvidersConfig,
     });
 
-    expect(merged['amazon-bedrock'].models?.[0]).toEqual({
+    expect(merged['amazon-bedrock']?.models?.[0]).toEqual({
       name: 'eu.openai.gpt-5.6-luna-v1:0',
       label: 'Luna on Bedrock',
       inputCostPerMillionTokens: 0.25,
@@ -157,7 +157,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
       benchmark: { intelligenceIndex: 37.5 },
       benchmarkByEffort: undefined,
     });
-    expect(merged['amazon-bedrock'].models?.[1]).toEqual({
+    expect(merged['amazon-bedrock']?.models?.[1]).toEqual({
       name: 'eu.mistral.pixtral-large',
       label: 'Pixtral',
       efforts: undefined,
@@ -193,7 +193,7 @@ describe('mergeCustomProvidersIntoCatalog', () => {
       } as unknown as AiProvidersConfig,
     });
 
-    expect(merged['azure-foundry'].models?.[0]?.benchmark).toEqual({
+    expect(merged['azure-foundry']?.models?.[0]?.benchmark).toEqual({
       intelligenceIndex: 12.7,
     });
   });
@@ -221,7 +221,7 @@ describe('inheritCatalogReadings', () => {
     });
 
     expect(Object.keys(providers)).toEqual(['azure-foundry']);
-    expect(providers['azure-foundry'].models?.[0]).toMatchObject({
+    expect(providers['azure-foundry']?.models?.[0]).toMatchObject({
       label: 'Luna on Azure',
       efforts: ['low', 'medium', 'high'],
       benchmark: { intelligenceIndex: 37.5 },

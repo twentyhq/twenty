@@ -5,6 +5,7 @@ import {
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const compute = ({
   canAccessAllTools = false,
@@ -13,7 +14,7 @@ const compute = ({
   canUpdateObjectRecords = true,
 } = {}) => {
   const service = new WorkspaceRolesPermissionsCacheService();
-  return service.computeForCache({
+  const role = service.computeForCache({
     workspaceId: 'workspace',
     rows: {
       role: [{ id: 'role', canAccessAllTools, canUpdateAllSettings }],
@@ -45,7 +46,11 @@ const compute = ({
       rowLevelPermissionPredicate: { byRoleId: new Map() },
       rowLevelPermissionPredicateGroup: { byRoleId: new Map() },
     },
-  } as never).role.thread;
+  } as never).role;
+
+  jestExpectToBeDefined(role);
+
+  return role.thread;
 };
 
 describe('Conversation role permissions', () => {

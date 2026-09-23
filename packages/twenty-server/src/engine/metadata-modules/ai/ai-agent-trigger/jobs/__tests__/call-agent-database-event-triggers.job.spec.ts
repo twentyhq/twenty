@@ -260,7 +260,7 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
     );
 
     expect(enqueuedJobs()).toHaveLength(1);
-    expect(enqueuedJobs()[0].payload).toMatchObject({
+    expect(enqueuedJobs()[0]?.payload).toMatchObject({
       events: [{ recordId: 'record-1' }, { recordId: 'record-2' }],
     });
   });
@@ -297,7 +297,7 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
     );
 
     expect(enqueuedJobs()).toHaveLength(1);
-    expect(enqueuedJobs()[0].payload).toMatchObject({
+    expect(enqueuedJobs()[0]?.payload).toMatchObject({
       events: [{ recordId: 'record-2' }],
     });
   });
@@ -315,7 +315,7 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
     );
 
     expect(enqueuedJobs()).toHaveLength(1);
-    expect(enqueuedJobs()[0].payload).toMatchObject({
+    expect(enqueuedJobs()[0]?.payload).toMatchObject({
       events: [{ recordId: 'record-2' }],
     });
   });
@@ -351,7 +351,7 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
     );
 
     expect(enqueuedJobs()).toHaveLength(1);
-    expect(enqueuedJobs()[0].payload).toMatchObject({
+    expect(enqueuedJobs()[0]?.payload).toMatchObject({
       events: [{ recordId: 'record-1' }],
     });
   });

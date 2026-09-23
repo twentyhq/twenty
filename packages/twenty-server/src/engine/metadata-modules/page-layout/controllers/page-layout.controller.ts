@@ -15,6 +15,7 @@ import {
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { ApiPath, PageLayoutType } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
@@ -113,6 +114,8 @@ export class PageLayoutController {
           workspaceId: workspace.id,
         },
       );
+
+    assertIsDefinedOrThrow(resolvedPageLayout);
 
     return resolvedPageLayout;
   }

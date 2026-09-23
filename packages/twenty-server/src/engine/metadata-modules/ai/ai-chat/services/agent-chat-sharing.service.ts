@@ -8,7 +8,7 @@ import chunk from 'lodash.chunk';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
@@ -238,6 +238,8 @@ export class AgentChatSharingService {
           ],
         );
         const record = records[0];
+        assertIsDefinedOrThrow(record);
+
         await this.recordShareStorageService.deleteByRecordIdsInTransaction({
           workspaceId: args.workspaceId,
           objectMetadataId: objectMetadata.id,
@@ -323,6 +325,9 @@ export class AgentChatSharingService {
               `WITH restored_thread AS (UPDATE ${table('agentChatThread')} SET "deletedAt" = NULL, "updatedAt" = NOW() WHERE id = $1 RETURNING *) SELECT * FROM restored_thread`,
               [args.threadId],
             );
+            if (!isDefined(restoredThread)) {
+              return throwAgentChatThreadNotFound();
+            }
             return restoredThread;
           },
         ),

@@ -91,8 +91,8 @@ const buildFileMessage = ({
   ],
 });
 
-const getPartTypes = (message: { parts: { type: string }[] }) =>
-  message.parts.map((part) => part.type);
+const getPartTypes = (message: { parts: { type: string }[] } | undefined) =>
+  message?.parts.map((part) => part.type);
 
 describe('AgentConversationReaderService', () => {
   it('leaves a failed run out of the conversation the agent continues from', async () => {
@@ -225,7 +225,7 @@ describe('AgentConversationReaderService', () => {
       workspaceId: WORKSPACE_ID,
       fileFolder: FileFolder.AgentChat,
     });
-    expect(messages[0].parts[1]).toEqual({
+    expect(messages[0]?.parts[1]).toEqual({
       type: 'file',
       fileId: 'file-1',
       filename: 'deck.pdf',
