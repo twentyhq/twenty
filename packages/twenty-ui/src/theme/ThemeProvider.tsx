@@ -1,72 +1,13 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
-import { createContext, useLayoutEffect, useRef, useState } from 'react';
+import React from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { ThemeScopeContext } from './ThemeScopeContext';
-import { themeCssVariables } from './themeCssVariables';
+import { computeThemeFromCss } from './internal/computeThemeFromCss';
+import { getThemeContext } from './internal/getThemeContext';
+import { getThemeScopeContext } from './internal/getThemeScopeContext';
+import { type ThemeProviderProps } from './ThemeProviderProps';
 import { type ThemeType } from './themeTypes';
-
-export type ThemeContextType = {
-  theme: ThemeType;
-  colorScheme: 'light' | 'dark';
-};
-
-export type ThemeOverrides = Record<string, string | number>;
-
-const resolveTokenValue = (
-  cssVariableReference: string,
-  computedValue: string,
-): string | number => {
-  if (!isNonEmptyString(computedValue)) {
-    return cssVariableReference;
-  }
-
-  const numericValue = Number(computedValue);
-
-  return Number.isNaN(numericValue) ? computedValue : numericValue;
-};
-
-const computeThemeFromCss = (sourceElement?: HTMLElement): ThemeType => {
-  if (
-    typeof document === 'undefined' ||
-    typeof getComputedStyle !== 'function'
-  ) {
-    return themeCssVariables as unknown as ThemeType;
-  }
-
-  const computedStyle = getComputedStyle(
-    sourceElement ?? document.documentElement,
-  );
-
-  const resolve = (obj: Record<string, unknown>): Record<string, unknown> => {
-    const result: Record<string, unknown> = {};
-
-    for (const key of Object.keys(obj)) {
-      const value = obj[key];
-
-      if (typeof value === 'string' && value.startsWith('var(')) {
-        const varName = value.slice(4, -1);
-
-        result[key] = resolveTokenValue(
-          value,
-          computedStyle.getPropertyValue(varName).trim(),
-        );
-      } else if (typeof value === 'object' && value !== null) {
-        result[key] = resolve(value as Record<string, unknown>);
-      } else {
-        result[key] = value;
-      }
-    }
-
-    return result;
-  };
-
-  return resolve(
-    themeCssVariables as unknown as Record<string, unknown>,
-  ) as unknown as ThemeType;
-};
 
 const applyColorSchemeClass = (colorScheme: 'light' | 'dark') => {
   if (typeof document === 'undefined') return;
@@ -76,11 +17,6 @@ const applyColorSchemeClass = (colorScheme: 'light' | 'dark') => {
   root.classList.toggle('light', colorScheme === 'light');
 };
 
-export const ThemeContext = createContext<ThemeContextType>({
-  theme: themeCssVariables as unknown as ThemeType,
-  colorScheme: 'light',
-});
-
 export const ThemeProvider = ({
   children,
   colorScheme,
@@ -88,31 +24,26 @@ export const ThemeProvider = ({
   overrides,
   className,
   scale,
-}: {
-  children: React.ReactNode;
-  colorScheme: 'light' | 'dark';
-  applyToRoot?: boolean;
-  overrides?: ThemeOverrides;
-  className?: string;
-  scale?: number;
-}) => {
+  theme: providedTheme,
+}: ThemeProviderProps) => {
+  const ThemeContext = getThemeContext();
+  const ThemeScopeContext = getThemeScopeContext();
   const isScoped = isDefined(overrides) || !applyToRoot;
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
 
-  const [theme, setTheme] = useState<ThemeType>(() => {
+  const [theme, setTheme] = React.useState<ThemeType>(() => {
     if (applyToRoot) {
       applyColorSchemeClass(colorScheme);
     }
     return computeThemeFromCss();
   });
-  const [scopeContainer, setScopeContainer] = useState<HTMLElement | null>(
-    null,
-  );
+  const [scopeContainer, setScopeContainer] =
+    React.useState<HTMLElement | null>(null);
 
   const overridesKey = isDefined(overrides) ? JSON.stringify(overrides) : '';
 
-  useLayoutEffect(() => {
+  React.useLayoutEffect(() => {
     if (applyToRoot) {
       applyColorSchemeClass(colorScheme);
     }
@@ -132,7 +63,7 @@ export const ThemeProvider = ({
   // needed when the value changes. The cleanup is only registered from the
   // branch that set the property, so a provider mounted without a scale can
   // never clear a value another provider owns.
-  useLayoutEffect(() => {
+  React.useLayoutEffect(() => {
     if (typeof document === 'undefined' || isScoped || !isDefined(scale)) {
       return;
     }
@@ -146,7 +77,7 @@ export const ThemeProvider = ({
     };
   }, [scale, isScoped]);
 
-  const contextValue = { theme, colorScheme };
+  const contextValue = { theme: providedTheme ?? theme, colorScheme };
 
   if (!isScoped) {
     return (

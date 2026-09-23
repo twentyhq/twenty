@@ -21,7 +21,7 @@ import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/component
 import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 
 import { FieldsConfigurationGroupDraggableHeader } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDraggableHeader';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldsDroppable = styled.div`
   display: flex;

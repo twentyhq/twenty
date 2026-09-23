@@ -8,7 +8,7 @@ import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { IconListViewGrip } from '@/object-record/record-table/record-table-cell/components/internal/IconListViewGrip/IconListViewGrip';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   border-color: transparent;

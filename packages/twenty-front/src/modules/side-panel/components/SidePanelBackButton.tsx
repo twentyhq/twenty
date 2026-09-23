@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconButton, MenuItem } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledNavigationIcon = styled.div`
   align-items: center;

@@ -1,9 +1,8 @@
 import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSizeToPx';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 export const useLineChartTheme = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const tickFontSize = 12;
   const legendFontSize = parseFontSizeToPx(theme.font.size.sm, tickFontSize);

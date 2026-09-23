@@ -1,8 +1,8 @@
 import { MenuItemIconBoxContainer } from '@ui/components/navigation/MenuItem/parts/MenuItemIconBoxContainer';
 import { TintedIconTile } from '@ui/components/data-display/TintedIconTile/TintedIconTile';
 import { type IconComponent } from '@ui/icon';
-import { type ThemeColor } from '@ui/theme';
-import { useTheme } from '@ui/theme-constants';
+import { type ThemeColor, useTheme } from '@ui/theme';
+
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 export type MenuItemIconProps = {

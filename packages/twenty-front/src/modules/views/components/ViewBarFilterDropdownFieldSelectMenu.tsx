@@ -24,7 +24,7 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useLingui } from '@lingui/react/macro';
 import { IconX } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledInput = styled.input`
   background: transparent;

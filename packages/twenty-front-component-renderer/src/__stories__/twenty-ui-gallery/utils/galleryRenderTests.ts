@@ -37,27 +37,6 @@ export const codeEditorTest: TwentyUiGalleryPlayFunction = async ({
   expect(codeEditor).toHaveAttribute('data-monaco-mount-state', 'pending');
 };
 
-export const themeTokenTest: TwentyUiGalleryPlayFunction = async ({
-  canvasElement,
-}) => {
-  const canvas = within(canvasElement);
-
-  const iconWrapper = await canvas.findByTestId(
-    'theme-token-icon-wrapper',
-    {},
-    { timeout: MOUNT_TIMEOUT },
-  );
-
-  await waitFor(() => {
-    const iconBox = iconWrapper.getBoundingClientRect();
-
-    expect(Math.round(iconBox.width)).toBe(16);
-    expect(Math.round(iconBox.height)).toBe(16);
-  });
-
-  expect(errorHandler).not.toHaveBeenCalled();
-};
-
 export const displayHelpersTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {

@@ -3,13 +3,12 @@ import {
   StyledControlContainer,
 } from '@/ui/input/components/SelectControl';
 import { styled } from '@linaria/react';
-import React, { useContext } from 'react';
+import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TintedIconTile } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronDown, type IconComponent } from 'twenty-ui/icon';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;
@@ -42,7 +41,7 @@ export const MultiSelectControl = ({
   textAccent = 'default',
   hasRightElement,
 }: MultiSelectControlProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const firstSelectedOption = selectedOptions?.[0];
   return (
     <StyledControlContainer

@@ -11,7 +11,7 @@ import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTableRows = styled.div`

@@ -1,6 +1,6 @@
 import IconOpenaiRaw from '@assets/icons/openai.svg?react';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 type IconProviderOpenaiProps = Pick<IconComponentProps, 'size' | 'color'>;
 

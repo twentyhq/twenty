@@ -19,7 +19,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { LightIconButton, useToast } from 'twenty-ui/components';
 import {
   IconEye,
@@ -31,7 +31,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type SettingsObjectSearchSectionProps = {
@@ -107,7 +107,7 @@ export const SettingsObjectSearchSection = ({
 }: SettingsObjectSearchSectionProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
   const { closeDropdown } = useCloseDropdown();

@@ -11,7 +11,7 @@ import { useCallback, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

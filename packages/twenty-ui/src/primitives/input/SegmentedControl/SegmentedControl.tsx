@@ -1,7 +1,7 @@
 import { type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
 
 import { type IconComponent } from '@ui/icon';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { clsx } from 'clsx';

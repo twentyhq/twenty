@@ -711,7 +711,7 @@ Importez depuis le sous-chemin correspondant plutôt que depuis la racine du pac
 | `twenty-ui/feedback`        | `Callout`, `Banner`, `Info`, et plus encore              |
 | `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label`, et plus encore |
 | `twenty-ui/icon`            | Composants `Icon*` (par exemple `IconCheck`)             |
-| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`                     |
+| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`                     |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ Les composants Twenty UI correspondent automatiquement au thème clair et sombre
 Pour utiliser les mêmes jetons de design dans vos propres styles inline, appelez le hook `useTheme()`. Il renvoie les jetons de thème de Twenty (espacement, couleurs, rayons, polices) connectés au thème actif, sans qu’aucune configuration de `ThemeProvider` ne soit nécessaire dans votre composant :
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

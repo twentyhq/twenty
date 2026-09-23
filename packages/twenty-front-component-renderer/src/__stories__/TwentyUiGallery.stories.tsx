@@ -1,3 +1,4 @@
+import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
@@ -33,7 +34,6 @@ import {
   galleryRenderTest,
   inputPreactTest,
   inputReactTest,
-  themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {
   alertDialogTest,

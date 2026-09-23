@@ -4,11 +4,7 @@ import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor
 import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/utils/getBaseCodeEditorTheme';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
 import { useResizeHandle } from '@ui/primitives/layout/ResizeHandle/hooks/useResizeHandle';
-import {
-  useTheme,
-  useThemeColorScheme,
-  type ThemeType,
-} from '@ui/theme-constants';
+import { useTheme, useThemeColorScheme, type ThemeType } from '@ui/theme';
 import { type editor } from 'monaco-editor';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';

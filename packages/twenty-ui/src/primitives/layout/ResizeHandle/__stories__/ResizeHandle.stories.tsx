@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useResizeHandle } from '@ui/primitives/layout/ResizeHandle/hooks/useResizeHandle';
 import { ComponentDecorator } from '@ui/testing';
-import { themeCssVariables } from '@ui/theme-constants';
+import { themeCssVariables } from '@ui/theme';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';

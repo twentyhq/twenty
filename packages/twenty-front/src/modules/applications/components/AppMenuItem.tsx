@@ -3,7 +3,7 @@ import { AppChip } from '@/applications/components/AppChip';
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAppIconContainer = styled.span`
   background: ${themeCssVariables.background.transparent.light};

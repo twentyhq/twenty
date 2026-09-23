@@ -8,9 +8,9 @@ import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown'
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
-import { useContext, useId } from 'react';
+import { useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledMenuItem = styled.button`
   align-items: center;
@@ -44,7 +44,7 @@ type TurnIntoBlockDropdownProps = {
 export const TurnIntoBlockDropdown = ({
   editor,
 }: TurnIntoBlockDropdownProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const instanceId = useId();
   const dropdownId = `turn-into-block-dropdown-${instanceId}`;
   const { toggleDropdown } = useToggleDropdown();

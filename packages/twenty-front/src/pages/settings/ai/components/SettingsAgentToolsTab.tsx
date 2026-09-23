@@ -7,7 +7,7 @@ import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { SearchInput, Section, SettingsRow } from 'twenty-ui/components';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
 import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';

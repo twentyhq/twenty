@@ -4,7 +4,7 @@ import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSet
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
 import { type DragEvent, useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';

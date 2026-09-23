@@ -15,7 +15,7 @@ import {
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledLoadingContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]};

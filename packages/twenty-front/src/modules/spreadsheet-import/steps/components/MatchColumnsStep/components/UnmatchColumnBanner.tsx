@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { Banner } from 'twenty-ui/primitives/feedback';
 import { IconChevronDown, IconInfoCircle } from 'twenty-ui/icon';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledBannerContainer = styled.div<{ allMatched: boolean }>`
   > div {
@@ -65,7 +64,7 @@ export const UnmatchColumnBanner = ({
   buttonOnClick?: () => void;
   allMatched: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledBannerContainer allMatched={allMatched}>

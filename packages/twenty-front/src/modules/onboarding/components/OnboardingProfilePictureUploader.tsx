@@ -11,7 +11,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { IconUserCircle } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { UploadWorkspaceMemberProfilePictureDocument } from '~/generated-metadata/graphql';
 

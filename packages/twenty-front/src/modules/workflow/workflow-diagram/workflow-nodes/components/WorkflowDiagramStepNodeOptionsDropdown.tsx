@@ -12,7 +12,7 @@ import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOptionsButtonContainer = styled.div`
   align-items: center;

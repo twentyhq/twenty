@@ -6,10 +6,9 @@ import { CurrencyCode } from 'twenty-shared/constants';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
@@ -48,7 +47,7 @@ export const CurrencyPickerDropdownButton = ({
   selectedCurrencyCode: string;
   onChange: (currency: Currency) => void;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const dropdownId = 'currency-picker-dropdown-id';
 
   const { closeDropdown } = useCloseDropdown();

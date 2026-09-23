@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledScrollOverlayButton = styled.button<{
   hasTitle: boolean;

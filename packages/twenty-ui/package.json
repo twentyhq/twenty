@@ -189,11 +189,6 @@
       "import": "./dist/theme.mjs",
       "require": "./dist/theme.cjs"
     },
-    "./theme-constants": {
-      "types": "./dist/theme-constants/index.d.ts",
-      "import": "./dist/theme-constants.mjs",
-      "require": "./dist/theme-constants.cjs"
-    },
     "./utilities": {
       "types": "./dist/utilities/index.d.ts",
       "import": "./dist/utilities.mjs",
@@ -249,9 +244,6 @@
       ],
       "theme": [
         "dist/theme/index.d.ts"
-      ],
-      "theme-constants": [
-        "dist/theme-constants/index.d.ts"
       ],
       "utilities": [
         "dist/utilities/index.d.ts"

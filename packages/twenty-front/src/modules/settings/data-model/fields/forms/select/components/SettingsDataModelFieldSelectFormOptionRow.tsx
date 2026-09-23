@@ -8,7 +8,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { LightIconButton, type ColorLabels } from 'twenty-ui/components';
 import {
   IconCheck,
@@ -19,8 +18,8 @@ import {
 } from 'twenty-ui/icon';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MAIN_COLOR_NAMES, useTheme, themeCssVariables } from 'twenty-ui/theme';
+
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 
 const useColorLabels = (): ColorLabels => ({
@@ -114,7 +113,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   isNewRow,
   fieldIsNullable,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const colorLabels = useColorLabels();
   const SELECT_COLOR_DROPDOWN_ID = `select-color-dropdown-${option.id}`;
   const SELECT_ACTIONS_DROPDOWN_ID = `select-actions-dropdown-${option.id}`;

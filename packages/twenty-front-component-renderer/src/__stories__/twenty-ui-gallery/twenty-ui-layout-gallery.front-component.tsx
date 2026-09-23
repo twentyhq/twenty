@@ -6,7 +6,7 @@ import {
   HorizontalSeparator,
   ResizeHandle,
 } from 'twenty-ui/primitives/layout';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,

@@ -711,7 +711,7 @@ Importieren Sie aus dem passenden Subpfad statt aus dem Paket-Root, damit nur di
 | `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` und mehr              |
 | `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` und mehr |
 | `twenty-ui/icon`            | `Icon*`-Komponenten (z. B. `IconCheck`)           |
-| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`              |
+| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`              |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ Twenty UI-Komponenten passen sich automatisch dem hellen und dunklen Theme des A
 Um dieselben Design-Tokens in Ihren eigenen Inline-Styles zu verwenden, rufen Sie den Hook `useTheme()` auf. Er gibt die Theme-Tokens von Twenty (Abstände, Farben, Radien, Schriftarten) zurück, die mit dem aktiven Theme verknüpft sind – ohne dass ein `ThemeProvider` in Ihrer Komponente eingerichtet werden muss:
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

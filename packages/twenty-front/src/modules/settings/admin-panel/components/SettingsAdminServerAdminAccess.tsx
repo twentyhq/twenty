@@ -18,7 +18,7 @@ import { LightIconButton, useToast } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   GetServerAdminsDocument,
   UpdateServerAdminAccessDocument,

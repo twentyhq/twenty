@@ -6,7 +6,7 @@ import {
   isDefined,
   resolveCanvasTheme,
 } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { EmailBlockSettingsFieldInput } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';

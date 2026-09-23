@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledBackground = styled.div`
   background: ${themeCssVariables.background.secondary};

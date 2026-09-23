@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { sanitizeHtmlPreview } from '@/advanced-text-editor/utils/sanitizeHtmlPreview';
 
