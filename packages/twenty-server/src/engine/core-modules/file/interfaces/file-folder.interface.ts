@@ -91,7 +91,7 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.AppTarball]: {
     ignoreExpirationToken: false,
     cacheControl: null,
-    allowedMimeTypes: ANY_MIME_TYPE,
+    allowedMimeTypes: ['application/gzip'],
   },
   [FileFolder.GeneratedSdkClient]: {
     ignoreExpirationToken: false,
