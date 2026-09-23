@@ -20,7 +20,7 @@ const LEGACY_SETTINGS_MENU_ITEM_ICON = 'IconAdjustments';
 const LEGACY_SETTINGS_MENU_ITEM_POSITION = 0;
 const LEGACY_SETTINGS_MENU_ITEM_SCOPE = 'WORKSPACE';
 
-@RegisteredInstanceCommand('2.42.0', 1790094410000, { type: 'slow' })
+@RegisteredInstanceCommand('2.42.0', 1790165870000, { type: 'slow' })
 export class BackfillSettingsMenuItemSlowInstanceCommand
   implements SlowInstanceCommand
 {
