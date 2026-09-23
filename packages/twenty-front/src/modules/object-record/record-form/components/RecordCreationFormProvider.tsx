@@ -98,7 +98,7 @@ export const RecordCreationFormProvider = ({
 
         navigateSidePanelMenu({
           page: SidePanelPages.RecordCreationForm,
-          pageTitle: t`Create ${pendingRecordCreation.objectMetadataLabelSingular}`,
+          pageTitle: t`New ${pendingRecordCreation.objectMetadataLabelSingular}`,
           pageIcon: IconPlus,
           pageId: requestId,
         });
