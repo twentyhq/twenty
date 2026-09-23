@@ -1,8 +1,8 @@
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 
 import {
   currentWorkspaceState,
@@ -24,7 +24,6 @@ type WorkspaceAiModelSettingsChanges = Partial<
     | 'aiAgentModelTier'
     | 'isAutoModelSelectionEnabled'
     | 'aiModelIdByTier'
-    | 'aiEvaluationModelId'
   >
 >;
 
@@ -80,16 +79,10 @@ export const useSettingsAiModelsActions = () => {
     });
   };
 
-  // Null clears the pin, which puts the step back on whichever evaluation
-  // model the instance offers.
-  const handleEvaluationModelChange = (modelId: string | null) =>
-    updateAiModelSettings({ aiEvaluationModelId: modelId });
-
   return {
     handleChatTierChange,
     handleAgentTierChange,
     handleAutoModelSelectionToggle,
     handlePinnedModelChange,
-    handleEvaluationModelChange,
   };
 };

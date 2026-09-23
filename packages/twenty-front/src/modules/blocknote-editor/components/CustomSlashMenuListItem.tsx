@@ -1,10 +1,10 @@
-import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
 import { type SuggestionItem } from '@/blocknote-editor/types/types';
+import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { MenuItemSuggestion } from 'twenty-ui/primitives/navigation';
+import { MenuItemSuggestion } from 'twenty-ui/components';
 
 export type CustomSlashMenuListItemProps = {
   item: SuggestionItem;

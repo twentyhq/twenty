@@ -2,23 +2,20 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { workflowRunStepLogSchema } from 'twenty-shared/workflow';
+import { JsonTree } from 'twenty-ui/components';
 import { IconInfoCircle } from 'twenty-ui/icon';
-import {
-  isTwoFirstDepths,
-  JsonTree,
-} from 'twenty-ui/primitives/json-visualizer';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { useWorkflowRunStepLog } from '@/workflow/hooks/useWorkflowRunStepLog';
+import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
 import { WorkflowRunStepLogsAiAgentDetail } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail';
 import { WorkflowRunStepLogsCodeDetail } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail';
 import { WorkflowRunStepLogsEmailDetail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail';
 import { WorkflowRunStepLogsEntries } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEntries';
 import { WorkflowRunStepLogsHttpRequestDetail } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail';
-import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledRoot = styled.div`
@@ -76,7 +73,6 @@ export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
       <StyledRoot>
         <JsonTree
           value={rawStepLog as JsonValue}
-          shouldExpandNodeInitially={isTwoFirstDepths}
           emptyArrayLabel={t`Empty Array`}
           emptyObjectLabel={t`Empty Object`}
           emptyStringLabel={t`[empty string]`}
@@ -110,7 +106,6 @@ export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
         return (
           <JsonTree
             value={stepLog.details as JsonValue}
-            shouldExpandNodeInitially={isTwoFirstDepths}
             emptyArrayLabel={t`Empty Array`}
             emptyObjectLabel={t`Empty Object`}
             emptyStringLabel={t`[empty string]`}

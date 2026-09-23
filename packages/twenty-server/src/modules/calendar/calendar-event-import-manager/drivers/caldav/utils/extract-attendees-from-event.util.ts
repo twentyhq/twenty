@@ -17,7 +17,7 @@ export const extractAttendeesFromEvent = (
   return attendees.map((attendee) => {
     const rawValue = isString(attendee) ? attendee : attendee.val;
     const params = isString(attendee) ? undefined : attendee.params;
-    const handle = rawValue.replace(/^mailto:/i, '');
+    const handle = rawValue.replace(/^mailto:/i, '').toLowerCase();
     const partStat = params?.PARTSTAT ?? 'NEEDS_ACTION';
 
     return {

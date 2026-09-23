@@ -1,15 +1,15 @@
-import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
-import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
-import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
+import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
+import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
+import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
 import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
 import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
@@ -21,28 +21,28 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 export const DOCUMENTED_COMPONENTS = [
   {
     name: 'LightIconButton',
-    source: 'components/LightIconButton/LightIconButton.tsx',
+    source: 'components/input/LightIconButton/LightIconButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/light-icon-button',
     propDescriptions: LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS,
   },
   {
     name: 'IconButton',
-    source: 'components/IconButton/IconButton.tsx',
+    source: 'components/input/IconButton/IconButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/icon-button',
     propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
   },
   {
     name: 'MainButton',
-    source: 'components/MainButton/MainButton.tsx',
+    source: 'components/input/MainButton/MainButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/main-button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
   },
   {
     name: 'LightButton',
-    source: 'components/LightButton/LightButton.tsx',
+    source: 'components/input/LightButton/LightButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/light-button',
     propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
@@ -126,6 +126,10 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/navigation/ListItem/ListItem.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
+    propDescriptions: {
+      actionsVisibility:
+        'When trailing actions are visible: on hover and focus, or always.',
+    },
   },
   {
     name: 'Tabs',
@@ -177,8 +181,8 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'Toast',
-    source: 'primitives/feedback/Toast/Toast.tsx',
-    entryPoint: 'twenty-ui/primitives/feedback',
+    source: 'components/feedback/Toast/Toast.tsx',
+    entryPoint: 'twenty-ui/components',
     slug: 'feedback/toast',
   },
   {
@@ -224,14 +228,14 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'SettingsRow',
-    source: 'components/SettingsRow/SettingsRow.tsx',
+    source: 'components/input/SettingsRow/SettingsRow.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'components/settings-row',
     propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
   },
   {
     name: 'Section',
-    source: 'components/Section/Section.tsx',
+    source: 'components/layout/Section/Section.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'components/section',
     partPropDescriptions: {
@@ -255,7 +259,7 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'TabButton',
-    source: 'components/TabButton/TabButton.tsx',
+    source: 'components/navigation/TabButton/TabButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'components/tab-button',
     propDescriptions: {

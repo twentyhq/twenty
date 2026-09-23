@@ -3,7 +3,7 @@ import { publicDomainRecordsState } from '@/settings/domains/states/publicDomain
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { CheckPublicDomainValidRecordsDocument } from '~/generated-metadata/graphql';
 
 export const useCheckPublicDomainValidRecords = () => {

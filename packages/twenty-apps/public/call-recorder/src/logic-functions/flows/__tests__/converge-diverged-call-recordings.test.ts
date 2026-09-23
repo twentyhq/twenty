@@ -251,6 +251,96 @@ describe('convergeDivergedCallRecordings', () => {
     ]);
   });
 
+  it('spreads reconciliations over minutes with one job id per recording per day', async () => {
+    const client = buildClient(
+      Array.from({ length: 100 }, (_, index) => ({
+        id: `recording-${index}`,
+        status: 'RECORDING',
+      })),
+    );
+
+    await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    const reconcileBatches = enqueueJobsMock.mock.calls.map(([batch]) => batch);
+
+    expect(
+      reconcileBatches.map(({ jobs, delayMs }) => ({
+        jobCount: jobs.length,
+        delayMs,
+      })),
+    ).toEqual([
+      { jobCount: 60, delayMs: 0 },
+      { jobCount: 40, delayMs: 60_000 },
+    ]);
+    expect(reconcileBatches[1].jobs[0]).toEqual({
+      jobId: 'call-recorder-recording-60-reconcile-2026-06-10',
+      payload: { callRecordingId: 'recording-60' },
+    });
+  });
+
+  it('spreads imports over minutes, counting each artifact scope as a Recall call', async () => {
+    const client = buildClient(
+      Array.from({ length: 25 }, (_, index) => ({
+        id: `recording-${index}`,
+        status: 'PROCESSING',
+      })),
+    );
+
+    await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    const videoBatches = enqueueJobsMock.mock.calls
+      .map(([batch]) => batch)
+      .filter(({ jobs }) =>
+        jobs.every(
+          ({ payload }: { payload: { scope: string } }) =>
+            payload.scope === 'video',
+        ),
+      );
+
+    expect(
+      videoBatches.map(({ jobs, delayMs }) => ({
+        recordingCount: jobs.length,
+        delayMs,
+      })),
+    ).toEqual([
+      { recordingCount: 20, delayMs: 0 },
+      { recordingCount: 5, delayMs: 60_000 },
+    ]);
+  });
+
+  it('starts the next page once the current page has drained', async () => {
+    const client = buildClient(
+      Array.from({ length: 101 }, (_, index) => ({
+        id: `recording-${index}`,
+        status: 'PROCESSING',
+      })),
+    );
+
+    await convergeDivergedCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    const nextPageBatch = enqueueJobsMock.mock.calls
+      .map(([batch]) => batch)
+      .find(
+        ({ logicFunctionUniversalIdentifier }) =>
+          logicFunctionUniversalIdentifier ===
+          STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      );
+
+    expect(nextPageBatch).toMatchObject({
+      payloads: [{ after: 'recording-99' }],
+      delayMs: 5 * 60_000,
+    });
+  });
+
   it('propagates enqueue failure instead of silently reporting recovery success', async () => {
     enqueueJobsMock.mockRejectedValueOnce(new Error('Queue unavailable'));
     const client = buildClient([{ id: 'recording', status: 'PROCESSING' }]);

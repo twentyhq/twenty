@@ -1,11 +1,11 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
-import { IconChevronLeft, IconChevronRight, IconX } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
+import { IconChevronLeft, IconChevronRight, IconX } from 'twenty-ui/icon';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsApplicationScreenshotLightboxProps = {

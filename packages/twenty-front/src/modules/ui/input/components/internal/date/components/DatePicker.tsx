@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { lazy, Suspense, useContext, type ComponentType } from 'react';
+import { Suspense, lazy, useContext, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -29,7 +29,7 @@ import {
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/icon';
-import { MenuItemLeftContent } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
@@ -310,7 +310,8 @@ export const DatePicker = ({
       {clearable && (
         <StyledButtonContainer onClick={handleClear}>
           <StyledButtonContent>
-            <MenuItemLeftContent LeftIcon={IconCalendarX} text={t`Clear`} />
+            <IconCalendarX size={theme.icon.size.md} />
+            <Text>{t`Clear`}</Text>
           </StyledButtonContent>
         </StyledButtonContainer>
       )}

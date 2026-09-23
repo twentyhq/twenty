@@ -1479,6 +1479,9 @@ export default {
             "kanbanColumnWidth": [
                 28
             ],
+            "groupLoadLimit": [
+                28
+            ],
             "calendarFieldMetadataId": [
                 3
             ],
@@ -8188,6 +8191,15 @@ export default {
                     ]
                 }
             ],
+            "applicationCoreGraphqlSchema": [
+                1,
+                {
+                    "applicationUniversalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "currentUserApplicationAuthorizations": [
                 301
             ],
@@ -9020,6 +9032,15 @@ export default {
                 179
             ],
             "deleteConnectedAccount": [
+                193,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "disconnectConnectedAccount": [
                 193,
                 {
                     "id": [
@@ -11047,15 +11068,6 @@ export default {
                     ]
                 }
             ],
-            "generateApplicationToken": [
-                12,
-                {
-                    "applicationId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
             "renewApplicationToken": [
                 12,
                 {
@@ -11378,6 +11390,9 @@ export default {
             "kanbanColumnWidth": [
                 28
             ],
+            "groupLoadLimit": [
+                28
+            ],
             "openRecordIn": [
                 66
             ],
@@ -11459,6 +11474,9 @@ export default {
                 8
             ],
             "kanbanColumnWidth": [
+                28
+            ],
+            "groupLoadLimit": [
                 28
             ],
             "__typename": [
@@ -12302,6 +12320,9 @@ export default {
             ],
             "openRecordIn": [
                 24
+            ],
+            "readability": [
+                25
             ],
             "translations": [
                 490

@@ -10,14 +10,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconEye } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const SettingsWorkspaceNewUnsubscribeTopic = () => {
   const { t } = useLingui();

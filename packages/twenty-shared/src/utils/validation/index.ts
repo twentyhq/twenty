@@ -5,3 +5,4 @@ export * from './isValidTwentySubdomain';
 export * from './isSearchableFieldType';
 export * from './isValidUuid';
 export * from './normalizeLocale';
+export * from './isSupportedViewGroupLoadLimit';

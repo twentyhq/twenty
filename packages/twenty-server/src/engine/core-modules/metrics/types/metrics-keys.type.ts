@@ -94,6 +94,7 @@ export enum MetricsKeys {
   WorkspaceMigrationBuildEntityPhaseDurationMs = 'workspace-migration/build-entity-phase-duration-ms',
   WorkspaceMigrationRunDurationMs = 'workspace-migration/run-duration-ms',
   WorkspaceMigrationRunPhaseDurationMs = 'workspace-migration/run-phase-duration-ms',
+  DeferredWorkspaceMigrationActionDurationMs = 'deferred-workspace-migration-action/duration-ms',
   WorkspaceMigrationActionDurationMs = 'workspace-migration/action-duration-ms',
   WorkspaceMigrationActionCount = 'workspace-migration/action-count',
   OrmV2ReadPathUsed = 'orm-v2/read-path-used',
