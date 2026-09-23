@@ -73,11 +73,11 @@ export const createGetToolCatalogTool = (
         continue;
       }
 
-      if (!catalog[entry.category]) {
-        catalog[entry.category] = [];
-      }
+      const categoryEntries = catalog[entry.category] ?? [];
 
-      catalog[entry.category].push({
+      catalog[entry.category] = categoryEntries;
+
+      categoryEntries.push({
         name: entry.name,
         description: entry.description,
       });

@@ -36,7 +36,7 @@ const decodeHead = (text: string, budgetBytes: number): string => {
   while (
     end > 0 &&
     end < buffer.length &&
-    isUtf8ContinuationByte(buffer[end])
+    isUtf8ContinuationByte(buffer[end] ?? 0)
   ) {
     end -= 1;
   }
@@ -58,7 +58,7 @@ const decodeTail = (text: string, budgetBytes: number): string => {
   const buffer = Buffer.from(text.slice(sliceStart), 'utf-8');
   let start = Math.max(0, buffer.length - budgetBytes);
 
-  while (start < buffer.length && isUtf8ContinuationByte(buffer[start])) {
+  while (start < buffer.length && isUtf8ContinuationByte(buffer[start] ?? 0)) {
     start += 1;
   }
 

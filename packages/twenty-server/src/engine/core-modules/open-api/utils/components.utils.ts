@@ -363,7 +363,8 @@ export const computeMetadataSchemaComponents = (
           schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
             ...schemas[`${capitalize(item.nameSingular)}`],
             properties: {
-              ...schemas[`${capitalize(item.nameSingular)}`].properties,
+              ...(schemas[`${capitalize(item.nameSingular)}`]?.properties ??
+                {}),
               id: { type: 'string', format: 'uuid' },
               dataSourceId: { type: 'string', format: 'uuid' },
               isCustom: { type: 'boolean' },
@@ -465,7 +466,8 @@ export const computeMetadataSchemaComponents = (
               withRequiredFields: false,
             }),
             properties: {
-              ...schemas[`${capitalize(item.nameSingular)}`].properties,
+              ...(schemas[`${capitalize(item.nameSingular)}`]?.properties ??
+                {}),
               id: { type: 'string', format: 'uuid' },
               isCustom: { type: 'boolean' },
               isActive: { type: 'boolean' },

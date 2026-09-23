@@ -12,7 +12,7 @@ export class UsageLimitHttpException
     private readonly responseHeaders: Record<string, string>,
   ) {
     super(responseBody, responseBody.statusCode);
-    this.message = responseBody.messages[0];
+    this.message = responseBody.messages[0] ?? '';
   }
 
   getResponseBody(): UsageLimitRestResponseBody {

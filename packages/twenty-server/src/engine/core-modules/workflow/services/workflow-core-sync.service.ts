@@ -320,14 +320,14 @@ export class WorkflowCoreSyncService {
 
             if (
               coreWorkflows.length !== 1 ||
-              workflow.coreWorkflowId !== coreWorkflows[0].id
+              workflow.coreWorkflowId !== coreWorkflows[0]?.id
             ) {
               throw new Error(
                 `Invalid core mapping for workflow ${workspaceWorkflowId} in workspace ${workspaceId}`,
               );
             }
 
-            const coreWorkflowId = coreWorkflows[0].id;
+            const coreWorkflowId = coreWorkflows[0]?.id;
             let coreWorkflowVersionId: string | null = null;
 
             if (isNonEmptyString(workflow.lastPublishedVersionId)) {
@@ -342,7 +342,7 @@ export class WorkflowCoreSyncService {
                 );
               }
 
-              coreWorkflowVersionId = versions[0].id;
+              coreWorkflowVersionId = versions[0]?.id;
             }
 
             coreWorkflowUpdates.push({

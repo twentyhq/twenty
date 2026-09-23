@@ -394,7 +394,8 @@ export class CoreWorkflowListService {
     return {
       edges,
       pageInfo: {
-        endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
+        endCursor:
+          edges.length > 0 ? (edges[edges.length - 1]?.cursor ?? null) : null,
         hasNextPage,
       },
       totalCount,

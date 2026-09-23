@@ -121,7 +121,7 @@ export class LogicFunctionPrebuiltWarmUpService {
       results.forEach((result, index) => {
         if (result.status === 'rejected') {
           failures.push(
-            `${flatLogicFunctionsChunk[index].id}: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
+            `${flatLogicFunctionsChunk[index]?.id}: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
           );
         }
       });

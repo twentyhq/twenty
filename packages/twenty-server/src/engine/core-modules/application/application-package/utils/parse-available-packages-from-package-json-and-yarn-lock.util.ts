@@ -22,6 +22,10 @@ export const parseAvailablePackagesFromPackageJsonAndYarnLock = (
     const packageName = match[1];
     const version = match[2];
 
+    if (packageName === undefined || version === undefined) {
+      continue;
+    }
+
     if (packageJson.dependencies?.[packageName]) {
       versions[packageName] = version;
     }

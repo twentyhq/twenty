@@ -26,7 +26,7 @@ export const isUpgradeWorkspaceCursorValidForSegment = ({
 
   while (
     precedingInstanceSegmentStartCursor > 0 &&
-    sequence[precedingInstanceSegmentStartCursor - 1].kind !== 'workspace'
+    sequence[precedingInstanceSegmentStartCursor - 1]?.kind !== 'workspace'
   ) {
     precedingInstanceSegmentStartCursor--;
   }

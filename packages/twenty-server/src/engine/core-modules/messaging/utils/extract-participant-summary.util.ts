@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+
 import { type TimelineThreadParticipantDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-participant.dto';
 import { filterActiveParticipants } from 'src/engine/core-modules/messaging/utils/filter-active-participants.util';
 import { formatThreadParticipant } from 'src/engine/core-modules/messaging/utils/format-thread-participant.util';
@@ -13,9 +15,11 @@ export const extractParticipantSummary = (
   const activeMessageParticipants =
     filterActiveParticipants(messageParticipants);
 
-  const firstParticipant = formatThreadParticipant(
-    activeMessageParticipants[0],
-  );
+  const [firstActiveParticipant] = activeMessageParticipants;
+
+  assertIsDefinedOrThrow(firstActiveParticipant);
+
+  const firstParticipant = formatThreadParticipant(firstActiveParticipant);
 
   const activeMessageParticipantsWithoutFirstParticipant =
     activeMessageParticipants.filter(
@@ -37,11 +41,12 @@ export const extractParticipantSummary = (
           threadParticipant.handle !== lastParticipant.handle,
       );
 
-    if (activeMessageParticipantsWithoutFirstAndLastParticipants.length > 0) {
+    const [secondToLastParticipant] =
+      activeMessageParticipantsWithoutFirstAndLastParticipants.slice(-1);
+
+    if (isDefined(secondToLastParticipant)) {
       lastTwoParticipants.push(
-        formatThreadParticipant(
-          activeMessageParticipantsWithoutFirstAndLastParticipants.slice(-1)[0],
-        ),
+        formatThreadParticipant(secondToLastParticipant),
       );
     }
   }

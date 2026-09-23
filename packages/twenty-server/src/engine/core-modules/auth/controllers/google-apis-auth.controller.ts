@@ -103,7 +103,16 @@ export class GoogleAPIsAuthController {
         workspaceId,
       });
 
-      const handle = emails[0].value.toLowerCase();
+      const primaryEmail = emails[0]?.value;
+
+      if (primaryEmail === undefined) {
+        throw new AuthException(
+          'No email found on the account',
+          AuthExceptionCode.USER_NOT_FOUND,
+        );
+      }
+
+      const handle = primaryEmail.toLowerCase();
 
       const connectedAccountId =
         await this.googleAPIsService.refreshGoogleRefreshToken({

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { Injectable, Logger } from '@nestjs/common';
 import {
   type HealthIndicatorResult,
@@ -84,7 +86,15 @@ export class AdminPanelHealthService {
         };
       }
       const key = keys[0];
-      const serviceResult = result.value[key];
+      const serviceResult = isDefined(key) ? result.value[key] : undefined;
+
+      if (!isDefined(serviceResult)) {
+        return {
+          ...HEALTH_INDICATORS[indicatorId],
+          status: AdminPanelHealthServiceStatus.OUTAGE,
+          errorMessage: 'No health check result available',
+        };
+      }
       const { status, message, ...detailsWithoutStatus } = serviceResult;
       const indicator = HEALTH_INDICATORS[indicatorId];
 

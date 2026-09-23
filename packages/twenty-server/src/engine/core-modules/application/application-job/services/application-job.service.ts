@@ -67,7 +67,13 @@ export class ApplicationJobService {
         },
       });
 
-    return { enqueued, logicFunctionUniversalIdentifier, jobId: jobIds[0] };
+    const [jobId] = jobIds;
+
+    if (!isDefined(jobId)) {
+      throw new Error('Enqueueing the job returned no job id');
+    }
+
+    return { enqueued, logicFunctionUniversalIdentifier, jobId };
   }
 
   async enqueueJobs({
