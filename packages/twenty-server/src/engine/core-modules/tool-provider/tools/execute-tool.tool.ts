@@ -12,7 +12,11 @@ const executeToolInputZodSchema = z.object({
   toolName: z.string().describe('Tool name, as confirmed by learn_tools.'),
   arguments: z
     .record(z.string(), z.unknown())
-    .describe('Arguments matching the schema returned by learn_tools.'),
+    .optional()
+    .default({})
+    .describe(
+      'Arguments matching the schema returned by learn_tools. Omit for a tool that takes none.',
+    ),
 });
 
 export type ExecuteToolInput = z.infer<typeof executeToolInputZodSchema>;
