@@ -12,16 +12,14 @@ import { type ReactNode } from 'react';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockNavigateSidePanelMenu = jest.fn();
-const mockGoBackFromSidePanel = jest.fn();
+const mockCloseSidePanelMenu = jest.fn();
 const mockEnqueueToast = jest.fn();
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({
     navigateSidePanelMenu: mockNavigateSidePanelMenu,
+    closeSidePanelMenu: mockCloseSidePanelMenu,
   }),
-}));
-jest.mock('@/side-panel/hooks/useSidePanelHistory', () => ({
-  useSidePanelHistory: () => ({ goBackFromSidePanel: mockGoBackFromSidePanel }),
 }));
 jest.mock('twenty-ui/primitives/feedback', () => ({
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
@@ -84,7 +82,8 @@ it('keeps a rejected creation open, reports the error, and resolves only after a
     });
   });
 
-  expect(mockGoBackFromSidePanel).not.toHaveBeenCalled();
+  expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+  expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
   expect(mockNavigateSidePanelMenu).toHaveBeenCalledTimes(1);
   expect(mockEnqueueToast).toHaveBeenCalledWith({
     variant: 'error',
@@ -104,7 +103,7 @@ it('keeps a rejected creation open, reports the error, and resolves only after a
   });
 
   expect(createRecord).toHaveBeenLastCalledWith(correctedDraft);
-  expect(mockGoBackFromSidePanel).toHaveBeenCalledTimes(1);
+  expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
   expect(resolved).toHaveBeenCalledWith(createdRecord);
 });
 
@@ -148,6 +147,6 @@ it('removes the form from deeper in the history when the user moved on before cr
     await submission;
   });
 
-  expect(mockGoBackFromSidePanel).not.toHaveBeenCalled();
+  expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
   expect(store.get(sidePanelNavigationStackState.atom)).toEqual([otherPage]);
 });
