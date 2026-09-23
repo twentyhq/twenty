@@ -102,6 +102,22 @@ describe('Object metadata readability update', () => {
     expect(errors).toBeDefined();
   });
 
+  it('should reject a null readability', async () => {
+    const { errors } = await updateOneObjectMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: customObjectMetadataId,
+        updatePayload: {
+          readability: null as unknown as MetadataReadability,
+        },
+      },
+    });
+
+    expect(errors?.[0]?.message).toContain(
+      'readability must be one of the following values',
+    );
+  });
+
   it('should reject a readability update on a standard object', async () => {
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,

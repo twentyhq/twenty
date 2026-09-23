@@ -10,6 +10,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 
@@ -93,7 +94,7 @@ export class UpdateObjectPayload {
   openRecordIn?: ObjectOpenRecordIn;
 
   @IsIn(UPDATABLE_OBJECT_READABILITIES)
-  @IsOptional()
+  @ValidateIf((_, value) => value !== undefined)
   @Field(() => MetadataReadability, { nullable: true })
   readability?: MetadataReadability;
 
