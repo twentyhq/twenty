@@ -2,14 +2,18 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { SyncMessageRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789757500000-sync-message-record-page.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service';
 
 jest.mock(
   'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
@@ -44,6 +48,18 @@ const HOME_TAB_UNIVERSAL_IDENTIFIER =
   MESSAGE_RECORD_PAGE.tabs.home.universalIdentifier;
 const FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
   MESSAGE_RECORD_PAGE.tabs.home.widgets.fields.universalIdentifier;
+
+const STANDARD_MAPS = jest
+  .requireActual<
+    typeof import('src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant')
+  >(
+    'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
+  )
+  .computeTwentyStandardApplicationAllFlatEntityMaps({
+    now: '2026-09-23T00:00:00.000Z',
+    workspaceId: WORKSPACE_ID,
+    twentyStandardApplicationId: STANDARD_APPLICATION.id,
+  }).allFlatEntityMaps;
 
 const STANDARD_FIELDS_VIEW_ID = '20202020-0000-0000-0000-000000000010';
 const EXISTING_FIELDS_VIEW_ID = '20202020-0000-0000-0000-000000000011';
@@ -101,7 +117,10 @@ describe('SyncMessageRecordPageCommand', () => {
         ),
         flatViewFieldMaps: buildMaps(
           FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
-            (universalIdentifier) => ({ universalIdentifier }),
+            (universalIdentifier) =>
+              STANDARD_MAPS.flatViewFieldMaps.byUniversalIdentifier[
+                universalIdentifier
+              ]!,
           ),
         ),
         flatPageLayoutMaps: buildMaps([
@@ -148,6 +167,7 @@ describe('SyncMessageRecordPageCommand', () => {
 
   const mockWorkspaceCache = ({
     hasMessageObject = true,
+    missingFieldIdentifiers = [] as string[],
     existingViews = [] as {
       id: string;
       universalIdentifier: string;
@@ -171,6 +191,15 @@ describe('SyncMessageRecordPageCommand', () => {
           ? [{ universalIdentifier: MESSAGE.universalIdentifier }]
           : [],
       ),
+      flatFieldMetadataMaps: {
+        byUniversalIdentifier: Object.fromEntries(
+          Object.entries(
+            STANDARD_MAPS.flatFieldMetadataMaps.byUniversalIdentifier,
+          ).filter(
+            ([identifier]) => !missingFieldIdentifiers.includes(identifier),
+          ),
+        ),
+      },
       flatViewMaps: buildMaps(existingViews),
       flatViewFieldGroupMaps: buildMaps(
         existingViewFieldGroups.map((universalIdentifier) => ({
@@ -249,6 +278,121 @@ describe('SyncMessageRecordPageCommand', () => {
       });
     }
   });
+
+  it.each([
+    {
+      description: 'createdBy',
+      missingFieldIdentifiers: [MESSAGE.fields.createdBy.universalIdentifier],
+      omittedViewFields: 1,
+    },
+    {
+      description: 'the historical system fields',
+      missingFieldIdentifiers: [
+        MESSAGE.fields.createdBy.universalIdentifier,
+        MESSAGE.fields.updatedBy.universalIdentifier,
+        MESSAGE.fields.position.universalIdentifier,
+        MESSAGE.fields.searchVector.universalIdentifier,
+      ],
+      omittedViewFields: 1,
+    },
+    {
+      description: 'other referenced fields',
+      missingFieldIdentifiers: [
+        MESSAGE.fields.text.universalIdentifier,
+        MESSAGE.fields.receivedAt.universalIdentifier,
+      ],
+      omittedViewFields: 2,
+    },
+  ])(
+    'creates a valid page without backfilling missing $description',
+    async ({ missingFieldIdentifiers, omittedViewFields }) => {
+      mockWorkspaceCache({ missingFieldIdentifiers });
+
+      const { flatFieldMetadataMaps } = await getOrRecomputeMock();
+      const viewFieldValidator = new FlatViewFieldValidatorService();
+      const standardView =
+        STANDARD_MAPS.flatViewMaps.byUniversalIdentifier[
+          FIELDS_VIEW_UNIVERSAL_IDENTIFIER
+        ]!;
+      const validateViewField = (viewField: FlatViewField) =>
+        viewFieldValidator.validateFlatViewFieldCreation({
+          flatEntityToValidate: viewField,
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+            ...STANDARD_MAPS,
+            flatFieldMetadataMaps,
+            flatViewFieldMaps: createEmptyFlatEntityMaps(),
+            flatViewMaps: buildMaps([
+              { ...standardView, viewFieldUniversalIdentifiers: [] },
+            ]),
+          },
+          remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
+          additionalCacheDataMaps: {
+            featureFlagsMap: {} as Record<FeatureFlagKey, boolean>,
+          },
+          buildOptions: {
+            isSystemBuild: true,
+            applicationUniversalIdentifier:
+              STANDARD_APPLICATION.universalIdentifier,
+          },
+          workspaceId: WORKSPACE_ID,
+        });
+
+      const originalViewFields = FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
+        (identifier) =>
+          STANDARD_MAPS.flatViewFieldMaps.byUniversalIdentifier[identifier]!,
+      );
+
+      expect(
+        originalViewFields.flatMap(
+          (viewField) => validateViewField(viewField).errors,
+        ),
+      ).toHaveLength(omittedViewFields);
+
+      await runOnWorkspace();
+
+      const payload = getMigrationPayload();
+      const viewFields: FlatViewField[] = payload.viewField.flatEntityToCreate;
+
+      expect(viewFields).toHaveLength(
+        FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.length - omittedViewFields,
+      );
+      expect(
+        viewFields.flatMap((viewField) => validateViewField(viewField).errors),
+      ).toEqual([]);
+      expect(payload.fieldMetadata).toBeUndefined();
+      expect(payload.pageLayout.flatEntityToCreate).toHaveLength(1);
+      expect(payload.pageLayoutTab.flatEntityToCreate).toHaveLength(1);
+      expect(payload.pageLayoutWidget.flatEntityToCreate).toHaveLength(1);
+      expect(loggerWarnMock).toHaveBeenCalledTimes(omittedViewFields);
+
+      mockWorkspaceCache({
+        missingFieldIdentifiers,
+        existingViews: [
+          {
+            id: EXISTING_FIELDS_VIEW_ID,
+            universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
+          },
+        ],
+        existingViewFieldGroups: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
+        existingViewFields: viewFields.map(
+          (viewField) => viewField.universalIdentifier,
+        ),
+        existingPageLayouts: [
+          { universalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER },
+        ],
+        existingPageLayoutTabs: [
+          { universalIdentifier: HOME_TAB_UNIVERSAL_IDENTIFIER },
+        ],
+        existingPageLayoutWidgets: [FIELDS_WIDGET_UNIVERSAL_IDENTIFIER],
+      });
+
+      await runOnWorkspace();
+
+      expect(
+        validateBuildAndRunLegacyWorkspaceMigrationMock,
+      ).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it('binds the fields widget to the fields view the workspace already holds', async () => {
     mockWorkspaceCache({
@@ -419,7 +563,7 @@ describe('SyncMessageRecordPageCommand', () => {
     ).not.toHaveBeenCalled();
   });
 
-  it('reports what it would do on a dry run without running the migration', async () => {
+  it('validates the migration on a dry run without executing it', async () => {
     mockWorkspaceCache();
 
     await runOnWorkspace(true);
@@ -429,24 +573,27 @@ describe('SyncMessageRecordPageCommand', () => {
     );
     expect(
       validateBuildAndRunLegacyWorkspaceMigrationMock,
-    ).not.toHaveBeenCalled();
+    ).toHaveBeenCalledWith(expect.objectContaining({ dryRun: true }));
   });
 
-  it('throws when the migration fails, so the upgrade does not record success', async () => {
-    const failedResult = { status: 'fail' };
+  it.each([false, true])(
+    'throws when validation fails (dryRun=%s)',
+    async (dryRun) => {
+      const failedResult = { status: 'fail' };
 
-    mockWorkspaceCache();
-    validateBuildAndRunLegacyWorkspaceMigrationMock.mockResolvedValue(
-      failedResult,
-    );
+      mockWorkspaceCache();
+      validateBuildAndRunLegacyWorkspaceMigrationMock.mockResolvedValue(
+        failedResult,
+      );
 
-    await expect(runOnWorkspace()).rejects.toThrow(
-      `Failed to sync the message record page for workspace ${WORKSPACE_ID}`,
-    );
-    // the typed exception is what carries the failed build result to callers
-    await expect(runOnWorkspace()).rejects.toMatchObject({
-      name: 'WorkspaceMigrationBuilderException',
-      failedWorkspaceMigrationBuildResult: failedResult,
-    });
-  });
+      await expect(runOnWorkspace(dryRun)).rejects.toThrow(
+        `Failed to sync the message record page for workspace ${WORKSPACE_ID}`,
+      );
+      // the typed exception is what carries the failed build result to callers
+      await expect(runOnWorkspace(dryRun)).rejects.toMatchObject({
+        name: 'WorkspaceMigrationBuilderException',
+        failedWorkspaceMigrationBuildResult: failedResult,
+      });
+    },
+  );
 });
