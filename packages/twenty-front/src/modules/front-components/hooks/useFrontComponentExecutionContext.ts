@@ -36,6 +36,7 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { useFrontComponentFileUpload } from '@/front-components/hooks/useFrontComponentFileUpload';
 import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
+import { getUploadFileFailureReasonFromError } from '@/front-components/utils/getUploadFileFailureReasonFromError';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
@@ -511,8 +512,6 @@ export const useFrontComponentExecutionContext = ({
         return { status: 'failed', reason: 'invalid-params' };
       }
 
-      // A non-FILES target would upload fine and then fail at attach time,
-      // stranding the file; reject it before uploading anything.
       const { fieldMetadataItem } = getFieldMetadataItemById({
         fieldMetadataId: params.fieldMetadataId,
         objectMetadataItems,
@@ -543,8 +542,11 @@ export const useFrontComponentExecutionContext = ({
             mimeType: file.type.split(';')[0],
           },
         };
-      } catch {
-        return { status: 'failed', reason: 'upload-failed' };
+      } catch (error) {
+        return {
+          status: 'failed',
+          reason: getUploadFileFailureReasonFromError(error),
+        };
       }
     };
 

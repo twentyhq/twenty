@@ -1,6 +1,8 @@
-import { type DocumentNode, print } from 'graphql';
+import { type TypedDocumentNode } from '@apollo/client';
+import { print } from 'graphql';
 
 import { type MetadataGraphqlResponse } from '@/front-components/types/MetadataGraphqlResponse';
+import { sendRequestWithOneRetryOnFailure } from '@/front-components/utils/sendRequestWithOneRetryOnFailure';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const postMetadataGraphqlOperationWithApplicationAccessToken = async <
@@ -11,19 +13,21 @@ export const postMetadataGraphqlOperationWithApplicationAccessToken = async <
   variables,
   applicationAccessToken,
 }: {
-  document: DocumentNode;
+  document: TypedDocumentNode<TData, TVariables>;
   variables: TVariables;
   applicationAccessToken: string;
 }): Promise<MetadataGraphqlResponse<TData>> => {
-  const response = await fetch(`${REACT_APP_SERVER_BASE_URL}/metadata`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${applicationAccessToken}`,
-    },
-    body: JSON.stringify({ query: print(document), variables }),
-    credentials: 'omit',
-  });
+  const response = await sendRequestWithOneRetryOnFailure(() =>
+    fetch(`${REACT_APP_SERVER_BASE_URL}/metadata`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${applicationAccessToken}`,
+      },
+      body: JSON.stringify({ query: print(document), variables }),
+      credentials: 'omit',
+    }),
+  );
 
   return {
     status: response.status,

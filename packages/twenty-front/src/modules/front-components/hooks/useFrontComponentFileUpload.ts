@@ -1,7 +1,8 @@
-import { type DocumentNode } from 'graphql';
+import { type TypedDocumentNode } from '@apollo/client';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { putFileToUploadTarget } from '@/file/utils/putFileToUploadTarget';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { frontComponentApplicationTokenPairFamilyState } from '@/front-components/states/frontComponentApplicationTokenPairFamilyState';
 import { isUnauthenticatedMetadataGraphqlResponse } from '@/front-components/utils/isUnauthenticatedMetadataGraphqlResponse';
@@ -9,11 +10,7 @@ import { postMetadataGraphqlOperationWithApplicationAccessToken } from '@/front-
 import { unwrapMetadataGraphqlResponseOrThrow } from '@/front-components/utils/unwrapMetadataGraphqlResponseOrThrow';
 import {
   CompleteFileUploadDocument,
-  type CompleteFileUploadMutation,
-  type CompleteFileUploadMutationVariables,
   CreateFileUploadDocument,
-  type CreateFileUploadMutation,
-  type CreateFileUploadMutationVariables,
   FileFolder,
   type FileWithSignedUrl,
 } from '~/generated-metadata/graphql';
@@ -22,8 +19,6 @@ type UseFrontComponentFileUploadArgs = {
   applicationId: string;
 };
 
-// Runs with the component's application token on purpose: the user session
-// would let a component upload with permissions its application never had.
 export const useFrontComponentFileUpload = ({
   applicationId,
 }: UseFrontComponentFileUploadArgs) => {
@@ -38,7 +33,7 @@ export const useFrontComponentFileUpload = ({
     document,
     variables,
   }: {
-    document: DocumentNode;
+    document: TypedDocumentNode<TData, TVariables>;
     variables: TVariables;
   }): Promise<TData> => {
     const applicationTokenPair = store.get(
@@ -52,10 +47,7 @@ export const useFrontComponentFileUpload = ({
     }
 
     const response =
-      await postMetadataGraphqlOperationWithApplicationAccessToken<
-        TData,
-        TVariables
-      >({
+      await postMetadataGraphqlOperationWithApplicationAccessToken({
         document,
         variables,
         applicationAccessToken:
@@ -66,17 +58,12 @@ export const useFrontComponentFileUpload = ({
       return unwrapMetadataGraphqlResponseOrThrow(response);
     }
 
-    const refreshedApplicationAccessToken =
-      await requestApplicationAccessTokenRefresh(applicationId);
-
     return unwrapMetadataGraphqlResponseOrThrow(
-      await postMetadataGraphqlOperationWithApplicationAccessToken<
-        TData,
-        TVariables
-      >({
+      await postMetadataGraphqlOperationWithApplicationAccessToken({
         document,
         variables,
-        applicationAccessToken: refreshedApplicationAccessToken,
+        applicationAccessToken:
+          await requestApplicationAccessTokenRefresh(applicationId),
       }),
     );
   };
@@ -85,10 +72,7 @@ export const useFrontComponentFileUpload = ({
     file: File,
     { fieldMetadataId }: { fieldMetadataId: string },
   ): Promise<FileWithSignedUrl> => {
-    const { createFileUpload: uploadTarget } = await executeAsApplication<
-      CreateFileUploadMutation,
-      CreateFileUploadMutationVariables
-    >({
+    const { createFileUpload: uploadTarget } = await executeAsApplication({
       document: CreateFileUploadDocument,
       variables: {
         filename: file.name,
@@ -98,21 +82,9 @@ export const useFrontComponentFileUpload = ({
       },
     });
 
-    const putResponse = await fetch(uploadTarget.uploadUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': uploadTarget.contentType },
-      body: file,
-      credentials: 'omit',
-    });
+    await putFileToUploadTarget({ file, uploadTarget });
 
-    if (!putResponse.ok) {
-      throw new Error(`File upload failed with status ${putResponse.status}`);
-    }
-
-    const { completeFileUpload: uploadedFile } = await executeAsApplication<
-      CompleteFileUploadMutation,
-      CompleteFileUploadMutationVariables
-    >({
+    const { completeFileUpload: uploadedFile } = await executeAsApplication({
       document: CompleteFileUploadDocument,
       variables: { fileId: uploadTarget.fileId },
     });
