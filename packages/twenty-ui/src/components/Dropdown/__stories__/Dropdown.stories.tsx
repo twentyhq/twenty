@@ -163,6 +163,7 @@ export const MultipleSelection: Story = {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Choose people' }),
     );
+    await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
     const ada = await body.findByRole('button', { name: 'Ada Lovelace' });
 
     await userEvent.click(ada);
