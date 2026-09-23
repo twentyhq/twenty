@@ -3,7 +3,6 @@ import {
   AvatarGroup,
   CommandBlock,
   NotificationCounter,
-  Pill,
   TintedIconTile,
 } from 'twenty-ui/components';
 import { IconStar } from 'twenty-ui/icon';
@@ -11,6 +10,7 @@ import {
   Avatar,
   Chip,
   ColorSample,
+  Pill,
   Status,
   Tag,
 } from 'twenty-ui/primitives/data-display';

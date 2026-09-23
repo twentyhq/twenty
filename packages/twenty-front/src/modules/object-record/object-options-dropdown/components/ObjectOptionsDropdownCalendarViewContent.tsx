@@ -12,7 +12,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
-import { Pill } from 'twenty-ui/components';
 import {
   IconCalendarEvent,
   IconCalendarMonth,
@@ -20,6 +19,7 @@ import {
   IconChevronLeft,
   IconTimelineEvent,
 } from 'twenty-ui/icon';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 

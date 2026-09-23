@@ -17,7 +17,6 @@ export type { JsonTreeEntry } from './data-display/JsonTree/types/JsonTreeEntry'
 export type { JsonTreeProps } from './data-display/JsonTree/types/JsonTreeProps';
 export type { ShouldExpandNodeInitiallyProps } from './data-display/JsonTree/types/ShouldExpandNodeInitiallyProps';
 export { NotificationCounter } from './data-display/NotificationCounter/NotificationCounter';
-export { Pill } from './data-display/Pill/Pill';
 export { TintedIconTile } from './data-display/TintedIconTile/TintedIconTile';
 export type { TintedIconTileProps } from './data-display/TintedIconTile/types/TintedIconTileProps';
 export type { IconTileColorShades } from './data-display/TintedIconTile/utils/getIconTileColorShades';

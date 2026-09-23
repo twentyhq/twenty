@@ -3,8 +3,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/components';
 import { IconChevronRight } from 'twenty-ui/icon';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -9,7 +9,7 @@ import {
   IconUser,
 } from '@ui/icon';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
-import { Pill } from '@ui/components/data-display/Pill/Pill';
+import { Pill } from '@ui/primitives/data-display/Pill/Pill';
 import { Tabs } from '@ui/primitives/navigation/Tabs/Tabs';
 import {
   A11Y_DEFER_COLOR_CONTRAST,

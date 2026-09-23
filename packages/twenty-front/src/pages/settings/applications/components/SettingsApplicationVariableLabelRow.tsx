@@ -3,8 +3,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { Pill } from 'twenty-ui/components';
 import { IconInfoCircle } from 'twenty-ui/icon';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

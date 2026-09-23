@@ -16,8 +16,8 @@ import { t } from '@lingui/core/macro';
 import { type JSX, type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/components';
 import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
   Text,

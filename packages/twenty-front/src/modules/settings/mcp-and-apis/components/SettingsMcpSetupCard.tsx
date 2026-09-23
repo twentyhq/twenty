@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type McpSetupCard } from '@/settings/mcp-and-apis/types/McpSetup';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { Pill } from 'twenty-ui/components';
 import { IconExternalLink } from 'twenty-ui/icon';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import { Card, CardContent, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 

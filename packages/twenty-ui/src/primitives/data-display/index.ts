@@ -21,6 +21,7 @@ export type {
   ColorSampleProps,
 } from './ColorSample/ColorSample';
 export { ColorSample } from './ColorSample/ColorSample';
+export { Pill } from './Pill/Pill';
 export { Status } from './Status/Status';
 export type { StatusProps } from './Status/types/StatusProps';
 export { Tag } from './Tag/Tag';
