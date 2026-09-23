@@ -21,7 +21,7 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
   Application,
-  'objects' | 'frontComponents' | 'commandMenuItems'
+  'objects' | 'frontComponents' | 'commandMenuItems' | 'settingsMenuItems'
 > & {
   objects: { id: string }[];
   frontComponents?: {

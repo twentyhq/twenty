@@ -16,14 +16,14 @@ Front components can render in four locations within Twenty:
 
 - **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
 - **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
-- **App settings** — Defined with [`defineSettingsFrontComponent()`](#custom-settings-component), the front component is the whole content of the app's **Settings** tab, in place of the default **Variables** tab.
+- **App settings** — Pointed at by a [`defineSettingsMenuItem()`](#settings-menu-items) declaration, the front component renders the page behind one of the app's settings menu items. An app can declare several.
 - **AI chat** — A [logic function exposed as an AI tool](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) can name a front component, which then renders that tool's calls inline in the chat in place of the default step row.
 
 A front component on its own isn't reachable from the UI — you need to *surface* it. The four ways to do that are:
 
 - **Pair it with a [command menu item](/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
 - **Embed it as a widget in a [page layout](/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
-- **Define it with [`defineSettingsFrontComponent()`](#custom-settings-component)** — makes it the whole content of the app's **Settings** tab, in place of the default **Variables** tab.
+- **Point a [`defineSettingsMenuItem()`](#settings-menu-items) at it** — renders it behind one of the app's settings menu items.
 - **Name it from a [logic function's `toolTriggerSettings`](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action)** — renders the tool's calls in the AI chat.
 
 ## Basic example
@@ -85,33 +85,57 @@ Click it to render the component inline.
 
 Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See [Page Layouts](/developers/extend/apps/layout/page-layouts) for details.
 
-## Custom settings component
+## Settings menu items
 
-To replace the auto-generated variable configuration UI with your own component, define it with `defineSettingsFrontComponent` instead of `defineFrontComponent`. It takes the same [configuration fields](#configuration-fields) (except `isHeadless`, which is not accepted since a settings component always renders visible UI) and additionally marks the component as the app's settings UI.
+An app can add its own entries to the settings menu, each rendering a front component. Declare one with `defineSettingsMenuItem()` in its own file, pointing at the component that renders it:
 
-The component is the whole content of a dedicated **Settings** tab, and it replaces the auto-generated **Variables** tab: your app is expected to render its own variables. Twenty's system-managed sections — auto-upgrade, App URL, and connections — live in the app's **General** tab and cannot be overridden by the app. App URL only shows with **Advanced mode** on.
+```tsx src/settings-menu-items/sync-settings.ts
+import { defineSettingsMenuItem } from 'twenty-sdk/define';
 
-```tsx src/front-components/app-settings.tsx
-import { defineSettingsFrontComponent } from 'twenty-sdk/define';
-
-const AppSettings = () => {
-  return (
-    <div style={{ padding: '20px' }}>
-      <h2>My app settings</h2>
-      {/* render your own configuration UI here */}
-    </div>
-  );
-};
-
-export default defineSettingsFrontComponent({
+export default defineSettingsMenuItem({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-  name: 'app-settings',
-  description: "Custom UI for the app's Settings tab",
-  component: AppSettings,
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+  title: 'Sync',
+  icon: 'IconRefresh',
+  position: 1,
 });
 ```
 
-Only one settings front component is allowed per app; declaring more than one fails the build. When present, the app gains a **Settings** tab rendering this component, in place of the default **Variables** tab.
+The menu item points at the front component rather than the component declaring itself a settings entry. One component can therefore back several menu items, and an item can be repointed at a different component without touching either.
+
+Each item renders as a tab on the app's page under **Settings > Apps**, after **General**, in `position` order.
+
+Declare as many as you need. Twenty's own **General** item — auto-upgrade, App URL and connections — always comes first and cannot be overridden by an app; App URL only shows with **Advanced mode** on.
+
+### Fields
+
+| Field | Description |
+|-------|-------------|
+| `universalIdentifier` | A UUID you generate once and own, stable across syncs |
+| `frontComponentUniversalIdentifier` | The `universalIdentifier` of the front component this item renders |
+| `title` | The item's label. `General` is reserved and fails the build |
+| `icon` *(optional)* | Icon name, resolved client-side; an unknown name falls back to a default |
+| `position` *(optional)* | Sort order, ascending. Defaults to `0` |
+| `scope` *(optional)* | `WORKSPACE` (default) or `USER` |
+
+`position` is a decimal, so an item can be slotted between two existing ones without renumbering. Items sort by ascending `position`, ties broken on `universalIdentifier` so the order is the same in every workspace. Two items of one app cannot share a position in the same scope — the sync refuses it rather than letting install order decide which renders first.
+
+### Workspace and user scope
+
+`scope` says who an item is configured by:
+
+- **`WORKSPACE`** (default) — configured once for the whole workspace, alongside the other workspace settings. These are the items that render as tabs on the app's page.
+- **`USER`** — configured by each member for themselves, under their own user settings.
+
+<Note>
+`USER` items are not displayed yet. Their placement under the user's own settings lands with per-member variable values; until then a `USER` item is persisted and synced but nothing renders it.
+</Note>
+
+A `USER` item runs as the member viewing it. Note that `applicationVariables` are workspace-wide: one value shared by everyone. An item that stores something per person should persist it through the app's own objects rather than a variable, otherwise one member's value overwrites another's.
+
+<Note>
+`defineSettingsFrontComponent()` is deprecated in favor of `defineSettingsMenuItem()`. An app still using it keeps working — its component is treated as a single **Settings** menu item — but it can only ever declare one, which is what `defineSettingsMenuItem()` exists to lift.
+</Note>
 
 ## Headless vs non-headless
 
@@ -453,7 +477,7 @@ Secret variables (`isSecret: true`) are **not** exposed to front components. The
 
 ### Reading and updating variables at runtime
 
-`getApplicationVariable` returns the values injected when the component loaded, so a value written afterwards only shows up on the next load. To read the stored values, or to write one (what a [custom settings component](#custom-settings-component) does when it saves what the user typed), go through `MetadataApiClient`:
+`getApplicationVariable` returns the values injected when the component loaded, so a value written afterwards only shows up on the next load. To read the stored values, or to write one (what a [settings menu item](#settings-menu-items) does when it saves what the user typed), go through `MetadataApiClient`:
 
 ```tsx src/front-components/app-settings.tsx
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';

@@ -33,6 +33,7 @@ import { getConnectionProviderBaseFile } from '@/cli/utilities/entity/entity-con
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import { getViewFieldBaseFile } from '@/cli/utilities/entity/entity-view-field-template';
+import { getSettingsMenuItemBaseFile } from '@/cli/utilities/entity/entity-settings-menu-item-template';
 import { getTimelineActivityTypeBaseFile } from '@/cli/utilities/entity/entity-timeline-activity-type-template';
 import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
@@ -288,6 +289,14 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getTimelineActivityTypeBaseFile({ name });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.SettingsMenuItem: {
+        const name = await this.getEntityName(entity);
+
+        const file = getSettingsMenuItemBaseFile({ name });
 
         return { name, file };
       }
