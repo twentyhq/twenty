@@ -120,7 +120,7 @@ export class ApplicationDTO {
   @Field(() => [CommandMenuItemDTO])
   commandMenuItems?: CommandMenuItemDTO[];
 
-  @Field(() => [SettingsMenuItemDTO])
+  @Field(() => [SettingsMenuItemDTO], { nullable: true })
   settingsMenuItems?: SettingsMenuItemDTO[];
 
   @Field(() => [LogicFunctionDTO])

@@ -386,7 +386,7 @@ export interface Application {
     agents: Agent[]
     frontComponents: FrontComponent[]
     commandMenuItems: CommandMenuItem[]
-    settingsMenuItems: SettingsMenuItem[]
+    settingsMenuItems?: SettingsMenuItem[]
     logicFunctions: LogicFunction[]
     objects: Object[]
     applicationVariables: ApplicationVariable[]
