@@ -156,19 +156,39 @@ export const FormArrayFieldInput = ({
     setNewItemDraftValue(value);
   };
 
-  const handleFirstItemInputEnter = () => {
-    if (isLimitReached) {
-      return;
+  const commitFirstItemDraft = () => {
+    const sanitizedDraft = newItemDraftValue.trim();
+
+    if (
+      isLimitReached ||
+      draftValue.type !== 'static' ||
+      sanitizedDraft === ''
+    ) {
+      return false;
     }
+
+    const updatedItems = [...draftValue.value, sanitizedDraft];
 
     setDraftValue({
       type: 'static',
-      value: [...draftValue.value, newItemDraftValue],
+      value: updatedItems,
     });
 
-    onChange([...draftValue.value, newItemDraftValue]);
+    onChange(updatedItems);
 
     setNewItemDraftValue('');
+
+    return true;
+  };
+
+  const handleFirstItemInputBlur = () => {
+    commitFirstItemDraft();
+  };
+
+  const handleFirstItemInputEnter = () => {
+    if (!commitFirstItemDraft()) {
+      return;
+    }
 
     openDropdown({
       dropdownComponentInstanceIdFromProps: dropdownId,
@@ -331,7 +351,7 @@ export const FormArrayFieldInput = ({
                 )}
               </StyledDisplayModeReadonlyContainer>
             ) : draftValue.value.length === 0 ? (
-              <StyledInputContainer>
+              <StyledInputContainer onBlur={handleFirstItemInputBlur}>
                 <TextInput
                   instanceId={formFieldInputInstanceId}
                   placeholder={t`Enter an item`}
