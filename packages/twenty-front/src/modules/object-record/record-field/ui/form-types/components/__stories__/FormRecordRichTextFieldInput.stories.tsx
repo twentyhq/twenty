@@ -38,6 +38,22 @@ const BLOCKNOTE_BULLET_LIST = JSON.stringify([
   },
 ]);
 
+const BLOCKNOTE_LINK = JSON.stringify([
+  {
+    id: 'block-1',
+    type: 'paragraph',
+    props: {},
+    content: [
+      { type: 'text', text: 'See ', styles: {} },
+      {
+        type: 'link',
+        href: 'https://twenty.com',
+        content: [{ type: 'text', text: 'Twenty', styles: {} }],
+      },
+    ],
+  },
+]);
+
 const meta: Meta<typeof FormRecordRichTextFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRecordRichTextFieldInput',
   component: FormRecordRichTextFieldInput,
@@ -229,6 +245,127 @@ export const ClosesSlashMenuBeforeLeavingForm: Story = {
     });
     expect(onFieldEscape).not.toHaveBeenCalled();
 
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(onFieldEscape).toHaveBeenCalledTimes(1);
+    });
+  },
+};
+
+const selectEditorText = (
+  canvasElement: HTMLElement,
+  text: string,
+  anchorOffset: number,
+  focusOffset = anchorOffset,
+) => {
+  const editor = canvasElement.querySelector('.ProseMirror');
+  const walker = canvasElement.ownerDocument.createTreeWalker(
+    editor ?? canvasElement,
+    NodeFilter.SHOW_TEXT,
+  );
+  let textNode = walker.nextNode();
+
+  while (textNode !== null && textNode.textContent !== text) {
+    textNode = walker.nextNode();
+  }
+
+  if (textNode === null) {
+    throw new Error(`Text "${text}" not found in the editor`);
+  }
+
+  canvasElement.ownerDocument
+    .getSelection()
+    ?.setBaseAndExtent(textNode, anchorOffset, textNode, focusOffset);
+};
+
+export const KeepsFormOpenOnEscapeWithSelectedText: Story = {
+  args: {
+    onChange: fn(),
+  },
+  decorators: [CreationFormDecorator],
+  beforeEach: () => {
+    onFieldEscape.mockClear();
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await focusEditor(canvasElement);
+    await userEvent.keyboard('Hello');
+    selectEditorText(canvasElement, 'Hello', 0, 5);
+    expect(await body.findByRole('toolbar')).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+
+    expect(onFieldEscape).not.toHaveBeenCalled();
+
+    await focusEditor(canvasElement);
+    selectEditorText(canvasElement, 'Hello', 5);
+    await waitFor(() => {
+      expect(body.queryByRole('toolbar')).not.toBeInTheDocument();
+    });
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(onFieldEscape).toHaveBeenCalledTimes(1);
+    });
+  },
+};
+
+export const KeepsFormOpenOnEscapeInLink: Story = {
+  args: {
+    defaultValue: { blocknote: BLOCKNOTE_LINK, markdown: null },
+    onChange: fn(),
+  },
+  decorators: [CreationFormDecorator],
+  beforeEach: () => {
+    onFieldEscape.mockClear();
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await focusEditor(canvasElement);
+    selectEditorText(canvasElement, 'Twenty', 2);
+    expect(await body.findByRole('toolbar')).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+
+    expect(onFieldEscape).not.toHaveBeenCalled();
+
+    await focusEditor(canvasElement);
+    selectEditorText(canvasElement, 'See ', 1);
+    await waitFor(() => {
+      expect(body.queryByRole('toolbar')).not.toBeInTheDocument();
+    });
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(onFieldEscape).toHaveBeenCalledTimes(1);
+    });
+  },
+};
+
+export const KeepsFormOpenOnComposingEscape: Story = {
+  args: {
+    onChange: fn(),
+  },
+  decorators: [CreationFormDecorator],
+  beforeEach: () => {
+    onFieldEscape.mockClear();
+  },
+  play: async ({ canvasElement }) => {
+    await focusEditor(canvasElement);
+    const editor = canvasElement.querySelector('.ProseMirror');
+
+    editor?.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Escape',
+        isComposing: true,
+        bubbles: true,
+      }),
+    );
+
+    expect(onFieldEscape).not.toHaveBeenCalled();
+
+    await focusEditor(canvasElement);
     await userEvent.keyboard('{Escape}');
 
     await waitFor(() => {

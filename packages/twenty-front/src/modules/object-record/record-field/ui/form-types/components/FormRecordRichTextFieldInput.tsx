@@ -1,4 +1,8 @@
-import { SuggestionMenu } from '@blocknote/core/extensions';
+import {
+  FormattingToolbarExtension,
+  LinkToolbarExtension,
+  SuggestionMenu,
+} from '@blocknote/core/extensions';
 import { useCreateBlockNote } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -116,7 +120,16 @@ export const FormRecordRichTextFieldInput = ({
 
   const onFieldEscape = useContext(FormFieldEscapeContext);
 
+  const isEditorMenuOrToolbarShown = () =>
+    editor.getExtension(SuggestionMenu)?.shown() ||
+    editor.getExtension(FormattingToolbarExtension)?.store.state ||
+    isDefined(editor.getExtension(LinkToolbarExtension)?.getLinkAtSelection());
+
   const handleKeyDownCapture = (event: KeyboardEvent) => {
+    if (event.nativeEvent.isComposing || event.keyCode === 229) {
+      return;
+    }
+
     const isEscapeInEditor =
       event.key === Key.Escape &&
       event.target instanceof Node &&
@@ -126,7 +139,7 @@ export const FormRecordRichTextFieldInput = ({
     if (
       !isEscapeInEditor ||
       !isDefined(onFieldEscape) ||
-      editor.getExtension(SuggestionMenu)?.shown()
+      isEditorMenuOrToolbarShown()
     ) {
       return;
     }

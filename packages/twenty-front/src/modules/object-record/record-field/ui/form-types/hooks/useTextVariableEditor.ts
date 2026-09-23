@@ -71,6 +71,10 @@ export const useTextVariableEditor = ({
     },
     editorProps: {
       handleKeyDown: (view, event) => {
+        if (event.isComposing || event.keyCode === 229) {
+          return false;
+        }
+
         if (event.key === Key.Escape && isDefined(onFieldEscape)) {
           event.stopPropagation();
           onFieldEscape();
