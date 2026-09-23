@@ -368,13 +368,13 @@ export class WorkflowExecutorWorkspaceService {
     });
   }
 
-  private async assertNodeRunAllowed({
+  private async getNodeRunRefusal({
     workspaceId,
     billingSpenders,
   }: {
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
-  }) {
+  }): Promise<WorkflowActionOutput | undefined> {
     const isExecutionQuotaEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
@@ -382,15 +382,29 @@ export class WorkflowExecutorWorkspaceService {
       );
 
     if (!isExecutionQuotaEnabled) {
-      return;
+      return undefined;
     }
 
-    await this.billingUsageService.assertUsageAllowed({
-      workspaceId,
-      resourceType: UsageResourceType.WORKFLOW,
-      operationType: UsageOperationType.WORKFLOW_EXECUTION,
-      spenders: billingSpenders,
-    });
+    try {
+      await this.billingUsageService.assertUsageAllowed({
+        workspaceId,
+        resourceType: UsageResourceType.WORKFLOW,
+        operationType: UsageOperationType.WORKFLOW_EXECUTION,
+        spenders: billingSpenders,
+      });
+
+      return undefined;
+    } catch (error) {
+      if (!isUsageRefusedError(error)) {
+        throw error;
+      }
+
+      return {
+        error: error.message,
+        isUserError: true,
+        isUsageRefused: true,
+      };
+    }
   }
 
   private async sendWorkflowNodeRunEvent(
@@ -516,7 +530,14 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
-      await this.assertNodeRunAllowed({ workspaceId, billingSpenders });
+      const nodeRunRefusal = await this.getNodeRunRefusal({
+        workspaceId,
+        billingSpenders,
+      });
+
+      if (isDefined(nodeRunRefusal)) {
+        return nodeRunRefusal;
+      }
 
       return await workflowAction.execute({
         currentStepId: stepId,
@@ -545,7 +566,6 @@ export class WorkflowExecutorWorkspaceService {
       return {
         error: error.message ?? 'Execution result error, no data or error',
         isUserError,
-        isUsageRefused: isUsageRefusedError(error),
       };
     }
   }
