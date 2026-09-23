@@ -33,7 +33,7 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -160,15 +160,17 @@ const destroyRecords = ({
   );
 
 describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
-  let recordShareService: RecordShareService;
+  let recordShareStorageService: RecordShareStorageService;
   let personObjectMetadataId: string;
   let noteObjectMetadataId: string;
 
   const sourceId = randomUUID();
 
   beforeAll(async () => {
-    recordShareService =
-      getAppProviderByClassName<RecordShareService>('RecordShareService');
+    recordShareStorageService =
+      getAppProviderByClassName<RecordShareStorageService>(
+        'RecordShareStorageService',
+      );
 
     const objectMetadataRepository =
       getCoreRepository<ObjectMetadataEntity>(ObjectMetadataEntity);
@@ -280,11 +282,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
   afterAll(async () => {
     await setRecordSharingEnabled(false);
-    await recordShareService.deleteBySourceId({
+    await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
     });
-    await recordShareService.deleteByRecordIds({
+    await recordShareStorageService.deleteByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId: noteObjectMetadataId,
       recordIds: NOTE_IDS,
@@ -409,7 +411,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
   describe('with a READ share row on the person', () => {
     beforeAll(async () => {
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {
@@ -486,6 +488,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
             })),
           })
           .resolveAdmittedRecordIds({
+            isSystemContext: false,
             objectsPermissions: rolesPermissions[memberRole.id],
             principalIds: [
               EVERYONE_PRINCIPAL_ID,
@@ -568,7 +571,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
     beforeAll(async () => {
       const memberRole = await findOneRoleByLabel({ label: 'Member' });
 
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {
@@ -650,6 +653,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
             events,
           })
           .resolveAdmittedRecordIds({
+            isSystemContext: false,
             objectsPermissions: rolesPermissions[memberRole.id],
             principalIds: [
               EVERYONE_PRINCIPAL_ID,

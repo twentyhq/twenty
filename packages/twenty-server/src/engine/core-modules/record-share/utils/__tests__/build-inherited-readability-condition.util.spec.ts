@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import {

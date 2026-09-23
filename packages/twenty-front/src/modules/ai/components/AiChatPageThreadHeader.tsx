@@ -1,3 +1,4 @@
+import { AiChatSharingDropdown } from '@/ai/components/AiChatSharingDropdown';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
@@ -32,14 +33,16 @@ const StyledTitleDisplay = styled.div`
   align-items: center;
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  cursor: pointer;
+  &[role='button'] {
+    cursor: pointer;
+  }
   display: flex;
   height: 24px;
   overflow: hidden;
   padding: 0 5px;
 
-  &:hover,
-  &:focus-visible {
+  &[role='button']:hover,
+  &[role='button']:focus-visible {
     background: ${themeCssVariables.background.transparent.light};
     outline: none;
   }
@@ -114,12 +117,17 @@ export const AiChatPageThreadHeader = ({
           />
         ) : (
           <StyledTitleDisplay
-            role="button"
-            tabIndex={0}
-            aria-label={t`Rename chat`}
-            onClick={startRename}
+            role={thread.permissions.canUpdate ? 'button' : undefined}
+            tabIndex={thread.permissions.canUpdate ? 0 : undefined}
+            aria-label={
+              thread.permissions.canUpdate ? t`Rename chat` : undefined
+            }
+            onClick={thread.permissions.canUpdate ? startRename : undefined}
             onKeyDown={(event) => {
-              if (event.key === Key.Enter || event.key === ' ') {
+              if (
+                thread.permissions.canUpdate &&
+                (event.key === Key.Enter || event.key === ' ')
+              ) {
                 event.preventDefault();
                 startRename();
               }
@@ -130,6 +138,7 @@ export const AiChatPageThreadHeader = ({
         )}
       </StyledTitle>
       <StyledActions>
+        <AiChatSharingDropdown threadId={thread.id} />
         {hasConversation && (
           <Button
             startIcon={<IconPlus />}

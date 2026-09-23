@@ -1,12 +1,9 @@
-/* @license Enterprise */
-
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
@@ -112,36 +109,15 @@ export const buildRecordShareInputsForCreatedRecords = ({
   objectMetadataId,
   authContext,
   apiKeyRoleMap,
-  isRecordSharingEnabled,
   shareWith,
 }: {
   recordIds: string[];
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
-  isRecordSharingEnabled: boolean;
   shareWith?: ShareWithInput[] | null;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
-  // A record created while the flag is off is readable by everyone today and
-  // must stay so once the flag turns on, whoever created it
-  const everyoneFullRows =
-    !isRecordSharingEnabled && !isNonEmptyArray(shareWithEntries)
-      ? recordIds.map((recordId) => ({
-          recordId,
-          objectMetadataId,
-          principalId: EVERYONE_PRINCIPAL_ID,
-          principalType: RecordSharePrincipalType.EVERYONE,
-          accessLevel: RecordShareAccessLevel.FULL,
-          rowCause: RecordShareRowCause.APPLICATION,
-          sourceId: objectMetadataId,
-        }))
-      : [];
-
-  if (!isUserAuthContext(authContext) && isNonEmptyArray(everyoneFullRows)) {
-    return everyoneFullRows;
-  }
-
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
   const shareWithPrincipals = shareWithEntries
     .map(resolveShareWithPrincipalOrThrow)
@@ -166,6 +142,5 @@ export const buildRecordShareInputsForCreatedRecords = ({
         ...resolveShareWithRowOrigin({ authContext, recordId }),
       })),
     ]),
-    ...everyoneFullRows,
   ];
 };

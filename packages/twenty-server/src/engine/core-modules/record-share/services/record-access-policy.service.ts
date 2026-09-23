@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -11,8 +9,7 @@ import { In } from 'typeorm';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import {
@@ -46,7 +43,6 @@ type SnapshotEvaluation = {
   subject: RowAccessPolicySubject;
   depth: number;
   maps?: ReadabilityMaps;
-  isRecordSharingEnabled?: boolean;
 };
 
 type SnapshotEvaluationInContext = SnapshotEvaluation & {
@@ -60,8 +56,7 @@ export class RecordAccessPolicyService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareService: RecordShareService,
-    private readonly recordSharingFeatureService: RecordSharingFeatureService,
+    private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
   // A subject receives the records a query would return it: its role must read
@@ -74,16 +69,11 @@ export class RecordAccessPolicyService {
   }: WorkspaceEventBatch<ObjectRecordEvent>): EventRecordAccessGate {
     let recordSharesPromise: Promise<RecordShare[]> | undefined;
     const fetchRecordShares: FetchRecordShares = () =>
-      (recordSharesPromise ??= this.recordShareService.findByRecordIds({
+      (recordSharesPromise ??= this.recordShareStorageService.findByRecordIds({
         workspaceId,
         objectMetadataId: objectMetadata.id,
         recordIds: events.map((event) => event.recordId),
       }));
-
-    let isRecordSharingEnabledPromise: Promise<boolean> | undefined;
-    const fetchIsRecordSharingEnabled = () =>
-      (isRecordSharingEnabledPromise ??=
-        this.recordSharingFeatureService.isRecordSharingEnabled(workspaceId));
 
     return {
       resolveAdmittedRecordIds: async (subject) => {
@@ -106,7 +96,6 @@ export class RecordAccessPolicyService {
             snapshots,
             subject,
             depth: 0,
-            isRecordSharingEnabled: await fetchIsRecordSharingEnabled(),
           },
           fetchRecordShares,
         );
@@ -170,14 +159,8 @@ export class RecordAccessPolicyService {
     fetchRecordShares: FetchRecordShares,
   ): Promise<Set<string>> {
     const { objectMetadata, snapshots, subject } = evaluation;
-    const resolvedIsRecordSharingEnabled =
-      evaluation.isRecordSharingEnabled ??
-      (await this.recordSharingFeatureService.isRecordSharingEnabled(
-        evaluation.workspaceId,
-      ));
     const gateKind = resolveRecordShareGateKind({
       readability: objectMetadata.readability,
-      isRecordSharingEnabled: resolvedIsRecordSharingEnabled,
       isOwningApplication: subject.isOwningApplication(objectMetadata),
     });
 
@@ -199,7 +182,6 @@ export class RecordAccessPolicyService {
           )),
           ...(await this.resolveSnapshotIdsReadableThroughParents({
             ...evaluation,
-            isRecordSharingEnabled: resolvedIsRecordSharingEnabled,
           })),
         ]);
       default:
@@ -314,7 +296,6 @@ export class RecordAccessPolicyService {
     depth,
     maps,
     parent,
-    isRecordSharingEnabled,
   }: SnapshotEvaluationInContext & {
     parent: InheritedReadabilityChildrenParent;
   }): Promise<Set<string>> {
@@ -374,7 +355,6 @@ export class RecordAccessPolicyService {
       workspaceId,
       objectMetadata: parent.childFlatObjectMetadata,
       snapshots: [...capturedChildSnapshotsBySnapshotId.values()].flat(),
-      isRecordSharingEnabled,
       subject,
       depth: depth + 1,
       maps,
@@ -415,7 +395,7 @@ export class RecordAccessPolicyService {
     return this.resolveSnapshotIdsAdmittedByRecordShareGate(
       { ...evaluation, snapshots: candidateSnapshots },
       () =>
-        this.recordShareService.findByRecordIds({
+        this.recordShareStorageService.findByRecordIds({
           workspaceId,
           objectMetadataId: objectMetadata.id,
           recordIds: candidateSnapshots.map((snapshot) => snapshot.id),

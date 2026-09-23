@@ -8,10 +8,11 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const queryMock = jest.fn();
+const mockApolloClient = { query: queryMock };
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
-  useApolloClient: () => ({ query: queryMock }),
+  useApolloClient: () => mockApolloClient,
 }));
 
 const buildThread = (id: string, title: string): AgentChatThread => ({
@@ -21,6 +22,13 @@ const buildThread = (id: string, title: string): AgentChatThread => ({
   createdAt: '2026-09-07T00:00:00.000Z',
   updatedAt: '2026-09-07T00:00:00.000Z',
   lastMessageAt: '2026-09-07T00:00:00.000Z',
+
+  permissions: {
+    canRead: true,
+    canUpdate: true,
+    canDelete: true,
+    canSoftDelete: true,
+  },
   totalInputTokens: 0,
   totalOutputTokens: 0,
   totalCacheReadTokens: 0,
@@ -38,6 +46,17 @@ describe('useRefreshAgentChatThreads', () => {
   beforeEach(async () => {
     await clearMetadataStoreStorage();
     jest.clearAllMocks();
+  });
+
+  it('keeps the refresh callback stable so render updates do not restart subscriptions', () => {
+    const store = createStore();
+    const { result, rerender } = renderHook(
+      () => useRefreshAgentChatThreads(),
+      { wrapper: getWrapper(store) },
+    );
+    const refresh = result.current.refreshAgentChatThreads;
+    rerender();
+    expect(result.current.refreshAgentChatThreads).toBe(refresh);
   });
 
   it('loads chat threads into an empty store', async () => {

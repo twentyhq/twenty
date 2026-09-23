@@ -620,7 +620,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectMetadataId: flatObjectMetadata.id,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
-      isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
       shareWith,
       transactionScope,
     });
@@ -631,12 +630,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   ): boolean {
     switch (queryRunnerContext.flatObjectMetadata.readability) {
       case MetadataReadability.PRIVATE:
-        return true;
-      // An inherited record gets its creator's share row like a PRIVATE one,
-      // but one created while the flag is off must keep following its parent
-      // once the flag turns on instead of becoming readable by everyone
       case MetadataReadability.INHERITED:
-        return this.isRecordSharingEnabled(queryRunnerContext);
+        return true;
       default:
         return false;
     }

@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 

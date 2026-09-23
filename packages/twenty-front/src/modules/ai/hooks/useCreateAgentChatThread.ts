@@ -36,6 +36,8 @@ export const useCreateAgentChatThread = () => {
     onCompleted: (data) => {
       const newThread: FlatAgentChatThread = {
         id: data.createChatThread.id,
+        permissions: data.createChatThread.permissions,
+
         title: data.createChatThread.title ?? null,
         createdAt: data.createChatThread.createdAt,
         updatedAt: data.createChatThread.updatedAt,

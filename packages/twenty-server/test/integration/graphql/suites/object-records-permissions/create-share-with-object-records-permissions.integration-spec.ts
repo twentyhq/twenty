@@ -33,7 +33,7 @@ import {
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -149,7 +149,7 @@ const setRecordSharingEnabled = (value: boolean) =>
   });
 
 describe('createShareWithObjectRecordsPermissions', () => {
-  let recordShareService: RecordShareService;
+  let recordShareStorageService: RecordShareStorageService;
   let objectMetadataId: string;
   let personRelationFieldMetadataId: string;
   let memberRoleId: string;
@@ -159,7 +159,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
   const createdPersonIds: string[] = [];
 
   const findRecordShares = (recordId: string) =>
-    recordShareService.findByRecordIds({
+    recordShareStorageService.findByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
       recordIds: [recordId],
@@ -174,8 +174,10 @@ describe('createShareWithObjectRecordsPermissions', () => {
   };
 
   beforeAll(async () => {
-    recordShareService =
-      getAppProviderByClassName<RecordShareService>('RecordShareService');
+    recordShareStorageService =
+      getAppProviderByClassName<RecordShareStorageService>(
+        'RecordShareStorageService',
+      );
 
     const { data } = await createOneObjectMetadata({
       input: {
@@ -672,7 +674,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       await setRecordSharingEnabled(false);
     });
 
-    it('should accept an api key create without shareWith and grant everyone FULL access', async () => {
+    it('keeps an API-created record restricted to the creating role with the flag off', async () => {
       const recordId = trackRecordId();
 
       const response = await makeGraphqlAPIRequestWithApiKey(
@@ -687,16 +689,16 @@ describe('createShareWithObjectRecordsPermissions', () => {
       expect(await findRecordShares(recordId)).toEqual([
         expect.objectContaining({
           recordId,
-          principalId: EVERYONE_PRINCIPAL_ID,
-          principalType: RecordSharePrincipalType.EVERYONE,
+          principalId: adminRoleId,
+          principalType: RecordSharePrincipalType.ROLE,
           accessLevel: RecordShareAccessLevel.FULL,
-          rowCause: RecordShareRowCause.APPLICATION,
-          sourceId: objectMetadataId,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: recordId,
         }),
       ]);
     });
 
-    it('should give the creating member the owner row and everyone FULL access, so the record stays open once the flag turns on', async () => {
+    it('keeps a user-created private record owner-only with the flag off', async () => {
       const recordId = trackRecordId();
 
       const response = await makeGraphqlAPIRequest(
@@ -712,14 +714,9 @@ describe('createShareWithObjectRecordsPermissions', () => {
           expect.objectContaining(
             ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
           ),
-          expect.objectContaining({
-            recordId,
-            principalId: EVERYONE_PRINCIPAL_ID,
-            accessLevel: RecordShareAccessLevel.FULL,
-          }),
         ]),
       );
-      expect(await findRecordShares(recordId)).toHaveLength(2);
+      expect(await findRecordShares(recordId)).toHaveLength(1);
     });
   });
 

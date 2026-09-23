@@ -1,11 +1,9 @@
-/* @license Enterprise */
-
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { buildRecordShareInputsForCreatedRecords } from 'src/engine/core-modules/record-share/utils/build-record-share-inputs-for-created-records.util';
 import { validateShareWithArgOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util';
@@ -16,7 +14,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 @Injectable()
 export class ShareWithService {
   constructor(
-    private readonly recordShareService: RecordShareService,
+    private readonly recordShareStorageService: RecordShareStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -57,7 +55,6 @@ export class ShareWithService {
     objectMetadataId,
     recordIds,
     apiKeyRoleMap,
-    isRecordSharingEnabled,
     shareWith,
     transactionScope,
   }: {
@@ -65,28 +62,26 @@ export class ShareWithService {
     objectMetadataId: string;
     recordIds: string[];
     apiKeyRoleMap: Record<string, string>;
-    isRecordSharingEnabled: boolean;
     shareWith?: ShareWithInput[] | null;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
     const workspaceId = authContext.workspace.id;
 
     // A hard-destroyed record leaves its rows behind, and a client may reuse its id
-    await this.recordShareService.deleteByRecordIds({
+    await this.recordShareStorageService.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
       recordIds,
       transactionScope,
     });
 
-    await this.recordShareService.insertMany({
+    await this.recordShareStorageService.insertMany({
       workspaceId,
       recordShares: buildRecordShareInputsForCreatedRecords({
         recordIds,
         objectMetadataId,
         authContext,
         apiKeyRoleMap,
-        isRecordSharingEnabled,
         shareWith,
       }),
       transactionScope,

@@ -23,7 +23,7 @@ import {
 } from 'twenty-shared/types';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -118,7 +118,7 @@ const destroyRecords = ({
   );
 
 describe('inheritedReadabilityObjectRecordsPermissions', () => {
-  let recordShareService: RecordShareService;
+  let recordShareStorageService: RecordShareStorageService;
   let noteObjectMetadataId: string;
   let personObjectMetadataId: string;
   let attachmentObjectMetadataId: string;
@@ -126,8 +126,10 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
   const sourceId = randomUUID();
 
   beforeAll(async () => {
-    recordShareService =
-      getAppProviderByClassName<RecordShareService>('RecordShareService');
+    recordShareStorageService =
+      getAppProviderByClassName<RecordShareStorageService>(
+        'RecordShareStorageService',
+      );
 
     const noteObjectMetadata = await getCoreRepository<ObjectMetadataEntity>(
       ObjectMetadataEntity,
@@ -217,11 +219,11 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
 
   afterAll(async () => {
     await setRecordSharingEnabled(false);
-    await recordShareService.deleteBySourceId({
+    await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
     });
-    await recordShareService.deleteByRecordIds({
+    await recordShareStorageService.deleteByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId: attachmentObjectMetadataId,
       recordIds: ATTACHMENT_IDS,
@@ -261,7 +263,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       await setRecordSharingEnabled(true);
     });
 
-    it('should show every attachment and note target as if the note were OPEN', async () => {
+    it('keeps inherited record visibility enforced when the sharing UI is disabled', async () => {
       const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
         findAttachmentsOperation,
       );
@@ -272,9 +274,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       expect(attachmentsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(attachmentsResponse.body.data.attachments.edges),
-      ).toEqual(
-        [NOTE_ATTACHMENT_ID, PERSON_ATTACHMENT_ID, ORPHAN_ATTACHMENT_ID].sort(),
-      );
+      ).toEqual([PERSON_ATTACHMENT_ID]);
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(
         collectIds(noteTargetsResponse.body.data.noteTargets.edges),
@@ -324,7 +324,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
 
   describe('with a READ share row on the note', () => {
     beforeAll(async () => {
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {
@@ -382,7 +382,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should show the orphan attachment once it is shared with the member itself', async () => {
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {
@@ -462,7 +462,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     beforeAll(async () => {
       const memberRole = await findOneRoleByLabel({ label: 'Member' });
 
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {
@@ -556,7 +556,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
 
   describe('once every share row on the note is gone', () => {
     beforeAll(async () => {
-      await recordShareService.deleteBySourceId({
+      await recordShareStorageService.deleteBySourceId({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         sourceId,
       });
@@ -617,7 +617,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       const unsharedResponse =
         await makeGraphqlAPIRequestWithMemberRole(findPersonOperation);
 
-      await recordShareService.insertMany({
+      await recordShareStorageService.insertMany({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         recordShares: [
           {

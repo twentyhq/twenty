@@ -9,6 +9,7 @@ import { IconDotsVertical } from 'twenty-ui/icon';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 const archiveChatThread = jest.fn();
@@ -48,10 +49,26 @@ it.each([
     const user = userEvent.setup();
     const onRowClick = jest.fn();
     archiveChatThread.mockReturnValue(new Promise(() => {}));
+    const store = createStore();
+    store.set(metadataStoreState.atomFamily('agentChatThreads'), {
+      current: [
+        {
+          id: 'thread-archive',
+          permissions: {
+            canRead: true,
+            canUpdate: false,
+            canDelete: false,
+            canSoftDelete: true,
+          },
+        },
+      ],
+      draft: [],
+      status: 'up-to-date',
+    });
 
     render(
       <I18nProvider i18n={i18n}>
-        <Provider store={createStore()}>
+        <Provider store={store}>
           <MemoryRouter initialEntries={['/initial']}>
             <CurrentLocation />
             <NavigationDrawerItem
@@ -80,6 +97,8 @@ it.each([
 
     const trigger = screen.getByRole('button', { name: 'Chat actions' });
     await user.click(trigger);
+    expect(screen.queryByRole('menuitem', { name: 'Rename' })).toBeNull();
+    expect(screen.queryByRole('menuitem', { name: 'Delete' })).toBeNull();
     await user.click(await screen.findByRole('menuitem', { name: 'Archive' }));
 
     expect(archiveChatThread).toHaveBeenCalledWith('thread-archive');

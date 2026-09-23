@@ -50,6 +50,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
+      getThreadById: jest.fn().mockResolvedValue(undefined),
       findLatestSentUserMessage: jest.fn().mockResolvedValue(lastUserMessage),
       deleteAssistantMessagesForTurn: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue(threadMessages),
@@ -104,6 +105,25 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     userWorkspaceId: 'user-workspace-id',
     workspace,
   };
+
+  it('rejects a shared viewer without deleting messages or scheduling execution', async () => {
+    const { service, threadRepository, messageQueueService, agentChatService } =
+      buildService();
+    threadRepository.findOne.mockResolvedValue(null);
+    await expect(
+      service.retryLastFailedTurn(retryArguments),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
+    expect(threadRepository.findOne).toHaveBeenCalledWith(workspace.id, {
+      where: {
+        id: retryArguments.threadId,
+      },
+    });
+    expect(threadRepository.update).not.toHaveBeenCalled();
+    expect(
+      agentChatService.deleteAssistantMessagesForTurn,
+    ).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
 
   it('rejects when the thread has no persisted stream error', async () => {
     const { service, messageQueueService } = buildService({

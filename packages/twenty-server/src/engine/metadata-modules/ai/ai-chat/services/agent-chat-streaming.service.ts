@@ -137,10 +137,14 @@ export class AgentChatStreamingService {
       }
     | { queued: true; messageId: string }
   > {
+    await this.agentChatService.getThreadById({
+      threadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: {
         id: threadId,
-        userWorkspaceId,
       },
     });
 
@@ -378,8 +382,13 @@ export class AgentChatStreamingService {
     workspace: WorkspaceEntity;
     modelId?: string;
   }): Promise<{ streamId: string; messageId: string; turnId: string }> {
+    await this.agentChatService.getThreadById({
+      threadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
     const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId, userWorkspaceId },
+      where: { id: threadId },
     });
 
     if (!thread) {
@@ -539,6 +548,11 @@ export class AgentChatStreamingService {
     modelId?: string;
     fileAttachments?: AiChatFileAttachment[];
   }): Promise<{ streamId: string; turnId: string | null }> {
+    await this.agentChatService.getThreadById({
+      threadId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
     if (
       !answers.some(
         (answer) =>
@@ -943,7 +957,12 @@ export class AgentChatStreamingService {
         // insert time is meaningless and later than the first real message it sorts before.
         ...(message.isHidden
           ? {}
-          : { metadata: { createdAt: message.createdAt.toISOString() } }),
+          : {
+              metadata: {
+                createdAt: message.createdAt.toISOString(),
+                senderUserWorkspaceId: message.senderUserWorkspaceId,
+              },
+            }),
       })),
     );
   }

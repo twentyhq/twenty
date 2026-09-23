@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { randomBytes } from 'node:crypto';
 
 import { type RecordShareAccessLevel } from 'twenty-shared/types';

@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -32,7 +30,6 @@ export const buildRecordShareGate = ({
   target,
   buildParentPolicy,
 }: RecordShareGateArgs): RowAccessPolicy => {
-  const { isRecordSharingEnabled } = context.environment;
   const isOwningApplication = context.subject.isOwningApplication(
     target.flatObjectMetadata,
   );
@@ -40,7 +37,6 @@ export const buildRecordShareGate = ({
   const gateKind = resolveRecordShareGateKind({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
-    isRecordSharingEnabled,
   });
   switch (gateKind) {
     case 'open':

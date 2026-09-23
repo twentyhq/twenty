@@ -11,7 +11,6 @@ const NOW = '2024-01-01T00:00:00.000Z';
 // sync bookkeeping rows and workflow trigger registrations. timelineActivity
 // stays OPEN because merging records reparents its rows under the caller.
 const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
-  'agentChatThread',
   'agentMessage',
   'agentMessagePart',
   'agentTurn',

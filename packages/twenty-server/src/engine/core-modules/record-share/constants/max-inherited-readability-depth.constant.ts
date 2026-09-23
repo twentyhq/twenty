@@ -1,3 +1,1 @@
-/* @license Enterprise */
-
 export const MAX_INHERITED_READABILITY_DEPTH = 3;

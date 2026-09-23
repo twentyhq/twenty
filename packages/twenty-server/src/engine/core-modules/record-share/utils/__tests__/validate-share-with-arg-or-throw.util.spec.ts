@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { validateShareWithArgOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util';

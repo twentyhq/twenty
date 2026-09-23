@@ -1,4 +1,4 @@
-import { MetadataReadability } from 'twenty-shared/types';
+import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -49,7 +49,6 @@ const person = buildObject({
 });
 
 const environment: RowAccessPolicyEnvironment = {
-  isRecordSharingEnabled: true,
   flatFieldMetadataMaps: { byId: {} } as never,
   flatObjectMetadataMaps: { byId: {} } as never,
   recordShareTableExpression: '"workspace"."recordShare"',
@@ -58,6 +57,7 @@ const environment: RowAccessPolicyEnvironment = {
 };
 
 const readEverything: RowAccessPolicySubject = {
+  isSystemContext: false,
   objectsPermissions: undefined,
   principalIds: ['member-1'],
   isOwningApplication: () => false,
@@ -110,6 +110,40 @@ describe('buildRowAccessPolicy', () => {
         parameters: { restricted: 'restricted' },
       }),
     );
+  });
+
+  it.each(Object.values(MetadataReadability))(
+    'allows trusted system reads and writes for %s metadata',
+    (readability) => {
+      for (const operationType of ['select', 'update', 'delete'] as const) {
+        expect(
+          buildRowAccessPolicy({
+            subject: {
+              ...readEverything,
+              isSystemContext: true,
+              principalIds: undefined,
+            },
+            environment,
+            tableAlias: 'internal',
+            flatObjectMetadata: {
+              ...note,
+              readability,
+              writability: MetadataWritability.SYSTEM,
+            },
+            operationType,
+            depth: 0,
+          }),
+        ).toEqual({ kind: 'open' });
+      }
+    },
+  );
+
+  it('keeps APPLICATION records restricted to their owning application', () => {
+    const object = { ...note, readability: MetadataReadability.APPLICATION };
+    expect(build(readEverything, object)).toEqual({ kind: 'denied' });
+    expect(
+      build({ ...readEverything, isOwningApplication: () => true }, object),
+    ).toEqual({ kind: 'open' });
   });
 
   it('opens an OPEN object to a subject without predicate', () => {
@@ -182,5 +216,45 @@ describe('buildRowAccessPolicy', () => {
     expect(
       build({ ...readEverything, isOwningApplication: () => true }, attachment),
     ).toEqual({ kind: 'open' });
+  });
+  it('does not inherit write access through a read-only system parent', () => {
+    jest.mocked(resolveInheritedReadabilityParents).mockReturnValue([
+      {
+        kind: 'column',
+        fieldMetadataId: 'target-note-field-id',
+        joinColumnName: 'targetNoteId',
+        parentFlatObjectMetadata: {
+          ...note,
+          writability: MetadataWritability.SYSTEM,
+        },
+      },
+    ]);
+    const policy = buildRowAccessPolicy({
+      subject: readEverything,
+      environment,
+      tableAlias: 'attachment',
+      flatObjectMetadata: attachment,
+      operationType: 'update',
+      depth: 0,
+    });
+    expect(policy.kind).toBe('gated');
+    if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+    expect(policy.condition.sql).not.toContain('targetNoteId');
+    expect(policy.condition.sql).toContain('recordShare');
+  });
+
+  it('keeps private records gated regardless of the sharing UI flag', () => {
+    const policy = buildRowAccessPolicy({
+      subject: readEverything,
+      environment,
+      tableAlias: 'person',
+      flatObjectMetadata: person,
+      operationType: 'select',
+      depth: 0,
+    });
+    expect(policy.kind).toBe('gated');
+    if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+    expect(policy.condition.sql).toContain('recordShare');
+    expect(policy.condition.sql).not.toContain('rowCause');
   });
 });

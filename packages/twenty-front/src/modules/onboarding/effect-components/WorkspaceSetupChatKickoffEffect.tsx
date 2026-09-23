@@ -88,6 +88,8 @@ export const WorkspaceSetupChatKickoffEffect = () => {
 
         const workspaceSetupThread: FlatAgentChatThread = {
           id: thread.id,
+          permissions: thread.permissions,
+
           title: thread.title ?? null,
           createdAt: thread.createdAt,
           updatedAt: thread.updatedAt,

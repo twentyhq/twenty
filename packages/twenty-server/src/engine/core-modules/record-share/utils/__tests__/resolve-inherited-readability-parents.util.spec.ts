@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { FieldMetadataType, MetadataReadability } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';

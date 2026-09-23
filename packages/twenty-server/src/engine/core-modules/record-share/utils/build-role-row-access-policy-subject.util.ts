@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,6 +27,7 @@ export const buildRoleRowAccessPolicySubject = ({
   const roleIds = isDefined(roleId) ? [roleId] : [];
 
   return {
+    isSystemContext: false,
     objectsPermissions: isDefined(roleId)
       ? rolesPermissions[roleId]
       : undefined,
