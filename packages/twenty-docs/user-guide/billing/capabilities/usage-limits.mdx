@@ -58,13 +58,6 @@ Click a limit row to change its amount, period or scope. **Delete limit** sits i
 
 The work is refused rather than queued, and only in that scope. The rest of the workspace keeps running.
 
-| Where | What happens |
-|-------|--------------|
-| **AI chat** | The message is answered with the limit that was reached |
-| **API and app calls** | The call returns a `QUOTA_EXHAUSTED` error (HTTP 402) |
-| **Email campaigns** | Sending stops and the remaining deliveries are marked as skipped |
-| **Workflows and logic functions** | The run fails with the limit as its reason |
-
 Spending resumes on its own when the period resets. To unblock sooner, raise the limit or delete it.
 
 <Note>
