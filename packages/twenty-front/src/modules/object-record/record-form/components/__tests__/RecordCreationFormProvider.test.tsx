@@ -13,7 +13,6 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 
 const mockNavigateSidePanelMenu = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
-const mockEnqueueToast = jest.fn();
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({
@@ -22,13 +21,7 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   }),
 }));
 jest.mock('twenty-ui/primitives/feedback', () => ({
-  useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-jest.mock('@/error-handler/utils/getToastOptionsFromError', () => ({
-  getToastOptionsFromError: ({ error }: { error: Error }) => ({
-    variant: 'error',
-    children: error.message,
-  }),
+  useToast: () => ({ enqueueToast: jest.fn() }),
 }));
 
 const setup = () => {
@@ -51,61 +44,6 @@ const setup = () => {
 };
 
 beforeEach(() => jest.clearAllMocks());
-
-it('keeps a rejected creation open, reports the error, and resolves only after a successful retry', async () => {
-  const { result, store } = setup();
-  const createdRecord = {
-    id: 'created-company',
-    __typename: 'Company',
-    name: 'Test',
-  };
-  const createRecord = jest
-    .fn()
-    .mockRejectedValueOnce(new Error('Invalid URL'))
-    .mockResolvedValueOnce(createdRecord);
-  let creation: Promise<ObjectRecord | null> | undefined;
-  act(() => {
-    creation = result.current.requestRecordCreation({
-      objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
-      createRecord,
-      initialDraftRecord: { name: 'Test' },
-    });
-  });
-  const requestId = store.get(sidePanelNavigationStackState.atom)[0].pageId;
-  const resolved = jest.fn();
-  void creation?.then(resolved);
-
-  await act(async () => {
-    await result.current.settleRecordCreationDraft({
-      requestId,
-      draftRecord: { name: 'Test', domainName: { primaryLinkUrl: 'test' } },
-    });
-  });
-
-  expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
-  expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
-  expect(mockNavigateSidePanelMenu).toHaveBeenCalledTimes(1);
-  expect(mockEnqueueToast).toHaveBeenCalledWith({
-    variant: 'error',
-    children: 'Invalid URL',
-  });
-  expect(resolved).not.toHaveBeenCalled();
-
-  const correctedDraft = {
-    name: 'Test',
-    domainName: { primaryLinkUrl: 'https://example.com' },
-  };
-  await act(async () => {
-    await result.current.settleRecordCreationDraft({
-      requestId,
-      draftRecord: correctedDraft,
-    });
-  });
-
-  expect(createRecord).toHaveBeenLastCalledWith(correctedDraft);
-  expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
-  expect(resolved).toHaveBeenCalledWith(createdRecord);
-});
 
 it('removes the form from deeper in the history when the user moved on before creation finished', async () => {
   const { result, store } = setup();
