@@ -18,14 +18,10 @@ export enum BillingExceptionCode {
   BILLING_SUBSCRIPTION_ALREADY_EXISTS = 'BILLING_SUBSCRIPTION_ALREADY_EXISTS',
   BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND',
   BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND',
-  BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND = 'BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND',
   BILLING_MISSING_REQUEST_BODY = 'BILLING_MISSING_REQUEST_BODY',
   BILLING_UNHANDLED_ERROR = 'BILLING_UNHANDLED_ERROR',
   BILLING_STRIPE_ERROR = 'BILLING_STRIPE_ERROR',
   BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD = 'BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD',
-  BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE = 'BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE',
-  BILLING_SUBSCRIPTION_INTERVAL_INVALID = 'BILLING_SUBSCRIPTION_INTERVAL_INVALID',
-  BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE = 'BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE',
   BILLING_SUBSCRIPTION_ITEM_INVALID = 'BILLING_SUBSCRIPTION_ITEM_INVALID',
   BILLING_PRICE_INVALID_TIERS = 'BILLING_PRICE_INVALID_TIERS',
   BILLING_PRICE_INVALID = 'BILLING_PRICE_INVALID',
@@ -64,8 +60,6 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Workspace not found for subscription event.`;
     case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
       return msg`Workspace not found for customer event.`;
-    case BillingExceptionCode.BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND:
-      return msg`No active subscription found.`;
     case BillingExceptionCode.BILLING_MISSING_REQUEST_BODY:
       return msg`Missing request body.`;
     case BillingExceptionCode.BILLING_UNHANDLED_ERROR:
@@ -74,12 +68,6 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`A payment processing error occurred.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD:
       return msg`Subscription is not in trial period.`;
-    case BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE:
-      return msg`Cannot switch subscription interval.`;
-    case BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_INVALID:
-      return msg`Invalid subscription interval.`;
-    case BillingExceptionCode.BILLING_SUBSCRIPTION_PLAN_NOT_SWITCHABLE:
-      return msg`Cannot switch subscription plan.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_INVALID:
       return msg`Invalid subscription item.`;
     case BillingExceptionCode.BILLING_PRICE_INVALID_TIERS:
