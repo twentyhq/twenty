@@ -146,7 +146,7 @@ Notes:
 
 - It answers whether the workspace may spend, not how much it has left. Your app does not see the balance or the plan.
 - It fails open. If the check times out or the server is unreachable it reports credits available, so an infrastructure hiccup does not stop your app. Treat it as a hint worth honouring, not as an authorization decision.
-- It is a snapshot. Credits can run out between the check and the work.
+- It is a snapshot. Credits can run out between the check and the work — including because of your own charges, since every charge you make moves the same counter this reads.
 - The gate is not applied uniformly. Not every outbound email path is credit-gated, so a `false` here tells you the workspace is out of credits rather than predicting exactly which calls will fail.
 
 ## Telling people what it costs
