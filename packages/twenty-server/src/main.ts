@@ -88,7 +88,7 @@ const bootstrap = async () => {
     `/${ApiPath.GraphQL}`,
     graphqlUploadExpress({
       maxFieldSize: bytes(settings.maxRequestBodySize)!,
-      maxFileSize: bytes(settings.storage.maxMultipartFileSize)!,
+      maxFileSize: bytes(settings.maxRequestBodySize)!,
       maxFiles: 10,
     }),
   );
@@ -97,7 +97,7 @@ const bootstrap = async () => {
     `/${ApiPath.Metadata}`,
     graphqlUploadExpress({
       maxFieldSize: bytes(settings.maxRequestBodySize)!,
-      maxFileSize: bytes(settings.storage.maxMultipartFileSize)!,
+      maxFileSize: bytes(settings.maxRequestBodySize)!,
       maxFiles: 10,
     }),
   );
