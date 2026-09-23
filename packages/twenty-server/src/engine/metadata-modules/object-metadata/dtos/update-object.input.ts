@@ -5,6 +5,7 @@ import { MetadataReadability, ObjectOpenRecordIn } from 'twenty-shared/types';
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -14,6 +15,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { UPDATABLE_OBJECT_READABILITIES } from 'src/engine/metadata-modules/object-metadata/constants/updatable-object-readabilities.constant';
 import { MetadataTranslationOverrideInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation-override.input';
 
 @InputType()
@@ -90,7 +92,7 @@ export class UpdateObjectPayload {
   @Field(() => ObjectOpenRecordIn, { nullable: true })
   openRecordIn?: ObjectOpenRecordIn;
 
-  @IsEnum(MetadataReadability)
+  @IsIn(UPDATABLE_OBJECT_READABILITIES)
   @IsOptional()
   @Field(() => MetadataReadability, { nullable: true })
   readability?: MetadataReadability;
