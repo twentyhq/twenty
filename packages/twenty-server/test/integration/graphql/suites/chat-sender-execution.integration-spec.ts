@@ -1,4 +1,4 @@
-import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790087069782-add-chat-message-sender';
+import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790149521259-add-chat-message-sender';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -7,7 +7,7 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
-import { type AttributeChatMessageSendersCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790087156008-attribute-chat-message-senders.command';
+import { type AttributeChatMessageSendersCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790149522160-attribute-chat-message-senders.command';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
