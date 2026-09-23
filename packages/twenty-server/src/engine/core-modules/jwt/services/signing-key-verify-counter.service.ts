@@ -105,9 +105,12 @@ export class SigningKeyVerifyCounterService
 
     return {
       byKid: Object.fromEntries(
-        kids.map((kid, kidIndex) => [kid, sumWindow(valuesByBucket[kidIndex])]),
+        kids.map((kid, kidIndex) => [
+          kid,
+          sumWindow(valuesByBucket[kidIndex] ?? []),
+        ]),
       ),
-      legacyCount: sumWindow(valuesByBucket[bucketIds.length - 1]),
+      legacyCount: sumWindow(valuesByBucket[bucketIds.length - 1] ?? []),
       windowDays: WINDOW_DAYS,
     };
   }
@@ -138,9 +141,15 @@ export class SigningKeyVerifyCounterService
     let failedCount = 0;
 
     for (let index = 0; index < entries.length; index++) {
-      const [key, increment] = entries[index];
+      const entry = entries[index];
 
-      if (incrResults[index].status === 'rejected') {
+      if (!isDefined(entry)) {
+        continue;
+      }
+
+      const [key, increment] = entry;
+
+      if (incrResults[index]?.status === 'rejected') {
         this.pendingCounts.set(
           key,
           (this.pendingCounts.get(key) ?? 0) + increment,

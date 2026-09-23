@@ -60,7 +60,7 @@ describe('event-log registry', () => {
         EventLogTable.WORKSPACE_EVENT,
       );
 
-      expect(record.timestamp.toISOString()).toBe('2026-01-01T00:00:00.000Z');
+      expect(record?.timestamp.toISOString()).toBe('2026-01-01T00:00:00.000Z');
     });
 
     it('maps a pageview row from the name column', () => {

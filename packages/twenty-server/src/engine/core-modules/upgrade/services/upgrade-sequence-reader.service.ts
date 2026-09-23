@@ -104,7 +104,7 @@ export class UpgradeSequenceReaderService {
 
     let startCursor = workspaceCommandCursor;
 
-    while (startCursor > 0 && sequence[startCursor - 1].kind === 'workspace') {
+    while (startCursor > 0 && sequence[startCursor - 1]?.kind === 'workspace') {
       startCursor--;
     }
 
@@ -112,7 +112,7 @@ export class UpgradeSequenceReaderService {
 
     while (
       endCursor < sequence.length - 1 &&
-      sequence[endCursor + 1].kind === 'workspace'
+      sequence[endCursor + 1]?.kind === 'workspace'
     ) {
       endCursor++;
     }
@@ -137,7 +137,7 @@ export class UpgradeSequenceReaderService {
     for (let cursor = fromCursor; cursor < sequence.length; cursor++) {
       const step = sequence[cursor];
 
-      if (step.kind !== 'workspace') {
+      if (!isDefined(step) || step.kind !== 'workspace') {
         break;
       }
 
@@ -212,6 +212,14 @@ export class UpgradeSequenceReaderService {
       fromWorkspaceCommand: firstWorkspaceCommand,
     });
 
-    return segment[segment.length - 1];
+    const lastWorkspaceCommand = segment[segment.length - 1];
+
+    if (!isDefined(lastWorkspaceCommand)) {
+      throw new Error(
+        `No workspace commands follow "${firstWorkspaceCommand.name}".`,
+      );
+    }
+
+    return lastWorkspaceCommand;
   }
 }

@@ -8,6 +8,7 @@ import {
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const FIRST_PARAMETER_INDEX = 2;
 
@@ -439,10 +440,15 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       const [todayStart, tomorrowStart] = todayPredicate.parameters as string[];
       const dayInMilliseconds = 24 * 60 * 60 * 1000;
 
+      jestExpectToBeDefined(tomorrowStart);
+      jestExpectToBeDefined(todayStart);
+
       expect(
         new Date(tomorrowStart).getTime() - new Date(todayStart).getTime(),
       ).toBe(dayInMilliseconds);
+
       expect(new Date(todayStart).getTime()).toBeLessThanOrEqual(Date.now());
+
       expect(new Date(tomorrowStart).getTime()).toBeGreaterThan(Date.now());
     });
 
@@ -456,6 +462,9 @@ describe('buildCoreWorkflowFilterPredicate', () => {
         },
       ]);
       const [start, end] = parameters as string[];
+
+      jestExpectToBeDefined(end);
+      jestExpectToBeDefined(start);
 
       expect(new Date(end).getTime() - new Date(start).getTime()).toBe(
         24 * 60 * 60 * 1000,

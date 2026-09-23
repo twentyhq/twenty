@@ -13,6 +13,7 @@ import { EventLoopStallMonitorService } from 'src/engine/core-modules/message-qu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 @Processor(MessageQueue.workspaceQueue)
 class ProgressProcessor {
@@ -59,7 +60,9 @@ describe('MessageQueueExplorer progress context', () => {
         { data: { total: 10 } },
       ]);
 
-      expect((await queue.getJobs([id]))[id]).toMatchObject({
+      jestExpectToBeDefined(id);
+
+      expect((await queue.getJobs([id]))[id!]).toMatchObject({
         state: 'completed',
         progress: { completed: 10, total: 10 },
       });

@@ -156,7 +156,7 @@ describe('buildRecurringChargeUsageEvents', () => {
     });
 
     expect(events).toHaveLength(1);
-    expect(events[0].creditsUsedMicro).toBe(
+    expect(events[0]?.creditsUsedMicro).toBe(
       MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD,
     );
     expect(rejectedCharges).toEqual([]);

@@ -1,4 +1,5 @@
 import { sanitizeAddressAutocompleteGooglePlacesSuggestions } from 'src/engine/core-modules/geo-map/drivers/google-places/utils/sanitize-address-autocomplete-google-places-suggestions.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 // Real Google Places Autocomplete API prediction format
 const GOOGLE_PREDICTIONS = [
@@ -42,12 +43,16 @@ describe('sanitizeAddressAutocompleteGooglePlacesSuggestions', () => {
   });
 
   it('should map a single prediction', () => {
+    jestExpectToBeDefined(GOOGLE_PREDICTIONS[0]);
+
     const result = sanitizeAddressAutocompleteGooglePlacesSuggestions([
       GOOGLE_PREDICTIONS[0],
     ]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].text).toBe('48 Pirrama Road, Pyrmont NSW 2009, Australia');
-    expect(result[0].placeId).toBe('ChIJN1t_tDeuEmsRUsoyG83frY4');
+    expect(result[0]?.text).toBe(
+      '48 Pirrama Road, Pyrmont NSW 2009, Australia',
+    );
+    expect(result[0]?.placeId).toBe('ChIJN1t_tDeuEmsRUsoyG83frY4');
   });
 });

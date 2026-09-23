@@ -1099,7 +1099,7 @@ describe('reconstructViewsManifest', () => {
     });
 
     expect(views.map(({ name }) => name)).toEqual(['Zoo pets', 'All pets']);
-    expect(views[1].fields).toEqual([
+    expect(views[1]?.fields).toEqual([
       AGE_VIEW_FIELD_MANIFEST,
       NAME_VIEW_FIELD_MANIFEST,
     ]);

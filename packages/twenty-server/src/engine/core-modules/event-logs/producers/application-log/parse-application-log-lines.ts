@@ -17,9 +17,9 @@ export const parseApplicationLogLines = (rawLogs: string): ParsedLogLine[] => {
 
     if (match) {
       return {
-        timestamp: new Date(match[1]),
-        level: match[2],
-        message: stripAnsiEscapes(match[3]),
+        timestamp: new Date(match[1] ?? ''),
+        level: match[2] ?? 'INFO',
+        message: stripAnsiEscapes(match[3] ?? ''),
       };
     }
 

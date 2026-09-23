@@ -57,6 +57,10 @@ export const resolveShareWithPrincipalOrThrow = (
 
   const [principal] = principals;
 
+  if (!isDefined(principal)) {
+    throw buildSingleTargetException();
+  }
+
   if (
     principal.principalType !== RecordSharePrincipalType.EVERYONE &&
     !isValidUuid(principal.principalId)

@@ -6,6 +6,7 @@ import { FilesFieldService } from 'src/engine/core-modules/file/files-field/serv
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('FilesFieldService.copyFileIntoFilesField', () => {
   const workspaceId = '20202020-0000-4000-8000-000000000001';
@@ -111,6 +112,8 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
 
     expect(fileStorageService.copyFile).toHaveBeenCalledTimes(1);
 
+    jestExpectToBeDefined(fileStorageService.copyFile.mock.calls[0]);
+
     const copyArgs = fileStorageService.copyFile.mock.calls[0][0];
 
     expect(copyArgs.from).toEqual({
@@ -150,7 +153,7 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
     });
 
     expect(
-      fileStorageService.copyFile.mock.calls[0][0].to.resourcePath,
+      fileStorageService.copyFile.mock.calls[0]?.[0]?.to.resourcePath,
     ).toMatch(/\.csv$/);
   });
 });

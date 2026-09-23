@@ -126,11 +126,11 @@ export class TimelineMessagingService {
 
           return {
             id: messageThread.id,
-            subject: firstMessage.subject ?? '',
-            lastMessageBody: lastMessage.text ?? '',
-            lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
+            subject: firstMessage?.subject ?? '',
+            lastMessageBody: lastMessage?.text ?? '',
+            lastMessageReceivedAt: lastMessage?.receivedAt ?? new Date(),
             numberOfMessagesInThread: messageThread.messages.length,
-            lastMessageIsDraft: lastMessage.isDraft ?? false,
+            lastMessageIsDraft: lastMessage?.isDraft ?? false,
           };
         }),
         totalNumberOfThreads,

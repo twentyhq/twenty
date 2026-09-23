@@ -45,11 +45,11 @@ describe('resolveDpa', () => {
     const us = resolveDpa({ region: DpaRegion.US, mode: 'preview' });
 
     for (const resolved of [eu, us]) {
-      expect(resolved.blocks[0].text).toContain('between Twenty.com PBC (');
-      expect(resolved.blocks[0].text).toContain(
+      expect(resolved.blocks[0]?.text).toContain('between Twenty.com PBC (');
+      expect(resolved.blocks[0]?.text).toContain(
         'Twenty.com SAS (“Twenty SAS” or “EU Affiliate”) joins this DPA',
       );
-      expect(resolved.blocks[0].text).toContain(
+      expect(resolved.blocks[0]?.text).toContain(
         'Twenty SAS does not replace Twenty PBC as the Processor',
       );
     }

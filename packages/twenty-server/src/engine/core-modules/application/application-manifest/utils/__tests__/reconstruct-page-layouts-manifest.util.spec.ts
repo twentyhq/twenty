@@ -34,6 +34,7 @@ import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { normalizePageLayoutTabManifestOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/normalize-page-layout-tab-manifest-or-throw.test-util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const APP_ID = 'application-id';
 const WORKSPACE_ID = 'workspace-id';
@@ -231,33 +232,39 @@ const buildFlatPageLayoutWidget = ({
 }: {
   pageLayoutWidgetManifest: PageLayoutWidgetManifest;
   pageLayoutTabUniversalIdentifier: string;
-} & Partial<FlatPageLayoutWidget>): FlatPageLayoutWidget => ({
-  ...fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
-    pageLayoutWidgetManifest: normalizePageLayoutTabManifestOrThrow({
-      pageLayoutTabManifest: {
-        universalIdentifier: pageLayoutTabUniversalIdentifier,
-        title: 'Overview',
-        position: 0,
-        layoutMode:
-          pageLayoutWidgetManifest.position?.layoutMode ??
-          PageLayoutTabLayoutMode.VERTICAL_LIST,
-        widgets: [pageLayoutWidgetManifest],
-      },
-      pageLayoutType: PageLayoutType.RECORD_PAGE,
-    }).widgets[0],
-    pageLayoutTabUniversalIdentifier,
-    applicationUniversalIdentifier: APP_UID,
-    now: NOW,
-  }),
-  id: `${pageLayoutWidgetManifest.universalIdentifier}-id`,
-  workspaceId: WORKSPACE_ID,
-  applicationId: APP_ID,
-  pageLayoutTabId: `${pageLayoutTabUniversalIdentifier}-id`,
-  objectMetadataId: null,
-  configuration: { configurationType: WidgetConfigurationType.NOTES },
-  overrides: null,
-  ...flatPageLayoutWidgetProperties,
-});
+} & Partial<FlatPageLayoutWidget>): FlatPageLayoutWidget => {
+  const widget = normalizePageLayoutTabManifestOrThrow({
+    pageLayoutTabManifest: {
+      universalIdentifier: pageLayoutTabUniversalIdentifier,
+      title: 'Overview',
+      position: 0,
+      layoutMode:
+        pageLayoutWidgetManifest.position?.layoutMode ??
+        PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [pageLayoutWidgetManifest],
+    },
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+  }).widgets[0];
+
+  jestExpectToBeDefined(widget);
+
+  return {
+    ...fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: widget,
+      pageLayoutTabUniversalIdentifier,
+      applicationUniversalIdentifier: APP_UID,
+      now: NOW,
+    }),
+    id: `${pageLayoutWidgetManifest.universalIdentifier}-id`,
+    workspaceId: WORKSPACE_ID,
+    applicationId: APP_ID,
+    pageLayoutTabId: `${pageLayoutTabUniversalIdentifier}-id`,
+    objectMetadataId: null,
+    configuration: { configurationType: WidgetConfigurationType.NOTES },
+    overrides: null,
+    ...flatPageLayoutWidgetProperties,
+  };
+};
 
 const companyPage = buildFlatPageLayout({
   pageLayoutManifest: {
@@ -483,7 +490,7 @@ describe('reconstructPageLayoutsManifest', () => {
       }),
     });
 
-    expect(pageLayouts[0].tabs?.[0].widgets).toEqual([
+    expect(pageLayouts[0]?.tabs?.[0]?.widgets).toEqual([
       lastWidgetManifest,
       buildNotesWidgetManifest('notes-widget'),
     ]);
@@ -614,10 +621,10 @@ describe('reconstructPageLayoutsManifest', () => {
     expect(
       pageLayoutTabs.map(({ universalIdentifier }) => universalIdentifier),
     ).toEqual([COMPANY_TAB_UID]);
-    expect(pageLayoutTabs[0].pageLayoutUniversalIdentifier).toBe(
+    expect(pageLayoutTabs[0]?.pageLayoutUniversalIdentifier).toBe(
       COMPANY_PAGE_UID,
     );
-    expect(pageLayoutTabs[0].widgets).toEqual([
+    expect(pageLayoutTabs[0]?.widgets).toEqual([
       withoutPosition(buildNotesWidgetManifest('company-widget')),
     ]);
     expect(statusOf(coverage, 'company-widget')?.status).toBe(

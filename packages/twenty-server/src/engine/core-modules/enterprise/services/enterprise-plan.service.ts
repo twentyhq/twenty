@@ -751,6 +751,15 @@ export class EnterprisePlanService implements OnModuleInit {
       }
 
       const [encodedHeader, encodedPayload, signature] = parts;
+
+      if (
+        encodedHeader === undefined ||
+        encodedPayload === undefined ||
+        signature === undefined
+      ) {
+        return null;
+      }
+
       const signingInput = `${encodedHeader}.${encodedPayload}`;
 
       const signatureBuffer = Buffer.from(

@@ -24,8 +24,8 @@ describe('buildUsageEventEnvelopes', () => {
     ]);
 
     expect(envelopes).toHaveLength(1);
-    expect(envelopes[0].table).toBe('usageEvent');
-    expect(envelopes[0].row).toMatchObject({
+    expect(envelopes[0]?.table).toBe('usageEvent');
+    expect(envelopes[0]?.row).toMatchObject({
       workspaceId: 'ws-1',
       userWorkspaceId: 'uw-1',
       agentId: 'agent-1',
@@ -41,7 +41,7 @@ describe('buildUsageEventEnvelopes', () => {
   it('defaults the optional string columns to empty and omits periodStart when absent', () => {
     const [envelope] = buildUsageEventEnvelopes('ws-1', [usageEvent()]);
 
-    expect(envelope.row).toMatchObject({
+    expect(envelope?.row).toMatchObject({
       userWorkspaceId: '',
       apiKeyId: '',
       applicationId: '',
@@ -52,7 +52,7 @@ describe('buildUsageEventEnvelopes', () => {
       resourceContext: '',
     });
     expect(
-      (envelope.row as { periodStart?: string }).periodStart,
+      (envelope?.row as { periodStart?: string }).periodStart,
     ).toBeUndefined();
   });
 
@@ -61,7 +61,7 @@ describe('buildUsageEventEnvelopes', () => {
       usageEvent({ periodStart: new Date('2026-01-01T00:00:00.000Z') }),
     ]);
 
-    expect((envelope.row as { periodStart?: string }).periodStart).toBe(
+    expect((envelope?.row as { periodStart?: string }).periodStart).toBe(
       '2026-01-01 00:00:00.000',
     );
   });

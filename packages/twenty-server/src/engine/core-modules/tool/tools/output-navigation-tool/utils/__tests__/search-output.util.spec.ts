@@ -23,12 +23,12 @@ describe('searchOutput', () => {
     expect(result.totalMatches).toBe(3);
     expect(result.hasMore).toBe(false);
     expect(result.matches).toHaveLength(3);
-    expect(result.matches[0].match).toBe('error');
-    expect(result.matches[0].charOffset).toBe(
+    expect(result.matches[0]?.match).toBe('error');
+    expect(result.matches[0]?.charOffset).toBe(
       multiLineContent.indexOf('error'),
     );
-    expect(result.matches[0].context).toContain('error');
-    expect(result.matches[0].context.endsWith('…')).toBe(true);
+    expect(result.matches[0]?.context).toContain('error');
+    expect(result.matches[0]?.context.endsWith('…')).toBe(true);
   });
 
   it('finds every occurrence on a single newline-free line', () => {
@@ -76,7 +76,7 @@ describe('searchOutput', () => {
 
     expect(result.totalMatches).toBe(3);
     expect(result.matches).toHaveLength(1);
-    expect(result.matches[0].charOffset).toBe(
+    expect(result.matches[0]?.charOffset).toBe(
       multiLineContent.lastIndexOf('error'),
     );
     expect(result.hasMore).toBe(false);
@@ -129,7 +129,7 @@ describe('searchOutput', () => {
     });
 
     expect(result.totalMatches).toBe(1);
-    expect(result.matches[0].match).toBe('(b');
+    expect(result.matches[0]?.match).toBe('(b');
   });
 
   it('truncates an overly long single match with a centered ellipsis', () => {
@@ -144,8 +144,8 @@ describe('searchOutput', () => {
     });
 
     expect(result.totalMatches).toBe(1);
-    expect(result.matches[0].match).toContain('…');
-    expect(result.matches[0].match.length).toBeLessThanOrEqual(
+    expect(result.matches[0]?.match).toContain('…');
+    expect(result.matches[0]?.match.length).toBeLessThanOrEqual(
       SEARCH_OUTPUT_MAX_MATCH_LENGTH,
     );
   });

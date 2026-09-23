@@ -25,7 +25,7 @@ export const isHostUnderPublicFunctionDomain = ({
     return false;
   }
 
-  const hostname = host.split(':')[0].toLowerCase();
+  const hostname = (host.split(':')[0] ?? host).toLowerCase();
   const base = publicDomainBaseHostname.toLowerCase();
 
   return hostname !== base && hostname.endsWith(`.${base}`);

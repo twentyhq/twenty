@@ -151,7 +151,7 @@ describe('resolveEmailDocumentBindings', () => {
       value.replace(/\{\{[^{}]+\}\}/g, (binding) => values[binding] ?? ''),
     );
 
-    expect(resolved.content?.[0].content).toEqual([
+    expect(resolved.content?.[0]?.content).toEqual([
       { type: 'text', text: '{{secret}}' },
     ]);
   });
@@ -174,7 +174,7 @@ describe('resolveEmailDocumentBindings', () => {
       value.replace('{{empty}}', ''),
     );
 
-    expect(resolved.content?.[0].content).toEqual([
+    expect(resolved.content?.[0]?.content).toEqual([
       { type: 'variableTag', attrs: { variable: null } },
     ]);
   });

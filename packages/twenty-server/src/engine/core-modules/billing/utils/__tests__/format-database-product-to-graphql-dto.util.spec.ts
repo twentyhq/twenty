@@ -154,12 +154,12 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
       mockPlan as unknown as BillingGetPlanResult,
     );
 
-    const meteredPrices = result.meteredProducts[0].prices;
+    const meteredPrices = result.meteredProducts[0]?.prices;
 
-    expect(meteredPrices![0].tiers[0]).toEqual(
+    expect(meteredPrices?.[0]?.tiers[0]).toEqual(
       expect.objectContaining({ upTo: 50 }),
     );
-    expect(meteredPrices![0].tiers[1]).toEqual(
+    expect(meteredPrices?.[0]?.tiers[1]).toEqual(
       expect.objectContaining({ upTo: null }),
     );
   });

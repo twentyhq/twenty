@@ -3,6 +3,7 @@ import { type Job, Worker } from 'bullmq';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const mockGetJobs = jest.fn();
 const mockGetJob = jest.fn();
@@ -181,7 +182,11 @@ describe('BullMQDriver progress', () => {
         await queueJob.updateProgress(progress);
       });
 
-      const processor = jest.mocked(Worker).mock.calls[0][1];
+      const firstCall = jest.mocked(Worker).mock.calls[0];
+
+      jestExpectToBeDefined(firstCall);
+
+      const processor = firstCall[1];
 
       if (typeof processor !== 'function') {
         throw new Error('Worker processor was not registered');

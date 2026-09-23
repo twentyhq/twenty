@@ -171,7 +171,7 @@ describe('buildSpeedBuckets for a spender no application identifies', () => {
       speedLimitDefaults: WORKSPACE_DEFAULTS,
     });
 
-    expect(bucket.key).toBe('{server}:speed:API:API_REQUEST:workspace:-:10');
+    expect(bucket?.key).toBe('{server}:speed:API:API_REQUEST:workspace:-:10');
   });
 
   it('still drops an application bucket when no application identifies the caller', () => {

@@ -37,7 +37,7 @@ describe('AssertOrWarn Decorator', () => {
     const warnings = validateSync(validatedConfig, { groups: ['warning'] });
 
     expect(warnings.length).toBe(1);
-    expect(warnings[0].constraints!.AssertOrWarn).toBe(
+    expect(warnings[0]?.constraints?.AssertOrWarn).toBe(
       'Value should be higher than 10',
     );
   });
@@ -66,7 +66,7 @@ describe('AssertOrWarn Decorator', () => {
 
     expect(errors.length).toBe(0);
     expect(warnings.length).toBe(1);
-    expect(warnings[0].constraints!.AssertOrWarn).toBe(
+    expect(warnings[0]?.constraints?.AssertOrWarn).toBe(
       'The unit is in seconds but the duration in milliseconds',
     );
   });

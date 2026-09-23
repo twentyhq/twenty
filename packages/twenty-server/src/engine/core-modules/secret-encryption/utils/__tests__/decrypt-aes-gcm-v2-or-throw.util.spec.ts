@@ -4,6 +4,7 @@ import {
 } from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import { decryptAesGcmV2OrThrow } from 'src/engine/core-modules/secret-encryption/utils/decrypt-aes-gcm-v2-or-throw.util';
 import { encryptAesGcmV2 } from 'src/engine/core-modules/secret-encryption/utils/encrypt-aes-gcm-v2.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('decryptAesGcmV2OrThrow', () => {
   const KEY = 'gcm-test-key-zzzz1234567890abcdefghijkl';
@@ -51,7 +52,11 @@ describe('decryptAesGcmV2OrThrow', () => {
     const buffer = Buffer.from(ciphertext, 'base64');
     const middle = Math.floor(buffer.length / 2);
 
-    buffer[middle] = buffer[middle] ^ 0xff;
+    const middleByte = buffer[middle];
+
+    jestExpectToBeDefined(middleByte);
+
+    buffer[middle] = middleByte ^ 0xff;
     const tampered = buffer.toString('base64');
 
     expect(() =>

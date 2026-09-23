@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   BillingException,
   BillingExceptionCode,
@@ -47,5 +49,14 @@ export const findSellableBaseProductPriceOrThrow = <
     );
   }
 
-  return sellableBasePrices[0];
+  const [soleSellableBasePrice] = sellableBasePrices;
+
+  if (!isDefined(soleSellableBasePrice)) {
+    throw new BillingException(
+      'No sellable base product price found',
+      BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+    );
+  }
+
+  return soleSellableBasePrice;
 };
