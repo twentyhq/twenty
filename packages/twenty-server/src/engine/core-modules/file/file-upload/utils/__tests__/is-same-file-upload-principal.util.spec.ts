@@ -7,10 +7,34 @@ describe('isSameFileUploadPrincipal', () => {
     apiKeyId: null,
   };
 
+  const userPrincipal = {
+    applicationId: null,
+    userWorkspaceId: 'user-workspace-1',
+    apiKeyId: null,
+  };
+
   it('should match a principal with the same application, user workspace and api key', () => {
     expect(
       isSameFileUploadPrincipal(applicationPrincipal, {
         ...applicationPrincipal,
+      }),
+    ).toBe(true);
+  });
+
+  it('should match the same application acting for another user', () => {
+    expect(
+      isSameFileUploadPrincipal(applicationPrincipal, {
+        ...applicationPrincipal,
+        userWorkspaceId: 'user-workspace-2',
+      }),
+    ).toBe(true);
+  });
+
+  it('should match the same application acting without a user', () => {
+    expect(
+      isSameFileUploadPrincipal(applicationPrincipal, {
+        ...applicationPrincipal,
+        userWorkspaceId: null,
       }),
     ).toBe(true);
   });
@@ -24,20 +48,23 @@ describe('isSameFileUploadPrincipal', () => {
     ).toBe(false);
   });
 
-  it('should not match the same application acting for another user', () => {
-    expect(
-      isSameFileUploadPrincipal(applicationPrincipal, {
-        ...applicationPrincipal,
-        userWorkspaceId: 'user-workspace-2',
-      }),
-    ).toBe(false);
+  it('should not match the plain user session behind an application principal', () => {
+    expect(isSameFileUploadPrincipal(applicationPrincipal, userPrincipal)).toBe(
+      false,
+    );
   });
 
-  it('should not match the plain user session behind an application principal', () => {
+  it('should not match an application acting for the user who started the upload', () => {
+    expect(isSameFileUploadPrincipal(userPrincipal, applicationPrincipal)).toBe(
+      false,
+    );
+  });
+
+  it('should not match another user', () => {
     expect(
-      isSameFileUploadPrincipal(applicationPrincipal, {
-        ...applicationPrincipal,
-        applicationId: null,
+      isSameFileUploadPrincipal(userPrincipal, {
+        ...userPrincipal,
+        userWorkspaceId: 'user-workspace-2',
       }),
     ).toBe(false);
   });

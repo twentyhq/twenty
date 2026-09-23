@@ -66,14 +66,6 @@ const uploadFilesFieldFileMutation = gql`
   }
 `;
 
-const deleteFileMutation = gql`
-  mutation DeleteFile($fileId: UUID!) {
-    deleteFile(fileId: $fileId) {
-      id
-    }
-  }
-`;
-
 type TestApplication = {
   universalIdentifier: string;
   roleUniversalIdentifier: string;
@@ -81,7 +73,7 @@ type TestApplication = {
   filesFieldUniversalIdentifier: string;
   textFieldUniversalIdentifier: string;
   ownObjectPermissionUniversalIdentifier: string;
-  callRecordingPermissionUniversalIdentifier: string;
+  personPermissionUniversalIdentifier: string;
 };
 
 const buildTestApplication = (): TestApplication => ({
@@ -91,7 +83,7 @@ const buildTestApplication = (): TestApplication => ({
   filesFieldUniversalIdentifier: randomUUID(),
   textFieldUniversalIdentifier: randomUUID(),
   ownObjectPermissionUniversalIdentifier: randomUUID(),
-  callRecordingPermissionUniversalIdentifier: randomUUID(),
+  personPermissionUniversalIdentifier: randomUUID(),
 });
 
 const UPLOADING_APPLICATION = buildTestApplication();
@@ -105,10 +97,6 @@ type UploadTarget = {
   contentType: string;
 };
 
-// The uploading application's role holds UPLOAD_FILE and may update its own
-// object and the standard callRecording object, as the call-recorder app
-// does. The restricted application's role holds nothing, while the member
-// behind both tokens is an admin who holds every permission.
 const buildManifest = ({
   application,
   nameSuffix,
@@ -174,9 +162,9 @@ const buildManifest = ({
                   },
                   {
                     universalIdentifier:
-                      application.callRecordingPermissionUniversalIdentifier,
+                      application.personPermissionUniversalIdentifier,
                     objectUniversalIdentifier:
-                      STANDARD_OBJECTS.callRecording.universalIdentifier,
+                      STANDARD_OBJECTS.person.universalIdentifier,
                     canReadObjectRecords: true,
                     canUpdateObjectRecords: true,
                   },
@@ -189,9 +177,9 @@ const buildManifest = ({
   });
 
 describe('application files field upload', () => {
-  let uploadingApplicationId: string;
   let uploadingApplicationToken: string;
   let uploadingApplicationOtherMemberToken: string;
+  let uploadingApplicationOwnToken: string;
   let restrictedApplicationToken: string;
   const uploadedFileIds: string[] = [];
 
@@ -211,7 +199,6 @@ describe('application files field upload', () => {
       sourcePath: `test-files-field-upload-${application.universalIdentifier}`,
     });
 
-    // setupApplicationForSync leaves fake timers installed.
     jest.useRealTimers();
 
     const { errors } = await syncApplication({
@@ -229,14 +216,14 @@ describe('application files field upload', () => {
     return data.findOneApplication.id;
   };
 
-  const mintMemberBoundToken = async ({
+  const mintApplicationToken = async ({
     applicationId,
     userId,
     userWorkspaceId,
   }: {
     applicationId: string;
-    userId: string;
-    userWorkspaceId: string;
+    userId?: string;
+    userWorkspaceId?: string;
   }): Promise<string> => {
     const { applicationAccessToken } = await generateApplicationTokenPair({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -302,8 +289,6 @@ describe('application files field upload', () => {
     );
 
   const putFileToUploadUrl = ({ uploadUrl, contentType }: UploadTarget) => {
-    // Integration tests run on the local storage driver, so the upload url
-    // targets the server's streaming endpoint: replay it against the test app.
     const { pathname, search } = new URL(uploadUrl);
 
     return request(global.app.getHttpServer())
@@ -347,10 +332,15 @@ describe('application files field upload', () => {
     });
   };
 
+  const expectCompleted = (response: request.Response, fileId: string) => {
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.completeFileUpload.id).toBe(fileId);
+  };
+
   beforeAll(async () => {
     jest.useRealTimers();
 
-    uploadingApplicationId = await setupApplication({
+    const uploadingApplicationId = await setupApplication({
       application: UPLOADING_APPLICATION,
       nameSuffix: 'A',
       canUploadFiles: true,
@@ -362,17 +352,20 @@ describe('application files field upload', () => {
       canUploadFiles: false,
     });
 
-    uploadingApplicationToken = await mintMemberBoundToken({
+    uploadingApplicationToken = await mintApplicationToken({
       applicationId: uploadingApplicationId,
       userId: USER_DATA_SEED_IDS.JANE,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
     });
-    uploadingApplicationOtherMemberToken = await mintMemberBoundToken({
+    uploadingApplicationOtherMemberToken = await mintApplicationToken({
       applicationId: uploadingApplicationId,
       userId: USER_DATA_SEED_IDS.JONY,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
     });
-    restrictedApplicationToken = await mintMemberBoundToken({
+    uploadingApplicationOwnToken = await mintApplicationToken({
+      applicationId: uploadingApplicationId,
+    });
+    restrictedApplicationToken = await mintApplicationToken({
       applicationId: restrictedApplicationId,
       userId: USER_DATA_SEED_IDS.JANE,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
@@ -380,17 +373,10 @@ describe('application files field upload', () => {
   }, SETUP_TIMEOUT_MS);
 
   afterAll(async () => {
-    for (const fileId of uploadedFileIds) {
-      try {
-        await makeMetadataAPIRequest({
-          query: deleteFileMutation,
-          variables: { fileId },
-        });
-      } catch {
-        // Cleanup is best-effort: pending uploads are reaped by the cron and
-        // must not block the application teardown below.
-      }
-    }
+    await global.testDataSource.query(
+      `DELETE FROM core."file" WHERE id = ANY($1)`,
+      [uploadedFileIds],
+    );
 
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: UPLOADING_APPLICATION.universalIdentifier,
@@ -425,10 +411,26 @@ describe('application files field upload', () => {
     );
   });
 
+  it('should let an application acting on its own upload into a files field its role can update', async () => {
+    const uploadTarget = await initiateUploadAndSendBytes({
+      fieldMetadataUniversalIdentifier:
+        UPLOADING_APPLICATION.filesFieldUniversalIdentifier,
+      token: uploadingApplicationOwnToken,
+    });
+
+    expectCompleted(
+      await completeFileUpload({
+        fileId: uploadTarget.fileId,
+        token: uploadingApplicationOwnToken,
+      }),
+      uploadTarget.fileId,
+    );
+  });
+
   it('should let an application upload into a standard files field its role can update', async () => {
     const createResponse = await createFileUpload({
       fieldMetadataUniversalIdentifier:
-        STANDARD_OBJECTS.callRecording.fields.video.universalIdentifier,
+        STANDARD_OBJECTS.person.fields.avatarFile.universalIdentifier,
       token: uploadingApplicationToken,
     });
 
@@ -458,7 +460,31 @@ describe('application files field upload', () => {
     expectPermissionDenied(createResponse);
   });
 
-  it('should only let the principal that initiated an upload complete it', async () => {
+  it('should let the application that initiated an upload complete it whatever user it acts for', async () => {
+    const uploadTarget = await initiateUploadAndSendBytes({
+      fieldMetadataUniversalIdentifier:
+        UPLOADING_APPLICATION.filesFieldUniversalIdentifier,
+      token: uploadingApplicationToken,
+    });
+
+    expectCompleted(
+      await completeFileUpload({
+        fileId: uploadTarget.fileId,
+        token: uploadingApplicationOtherMemberToken,
+      }),
+      uploadTarget.fileId,
+    );
+
+    expectCompleted(
+      await completeFileUpload({
+        fileId: uploadTarget.fileId,
+        token: uploadingApplicationOwnToken,
+      }),
+      uploadTarget.fileId,
+    );
+  });
+
+  it('should refuse to let another principal complete an upload', async () => {
     const uploadTarget = await initiateUploadAndSendBytes({
       fieldMetadataUniversalIdentifier:
         UPLOADING_APPLICATION.filesFieldUniversalIdentifier,
@@ -471,32 +497,41 @@ describe('application files field upload', () => {
     expectPermissionDenied(
       await completeFileUpload({
         fileId: uploadTarget.fileId,
-        token: uploadingApplicationOtherMemberToken,
+        token: API_KEY_ACCESS_TOKEN,
       }),
     );
 
-    const completeResponse = await completeFileUpload({
-      fileId: uploadTarget.fileId,
-      token: uploadingApplicationToken,
-    });
-
-    expect(completeResponse.body.errors).toBeUndefined();
-    expect(completeResponse.body.data.completeFileUpload.id).toBe(
+    expectCompleted(
+      await completeFileUpload({
+        fileId: uploadTarget.fileId,
+        token: uploadingApplicationToken,
+      }),
       uploadTarget.fileId,
     );
 
     expectPermissionDenied(
       await completeFileUpload({ fileId: uploadTarget.fileId }),
     );
+  });
 
-    const resignResponse = await completeFileUpload({
-      fileId: uploadTarget.fileId,
-      token: uploadingApplicationToken,
+  it('should refuse to re-sign an uploaded file stored without an initiating principal', async () => {
+    const uploadTarget = await initiateUploadAndSendBytes({
+      fieldMetadataUniversalIdentifier:
+        UPLOADING_APPLICATION.filesFieldUniversalIdentifier,
     });
 
-    expect(resignResponse.body.errors).toBeUndefined();
-    expect(resignResponse.body.data.completeFileUpload.id).toBe(
+    expectCompleted(
+      await completeFileUpload({ fileId: uploadTarget.fileId }),
       uploadTarget.fileId,
+    );
+
+    await global.testDataSource.query(
+      `UPDATE core."file" SET settings = settings - 'uploadPrincipal' WHERE id = $1`,
+      [uploadTarget.fileId],
+    );
+
+    expectPermissionDenied(
+      await completeFileUpload({ fileId: uploadTarget.fileId }),
     );
   });
 
@@ -516,13 +551,13 @@ describe('application files field upload', () => {
 
     expectPermissionDenied(await completeFileUpload({ fileId }));
 
-    const resignResponse = await completeFileUpload({
+    expectCompleted(
+      await completeFileUpload({
+        fileId,
+        token: uploadingApplicationToken,
+      }),
       fileId,
-      token: uploadingApplicationToken,
-    });
-
-    expect(resignResponse.body.errors).toBeUndefined();
-    expect(resignResponse.body.data.completeFileUpload.id).toBe(fileId);
+    );
   });
 
   it('should refuse a multipart upload into a files field on an object the application cannot update', async () => {
@@ -535,7 +570,7 @@ describe('application files field upload', () => {
     expectPermissionDenied(uploadResponse);
   });
 
-  it('should refuse a target field that is not a files field', async () => {
+  it('should refuse a target field that is not a files field as a bad user input', async () => {
     const createResponse = await createFileUpload({
       fieldMetadataUniversalIdentifier:
         UPLOADING_APPLICATION.textFieldUniversalIdentifier,
@@ -546,9 +581,28 @@ describe('application files field upload', () => {
     expect(createResponse.body.errors[0].message).toContain(
       'not a files field',
     );
+    expect(createResponse.body.errors[0].extensions.code).toBe(
+      'BAD_USER_INPUT',
+    );
   });
 
-  it('should refuse a field that does not exist in the workspace', async () => {
+  it('should refuse a multipart upload into a field that is not a files field as a bad user input', async () => {
+    const uploadResponse = await uploadFilesFieldFile({
+      fieldMetadataUniversalIdentifier:
+        UPLOADING_APPLICATION.textFieldUniversalIdentifier,
+      token: uploadingApplicationToken,
+    });
+
+    expect(uploadResponse.body.data ?? null).toBeNull();
+    expect(uploadResponse.body.errors[0].message).toContain(
+      'not a files field',
+    );
+    expect(uploadResponse.body.errors[0].extensions.code).toBe(
+      'BAD_USER_INPUT',
+    );
+  });
+
+  it('should refuse a field that does not exist in the workspace as a bad user input', async () => {
     const createResponse = await createFileUpload({
       fieldMetadataUniversalIdentifier: randomUUID(),
       token: uploadingApplicationToken,
@@ -556,6 +610,9 @@ describe('application files field upload', () => {
 
     expect(createResponse.body.data ?? null).toBeNull();
     expect(createResponse.body.errors[0].message).toContain('not found');
+    expect(createResponse.body.errors[0].extensions.code).toBe(
+      'BAD_USER_INPUT',
+    );
   });
 
   it('should keep letting a member upload into an application-owned files field', async () => {
@@ -564,12 +621,8 @@ describe('application files field upload', () => {
         UPLOADING_APPLICATION.filesFieldUniversalIdentifier,
     });
 
-    const completeResponse = await completeFileUpload({
-      fileId: uploadTarget.fileId,
-    });
-
-    expect(completeResponse.body.errors).toBeUndefined();
-    expect(completeResponse.body.data.completeFileUpload.id).toBe(
+    expectCompleted(
+      await completeFileUpload({ fileId: uploadTarget.fileId }),
       uploadTarget.fileId,
     );
   });

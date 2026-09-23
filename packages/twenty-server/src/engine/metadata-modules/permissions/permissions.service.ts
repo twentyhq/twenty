@@ -15,7 +15,8 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getAuthContextApplicationId } from 'src/engine/core-modules/auth/utils/get-auth-context-application-id.util';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { flatRoleHasPermissionFlag } from 'src/engine/metadata-modules/flat-role/utils/flat-role-has-permission-flag.util';
@@ -26,7 +27,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
-import { canRolesUpdateField } from 'src/engine/metadata-modules/permissions/utils/can-roles-update-field.util';
+import { assertAuthContextCanUpdateFieldOrThrow } from 'src/engine/metadata-modules/permissions/utils/assert-auth-context-can-update-field-or-throw.util';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -271,84 +272,41 @@ export class PermissionsService {
     );
   }
 
-  public async assertApplicationPrincipalCanUpdateFieldOrThrow({
+  public async assertApplicationCanUpdateFieldOrThrow({
     workspaceId,
-    objectMetadataId,
+    authContext,
     fieldMetadataId,
-    principal,
   }: {
     workspaceId: string;
-    objectMetadataId: string;
+    authContext: WorkspaceAuthContext;
     fieldMetadataId: string;
-    principal:
-      | { applicationId: string | null; userWorkspaceId: string | null }
-      | undefined;
   }): Promise<void> {
-    const applicationId = principal?.applicationId;
-
-    if (!isDefined(applicationId)) {
+    if (!isDefined(getAuthContextApplicationId(authContext))) {
       return;
     }
 
-    const roleIds = await this.resolveApplicationPrincipalRoleIds({
-      workspaceId,
-      applicationId,
-      userWorkspaceId: principal?.userWorkspaceId ?? null,
-    });
+    const {
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMapsOrm,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'rolesPermissions',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMapsOrm',
+      'userWorkspaceRoleMap',
+      'apiKeyRoleMap',
+    ]);
 
-    const { rolesPermissions, flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-        'flatObjectMetadataMaps',
-      ]);
-
-    const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: objectMetadataId,
-    });
-
-    if (
-      isDefined(objectMetadata) &&
-      canRolesUpdateField({
-        roleIds,
-        rolesPermissions,
-        objectMetadata,
-        fieldMetadataId,
-      })
-    ) {
-      return;
-    }
-
-    throw new PermissionsException(
-      `Application ${applicationId} cannot update records of the object owning field ${fieldMetadataId}`,
-      PermissionsExceptionCode.PERMISSION_DENIED,
-    );
-  }
-
-  private async resolveApplicationPrincipalRoleIds({
-    workspaceId,
-    applicationId,
-    userWorkspaceId,
-  }: {
-    workspaceId: string;
-    applicationId: string;
-    userWorkspaceId: string | null;
-  }): Promise<string[]> {
-    const applicationRoleId = await this.findApplicationDefaultRoleIdOrThrow({
-      applicationId,
-      workspaceId,
-    });
-
-    if (!isDefined(userWorkspaceId)) {
-      return [applicationRoleId].filter(isDefined);
-    }
-
-    return resolveRoleIdsForUser({
-      userRoleId: await this.userRoleService.getRoleIdForUserWorkspace({
-        userWorkspaceId,
-        workspaceId,
-      }),
-      applicationRoleId,
+    assertAuthContextCanUpdateFieldOrThrow({
+      authContext,
+      fieldMetadataId,
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
     });
   }
 

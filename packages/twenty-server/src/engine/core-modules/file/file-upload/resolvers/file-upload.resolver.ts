@@ -5,18 +5,14 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
+import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { buildFileUploadPrincipal } from 'src/engine/core-modules/file/file-upload/utils/build-file-upload-principal.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -29,6 +25,7 @@ import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usa
   UsageLimitGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   AuthGraphqlApiExceptionFilter,
+  FileUploadGraphqlApiExceptionFilter,
 )
 @MetadataResolver()
 export class FileUploadResolver {
@@ -39,12 +36,6 @@ export class FileUploadResolver {
   async createFileUpload(
     @AuthWorkspace()
     { id: workspaceId }: WorkspaceEntity,
-    @AuthApplication({ allowUndefined: true })
-    application: FlatApplication | undefined,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @AuthApiKey()
-    apiKey: ApiKeyEntity | undefined,
     @Args({ name: 'filename', type: () => String })
     filename: string,
     @Args({ name: 'size', type: () => Number })
@@ -67,11 +58,7 @@ export class FileUploadResolver {
       fileFolder,
       fieldMetadataId,
       fieldMetadataUniversalIdentifier,
-      principal: buildFileUploadPrincipal({
-        application,
-        userWorkspaceId,
-        apiKey,
-      }),
+      authContext: getWorkspaceAuthContext(),
     });
   }
 
@@ -80,23 +67,13 @@ export class FileUploadResolver {
   async completeFileUpload(
     @AuthWorkspace()
     { id: workspaceId }: WorkspaceEntity,
-    @AuthApplication({ allowUndefined: true })
-    application: FlatApplication | undefined,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @AuthApiKey()
-    apiKey: ApiKeyEntity | undefined,
     @Args({ name: 'fileId', type: () => String })
     fileId: string,
   ): Promise<FileWithSignedUrlDTO> {
     return await this.fileUploadService.completeFileUpload({
       workspaceId,
       fileId,
-      principal: buildFileUploadPrincipal({
-        application,
-        userWorkspaceId,
-        apiKey,
-      }),
+      authContext: getWorkspaceAuthContext(),
     });
   }
 }

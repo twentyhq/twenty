@@ -2,12 +2,12 @@ import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadExceptionCode } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { type FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { type FileUploadPrincipal } from 'src/engine/core-modules/file/file-upload/types/file-upload-principal.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   PermissionsException,
@@ -18,18 +18,22 @@ import { type PermissionsService } from 'src/engine/metadata-modules/permissions
 describe('FileUploadService.createFileUpload', () => {
   const workspaceId = '20202020-0000-4000-8000-000000000001';
   const fieldMetadataId = '20202020-0000-4000-8000-000000000002';
-  const objectMetadataId = '20202020-0000-4000-8000-000000000003';
 
-  const userPrincipal: FileUploadPrincipal = {
-    applicationId: null,
-    userWorkspaceId: 'user-workspace-1',
-    apiKeyId: null,
-  };
-  const applicationPrincipal: FileUploadPrincipal = {
-    applicationId: 'application-a',
-    userWorkspaceId: 'user-workspace-1',
-    apiKeyId: null,
-  };
+  const buildUserAuthContext = (application?: {
+    id: string;
+  }): WorkspaceAuthContext =>
+    ({
+      type: 'user',
+      workspace: { id: workspaceId },
+      userWorkspaceId: 'user-workspace-1',
+      user: { id: 'user-1' },
+      workspaceMemberId: 'workspace-member-1',
+      workspaceMember: { id: 'workspace-member-1' },
+      ...(application ? { application } : {}),
+    }) as unknown as WorkspaceAuthContext;
+
+  const userAuthContext = buildUserAuthContext();
+  const applicationAuthContext = buildUserAuthContext({ id: 'application-a' });
 
   let fileStorageService: jest.Mocked<FileStorageService>;
   let fileUploadTargetService: jest.Mocked<FileUploadTargetService>;
@@ -45,7 +49,6 @@ describe('FileUploadService.createFileUpload', () => {
       applicationId: 'field-owner-application',
       universalIdentifier: 'field-universal-identifier',
       type: FieldMetadataType.FILES,
-      objectMetadataId,
       ...overrides,
     }) as FieldMetadataEntity;
 
@@ -65,11 +68,11 @@ describe('FileUploadService.createFileUpload', () => {
   const createUpload = ({
     filename = 'document.pdf',
     size = 10,
-    principal = userPrincipal,
+    authContext = userAuthContext,
   }: {
     filename?: string;
     size?: number;
-    principal?: FileUploadPrincipal;
+    authContext?: WorkspaceAuthContext;
   } = {}) =>
     buildService().createFileUpload({
       workspaceId,
@@ -77,7 +80,7 @@ describe('FileUploadService.createFileUpload', () => {
       size,
       fileFolder: FileFolder.FilesField,
       fieldMetadataId,
-      principal,
+      authContext,
     });
 
   beforeEach(() => {
@@ -105,7 +108,7 @@ describe('FileUploadService.createFileUpload', () => {
     } as unknown as jest.Mocked<Repository<FieldMetadataEntity>>;
 
     permissionsService = {
-      assertApplicationPrincipalCanUpdateFieldOrThrow: jest
+      assertApplicationCanUpdateFieldOrThrow: jest
         .fn()
         .mockResolvedValue(undefined),
     } as unknown as jest.Mocked<PermissionsService>;
@@ -158,7 +161,7 @@ describe('FileUploadService.createFileUpload', () => {
     });
 
     it('should refuse an application whose permissions cannot update the object owning the field', async () => {
-      permissionsService.assertApplicationPrincipalCanUpdateFieldOrThrow.mockRejectedValue(
+      permissionsService.assertApplicationCanUpdateFieldOrThrow.mockRejectedValue(
         new PermissionsException(
           'denied',
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -166,39 +169,42 @@ describe('FileUploadService.createFileUpload', () => {
       );
 
       await expect(
-        createUpload({ principal: applicationPrincipal }),
+        createUpload({ authContext: applicationAuthContext }),
       ).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
       });
 
       expect(
-        permissionsService.assertApplicationPrincipalCanUpdateFieldOrThrow,
+        permissionsService.assertApplicationCanUpdateFieldOrThrow,
       ).toHaveBeenCalledWith({
         workspaceId,
-        objectMetadataId,
+        authContext: applicationAuthContext,
         fieldMetadataId,
-        principal: applicationPrincipal,
       });
       expect(fileStorageService.createPendingFile).not.toHaveBeenCalled();
     });
 
     it('should let an application upload into a field owned by another application when it can update the object', async () => {
       await expect(
-        createUpload({ principal: applicationPrincipal }),
+        createUpload({ authContext: applicationAuthContext }),
       ).resolves.toMatchObject({ fileId: 'file-id' });
 
       expect(fileStorageService.createPendingFile).toHaveBeenCalledTimes(1);
     });
 
     it('should store the initiating principal on the pending row', async () => {
-      await createUpload({ principal: applicationPrincipal });
+      await createUpload({ authContext: applicationAuthContext });
 
       expect(fileStorageService.createPendingFile).toHaveBeenCalledWith(
         expect.objectContaining({
           settings: {
             isTemporaryFile: true,
             toDelete: false,
-            uploadPrincipal: applicationPrincipal,
+            uploadPrincipal: {
+              applicationId: 'application-a',
+              userWorkspaceId: 'user-workspace-1',
+              apiKeyId: null,
+            },
           },
         }),
       );
