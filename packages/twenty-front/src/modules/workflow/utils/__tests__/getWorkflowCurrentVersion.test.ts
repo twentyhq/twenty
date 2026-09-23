@@ -7,7 +7,7 @@ const buildVersion = (status: string, createdAt: string) => ({
 });
 
 describe('getWorkflowCurrentVersion', () => {
-  it('prefers a draft, then an active version, then the newest version', () => {
+  it('prefers a draft, then an active version, over the last published version', () => {
     const deactivatedVersion = buildVersion(
       'DEACTIVATED',
       '2026-09-18T12:00:00.000Z',
@@ -35,14 +35,14 @@ describe('getWorkflowCurrentVersion', () => {
     ).toEqual(deactivatedVersion);
   });
 
-  it('prefers the last published version over a newer archived version', () => {
+  it('prefers the last published version when versions share the same createdAt', () => {
     const deactivatedVersion = buildVersion(
       'DEACTIVATED',
-      '2026-09-18T10:00:00.000Z',
+      '2026-07-17T10:00:00.000Z',
     );
     const archivedVersion = buildVersion(
       'ARCHIVED',
-      '2026-09-18T11:00:00.000Z',
+      '2026-07-17T10:00:00.000Z',
     );
 
     expect(
