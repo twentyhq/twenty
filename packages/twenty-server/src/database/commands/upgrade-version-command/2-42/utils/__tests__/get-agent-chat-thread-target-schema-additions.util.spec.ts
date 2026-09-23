@@ -24,41 +24,43 @@ const createStandardMetadata = () =>
 // A workspace that already carries agent history but not the target object.
 const createExistingWithoutTarget = () => {
   const standard = createStandardMetadata();
-  const objects = structuredClone(standard.flatObjectMetadataMaps);
 
-  delete objects.byUniversalIdentifier[TARGET_IDENTIFIER];
-
-  const fields = structuredClone(standard.flatFieldMetadataMaps);
-
-  for (const [identifier, field] of Object.entries(
-    fields.byUniversalIdentifier,
-  )) {
-    if (
-      isDefined(field) &&
-      (field.objectMetadataUniversalIdentifier === TARGET_IDENTIFIER ||
-        identifier === RECORD_TARGETS_IDENTIFIER)
-    ) {
-      delete fields.byUniversalIdentifier[identifier];
-    }
-  }
-
-  const indexes = structuredClone(standard.flatIndexMaps);
-
-  for (const [identifier, index] of Object.entries(
-    indexes.byUniversalIdentifier,
-  )) {
-    if (
-      isDefined(index) &&
-      index.objectMetadataUniversalIdentifier === TARGET_IDENTIFIER
-    ) {
-      delete indexes.byUniversalIdentifier[identifier];
-    }
-  }
+  const keepByUniversalIdentifier = <TFlatEntity>(
+    byUniversalIdentifier: Partial<Record<string, TFlatEntity>>,
+    shouldKeep: (identifier: string, flatEntity: TFlatEntity) => boolean,
+  ) =>
+    Object.fromEntries(
+      Object.entries(byUniversalIdentifier).filter(
+        ([identifier, flatEntity]) =>
+          isDefined(flatEntity) && shouldKeep(identifier, flatEntity),
+      ),
+    );
 
   return {
-    flatObjectMetadataMaps: objects,
-    flatFieldMetadataMaps: fields,
-    flatIndexMaps: indexes,
+    flatObjectMetadataMaps: {
+      ...standard.flatObjectMetadataMaps,
+      byUniversalIdentifier: keepByUniversalIdentifier(
+        standard.flatObjectMetadataMaps.byUniversalIdentifier,
+        (identifier) => identifier !== TARGET_IDENTIFIER,
+      ),
+    },
+    flatFieldMetadataMaps: {
+      ...standard.flatFieldMetadataMaps,
+      byUniversalIdentifier: keepByUniversalIdentifier(
+        standard.flatFieldMetadataMaps.byUniversalIdentifier,
+        (identifier, field) =>
+          field.objectMetadataUniversalIdentifier !== TARGET_IDENTIFIER &&
+          identifier !== RECORD_TARGETS_IDENTIFIER,
+      ),
+    },
+    flatIndexMaps: {
+      ...standard.flatIndexMaps,
+      byUniversalIdentifier: keepByUniversalIdentifier(
+        standard.flatIndexMaps.byUniversalIdentifier,
+        (_identifier, index) =>
+          index.objectMetadataUniversalIdentifier !== TARGET_IDENTIFIER,
+      ),
+    },
   };
 };
 
