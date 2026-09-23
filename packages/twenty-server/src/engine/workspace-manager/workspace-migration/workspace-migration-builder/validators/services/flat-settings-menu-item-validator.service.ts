@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import {
   isReservedSettingsMenuItemTitle,
+  isSettingsMenuItemScope,
   type SettingsMenuItemScope,
 } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
@@ -52,6 +53,9 @@ const hasSettingsMenuItemPositionCollision = ({
         existingSettingsMenuItem.position === position,
     ),
   );
+
+const isUsableSettingsMenuItemPosition = (position: number): boolean =>
+  isNumber(position) && Number.isFinite(position);
 
 @Injectable()
 export class FlatSettingsMenuItemValidatorService {
@@ -104,6 +108,31 @@ export class FlatSettingsMenuItemValidatorService {
         code: SettingsMenuItemExceptionCode.SETTINGS_MENU_ITEM_FRONT_COMPONENT_NOT_FOUND,
         message: t`Front component "${flatSettingsMenuItem.frontComponentUniversalIdentifier}" not found`,
         userFriendlyMessage: msg`The front component this settings menu item renders was not found.`,
+      });
+    } else if (
+      frontComponent.applicationUniversalIdentifier !==
+      flatSettingsMenuItem.applicationUniversalIdentifier
+    ) {
+      validationResult.errors.push({
+        code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT,
+        message: t`Front component "${flatSettingsMenuItem.frontComponentUniversalIdentifier}" belongs to another application`,
+        userFriendlyMessage: msg`The front component this settings menu item renders belongs to another application.`,
+      });
+    }
+
+    if (!isSettingsMenuItemScope(flatSettingsMenuItem.scope)) {
+      validationResult.errors.push({
+        code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT,
+        message: t`Settings menu item scope "${flatSettingsMenuItem.scope}" is invalid`,
+        userFriendlyMessage: msg`This settings menu item scope is not supported.`,
+      });
+    }
+
+    if (!isUsableSettingsMenuItemPosition(flatSettingsMenuItem.position)) {
+      validationResult.errors.push({
+        code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT,
+        message: t`Settings menu item position must be a number`,
+        userFriendlyMessage: msg`The settings menu item position must be a number.`,
       });
     }
 
@@ -201,12 +230,37 @@ export class FlatSettingsMenuItemValidatorService {
           message: t`Front component "${updatedFrontComponentUniversalIdentifier}" not found`,
           userFriendlyMessage: msg`The front component this settings menu item renders was not found.`,
         });
+      } else if (
+        frontComponent.applicationUniversalIdentifier !==
+        fromFlatSettingsMenuItem.applicationUniversalIdentifier
+      ) {
+        validationResult.errors.push({
+          code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT,
+          message: t`Front component "${updatedFrontComponentUniversalIdentifier}" belongs to another application`,
+          userFriendlyMessage: msg`The front component this settings menu item renders belongs to another application.`,
+        });
       }
     }
 
     const nextPosition =
       flatEntityUpdate.position ?? fromFlatSettingsMenuItem.position;
     const nextScope = flatEntityUpdate.scope ?? fromFlatSettingsMenuItem.scope;
+
+    if (!isSettingsMenuItemScope(nextScope)) {
+      validationResult.errors.push({
+        code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT,
+        message: t`Settings menu item scope "${nextScope}" is invalid`,
+        userFriendlyMessage: msg`This settings menu item scope is not supported.`,
+      });
+    }
+
+    if (!isUsableSettingsMenuItemPosition(nextPosition)) {
+      validationResult.errors.push({
+        code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT,
+        message: t`Settings menu item position must be a number`,
+        userFriendlyMessage: msg`The settings menu item position must be a number.`,
+      });
+    }
 
     if (
       hasSettingsMenuItemPositionCollision({
