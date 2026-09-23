@@ -59,11 +59,16 @@ export const DropdownActionItem = ({
           const content = event.currentTarget.closest<HTMLElement>(
             '[data-dropdown-content]',
           );
-          const index = isDefined(content)
-            ? getDropdownItems(content).indexOf(event.currentTarget)
-            : -1;
+
+          if (!isDefined(content)) {
+            return;
+          }
+
+          const index = getDropdownItems(content).indexOf(event.currentTarget);
+
           goToPage({
             id: page,
+            content,
             trigger: {
               id,
               index,

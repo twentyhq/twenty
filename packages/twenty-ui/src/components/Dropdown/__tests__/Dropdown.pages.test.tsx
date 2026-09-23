@@ -51,6 +51,74 @@ const FilterPages = ({
 };
 
 describe('Dropdown pages', () => {
+  it('keeps the current page and focus when navigation is prevented', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.Page id="root">
+            <Dropdown.ActionItem
+              page="edit"
+              onClick={(event) => event.preventDefault()}
+            >
+              Edit
+            </Dropdown.ActionItem>
+          </Dropdown.Page>
+          <Dropdown.Page id="edit" type="panel">
+            <Input aria-label="Name" />
+          </Dropdown.Page>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    const edit = screen.getByRole('menuitem', { name: 'Edit' });
+
+    await user.click(edit);
+
+    expect(edit).toHaveFocus();
+    expect(
+      screen.queryByRole('textbox', { name: 'Name' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('preserves focus when the destination page arrives after navigation', async () => {
+    const user = userEvent.setup();
+    const DeferredPages = ({ isLoaded }: { isLoaded: boolean }) => (
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.Page id="root">
+            <Dropdown.ActionItem page="edit">Edit</Dropdown.ActionItem>
+          </Dropdown.Page>
+          {isLoaded && (
+            <Dropdown.Page id="edit" type="panel">
+              <Input aria-label="Name" />
+              <Dropdown.Back>Back to actions</Dropdown.Back>
+            </Dropdown.Page>
+          )}
+        </Dropdown.Content>
+      </Dropdown.Root>
+    );
+    const { rerender } = render(<DeferredPages isLoaded={false} />);
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Edit' }));
+
+    const content = screen.getByRole('menu', { name: 'Record actions' });
+
+    await waitFor(() => expect(content).toHaveFocus());
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
+    rerender(<DeferredPages isLoaded />);
+
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeVisible();
+    expect(content).toHaveFocus();
+  });
+
   it('uses the default page type and preserves the initial keyboard focus edge', async () => {
     const user = userEvent.setup();
 
@@ -131,7 +199,7 @@ describe('Dropdown pages', () => {
     const name = screen.getByRole('textbox', { name: 'Name' });
     const website = screen.getByRole('textbox', { name: 'Website' });
 
-    expect(name).toHaveFocus();
+    await waitFor(() => expect(name).toHaveFocus());
     await user.keyboard(' company');
     expect(name).toHaveValue('Acme company');
     await user.tab();
@@ -145,7 +213,9 @@ describe('Dropdown pages', () => {
     expect(screen.getByRole('menu', { name: 'Record actions' })).toBeVisible();
     expect(website).toHaveFocus();
     await user.click(screen.getByRole('menuitem', { name: 'Back to actions' }));
-    expect(screen.getByRole('menuitem', { name: 'Edit' })).toHaveFocus();
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'Edit' })).toHaveFocus(),
+    );
   });
 
   it('respects disabled initial focus when the default page mounts', async () => {

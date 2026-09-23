@@ -32,7 +32,7 @@ export const DropdownContent = ({
   ref,
   ...props
 }: DropdownContentProps) => {
-  const { type, isSubmenu, setOpen, initialFocusEdge, focusOnOpen } =
+  const { type, isSubmenu, setOpen, initialFocusEdge, focusOnOpen, pageId } =
     useDropdownContext();
   const contentRef = useRef<HTMLDivElement>(null);
   const mergedRef = useMergedRefs(contentRef, ref);
@@ -55,6 +55,7 @@ export const DropdownContent = ({
       keepMounted={keepMounted}
       role={type === 'menu' ? 'menu' : 'dialog'}
       data-dropdown-content=""
+      data-dropdown-page-id={pageId}
       data-type={type}
       className={mergeClassNames(styles.content, className)}
       style={(state) => ({

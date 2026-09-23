@@ -7,7 +7,7 @@ import { type DropdownRootProps } from '../types/DropdownRootProps';
 import { type DropdownType } from '../types/DropdownType';
 import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
-import { getDropdownFocusTarget } from './getDropdownFocusTarget';
+import { scheduleDropdownPageFocus } from './scheduleDropdownPageFocus';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -34,7 +34,6 @@ export const DropdownRoot = ({
   }>();
   const [activeItemId, setActiveItemId] = useState<string>();
   const pageId = pageHistory[pageHistory.length - 1]?.id;
-  const [focusTarget, setFocusTarget] = useState<DropdownFocusTarget>();
   const [initialFocusEdge, setInitialFocusEdge] = useState<'first' | 'last'>(
     'first',
   );
@@ -46,7 +45,6 @@ export const DropdownRoot = ({
     if (!open) {
       setPageHistory([{ id: defaultPage }]);
       setActivePage(undefined);
-      setFocusTarget(undefined);
       setInitialFocusEdge('first');
       setFocusOnOpen(true);
     }
@@ -71,62 +69,49 @@ export const DropdownRoot = ({
   const goToPage = ({
     id,
     trigger,
+    content,
   }: {
     id: string;
     trigger: DropdownFocusTarget;
+    content: HTMLElement;
   }) => {
-    setFocusTarget(undefined);
+    content.focus({ preventScroll: true });
     setPageHistory((history) => [...history, { id, trigger }]);
+    scheduleDropdownPageFocus({ content, pageId: id });
   };
 
-  const goBack = () => {
+  const goBack = (content: HTMLElement) => {
     if (pageHistory.length < 2) {
       return;
     }
 
-    setFocusTarget(pageHistory[pageHistory.length - 1]?.trigger);
+    const previousPage = pageHistory[pageHistory.length - 2];
+    const trigger = pageHistory[pageHistory.length - 1]?.trigger;
+
+    content.focus({ preventScroll: true });
     setPageHistory((history) => history.slice(0, -1));
+    scheduleDropdownPageFocus({
+      content,
+      pageId: previousPage.id,
+      target: trigger,
+    });
   };
 
-  const onPageMount = useCallback(
-    ({
-      id,
-      type: pageType,
-      element,
-    }: {
-      id: string;
-      type?: DropdownType;
-      element: HTMLDivElement;
-    }) => {
+  const registerPage = useCallback(
+    ({ id, type: pageType }: { id: string; type?: DropdownType }) => {
       if (!open) {
         return;
       }
 
       const resolvedType = pageType ?? type;
 
-      if (activePage?.id === id && activePage.type === resolvedType) {
-        return;
-      }
-
-      setActivePage({ id, type: resolvedType });
-
-      if (!isDefined(activePage) || activePage.id === id) {
-        return;
-      }
-
-      const content = element.closest<HTMLElement>('[data-dropdown-content]');
-
-      if (!isDefined(content)) {
-        return;
-      }
-
-      getDropdownFocusTarget({
-        content,
-        target: focusTarget,
-        type: resolvedType,
-      }).focus();
+      setActivePage((previousPage) =>
+        previousPage?.id === id && previousPage.type === resolvedType
+          ? previousPage
+          : { id, type: resolvedType },
+      );
     },
-    [activePage, focusTarget, open, type],
+    [open, type],
   );
 
   return (
@@ -162,7 +147,7 @@ export const DropdownRoot = ({
           closeTree,
           goToPage,
           goBack,
-          onPageMount,
+          registerPage,
         }}
       >
         {children}

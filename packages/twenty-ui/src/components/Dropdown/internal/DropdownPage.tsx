@@ -9,14 +9,14 @@ import { useDropdownContext } from './useDropdownContext';
 
 export const DropdownPage = ({ id, type, children }: DropdownPageProps) => {
   const context = useDropdownContext();
-  const { onPageMount } = context;
-  const handleMount = useCallback(
+  const { registerPage } = context;
+  const registerPageType = useCallback(
     (element: HTMLDivElement | null) => {
       if (isDefined(element)) {
-        onPageMount({ id, type, element });
+        registerPage({ id, type });
       }
     },
-    [id, type, onPageMount],
+    [id, type, registerPage],
   );
 
   if (context.pageId !== id) {
@@ -27,7 +27,7 @@ export const DropdownPage = ({ id, type, children }: DropdownPageProps) => {
     <DropdownContext.Provider
       value={{ ...context, type: type ?? context.rootType }}
     >
-      <div ref={handleMount} className={styles.page}>
+      <div ref={registerPageType} className={styles.page}>
         {children}
       </div>
     </DropdownContext.Provider>

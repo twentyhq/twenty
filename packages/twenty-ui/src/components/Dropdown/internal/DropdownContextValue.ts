@@ -20,11 +20,11 @@ export type DropdownContextValue = {
   setFocusOnOpen: (focusOnOpen: boolean) => void;
   setOpen: (open: boolean) => void;
   closeTree: () => void;
-  goToPage: (page: { id: string; trigger: DropdownFocusTarget }) => void;
-  goBack: () => void;
-  onPageMount: (page: {
+  goToPage: (page: {
     id: string;
-    type?: DropdownType;
-    element: HTMLDivElement;
+    trigger: DropdownFocusTarget;
+    content: HTMLElement;
   }) => void;
+  goBack: (content: HTMLElement) => void;
+  registerPage: (page: { id: string; type?: DropdownType }) => void;
 };

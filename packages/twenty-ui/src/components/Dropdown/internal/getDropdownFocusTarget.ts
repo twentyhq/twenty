@@ -55,7 +55,7 @@ export const getDropdownFocusTarget = ({
     'input:not(:disabled):not([type="hidden"]),button:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]',
   );
 
-  if (type === 'panel') {
+  if ((type ?? content.dataset.type) === 'panel') {
     return firstFormControl ?? content;
   }
 

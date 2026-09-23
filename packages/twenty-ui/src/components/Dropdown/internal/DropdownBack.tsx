@@ -1,6 +1,7 @@
 import { clsx } from 'clsx';
 
 import { IconChevronLeft } from '@ui/icon';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
@@ -26,8 +27,16 @@ export const DropdownBack = ({
       onClick={(event) => {
         onClick?.(event);
 
-        if (!event.defaultPrevented) {
-          goBack();
+        if (event.defaultPrevented) {
+          return;
+        }
+
+        const content = event.currentTarget.closest<HTMLElement>(
+          '[data-dropdown-content]',
+        );
+
+        if (isDefined(content)) {
+          goBack(content);
         }
       }}
     >
