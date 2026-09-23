@@ -5,6 +5,7 @@ import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
+import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
@@ -61,7 +62,15 @@ export const DropdownActionItem = ({
           const index = isDefined(content)
             ? getDropdownItems(content).indexOf(event.currentTarget)
             : -1;
-          goToPage({ id: page, trigger: { id, index } });
+          goToPage({
+            id: page,
+            trigger: {
+              id,
+              index,
+              page,
+              label: getDropdownItemLabel(event.currentTarget),
+            },
+          });
           return;
         }
 

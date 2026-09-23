@@ -5,7 +5,17 @@ import { describe, expect, it } from 'vitest';
 
 import { Dropdown } from '../Dropdown';
 
-const FilterPages = () => {
+type FilterPagesProps = {
+  actions?: { label: string; page?: string }[];
+};
+
+const FilterPages = ({
+  actions = [
+    { label: 'People', page: 'people' },
+    { label: 'Recent people', page: 'people' },
+    { label: 'Clear filters' },
+  ],
+}: FilterPagesProps) => {
   const [search, setSearch] = useState('');
 
   return (
@@ -13,9 +23,11 @@ const FilterPages = () => {
       <Dropdown.Trigger>Filters</Dropdown.Trigger>
       <Dropdown.Content aria-label="Filters">
         <Dropdown.Page id="root">
-          <Dropdown.ActionItem page="people">People</Dropdown.ActionItem>
-          <Dropdown.ActionItem page="people">Recent people</Dropdown.ActionItem>
-          <Dropdown.ActionItem>Clear filters</Dropdown.ActionItem>
+          {actions.map(({ label, page }) => (
+            <Dropdown.ActionItem key={label} page={page}>
+              {label}
+            </Dropdown.ActionItem>
+          ))}
         </Dropdown.Page>
         <Dropdown.Page id="people" kind="picker">
           <Dropdown.Back>Back to filters</Dropdown.Back>
@@ -86,6 +98,57 @@ describe('Dropdown pages', () => {
     await waitFor(() =>
       expect(
         screen.getByRole('menuitem', { name: 'Recent people' }),
+      ).toHaveFocus(),
+    );
+  });
+
+  it('restores the invoking action after its page remounts with reordered entrypoints', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<FilterPages />);
+
+    await user.click(screen.getByRole('button', { name: 'Filters' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Recent people' }));
+    rerender(
+      <FilterPages
+        actions={[
+          { label: 'Recent people', page: 'people' },
+          { label: 'People', page: 'people' },
+        ]}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Back to filters' }));
+    await waitFor(() =>
+      expect(
+        screen.getByRole('menuitem', { name: 'Recent people' }),
+      ).toHaveFocus(),
+    );
+  });
+
+  it('restores the unique destination when its action moves and changes label', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <FilterPages
+        actions={[
+          { label: 'People', page: 'people' },
+          { label: 'Clear filters' },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Filters' }));
+    await user.click(screen.getByRole('menuitem', { name: 'People' }));
+    rerender(
+      <FilterPages
+        actions={[
+          { label: 'Clear filters' },
+          { label: 'All people', page: 'people' },
+        ]}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Back to filters' }));
+    await waitFor(() =>
+      expect(
+        screen.getByRole('menuitem', { name: 'All people' }),
       ).toHaveFocus(),
     );
   });

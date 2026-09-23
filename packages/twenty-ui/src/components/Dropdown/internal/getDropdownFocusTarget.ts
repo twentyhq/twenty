@@ -1,7 +1,10 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownKind } from '../types/DropdownKind';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
+import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 
 export const getDropdownFocusTarget = ({
@@ -23,9 +26,26 @@ export const getDropdownFocusTarget = ({
     return previousTrigger;
   }
 
-  const pageTrigger = isDefined(target)
-    ? getDropdownItems(content)[target.index]
-    : undefined;
+  const items = getDropdownItems(content);
+  const pageTriggers = isDefined(target)
+    ? items.filter((item) => item.dataset.dropdownPage === target.page)
+    : [];
+
+  if (pageTriggers.length === 1) {
+    return pageTriggers[0];
+  }
+
+  const matchingPageTriggers = isNonEmptyString(target?.label)
+    ? pageTriggers.filter(
+        (item) => getDropdownItemLabel(item) === target?.label,
+      )
+    : [];
+
+  if (matchingPageTriggers.length === 1) {
+    return matchingPageTriggers[0];
+  }
+
+  const pageTrigger = isDefined(target) ? items[target.index] : undefined;
 
   if (isDefined(pageTrigger)) {
     return pageTrigger;
@@ -46,8 +66,6 @@ export const getDropdownFocusTarget = ({
   if (isDefined(search)) {
     return search;
   }
-
-  const items = getDropdownItems(content);
 
   return (
     (edge === 'last' ? items[items.length - 1] : items[0]) ??
