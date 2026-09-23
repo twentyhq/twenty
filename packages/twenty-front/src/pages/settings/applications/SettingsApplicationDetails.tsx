@@ -195,25 +195,18 @@ export const SettingsApplicationDetails = () => {
 
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
-    // An application declaring its own settings tabs lays the application
-    // variables out itself, so exposing them again would duplicate the same
-    // fields.
+    // A custom settings tab lays out the application variables itself, so
+    // exposing them again would duplicate the same fields.
     ...(hasVariablesTab
       ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
       : []),
     ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
       id: settingsMenuItem.universalIdentifier,
       title: settingsMenuItem.title,
-      // The icon is a free-form name the application picks and can name one this
-      // build does not ship; falling back to the icon the single settings tab
-      // always rendered keeps such a tab recognisable rather than generic.
       Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
     })),
   ];
 
-  // Where the missing-configuration and health banners send someone: the
-  // generated variables tab when there is one, otherwise the first tab the
-  // application declares, which is where it lays its own variables out.
   const configurationTabId = hasVariablesTab
     ? VARIABLES_TAB_ID
     : workspaceSettingsMenuItems.at(0)?.universalIdentifier;

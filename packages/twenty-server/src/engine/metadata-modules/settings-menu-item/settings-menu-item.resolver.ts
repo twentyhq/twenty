@@ -37,9 +37,6 @@ export class SettingsMenuItemResolver {
     return resolveEffectiveEntityProperty({
       metadataName: 'settingsMenuItem',
       baseValue: settingsMenuItem.title,
-      // settingsMenuItem carries no overrides column: only the application that
-      // declared the item can rename it, so there is no workspace-authored value
-      // to arbitrate against the standard one.
       overrides: undefined,
       property: 'title',
       i18nContext:

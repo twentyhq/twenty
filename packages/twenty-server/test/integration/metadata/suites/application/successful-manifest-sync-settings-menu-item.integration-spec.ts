@@ -341,8 +341,6 @@ describe('Manifest sync - settings menu items', () => {
     );
   }, 60000);
 
-  // The settings page builds one tab per item off findOneApplication, so the read
-  // path has to expose the item's own fields and not just the rows the sync wrote.
   it('exposes the items on findOneApplication, pointing at their front component', async () => {
     await syncApplication({
       manifest: buildManifest([

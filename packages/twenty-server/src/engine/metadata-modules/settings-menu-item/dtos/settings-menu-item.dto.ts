@@ -23,9 +23,6 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-// registerEnumType reads the members off an object, while the scopes are a
-// string-literal union in twenty-shared; deriving the object keeps the schema
-// from drifting out of a second hand-written declaration.
 const SettingsMenuItemScopeEnum = Object.fromEntries(
   SETTINGS_MENU_ITEM_SCOPES.map((scope) => [scope, scope]),
 ) as { [P in SettingsMenuItemScope]: P };
