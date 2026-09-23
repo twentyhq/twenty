@@ -157,7 +157,6 @@ export const FormArrayFieldInput = ({
   };
 
   const commitFirstItemDraft = () => {
-    // Keep the item as typed: consumers decide whether whitespace matters
     if (
       isLimitReached ||
       draftValue.type !== 'static' ||
