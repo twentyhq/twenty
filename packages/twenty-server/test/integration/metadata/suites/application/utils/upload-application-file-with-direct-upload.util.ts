@@ -4,7 +4,7 @@ import { createApplicationFileUploadsQueryFactory } from 'test/integration/metad
 import { type CreateApplicationFileUploadsResult } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads.util';
 import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
@@ -54,7 +54,7 @@ const runDirectUpload = async ({
   }: CreateApplicationFileUploadsResult =
     createResponse.body.data.createApplicationFileUploads;
 
-  if (reservationErrors.length > 0 || targets.length === 0) {
+  if (isNonEmptyArray(reservationErrors) || !isNonEmptyArray(targets)) {
     return {
       data: undefined,
       errors: toGraphqlErrors(reservationErrors.map(({ message }) => message)),
@@ -95,7 +95,7 @@ const runDirectUpload = async ({
   }: CompleteApplicationFileUploadsResult =
     completeResponse.body.data.completeApplicationFileUploads;
 
-  if (completionErrors.length > 0 || files.length === 0) {
+  if (isNonEmptyArray(completionErrors) || !isNonEmptyArray(files)) {
     return {
       data: undefined,
       errors: toGraphqlErrors(completionErrors.map(({ message }) => message)),
