@@ -27,10 +27,17 @@ export const buildCampaignSendRefusalException = ({
     );
   }
 
-  const { limitKind, spenderType } = sendRefusal.exhaustedScope;
+  const { exhaustedKind, spenderType, limitValue } = sendRefusal.exhaustedScope;
+
+  if (exhaustedKind === 'allowance') {
+    return new EmailingDomainException(
+      `Campaign ${campaignId} cannot be sent to ${recipientCount} recipient(s): the workspace credit allowance is exhausted`,
+      EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
+    );
+  }
 
   return new EmailingDomainException(
-    `Campaign ${campaignId} cannot be sent to ${recipientCount} recipient(s): the email ${limitKind} for ${spenderType} is exhausted`,
-    EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
+    `Campaign ${campaignId} cannot be sent to ${recipientCount} recipient(s): an email usage limit of ${limitValue} for ${spenderType} is reached`,
+    EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED,
   );
 };
