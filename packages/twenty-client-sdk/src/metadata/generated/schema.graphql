@@ -4797,6 +4797,7 @@ input UpdateObjectPayload {
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
   openRecordIn: ObjectOpenRecordIn
+  readability: MetadataReadability
   translations: [MetadataTranslationOverrideInput!]
 }
 
