@@ -1,10 +1,10 @@
 import {
   PermissionFlagType,
   SystemPermissionFlag,
+  TOOL_PERMISSION_FLAGS,
 } from 'twenty-shared/constants';
 
 import { type PermissionFlagPermissionType } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
-import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 
 export type StandardPermissionFlagDefinition = {
   key: PermissionFlagType;

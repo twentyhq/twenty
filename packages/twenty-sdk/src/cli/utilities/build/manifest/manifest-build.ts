@@ -11,6 +11,7 @@ import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/uti
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
+import { validateAgentRolesWithinApplicationRole } from '@/cli/utilities/build/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
@@ -641,6 +642,18 @@ export const buildManifest = async (
       fields,
     }),
   );
+
+  if (isDefined(resolvedDefaultRoleUniversalIdentifier)) {
+    errors.push(
+      ...validateAgentRolesWithinApplicationRole({
+        agents,
+        roles,
+        objects,
+        permissionFlags,
+        defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,
+      }),
+    );
+  }
 
   const application: ApplicationManifest | undefined =
     applicationConfig && resolvedDefaultRoleUniversalIdentifier

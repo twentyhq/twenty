@@ -208,6 +208,17 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export { computeRoleManifestUnion } from './utils/computeRoleManifestUnion';
+export type {
+  ObjectPermissionAction,
+  EffectiveObjectPermissions,
+} from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export {
+  OBJECT_PERMISSION_ACTIONS,
+  getEffectiveObjectPermissionsFromRoleManifest,
+} from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export type { RoleManifestGrant } from './utils/getRoleManifestGrantsNotCoveredBy';
+export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,
