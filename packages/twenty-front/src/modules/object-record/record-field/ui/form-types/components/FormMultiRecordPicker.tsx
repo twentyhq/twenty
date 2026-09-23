@@ -203,6 +203,7 @@ export const FormMultiRecordPicker = ({
         ) : (
           <StyledDropdownContainer>
             <Dropdown
+              clickableComponentTabIndex={0}
               dropdownId={dropdownId}
               dropdownPlacement="bottom-start"
               clickableComponentWidth="100%"

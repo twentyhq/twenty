@@ -18,10 +18,11 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { styled } from '@linaria/react';
 import {
   FloatingPortal,
+  FloatingFocusManager,
   type Placement,
   type UseFloatingReturn,
 } from '@floating-ui/react';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useLayoutEffect } from 'react';
 import { type Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -47,6 +48,8 @@ export type DropdownInternalContainerProps = {
   dropdownId: string;
   dropdownPlacement: Placement;
   floatingUiRefs: UseFloatingReturn['refs'];
+  floatingContext: UseFloatingReturn['context'];
+  manageFocus: boolean;
   onClickOutside?: () => void;
   floatingStyles: UseFloatingReturn['floatingStyles'];
   hotkey?: {
@@ -63,6 +66,8 @@ export const DropdownInternalContainer = ({
   dropdownId,
   dropdownPlacement,
   floatingUiRefs,
+  floatingContext,
+  manageFocus,
   onClickOutside,
   floatingStyles,
   hotkey,
@@ -76,6 +81,22 @@ export const DropdownInternalContainer = ({
   );
 
   const { closeDropdown } = useCloseDropdown();
+
+  // Layout cleanup runs before the portal is removed, while focus is still inside it
+  useLayoutEffect(() => {
+    const floatingElement = floatingContext.elements.floating;
+    const triggerElement = floatingUiRefs.domReference.current;
+
+    return () => {
+      if (
+        manageFocus &&
+        floatingElement?.contains(document.activeElement) &&
+        triggerElement instanceof HTMLElement
+      ) {
+        triggerElement.focus({ preventScroll: true });
+      }
+    };
+  }, [floatingContext.elements.floating, floatingUiRefs, manageFocus]);
 
   const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
 
@@ -155,25 +176,33 @@ export const DropdownInternalContainer = ({
       )}
 
       <FloatingPortal>
-        <StyledDropdownContentContainer
-          data-floating-ui-viewport
-          ref={floatingUiRefs.setFloating}
-          style={dropdownMenuStyles}
-          role="listbox"
-          id={`${dropdownId}-options`}
-          data-click-outside-id={excludedClickOutsideId}
-          isDropdownInModal={isDropdownInModal}
+        <FloatingFocusManager
+          context={floatingContext}
+          disabled={!manageFocus}
+          modal={false}
+          returnFocus={false}
+          initialFocus={-1}
         >
-          <OverlayContainer>
-            <StyledDropdownInsideContainer
-              id={dropdownId}
-              data-select-disable
-              data-click-outside-id={parentClickOutsideId}
-            >
-              {dropdownComponents}
-            </StyledDropdownInsideContainer>
-          </OverlayContainer>
-        </StyledDropdownContentContainer>
+          <StyledDropdownContentContainer
+            data-floating-ui-viewport
+            ref={floatingUiRefs.setFloating}
+            style={dropdownMenuStyles}
+            role="listbox"
+            id={`${dropdownId}-options`}
+            data-click-outside-id={excludedClickOutsideId}
+            isDropdownInModal={isDropdownInModal}
+          >
+            <OverlayContainer>
+              <StyledDropdownInsideContainer
+                id={dropdownId}
+                data-select-disable
+                data-click-outside-id={parentClickOutsideId}
+              >
+                {dropdownComponents}
+              </StyledDropdownInsideContainer>
+            </OverlayContainer>
+          </StyledDropdownContentContainer>
+        </FloatingFocusManager>
       </FloatingPortal>
     </>
   );

@@ -344,6 +344,7 @@ export const FormArrayFieldInput = ({
               </StyledInputContainer>
             ) : (
               <Dropdown
+                clickableComponentTabIndex={0}
                 dropdownId={dropdownId}
                 dropdownPlacement="bottom-start"
                 dropdownOffset={{
