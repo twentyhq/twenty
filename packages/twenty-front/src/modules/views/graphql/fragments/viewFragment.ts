@@ -28,6 +28,7 @@ export const VIEW_FRAGMENT = gql`
     mainGroupByFieldMetadataId
     shouldHideEmptyGroups
     kanbanColumnWidth
+    groupLoadLimit
     anyFieldFilterValue
     calendarFieldMetadataId
     calendarEndFieldMetadataId

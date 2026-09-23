@@ -100,6 +100,8 @@ type FrontComponent {
   applicationTokenPair: ApplicationTokenPair
   applicationVariables: JSON
   frontComponentSharedDependenciesChecksum: String
+  applicationName: String
+  applicationGrantedCapabilities: [String!]
 }
 
 type CommandMenuItem {
@@ -761,6 +763,7 @@ type View {
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean!
   kanbanColumnWidth: Int
+  groupLoadLimit: Int
   calendarFieldMetadataId: UUID
   calendarEndFieldMetadataId: UUID
   workspaceId: UUID!
@@ -2448,6 +2451,7 @@ type MarketplaceAppDetail {
   installCount: Int!
   defaultRoleUniversalIdentifier: String
   roles: [MarketplaceAppRole!]
+  requestedCapabilities: [String!]!
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
 }
 
@@ -2457,6 +2461,11 @@ type TriggerInstallApplicationJobResult {
 
 type TriggerUninstallApplicationJobResult {
   jobId: String!
+}
+
+type ApplicationCapabilityGrant {
+  id: UUID!
+  grantedCapabilities: [String!]!
 }
 
 type WorkspaceCompanyEnrichmentResult {
@@ -4018,6 +4027,7 @@ type Mutation {
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchResourceCreditPrice: BillingUpdate!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
@@ -4078,6 +4088,7 @@ type Mutation {
   uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
+  grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
   triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
@@ -4347,6 +4358,7 @@ input CreateViewInput {
   isCompact: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   kanbanColumnWidth: Int
+  groupLoadLimit: Int = 8
 
   """
   Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
@@ -4384,6 +4396,7 @@ input UpdateViewInput {
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
   kanbanColumnWidth: Int
+  groupLoadLimit: Int
 }
 
 input UpsertViewWidgetInput {
@@ -4987,6 +5000,11 @@ input UpdateApplicationRegistrationVariablePayload {
   value: String
   resetValue: Boolean
   description: String
+}
+
+input GrantApplicationCapabilitiesInput {
+  applicationId: UUID!
+  capabilities: [String!]!
 }
 
 input TriggerInstallApplicationJobInput {

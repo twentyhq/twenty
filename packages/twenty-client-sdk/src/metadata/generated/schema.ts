@@ -99,6 +99,8 @@ export interface FrontComponent {
     applicationTokenPair?: ApplicationTokenPair
     applicationVariables?: Scalars['JSON']
     frontComponentSharedDependenciesChecksum?: Scalars['String']
+    applicationName?: Scalars['String']
+    applicationGrantedCapabilities?: Scalars['String'][]
     __typename: 'FrontComponent'
 }
 
@@ -524,6 +526,7 @@ export interface View {
     mainGroupByFieldMetadataId?: Scalars['UUID']
     shouldHideEmptyGroups: Scalars['Boolean']
     kanbanColumnWidth?: Scalars['Int']
+    groupLoadLimit?: Scalars['Int']
     calendarFieldMetadataId?: Scalars['UUID']
     calendarEndFieldMetadataId?: Scalars['UUID']
     workspaceId: Scalars['UUID']
@@ -2072,6 +2075,7 @@ export interface MarketplaceAppDetail {
     installCount: Scalars['Int']
     defaultRoleUniversalIdentifier?: Scalars['String']
     roles?: MarketplaceAppRole[]
+    requestedCapabilities: Scalars['String'][]
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: Scalars['JSON']
     __typename: 'MarketplaceAppDetail'
@@ -2085,6 +2089,12 @@ export interface TriggerInstallApplicationJobResult {
 export interface TriggerUninstallApplicationJobResult {
     jobId: Scalars['String']
     __typename: 'TriggerUninstallApplicationJobResult'
+}
+
+export interface ApplicationCapabilityGrant {
+    id: Scalars['UUID']
+    grantedCapabilities: Scalars['String'][]
+    __typename: 'ApplicationCapabilityGrant'
 }
 
 export interface WorkspaceCompanyEnrichmentResult {
@@ -3434,6 +3444,7 @@ export interface Mutation {
     endSubscriptionTrialPeriod: BillingEndTrialPeriod
     cancelSwitchResourceCreditPrice: BillingUpdate
     deleteConnectedAccount: ConnectedAccountPublicDTO
+    disconnectConnectedAccount: ConnectedAccountPublicDTO
     updateOneApplicationVariable: Scalars['Boolean']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     completeBookCallOnboardingStep: OnboardingStepSuccess
@@ -3494,6 +3505,7 @@ export interface Mutation {
     uploadAppTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
+    grantApplicationCapabilities: ApplicationCapabilityGrant
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
     installApplication: Application
@@ -3746,6 +3758,8 @@ export interface FrontComponentGenqlSelection{
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     applicationVariables?: boolean | number
     frontComponentSharedDependenciesChecksum?: boolean | number
+    applicationName?: boolean | number
+    applicationGrantedCapabilities?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4185,6 +4199,7 @@ export interface ViewGenqlSelection{
     mainGroupByFieldMetadataId?: boolean | number
     shouldHideEmptyGroups?: boolean | number
     kanbanColumnWidth?: boolean | number
+    groupLoadLimit?: boolean | number
     calendarFieldMetadataId?: boolean | number
     calendarEndFieldMetadataId?: boolean | number
     workspaceId?: boolean | number
@@ -5796,6 +5811,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     installCount?: boolean | number
     defaultRoleUniversalIdentifier?: boolean | number
     roles?: MarketplaceAppRoleGenqlSelection
+    requestedCapabilities?: boolean | number
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: boolean | number
     __typename?: boolean | number
@@ -5810,6 +5826,13 @@ export interface TriggerInstallApplicationJobResultGenqlSelection{
 
 export interface TriggerUninstallApplicationJobResultGenqlSelection{
     jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationCapabilityGrantGenqlSelection{
+    id?: boolean | number
+    grantedCapabilities?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7265,6 +7288,7 @@ export interface MutationGenqlSelection{
     endSubscriptionTrialPeriod?: BillingEndTrialPeriodGenqlSelection
     cancelSwitchResourceCreditPrice?: BillingUpdateGenqlSelection
     deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
+    disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId?: (Scalars['UUID'] | null)} }
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
     completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
@@ -7325,6 +7349,7 @@ export interface MutationGenqlSelection{
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
+    grantApplicationCapabilities?: (ApplicationCapabilityGrantGenqlSelection & { __args: {input: GrantApplicationCapabilitiesInput} })
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
@@ -7505,13 +7530,13 @@ export interface DestroyViewFilterInput {
 /** The id of the view filter to destroy. */
 id: Scalars['UUID']}
 
-export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),
+export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),groupLoadLimit?: (Scalars['Int'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
 
 export interface UpdateViewInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),type?: (ViewType | null),icon?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null)}
+openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),groupLoadLimit?: (Scalars['Int'] | null)}
 
 export interface UpsertViewWidgetInput {
 /** The id of the view widget (page layout widget). */
@@ -7726,6 +7751,8 @@ export interface CreateApplicationRegistrationVariableInput {applicationRegistra
 export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
 
 export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
+
+export interface GrantApplicationCapabilitiesInput {applicationId: Scalars['UUID'],capabilities: Scalars['String'][]}
 
 export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
 
@@ -9320,6 +9347,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isTriggerUninstallApplicationJobResult = (obj?: { __typename?: any } | null): obj is TriggerUninstallApplicationJobResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerUninstallApplicationJobResult"')
       return TriggerUninstallApplicationJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationCapabilityGrant_possibleTypes: string[] = ['ApplicationCapabilityGrant']
+    export const isApplicationCapabilityGrant = (obj?: { __typename?: any } | null): obj is ApplicationCapabilityGrant => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationCapabilityGrant"')
+      return ApplicationCapabilityGrant_possibleTypes.includes(obj.__typename)
     }
     
 

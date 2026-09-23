@@ -4,6 +4,7 @@ import { type PreInstallLogicFunctionApplicationManifest } from '@/application/p
 import { type SettingsFrontComponentApplicationManifest } from '@/application/settingsFrontComponentApplicationType';
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
 import { type FrontComponentSharedDependenciesManifest } from '@/application/frontComponentSharedDependenciesManifestType';
+import { type ApplicationCapability } from '@/application/applicationCapabilityType';
 import { type ApplicationBilling } from './applicationBillingType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
@@ -14,6 +15,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   defaultRoleUniversalIdentifier: string;
   displayName: string;
   description: string;
+  requestedCapabilities?: ApplicationCapability[];
   applicationVariables?: ApplicationVariables;
   billing?: ApplicationBilling;
   serverVariables?: ServerVariables;

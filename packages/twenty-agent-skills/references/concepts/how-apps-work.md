@@ -78,6 +78,10 @@ This means:
 - They import UI primitives from `twenty-ui` (installed from npm), not from external component libraries.
 - They fetch workspace data through `twenty-client-sdk/core`, not through direct API calls.
 
+For microphone or camera capture, declare `requestedCapabilities: ['microphone']`, `['camera']`, or `['microphone', 'camera']` in `defineApplication()`. These capabilities appear during installation and are separate from role permissions. Approval requires a workspace member who can manage apps and applies to the whole workspace.
+
+Calling `navigator.mediaDevices.getUserMedia()` without a saved grant pauses capture and shows an approval dialog, including for older apps without `requestedCapabilities`. Declining leaves capture blocked before browser permissions are requested. Package updates do not automatically add grants; locally synced development apps receive their declared capabilities. Browser and operating system permissions still apply after workspace approval.
+
 ## App File Structure
 
 A typical Twenty app after scaffolding:
