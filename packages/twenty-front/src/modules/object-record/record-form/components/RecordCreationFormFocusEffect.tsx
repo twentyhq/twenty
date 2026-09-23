@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const FOCUSABLE_FIELD_SELECTOR = [
@@ -12,13 +12,13 @@ const FOCUSABLE_FIELD_SELECTOR = [
 type RecordCreationFormFocusEffectProps = {
   requestId: string;
   fieldCount: number;
-  formFieldsRef: RefObject<HTMLDivElement | null>;
+  containerElement: HTMLElement | null;
 };
 
 export const RecordCreationFormFocusEffect = ({
   requestId,
   fieldCount,
-  formFieldsRef,
+  containerElement,
 }: RecordCreationFormFocusEffectProps) => {
   const [focusedRequestId, setFocusedRequestId] = useState<string | null>(null);
 
@@ -28,7 +28,7 @@ export const RecordCreationFormFocusEffect = ({
     }
 
     const animationFrame = requestAnimationFrame(() => {
-      const firstField = formFieldsRef.current?.querySelector<HTMLElement>(
+      const firstField = containerElement?.querySelector<HTMLElement>(
         FOCUSABLE_FIELD_SELECTOR,
       );
 
@@ -41,7 +41,7 @@ export const RecordCreationFormFocusEffect = ({
     });
 
     return () => cancelAnimationFrame(animationFrame);
-  }, [requestId, fieldCount, focusedRequestId, formFieldsRef]);
+  }, [requestId, fieldCount, focusedRequestId, containerElement]);
 
   return null;
 };

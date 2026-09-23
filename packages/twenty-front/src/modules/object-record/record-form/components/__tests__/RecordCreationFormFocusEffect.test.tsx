@@ -6,7 +6,7 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
-import { type ReactNode, useRef } from 'react';
+import { type ReactNode, useState } from 'react';
 
 const OPTIONS = [
   { label: 'Option A', value: 'a' },
@@ -22,14 +22,15 @@ const Form = ({
   fieldCount?: number;
   children: ReactNode;
 }) => {
-  const formFieldsRef = useRef<HTMLDivElement>(null);
+  const [containerElement, setContainerElement] =
+    useState<HTMLDivElement | null>(null);
 
   return (
-    <div ref={formFieldsRef}>
+    <div ref={setContainerElement}>
       <RecordCreationFormFocusEffect
         requestId={requestId}
         fieldCount={fieldCount}
-        formFieldsRef={formFieldsRef}
+        containerElement={containerElement}
       />
       {children}
     </div>
