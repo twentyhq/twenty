@@ -1,15 +1,65 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 import { settings } from 'src/engine/constants/settings';
+
+// Keeps a workspace with many logic functions from inflating every session's
+// instructions; the omitted names stay reachable through get_tool_catalog.
+const MAX_TOOL_NAMES_PER_CATEGORY = 40;
+
+const CATEGORY_NOTES: Partial<Record<ToolCategory, string>> = {
+  [ToolCategory.METADATA]: `Both GET tools return system items as compact summaries by default — keep that default for listing/inspecting; only set includeFullSystemObjects / includeFullSystemFields=true when you specifically need a system item's full configuration`,
+};
+
+const buildCategoryLines = (
+  toolNamesByCategory: Partial<Record<ToolCategory, string[]>>,
+): string[] => {
+  const lines: string[] = [];
+
+  for (const category of Object.values(ToolCategory)) {
+    if (category === ToolCategory.DATABASE_CRUD) {
+      continue;
+    }
+
+    const toolNames = toolNamesByCategory[category];
+
+    if (!isNonEmptyArray(toolNames)) {
+      continue;
+    }
+
+    const shown = toolNames.slice(0, MAX_TOOL_NAMES_PER_CATEGORY);
+    const omittedCount = toolNames.length - shown.length;
+    const omitted =
+      omittedCount > 0
+        ? ` | (+${omittedCount} more, call get_tool_catalog with categories: ['${category}'])`
+        : '';
+
+    lines.push(`  ${category}: ${shown.join(' | ')}${omitted}`);
+
+    const note = CATEGORY_NOTES[category];
+
+    if (note) {
+      lines.push(`    ${note}`);
+    }
+  }
+
+  return lines;
+};
 
 export const buildMcpServerInstructions = ({
   objectNames,
-  actionToolNames,
+  readOnlyObjectNames,
+  toolNamesByCategory,
   skillNames,
 }: {
   objectNames: string;
-  actionToolNames: string[];
+  readOnlyObjectNames?: string;
+  toolNamesByCategory: Partial<Record<ToolCategory, string[]>>;
   skillNames?: string;
 }): string => {
-  const availableActionTools = new Set(actionToolNames);
+  const availableActionTools = new Set(
+    toolNamesByCategory[ToolCategory.ACTION] ?? [],
+  );
 
   return [
     `You are an AI assistant for a Twenty CRM workspace.`,
@@ -34,16 +84,14 @@ export const buildMcpServerInstructions = ({
     `  Read:  find_many_{objects} | find_one_{object} | group_by_{objects}`,
     `  Write: create_one_{object} | create_many_{objects} | update_one_{object} | update_many_{objects} | delete_one_{object} | delete_many_{objects} | upsert_many_{objects}. Use upsert_many_{objects} instead of update_many_{objects} when each record has its own individual data.`,
     `  Not sure a constructed name exists? Pass it to learn_tools — unknown names come back under notFound with the closest matching names. Never call get_tool_catalog just to check a name.`,
+    ...(readOnlyObjectNames
+      ? [
+          `  Read-only objects — only the Read operations above exist for these, no create / update / upsert: ${readOnlyObjectNames}`,
+        ]
+      : []),
     ``,
-    `Non-CRUD tools — use learn_tools for schemas:`,
-    `  ACTION:           ${actionToolNames.join(' | ')}`,
-    `  WORKFLOW:         list_workflows | create_complete_workflow | create/update/delete_workflow_version_step | activate/deactivate_workflow_version | list_workflow_runs | get_workflow_run | get_workflow_current_version`,
-    `  METADATA:         get/create/update/delete_object_metadata | get/create/update/delete_field_metadata`,
-    `                     Both GET tools return system items as compact summaries by default — keep that default for listing/inspecting; only set includeFullSystemObjects / includeFullSystemFields=true when you specifically need a system item's full configuration`,
-    `  VIEW:             get_views | get_view_query_parameters | create/update/delete_view | manage view fields, filters, sorts`,
-    `  WEBHOOK:          list/create/update/delete_webhook`,
-    `  NAVIGATION:       list/create/update/delete_navigation_menu_item`,
-    `  LOGIC_FUNCTION:   app_{function_name} — workspace-specific; use list_logic_function_tools to discover`,
+    `Non-CRUD tools — use learn_tools for schemas. Each heading is the exact category to pass to get_tool_catalog:`,
+    ...buildCategoryLines(toolNamesByCategory),
     `  Don't know which tool exists at all? get_tool_catalog with ONE category from the list above, then learn_tools, then execute_tool.`,
     ``,
     `Skills vs Tools:`,

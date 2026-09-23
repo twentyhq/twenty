@@ -15,7 +15,7 @@ describe('buildMcpServerInstructions', () => {
   it('should render the ACTION line from the tools the caller can reach', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies, people',
-      actionToolNames: ['send_email', 'search_help_center'],
+      toolNamesByCategory: { ACTION: ['send_email', 'search_help_center'] },
     });
 
     expect(getActionLine(instructions)).toContain(
@@ -28,14 +28,16 @@ describe('buildMcpServerInstructions', () => {
   it('should add the upload recipe only when the upload tools are reachable', () => {
     const withUpload = buildMcpServerInstructions({
       objectNames: 'companies',
-      actionToolNames: ['create_file_upload', 'complete_file_upload'],
+      toolNamesByCategory: {
+        ACTION: ['create_file_upload', 'complete_file_upload'],
+      },
     });
 
     expect(withUpload).toContain('To attach a file: create_file_upload');
 
     const withoutUpload = buildMcpServerInstructions({
       objectNames: 'companies',
-      actionToolNames: ['send_email'],
+      toolNamesByCategory: { ACTION: ['send_email'] },
     });
 
     expect(withoutUpload).not.toContain('To attach a file');
@@ -44,14 +46,14 @@ describe('buildMcpServerInstructions', () => {
   it('should add the http_request guidance only when http_request is reachable', () => {
     const withHttp = buildMcpServerInstructions({
       objectNames: 'companies',
-      actionToolNames: ['http_request'],
+      toolNamesByCategory: { ACTION: ['http_request'] },
     });
 
     expect(withHttp).toContain('http_request is ONLY for external');
 
     const withoutHttp = buildMcpServerInstructions({
       objectNames: 'companies',
-      actionToolNames: ['send_email'],
+      toolNamesByCategory: { ACTION: ['send_email'] },
     });
 
     expect(withoutHttp).not.toContain('http_request is ONLY for external');
@@ -60,7 +62,7 @@ describe('buildMcpServerInstructions', () => {
   it('should document every meta-tool the MCP server exposes', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies',
-      actionToolNames: ['send_email'],
+      toolNamesByCategory: { ACTION: ['send_email'] },
     });
 
     for (const toolName of [
@@ -78,7 +80,7 @@ describe('buildMcpServerInstructions', () => {
   it('should route an unverified tool name to learn_tools, not to the catalog', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies',
-      actionToolNames: ['send_email'],
+      toolNamesByCategory: { ACTION: ['send_email'] },
     });
 
     expect(instructions).toContain(
@@ -95,7 +97,7 @@ describe('buildMcpServerInstructions', () => {
   it('should omit the skills line when the workspace has no skills', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies',
-      actionToolNames: ['send_email'],
+      toolNamesByCategory: { ACTION: ['send_email'] },
     });
 
     expect(instructions).not.toContain('Available skills');

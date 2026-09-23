@@ -57,6 +57,35 @@ const unwrapJsonSchema = (schema: unknown) =>
     ? schema.jsonSchema
     : schema;
 
+type SchemaValidator = (
+  value: unknown,
+) => Promise<{ success: boolean; value?: unknown; error?: unknown }>;
+
+const getSchemaValidator = (schema: unknown): SchemaValidator | undefined => {
+  if (!isDefined(schema) || typeof schema !== 'object') {
+    return undefined;
+  }
+
+  const validate = (schema as { validate?: unknown }).validate;
+
+  return typeof validate === 'function'
+    ? (validate as SchemaValidator)
+    : undefined;
+};
+
+const MAX_VALIDATION_ERROR_LENGTH = 500;
+
+const describeValidationError = (error: unknown): string => {
+  const message =
+    error instanceof Error
+      ? error.message
+      : (JSON.stringify(error) ?? 'unknown');
+
+  return message.length > MAX_VALIDATION_ERROR_LENGTH
+    ? `${message.slice(0, MAX_VALIDATION_ERROR_LENGTH)}…`
+    : message;
+};
+
 @Injectable()
 export class McpToolExecutorService {
   constructor(private readonly metricsService: MetricsService) {}
@@ -88,6 +117,26 @@ export class McpToolExecutorService {
       });
     }
 
+    // Arguments arrive as raw JSON-RPC input. Without this the advertised
+    // schema is documentation only: nothing is rejected and no default applies.
+    const validator = getSchemaValidator(tool.inputSchema);
+    let toolArguments = params.arguments ?? {};
+
+    if (isDefined(validator)) {
+      const validation = await validator(toolArguments);
+
+      if (!validation.success) {
+        return wrapJsonRpcResponse(id, {
+          error: {
+            code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
+            message: `Invalid arguments for tool ${toolName}: ${describeValidationError(validation.error)}`,
+          },
+        });
+      }
+
+      toolArguments = validation.value as Record<string, unknown>;
+    }
+
     const progressToken = getProgressToken(params);
 
     if (isDefined(sseWriter) && isDefined(progressToken)) {
@@ -105,7 +154,7 @@ export class McpToolExecutorService {
     const metricToolName = getToolMetricName(
       resolveToolName({
         toolName,
-        input: params.arguments,
+        input: toolArguments,
       }),
     );
 
@@ -121,7 +170,7 @@ export class McpToolExecutorService {
         undefined
       >;
       const result = boundToolOutput(
-        await execute(params.arguments, {
+        await execute(toolArguments, {
           toolCallId: '1',
           messages: [],
           context: undefined,

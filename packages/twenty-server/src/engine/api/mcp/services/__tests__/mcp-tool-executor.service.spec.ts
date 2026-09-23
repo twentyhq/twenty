@@ -1,11 +1,27 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type ToolSet } from 'ai';
+import { zodSchema, type ToolSet } from 'ai';
+import { z } from 'zod';
 
+import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { MAX_INLINE_TOOL_OUTPUT_BYTES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/max-inline-tool-output-bytes.constant';
+
+type JsonRpcResponse = Awaited<
+  ReturnType<McpToolExecutorService['handleToolCall']>
+>;
+
+const getError = (response: JsonRpcResponse) =>
+  (response as unknown as { error: { code: number; message: string } }).error;
+
+const getResult = (response: JsonRpcResponse) =>
+  (
+    response as unknown as {
+      result: { content: { type: string; text: string }[]; isError: boolean };
+    }
+  ).result;
 
 describe('McpToolExecutorService', () => {
   let service: McpToolExecutorService;
@@ -68,6 +84,45 @@ describe('McpToolExecutorService', () => {
       );
     });
 
+    it('should reject arguments the advertised schema does not accept', async () => {
+      const execute = jest.fn();
+      const toolSet = {
+        create_person: {
+          description: 'Create a person',
+          inputSchema: zodSchema(z.object({ name: z.string() })),
+          execute,
+        },
+      } as unknown as ToolSet;
+
+      const response = await service.handleToolCall(1, toolSet, {
+        name: 'create_person',
+        arguments: { name: 42 },
+      });
+
+      expect(execute).not.toHaveBeenCalled();
+      expect(getError(response).code).toBe(JSON_RPC_ERROR_CODE.INVALID_PARAMS);
+      expect(getError(response).message).toContain(
+        'Invalid arguments for tool create_person',
+      );
+    });
+
+    it('should apply schema defaults before executing, and accept absent arguments', async () => {
+      const execute = jest.fn().mockResolvedValue({ success: true });
+      const toolSet = {
+        create_person: {
+          description: 'Create a person',
+          inputSchema: zodSchema(
+            z.object({ limit: z.number().optional().default(10) }),
+          ),
+          execute,
+        },
+      } as unknown as ToolSet;
+
+      await service.handleToolCall(1, toolSet, { name: 'create_person' });
+
+      expect(execute).toHaveBeenCalledWith({ limit: 10 }, expect.anything());
+    });
+
     it('should bound an oversized tool output while keeping the payload parseable', async () => {
       const toolOutput = {
         success: true,
@@ -81,7 +136,7 @@ describe('McpToolExecutorService', () => {
         arguments: {},
       });
 
-      const text = response?.result.content[0].text as string;
+      const text = getResult(response).content[0].text;
       const payload = JSON.parse(text);
 
       expect(Buffer.byteLength(text)).toBeLessThan(
@@ -97,7 +152,7 @@ describe('McpToolExecutorService', () => {
         },
       });
       expect(payload.result.content).toContain('Narrow the call');
-      expect(response?.result.isError).toBe(false);
+      expect(getResult(response).isError).toBe(false);
     });
 
     it('should leave a tool output under the inline budget untouched', async () => {
@@ -113,7 +168,9 @@ describe('McpToolExecutorService', () => {
         arguments: {},
       });
 
-      expect(response?.result.content[0].text).toBe(JSON.stringify(toolOutput));
+      expect(getResult(response).content[0].text).toBe(
+        JSON.stringify(toolOutput),
+      );
     });
 
     it('should return isError true and count a failure when the tool output resolves with success false', async () => {
