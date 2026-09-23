@@ -24,10 +24,6 @@ import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -109,11 +105,14 @@ export class FilesFieldService {
       );
     }
 
-    await this.assertApplicationPrincipalCanUpdateFieldOrThrow({
-      workspaceId,
-      fieldMetadata,
-      principal,
-    });
+    await this.permissionsService.assertApplicationPrincipalCanUpdateFieldOrThrow(
+      {
+        workspaceId,
+        objectMetadataId: fieldMetadata.objectMetadataId,
+        fieldMetadataId: fieldMetadata.id,
+        principal,
+      },
+    );
 
     const application = await this.applicationRepository.findOneOrFail({
       where: {
@@ -132,6 +131,7 @@ export class FilesFieldService {
       settings: {
         isTemporaryFile: true,
         toDelete: false,
+        uploadPrincipal: principal,
       },
     });
 
@@ -143,40 +143,6 @@ export class FilesFieldService {
         fileFolder: FileFolder.FilesField,
       }),
     };
-  }
-
-  private async assertApplicationPrincipalCanUpdateFieldOrThrow({
-    workspaceId,
-    fieldMetadata,
-    principal,
-  }: {
-    workspaceId: string;
-    fieldMetadata: Pick<FieldMetadataEntity, 'id' | 'objectMetadataId'>;
-    principal: FileUploadPrincipal | undefined;
-  }): Promise<void> {
-    const applicationId = principal?.applicationId;
-
-    if (!isDefined(applicationId)) {
-      return;
-    }
-
-    const canUpdateField =
-      await this.permissionsService.principalCanUpdateField({
-        workspaceId,
-        objectMetadataId: fieldMetadata.objectMetadataId,
-        fieldMetadataId: fieldMetadata.id,
-        userWorkspaceId: principal?.userWorkspaceId ?? null,
-        applicationId,
-      });
-
-    if (canUpdateField) {
-      return;
-    }
-
-    throw new PermissionsException(
-      `Application ${applicationId} cannot update records of the object owning field ${fieldMetadata.id}`,
-      PermissionsExceptionCode.PERMISSION_DENIED,
-    );
   }
 
   async copyFileIntoFilesField({

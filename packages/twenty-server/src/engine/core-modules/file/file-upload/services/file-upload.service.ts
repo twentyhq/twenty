@@ -378,11 +378,14 @@ export class FileUploadService {
         fieldMetadataUniversalIdentifier,
       });
 
-      await this.assertApplicationPrincipalCanUpdateFieldOrThrow({
-        workspaceId,
-        fieldMetadata,
-        principal,
-      });
+      await this.permissionsService.assertApplicationPrincipalCanUpdateFieldOrThrow(
+        {
+          workspaceId,
+          objectMetadataId: fieldMetadata.objectMetadataId,
+          fieldMetadataId: fieldMetadata.id,
+          principal,
+        },
+      );
 
       const application = await this.applicationRepository.findOneOrFail({
         where: {
@@ -458,38 +461,6 @@ export class FileUploadService {
     }
 
     return fieldMetadata;
-  }
-
-  private async assertApplicationPrincipalCanUpdateFieldOrThrow({
-    workspaceId,
-    fieldMetadata,
-    principal,
-  }: {
-    workspaceId: string;
-    fieldMetadata: Pick<FieldMetadataEntity, 'id' | 'objectMetadataId'>;
-    principal: FileUploadPrincipal;
-  }): Promise<void> {
-    if (!isDefined(principal.applicationId)) {
-      return;
-    }
-
-    const canUpdateField =
-      await this.permissionsService.principalCanUpdateField({
-        workspaceId,
-        objectMetadataId: fieldMetadata.objectMetadataId,
-        fieldMetadataId: fieldMetadata.id,
-        userWorkspaceId: principal.userWorkspaceId,
-        applicationId: principal.applicationId,
-      });
-
-    if (canUpdateField) {
-      return;
-    }
-
-    throw new PermissionsException(
-      `Application ${principal.applicationId} cannot update records of the object owning field ${fieldMetadata.id}`,
-      PermissionsExceptionCode.PERMISSION_DENIED,
-    );
   }
 
   // A pending row is confirmable by any UPLOAD_FILE holder who knows its id,

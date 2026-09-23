@@ -9,6 +9,7 @@ import { findOneApplication } from 'test/integration/metadata/suites/application
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { type Manifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -46,6 +47,21 @@ const completeFileUploadMutation = gql`
       path
       size
       url
+    }
+  }
+`;
+
+const uploadFilesFieldFileMutation = gql`
+  mutation UploadFilesFieldFile(
+    $file: Upload!
+    $fieldMetadataUniversalIdentifier: String!
+  ) {
+    uploadFilesFieldFileByUniversalIdentifier(
+      file: $file
+      fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier
+    ) {
+      id
+      path
     }
   }
 `;
@@ -264,6 +280,27 @@ describe('application files field upload', () => {
       token,
     );
 
+  const uploadFilesFieldFile = ({
+    fieldMetadataUniversalIdentifier,
+    token,
+  }: {
+    fieldMetadataUniversalIdentifier: string;
+    token?: string;
+  }) =>
+    makeMetadataAPIRequestWithFileUpload(
+      {
+        query: uploadFilesFieldFileMutation,
+        variables: { file: null, fieldMetadataUniversalIdentifier },
+      },
+      {
+        field: 'file',
+        buffer: FILE_CONTENT,
+        filename: 'document.txt',
+        contentType: 'text/plain',
+      },
+      token,
+    );
+
   const putFileToUploadUrl = ({ uploadUrl, contentType }: UploadTarget) => {
     // Integration tests run on the local storage driver, so the upload url
     // targets the server's streaming endpoint: replay it against the test app.
@@ -447,6 +484,55 @@ describe('application files field upload', () => {
     expect(completeResponse.body.data.completeFileUpload.id).toBe(
       uploadTarget.fileId,
     );
+
+    expectPermissionDenied(
+      await completeFileUpload({ fileId: uploadTarget.fileId }),
+    );
+
+    const resignResponse = await completeFileUpload({
+      fileId: uploadTarget.fileId,
+      token: uploadingApplicationToken,
+    });
+
+    expect(resignResponse.body.errors).toBeUndefined();
+    expect(resignResponse.body.data.completeFileUpload.id).toBe(
+      uploadTarget.fileId,
+    );
+  });
+
+  it('should bind a multipart upload to the application that sent it', async () => {
+    const uploadResponse = await uploadFilesFieldFile({
+      fieldMetadataUniversalIdentifier:
+        UPLOADING_APPLICATION.filesFieldUniversalIdentifier,
+      token: uploadingApplicationToken,
+    });
+
+    expect(uploadResponse.body.errors).toBeUndefined();
+
+    const { id: fileId } =
+      uploadResponse.body.data.uploadFilesFieldFileByUniversalIdentifier;
+
+    uploadedFileIds.push(fileId);
+
+    expectPermissionDenied(await completeFileUpload({ fileId }));
+
+    const resignResponse = await completeFileUpload({
+      fileId,
+      token: uploadingApplicationToken,
+    });
+
+    expect(resignResponse.body.errors).toBeUndefined();
+    expect(resignResponse.body.data.completeFileUpload.id).toBe(fileId);
+  });
+
+  it('should refuse a multipart upload into a files field on an object the application cannot update', async () => {
+    const uploadResponse = await uploadFilesFieldFile({
+      fieldMetadataUniversalIdentifier:
+        RESTRICTED_APPLICATION.filesFieldUniversalIdentifier,
+      token: uploadingApplicationToken,
+    });
+
+    expectPermissionDenied(uploadResponse);
   });
 
   it('should refuse a target field that is not a files field', async () => {

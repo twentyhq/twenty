@@ -15,6 +15,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { flatRoleHasPermissionFlag } from 'src/engine/metadata-modules/flat-role/utils/flat-role-has-permission-flag.util';
@@ -25,10 +26,10 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
+import { canRolesUpdateField } from 'src/engine/metadata-modules/permissions/utils/can-roles-update-field.util';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -270,50 +271,85 @@ export class PermissionsService {
     );
   }
 
-  // Mirrors the update permission the attach step will enforce, so an
-  // application cannot park files under a field it could never write.
-  public async principalCanUpdateField({
+  public async assertApplicationPrincipalCanUpdateFieldOrThrow({
     workspaceId,
     objectMetadataId,
     fieldMetadataId,
-    userWorkspaceId,
-    applicationId,
+    principal,
   }: {
     workspaceId: string;
     objectMetadataId: string;
     fieldMetadataId: string;
-    userWorkspaceId: string | null;
+    principal:
+      | { applicationId: string | null; userWorkspaceId: string | null }
+      | undefined;
+  }): Promise<void> {
+    const applicationId = principal?.applicationId;
+
+    if (!isDefined(applicationId)) {
+      return;
+    }
+
+    const roleIds = await this.resolveApplicationPrincipalRoleIds({
+      workspaceId,
+      applicationId,
+      userWorkspaceId: principal?.userWorkspaceId ?? null,
+    });
+
+    const { rolesPermissions, flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+        'flatObjectMetadataMaps',
+      ]);
+
+    const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: objectMetadataId,
+    });
+
+    if (
+      isDefined(objectMetadata) &&
+      canRolesUpdateField({
+        roleIds,
+        rolesPermissions,
+        objectMetadata,
+        fieldMetadataId,
+      })
+    ) {
+      return;
+    }
+
+    throw new PermissionsException(
+      `Application ${applicationId} cannot update records of the object owning field ${fieldMetadataId}`,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+    );
+  }
+
+  private async resolveApplicationPrincipalRoleIds({
+    workspaceId,
+    applicationId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
     applicationId: string;
-  }): Promise<boolean> {
+    userWorkspaceId: string | null;
+  }): Promise<string[]> {
     const applicationRoleId = await this.findApplicationDefaultRoleIdOrThrow({
       applicationId,
       workspaceId,
     });
 
-    const roleIds = isDefined(userWorkspaceId)
-      ? resolveRoleIdsForUser({
-          userRoleId: await this.userRoleService.getRoleIdForUserWorkspace({
-            userWorkspaceId,
-            workspaceId,
-          }),
-          applicationRoleId,
-        })
-      : [applicationRoleId].filter(isDefined);
+    if (!isDefined(userWorkspaceId)) {
+      return [applicationRoleId].filter(isDefined);
+    }
 
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
-
-    const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
-      rolesPermissions,
-      rolePermissionConfig: { intersectionOf: roleIds },
-    })[objectMetadataId];
-
-    return (
-      objectPermissions?.canUpdateObjectRecords === true &&
-      objectPermissions.restrictedFields[fieldMetadataId]?.canUpdate !== false
-    );
+    return resolveRoleIdsForUser({
+      userRoleId: await this.userRoleService.getRoleIdForUserWorkspace({
+        userWorkspaceId,
+        workspaceId,
+      }),
+      applicationRoleId,
+    });
   }
 
   // Naming an application that no longer exists is not the same as declaring
