@@ -105,7 +105,7 @@ export default {
         435,
         556,
         560,
-        590
+        587
     ],
     "types": {
         "BillingProductDTO": {
@@ -7193,24 +7193,27 @@ export default {
                 1
             ]
         },
-        "ValidationRule": {
+        "PermissionFlag": {
             "id": [
                 3
             ],
-            "objectMetadataId": [
+            "universalIdentifier": [
                 3
             ],
-            "errorFieldMetadataId": [
-                3
-            ],
-            "expression": [
+            "key": [
                 1
             ],
-            "message": [
+            "label": [
                 1
             ],
-            "isActive": [
-                8
+            "description": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "permissionType": [
+                1
             ],
             "applicationId": [
                 3
@@ -7995,6 +7998,9 @@ export default {
                     ]
                 }
             ],
+            "getPermissionFlags": [
+                404
+            ],
             "minimalMetadata": [
                 409
             ],
@@ -8091,15 +8097,6 @@ export default {
                 386,
                 {
                     "agentId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "validationRules": [
-                404,
-                {
-                    "objectMetadataId": [
                         3,
                         "UUID!"
                     ]
@@ -10457,38 +10454,11 @@ export default {
                     ]
                 }
             ],
-            "createValidationRule": [
-                404,
-                {
-                    "input": [
-                        579,
-                        "CreateValidationRuleInput!"
-                    ]
-                }
-            ],
-            "updateValidationRule": [
-                404,
-                {
-                    "input": [
-                        580,
-                        "UpdateValidationRuleInput!"
-                    ]
-                }
-            ],
-            "deleteValidationRule": [
-                404,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
             "updateTimelineActivityType": [
                 403,
                 {
                     "input": [
-                        582,
+                        579,
                         "UpdateTimelineActivityTypeInput!"
                     ]
                 }
@@ -10506,7 +10476,7 @@ export default {
                 287,
                 {
                     "input": [
-                        583,
+                        580,
                         "GetAuthorizationUrlForSSOInput!"
                     ]
                 }
@@ -10672,7 +10642,7 @@ export default {
                 290,
                 {
                     "input": [
-                        584
+                        581
                     ]
                 }
             ],
@@ -10850,7 +10820,7 @@ export default {
                 8,
                 {
                     "input": [
-                        585,
+                        582,
                         "UpdateWorkspaceMemberSettingsInput!"
                     ]
                 }
@@ -10884,7 +10854,7 @@ export default {
                 238,
                 {
                     "input": [
-                        586,
+                        583,
                         "SetupOIDCSsoInput!"
                     ]
                 }
@@ -10893,7 +10863,7 @@ export default {
                 238,
                 {
                     "input": [
-                        587,
+                        584,
                         "SetupSAMLSsoInput!"
                     ]
                 }
@@ -10902,7 +10872,7 @@ export default {
                 234,
                 {
                     "input": [
-                        588,
+                        585,
                         "DeleteSsoInput!"
                     ]
                 }
@@ -10911,7 +10881,7 @@ export default {
                 235,
                 {
                     "input": [
-                        589,
+                        586,
                         "EditSsoInput!"
                     ]
                 }
@@ -10940,7 +10910,7 @@ export default {
                 368,
                 {
                     "type": [
-                        590,
+                        587,
                         "AnalyticsType!"
                     ],
                     "name": [
@@ -10983,7 +10953,7 @@ export default {
                 358,
                 {
                     "input": [
-                        591,
+                        588,
                         "CreateCalendarEventInput!"
                     ]
                 }
@@ -10992,7 +10962,7 @@ export default {
                 367,
                 {
                     "input": [
-                        592,
+                        589,
                         "SendEmailInput!"
                     ]
                 }
@@ -11014,7 +10984,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        594,
+                        591,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -11026,7 +10996,7 @@ export default {
                 197,
                 {
                     "input": [
-                        596,
+                        593,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -11119,7 +11089,7 @@ export default {
                         "String!"
                     ],
                     "files": [
-                        597,
+                        594,
                         "[ApplicationFileUploadRequestInput!]!"
                     ]
                 }
@@ -13947,54 +13917,6 @@ export default {
                 1
             ]
         },
-        "CreateValidationRuleInput": {
-            "objectMetadataId": [
-                3
-            ],
-            "errorFieldMetadataId": [
-                3
-            ],
-            "expression": [
-                1
-            ],
-            "message": [
-                1
-            ],
-            "isActive": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateValidationRuleInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                581
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateValidationRuleInputUpdates": {
-            "errorFieldMetadataId": [
-                3
-            ],
-            "expression": [
-                1
-            ],
-            "message": [
-                1
-            ],
-            "isActive": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "UpdateTimelineActivityTypeInput": {
             "id": [
                 3
@@ -14175,7 +14097,7 @@ export default {
                 1
             ],
             "files": [
-                593
+                590
             ],
             "__typename": [
                 1
@@ -14197,13 +14119,13 @@ export default {
                 1
             ],
             "IMAP": [
-                595
+                592
             ],
             "SMTP": [
-                595
+                592
             ],
             "CALDAV": [
-                595
+                592
             ],
             "__typename": [
                 1
@@ -14268,7 +14190,7 @@ export default {
                 279,
                 {
                     "input": [
-                        599,
+                        596,
                         "LogicFunctionLogsInput!"
                     ]
                 }
@@ -14295,7 +14217,7 @@ export default {
                 372,
                 {
                     "input": [
-                        600,
+                        597,
                         "CreateRecordExportInput!"
                     ]
                 }

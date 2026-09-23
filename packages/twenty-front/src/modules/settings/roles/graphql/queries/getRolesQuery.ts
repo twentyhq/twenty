@@ -20,6 +20,15 @@ export const GET_ROLES = gql`
   ${ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT}
   ${ROW_LEVEL_PERMISSION_PREDICATE_GROUP_FRAGMENT}
   query GetRoles {
+    getPermissionFlags {
+      id
+      applicationId
+      key
+      label
+      description
+      icon
+      permissionType
+    }
     getRoles {
       ...RoleFragment
       workspaceMembers {

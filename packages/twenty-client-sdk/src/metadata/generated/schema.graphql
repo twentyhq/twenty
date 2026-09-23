@@ -3647,13 +3647,14 @@ type TimelineActivityType {
   updatedAt: DateTime!
 }
 
-type ValidationRule {
+type PermissionFlag {
   id: UUID!
-  objectMetadataId: UUID!
-  errorFieldMetadataId: UUID
-  expression: String!
-  message: String!
-  isActive: Boolean!
+  universalIdentifier: UUID!
+  key: String!
+  label: String!
+  description: String
+  icon: String
+  permissionType: String!
   applicationId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3698,7 +3699,6 @@ enum AllMetadataName {
   searchFieldMetadata
   timelineActivityType
   settingsMenuItem
-  validationRule
   workflow
   workflowVersion
 }
@@ -3842,6 +3842,7 @@ type Query {
   webhook(id: UUID!): Webhook
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
+  getPermissionFlags: [PermissionFlag!]!
   minimalMetadata: MinimalMetadata!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
   getJobs(jobIds: [String!]!): [JobStatus!]!
@@ -3857,7 +3858,6 @@ type Query {
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
-  validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
@@ -4204,9 +4204,6 @@ type Mutation {
   deactivateSkill(id: UUID!): Skill!
   evaluateAgentTurn(turnId: UUID!): AgentTurnEvaluation!
   runEvaluationInput(agentId: UUID!, input: String!): AgentTurn!
-  createValidationRule(input: CreateValidationRuleInput!): ValidationRule!
-  updateValidationRule(input: UpdateValidationRuleInput!): ValidationRule!
-  deleteValidationRule(id: UUID!): ValidationRule!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   resetTimelineActivityType(id: UUID!): TimelineActivityType!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
@@ -5503,26 +5500,6 @@ input UpdateSkillInput {
   icon: String
   description: String
   content: String
-  isActive: Boolean
-}
-
-input CreateValidationRuleInput {
-  objectMetadataId: UUID!
-  errorFieldMetadataId: UUID
-  expression: String!
-  message: String!
-  isActive: Boolean
-}
-
-input UpdateValidationRuleInput {
-  id: UUID!
-  update: UpdateValidationRuleInputUpdates!
-}
-
-input UpdateValidationRuleInputUpdates {
-  errorFieldMetadataId: UUID
-  expression: String
-  message: String
   isActive: Boolean
 }
 
