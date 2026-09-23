@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
-import { FileFolder as FileFolderPath } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { IconUserCircle } from 'twenty-ui/icon';
@@ -65,7 +65,7 @@ export const OnboardingProfilePictureUploader = ({
     try {
       const uploadedFile = await uploadWorkspaceMemberProfilePicture(file);
 
-      const newAvatarUrl = `${REACT_APP_SERVER_BASE_URL}/file/${FileFolderPath.CorePicture}/${uploadedFile.id}`;
+      const newAvatarUrl = `${REACT_APP_SERVER_BASE_URL}/file/${FileFolder.CorePicture}/${uploadedFile.id}`;
 
       await updateWorkspaceMemberSettings({
         workspaceMemberId,

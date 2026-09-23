@@ -8,7 +8,7 @@ import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUp
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { FileFolder as FileFolderPath } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -65,7 +65,7 @@ export const WorkspaceMemberPictureUploader = ({
         signal: controller.signal,
       });
 
-      newAvatarUrl = `${REACT_APP_SERVER_BASE_URL}/file/${FileFolderPath.CorePicture}/${uploadedFile.id}`;
+      newAvatarUrl = `${REACT_APP_SERVER_BASE_URL}/file/${FileFolder.CorePicture}/${uploadedFile.id}`;
       await updateWorkspaceMemberSettings({
         workspaceMemberId,
         update: { avatarUrl: newAvatarUrl },
