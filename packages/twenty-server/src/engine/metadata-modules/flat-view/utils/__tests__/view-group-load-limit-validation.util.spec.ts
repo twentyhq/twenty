@@ -175,6 +175,49 @@ describe('view groupLoadLimit allowlist enforcement', () => {
       },
     );
 
+    // Seeded at 50 so keeping the stored value cannot pass for a reset
+    it('resets an explicit null to the default group load limit', () => {
+      const { flatViewToUpdate } = fromUpdateViewInputToFlatViewToUpdateOrThrow(
+        {
+          updateViewInput: { id: VIEW_ID, groupLoadLimit: null },
+          flatViewMaps: addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: { ...existingFlatView, groupLoadLimit: 50 },
+            flatEntityMaps: createEmptyFlatEntityMaps(),
+          }),
+          flatViewGroupMaps,
+          flatFieldMetadataMaps,
+          callerApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
+          workspaceCustomApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      );
+
+      expect(flatViewToUpdate.groupLoadLimit).toBe(
+        DEFAULT_VIEW_GROUP_LOAD_LIMIT,
+      );
+    });
+
+    it('keeps the stored group load limit when an update omits it', () => {
+      const { flatViewToUpdate } = fromUpdateViewInputToFlatViewToUpdateOrThrow(
+        {
+          updateViewInput: { id: VIEW_ID, name: 'Renamed' },
+          flatViewMaps: addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: { ...existingFlatView, groupLoadLimit: 50 },
+            flatEntityMaps: createEmptyFlatEntityMaps(),
+          }),
+          flatViewGroupMaps,
+          flatFieldMetadataMaps,
+          callerApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
+          workspaceCustomApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
+        },
+      );
+
+      expect(flatViewToUpdate.groupLoadLimit).toBe(50);
+    });
+
     it.each(REJECTED_GROUP_LOAD_LIMITS)(
       'rejects the group load limit %s',
       (groupLoadLimit) => {

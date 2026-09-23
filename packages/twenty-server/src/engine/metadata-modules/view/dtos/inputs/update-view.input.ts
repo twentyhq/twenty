@@ -124,5 +124,5 @@ export class UpdateViewInput {
   @IsOptional()
   @IsIn(VIEW_GROUP_LOAD_LIMIT_OPTIONS)
   @Field(() => Int, { nullable: true })
-  groupLoadLimit?: number;
+  groupLoadLimit?: number | null;
 }

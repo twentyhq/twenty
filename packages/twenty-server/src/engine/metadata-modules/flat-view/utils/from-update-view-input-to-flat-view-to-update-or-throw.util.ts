@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -68,8 +69,18 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     );
   }
 
+  // The column is NOT NULL, so an explicit null would otherwise reach the merge
+  // and fail on the database constraint; create and the manifest read null as the default too
+  const { groupLoadLimit, ...updateViewInputWithoutGroupLoadLimit } =
+    rawUpdateViewInput;
+
   const editableProperties = extractAndSanitizeObjectStringFields(
-    rawUpdateViewInput,
+    {
+      ...updateViewInputWithoutGroupLoadLimit,
+      ...(groupLoadLimit !== undefined && {
+        groupLoadLimit: groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
+      }),
+    },
     FLAT_VIEW_EDITABLE_PROPERTIES,
   );
 
