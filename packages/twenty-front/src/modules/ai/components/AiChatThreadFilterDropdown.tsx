@@ -4,11 +4,12 @@ import { IconFilter } from 'twenty-ui/icon';
 
 import { AiChatThreadFilterDropdownContent } from '@/ai/components/AiChatThreadFilterDropdownContent';
 import { AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE } from '@/ai/constants/AiChatThreadFilterDropdownPage';
+import { DropdownFocusCleanupEffect } from '@/ui/utilities/focus/components/DropdownFocusCleanupEffect';
 import { useDropdownFocus } from '@/ui/utilities/focus/hooks/useDropdownFocus';
 
 export const AiChatThreadFilterDropdown = () => {
   const { t } = useLingui();
-  const { updateDropdownFocus } = useDropdownFocus();
+  const { focusId, updateDropdownFocus } = useDropdownFocus();
 
   return (
     <Dropdown.Root
@@ -16,6 +17,7 @@ export const AiChatThreadFilterDropdown = () => {
       defaultPage={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.ROOT}
       onOpenChange={updateDropdownFocus}
     >
+      <DropdownFocusCleanupEffect focusId={focusId} />
       <Dropdown.Trigger
         render={
           <LightIconButton

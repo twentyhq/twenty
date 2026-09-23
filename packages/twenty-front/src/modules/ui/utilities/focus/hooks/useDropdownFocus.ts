@@ -1,4 +1,4 @@
-import { useEffect, useId } from 'react';
+import { useId } from 'react';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -9,11 +9,6 @@ export const useDropdownFocus = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
-
-  useEffect(
-    () => () => removeFocusItemFromFocusStackById({ focusId }),
-    [focusId, removeFocusItemFromFocusStackById],
-  );
 
   const updateDropdownFocus = (open: boolean) => {
     if (!open) {
@@ -31,5 +26,5 @@ export const useDropdownFocus = () => {
     });
   };
 
-  return { updateDropdownFocus };
+  return { focusId, updateDropdownFocus };
 };

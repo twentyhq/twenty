@@ -13,6 +13,7 @@ import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsS
 import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteFamilyState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
+import { DropdownFocusCleanupEffect } from '@/ui/utilities/focus/components/DropdownFocusCleanupEffect';
 import { useDropdownFocus } from '@/ui/utilities/focus/hooks/useDropdownFocus';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -40,7 +41,7 @@ export const AiChatThreadItemMenu = ({
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
-  const { updateDropdownFocus } = useDropdownFocus();
+  const { focusId, updateDropdownFocus } = useDropdownFocus();
   const { archiveChatThread, unarchiveChatThread } =
     useChatThreadArchiveActions();
   const setAiChatThreadPendingDelete = useSetAtomFamilyState(
@@ -78,6 +79,7 @@ export const AiChatThreadItemMenu = ({
         onOpenChange?.(nextOpen);
       }}
     >
+      <DropdownFocusCleanupEffect focusId={focusId} />
       <Dropdown.Trigger
         render={
           trigger ?? (

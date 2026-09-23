@@ -2,6 +2,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
+import { DropdownFocusCleanupEffect } from '@/ui/utilities/focus/components/DropdownFocusCleanupEffect';
 import { useDropdownFocus } from '@/ui/utilities/focus/hooks/useDropdownFocus';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -40,7 +41,7 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
   callToActionButton,
 }: MultiSelectAddressFieldsProps<TValue>) => {
   const [searchInputValue, setSearchInputValue] = useState('');
-  const { updateDropdownFocus } = useDropdownFocus();
+  const { focusId, updateDropdownFocus } = useDropdownFocus();
   const filteredOptions = isNonEmptyString(searchInputValue)
     ? options.filter(({ label }) =>
         label.toLowerCase().includes(searchInputValue.toLowerCase()),
@@ -67,6 +68,7 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
         }
       }}
     >
+      <DropdownFocusCleanupEffect focusId={focusId} />
       <Dropdown.Trigger
         className={className}
         render={<div />}

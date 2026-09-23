@@ -114,28 +114,4 @@ describe('useDropdownFocus', () => {
       expect(store.get(focusStackState.atom)).toEqual(outerFocusStack);
     });
   });
-
-  it('removes only the unmounted owner while another dropdown remains open', () => {
-    const { store, Wrapper } = createTestContext();
-    const outer = renderHook(() => useDropdownFocus(), { wrapper: Wrapper });
-    const inner = renderHook(() => useDropdownFocus(), { wrapper: Wrapper });
-
-    act(() => {
-      outer.result.current.updateDropdownFocus(true);
-      inner.result.current.updateDropdownFocus(true);
-    });
-
-    const innerFocusItem = store.get(focusStackState.atom).at(-1);
-
-    outer.unmount();
-
-    expect(store.get(focusStackState.atom)).toEqual([
-      BACKGROUND_FOCUS_ITEM,
-      innerFocusItem,
-    ]);
-
-    inner.unmount();
-
-    expect(store.get(focusStackState.atom)).toEqual([BACKGROUND_FOCUS_ITEM]);
-  });
 });

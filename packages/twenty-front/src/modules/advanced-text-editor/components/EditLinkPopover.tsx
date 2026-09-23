@@ -1,4 +1,5 @@
 import { TextInput } from '@/ui/input/components/TextInput';
+import { DropdownFocusCleanupEffect } from '@/ui/utilities/focus/components/DropdownFocusCleanupEffect';
 import { useDropdownFocus } from '@/ui/utilities/focus/hooks/useDropdownFocus';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -21,7 +22,7 @@ export const EditLinkPopover = ({
   const { t } = useLingui();
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState(defaultValue);
-  const { updateDropdownFocus } = useDropdownFocus();
+  const { focusId, updateDropdownFocus } = useDropdownFocus();
 
   const handleOpenChange = (open: boolean) => {
     updateDropdownFocus(open);
@@ -59,6 +60,7 @@ export const EditLinkPopover = ({
 
   return (
     <Dropdown.Root kind="panel" open={isOpen} onOpenChange={handleOpenChange}>
+      <DropdownFocusCleanupEffect focusId={focusId} />
       <Dropdown.Trigger
         render={
           <LightIconButton
