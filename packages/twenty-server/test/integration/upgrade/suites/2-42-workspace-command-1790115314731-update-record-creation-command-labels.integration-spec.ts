@@ -11,6 +11,12 @@ import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty
 
 const authContext = buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID);
 
+const { universalIdentifier: CREATE_NEW_RECORD_UNIVERSAL_IDENTIFIER } =
+  STANDARD_COMMAND_MENU_ITEMS.createNewRecord;
+
+const { universalIdentifier: COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER } =
+  STANDARD_COMMAND_MENU_ITEMS.composeCampaignPinned;
+
 const FORMER_LABELS = {
   label: 'Create new {objectLabelSingular}',
   shortLabel: 'New {objectLabelSingular}',
@@ -21,10 +27,19 @@ const CURRENT_LABELS = {
   shortLabel: 'Create',
 };
 
-const CREATE_NEW_RECORD_COMMAND_WHERE = {
-  universalIdentifier:
-    STANDARD_COMMAND_MENU_ITEMS.createNewRecord.universalIdentifier,
-  workspaceId: SEED_APPLE_WORKSPACE_ID,
+const FORMER_CAMPAIGN_LABELS = {
+  label: 'Create new Campaign',
+  shortLabel: 'New Campaign',
+};
+
+const CURRENT_CAMPAIGN_LABELS = {
+  label: 'Create Campaign',
+  shortLabel: 'Create',
+};
+
+type CommandMenuItemLabels = {
+  label: string;
+  shortLabel: string | null;
 };
 
 describe('2-42 workspace command 1790115314731 - UpdateRecordCreationCommandLabelsCommand (integration)', () => {
@@ -43,13 +58,19 @@ describe('2-42 workspace command 1790115314731 - UpdateRecordCreationCommandLabe
       authContext,
     );
 
-  const setLabels = async (labels: {
-    label: string;
-    shortLabel: string | null;
-  }) => {
-    await getCoreRepository<CommandMenuItemEntity>(
-      CommandMenuItemEntity,
-    ).update(CREATE_NEW_RECORD_COMMAND_WHERE, labels);
+  const setLabels = async (
+    labelsByUniversalIdentifier: Record<string, CommandMenuItemLabels>,
+  ) => {
+    for (const [universalIdentifier, labels] of Object.entries(
+      labelsByUniversalIdentifier,
+    )) {
+      await getCoreRepository<CommandMenuItemEntity>(
+        CommandMenuItemEntity,
+      ).update(
+        { universalIdentifier, workspaceId: SEED_APPLE_WORKSPACE_ID },
+        labels,
+      );
+    }
 
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
@@ -58,11 +79,13 @@ describe('2-42 workspace command 1790115314731 - UpdateRecordCreationCommandLabe
     ]);
   };
 
-  const findLabels = async () => {
+  const findLabels = async (universalIdentifier: string) => {
     const { label, shortLabel } =
       await getCoreRepository<CommandMenuItemEntity>(
         CommandMenuItemEntity,
-      ).findOneOrFail({ where: CREATE_NEW_RECORD_COMMAND_WHERE });
+      ).findOneOrFail({
+        where: { universalIdentifier, workspaceId: SEED_APPLE_WORKSPACE_ID },
+      });
 
     return { label, shortLabel };
   };
@@ -78,32 +101,56 @@ describe('2-42 workspace command 1790115314731 - UpdateRecordCreationCommandLabe
   });
 
   afterAll(async () => {
-    await setLabels(CURRENT_LABELS);
+    await setLabels({
+      [CREATE_NEW_RECORD_UNIVERSAL_IDENTIFIER]: CURRENT_LABELS,
+      [COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER]: CURRENT_CAMPAIGN_LABELS,
+    });
   });
 
   it('keeps the former labels on a dry run', async () => {
-    await setLabels(FORMER_LABELS);
+    await setLabels({
+      [CREATE_NEW_RECORD_UNIVERSAL_IDENTIFIER]: FORMER_LABELS,
+      [COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER]: FORMER_CAMPAIGN_LABELS,
+    });
 
     await runCommand({ dryRun: true });
 
-    expect(await findLabels()).toEqual(FORMER_LABELS);
+    expect(await findLabels(CREATE_NEW_RECORD_UNIVERSAL_IDENTIFIER)).toEqual(
+      FORMER_LABELS,
+    );
+    expect(await findLabels(COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER)).toEqual(
+      FORMER_CAMPAIGN_LABELS,
+    );
   });
 
   it('renames the former labels and is a no-op on a second run', async () => {
-    await setLabels(FORMER_LABELS);
+    await setLabels({
+      [CREATE_NEW_RECORD_UNIVERSAL_IDENTIFIER]: FORMER_LABELS,
+      [COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER]: FORMER_CAMPAIGN_LABELS,
+    });
 
     await runCommand();
     await runCommand();
 
-    expect(await findLabels()).toEqual(CURRENT_LABELS);
+    expect(await findLabels(CREATE_NEW_RECORD_UNIVERSAL_IDENTIFIER)).toEqual(
+      CURRENT_LABELS,
+    );
+    expect(await findLabels(COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER)).toEqual(
+      CURRENT_CAMPAIGN_LABELS,
+    );
   });
 
   it('keeps a customized short label', async () => {
-    await setLabels({ label: FORMER_LABELS.label, shortLabel: 'Add' });
+    await setLabels({
+      [CREATE_NEW_RECORD_UNIVERSAL_IDENTIFIER]: {
+        label: FORMER_LABELS.label,
+        shortLabel: 'Add',
+      },
+    });
 
     await runCommand();
 
-    expect(await findLabels()).toEqual({
+    expect(await findLabels(CREATE_NEW_RECORD_UNIVERSAL_IDENTIFIER)).toEqual({
       label: CURRENT_LABELS.label,
       shortLabel: 'Add',
     });

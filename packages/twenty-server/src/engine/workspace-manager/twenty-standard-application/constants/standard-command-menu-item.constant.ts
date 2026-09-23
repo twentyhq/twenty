@@ -945,13 +945,13 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   composeCampaignPinned: {
     universalIdentifier: '7ad6f0c7-ac02-4062-b5cf-1f36e1664bc8',
     label: i18nLabel(
-      msg({ message: `Create new Campaign`, context: 'commandMenuItem.label' }),
+      msg({ message: `Create Campaign`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconPlus',
     isPinned: true,
     position: 67,
     shortLabel: i18nLabel(
-      msg({ message: `New Campaign`, context: 'commandMenuItem.shortLabel' }),
+      msg({ message: `Create`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     conditionalAvailabilityExpression:

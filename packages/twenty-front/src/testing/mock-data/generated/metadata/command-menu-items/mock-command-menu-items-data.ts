@@ -1536,9 +1536,9 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "pageLayoutId": null,
     "isActive": true,
     "frontComponent": null,
-    "label": "Create new Campaign",
+    "label": "Create Campaign",
     "icon": "IconPlus",
-    "shortLabel": "New Campaign",
+    "shortLabel": "Create",
     "navigationTargetObjectMetadataId": null
   },
   {

@@ -7,6 +7,9 @@ const NOW = '2026-09-23T00:00:00.000Z';
 const { universalIdentifier: CREATE_NEW_RECORD_UNIVERSAL_IDENTIFIER } =
   STANDARD_COMMAND_MENU_ITEMS.createNewRecord;
 
+const { universalIdentifier: COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER } =
+  STANDARD_COMMAND_MENU_ITEMS.composeCampaignPinned;
+
 const FORMER_LABELS = {
   label: 'Create new {objectLabelSingular}',
   shortLabel: 'New {objectLabelSingular}',
@@ -45,6 +48,28 @@ describe('buildRecordCreationCommandLabelUpdates', () => {
     ]);
   });
 
+  it('renames the former campaign creation labels', () => {
+    const updates = buildRecordCreationCommandLabelUpdates({
+      flatCommandMenuItemByUniversalIdentifier: {
+        [COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER]: {
+          universalIdentifier: COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER,
+          label: 'Create new Campaign',
+          shortLabel: 'New Campaign',
+          updatedAt: '2025-01-01T00:00:00.000Z',
+        } as FlatCommandMenuItem,
+      },
+      now: NOW,
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({
+        label: 'Create Campaign',
+        shortLabel: 'Create',
+        updatedAt: NOW,
+      }),
+    ]);
+  });
+
   it.each([null, 'Add'])(
     'preserves a hidden or customized short label (%s)',
     (shortLabel) => {
@@ -53,7 +78,7 @@ describe('buildRecordCreationCommandLabelUpdates', () => {
           label: FORMER_LABELS.label,
           shortLabel,
         }),
-          now: NOW,
+        now: NOW,
       });
 
       expect(updates).toEqual([
@@ -84,7 +109,7 @@ describe('buildRecordCreationCommandLabelUpdates', () => {
       buildRecordCreationCommandLabelUpdates({
         flatCommandMenuItemByUniversalIdentifier:
           buildExistingItems(CURRENT_LABELS),
-          now: NOW,
+        now: NOW,
       }),
     ).toEqual([]);
   });
@@ -93,7 +118,7 @@ describe('buildRecordCreationCommandLabelUpdates', () => {
     expect(
       buildRecordCreationCommandLabelUpdates({
         flatCommandMenuItemByUniversalIdentifier: {},
-          now: NOW,
+        now: NOW,
       }),
     ).toEqual([]);
   });
