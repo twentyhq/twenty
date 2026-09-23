@@ -54,11 +54,14 @@ export class FrontComponentSharedDependenciesController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Param('cacheKey') cacheKey?: string,
   ) {
+    const requestedChecksum = extractChecksumFromCacheKey(cacheKey);
+
     const { fileResponse, frontComponentSharedDependenciesChecksum } =
       await this.frontComponentSharedDependenciesService
         .getBuiltSharedDependenciesPresignedUrlOrStream({
           applicationId,
           workspaceId: workspace.id,
+          requestedChecksum,
         })
         .catch((error) => {
           if (
@@ -95,7 +98,7 @@ export class FrontComponentSharedDependenciesController {
     res.setHeader(
       'Cache-Control',
       getSharedDependenciesBundleCacheControl({
-        requestedChecksum: extractChecksumFromCacheKey(cacheKey),
+        requestedChecksum,
         frontComponentSharedDependenciesChecksum,
       }),
     );

@@ -26,9 +26,11 @@ export class FrontComponentSharedDependenciesService {
   async getBuiltSharedDependenciesPresignedUrlOrStream({
     applicationId,
     workspaceId,
+    requestedChecksum,
   }: {
     applicationId: string;
     workspaceId: string;
+    requestedChecksum?: string;
   }): Promise<{
     fileResponse: FileResponse;
     frontComponentSharedDependenciesChecksum: string | null;
@@ -42,6 +44,16 @@ export class FrontComponentSharedDependenciesService {
     if (!isDefined(application.frontComponentSharedDependenciesBuiltPath)) {
       throw new ApplicationException(
         `Application "${applicationId}" does not declare shared dependencies`,
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    if (
+      isDefined(requestedChecksum) &&
+      requestedChecksum !== application.frontComponentSharedDependenciesChecksum
+    ) {
+      throw new ApplicationException(
+        `Application "${applicationId}" has no shared dependencies bundle with checksum "${requestedChecksum}" (current checksum "${application.frontComponentSharedDependenciesChecksum}")`,
         ApplicationExceptionCode.ENTITY_NOT_FOUND,
       );
     }

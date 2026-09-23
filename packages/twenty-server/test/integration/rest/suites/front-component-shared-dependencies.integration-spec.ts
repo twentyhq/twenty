@@ -6,6 +6,8 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const SHARED_DEPENDENCIES_BUILT_PATH =
   'src/front-component-shared-dependencies.mjs';
 const SHARED_DEPENDENCIES_CHECKSUM = 'a'.repeat(64);
+const STALE_SHARED_DEPENDENCIES_CHECKSUM = 'b'.repeat(64);
+const LEGACY_MD5_CACHE_KEY = 'c'.repeat(32);
 const SHARED_DEPENDENCIES_BUNDLE_CONTENT =
   'export const sharedDependenciesReady = true;\n';
 
@@ -91,6 +93,34 @@ describe('Front component shared dependencies endpoint', () => {
       })
         .expect(200)
         .expect('Cache-Control', 'private, max-age=86400, immutable')
+        .expect((res) => {
+          expect(res.text).toBe(SHARED_DEPENDENCIES_BUNDLE_CONTENT);
+        });
+    });
+
+    it('should return 404 when the fingerprinted path carries a stale checksum', async () => {
+      await makeRestAPIRequest({
+        method: 'get',
+        path: `/front-component-shared-dependencies/${applicationId}/${STALE_SHARED_DEPENDENCIES_CHECKSUM}.js`,
+        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      })
+        .expect(404)
+        .expect((res) => {
+          expect(res.body.code).toBe('ENTITY_NOT_FOUND');
+          expect(res.body.messages[0]).toContain(
+            STALE_SHARED_DEPENDENCIES_CHECKSUM,
+          );
+        });
+    });
+
+    it('should serve a legacy md5 cache key as the plain path with no-store', async () => {
+      await makeRestAPIRequest({
+        method: 'get',
+        path: `/front-component-shared-dependencies/${applicationId}/${LEGACY_MD5_CACHE_KEY}.js`,
+        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      })
+        .expect(200)
+        .expect('Cache-Control', 'private, no-store')
         .expect((res) => {
           expect(res.text).toBe(SHARED_DEPENDENCIES_BUNDLE_CONTENT);
         });
