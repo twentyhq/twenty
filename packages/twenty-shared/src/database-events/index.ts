@@ -7,7 +7,10 @@
  *                              |___/
  */
 
-export type { DatabaseEventPayload } from './database-event-payload.type';
+export type {
+  DatabaseEventPayload,
+  DatabaseEventBatchPayload,
+} from './database-event-payload.type';
 export { ObjectRecordCreateEvent } from './object-record-create.event';
 export { ObjectRecordDeleteEvent } from './object-record-delete.event';
 export { ObjectRecordDestroyEvent } from './object-record-destroy.event';

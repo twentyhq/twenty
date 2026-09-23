@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useDuplicatePageLayoutWidget } from '@/page-layout/hooks/useDuplicatePageLayoutWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -7,12 +8,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopyPlus, IconTrash } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 
 export const WidgetSettingsFooter = ({
   pageLayoutId,
@@ -43,12 +42,9 @@ export const WidgetSettingsFooter = ({
     closeDropdown(dropdownId);
   };
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   return (
@@ -64,25 +60,23 @@ export const WidgetSettingsFooter = ({
             itemId="duplicate-widget"
             onEnter={handleDuplicateWidget}
           >
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'duplicate-widget'}
               onClick={handleDuplicateWidget}
-              text={t`Duplicate widget`}
-              LeftIcon={IconCopyPlus}
-            />
+              startIcon={<IconCopyPlus />}
+            >{t`Duplicate widget`}</ListItem>
           </SelectableListItem>
 
           <SelectableListItem
             itemId="delete-widget"
             onEnter={handleDeleteWidget}
           >
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'delete-widget'}
               onClick={handleDeleteWidget}
-              text={t`Delete widget`}
-              LeftIcon={IconTrash}
-              accent="danger"
-            />
+              startIcon={<IconTrash />}
+              color="danger"
+            >{t`Delete widget`}</ListItem>
           </SelectableListItem>
         </OptionsDropdownMenu>,
       ]}

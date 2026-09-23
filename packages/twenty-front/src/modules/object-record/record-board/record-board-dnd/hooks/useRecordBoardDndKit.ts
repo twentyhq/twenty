@@ -15,9 +15,10 @@ import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecord
 import { useProcessBoardCardDrop } from '@/object-record/record-drag/hooks/useProcessBoardCardDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
@@ -75,7 +76,8 @@ export const useRecordBoardDndKit = (): {
       isRecordBoardDropProcessingComponentState,
     );
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
     number | null
@@ -165,7 +167,7 @@ export const useRecordBoardDndKit = (): {
 
     if (boardCardDropBehavior.shouldBlockDrop) {
       resetDragState();
-      openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+      openDialog(getRecordIndexRemoveSortingModalId(recordIndexId));
       return;
     }
 

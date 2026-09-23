@@ -28,6 +28,11 @@ export {
   isRecurringChargeAmount,
   isRecurringCharge,
 } from './applicationBillingType';
+export type { ApplicationCapability } from './applicationCapabilityType';
+export {
+  APPLICATION_CAPABILITIES,
+  isApplicationCapability,
+} from './applicationCapabilityType';
 export type {
   KnownApplicationCategory,
   ApplicationCategory,
@@ -36,6 +41,14 @@ export {
   APPLICATION_CATEGORIES,
   isKnownApplicationCategory,
 } from './applicationCategoryType';
+export { ApplicationHealthStatus } from './applicationHealthStatus';
+export type {
+  ApplicationHealthCheckReportedStatus,
+  ApplicationHealthCheckReportedBannerStatus,
+  ApplicationHealthCheckAction,
+  ApplicationHealthCheckResult,
+} from './applicationHealthType';
+export { isApplicationHealthCheckResult } from './applicationHealthType';
 export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
@@ -45,6 +58,7 @@ export type {
   ApplicationVariables,
 } from './applicationVariablesType';
 export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariablesType';
+export type { AppMessageChannel } from './appMessageChannelType';
 export type { AssetManifest } from './assetManifestType';
 export type {
   BillableOperationManifest,
@@ -128,6 +142,7 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
+export type { FieldManifestOptions } from './fieldManifestOptionsType';
 export type {
   RegularFieldManifest,
   RelationFieldManifest,
@@ -138,6 +153,7 @@ export type {
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
+export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
@@ -148,12 +164,18 @@ export type {
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
+export type {
+  NormalizedPageLayoutWidgetManifest,
+  NormalizedPageLayoutTabManifest,
+} from './normalizedPageLayoutManifestType';
+export { normalizePageLayoutTabManifest } from './normalizePageLayoutTabManifest';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type {
   PageLayoutWidgetManifest,
+  StandalonePageLayoutWidgetManifest,
   PageLayoutTabManifest,
   PageLayoutManifest,
 } from './pageLayoutManifestType';
@@ -170,6 +192,7 @@ export type {
   RowLevelPermissionPredicateManifest,
   RoleManifest,
 } from './roleManifestType';
+export type { RunAgentMessageAttachment } from './runAgentMessageAttachmentType';
 export type {
   RunAgentMessageRole,
   RunAgentMessage,

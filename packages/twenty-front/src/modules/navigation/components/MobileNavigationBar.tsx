@@ -7,7 +7,7 @@ import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingC
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLocation } from 'react-router-dom';
-import { NavigationBar } from 'twenty-ui/navigation';
+import { NavigationBar } from 'twenty-ui/primitives/navigation';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 
 // The bar floats over the page, so the container has to let taps through to

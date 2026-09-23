@@ -1,26 +1,24 @@
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
-import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
-import { SCROLLABLE_TAB_ROW_CSS } from '@/ui/layout/tab-list/styles/ScrollableTabRowCSS';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { TabButton } from 'twenty-ui/input';
+import { TabListRow } from '@/ui/layout/tab-list/components/TabListRow';
+import { TabListItem } from '@/ui/layout/tab-list/components/TabListItem';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
-import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
+import { TabListSelectionSyncEffect } from '@/ui/layout/tab-list/components/TabListSelectionSyncEffect';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -54,15 +52,6 @@ const StyledDropdownContainer = styled.div`
   display: flex;
 `;
 
-const StyledTabContainer = styled.div<{ isScrollable: boolean }>`
-  display: flex;
-  gap: ${TAB_LIST_GAP}px;
-  max-width: 100%;
-  overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
-  position: relative;
-  ${SCROLLABLE_TAB_ROW_CSS}
-`;
-
 const StyledNodeDimension = styled(NodeDimension)`
   display: flex;
   flex: 1;
@@ -76,6 +65,7 @@ const StyledRightContainer = styled.div`
 `;
 
 export const TabList = ({
+  'aria-label': ariaLabel,
   tabs,
   loading,
   behaveAsLinks = true,
@@ -90,16 +80,23 @@ export const TabList = ({
   const navigate = useNavigate();
   const workspaceSurface = useWorkspaceSurface();
   const isMobile = useIsMobile();
-  const scopedComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId);
 
   const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
-    scopedComponentInstanceId,
+    componentInstanceId,
   );
 
   const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
-  const initialActiveTabId = activeTabExists ? activeTabId : visibleTabs[0]?.id;
+  const routeTabId = location.hash.replace('#', '');
+  const shouldSelectRouteTab =
+    behaveAsLinks &&
+    workspaceSurface.ownsRouteLocation &&
+    visibleTabs.some((tab) => tab.id === routeTabId);
+  const nextActiveTabId = shouldSelectRouteTab
+    ? routeTabId
+    : activeTabExists
+      ? activeTabId
+      : (visibleTabs[0]?.id ?? null);
 
   const {
     visibleTabCount,
@@ -125,7 +122,7 @@ export const TabList = ({
     isScrollable: shouldScrollTabs,
   });
 
-  const dropdownId = `tab-overflow-${scopedComponentInstanceId}`;
+  const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
 
   const isActiveTabHidden = useMemo(() => {
@@ -133,17 +130,16 @@ export const TabList = ({
     return hiddenTabs.some((tab) => tab.id === activeTabId);
   }, [hasHiddenTabs, hiddenTabs, activeTabId]);
 
-  useEffect(() => {
-    setActiveTabId(initialActiveTabId);
-    onChangeTab?.(initialActiveTabId || '');
-  }, [initialActiveTabId, setActiveTabId, onChangeTab]);
-
   const handleTabSelect = useCallback(
     (tabId: string) => {
+      if (tabId === activeTabId) {
+        return;
+      }
+
       setActiveTabId(tabId);
       onChangeTab?.(tabId);
     },
-    [setActiveTabId, onChangeTab],
+    [activeTabId, setActiveTabId, onChangeTab],
   );
 
   const handleTabSelectFromDropdown = useCallback(
@@ -156,10 +152,9 @@ export const TabList = ({
             state: location.state,
           },
         );
-        onChangeTab?.(tabId);
-      } else {
-        handleTabSelect(tabId);
       }
+
+      handleTabSelect(tabId);
     },
     [
       behaveAsLinks,
@@ -167,21 +162,30 @@ export const TabList = ({
       location.search,
       location.state,
       navigate,
-      onChangeTab,
       workspaceSurface.type,
     ],
   );
 
   if (visibleTabs.length === 0) {
-    return null;
+    return (
+      <TabListSelectionSyncEffect
+        componentInstanceId={componentInstanceId}
+        nextActiveTabId={null}
+        onChangeTab={onChangeTab}
+      />
+    );
   }
 
   return (
     <TabListComponentInstanceContext.Provider
-      value={{ instanceId: scopedComponentInstanceId }}
+      value={{ instanceId: componentInstanceId }}
     >
       <>
-        <TabListFromUrlOptionalEffect tabListIds={tabs.map((tab) => tab.id)} />
+        <TabListSelectionSyncEffect
+          componentInstanceId={componentInstanceId}
+          nextActiveTabId={nextActiveTabId}
+          onChangeTab={onChangeTab}
+        />
 
         {visibleTabs.length > 1 && !shouldScrollTabs && (
           <TabListHiddenMeasurements
@@ -196,38 +200,23 @@ export const TabList = ({
         <StyledContainer className={className}>
           <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
             <StyledInnerContainer $centerTabs={centerTabs && !shouldScrollTabs}>
-              <StyledTabContainer
+              <TabListRow
+                aria-label={ariaLabel}
                 ref={tabRowRef}
+                behaveAsLinks={behaveAsLinks}
                 isScrollable={shouldScrollTabs}
               >
                 {renderedTabs.map((tab) => (
-                  <TabButton
+                  <TabListItem
                     key={tab.id}
-                    id={tab.id}
-                    title={tab.title}
-                    LeftIcon={tab.Icon}
-                    logo={tab.logo}
+                    tab={tab}
+                    mode={behaveAsLinks ? 'link' : 'tab'}
                     active={tab.id === activeTabId}
                     disabled={tab.disabled ?? loading}
-                    pill={tab.pill}
-                    to={
-                      behaveAsLinks
-                        ? { search: location.search, hash: `#${tab.id}` }
-                        : undefined
-                    }
-                    state={behaveAsLinks ? location.state : undefined}
-                    replace={
-                      behaveAsLinks && workspaceSurface.type === 'side-panel'
-                    }
-                    tooltipContent={tab.tooltipContent}
-                    onClick={
-                      behaveAsLinks
-                        ? () => onChangeTab?.(tab.id)
-                        : () => handleTabSelect(tab.id)
-                    }
+                    onSelect={handleTabSelect}
                   />
                 ))}
-              </StyledTabContainer>
+              </TabListRow>
 
               {shouldShowOverflowDropdown && (
                 <StyledDropdownContainer>

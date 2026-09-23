@@ -1,15 +1,15 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -17,9 +17,10 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
@@ -51,8 +52,8 @@ export const SettingsObjectIndexesSection = ({
   isReadOnly,
 }: SettingsObjectIndexesSectionProps) => {
   const { t } = useLingui();
-  const { openModal, closeModal } = useModal();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { openDialog, closeDialog } = useDialog();
+  const { enqueueToast } = useToast();
   const { deleteOneIndexMetadataItem } = useDeleteOneIndexMetadataItem();
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -138,7 +139,7 @@ export const SettingsObjectIndexesSection = ({
 
   const handleRequestDelete = (item: SettingsObjectIndexesTableItem) => {
     setPendingDelete(item);
-    openModal(DELETE_INDEX_MODAL_ID);
+    openDialog(DELETE_INDEX_MODAL_ID);
   };
 
   const handleConfirmDelete = async () => {
@@ -150,10 +151,10 @@ export const SettingsObjectIndexesSection = ({
     });
 
     setIsDeleting(false);
-    closeModal(DELETE_INDEX_MODAL_ID);
+    closeDialog(DELETE_INDEX_MODAL_ID);
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({ message: t`Index deleted` });
+      enqueueToast({ variant: 'success', children: t`Index deleted` });
       setPendingDelete(null);
     }
   };
@@ -173,15 +174,13 @@ export const SettingsObjectIndexesSection = ({
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItemToggle
-                    LeftIcon={IconEyeOff}
-                    onToggleChange={() =>
+                  <SettingsRow
+                    startIcon={<IconEyeOff />}
+                    onCheckedChange={() =>
                       setHideSystemIndexes(!hideSystemIndexes)
                     }
-                    toggled={hideSystemIndexes}
-                    text={t`Hide system indexes`}
-                    toggleSize="small"
-                  />
+                    checked={hideSystemIndexes}
+                  >{t`Hide system indexes`}</SettingsRow>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }
@@ -196,31 +195,26 @@ export const SettingsObjectIndexesSection = ({
       {!isReadOnly && (
         <StyledButtonContainer>
           {canCreate ? (
-            <UndecoratedLink
+            <NavigationButton
               to={getSettingsPath(SettingsPath.ObjectNewIndex, {
                 objectNamePlural: objectMetadataItem.namePlural,
               })}
-            >
-              <Button
-                Icon={IconPlus}
-                title={t`Add Index`}
-                size="small"
-                variant="secondary"
-              />
-            </UndecoratedLink>
+              startIcon={<IconPlus />}
+              size="sm"
+              variant="outline"
+            >{t`Add Index`}</NavigationButton>
           ) : (
             <Button
-              Icon={IconPlus}
-              title={t`Add Index`}
-              size="small"
-              variant="secondary"
+              startIcon={<IconPlus />}
+              size="sm"
               disabled
-            />
+              variant="outline"
+            >{t`Add Index`}</Button>
           )}
         </StyledButtonContainer>
       )}
-      <ConfirmationModal
-        modalInstanceId={DELETE_INDEX_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_INDEX_MODAL_ID}
         title={t`Delete this index?`}
         subtitle={t`Queries that relied on it will fall back to a sequential scan. You can recreate it later.`}
         confirmButtonText={t`Delete`}

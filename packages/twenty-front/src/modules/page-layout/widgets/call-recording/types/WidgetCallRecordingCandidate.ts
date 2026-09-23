@@ -8,4 +8,5 @@ export type WidgetCallRecordingCandidate = {
   transcript?: unknown;
   summary?: { markdown: string | null } | null;
   video?: FieldFilesValue[] | null;
+  audio?: FieldFilesValue[] | null;
 };

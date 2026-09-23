@@ -33,6 +33,7 @@ function unescapeTagsInInlineCode(text: string): string {
 
 export const ESCAPED_INLINE_CODE_TAGS_RULE: NormalizationRule = {
   name: 'escaped-inline-code-tags',
+  formats: ['po', 'mdx'],
   detect: hasEscapedTagInInlineCode,
   fix: unescapeTagsInInlineCode,
   sourceFilter: sourceHasTagInInlineCode,

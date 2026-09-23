@@ -1,0 +1,128 @@
+import { clsx } from 'clsx';
+import { useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
+import { IconHelp, IconX } from '@ui/icon/components/TablerIcons';
+import { type IconComponent } from '@ui/icon/types/IconComponent';
+import { Button } from '@ui/primitives/input';
+
+import styles from './Callout.module.scss';
+
+export type CalloutVariant =
+  | 'info'
+  | 'warning'
+  | 'error'
+  | 'neutral'
+  | 'success';
+
+const CALLOUT_CONTAINER_VARIANT_CLASS_NAMES: Record<CalloutVariant, string> = {
+  info: styles.containerInfo,
+  warning: styles.containerWarning,
+  error: styles.containerError,
+  neutral: styles.containerNeutral,
+  success: styles.containerSuccess,
+};
+
+const CALLOUT_ICON_VARIANT_CLASS_NAMES: Record<CalloutVariant, string> = {
+  info: styles.iconContainerInfo,
+  warning: styles.iconContainerWarning,
+  error: styles.iconContainerError,
+  neutral: styles.iconContainerNeutral,
+  success: styles.iconContainerSuccess,
+};
+
+export type CalloutProps = {
+  variant: CalloutVariant;
+  title: string;
+  description?: string;
+  fullWidth?: boolean;
+  Icon?: IconComponent;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  isClosable?: boolean;
+  onClose?: () => void;
+};
+
+export const Callout = ({
+  variant,
+  title,
+  description,
+  fullWidth = false,
+  Icon = IconHelp,
+  action,
+  isClosable = false,
+  onClose,
+}: CalloutProps) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  const handleClose = () => {
+    if (!isClosable) {
+      return;
+    }
+
+    setIsVisible(false);
+    onClose?.();
+  };
+
+  if (!isVisible) {
+    return null;
+  }
+
+  return (
+    <div
+      className={clsx(
+        styles.container,
+        CALLOUT_CONTAINER_VARIANT_CLASS_NAMES[variant],
+        fullWidth && styles.containerFullWidth,
+      )}
+    >
+      <div className={styles.header}>
+        <div
+          className={clsx(
+            styles.iconContainer,
+            CALLOUT_ICON_VARIANT_CLASS_NAMES[variant],
+          )}
+        >
+          <Icon size={16} />
+        </div>
+        <div className={styles.title}>{title}</div>
+        {isClosable && (
+          <Button
+            startIcon={<IconX />}
+            className={styles.closeButton}
+            variant="ghost"
+            size="sm"
+            aria-label="Close"
+            onClick={handleClose}
+          />
+        )}
+      </div>
+      {isNonEmptyString(description) && (
+        <div
+          className={clsx(
+            styles.descriptionWrapper,
+            isDefined(action) && styles.descriptionWrapperWithAction,
+          )}
+        >
+          <div className={styles.description}>{description}</div>
+        </div>
+      )}
+      {isDefined(action) && (
+        <div className={styles.footer}>
+          <Button
+            type="button"
+            onClick={action.onClick}
+            size="sm"
+            variant="ghost"
+            style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+          >
+            {action.label}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};

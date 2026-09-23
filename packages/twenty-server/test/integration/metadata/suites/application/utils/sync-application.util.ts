@@ -1,4 +1,5 @@
 import { type Manifest } from 'twenty-shared/application';
+import { type SyncAction } from 'twenty-shared/metadata';
 import { syncApplicationQueryFactory } from 'test/integration/metadata/suites/application/utils/sync-application-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
@@ -7,7 +8,7 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 
 type WorkspaceMigration = {
   applicationUniversalIdentifier: string;
-  actions: unknown[];
+  actions: SyncAction[];
 };
 
 export const syncApplication = async ({

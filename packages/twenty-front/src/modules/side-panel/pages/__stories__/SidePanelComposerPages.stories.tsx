@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
-import { graphql, HttpResponse } from 'msw';
+import { HttpResponse, graphql } from 'msw';
+import { useEffect, useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
@@ -15,7 +15,7 @@ import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/com
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -30,6 +30,7 @@ const storyConnectedAccounts = [
     handle: 'tim@apple.dev',
     provider: 'google',
     authFailedAt: null,
+    authFailedReason: null,
     archivedAt: null,
     scopes: ['https://www.googleapis.com/auth/calendar.events'],
     handleAliases: '',
@@ -48,6 +49,7 @@ const storyConnectedAccounts = [
     handle: 'tim@twenty.com',
     provider: 'microsoft',
     authFailedAt: null,
+    authFailedReason: null,
     archivedAt: null,
     scopes: ['Calendars.ReadWrite'],
     handleAliases: '',
@@ -207,7 +209,7 @@ const meta = {
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     RouterDecorator,
     WorkspaceDecorator,
   ],

@@ -11,23 +11,44 @@ import onOpportunityUpdated from 'src/logic-functions/on-opportunity-updated';
 import onPersonUpdated from 'src/logic-functions/on-person-updated';
 
 const calendarHandler = onCalendarInteraction.config.handler as (
-  event: unknown,
+  batch: unknown,
 ) => Promise<void>;
 const emailHandler = onEmailInteraction.config.handler as (
-  event: unknown,
+  batch: unknown,
 ) => Promise<void>;
 const opportunityCreatedHandler = onOpportunityCreated.config.handler as (
-  event: unknown,
+  batch: unknown,
 ) => Promise<void>;
 const opportunityUpdatedHandler = onOpportunityUpdated.config.handler as (
-  event: unknown,
+  batch: unknown,
 ) => Promise<void>;
 const companyCreatedHandler = onCompanyCreated.config.handler as (
-  event: unknown,
+  batch: unknown,
 ) => Promise<void>;
 const personUpdatedHandler = onPersonUpdated.config.handler as (
-  event: unknown,
+  batch: unknown,
 ) => Promise<void>;
+
+const buildBatch = (name: string, recordId: string, properties: object) => ({
+  name,
+  events: [{ recordId, properties }],
+});
+
+const emailBatch = (personId: string, messageId: string) =>
+  buildBatch('messageParticipant.updated', 'unused-participant-id', {
+    updatedFields: ['personId'],
+    after: { id: 'unused-participant-id', personId, messageId },
+  });
+
+const calendarBatch = (
+  participantId: string,
+  personId: string,
+  calendarEventId: string,
+) =>
+  buildBatch('calendarEventParticipant.updated', participantId, {
+    updatedFields: ['personId'],
+    after: { id: participantId, personId, calendarEventId },
+  });
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -190,11 +211,8 @@ const createCalendarEventParticipant = async (
 };
 
 let cachedWorkspaceMemberId: string | undefined;
-let cachedMessageChannelId: string | undefined;
 
-const getWorkspaceMemberId = async (
-  client: CoreApiClient,
-): Promise<string> => {
+const getWorkspaceMemberId = async (client: CoreApiClient): Promise<string> => {
   if (cachedWorkspaceMemberId) {
     return cachedWorkspaceMemberId;
   }
@@ -206,8 +224,7 @@ const getWorkspaceMemberId = async (
     },
   });
 
-  const workspaceMemberId =
-    result.workspaceMembers?.edges?.[0]?.node?.id;
+  const workspaceMemberId = result.workspaceMembers?.edges?.[0]?.node?.id;
 
   if (!workspaceMemberId) {
     throw new Error('No workspace member found in the test workspace');
@@ -216,35 +233,6 @@ const getWorkspaceMemberId = async (
   cachedWorkspaceMemberId = workspaceMemberId;
 
   return workspaceMemberId;
-};
-
-const getAnyMessageChannelId = async (
-  client: CoreApiClient,
-): Promise<string> => {
-  if (cachedMessageChannelId) {
-    return cachedMessageChannelId;
-  }
-
-  const result = await client.query({
-    messageChannelMessageAssociations: {
-      __args: { first: 1 },
-      edges: { node: { id: true, messageChannelId: true } },
-    },
-  });
-
-  const messageChannelId =
-    result.messageChannelMessageAssociations?.edges?.[0]?.node
-      ?.messageChannelId;
-
-  if (!messageChannelId) {
-    throw new Error(
-      'No message channel found — run against a workspace with seeded messaging data',
-    );
-  }
-
-  cachedMessageChannelId = messageChannelId;
-
-  return messageChannelId;
 };
 
 const createMessage = async (
@@ -264,23 +252,6 @@ const createMessage = async (
   });
 
   return requireId(result.createMessage?.id, 'createMessage');
-};
-
-const createMessageChannelAssociation = async (
-  client: CoreApiClient,
-  { messageId, messageChannelId }: { messageId: string; messageChannelId: string },
-): Promise<string> => {
-  const result = await client.mutation({
-    createMessageChannelMessageAssociation: {
-      __args: { data: { messageId, messageChannelId } },
-      id: true,
-    },
-  });
-
-  return requireId(
-    result.createMessageChannelMessageAssociation?.id,
-    'createMessageChannelMessageAssociation',
-  );
 };
 
 const createMessageParticipant = async (
@@ -423,7 +394,6 @@ describe('last contact handlers', () => {
   const createdParticipantIds: string[] = [];
   const createdMessageParticipantIds: string[] = [];
   const createdCalendarEventIds: string[] = [];
-  const createdMessageAssociationIds: string[] = [];
   const createdMessageIds: string[] = [];
   const createdPersonIds: string[] = [];
   const createdOpportunityIds: string[] = [];
@@ -435,12 +405,6 @@ describe('last contact handlers', () => {
   ): Promise<string> => {
     const messageId = await createMessage(client, { receivedAt });
     createdMessageIds.push(messageId);
-    const messageChannelId = await getAnyMessageChannelId(client);
-    const associationId = await createMessageChannelAssociation(client, {
-      messageId,
-      messageChannelId,
-    });
-    createdMessageAssociationIds.push(associationId);
     const participantId = await createMessageParticipant(client, {
       messageId,
       personId,
@@ -484,13 +448,7 @@ describe('last contact handlers', () => {
       }),
     );
 
-    await emailHandler({
-      recordId: 'unused-participant-id',
-      properties: {
-        updatedFields: ['personId'],
-        after: { id: 'unused-participant-id', personId, messageId },
-      },
-    });
+    await emailHandler(emailBatch(personId, messageId));
 
     return messageId;
   };
@@ -520,13 +478,9 @@ describe('last contact handlers', () => {
       }),
     );
 
-    await calendarHandler({
-      recordId: 'unused-participant-id',
-      properties: {
-        updatedFields: ['personId'],
-        after: { id: 'unused-participant-id', personId },
-      },
-    });
+    await calendarHandler(
+      calendarBatch('unused-participant-id', personId, calendarEventId),
+    );
 
     return calendarEventId;
   };
@@ -558,15 +512,6 @@ describe('last contact handlers', () => {
         .catch(() => {});
     }
     createdCalendarEventIds.length = 0;
-
-    for (const id of createdMessageAssociationIds) {
-      await client
-        .mutation({
-          destroyMessageChannelMessageAssociation: { __args: { id }, id: true },
-        })
-        .catch(() => {});
-    }
-    createdMessageAssociationIds.length = 0;
 
     for (const id of createdMessageIds) {
       await client
@@ -618,13 +563,9 @@ describe('last contact handlers', () => {
     });
     createdParticipantIds.push(participantId);
 
-    await calendarHandler({
-      recordId: participantId,
-      properties: {
-        updatedFields: ['personId'],
-        after: { id: participantId, personId },
-      },
-    });
+    await calendarHandler(
+      calendarBatch(participantId, personId, calendarEventId),
+    );
 
     const lastContact = await getPersonLastContact(client, personId);
     expect(asTime(lastContact.lastContactAt)).toBe(asTime(startsAt));
@@ -644,13 +585,9 @@ describe('last contact handlers', () => {
     });
     createdParticipantIds.push(participantId);
 
-    await calendarHandler({
-      recordId: participantId,
-      properties: {
-        updatedFields: ['personId'],
-        after: { id: participantId, personId },
-      },
-    });
+    await calendarHandler(
+      calendarBatch(participantId, personId, calendarEventId),
+    );
 
     expect(
       (await getPersonLastContact(client, personId)).lastContactAt,
@@ -672,13 +609,9 @@ describe('last contact handlers', () => {
     });
     createdParticipantIds.push(participantId);
 
-    await calendarHandler({
-      recordId: participantId,
-      properties: {
-        updatedFields: ['personId'],
-        after: { id: participantId, personId },
-      },
-    });
+    await calendarHandler(
+      calendarBatch(participantId, personId, calendarEventId),
+    );
 
     expect(
       (await getPersonLastContact(client, personId)).lastContactAt,
@@ -691,13 +624,7 @@ describe('last contact handlers', () => {
     createdPersonIds.push(personId);
     const messageId = await createLinkedMessage(receivedAt, personId);
 
-    await emailHandler({
-      recordId: 'unused-participant-id',
-      properties: {
-        updatedFields: ['personId'],
-        after: { id: 'unused-participant-id', personId, messageId },
-      },
-    });
+    await emailHandler(emailBatch(personId, messageId));
 
     const lastContact = await getPersonLastContact(client, personId);
     expect(asTime(lastContact.lastContactAt)).toBe(asTime(receivedAt));
@@ -713,28 +640,8 @@ describe('last contact handlers', () => {
     const newerMessageId = await createLinkedMessage(newerReceivedAt, personId);
     const olderMessageId = await createLinkedMessage(olderReceivedAt, personId);
 
-    await emailHandler({
-      recordId: 'unused-participant-id',
-      properties: {
-        updatedFields: ['personId'],
-        after: {
-          id: 'unused-participant-id',
-          personId,
-          messageId: newerMessageId,
-        },
-      },
-    });
-    await emailHandler({
-      recordId: 'unused-participant-id',
-      properties: {
-        updatedFields: ['personId'],
-        after: {
-          id: 'unused-participant-id',
-          personId,
-          messageId: olderMessageId,
-        },
-      },
-    });
+    await emailHandler(emailBatch(personId, newerMessageId));
+    await emailHandler(emailBatch(personId, olderMessageId));
 
     expect(
       asTime((await getPersonLastContact(client, personId)).lastContactAt),
@@ -1029,10 +936,11 @@ describe('last contact handlers', () => {
     });
     createdOpportunityIds.push(opportunityId);
 
-    await opportunityCreatedHandler({
-      recordId: opportunityId,
-      properties: { after: { id: opportunityId } },
-    });
+    await opportunityCreatedHandler(
+      buildBatch('opportunity.created', opportunityId, {
+        after: { id: opportunityId },
+      }),
+    );
 
     const opportunityContact = await getRelatedLastContact(
       client,
@@ -1073,14 +981,13 @@ describe('last contact handlers', () => {
         id: true,
       },
     });
-    await opportunityUpdatedHandler({
-      recordId: opportunityId,
-      properties: {
+    await opportunityUpdatedHandler(
+      buildBatch('opportunity.updated', opportunityId, {
         updatedFields: ['pointOfContactId'],
         before: { id: opportunityId },
         after: { id: opportunityId },
-      },
-    });
+      }),
+    );
 
     const opportunityContact = await getRelatedLastContact(
       client,
@@ -1091,7 +998,7 @@ describe('last contact handlers', () => {
     expect(opportunityContact.lastContactItemMessageId).toBe(messageId);
   });
 
-  it("recomputes a company last contact when a person joins it after being contacted", async () => {
+  it('recomputes a company last contact when a person joins it after being contacted', async () => {
     const workspaceMemberId = await getWorkspaceMemberId(client);
     const companyId = await createCompany(client);
     createdCompanyIds.push(companyId);
@@ -1107,14 +1014,13 @@ describe('last contact handlers', () => {
     });
 
     await setPersonCompany(client, { personId, companyId });
-    await personUpdatedHandler({
-      recordId: personId,
-      properties: {
+    await personUpdatedHandler(
+      buildBatch('person.updated', personId, {
         updatedFields: ['companyId'],
         before: { id: personId, companyId: null },
         after: { id: personId, companyId },
-      },
-    });
+      }),
+    );
 
     const companyContact = await getRelatedLastContact(
       client,
@@ -1148,14 +1054,13 @@ describe('last contact handlers', () => {
         id: true,
       },
     });
-    await personUpdatedHandler({
-      recordId: personId,
-      properties: {
+    await personUpdatedHandler(
+      buildBatch('person.updated', personId, {
         updatedFields: ['companyId'],
         before: { id: personId, companyId },
         after: { id: personId, companyId: null },
-      },
-    });
+      }),
+    );
 
     const companyContact = await getRelatedLastContact(
       client,
@@ -1171,10 +1076,9 @@ describe('last contact handlers', () => {
     const companyId = await createCompany(client);
     createdCompanyIds.push(companyId);
 
-    await companyCreatedHandler({
-      recordId: companyId,
-      properties: { after: { id: companyId } },
-    });
+    await companyCreatedHandler(
+      buildBatch('company.created', companyId, { after: { id: companyId } }),
+    );
 
     const companyContact = await getRelatedLastContact(
       client,

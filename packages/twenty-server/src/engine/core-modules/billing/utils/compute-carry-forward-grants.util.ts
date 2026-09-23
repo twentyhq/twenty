@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   BillingCreditGrantType,
   CAPPED_BILLING_CREDIT_GRANT_TYPES,
@@ -10,12 +12,14 @@ export type CarryForwardGrantInput = {
   type: BillingCreditGrantType;
   amountMicro: number;
   createdAt: Date;
+  expiresAt: Date | null;
 };
 
 export type CarryForwardGrantOutput = {
   type: BillingCreditGrantType;
   amountMicro: number;
   sourceGrantId: string | null;
+  expiresAt: Date | null;
 };
 
 type CreditBucket = {
@@ -23,10 +27,20 @@ type CreditBucket = {
   type: BillingCreditGrantType;
   amountMicro: number;
   createdAt: Date;
+  expiresAt: Date | null;
 };
 
 const isCappedType = (type: BillingCreditGrantType): boolean =>
   CAPPED_BILLING_CREDIT_GRANT_TYPES.includes(type);
+
+const hasLapsedBy = ({
+  expiresAt,
+  boundary,
+}: {
+  expiresAt: Date | null;
+  boundary: Date;
+}): boolean =>
+  isDefined(expiresAt) && expiresAt.getTime() <= boundary.getTime();
 
 // Capped credits are spent first so that deliberately granted credits
 // (compensation, partnership, onboarding rewards) survive the period and carry
@@ -56,17 +70,22 @@ export const computeCarryForwardGrants = ({
   liveGrants,
   usageMicro,
   rolloverCapMicro,
+  boundary,
 }: {
   allowanceMicro: number;
   liveGrants: CarryForwardGrantInput[];
   usageMicro: number;
   rolloverCapMicro: number;
+  // Where the closing period ends, which decides whether a time-boxed grant is
+  // still alive on the other side of it.
+  boundary: Date;
 }): CarryForwardGrantOutput[] => {
   const allowanceBucket: CreditBucket = {
     grantId: null,
     type: BillingCreditGrantType.ROLLOVER,
     amountMicro: Math.max(0, allowanceMicro),
     createdAt: new Date(0),
+    expiresAt: null,
   };
 
   const buckets = [
@@ -99,16 +118,30 @@ export const computeCarryForwardGrants = ({
             type: BillingCreditGrantType.ROLLOVER,
             amountMicro: rolloverMicro,
             sourceGrantId: null,
+            expiresAt: null,
           },
         ]
       : [];
 
+  // A lapsed grant keeps its place in the waterfall above and only loses its
+  // remainder: carrying that would hand back credits the deadline took away.
+  // The waterfall spends a whole period at once with no event times, so this is
+  // only exact because every deadline is a period end, which is the invariant
+  // alignGrantExpiryToPeriodEnd holds at the point an expiry is set.
   const preservedGrants: CarryForwardGrantOutput[] = unspentBuckets
-    .filter((bucket) => !isCappedType(bucket.type) && bucket.amountMicro >= 1)
+    .filter(
+      (bucket) =>
+        !isCappedType(bucket.type) &&
+        bucket.amountMicro >= 1 &&
+        !hasLapsedBy({ expiresAt: bucket.expiresAt, boundary }),
+    )
     .map((bucket) => ({
       type: bucket.type,
       amountMicro: Math.floor(bucket.amountMicro),
       sourceGrantId: bucket.grantId,
+      // The successor inherits the deadline rather than outliving it, so a
+      // time-boxed grant does not become permanent by crossing a renewal.
+      expiresAt: bucket.expiresAt,
     }));
 
   return [...rolloverGrants, ...preservedGrants];

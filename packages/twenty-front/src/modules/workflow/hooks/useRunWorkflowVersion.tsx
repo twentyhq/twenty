@@ -1,3 +1,9 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import {
+  RunCoreWorkflowVersionDocument,
+  type RunWorkflowVersionMutation,
+  type RunWorkflowVersionMutationVariables,
+} from '~/generated/graphql';
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -24,15 +30,15 @@ import { useCallback } from 'react';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import {
-  type RunWorkflowVersionMutation,
-  type RunWorkflowVersionMutationVariables,
-} from '~/generated/graphql';
 import { useStore } from 'jotai';
 
 export const useRunWorkflowVersion = () => {
   const store = useStore();
+  const isCore = useIsWorkflowCoreEnabled();
   const apolloCoreClient = useApolloCoreClient();
+  const [mutateCore] = useMutation(RunCoreWorkflowVersionDocument, {
+    client: apolloCoreClient,
+  });
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -81,15 +87,19 @@ export const useRunWorkflowVersion = () => {
   }: {
     workflowId: string;
     workflowVersionId: string;
-    payload?: Record<string, any>;
+    payload?: Record<string, unknown>;
   }) => {
     const workflowRunId = v4();
 
     const recordInput: Partial<WorkflowRun> = {
       name: '#0',
       status: 'NOT_STARTED',
-      workflowVersionId,
-      workflowId,
+      ...(isCore
+        ? {
+            coreWorkflowVersionId: workflowVersionId,
+            coreWorkflowId: workflowId,
+          }
+        : { workflowVersionId, workflowId }),
       createdAt: new Date().toISOString(),
     };
 
@@ -151,9 +161,21 @@ export const useRunWorkflowVersion = () => {
     changeQueryIdListenState(true, sseQueryId, sseOperationSignature);
 
     try {
-      await mutate({
-        variables: { input: { workflowVersionId, workflowRunId, payload } },
-      });
+      if (isCore) {
+        await mutateCore({
+          variables: {
+            input: {
+              coreWorkflowVersionId: workflowVersionId,
+              workflowRunId,
+              payload,
+            },
+          },
+        });
+      } else {
+        await mutate({
+          variables: { input: { workflowVersionId, workflowRunId, payload } },
+        });
+      }
     } catch (error) {
       changeQueryIdListenState(false, sseQueryId, sseOperationSignature);
       throw error;

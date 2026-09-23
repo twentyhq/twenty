@@ -44,10 +44,10 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         fieldName: 'id',
         type: FieldMetadataType.UUID,
         label: i18nLabel(
-          msg({ message: `Id`, context: 'fieldMetadata.label' }),
+          msg({ message: `ID`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
-          msg({ message: `Id`, context: 'fieldMetadata.description' }),
+          msg({ message: `ID`, context: 'fieldMetadata.description' }),
         ),
         icon: 'Icon123',
         isSystem: true,
@@ -366,6 +366,25 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
             color: 'red',
           },
         ],
+      },
+    }),
+    scheduledAt: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'scheduledAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: `Scheduled at`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `When the campaign is due to start sending`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendarClock',
+        isNullable: true,
+        isUIEditable: false,
       },
     }),
     sentAt: createStandardFieldFlatMetadata({

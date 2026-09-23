@@ -1,10 +1,10 @@
 import { SettingsRoleAssignmentConfirmationModalSubtitle } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle';
-import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';
 import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedRoleTarget';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { t } from '@lingui/core/macro';
 
 type SettingsRoleAssignmentConfirmationModalProps = {
+  modalInstanceId: string;
   selectedRoleTarget: SettingsRoleAssignmentConfirmationModalSelectedRoleTarget;
   onClose: () => void;
   onConfirm: () => void;
@@ -13,6 +13,7 @@ type SettingsRoleAssignmentConfirmationModalProps = {
 };
 
 export const SettingsRoleAssignmentConfirmationModal = ({
+  modalInstanceId,
   selectedRoleTarget,
   onClose,
   onConfirm,
@@ -24,8 +25,8 @@ export const SettingsRoleAssignmentConfirmationModal = ({
   const title = t`Assign ${roleTargetName}?`;
 
   return (
-    <ConfirmationModal
-      modalInstanceId={ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID}
+    <ConfirmationDialog
+      dialogId={modalInstanceId}
       title={title}
       subtitle={
         selectedRoleTarget.role ? (
@@ -40,7 +41,7 @@ export const SettingsRoleAssignmentConfirmationModal = ({
       onClose={onClose}
       onConfirmClick={onConfirm}
       confirmButtonText={t`Confirm`}
-      confirmButtonAccent="danger"
+      confirmButtonColor="danger"
     />
   );
 };

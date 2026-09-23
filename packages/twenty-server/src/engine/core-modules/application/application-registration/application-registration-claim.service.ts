@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import crypto from 'crypto';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import axios from 'axios';
+import { type Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 import { z } from 'zod';
@@ -13,8 +16,12 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
+import { claimStateNonceMatches } from 'src/engine/core-modules/application/application-registration/utils/claim-state-nonce-matches.util';
+import { hashClaimStateNonce } from 'src/engine/core-modules/application/application-registration/utils/hash-claim-state-nonce.util';
 import { type AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { isValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
 import { type ApplicationRegistrationGithubClaimStateJwtPayload } from 'src/engine/core-modules/auth/types/application-registration-github-claim-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -22,6 +29,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const GITHUB_CLAIM_STATE_EXPIRES_IN = '15m';
+const GITHUB_CLAIM_STATE_TTL_MS = 15 * 60 * 1000;
 
 const attestationsResponseSchema = z.object({
   attestations: z.array(
@@ -72,12 +80,14 @@ export class ApplicationRegistrationClaimService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly claimStateCookieService: ApplicationRegistrationClaimStateCookieService,
   ) {}
 
   async buildGithubAuthorizationUrl(params: {
     applicationRegistrationId: string;
     workspaceId: string;
     userId: string | null;
+    response: Response;
   }): Promise<string> {
     const registration =
       await this.applicationRegistrationService.findOneByIdGlobal(
@@ -95,16 +105,26 @@ export class ApplicationRegistrationClaimService {
       );
     }
 
+    const nonce = crypto.randomBytes(32).toString('hex');
+
     const statePayload: ApplicationRegistrationGithubClaimStateJwtPayload = {
       sub: registration.id,
       type: JwtTokenTypeEnum.APPLICATION_REGISTRATION_GITHUB_CLAIM_STATE,
       applicationRegistrationId: registration.id,
       workspaceId: params.workspaceId,
       userId: params.userId,
+      nonceHash: hashClaimStateNonce({ nonce }),
     };
 
     const state = await this.jwtWrapperService.signAsyncOrThrow(statePayload, {
       expiresIn: GITHUB_CLAIM_STATE_EXPIRES_IN,
+    });
+
+    this.claimStateCookieService.attachNonceToResponse({
+      response: params.response,
+      applicationRegistrationId: registration.id,
+      nonce,
+      maxAgeMs: GITHUB_CLAIM_STATE_TTL_MS,
     });
 
     const authorizationUrl = new URL(
@@ -148,7 +168,10 @@ export class ApplicationRegistrationClaimService {
   async completeGithubClaim(params: {
     statePayload: ApplicationRegistrationGithubClaimStateJwtPayload;
     code: string;
+    stateNonce: string | undefined;
   }): Promise<ApplicationRegistrationEntity> {
+    this.assertStateNonceMatches(params.statePayload, params.stateNonce);
+
     const registration =
       await this.applicationRegistrationService.findOneByIdGlobal(
         params.statePayload.applicationRegistrationId,
@@ -201,6 +224,25 @@ export class ApplicationRegistrationClaimService {
     ];
   }
 
+  private assertStateNonceMatches(
+    statePayload: ApplicationRegistrationGithubClaimStateJwtPayload,
+    stateNonce: string | undefined,
+  ): void {
+    if (
+      !isNonEmptyString(stateNonce) ||
+      !isNonEmptyString(statePayload.nonceHash) ||
+      !claimStateNonceMatches({
+        nonce: stateNonce,
+        expectedNonceHash: statePayload.nonceHash,
+      })
+    ) {
+      throw new ApplicationRegistrationException(
+        'Claim state does not match the browser that started the claim',
+        ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH,
+      );
+    }
+  }
+
   private assertClaimable(registration: ApplicationRegistrationEntity): string {
     if (isDefined(registration.ownerWorkspaceId)) {
       throw new ApplicationRegistrationException(
@@ -237,14 +279,22 @@ export class ApplicationRegistrationClaimService {
       params.version ??
       (await this.fetchLatestVersion(registryUrl, params.packageName));
 
+    if (!isValidNpmVersionSpec(version)) {
+      throw new ApplicationRegistrationException(
+        `Invalid version "${version}" for ${params.packageName}`,
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     // Scoped packages need their slash percent-encoded for the registry path.
     const encodedName = params.packageName.replace(/\//g, '%2F');
+    const encodedVersion = encodeURIComponent(version);
 
     let data: unknown;
 
     try {
       const response = await axios.get(
-        `${registryUrl}/-/npm/v1/attestations/${encodedName}@${version}`,
+        `${registryUrl}/-/npm/v1/attestations/${encodedName}@${encodedVersion}`,
         {
           headers: { 'User-Agent': 'Twenty-Marketplace' },
           timeout: 10_000,

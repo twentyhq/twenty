@@ -1,4 +1,5 @@
 import type { PageLayoutTabLayoutMode } from './PageLayoutTabLayoutMode';
+import type { PageLayoutWidgetVerticalListHeightBehavior } from './PageLayoutWidgetVerticalListHeightBehavior';
 
 export type PageLayoutWidgetGridPosition = {
   layoutMode: PageLayoutTabLayoutMode.GRID;
@@ -11,6 +12,7 @@ export type PageLayoutWidgetGridPosition = {
 export type PageLayoutWidgetVerticalListPosition = {
   layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST;
   index: number;
+  heightBehavior?: PageLayoutWidgetVerticalListHeightBehavior;
 };
 
 export type PageLayoutWidgetCanvasPosition = {

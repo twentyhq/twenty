@@ -1,5 +1,7 @@
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNavigationBarClearance';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
+import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -7,11 +9,10 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { AdvancedSettingsToggle } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledAdvancedToggleFixedContent = styled.div<{ isMobile: boolean }>`
+const StyledAdvancedSwitchFixedContent = styled.div<{ isMobile: boolean }>`
   flex-shrink: 0;
   margin-top: auto;
   padding-bottom: ${({ isMobile }) =>
@@ -22,13 +23,14 @@ const StyledAdvancedToggleFixedContent = styled.div<{ isMobile: boolean }>`
     isMobile ? themeCssVariables.spacing[5] : '0'};
 `;
 
-const advancedSettingsToggleClassName = css`
+const advancedSettingsSwitchClassName = css`
   padding-right: 0;
 `;
 
 export const SettingsNavigationDrawerContent = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
+  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useAtomState(
     isAdvancedModeEnabledState,
   );
@@ -39,16 +41,17 @@ export const SettingsNavigationDrawerContent = () => {
         <SettingsNavigationDrawerItems />
       </NavigationDrawerScrollableContent>
 
-      <StyledAdvancedToggleFixedContent isMobile={isMobile}>
+      <StyledAdvancedSwitchFixedContent isMobile={isMobile}>
         <NavigationDrawerSection>
-          <AdvancedSettingsToggle
-            className={advancedSettingsToggleClassName}
+          <AdvancedSettingsSwitch
+            className={advancedSettingsSwitchClassName}
             isAdvancedModeEnabled={isAdvancedModeEnabled}
             setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
             label={t`Advanced`}
+            isCompact={!isNavigationDrawerExpanded}
           />
         </NavigationDrawerSection>
-      </StyledAdvancedToggleFixedContent>
+      </StyledAdvancedSwitchFixedContent>
     </>
   );
 };

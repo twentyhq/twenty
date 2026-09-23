@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -14,12 +16,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -55,12 +55,9 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -160,19 +157,29 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
               itemId={RECORD_ITEM_ID}
               onEnter={onSelectRecord}
             >
-              <MenuItemSelect
-                text={recordOptionLabel}
+              <ListItem
+                focused={selectedItemId === RECORD_ITEM_ID}
+                onClick={onSelectRecord}
+                role="option"
+                aria-selected={
+                  isCurrentGroupByField && !isDefined(currentSubFieldName)
+                }
                 selected={
                   isCurrentGroupByField && !isDefined(currentSubFieldName)
                 }
-                focused={selectedItemId === RECORD_ITEM_ID}
-                LeftIcon={getIcon(targetObjectMetadataItem?.icon)}
-                onClick={onSelectRecord}
-              />
+                indicator="check"
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={getIcon(targetObjectMetadataItem?.icon)}
+                  />
+                }
+              >
+                {recordOptionLabel}
+              </ListItem>
             </SelectableListItem>
           )}
           {availableFields.length === 0 && !isRecordOptionVisible ? (
-            <MenuItem text={t`No fields available`} />
+            <ListItem disabled>{t`No fields available`}</ListItem>
           ) : (
             availableFields.map((fieldMetadataItem) => (
               <SelectableListItem
@@ -182,19 +189,28 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
                   handleSelectField(fieldMetadataItem);
                 }}
               >
-                <MenuItemSelect
-                  text={fieldMetadataItem.label}
+                <ListItem
+                  focused={selectedItemId === fieldMetadataItem.id}
+                  onClick={() => {
+                    handleSelectField(fieldMetadataItem);
+                  }}
+                  role="option"
+                  aria-selected={
+                    !isCompositeFieldType(fieldMetadataItem.type) &&
+                    currentNestedFieldName === fieldMetadataItem.name
+                  }
                   selected={
                     !isCompositeFieldType(fieldMetadataItem.type) &&
                     currentNestedFieldName === fieldMetadataItem.name
                   }
-                  focused={selectedItemId === fieldMetadataItem.id}
-                  LeftIcon={getIcon(fieldMetadataItem.icon)}
-                  hasSubMenu={isCompositeFieldType(fieldMetadataItem.type)}
-                  onClick={() => {
-                    handleSelectField(fieldMetadataItem);
-                  }}
-                />
+                  indicator="check"
+                  hasSubmenu={isCompositeFieldType(fieldMetadataItem.type)}
+                  startIcon={
+                    <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+                  }
+                >
+                  {fieldMetadataItem.label}
+                </ListItem>
               </SelectableListItem>
             ))
           )}

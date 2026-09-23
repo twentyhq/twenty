@@ -3,14 +3,16 @@ import { useEffect } from 'react';
 import { expect, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
 import { SettingsPath } from 'twenty-shared/types';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { LoadedDecorator } from '~/testing/decorators/LoadedDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -34,7 +36,6 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { AdvancedSettingsToggle } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
@@ -48,7 +49,7 @@ const meta: Meta<typeof NavigationDrawer> = {
   component: NavigationDrawer,
   decorators: [
     ComponentWithRouterDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     ObjectMetadataItemsDecorator,
     LoadedDecorator,
     (Story) => {
@@ -182,7 +183,7 @@ export const Settings: Story = {
         </NavigationDrawerSection>
 
         <NavigationDrawerFixedContent>
-          <AdvancedSettingsToggle
+          <AdvancedSettingsSwitch
             isAdvancedModeEnabled={false}
             setIsAdvancedModeEnabled={() => {}}
             label="Advanced:"

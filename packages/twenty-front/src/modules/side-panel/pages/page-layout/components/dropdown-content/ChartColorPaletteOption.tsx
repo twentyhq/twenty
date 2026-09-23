@@ -5,8 +5,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { ColorSample } from 'twenty-ui/data-display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -64,16 +64,18 @@ export const ChartColorPaletteOption = ({
         onSelectColor('auto');
       }}
     >
-      <MenuItemSelect
-        text={t`Default palette`}
-        selected={false}
+      <ListItem
         focused={selectedItemId === 'auto' || currentColor === 'auto'}
-        contextualText={colorSamples}
-        contextualTextPosition="right"
         onClick={() => {
           onSelectColor('auto');
         }}
-      />
+        role="option"
+        aria-selected={false}
+        selected={false}
+        indicator="check"
+        description={colorSamples}
+        descriptionPlacement={'end'}
+      >{t`Default palette`}</ListItem>
     </SelectableListItem>
   );
 };

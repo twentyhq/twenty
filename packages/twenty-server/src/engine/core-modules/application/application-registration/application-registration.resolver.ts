@@ -8,6 +8,7 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
+import { type Request } from 'express';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
@@ -259,8 +260,13 @@ export class ApplicationRegistrationResolver {
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream }: FileUpload,
-    @Args('universalIdentifier', { type: () => String, nullable: true })
-    universalIdentifier: string | undefined,
+    @Args('universalIdentifier', {
+      type: () => String,
+      nullable: true,
+      deprecationReason:
+        'Ignored: the application universalIdentifier is read from the tarball manifest.',
+    })
+    _universalIdentifier: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
     const maxSize = this.twentyConfigService.get(
@@ -274,7 +280,6 @@ export class ApplicationRegistrationResolver {
 
       return this.applicationTarballService.uploadTarball({
         tarballBuffer,
-        universalIdentifier,
         ownerWorkspaceId: workspaceId,
       });
     } catch (error) {
@@ -360,12 +365,21 @@ export class ApplicationRegistrationResolver {
     @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @Context() context: { req: Request },
   ): Promise<string> {
+    if (!isDefined(context.req.res)) {
+      throw new ApplicationRegistrationException(
+        'Cannot start a GitHub claim without a response to bind it to',
+        ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH,
+      );
+    }
+
     return this.applicationRegistrationClaimService.buildGithubAuthorizationUrl(
       {
         applicationRegistrationId,
         workspaceId,
         userId: user?.id ?? null,
+        response: context.req.res,
       },
     );
   }

@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -20,14 +22,12 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`
@@ -148,12 +148,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
 
   const selectableItemIdArray = filteredObjects.map((option) => option.value);
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const handleOptionClick = (value: string) => {
@@ -246,12 +243,15 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                             itemId={option.value}
                             onEnter={() => handleOptionClick(option.value)}
                           >
-                            <MenuItem
+                            <ListItem
                               focused={selectedItemId === option.value}
-                              LeftIcon={option.Icon}
-                              text={option.label}
+                              startIcon={
+                                <SelectOptionIcon Icon={option.Icon} />
+                              }
                               onClick={() => handleOptionClick(option.value)}
-                            />
+                            >
+                              {option.label}
+                            </ListItem>
                           </SelectableListItem>
                         ))}
                       </SelectableList>

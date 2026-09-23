@@ -7,15 +7,19 @@
   "scripts": {
     "dev": "mintlify dev",
     "validate": "mintlify validate",
-    "fix-links": "bash scripts/fix-translated-links.sh",
+    "fix-links": "tsx scripts/fix-translated-links.ts",
     "lint": "npx oxlint -c .oxlintrc.json ."
   },
   "dependencies": {
     "mintlify": "^4.2.790"
   },
   "devDependencies": {
+    "@mdx-js/mdx": "^3.1.1",
+    "@sniptt/guards": "^0.2.0",
+    "remark-frontmatter": "^5.0.0",
     "tsx": "^4.19.3",
     "twenty-shared": "workspace:*",
+    "unist-util-visit": "^5.0.0",
     "vitest": "^4.1.0"
   },
   "engines": {

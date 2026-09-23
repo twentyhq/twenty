@@ -6,6 +6,10 @@ import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/u
 import { type UserContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.constant';
+import {
+  buildReferencedSkillsSection,
+  type ReferencedSkill,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/build-referenced-skills-section.util';
 import { buildSkillCatalogSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-skill-catalog-section.util';
 import { buildUploadedFilesSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-uploaded-files-section.util';
 import { buildUserContextSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-user-context-section.util';
@@ -16,6 +20,7 @@ import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/fla
 export const buildFullSystemPrompt = ({
   toolCatalog,
   skillCatalog,
+  referencedSkills = [],
   preloadedTools,
   uploadedFilesContext,
   workspaceInstructions,
@@ -24,6 +29,7 @@ export const buildFullSystemPrompt = ({
 }: {
   toolCatalog: ToolIndexEntry[];
   skillCatalog: FlatSkill[];
+  referencedSkills?: ReferencedSkill[];
   preloadedTools: string[];
   uploadedFilesContext?: {
     uploadedFiles: UploadedFileReference[];
@@ -61,6 +67,13 @@ export const buildFullSystemPrompt = ({
 
   if (skillSection) {
     parts.push(skillSection);
+  }
+
+  const referencedSkillsSection =
+    buildReferencedSkillsSection(referencedSkills);
+
+  if (isNonEmptyString(referencedSkillsSection)) {
+    parts.push(referencedSkillsSection);
   }
 
   if (

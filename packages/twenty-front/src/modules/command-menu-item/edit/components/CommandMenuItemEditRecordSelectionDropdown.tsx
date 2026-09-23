@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { useSelectFirstRecordForEditMode } from '@/command-menu-item/edit/hooks/useSelectFirstRecordForEditMode';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -13,7 +14,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconChevronDown, IconSquareCheck, IconSquareX } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
@@ -79,7 +80,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
   const TriggerIcon = isNoneSelected ? IconSquareX : IconSquareCheck;
   const triggerLabel = isNoneSelected
     ? t`No record selected`
-    : t`Record(s) selected`;
+    : t`Records selected`;
 
   return (
     <Dropdown
@@ -111,18 +112,22 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
             data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
           >
             <DropdownMenuItemsContainer>
-              <MenuItemSelect
-                LeftIcon={IconSquareX}
-                text={t`No record selected`}
-                selected={isNoneSelected}
+              <ListItem
                 onClick={() => handleSelectMode('none')}
-              />
-              <MenuItemSelect
-                LeftIcon={IconSquareCheck}
-                text={t`Record(s) selected`}
-                selected={!isNoneSelected}
+                role="option"
+                aria-selected={isNoneSelected}
+                selected={isNoneSelected}
+                indicator="check"
+                startIcon={<SelectOptionIcon Icon={IconSquareX} />}
+              >{t`No record selected`}</ListItem>
+              <ListItem
                 onClick={() => handleSelectMode('selection')}
-              />
+                role="option"
+                aria-selected={!isNoneSelected}
+                selected={!isNoneSelected}
+                indicator="check"
+                startIcon={<SelectOptionIcon Icon={IconSquareCheck} />}
+              >{t`Records selected`}</ListItem>
             </DropdownMenuItemsContainer>
           </StyledDropdownMenuContainer>
         </DropdownContent>

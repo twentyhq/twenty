@@ -1,18 +1,18 @@
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
-import { type AgentChatFileUIPart } from '@/ai/types/agent-chat-file-ui-part.type';
+import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const setAgentChatSelectedFiles = useSetAtomState(
     agentChatSelectedFilesState,
   );
@@ -35,8 +35,9 @@ export const useAiChatFileUpload = () => {
       };
     } catch {
       const fileName = file.name;
-      enqueueErrorSnackBar({
-        message: t`Failed to upload file: ${fileName}`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to upload file: ${fileName}`,
       });
       return null;
     } finally {
@@ -74,8 +75,9 @@ export const useAiChatFileUpload = () => {
       (result) => result.status === 'rejected',
     ).length;
     if (failedCount > 0) {
-      enqueueErrorSnackBar({
-        message: t`${failedCount} file(s) failed to upload`,
+      enqueueToast({
+        variant: 'error',
+        children: t`${failedCount} file(s) failed to upload`,
       });
     }
   };

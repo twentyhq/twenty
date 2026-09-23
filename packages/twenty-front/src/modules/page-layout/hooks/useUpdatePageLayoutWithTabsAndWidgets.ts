@@ -5,11 +5,11 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const useUpdatePageLayoutWithTabsAndWidgets = () => {
   const [updatePageLayoutWithTabsAndWidgetsMutation] = useMutation(
@@ -17,7 +17,7 @@ export const useUpdatePageLayoutWithTabsAndWidgets = () => {
   );
 
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const updatePageLayoutWithTabsAndWidgets = async (
     id: string,
@@ -47,7 +47,7 @@ export const useUpdatePageLayoutWithTabsAndWidgets = () => {
           operationType: CrudOperationType.UPDATE,
         });
       } else {
-        enqueueErrorSnackBar({ message: t`An error occurred.` });
+        enqueueToast({ variant: 'error', children: t`An error occurred.` });
       }
 
       return {

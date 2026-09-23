@@ -30,11 +30,12 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { DerivedFieldMetadataIdsService } from 'src/engine/metadata-modules/derived-field-metadata-ids/services/derived-field-metadata-ids.service';
+import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derived-field-metadata-ids/types/derived-field-metadata-ids.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
-import { UniqueFieldMetadataIdsService } from 'src/engine/metadata-modules/index-metadata/services/unique-field-metadata-ids.service';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { type ObjectMetadataWithFieldsDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata-with-fields.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -57,6 +58,7 @@ import {
   toLegacyObjectMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/metadata/objects`)
 @UseGuards(
@@ -69,6 +71,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
   ObjectMetadataRestApiExceptionFilter,
   ApplicationRestApiExceptionFilter,
   FlatEntityMapsRestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
 )
 @UsePipes(new ValidationPipe())
 export class ObjectMetadataController {
@@ -79,7 +82,7 @@ export class ObjectMetadataController {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
+    private readonly derivedFieldMetadataIdsService: DerivedFieldMetadataIdsService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
@@ -95,18 +98,18 @@ export class ObjectMetadataController {
       request,
     });
 
-    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+    const [fields, derivedFieldMetadataIds] = await Promise.all([
       this.findFieldsForObjectIds(
         workspaceId,
         items.map((object) => object.id),
       ),
-      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+      this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
     const data = await this.toObjectWithFieldsDtos({
       objects: items,
       fieldsByObjectId: fields,
-      uniqueFieldMetadataIds,
+      derivedFieldMetadataIds,
       locale,
       workspaceId,
     });
@@ -139,17 +142,17 @@ export class ObjectMetadataController {
       );
     }
 
-    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+    const [fields, derivedFieldMetadataIds] = await Promise.all([
       this.fieldMetadataRepository.find({
         where: { objectMetadataId: object.id, workspaceId },
       }),
-      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+      this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
     const [result] = await this.toObjectWithFieldsDtos({
       objects: [object],
       fieldsByObjectId: new Map([[object.id, fields]]),
-      uniqueFieldMetadataIds,
+      derivedFieldMetadataIds,
       locale,
       workspaceId,
     });
@@ -169,11 +172,11 @@ export class ObjectMetadataController {
       workspaceId,
     });
 
-    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+    const [fields, derivedFieldMetadataIds] = await Promise.all([
       this.fieldMetadataRepository.find({
         where: { objectMetadataId: flatObject.id, workspaceId },
       }),
-      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+      this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
     const result: ObjectMetadataWithFieldsDTO = {
@@ -181,7 +184,7 @@ export class ObjectMetadataController {
       fields: fields.map((field) =>
         fromFieldMetadataEntityToFieldMetadataDto(
           field,
-          uniqueFieldMetadataIds,
+          derivedFieldMetadataIds,
         ),
       ),
     };
@@ -240,11 +243,11 @@ export class ObjectMetadataController {
       workspaceId,
     });
 
-    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+    const [fields, derivedFieldMetadataIds] = await Promise.all([
       this.fieldMetadataRepository.find({
         where: { objectMetadataId: flatObject.id, workspaceId },
       }),
-      this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
+      this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
     const result: ObjectMetadataWithFieldsDTO = {
@@ -252,7 +255,7 @@ export class ObjectMetadataController {
       fields: fields.map((field) =>
         fromFieldMetadataEntityToFieldMetadataDto(
           field,
-          uniqueFieldMetadataIds,
+          derivedFieldMetadataIds,
         ),
       ),
     };
@@ -303,13 +306,13 @@ export class ObjectMetadataController {
   private async toObjectWithFieldsDtos({
     objects,
     fieldsByObjectId,
-    uniqueFieldMetadataIds,
+    derivedFieldMetadataIds,
     locale,
     workspaceId,
   }: {
     objects: ObjectMetadataEntity[];
     fieldsByObjectId: Map<string, FieldMetadataEntity[]>;
-    uniqueFieldMetadataIds: ReadonlySet<string>;
+    derivedFieldMetadataIds: DerivedFieldMetadataIds;
     locale: keyof typeof APP_LOCALES | undefined;
     workspaceId: string;
   }): Promise<ObjectMetadataWithFieldsDTO[]> {
@@ -348,7 +351,7 @@ export class ObjectMetadataController {
       fields: (resolvedFieldsByObjectId.get(object.id) ?? []).map((field) =>
         fromFieldMetadataEntityToFieldMetadataDto(
           field,
-          uniqueFieldMetadataIds,
+          derivedFieldMetadataIds,
         ),
       ),
     }));

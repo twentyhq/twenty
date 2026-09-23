@@ -19,6 +19,8 @@ export const getChatReferenceIdentitySegment = (
       return identity.roleId;
     case 'app':
       return identity.applicationId;
+    case 'skill':
+      return identity.skillId;
     default:
       return assertUnreachable(identity);
   }

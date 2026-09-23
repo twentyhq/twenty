@@ -1,28 +1,30 @@
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { CoreWorkflowVersionStatus } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useRestoreCoreWorkflowVersionAsDraft = ({
   workflowId,
-  workspaceWorkflowVersionId,
+  coreWorkflowVersionId,
 }: {
   workflowId: string;
-  workspaceWorkflowVersionId: string;
+  coreWorkflowVersionId: string;
 }) => {
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const { t } = useLingui();
   const [isRestoring, setIsRestoring] = useState(false);
   const { coreWorkflowVersions, loading: isLoadingCoreWorkflowVersions } =
     useCoreWorkflowVersions(workflowId);
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const navigate = useNavigateApp();
 
   const hasExistingDraft = coreWorkflowVersions.some(
@@ -40,24 +42,24 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
     try {
       const draftWorkflowVersionId = await createDraftFromWorkflowVersion({
         workflowId,
-        workflowVersionIdToCopy: workspaceWorkflowVersionId,
+        workflowVersionIdToCopy: coreWorkflowVersionId,
       });
 
       if (!isDefined(draftWorkflowVersionId)) {
-        enqueueErrorSnackBar({
-          message: t`Could not restore this version as draft.`,
+        enqueueToast({
+          variant: 'error',
+          children: t`Could not restore this version as draft.`,
         });
 
         return;
       }
 
-      navigate(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: workflowId,
-      });
+      closeSidePanelMenu();
+      navigate(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflowId });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Could not restore this version as draft.`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Could not restore this version as draft.`,
       });
     } finally {
       setIsRestoring(false);

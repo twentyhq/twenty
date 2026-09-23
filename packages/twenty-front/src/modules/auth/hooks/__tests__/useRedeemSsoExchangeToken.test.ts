@@ -2,9 +2,11 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
-import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { useRedeemSsoExchangeToken } from '@/auth/hooks/useRedeemSsoExchangeToken';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
+import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
+import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
+
 import {
   jotaiStore,
   resetJotaiStore,
@@ -17,8 +19,11 @@ jest.mock('@apollo/client/react', () => ({
   useMutation: () => [mockGetAuthTokensFromSsoExchangeToken],
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: jest.fn(),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/primitives/feedback', () => ({
+  ...jest.requireActual('twenty-ui/primitives/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 const renderHooks = () => {
@@ -41,16 +46,11 @@ const freshTokenPair = {
 };
 
 describe('useRedeemSsoExchangeToken', () => {
-  const mockEnqueueErrorSnackBar = jest.fn();
-
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
+    clearSessionGeneration();
     resetJotaiStore();
-
-    (useSnackBar as jest.Mock).mockReturnValue({
-      enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-    });
 
     mockGetAuthTokensFromSsoExchangeToken.mockResolvedValue({
       data: {
@@ -88,6 +88,7 @@ describe('useRedeemSsoExchangeToken', () => {
     await result.current.redeemSsoExchangeToken('sso-exchange-token');
 
     expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
+    expect(getSessionGeneration()).not.toBeNull();
   });
 
   it('should leave the session inactive when the exchange fails', async () => {
@@ -100,9 +101,10 @@ describe('useRedeemSsoExchangeToken', () => {
     await result.current.redeemSsoExchangeToken('sso-exchange-token');
 
     expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
+    expect(getSessionGeneration()).toBeNull();
   });
 
-  it('should snackbar when redemption fails', async () => {
+  it('should toast when redemption fails', async () => {
     mockGetAuthTokensFromSsoExchangeToken.mockRejectedValueOnce(
       new Error('Invalid SSO exchange token'),
     );
@@ -111,8 +113,9 @@ describe('useRedeemSsoExchangeToken', () => {
 
     await result.current.redeemSsoExchangeToken('sso-exchange-token');
 
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-      message: 'Invalid SSO exchange token',
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'Invalid SSO exchange token',
     });
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
   });

@@ -16,12 +16,12 @@ const StyledWord = styled.span<{ isSpoken: boolean }>`
 
 type CallRecordingTranscriptEntryWordsProps = {
   words: CallRecordingParsedTranscriptWord[];
-  videoElement: HTMLVideoElement;
+  mediaElement: HTMLMediaElement;
 };
 
 export const CallRecordingTranscriptEntryWords = ({
   words,
-  videoElement,
+  mediaElement,
 }: CallRecordingTranscriptEntryWordsProps) => {
   const [wordPlaybackPosition, setWordPlaybackPosition] = useState(
     INITIAL_CALL_RECORDING_TRANSCRIPT_PLAYBACK_POSITION,
@@ -30,7 +30,7 @@ export const CallRecordingTranscriptEntryWords = ({
   return (
     <>
       <CallRecordingTranscriptPlaybackEffect
-        videoElement={videoElement}
+        mediaElement={mediaElement}
         timedItems={words}
         onPlaybackPositionChange={setWordPlaybackPosition}
       />

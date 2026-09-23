@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -7,33 +8,31 @@ import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/comp
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
 import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewItem';
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
-import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 // The card brings its own surface, so the tooltip only contributes the shadow.
-// Tooltips render at 0.9 opacity, which would make the card translucent.
 const previewTooltipClass = css`
   background: transparent !important;
   border-radius: ${themeCssVariables.border.radius.md} !important;
   box-shadow: ${themeCssVariables.boxShadow.strong} !important;
-  opacity: 1 !important;
   padding: 0 !important;
 `;
 
 export const SidePanelSearchRecordsPage = () => {
   const { t } = useLingui();
-  const { searchResultItems, loading, noResults } = useSidePanelSearchRecords();
+  const { searchResultItems, loading, noResults, error } =
+    useSidePanelSearchRecords();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
   const navigate = useNavigate();
@@ -44,12 +43,16 @@ export const SidePanelSearchRecordsPage = () => {
     [searchResultItems],
   );
 
+  const previewAnchorRef = useRef<HTMLDivElement>(null);
+
   const previewedItem = useSidePanelSearchRecordPreviewItem(searchResultItems);
 
   const shouldDisplayPreview = !isMobile && isDefined(previewedItem);
 
   return (
     <>
+      <ToastOnQueryErrorEffect error={error} />
+
       <SidePanelList
         selectableItemIds={selectableItemIds}
         loading={loading}
@@ -87,7 +90,13 @@ export const SidePanelSearchRecordsPage = () => {
                   itemId={item.id}
                   onEnter={handleClick}
                 >
-                  <div id={getSidePanelSearchResultAnchorId(item.id)}>
+                  <div
+                    ref={
+                      previewedItem?.id === item.id
+                        ? previewAnchorRef
+                        : undefined
+                    }
+                  >
                     <CommandMenuItem
                       id={item.id}
                       label={item.label}
@@ -95,10 +104,10 @@ export const SidePanelSearchRecordsPage = () => {
                       onClick={handleClick}
                       LeftComponent={
                         <Avatar
-                          type={item.avatarType}
-                          avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
-                          placeholderColorSeed={item.recordId}
-                          placeholder={item.label}
+                          shape={item.avatarShape}
+                          src={getAbsoluteImageUrl(item.imageUrl)}
+                          colorSeed={item.recordId}
+                          name={item.label}
                         />
                       }
                     />
@@ -111,24 +120,23 @@ export const SidePanelSearchRecordsPage = () => {
       </SidePanelList>
 
       {shouldDisplayPreview && (
-        <AppTooltip
-          anchorSelect={`#${getSidePanelSearchResultAnchorId(previewedItem.id)}`}
-          place="left-start"
-          offset={16}
-          noArrow
-          clickable
-          isOpen
-          delay={TooltipDelay.noDelay}
-          className={previewTooltipClass}
-          width={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
-        >
-          <SidePanelSearchRecordPreviewCard
-            key={previewedItem.recordId}
-            objectNameSingular={previewedItem.objectNameSingular}
-            recordId={previewedItem.recordId}
-            label={previewedItem.label}
-          />
-        </AppTooltip>
+        <Tooltip.Root key={previewedItem.id} open>
+          <Tooltip.Popup
+            anchor={previewAnchorRef}
+            side="left"
+            align="start"
+            sideOffset={16}
+            className={previewTooltipClass}
+            maxWidth={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
+          >
+            <SidePanelSearchRecordPreviewCard
+              key={previewedItem.recordId}
+              objectNameSingular={previewedItem.objectNameSingular}
+              recordId={previewedItem.recordId}
+              label={previewedItem.label}
+            />
+          </Tooltip.Popup>
+        </Tooltip.Root>
       )}
     </>
   );

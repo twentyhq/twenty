@@ -1,3 +1,7 @@
+import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
+import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
+import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
+import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
 import { type DragEvent, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -26,6 +30,7 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
 `;
 
 export const AiChatTab = () => {
+  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const threadIdCreatedFromDraft = useAtomStateValue(
@@ -64,6 +69,7 @@ export const AiChatTab = () => {
       onDragOver={(event) => event.preventDefault()}
       onDrop={handleDrop}
     >
+      {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       <AgentChatHasBeenOpenedEffect />
       <AgentChatStreamingPartsDiffSyncEffect />
       {isDraggingFile && (
@@ -73,11 +79,13 @@ export const AiChatTab = () => {
         />
       )}
       {!isDraggingFile && (
-        <>
+        <AiChatMessageListPreambleContext.Provider
+          value={isWorkspaceSetupChat ? <WorkspaceSetupChatPreamble /> : null}
+        >
           <AiChatTabMessageList />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={editorSectionKey} />
-        </>
+        </AiChatMessageListPreambleContext.Provider>
       )}
     </StyledContainer>
   );

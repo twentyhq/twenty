@@ -1,5 +1,56 @@
-import { MAIN_COLORS_LIGHT } from './MainColorsLight';
+// Generated from design-tokens by scripts/generateThemeTokens.ts.
+// Do not edit manually. Regenerate with: npx nx generateTokens twenty-ui.
+export type ThemeColor =
+  | 'red'
+  | 'ruby'
+  | 'crimson'
+  | 'tomato'
+  | 'orange'
+  | 'amber'
+  | 'yellow'
+  | 'lime'
+  | 'grass'
+  | 'green'
+  | 'jade'
+  | 'mint'
+  | 'turquoise'
+  | 'cyan'
+  | 'sky'
+  | 'blue'
+  | 'iris'
+  | 'violet'
+  | 'purple'
+  | 'plum'
+  | 'pink'
+  | 'bronze'
+  | 'gold'
+  | 'brown'
+  | 'gray';
 
-export const MAIN_COLOR_NAMES = Object.keys(MAIN_COLORS_LIGHT) as ThemeColor[];
-
-export type ThemeColor = keyof typeof MAIN_COLORS_LIGHT;
+export const MAIN_COLOR_NAMES: ThemeColor[] = [
+  'red',
+  'ruby',
+  'crimson',
+  'tomato',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'grass',
+  'green',
+  'jade',
+  'mint',
+  'turquoise',
+  'cyan',
+  'sky',
+  'blue',
+  'iris',
+  'violet',
+  'purple',
+  'plum',
+  'pink',
+  'bronze',
+  'gold',
+  'brown',
+  'gray',
+];

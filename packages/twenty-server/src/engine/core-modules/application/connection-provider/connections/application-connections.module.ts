@@ -4,11 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ApplicationConnectionsController } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.controller';
 import { ApplicationConnectionsResolver } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.resolver';
+import { ApplicationConnectionAuthFailureService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connection-auth-failure.service';
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
+import { ConnectionProviderGraphqlApiExceptionInterceptor } from 'src/engine/core-modules/application/connection-provider/interceptors/connection-provider-graphql-api-exception.interceptor';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
@@ -33,8 +36,11 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     ConnectedAccountTokenEncryptionModule,
   ],
   providers: [
+    provideWorkspaceScopedRepository(ConnectionProviderEntity),
+    ApplicationConnectionAuthFailureService,
     ApplicationConnectionsListService,
     ApplicationConnectionsResolver,
+    ConnectionProviderGraphqlApiExceptionInterceptor,
   ],
   controllers: [ApplicationConnectionsController],
   exports: [ApplicationConnectionsListService],

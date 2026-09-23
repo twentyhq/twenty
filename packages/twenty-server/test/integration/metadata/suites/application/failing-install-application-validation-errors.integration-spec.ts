@@ -96,6 +96,7 @@ const buildManifestWithCrossEntityIdentifierConflict = (
     navigationMenuItems: [],
     pageLayouts: [],
     pageLayoutTabs: [],
+    pageLayoutWidgets: [],
   });
 
 describe('Install application should return structured validation errors', () => {

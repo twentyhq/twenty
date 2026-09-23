@@ -458,6 +458,26 @@ const SettingsUsage = lazy(() =>
   })),
 );
 
+const SettingsBillingLimits = lazy(() =>
+  import('~/pages/settings/billing/SettingsBillingLimits').then((module) => ({
+    default: module.SettingsBillingLimits,
+  })),
+);
+
+const SettingsBillingNewLimit = lazy(() =>
+  import('~/pages/settings/billing/SettingsBillingNewLimit').then((module) => ({
+    default: module.SettingsBillingNewLimit,
+  })),
+);
+
+const SettingsBillingLimitEdit = lazy(() =>
+  import('~/pages/settings/billing/SettingsBillingLimitEdit').then(
+    (module) => ({
+      default: module.SettingsBillingLimitEdit,
+    }),
+  ),
+);
+
 const SettingsUsageUserDetail = lazy(() =>
   import('~/pages/settings/billing/SettingsUsageUserDetail').then((module) => ({
     default: module.SettingsUsageUserDetail,
@@ -788,6 +808,18 @@ const createSettingsRouteElements = ({
         element={<SettingsUsageUserDetail />}
       />
       <Route
+        path={SettingsPath.BillingLimits}
+        element={<SettingsBillingLimits />}
+      />
+      <Route
+        path={SettingsPath.BillingNewLimit}
+        element={<SettingsBillingNewLimit />}
+      />
+      <Route
+        path={SettingsPath.BillingLimitEdit}
+        element={<SettingsBillingLimitEdit />}
+      />
+      <Route
         path={SettingsPath.Subdomain}
         element={<SettingsSubdomainPage />}
       />
@@ -796,7 +828,11 @@ const createSettingsRouteElements = ({
         element={<SettingsCustomDomainPage />}
       />
       <Route
-        path={SettingsPath.PublicDomain}
+        path={SettingsPath.ApplicationPublicDomainNew}
+        element={<SettingPublicDomain />}
+      />
+      <Route
+        path={SettingsPath.ApplicationPublicDomainDetail}
         element={<SettingPublicDomain />}
       />
       <Route path={SettingsPath.LegalDpa} element={<SettingsLegalDpa />} />
@@ -1098,7 +1134,7 @@ const createSettingsRouteElements = ({
           path={SettingsPath.Enterprise}
           element={
             <Navigate
-              to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
+              to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
               replace
             />
           }

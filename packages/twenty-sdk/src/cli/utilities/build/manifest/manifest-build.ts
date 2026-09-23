@@ -48,8 +48,10 @@ import {
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
   type UninstallLogicFunctionApplicationManifest,
+  type HealthCheckLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
+  type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
   type TimelineActivityTypeManifest,
   type ViewManifest,
@@ -102,6 +104,7 @@ export const buildManifest = async (
 
   let applicationConfig: ApplicationConfig | undefined;
   const objectConfigs: ObjectConfig[] = [];
+  const roleConfigs: RoleConfig[] = [];
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
@@ -118,6 +121,7 @@ export const buildManifest = async (
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
   const pageLayoutTabs: PageLayoutTabManifest[] = [];
+  const pageLayoutWidgets: StandalonePageLayoutWidgetManifest[] = [];
   const commandMenuItems: CommandMenuItemManifest[] = [];
   const timelineActivityTypes: TimelineActivityTypeManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
@@ -125,6 +129,8 @@ export const buildManifest = async (
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
     [];
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
+    [];
+  const healthCheckLogicFunctions: HealthCheckLogicFunctionApplicationManifest[] =
     [];
   const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
@@ -145,6 +151,7 @@ export const buildManifest = async (
   const navigationMenuItemsFilePaths: string[] = [];
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
+  const pageLayoutWidgetsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
   const timelineActivityTypesFilePaths: string[] = [];
 
@@ -218,8 +225,7 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        const roleConfig = fromRoleConfigToRoleManifest(extract.config);
-        roles.push(roleConfig);
+        roleConfigs.push(extract.config);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         rolesFilePaths.push(relativePath);
@@ -356,6 +362,12 @@ export const buildManifest = async (
           });
         }
 
+        if (targetFunctionName === TargetFunction.DefineHealthCheck) {
+          healthCheckLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+          });
+        }
+
         break;
       }
       case ManifestEntityKey.FrontComponents: {
@@ -482,6 +494,19 @@ export const buildManifest = async (
         pageLayoutTabsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.PageLayoutWidgets: {
+        const extract =
+          await extractManifestFromFile<StandalonePageLayoutWidgetManifest>({
+            appPath,
+            filePath,
+          });
+
+        pageLayoutWidgets.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        pageLayoutWidgetsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.CommandMenuItems: {
         const extract = await extractManifestFromFile<CommandMenuItemConfig>({
           appPath,
@@ -566,6 +591,15 @@ export const buildManifest = async (
 
       objects.push(objectManifest);
     }
+
+    for (const roleConfig of roleConfigs) {
+      roles.push(
+        fromRoleConfigToRoleManifest({
+          roleConfig,
+          applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+        }),
+      );
+    }
   }
 
   if (postInstallLogicFunctions.length > 1) {
@@ -582,6 +616,10 @@ export const buildManifest = async (
 
   if (uninstallLogicFunctions.length > 1) {
     errors.push('Only one uninstall logic function is allowed per application');
+  }
+
+  if (healthCheckLogicFunctions.length > 1) {
+    errors.push('Only one health check is allowed per application');
   }
 
   if (settingsFrontComponentUniversalIdentifiers.length > 1) {
@@ -645,6 +683,9 @@ export const buildManifest = async (
             ...(uninstallLogicFunctions.length >= 1
               ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
               : {}),
+            ...(healthCheckLogicFunctions.length >= 1
+              ? { healthCheckLogicFunction: healthCheckLogicFunctions[0] }
+              : {}),
             ...(settingsFrontComponentUniversalIdentifiers.length >= 1
               ? {
                   settingsFrontComponent: {
@@ -686,6 +727,7 @@ export const buildManifest = async (
         navigationMenuItems: navigationMenuItems.sort(byId),
         pageLayouts: pageLayouts.sort(byId),
         pageLayoutTabs: pageLayoutTabs.sort(byId),
+        pageLayoutWidgets: pageLayoutWidgets.sort(byId),
         commandMenuItems: commandMenuItems.sort(byId),
         timelineActivityTypes: timelineActivityTypes.sort(byId),
       };
@@ -708,6 +750,7 @@ export const buildManifest = async (
     navigationMenuItems: navigationMenuItemsFilePaths,
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,
+    pageLayoutWidgets: pageLayoutWidgetsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
     timelineActivityTypes: timelineActivityTypesFilePaths,
   };

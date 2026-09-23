@@ -1,4 +1,5 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { type ApplicationExport } from '@/cli/utilities/pull/application-export-type';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import axios, { type AxiosInstance } from 'axios';
 import { type Manifest } from 'twenty-shared/application';
@@ -96,6 +97,67 @@ export class ApplicationApi {
         success: true,
         data: response.data.data
           .findApplicationRegistrationByUniversalIdentifier,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async exportApplication(
+    universalIdentifier: string,
+  ): Promise<ApiResponse<ApplicationExport>> {
+    try {
+      const query = `
+        query ExportApplication($universalIdentifier: UUID!) {
+          exportApplication(universalIdentifier: $universalIdentifier) {
+            application {
+              universalIdentifier
+              displayName
+              sourceType
+            }
+            manifest
+            coverage {
+              metadataName
+              universalIdentifier
+              status
+              reason
+            }
+            files {
+              folder
+              path
+              content
+            }
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.exportApplication,
       };
     } catch (error) {
       return {

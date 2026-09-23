@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
+import { getRecordGroupReorderConfirmationModalId } from '@/object-record/record-group/utils/getRecordGroupReorderConfirmationModalId';
 import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
@@ -42,7 +42,7 @@ export const useRecordBoardColumnDndKit = (): {
     onDragEnd: (event: DragEndPayload) => void;
   };
 } => {
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
   const { reorderRecordGroups } = useReorderRecordGroups({
     recordIndexId,
@@ -127,7 +127,7 @@ export const useRecordBoardColumnDndKit = (): {
         fromIndex: sourceIndex,
         toIndex: destinationIndex,
       });
-      openModal(RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID);
+      openDialog(getRecordGroupReorderConfirmationModalId(recordIndexId));
       return;
     }
 

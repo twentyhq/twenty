@@ -5,9 +5,9 @@ import {
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTextContainer,
   AnimatedPlaceholderErrorTitle,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsBillingPlansErrorStateProps = {
   onRetry: () => void;
@@ -30,11 +30,10 @@ export const SettingsBillingPlansErrorState = ({
         </AnimatedPlaceholderErrorSubTitle>
       </AnimatedPlaceholderErrorTextContainer>
       <Button
-        Icon={IconRefresh}
-        title={t`Try again`}
-        variant="secondary"
+        startIcon={<IconRefresh />}
         onClick={onRetry}
-      />
+        variant="outline"
+      >{t`Try again`}</Button>
     </AnimatedPlaceholderErrorContainer>
   );
 };

@@ -3,8 +3,6 @@
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { Issuer } from 'openid-client';
-
 import {
   AuthException,
   AuthExceptionCode,
@@ -79,7 +77,9 @@ export class OidcAuthGuard extends AuthGuard('openidconnect') {
           AuthExceptionCode.INVALID_DATA,
         );
       }
-      const issuer = await Issuer.discover(identityProvider.issuer);
+      const issuer = await this.ssoService.discoverOidcIssuer(
+        identityProvider.issuer,
+      );
 
       new OidcAuthStrategy(
         this.ssoService.getOidcClient(identityProvider, issuer),

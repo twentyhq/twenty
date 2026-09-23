@@ -1,9 +1,9 @@
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
-import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialogOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type RecordIndexTableContainerProps = {
@@ -13,12 +13,12 @@ type RecordIndexTableContainerProps = {
 export const RecordIndexTableContainer = ({
   recordTableId,
 }: RecordIndexTableContainerProps) => {
-  const { objectNameSingular, viewBarInstanceId } =
+  const { objectNameSingular, viewBarInstanceId, recordIndexId } =
     useRecordIndexContextOrThrow();
 
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
-    RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
+  const isDialogOpened = useAtomComponentStateValue(
+    isDialogOpenedComponentState,
+    getRecordIndexRemoveSortingModalId(recordIndexId),
   );
 
   return (
@@ -29,7 +29,7 @@ export const RecordIndexTableContainer = ({
         objectNameSingular={objectNameSingular}
         viewBarId={viewBarInstanceId}
       />
-      {isModalOpened && <RecordIndexRemoveSortingModal />}
+      {isDialogOpened && <RecordIndexRemoveSortingModal />}
     </>
   );
 };

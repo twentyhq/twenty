@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -22,7 +23,6 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 import {
   PermissionFlagType,
   ViewVisibility,
@@ -133,28 +133,27 @@ export const ViewPickerOptionDropdown = ({
         dropdownContent={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              <MenuItem
-                LeftIcon={isFavorite ? IconHeartOff : IconHeart}
-                text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
+              <ListItem
+                startIcon={isFavorite ? <IconHeartOff /> : <IconHeart />}
                 onClick={handleToggleFavorite}
-              />
+              >
+                {isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
+              </ListItem>
               {!isIndexView && canEditView && (
                 <>
-                  <MenuItem
-                    LeftIcon={IconPencil}
-                    text={t`Edit`}
+                  <ListItem
+                    startIcon={<IconPencil />}
                     onClick={(event) => {
                       onEdit(event, view.id);
                       closeDropdown(dropdownId);
                     }}
-                  />
+                  >{t`Edit`}</ListItem>
                   {!isLastView && (
-                    <MenuItem
-                      LeftIcon={IconTrash}
-                      text={t`Delete`}
+                    <ListItem
+                      startIcon={<IconTrash />}
                       onClick={handleDelete}
-                      accent="danger"
-                    />
+                      color="danger"
+                    >{t`Delete`}</ListItem>
                   )}
                 </>
               )}

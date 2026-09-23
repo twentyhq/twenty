@@ -1,15 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { css, cx } from '@linaria/core';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useId } from 'react';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { billingState } from '@/client-config/states/billingState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const pillClassName = css`
@@ -50,19 +50,15 @@ export const OrganizationAdornment = ({
 }: OrganizationAdornmentProps) => {
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  // useId returns a colon-wrapped value that is not a valid CSS selector
-  const anchorId = `organization-adornment-${useId().replace(/:/g, '')}`;
-
   const adornment = isBillingEnabled ? (
     <Link
-      id={anchorId}
       className={cx(pillClassName, pillLinkClassName)}
       to={getSettingsPath(SettingsPath.BillingPlans)}
     >
       <OrganizationAdornmentContent />
     </Link>
   ) : (
-    <span id={anchorId} className={pillClassName}>
+    <span className={pillClassName}>
       <OrganizationAdornmentContent />
     </span>
   );
@@ -72,16 +68,13 @@ export const OrganizationAdornment = ({
   }
 
   return (
-    <>
+    <Tooltip
+      content={tooltipContent}
+      delay={TooltipDelay.shortDelay}
+      side="top"
+      maxWidth="260px"
+    >
       {adornment}
-      <AppTooltip
-        anchorSelect={`#${anchorId}`}
-        content={tooltipContent}
-        delay={TooltipDelay.shortDelay}
-        place="top"
-        width="260px"
-        clickable
-      />
-    </>
+    </Tooltip>
   );
 };

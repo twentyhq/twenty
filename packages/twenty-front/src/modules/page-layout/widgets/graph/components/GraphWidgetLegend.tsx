@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
@@ -14,8 +15,8 @@ import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContext, useRef, useState } from 'react';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { LightIconButton } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { LightIconButton } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type GraphWidgetLegendItem = {
@@ -266,17 +267,21 @@ export const GraphWidgetLegend = ({
                 <LightIconButton
                   onClick={handlePreviousPage}
                   disabled={safeCurrentPage === 0}
-                  Icon={IconChevronLeft}
-                  accent="tertiary"
-                />
+                  emphasis="subtle"
+                  aria-label={t`Previous`}
+                >
+                  <IconChevronLeft />
+                </LightIconButton>
                 <StyledPaginationIndicator>
                   {safeCurrentPage + 1}/{totalPages}
                 </StyledPaginationIndicator>
                 <LightIconButton
                   onClick={handleNextPage}
                   disabled={safeCurrentPage === totalPages - 1}
-                  Icon={IconChevronRight}
-                />
+                  aria-label={t`Next`}
+                >
+                  <IconChevronRight />
+                </LightIconButton>
               </StyledPaginationContainer>
             )}
             <StyledAnimationClipContainer>

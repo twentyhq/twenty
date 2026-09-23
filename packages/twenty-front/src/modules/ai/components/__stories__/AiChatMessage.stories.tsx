@@ -3,12 +3,13 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { userEvent, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
+import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -19,7 +20,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const StyledConversationContainer = styled.div`
   display: flex;
@@ -288,7 +289,9 @@ const AgentChatInstanceDecorator: Decorator = (Story) => (
     value={{ instanceId: INSTANCE_ID }}
   >
     <AgentChatMessagesSetterEffect messages={allMockMessages} />
-    <Story />
+    <Suspense fallback={<MarkdownLoadingSkeleton />}>
+      <Story />
+    </Suspense>
   </AgentChatComponentInstanceContext.Provider>
 );
 
@@ -298,7 +301,7 @@ const meta: Meta<typeof AiChatMessage> = {
   decorators: [
     ComponentDecorator,
     RootDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     AgentChatInstanceDecorator,
   ],
   parameters: {

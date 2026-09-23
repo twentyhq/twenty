@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
 import { useSortSubFieldChoicesForField } from '@/object-metadata/hooks/useSortSubFieldChoicesForField';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
@@ -12,7 +13,7 @@ import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 type EditableSortChipProps = {
@@ -98,28 +99,36 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItemSelect
-              LeftIcon={IconArrowUp}
-              text={t`Ascending`}
-              selected={recordSort.direction === ViewSortDirection.ASC}
+            <ListItem
               onClick={() => handleDirectionSelect(ViewSortDirection.ASC)}
-            />
-            <MenuItemSelect
-              LeftIcon={IconArrowDown}
-              text={t`Descending`}
-              selected={recordSort.direction === ViewSortDirection.DESC}
+              role="option"
+              aria-selected={recordSort.direction === ViewSortDirection.ASC}
+              selected={recordSort.direction === ViewSortDirection.ASC}
+              indicator="check"
+              startIcon={<SelectOptionIcon Icon={IconArrowUp} />}
+            >{t`Ascending`}</ListItem>
+            <ListItem
               onClick={() => handleDirectionSelect(ViewSortDirection.DESC)}
-            />
+              role="option"
+              aria-selected={recordSort.direction === ViewSortDirection.DESC}
+              selected={recordSort.direction === ViewSortDirection.DESC}
+              indicator="check"
+              startIcon={<SelectOptionIcon Icon={IconArrowDown} />}
+            >{t`Descending`}</ListItem>
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
             {subFieldChoices.options.map((option) => (
-              <MenuItemSelect
+              <ListItem
                 key={option.value}
-                text={option.label}
-                selected={option.value === subFieldChoices.selectedValue}
                 onClick={() => handleSubFieldSelect(option.value)}
-              />
+                role="option"
+                aria-selected={option.value === subFieldChoices.selectedValue}
+                selected={option.value === subFieldChoices.selectedValue}
+                indicator="check"
+              >
+                {option.label}
+              </ListItem>
             ))}
           </DropdownMenuItemsContainer>
         </DropdownContent>

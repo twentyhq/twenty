@@ -7,6 +7,5 @@ export type FlatApplication = Pick<
   | 'name'
   | 'description'
   | 'version'
-  | 'state'
   | 'applicationRegistrationId'
 >;

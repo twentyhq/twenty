@@ -1,21 +1,22 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconGoogle, IconMicrosoft, IconPassword } from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -26,7 +27,7 @@ const StyledSettingsSecurityOptionsList = styled.div`
 export const SettingsSecurityAuthBypassOptionsList = () => {
   const { t } = useLingui();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const authProviders = useAtomStateValue(authProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
@@ -71,9 +72,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
         ...currentWorkspace,
         [key]: currentWorkspace[key],
       });
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error: err }));
     });
   };
 
@@ -85,7 +84,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
     <StyledSettingsSecurityOptionsList>
       <Card rounded>
         {authProviders.google === true && (
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconGoogle}
             title={t`Google`}
             description={t`Allow Google-based login for users with SSO bypass permissions.`}
@@ -96,7 +95,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
           />
         )}
         {authProviders.microsoft === true && (
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconMicrosoft}
             title={t`Microsoft`}
             description={t`Allow Microsoft-based login for users with SSO bypass permissions.`}
@@ -107,7 +106,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
           />
         )}
         {authProviders.password && (
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={IconPassword}
             title={t`Password`}
             description={t`Allow email & password login for SSO bypass users.`}

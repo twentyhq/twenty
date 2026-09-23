@@ -147,18 +147,15 @@ describe('pinAiChatScrollToBottom', () => {
 
   it('should stop once the content is quiet and the minimum duration has elapsed', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
-    const onContentSettled = jest.fn();
     const onPinningStopped = jest.fn();
 
     pinAiChatScrollToBottom({
       scrollWrapperElement,
-      onContentSettled,
       onPinningStopped,
     });
 
     advanceFrames(framesToCover(AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS));
 
-    expect(onContentSettled).toHaveBeenCalledTimes(1);
     expect(onPinningStopped).toHaveBeenCalledTimes(1);
   });
 
@@ -196,18 +193,15 @@ describe('pinAiChatScrollToBottom', () => {
 
   it('should stop immediately when the user scrolls', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
-    const onContentSettled = jest.fn();
     const onPinningStopped = jest.fn();
 
     pinAiChatScrollToBottom({
       scrollWrapperElement,
-      onContentSettled,
       onPinningStopped,
     });
 
     listenersByEventName.get('wheel')?.(new Event('wheel'));
 
-    expect(onContentSettled).toHaveBeenCalledTimes(1);
     expect(onPinningStopped).toHaveBeenCalledTimes(1);
 
     scrollWrapperElement.scrollHeight = 9000;
@@ -218,29 +212,24 @@ describe('pinAiChatScrollToBottom', () => {
 
   it('should stop via the watchdog when frames never run', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
-    const onContentSettled = jest.fn();
     const onPinningStopped = jest.fn();
 
     pinAiChatScrollToBottom({
       scrollWrapperElement,
-      onContentSettled,
       onPinningStopped,
     });
 
     jest.advanceTimersByTime(AI_CHAT_SCROLL_PIN_MAX_DURATION_IN_MS);
 
-    expect(onContentSettled).toHaveBeenCalledTimes(1);
     expect(onPinningStopped).toHaveBeenCalledTimes(1);
   });
 
-  it('should invoke each callback exactly once when stopped by the caller', () => {
+  it('should invoke the stop callback exactly once when stopped by the caller', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
-    const onContentSettled = jest.fn();
     const onPinningStopped = jest.fn();
 
     const stop = pinAiChatScrollToBottom({
       scrollWrapperElement,
-      onContentSettled,
       onPinningStopped,
     });
 
@@ -248,7 +237,6 @@ describe('pinAiChatScrollToBottom', () => {
     stop();
     jest.advanceTimersByTime(AI_CHAT_SCROLL_PIN_MAX_DURATION_IN_MS);
 
-    expect(onContentSettled).toHaveBeenCalledTimes(1);
     expect(onPinningStopped).toHaveBeenCalledTimes(1);
     expect(listenersByEventName.size).toBe(0);
   });

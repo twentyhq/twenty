@@ -5,6 +5,7 @@ import {
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
   type PageLayoutWidgetUniversalConfiguration,
+  type PageLayoutWidgetVerticalListHeightBehavior,
   type WidgetType,
 } from '@/types';
 
@@ -14,7 +15,13 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   objectUniversalIdentifier?: string;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
   position?: PageLayoutWidgetPosition;
+  heightBehavior?: `${PageLayoutWidgetVerticalListHeightBehavior}`;
   configuration: PageLayoutWidgetUniversalConfiguration;
+};
+
+export type StandalonePageLayoutWidgetManifest = PageLayoutWidgetManifest & {
+  pageLayoutTabUniversalIdentifier: string;
+  position: PageLayoutWidgetPosition;
 };
 
 export type PageLayoutTabManifest = SyncableEntityOptions & {

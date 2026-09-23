@@ -4,7 +4,7 @@ import { useCallRecordingWidgetRestriction } from '@/page-layout/widgets/call-re
 import { type CallRecordingWidgetKind } from '@/page-layout/widgets/call-recording/types/CallRecordingWidgetKind';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
   type RecordGqlOperationGqlRecordFields,
@@ -43,12 +43,22 @@ export const useCallRecordingForWidget = ({
     refetchCallRecordingId,
   } = useCallRecordingIdForWidget({ skip: shouldSkipQuery });
 
-  // The transcript widget plays the video, but requesting a field the role
+  const isVideoRestricted = isFieldRestricted('video');
+  const isAudioRestricted = isFieldRestricted('audio');
+
+  // The transcript widget plays media, but requesting a field the role
   // cannot read fails the whole query.
-  const recordGqlFields =
-    kind === 'transcript' && !isFieldRestricted('video')
-      ? CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS_WITH_VIDEO
-      : CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND[kind];
+  const recordGqlFields = useMemo(
+    () =>
+      kind === 'transcript'
+        ? {
+            ...CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND.transcript,
+            ...(!isVideoRestricted && { video: true }),
+            ...(!isAudioRestricted && { audio: true }),
+          }
+        : CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND[kind],
+    [kind, isVideoRestricted, isAudioRestricted],
+  );
 
   const {
     record: callRecording,
@@ -79,11 +89,4 @@ export const useCallRecordingForWidget = ({
     restriction,
     refetchCallRecording,
   };
-};
-
-// Selected between stable maps so the query hook's memoised fields do not
-// change identity on every render.
-const CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS_WITH_VIDEO = {
-  ...CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND.transcript,
-  video: true,
 };

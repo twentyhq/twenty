@@ -9,8 +9,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/input';
-import { MenuItemMultiSelect } from 'twenty-ui/navigation';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ConfigVariableType } from '~/generated-admin/graphql';
 import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
@@ -136,17 +136,20 @@ export const ConfigVariableDatabaseInput = ({
               }
               dropdownComponents={
                 <DropdownContent>
-                  <DropdownMenuItemsContainer>
+                  <DropdownMenuItemsContainer isMultiSelect>
                     {selectOptions.map((option) => (
-                      <MenuItemMultiSelect
+                      <ListItem
+                        render={<button type="button" />}
                         key={option.value}
-                        text={option.label}
-                        selected={isValueSelected(option.value)}
                         className="config-variable-array-menu-item-multi-select"
-                        onSelectChange={() =>
-                          handleMultiSelectChange(option.value)
-                        }
-                      />
+                        role="option"
+                        aria-selected={isValueSelected(option.value)}
+                        selected={isValueSelected(option.value)}
+                        indicator="checkbox"
+                        onClick={() => handleMultiSelectChange(option.value)}
+                      >
+                        {option.label}
+                      </ListItem>
                     ))}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

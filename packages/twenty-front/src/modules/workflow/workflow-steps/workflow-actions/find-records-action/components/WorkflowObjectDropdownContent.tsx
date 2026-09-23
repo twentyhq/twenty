@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -9,9 +10,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useState } from 'react';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type WorkflowObjectDropdownContentProps = {
   dropdownId: string;
@@ -74,12 +73,9 @@ export const WorkflowObjectDropdownContent = ({
     (objectMetadataItem) => objectMetadataItem.nameSingular,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const handleSearchInputChange = (
@@ -108,14 +104,15 @@ export const WorkflowObjectDropdownContent = ({
               itemId={objectMetadataItem.nameSingular}
               onEnter={() => onOptionClick(objectMetadataItem.nameSingular)}
             >
-              <MenuItem
+              <ListItem
                 focused={selectedItemId === objectMetadataItem.nameSingular}
-                LeftIcon={() => (
+                startIcon={
                   <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-                )}
-                text={objectMetadataItem.labelPlural}
+                }
                 onClick={() => onOptionClick(objectMetadataItem.nameSingular)}
-              />
+              >
+                {objectMetadataItem.labelPlural}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

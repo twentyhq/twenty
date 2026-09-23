@@ -1,14 +1,17 @@
-import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import { useDiscardWorkspaceWorkflowDraft } from '@/workflow/hooks/useDiscardWorkspaceWorkflowDraft';
 import { isDefined } from 'twenty-shared/utils';
 
-export const DiscardDraftWorkflowSingleRecordCommand = () => {
+import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { useDiscardCoreWorkflowDraft } from '@/object-core/workflows/hooks/useDiscardCoreWorkflowDraft';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+
+const DiscardCoreWorkflowDraftCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
-  const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
+  const { discardCoreWorkflowDraft } = useDiscardCoreWorkflowDraft();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId ?? '',
   );
@@ -22,8 +25,8 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
       return;
     }
 
-    deleteOneWorkflowVersion({
-      workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+    return discardCoreWorkflowDraft({
+      coreWorkflowVersionId: workflowWithCurrentVersion.currentVersion.id,
     });
   };
 
@@ -32,5 +35,33 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
       execute={handleExecute}
       ready={isDefined(workflowWithCurrentVersion)}
     />
+  );
+};
+
+const DiscardWorkspaceWorkflowDraftCommand = () => {
+  const { selectedRecords } = useHeadlessCommandContextApi();
+  const workflow = useWorkflowWithCurrentVersion(selectedRecords[0]?.id);
+  const { discardWorkspaceWorkflowDraft } = useDiscardWorkspaceWorkflowDraft();
+
+  return (
+    <HeadlessEngineCommandWrapperEffect
+      ready={isDefined(workflow)}
+      execute={() =>
+        isDefined(workflow)
+          ? discardWorkspaceWorkflowDraft({
+              workspaceWorkflowVersionId: workflow.currentVersion.id,
+            })
+          : undefined
+      }
+    />
+  );
+};
+
+export const DiscardDraftWorkflowSingleRecordCommand = () => {
+  const isCore = useIsWorkflowCoreEnabled();
+  return isCore ? (
+    <DiscardCoreWorkflowDraftCommand />
+  ) : (
+    <DiscardWorkspaceWorkflowDraftCommand />
   );
 };

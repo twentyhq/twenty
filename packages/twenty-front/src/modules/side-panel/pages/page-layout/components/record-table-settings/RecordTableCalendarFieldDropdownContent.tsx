@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
@@ -9,9 +10,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type RecordTableCalendarFieldDropdownContentProps = {
   pageLayoutId: string;
@@ -38,12 +38,9 @@ export const RecordTableCalendarFieldDropdownContent = ({
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const { closeDropdown } = useCloseDropdown();
@@ -75,16 +72,24 @@ export const RecordTableCalendarFieldDropdownContent = ({
               closeDropdown();
             }}
           >
-            <MenuItemSelect
-              text={fieldMetadataItem.label}
-              LeftIcon={getIcon(fieldMetadataItem.icon)}
-              selected={currentCalendarFieldMetadataId === fieldMetadataItem.id}
+            <ListItem
               focused={selectedItemId === fieldMetadataItem.id}
               onClick={() => {
                 handleCalendarFieldChange(fieldMetadataItem);
                 closeDropdown();
               }}
-            />
+              role="option"
+              aria-selected={
+                currentCalendarFieldMetadataId === fieldMetadataItem.id
+              }
+              selected={currentCalendarFieldMetadataId === fieldMetadataItem.id}
+              indicator="check"
+              startIcon={
+                <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+              }
+            >
+              {fieldMetadataItem.label}
+            </ListItem>
           </SelectableListItem>
         ))}
       </SelectableList>

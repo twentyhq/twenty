@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
@@ -24,8 +25,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
@@ -42,9 +43,8 @@ import {
   IconUnlink,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
-import { AnimatedEaseInOut } from 'twenty-ui/layout';
+import { LightIconButton } from 'twenty-ui/components';
+import { AnimatedEaseInOut } from 'twenty-ui/primitives/layout';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const StyledClickableZone = styled.div`
@@ -85,7 +85,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const { onSubmit } = useContext(FieldInputEventContext);
 
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const { relationType, objectMetadataNameSingular } =
     fieldDefinition.metadata as FieldRelationMetadata;
@@ -188,7 +188,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const handleDelete = async () => {
     closeDropdown(dropdownInstanceId);
-    openModal(getDeleteRelationModalId(relationRecord.id));
+    openDialog(getDeleteRelationModalId(relationRecord.id));
   };
 
   const handleConfirmDelete = async () => {
@@ -224,9 +224,11 @@ export const RecordDetailRelationRecordsListItem = ({
         <StyledClickableZone onClick={handleClick} data-testid="expand-button">
           <LightIconButton
             className="displayOnHover"
-            Icon={AnimatedIconChevronDown}
-            accent="tertiary"
-          />
+            emphasis="subtle"
+            aria-label={t`Expand relation`}
+          >
+            <AnimatedIconChevronDown />
+          </LightIconButton>
         </StyledClickableZone>
         {!parentIsRecordFieldReadOnly && (
           <Dropdown
@@ -235,26 +237,26 @@ export const RecordDetailRelationRecordsListItem = ({
             clickableComponent={
               <LightIconButton
                 className="displayOnHover"
-                Icon={IconDotsVertical}
-                accent="tertiary"
-              />
+                emphasis="subtle"
+                aria-label={t`More options`}
+              >
+                <IconDotsVertical />
+              </LightIconButton>
             }
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconUnlink}
-                    text={t`Detach`}
+                  <ListItem
+                    startIcon={<IconUnlink />}
                     onClick={handleDetach}
-                  />
+                  >{t`Detach`}</ListItem>
                   {!isAccountOwnerRelation &&
                     relationObjectPermissions.canSoftDeleteObjectRecords && (
-                      <MenuItem
-                        LeftIcon={IconTrash}
-                        text={t`Delete`}
-                        accent="danger"
+                      <ListItem
+                        startIcon={<IconTrash />}
+                        color="danger"
                         onClick={handleDelete}
-                      />
+                      >{t`Delete`}</ListItem>
                     )}
                 </DropdownMenuItemsContainer>
               </DropdownContent>
@@ -274,8 +276,8 @@ export const RecordDetailRelationRecordsListItem = ({
         />
       </AnimatedEaseInOut>
       {createPortal(
-        <ConfirmationModal
-          modalInstanceId={getDeleteRelationModalId(relationRecord.id)}
+        <ConfirmationDialog
+          dialogId={getDeleteRelationModalId(relationRecord.id)}
           title={t`Delete Related ${relationObjectLabelSingular}`}
           subtitle={
             <Trans>

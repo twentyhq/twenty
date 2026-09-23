@@ -29,7 +29,7 @@ export const FEATURE_TILES: FeatureTile[] = [
     ],
   },
   {
-    category: msg`Email & Calendar`,
+    category: msg`Emails & Calendar`,
     heading: msg`Every thread, on the right record.`,
     description: msg`Connect Google or Microsoft accounts and see emails and events linked to CRM records automatically.`,
     visual: 'emails',

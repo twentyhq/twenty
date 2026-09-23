@@ -127,8 +127,10 @@ describe('buildTimelineActivityTypeResolution', () => {
           noteLinked: {
             ...noteLinkedTimelineActivityType,
             overrides: {
-              label: 'Added a note',
-              icon: 'IconPencil',
+              '20202020-aaaa-4aaa-8aaa-000000000001': {
+                label: 'Added a note',
+                icon: 'IconPencil',
+              },
             },
           },
         },

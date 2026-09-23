@@ -5,6 +5,7 @@ import {
   ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -25,6 +26,8 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isUIEditable?: boolean;
   isUICreatable?: boolean;
   writability?: MetadataWritability;
+  readability?: MetadataReadability;
+  readabilityParentFieldMetadataNames?: AllStandardObjectFieldName<O>[];
   openRecordIn?: ObjectOpenRecordIn;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
@@ -37,6 +40,21 @@ export type CreateStandardObjectArgs<
 > = StandardBuilderArgs<'objectMetadata'> & {
   objectName: O;
   context: CreateStandardObjectContext<O>;
+};
+
+const getStandardFieldUniversalIdentifier = <O extends AllStandardObjectName>({
+  objectName,
+  fieldName,
+}: {
+  objectName: O;
+  fieldName: AllStandardObjectFieldName<O>;
+}): string => {
+  const standardObjectFields: Record<
+    PropertyKey,
+    { universalIdentifier: string }
+  > = STANDARD_OBJECTS[objectName].fields;
+
+  return standardObjectFields[fieldName].universalIdentifier;
 };
 
 export const createStandardObjectFlatMetadata = <
@@ -56,6 +74,8 @@ export const createStandardObjectFlatMetadata = <
     isUIEditable = true,
     isUICreatable = true,
     writability = MetadataWritability.OPEN,
+    readability = MetadataReadability.OPEN,
+    readabilityParentFieldMetadataNames,
     openRecordIn = ObjectOpenRecordIn.USER_CHOICE,
     shortcut = null,
     duplicateCriteria = null,
@@ -68,18 +88,30 @@ export const createStandardObjectFlatMetadata = <
   now,
 }: CreateStandardObjectArgs<O>): FlatObjectMetadata => {
   const labelIdentifierFieldMetadataUniversalIdentifier =
-    // @ts-expect-error ignore
-    STANDARD_OBJECTS[nameSingular as keyof typeof STANDARD_OBJECTS].fields[
-      labelIdentifierFieldMetadataName
-    ].universalIdentifier;
+    getStandardFieldUniversalIdentifier({
+      objectName: nameSingular,
+      fieldName: labelIdentifierFieldMetadataName,
+    });
 
   const imageIdentifierFieldMetadataUniversalIdentifier =
     imageIdentifierFieldMetadataName
-      ? // @ts-expect-error ignore
-        STANDARD_OBJECTS[nameSingular as keyof typeof STANDARD_OBJECTS].fields[
-          imageIdentifierFieldMetadataName
-        ].universalIdentifier
+      ? getStandardFieldUniversalIdentifier({
+          objectName: nameSingular,
+          fieldName: imageIdentifierFieldMetadataName,
+        })
       : null;
+
+  const readabilityParentFieldUniversalIdentifiers = isDefined(
+    readabilityParentFieldMetadataNames,
+  )
+    ? readabilityParentFieldMetadataNames.map(
+        (readabilityParentFieldMetadataName) =>
+          getStandardFieldUniversalIdentifier({
+            objectName: nameSingular,
+            fieldName: readabilityParentFieldMetadataName,
+          }),
+      )
+    : null;
 
   return {
     universalIdentifier,
@@ -100,7 +132,8 @@ export const createStandardObjectFlatMetadata = <
     isUIEditable,
     isUICreatable,
     writability,
-    readability: MetadataReadability.OPEN,
+    readability,
+    readabilityParentFieldUniversalIdentifiers,
     openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,
@@ -119,6 +152,7 @@ export const createStandardObjectFlatMetadata = <
     fieldIds: [],
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
+    navigationMenuItemIds: [],
     commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
@@ -136,6 +170,7 @@ export const createStandardObjectFlatMetadata = <
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
     pageLayoutUniversalIdentifiers: [],
+    navigationMenuItemUniversalIdentifiers: [],
     commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,

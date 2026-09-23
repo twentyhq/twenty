@@ -32,13 +32,14 @@ import { BillingProductService } from 'src/engine/core-modules/billing/services/
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingCreditAllowanceProvider } from 'src/engine/core-modules/billing/services/billing-credit-allowance-provider.service';
+import { BillingRecordSharingEntitlementProvider } from 'src/engine/core-modules/billing/services/billing-record-sharing-entitlement-provider.service';
 import { BillingUsageLimitEntitlementProvider } from 'src/engine/core-modules/billing/services/billing-usage-limit-entitlement-provider.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
+import { WorkspaceBillingEntitlementsCacheModule } from 'src/engine/core-modules/billing/workspace-billing-entitlements-cache.module';
 import { WorkspaceCurrentBillingSubscriptionCacheService } from 'src/engine/core-modules/billing/services/workspace-current-billing-subscription-cache.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -65,6 +66,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MessageQueueModule,
     PermissionsModule,
     WorkspaceCacheModule,
+    WorkspaceBillingEntitlementsCacheModule,
     WorkspaceDomainsModule,
     TypeOrmModule.forFeature([
       BillingSubscriptionEntity,
@@ -101,8 +103,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,
     BillingUsageService,
-    BillingUsageCacheService,
     BillingCreditAllowanceProvider,
+    BillingRecordSharingEntitlementProvider,
     BillingUsageLimitEntitlementProvider,
     BillingPriceService,
     BillingCreditRolloverService,
@@ -124,7 +126,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingPortalWorkspaceService,
     BillingService,
     BillingUsageService,
-    BillingUsageCacheService,
     BillingCreditRolloverService,
     BillingCreditGrantService,
     BillingCreditService,

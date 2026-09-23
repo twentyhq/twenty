@@ -1,6 +1,6 @@
 import { WidgetActionCallRecordingSeeAll } from '@/page-layout/widgets/call-recording/components/WidgetActionCallRecordingSeeAll';
 import { useCallRecordingForWidget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForWidget';
-import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
+import { getCallRecordingPlaybackMedia } from '@/page-layout/widgets/call-recording/utils/getCallRecordingPlaybackMedia';
 import { buildCallRecordingTranscriptPlainText } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptPlainText';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { t } from '@lingui/core/macro';
@@ -33,7 +33,7 @@ export const WidgetActionCallRecordingTranscript = () => {
     ? buildCallRecordingTranscriptPlainText(transcriptEntries)
     : undefined;
 
-  const videoFileUrl = getCallRecordingVideoFileUrl(
+  const playbackMedia = getCallRecordingPlaybackMedia(
     canExposeCallRecording ? callRecording : undefined,
   );
 
@@ -51,12 +51,16 @@ export const WidgetActionCallRecordingTranscript = () => {
           }
         />
       )}
-      {isDefined(videoFileUrl) && (
+      {isDefined(playbackMedia) && (
         <WidgetCardHeaderActionButton
           Icon={IconLink}
-          label={t`Copy video download link`}
+          label={
+            playbackMedia.kind === 'video'
+              ? t`Copy video download link`
+              : t`Copy audio download link`
+          }
           onClick={() =>
-            copyToClipboard(videoFileUrl, t`Link copied to clipboard`)
+            copyToClipboard(playbackMedia.url, t`Link copied to clipboard`)
           }
         />
       )}

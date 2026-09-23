@@ -1,6 +1,7 @@
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
+import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -114,7 +115,7 @@ export const WorkflowEditActionAiAgent = ({
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId),
+    componentInstanceId,
   );
   const currentTabId =
     (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
@@ -173,44 +174,47 @@ export const WorkflowEditActionAiAgent = ({
   return agentLoading || !isCurrentAgentLoaded ? (
     <SidePanelSkeletonLoader />
   ) : (
-    <>
+    <TabListRoot componentInstanceId={componentInstanceId}>
       <StyledTabListContainer>
         <TabList
+          aria-label={t`Agent configuration`}
           tabs={tabs}
           componentInstanceId={componentInstanceId}
           behaveAsLinks={false}
         />
       </StyledTabListContainer>
-      {currentTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS ? (
-        <WorkflowStepBody paddingBlock="0" paddingInline="0">
-          <WorkflowAiAgentPermissionsTab
-            action={action}
-            readonly={actionOptions.readonly === true}
-            isAgentLoading={agentLoading}
-            refetchAgent={refetchAgent}
-          />
-        </WorkflowStepBody>
-      ) : (
-        <WorkflowStepBody>
-          <WorkflowAiAgentPromptTab
-            action={action}
-            prompt={prompt}
-            readonly={actionOptions.readonly === true}
-            onPromptChange={handleAgentPromptChange}
-            onActionUpdate={
-              actionOptions.readonly === true
-                ? undefined
-                : actionOptions.onActionUpdate
-            }
-          />
-        </WorkflowStepBody>
-      )}
+      <WorkflowStepTabPanel value={currentTabId}>
+        {currentTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS ? (
+          <WorkflowStepBody paddingBlock="0" paddingInline="0">
+            <WorkflowAiAgentPermissionsTab
+              action={action}
+              readonly={actionOptions.readonly === true}
+              isAgentLoading={agentLoading}
+              refetchAgent={refetchAgent}
+            />
+          </WorkflowStepBody>
+        ) : (
+          <WorkflowStepBody>
+            <WorkflowAiAgentPromptTab
+              action={action}
+              prompt={prompt}
+              readonly={actionOptions.readonly === true}
+              onPromptChange={handleAgentPromptChange}
+              onActionUpdate={
+                actionOptions.readonly === true
+                  ? undefined
+                  : actionOptions.onActionUpdate
+              }
+            />
+          </WorkflowStepBody>
+        )}
+      </WorkflowStepTabPanel>
       {!actionOptions.readonly && (
         <WorkflowStepFooter
           additionalActions={getFooterActions()}
           stepId={action.id}
         />
       )}
-    </>
+    </TabListRoot>
   );
 };

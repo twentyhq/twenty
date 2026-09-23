@@ -9,7 +9,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { ColorSample } from 'twenty-ui/data-display';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import {
   IconCheck,
   IconDotsVertical,
@@ -17,12 +17,8 @@ import {
   IconTrash,
   IconX,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import {
-  type ColorLabels,
-  MenuItem,
-  MenuItemSelectColor,
-} from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/components';
+import { ListItem, type ColorLabels } from 'twenty-ui/primitives/navigation';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
@@ -172,16 +168,20 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {MAIN_COLOR_NAMES.map((colorName) => (
-                <MenuItemSelectColor
+                <ListItem
                   key={colorName}
                   onClick={() => {
                     onChange({ ...option, color: colorName });
                     closeColorDropdown(SELECT_COLOR_DROPDOWN_ID);
                   }}
-                  color={colorName}
+                  role="option"
+                  aria-selected={colorName === option.color}
                   selected={colorName === option.color}
-                  colorLabels={colorLabels}
-                />
+                  indicator="check"
+                  startIcon={<ColorSample colorName={colorName} />}
+                >
+                  {colorLabels[colorName]}
+                </ListItem>
               ))}
             </DropdownMenuItemsContainer>
           </DropdownContent>
@@ -216,10 +216,12 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         clickableComponent={
           <StyledLightIconButtonContainer>
             <LightIconButton
-              accent="tertiary"
-              Icon={IconDotsVertical}
+              emphasis="subtle"
               disabled={shouldForbidRemoveAsDefault}
-            />
+              aria-label={t`More options`}
+            >
+              <IconDotsVertical />
+            </LightIconButton>
           </StyledLightIconButtonContainer>
         }
         dropdownComponents={
@@ -227,34 +229,31 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
             <DropdownContent>
               <DropdownMenuItemsContainer>
                 {isDefault ? (
-                  <MenuItem
-                    LeftIcon={IconX}
-                    text={t`Remove as default`}
+                  <ListItem
+                    startIcon={<IconX />}
                     onClick={() => {
                       onRemoveAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                     }}
-                  />
+                  >{t`Remove as default`}</ListItem>
                 ) : (
-                  <MenuItem
-                    LeftIcon={IconCheck}
-                    text={t`Set as default`}
+                  <ListItem
+                    startIcon={<IconCheck />}
                     onClick={() => {
                       onSetAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                     }}
-                  />
+                  >{t`Set as default`}</ListItem>
                 )}
                 {!!onRemove && !isDefault && (
-                  <MenuItem
-                    accent="danger"
-                    LeftIcon={IconTrash}
-                    text={t`Remove option`}
+                  <ListItem
+                    color="danger"
+                    startIcon={<IconTrash />}
                     onClick={() => {
                       onRemove();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                     }}
-                  />
+                  >{t`Remove option`}</ListItem>
                 )}
               </DropdownMenuItemsContainer>
             </DropdownContent>

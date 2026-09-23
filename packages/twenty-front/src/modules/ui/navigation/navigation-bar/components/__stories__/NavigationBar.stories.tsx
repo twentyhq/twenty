@@ -6,7 +6,7 @@ import {
   IconSearch,
   IconSettings,
 } from 'twenty-ui/icon';
-import { NavigationBar } from 'twenty-ui/navigation';
+import { NavigationBar } from 'twenty-ui/primitives/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 

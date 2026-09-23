@@ -17,6 +17,20 @@ export default defineConfig({
     projects: [
       {
         extends: './vite.config.ts',
+        test: {
+          name: 'unit',
+          environment: 'jsdom',
+          globals: true,
+          include: [
+            'src/**/*.{test,spec}.{ts,tsx}',
+            'design-tokens/**/*.{test,spec}.{ts,tsx}',
+          ],
+          setupFiles: ['./setupTests.ts'],
+          css: { modules: { classNameStrategy: 'non-scoped' } },
+        },
+      },
+      {
+        extends: './vite.config.ts',
         plugins: [
           storybookTest({
             configDir: path.join(dirname, '.storybook'),

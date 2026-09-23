@@ -37,6 +37,7 @@ export default defineNavigationMenuItem({
 - The enum also contains `NavigationMenuItemType.RECORD`, used internally for user-created record favorites — it isn't usable from an app manifest (there is no field to reference a record).
 - `icon` and `color` are optional and customize how the entry looks.
 - `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
+- `yarn twenty pull` writes your navigation menu items back as `defineNavigationMenuItem()` files. An item a workspace member added to their own sidebar, and one pinned to a record, belong to that workspace rather than to your app and are reported instead; see [what pull does not write](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 <Note>
 **Common pitfall:** creating an object without an associated navigation menu item makes that object unreachable from the sidebar. Unless it's a technical/internal object, every custom object should have a sidebar entry pointing at it.

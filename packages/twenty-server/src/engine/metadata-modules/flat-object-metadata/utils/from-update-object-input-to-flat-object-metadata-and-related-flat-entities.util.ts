@@ -21,9 +21,11 @@ import {
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
   updateObjectInput: UpdateOneObjectInput;
+  workspaceCustomApplicationUniversalIdentifier: string;
 } & Pick<
   AllFlatEntityMaps,
   | 'flatIndexMaps'
@@ -43,6 +45,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     flatViewFieldMaps,
     flatViewMaps,
     flatSearchFieldMetadataMaps,
+    workspaceCustomApplicationUniversalIdentifier,
   }: FromUpdateObjectInputToFlatObjectMetadataArgs): FlatObjectMetadataUpdateSideEffects & {
     flatObjectMetadataToUpdate: UniversalFlatObjectMetadata;
   } => {
@@ -102,7 +105,13 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
         );
       }
 
-      if (!imageIdentifierFlatFieldMetadata.isActive) {
+      if (
+        !resolveEffectiveFlatEntityProperty({
+          metadataName: 'fieldMetadata',
+          flatEntity: imageIdentifierFlatFieldMetadata,
+          property: 'isActive',
+        })
+      ) {
         throw new ObjectMetadataException(
           'Field cannot be used as image identifier because it is deactivated',
           ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -117,6 +126,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       sanitizeRawUpdateObjectInput({
         existingFlatObjectMetadata,
         rawUpdateObjectInput,
+        workspaceCustomApplicationUniversalIdentifier,
       });
 
     const toFlatObjectMetadata = {

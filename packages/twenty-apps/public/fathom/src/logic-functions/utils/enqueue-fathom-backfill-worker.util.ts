@@ -1,5 +1,5 @@
 import { FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { enqueueFathomJobOrThrow } from 'src/logic-functions/utils/enqueue-fathom-job-or-throw.util';
+import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
 
 export const enqueueFathomBackfillWorker = async ({
   connectedAccountId,
@@ -8,8 +8,8 @@ export const enqueueFathomBackfillWorker = async ({
   connectedAccountId: string;
   days: number;
 }): Promise<void> =>
-  enqueueFathomJobOrThrow({
+  enqueueFathomJobsOrThrow({
     logicFunctionUniversalIdentifier:
       FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
-    payload: { connectedAccountId, days },
+    payloads: [{ connectedAccountId, days }],
   });

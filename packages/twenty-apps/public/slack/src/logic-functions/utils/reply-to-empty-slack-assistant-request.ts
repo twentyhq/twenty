@@ -1,9 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { SLACK_ASSISTANT_EMPTY_REQUEST_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-request-text';
-import { SLACK_ASSISTANT_EMPTY_THREAD_REQUEST_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-thread-request-text';
 import { type SlackAssistantEmptyRequest } from 'src/logic-functions/types/slack-assistant-empty-request.type';
 import { type SlackEventsEnqueueResult } from 'src/logic-functions/types/slack-events-enqueue-result.type';
+import { buildSlackAssistantEmptyRequestText } from 'src/logic-functions/utils/build-slack-assistant-empty-request-text';
 import { claimSlackEmptyRequestReply } from 'src/logic-functions/utils/claim-slack-empty-request-reply';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { postSlackMessage } from 'src/logic-functions/utils/post-slack-message';
@@ -33,9 +32,10 @@ export const replyToEmptySlackAssistantRequest = async (
 
   const replyResult = await postSlackMessage(slackClientResult.client, {
     slackChannelId: emptyRequest.slackChannelId,
-    messageText: emptyRequest.isInExistingThread
-      ? SLACK_ASSISTANT_EMPTY_THREAD_REQUEST_TEXT
-      : SLACK_ASSISTANT_EMPTY_REQUEST_TEXT,
+    messageText: buildSlackAssistantEmptyRequestText({
+      sharedFileNames: emptyRequest.sharedFileNames,
+      isInExistingThread: emptyRequest.isInExistingThread,
+    }),
     parentMessageTimestamp: emptyRequest.parentMessageTimestamp,
     messageFormat: 'markdown',
   });

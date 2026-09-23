@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { MetadataReadability, ObjectRecord } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   Brackets,
   FindOptionsRelations,
@@ -46,6 +46,8 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
+import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -60,7 +62,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 > {
   protected readonly operationName = CommonQueryNames.CREATE_MANY;
 
-  constructor(private readonly recordPositionService: RecordPositionService) {
+  constructor(
+    private readonly recordPositionService: RecordPositionService,
+    private readonly shareWithService: ShareWithService,
+  ) {
     super();
   }
 
@@ -68,15 +73,34 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
+    const isPrivateObject =
+      queryRunnerContext.flatObjectMetadata.readability ===
+      MetadataReadability.PRIVATE;
+    const isGatedThroughRecordShares =
+      isPrivateObject ||
+      queryRunnerContext.flatObjectMetadata.readability ===
+        MetadataReadability.INHERITED;
+
+    // An inherited record is reachable through its parent, so shareWith stays
+    // optional there and is checked only when given
+    if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
+      await this.shareWithService.validateShareWithOrThrow({
+        authContext: queryRunnerContext.authContext,
+        isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
+        shareWith: args.shareWith,
+      });
+    }
+
     if (
       !isDefined(queryRunnerContext.transactionScope) &&
-      containsNestedRelationCreate(
-        args.data,
-        getNestedRelationFieldNames({
-          flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-          flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-        }),
-      )
+      (isGatedThroughRecordShares ||
+        containsNestedRelationCreate(
+          args.data,
+          getNestedRelationFieldNames({
+            flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+          }),
+        ))
     ) {
       return this.workspaceOrmManager.runInWorkspaceTransaction(
         (transactionScope) =>
@@ -135,7 +159,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      repository,
+      repository:
+        isGatedThroughRecordShares &&
+        isDefined(queryRunnerContext.transactionScope)
+          ? queryRunnerContext.transactionScope.getRepository(
+              flatObjectMetadata.nameSingular,
+              { shouldBypassPermissionChecks: true },
+            )
+          : repository,
       selectedFieldsResult: args.selectedFieldsResult,
     });
 
@@ -268,14 +299,23 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
       const writeRepository = this.getWriteRepository(queryRunnerContext);
 
-      return writeRepository.runInsert({
+      const insertResult = await writeRepository.runInsert({
         records: await this.resolveNestedRelationsForCreate({
           records: args.data,
+          shareWith: args.shareWith,
           queryRunnerContext,
           writeRepository,
         }),
         columnsToReturn: selectedColumns,
       });
+
+      await this.insertRecordShares({
+        insertResult,
+        shareWith: args.shareWith,
+        queryRunnerContext,
+      });
+
+      return insertResult;
     }
 
     return this.performUpsertOperation({
@@ -359,6 +399,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatFieldMetadataMaps,
         result,
         columnsToReturn,
+        shareWith: args.shareWith,
         queryRunnerContext,
       });
     }
@@ -367,6 +408,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       recordsToInsert: recordsToInsertWithPosition,
       result,
       columnsToReturn,
+      shareWith: args.shareWith,
       queryRunnerContext,
     });
 
@@ -469,6 +511,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps,
     result,
     columnsToReturn,
+    shareWith,
     queryRunnerContext,
   }: {
     partialRecordsToUpdate: PartialObjectRecordWithId[];
@@ -476,6 +519,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     result: InsertResult;
     columnsToReturn: string[];
+    shareWith?: ShareWithInput[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
     const updateInputs = partialRecordsToUpdate
@@ -494,6 +538,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const writeRepository = this.getWriteRepository(queryRunnerContext);
     const resolvedData = await this.resolveNestedRelationsForCreate({
       records: updateInputs.map((input) => input.data),
+      shareWith,
       queryRunnerContext,
       writeRepository,
     });
@@ -518,11 +563,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     recordsToInsert,
     result,
     columnsToReturn,
+    shareWith,
     queryRunnerContext,
   }: {
     recordsToInsert: Partial<ObjectRecord>[];
     result: InsertResult;
     columnsToReturn: string[];
+    shareWith?: ShareWithInput[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
     if (recordsToInsert.length === 0) {
@@ -534,10 +581,17 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const insertResult = await writeRepository.runInsert({
       records: await this.resolveNestedRelationsForCreate({
         records: recordsToInsert,
+        shareWith,
         queryRunnerContext,
         writeRepository,
       }),
       columnsToReturn,
+    });
+
+    await this.insertRecordShares({
+      insertResult,
+      shareWith,
+      queryRunnerContext,
     });
 
     result.identifiers.push(...insertResult.identifiers);
@@ -545,12 +599,63 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     result.raw.push(...insertResult.raw);
   }
 
+  private async insertRecordShares({
+    insertResult,
+    shareWith,
+    queryRunnerContext,
+  }: {
+    insertResult: InsertResult;
+    shareWith?: ShareWithInput[];
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+  }): Promise<void> {
+    const { authContext, flatObjectMetadata, repository, transactionScope } =
+      queryRunnerContext;
+
+    if (!this.shouldInsertRecordSharesForCreatedRecords(queryRunnerContext)) {
+      return;
+    }
+
+    await this.shareWithService.insertRecordSharesForCreatedRecords({
+      authContext,
+      objectMetadataId: flatObjectMetadata.id,
+      recordIds: insertResult.generatedMaps.map((record) => record.id),
+      apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
+      isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
+      shareWith,
+      transactionScope,
+    });
+  }
+
+  private shouldInsertRecordSharesForCreatedRecords(
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): boolean {
+    switch (queryRunnerContext.flatObjectMetadata.readability) {
+      case MetadataReadability.PRIVATE:
+        return true;
+      // An inherited record gets its creator's share row like a PRIVATE one,
+      // but one created while the flag is off must keep following its parent
+      // once the flag turns on instead of becoming readable by everyone
+      case MetadataReadability.INHERITED:
+        return this.isRecordSharingEnabled(queryRunnerContext);
+      default:
+        return false;
+    }
+  }
+
+  private isRecordSharingEnabled(
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): boolean {
+    return queryRunnerContext.isRecordSharingEnabled;
+  }
+
   private resolveNestedRelationsForCreate({
     records,
+    shareWith,
     queryRunnerContext,
     writeRepository,
   }: {
     records: Partial<ObjectRecord>[];
+    shareWith?: ShareWithInput[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     writeRepository: WorkspaceRepository;
   }): Promise<Partial<ObjectRecord>[]> {
@@ -591,6 +696,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         const { results } = await this.execute(
           {
             data: targetRecords,
+            shareWith,
             selectedFields: { id: true },
           },
           {

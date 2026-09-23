@@ -14,11 +14,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconShield } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();
@@ -49,28 +48,28 @@ export const SettingsProfile = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title title={t`Picture`} />
+        <Section.Root>
+          <Section.Header title={t`Picture`} />
           <WorkspaceMemberPictureUploader
             workspaceMemberId={currentWorkspaceMember.id}
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Name`}
             description={t`Your name as it will be displayed`}
           />
           <NameFields key={currentWorkspaceMember.id} />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Email`}
             description={t`The email associated to your account`}
           />
           <EmailField />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Two Factor Authentication`}
             description={t`Enhances security by requiring a code along with your password`}
           />
@@ -85,23 +84,23 @@ export const SettingsProfile = () => {
               Icon={<IconShield />}
               Status={
                 has2FAMethod ? (
-                  <Status text={t`Active`} color="turquoise" />
+                  <Status color="turquoise">{t`Active`}</Status>
                 ) : (
-                  <Status text={t`Deactivated`} color="gray" />
+                  <Status color="gray">{t`Deactivated`}</Status>
                 )
               }
             />
           </UndecoratedLink>
-        </Section>
+        </Section.Root>
         {canChangePassword && (
-          <Section>
+          <Section.Root>
             <SetOrChangePassword />
-          </Section>
+          </Section.Root>
         )}
         <SettingsProfileDevicesSection />
-        <Section>
+        <Section.Root>
           <DeleteAccount />
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

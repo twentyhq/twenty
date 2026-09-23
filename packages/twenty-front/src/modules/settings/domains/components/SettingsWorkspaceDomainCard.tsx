@@ -7,9 +7,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconWorld, IconWorldWww } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -52,9 +52,9 @@ export const SettingsWorkspaceDomainCard = () => {
             Status={
               currentWorkspace?.customDomain &&
               currentWorkspace?.isCustomDomainEnabled ? (
-                <Status text={t`Active`} color="turquoise" />
+                <Status color="turquoise">{t`Active`}</Status>
               ) : currentWorkspace?.customDomain ? (
-                <Status text={t`Inactive`} color="orange" />
+                <Status color="orange">{t`Inactive`}</Status>
               ) : undefined
             }
           />

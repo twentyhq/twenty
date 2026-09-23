@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
@@ -18,11 +19,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const RecordTableDataSourceDropdownContent = () => {
@@ -40,12 +40,9 @@ export const RecordTableDataSourceDropdownContent = () => {
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const { updateCurrentWidgetConfig } =
@@ -142,17 +139,29 @@ export const RecordTableDataSourceDropdownContent = () => {
                 handleSelectSource(objectMetadataItem.id);
               }}
             >
-              <MenuItemSelect
-                text={objectMetadataItem.labelPlural}
-                selected={currentObjectMetadataItemId === objectMetadataItem.id}
+              <ListItem
                 focused={selectedItemId === objectMetadataItem.id}
-                LeftIcon={() => (
-                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-                )}
                 onClick={() => {
                   handleSelectSource(objectMetadataItem.id);
                 }}
-              />
+                role="option"
+                aria-selected={
+                  currentObjectMetadataItemId === objectMetadataItem.id
+                }
+                selected={currentObjectMetadataItemId === objectMetadataItem.id}
+                indicator="check"
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={() => (
+                      <ObjectMetadataIcon
+                        objectMetadataItem={objectMetadataItem}
+                      />
+                    )}
+                  />
+                }
+              >
+                {objectMetadataItem.labelPlural}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

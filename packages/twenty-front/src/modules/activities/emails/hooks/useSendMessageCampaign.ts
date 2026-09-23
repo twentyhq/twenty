@@ -1,20 +1,27 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 
 import { SEND_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/sendMessageCampaign';
 import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { plural, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { MessageCampaignStatus } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   type SendMessageCampaignMutation,
   type SendMessageCampaignMutationVariables,
 } from '~/generated-metadata/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 type SendMessageCampaignParams = {
   campaignId: string;
+  scheduledAt?: string;
+  wasAlreadyScheduled?: boolean;
 };
 
 export const useSendMessageCampaign = () => {
@@ -23,22 +30,29 @@ export const useSendMessageCampaign = () => {
     SendMessageCampaignMutationVariables
   >(SEND_MESSAGE_CAMPAIGN);
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { formatNumber } = useNumberFormat();
+  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const sendMessageCampaign = async ({
     campaignId,
+    scheduledAt,
+    wasAlreadyScheduled = false,
   }: SendMessageCampaignParams): Promise<boolean> => {
     try {
       const result = await sendMessageCampaignMutation({
-        variables: { input: { campaignId } },
+        variables: { input: { campaignId, scheduledAt } },
       });
 
       const queued = result.data?.sendMessageCampaign;
 
       if (!queued) {
-        enqueueErrorSnackBar({ message: t`Failed to send campaign` });
+        enqueueToast({
+          variant: 'error',
+          children: t`Failed to send campaign`,
+        });
 
         return false;
       }
@@ -50,7 +64,10 @@ export const useSendMessageCampaign = () => {
           {
             __typename: 'MessageCampaign',
             id: campaignId,
-            status: MessageCampaignStatus.SENDING,
+            status: isNonEmptyString(scheduledAt)
+              ? MessageCampaignStatus.SCHEDULED
+              : MessageCampaignStatus.SENDING,
+            scheduledAt: scheduledAt ?? null,
           },
         ],
       });
@@ -61,9 +78,25 @@ export const useSendMessageCampaign = () => {
         formatNumber,
       }).join(', ');
 
-      if (queuedCount === 0) {
-        enqueueErrorSnackBar({
-          message: t`No recipients to send to (${skipReasons})`,
+      if (isNonEmptyString(scheduledAt)) {
+        const sendTime = formatCampaignSendTime({
+          value: scheduledAt,
+          timeZone,
+          dateFormat,
+          timeFormat,
+          localeCatalog,
+        });
+
+        enqueueToast({
+          variant: 'success',
+          children: wasAlreadyScheduled
+            ? t`Campaign moved to ${sendTime}`
+            : t`Campaign scheduled for ${sendTime}`,
+        });
+      } else if (queuedCount === 0) {
+        enqueueToast({
+          variant: 'error',
+          children: t`No recipients to send to (${skipReasons})`,
         });
       } else {
         const queuedMessage = plural(queuedCount, {
@@ -71,8 +104,9 @@ export const useSendMessageCampaign = () => {
           other: `Campaign queued to ${formatNumber(queuedCount)} recipients`,
         });
 
-        enqueueSuccessSnackBar({
-          message:
+        enqueueToast({
+          variant: 'success',
+          children:
             skipReasons.length > 0
               ? t`${queuedMessage}, skipping ${skipReasons}`
               : queuedMessage,
@@ -81,9 +115,7 @@ export const useSendMessageCampaign = () => {
 
       return true;
     } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
 
       return false;
     }

@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,8 +12,7 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/components';
 
 type SettingsObjectInactiveMenuDropDownProps = {
   isCustomObject: boolean;
@@ -58,32 +58,32 @@ export const SettingsObjectInactiveMenuDropDown = ({
       clickableComponent={
         <LightIconButton
           aria-label={t`Inactive Object Options`}
-          Icon={IconDotsVertical}
-          accent="tertiary"
-        />
+          emphasis="subtle"
+        >
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              text={isEditable ? t`Edit` : t`View`}
-              LeftIcon={isEditable ? IconPencil : IconEye}
+            <ListItem
+              startIcon={isEditable ? <IconPencil /> : <IconEye />}
               onClick={handleEdit}
-            />
+            >
+              {isEditable ? t`Edit` : t`View`}
+            </ListItem>
             {!isReadOnly && (
-              <MenuItem
-                text={t`Activate`}
-                LeftIcon={IconArchiveOff}
+              <ListItem
+                startIcon={<IconArchiveOff />}
                 onClick={handleActivate}
-              />
+              >{t`Activate`}</ListItem>
             )}
             {isCustomObject && !isReadOnly && (
-              <MenuItem
-                text={t`Delete`}
-                LeftIcon={IconTrash}
-                accent="danger"
+              <ListItem
+                startIcon={<IconTrash />}
+                color="danger"
                 onClick={handleDelete}
-              />
+              >{t`Delete`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

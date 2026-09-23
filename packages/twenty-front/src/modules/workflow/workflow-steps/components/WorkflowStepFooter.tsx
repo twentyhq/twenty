@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
@@ -12,15 +13,13 @@ import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { IconLego, IconSettings, IconTrash, IconUsers } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const WorkflowStepFooter = ({
@@ -108,12 +107,9 @@ export const WorkflowStepFooter = ({
     }
   };
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const OptionsDropdown = (
@@ -135,35 +131,32 @@ export const WorkflowStepFooter = ({
             itemId={WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings}
             onEnter={handleNodeSettings}
           >
-            <MenuItem
+            <ListItem
               focused={
                 selectedItemId ===
                 WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.nodeSettings
               }
               onClick={handleNodeSettings}
-              text={t`Node settings`}
-              LeftIcon={IconSettings}
-            />
+              startIcon={<IconSettings />}
+            >{t`Node settings`}</ListItem>
           </SelectableListItem>
         ) : null}
         {hasViewAgentOption ? (
           <SelectableListItem itemId="view-agent" onEnter={handleViewAgent}>
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'view-agent'}
               onClick={handleViewAgent}
-              text={t`View Agent`}
-              LeftIcon={IconLego}
-            />
+              startIcon={<IconLego />}
+            >{t`View Agent`}</ListItem>
           </SelectableListItem>
         ) : null}
         {hasViewRoleOption ? (
           <SelectableListItem itemId="view-role" onEnter={handleViewRole}>
-            <MenuItem
+            <ListItem
               focused={selectedItemId === 'view-role'}
               onClick={handleViewRole}
-              text={t`View Role`}
-              LeftIcon={IconUsers}
-            />
+              startIcon={<IconUsers />}
+            >{t`View Role`}</ListItem>
           </SelectableListItem>
         ) : null}
       </WorkflowStepOptionsMenuItems>
@@ -172,15 +165,13 @@ export const WorkflowStepFooter = ({
 
   const deleteButton = (
     <Button
-      size="small"
-      title={t`Delete`}
+      size="sm"
       onClick={() => {
         deleteStep(stepId);
       }}
-      Icon={IconTrash}
-      accent="danger"
-      inverted
-    />
+      startIcon={<IconTrash />}
+      color="danger"
+    >{t`Delete`}</Button>
   );
 
   return (

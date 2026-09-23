@@ -16,9 +16,9 @@ import {
 import { type FathomBackfillWorkerPayload } from 'src/logic-functions/types/fathom-backfill-worker-payload.type';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { excludeDeletedFathomMeetings } from 'src/logic-functions/utils/exclude-deleted-fathom-meetings.util';
-import { enqueueFathomJobOrThrow } from 'src/logic-functions/utils/enqueue-fathom-job-or-throw.util';
+import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
 import { listFathomMeetingPage } from 'src/logic-functions/utils/list-fathom-meeting-page.util';
-import { reserveFathomBackfillBatchSlots } from 'src/logic-functions/utils/reserve-fathom-backfill-batch-slots.util';
+import { reserveFathomImportSlots } from 'src/logic-functions/utils/reserve-fathom-import-slots.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
 import { chunkIntoBatches } from 'src/utils/chunk-into-batches.util';
 
@@ -64,18 +64,17 @@ export const fathomBackfillWorkerHandler = async (
     importableMeetings,
     FATHOM_BACKFILL_BATCH_SIZE,
   );
-  const { batchDelays, continuationDelay } =
-    await reserveFathomBackfillBatchSlots({
-      connectedAccountId: payload.connectedAccountId,
-      batchCount: meetingBatches.length,
-    });
+  const { slotDelays, continuationDelay } = await reserveFathomImportSlots({
+    connectedAccountId: payload.connectedAccountId,
+    slotCount: meetingBatches.length,
+  });
 
   for (const [batchIndex, meetings] of meetingBatches.entries()) {
-    await enqueueFathomJobOrThrow({
+    await enqueueFathomJobsOrThrow({
       logicFunctionUniversalIdentifier:
         FATHOM_BACKFILL_BATCH_UNIVERSAL_IDENTIFIER,
-      payload: { connectedAccountId: payload.connectedAccountId, meetings },
-      delayMs: batchDelays[batchIndex],
+      payloads: [{ connectedAccountId: payload.connectedAccountId, meetings }],
+      delayMs: slotDelays[batchIndex],
     });
   }
 
@@ -93,15 +92,17 @@ export const fathomBackfillWorkerHandler = async (
   }
 
   if (hasMoreMeetings && !isPageBoundReached) {
-    await enqueueFathomJobOrThrow({
+    await enqueueFathomJobsOrThrow({
       logicFunctionUniversalIdentifier:
         FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
-      payload: {
-        connectedAccountId: payload.connectedAccountId,
-        createdAfter,
-        cursor: meetingPage.nextCursor,
-        pageIndex: pageIndex + 1,
-      },
+      payloads: [
+        {
+          connectedAccountId: payload.connectedAccountId,
+          createdAfter,
+          cursor: meetingPage.nextCursor,
+          pageIndex: pageIndex + 1,
+        },
+      ],
       delayMs: continuationDelay,
     });
   }

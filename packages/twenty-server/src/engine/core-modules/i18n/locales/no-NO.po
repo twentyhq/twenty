@@ -93,10 +93,10 @@ msgstr "{fieldType} felter kan ikke ha en standardverdi."
 msgid "{fullMessage}"
 msgstr "{fullMessage}"
 
-#. js-lingui-id: iEZavm
+#. js-lingui-id: 7PhDJp
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
-msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
-msgstr "{hostnameCount} vertsnavn funnet for domenet '{domainName}'. Forvent 1"
+msgid "{hostnameCount} hostnames found for domain \"{domainName}\". Expect 1"
+msgstr "{hostnameCount} vertsnavn funnet for domenet \"{domainName}\". Forvent 1."
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -174,10 +174,10 @@ msgstr "En duplisert oppføring ble oppdaget."
 msgid "A field with this name already exists."
 msgstr "Et felt med dette navnet finnes allerede."
 
-#. js-lingui-id: cWaEaJ
+#. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "A free development instance requires an active production instance on this enterprise subscription."
-msgstr "En gratis utviklingsinstans krever en aktiv produksjonsinstans på dette enterprise-abonnementet."
+msgid "A free development instance requires an active production instance on this Organization subscription."
+msgstr "En gratis utviklingsinstans krever en aktiv produksjonsinstans på abonnementet for denne organisasjonen."
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -492,6 +492,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Et arbeidsområdemedlem"
 
+#. js-lingui-id: ysZV7o
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "A workspace-wide blocklist entry cannot target a workspace member."
+msgstr "En blokkeringslisteoppføring for hele arbeidsområdet kan ikke målrette et arbeidsområdemedlem."
+
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -502,6 +507,12 @@ msgstr "Godtatt"
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 msgid "Access denied."
 msgstr ""
+
+#. js-lingui-id: Va0+qg
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Access level"
+msgstr "Tilgangsnivå"
 
 #. js-lingui-id: Bk+qoW
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -866,6 +877,12 @@ msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Apostrof og punktum"
 
+#. js-lingui-id: 5nw74G
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Application"
+msgstr "Applikasjon"
+
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Application cleanup is still in progress. Please try again."
@@ -1020,11 +1037,11 @@ msgctxt "fieldMetadata.label"
 msgid "Assignee"
 msgstr "Oppgavemottaker"
 
-#. js-lingui-id: AhhOBx
+#. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Associated User Id"
-msgstr "Tilknyttet Bruker-ID"
+msgid "Associated User ID"
+msgstr "Tilknyttet bruker-ID"
 
 #. js-lingui-id: IlaQdj
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -1218,10 +1235,10 @@ msgctxt "fieldMetadata.label"
 msgid "Avatar File"
 msgstr "Avatarfil"
 
-#. js-lingui-id: nWgj2z
+#. js-lingui-id: HYoTlQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Avatar Url"
+msgid "Avatar URL"
 msgstr "Avatar-URL"
 
 #. js-lingui-id: Cei2D0
@@ -1307,6 +1324,11 @@ msgctxt "fieldMetadata.description"
 msgid "Blocklist record position"
 msgstr "Blokkeringslisteoppføringens posisjon"
 
+#. js-lingui-id: HSo0Xn
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist scope cannot be updated."
+msgstr "Omfanget av blokkeringslisten kan ikke oppdateres."
+
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1369,6 +1391,17 @@ msgstr "Generert komponentsti er ugyldig"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Built handler path is invalid"
 msgstr "Generert handlersti er ugyldig"
+
+#. js-lingui-id: DKvxoP
+#: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
+msgid "Bulk deletion of blocklist entries is not allowed."
+msgstr "Massesletting av blokkeringslisteoppføringer er ikke tillatt."
+
+#. js-lingui-id: Az75zM
+#: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
+msgid "Bulk restoration of blocklist entries is not allowed."
+msgstr "Massegjenoppretting av blokkeringslisteoppføringer er ikke tillatt."
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1783,9 +1816,16 @@ msgstr "Kan ikke gjøre brukeren via API-nøkkel"
 
 #. js-lingui-id: PpmWQv
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Cancel"
 msgstr "Avbryt"
+
+#. js-lingui-id: CYhiCW
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Cancel Campaign"
+msgstr "Avbryt kampanje"
 
 #. js-lingui-id: 7g3N+g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1820,18 +1860,13 @@ msgstr "Kan ikke legge til tillatelser på systemobjekter."
 msgid "Cannot complete operation due to related records."
 msgstr "Kan ikke fullføre operasjonen på grunn av relaterte oppføringer."
 
-#. js-lingui-id: 6Sk/wo
-#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
-msgid "Cannot create blocklist entry for another workspace member."
-msgstr "Kan ikke opprette blokkeringslisteoppføring for et annet arbeidsområdemedlem."
-
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Kan ikke opprette flere kladdversjoner for samme arbeidsflyt"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Kan ikke opprette arbeidsflytversjon med annen status enn kladd"
 
@@ -1898,6 +1933,11 @@ msgstr "Kan ikke gi skrivetillatelse uten lesetillatelse."
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Kan ikke ha mer enn én aktiv arbeidsflytversjon"
+
+#. js-lingui-id: 9hWalM
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot manage a blocklist entry of another workspace member."
+msgstr "Kan ikke administrere en blokkeringslisteoppføring for et annet arbeidsområdemedlem."
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -2197,6 +2237,11 @@ msgctxt "fieldMetadata.label"
 msgid "Complained count"
 msgstr "Antall klager"
 
+#. js-lingui-id: c9jNCJ
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Complete File Upload"
+msgstr "Fullfør filopplasting"
+
 #. js-lingui-id: DjvRWr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -2354,6 +2399,11 @@ msgstr "Kobling er ikke tillatt for {connectFieldName} på {objectMetadataNameSi
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
 msgid "Connected account not found."
 msgstr "Tilkoblet konto ikke funnet."
+
+#. js-lingui-id: lAyVpb
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Connection not found."
+msgstr "Tilkobling ikke funnet."
 
 #. js-lingui-id: xQ2DfP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -2579,6 +2629,11 @@ msgstr "Opprett"
 msgid "Create Calendar Event"
 msgstr "Opprett kalenderhendelse"
 
+#. js-lingui-id: AIGOKT
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Create File Upload"
+msgstr "Opprett filopplasting"
+
 #. js-lingui-id: fOgbeX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -2625,6 +2680,7 @@ msgstr "Opprett visning"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -2640,6 +2696,11 @@ msgstr "Opprettet av"
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
 msgid "Created field metadata, parent object metadata not found"
 msgstr "Opprettet feltmetadata, metadata for overordnet objekt ble ikke funnet"
+
+#. js-lingui-id: tpPGe6
+#: src/engine/record-share/utils/validate-share-with-arg-or-throw.util.ts
+msgid "Creating a record of a private object requires the shareWith argument"
+msgstr "Oppretting av en oppføring for et privat objekt krever argumentet shareWith"
 
 #. js-lingui-id: ezEYQZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -2663,6 +2724,7 @@ msgstr "Opprettet feltmetadata, metadata for overordnet objekt ble ikke funnet"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -2698,6 +2760,7 @@ msgstr "Opprettelsesdato"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -2750,10 +2813,10 @@ msgctxt "fieldMetadata.label"
 msgid "Cron"
 msgstr "Cron"
 
-#. js-lingui-id: umhXiy
+#. js-lingui-id: bK9ya1
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
-msgid "Cron pattern '{pattern}' is invalid"
-msgstr "Cron-mønster '{pattern}' er ugyldig"
+msgid "Cron pattern \"{pattern}\" is invalid"
+msgstr "Cron-mønster \"{pattern}\" er ugyldig"
 
 #. js-lingui-id: DIjcDc
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -2878,6 +2941,7 @@ msgstr "Datoformat"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3154,6 +3218,7 @@ msgstr "Slettet {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3185,6 +3250,7 @@ msgstr "Beskrivelse"
 
 #. js-lingui-id: m+O/bO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Description"
 msgstr "Beskrivelse"
@@ -3299,15 +3365,29 @@ msgstr "Forfallsdato"
 #. js-lingui-id: pcd2n0
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Duplicate"
 msgstr "Dupliser"
+
+#. js-lingui-id: uv/ryv
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate Campaign"
+msgstr "Dupliser kampanje"
 
 #. js-lingui-id: zC/oFa
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Duplicate Dashboard"
 msgstr "Dupliser dashbord"
+
+#. js-lingui-id: Sr1mqj
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Duplicate List"
+msgstr "Dupliser liste"
 
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -3325,6 +3405,11 @@ msgstr "Dupliser arbeidsflyt"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "Duplisert alternativ {field}"
+
+#. js-lingui-id: nTBzmZ
+#: src/engine/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
+msgstr "Hver shareWith-oppføring må målrette nøyaktig én av workspaceMemberId, roleId eller everyone"
 
 #. js-lingui-id: zhhpvr
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3507,6 +3592,11 @@ msgstr "E-poster"
 msgid "Empty field permissions are not allowed."
 msgstr "Tomme felttillatelser er ikke tillatt."
 
+#. js-lingui-id: xFJpEE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
+msgid "Enable search on this object before adding searchable fields"
+msgstr "Aktiver søk på dette objektet før du legger til søkbare felt"
+
 #. js-lingui-id: ovnbNI
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "Enable two-factor authentication in your current workspace to manage server administrators."
@@ -3684,6 +3774,12 @@ msgctxt "fieldMetadata.description"
 msgid "Events linked to the workspace member"
 msgstr "Hendelser knyttet til arbeidsområdemedlemmet"
 
+#. js-lingui-id: fVkHAH
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Everyone"
+msgstr "Alle"
+
 #. js-lingui-id: b3ictS
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Exactly one of \"groups\" or \"fields\" must be provided"
@@ -3802,6 +3898,11 @@ msgstr "Kunne ikke slette oppføring."
 msgid "Failed to duplicate dashboard."
 msgstr "Kunne ikke duplisere dashbordet."
 
+#. js-lingui-id: UiaZiQ
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "Failed to duplicate list."
+msgstr "Kunne ikke duplisere listen."
+
 #. js-lingui-id: srkEOV
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Failed to exchange the authorization code for an access token."
@@ -3871,6 +3972,16 @@ msgstr "Funksjonskonfigurasjon ikke funnet."
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "Februar"
+
+#. js-lingui-id: joINBp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
+msgstr "Feltet \"{fieldName}\" er ikke en mange-til-én-relasjon og har ingen sammenføyningskolonne å sammenligne med"
+
+#. js-lingui-id: CJF9q0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
+msgstr "Feltet \"{workspaceMemberFieldName}\" er ikke et felt i workspaceMember-objektet, så predikatet vil aldri gjelde"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -4098,6 +4209,7 @@ msgstr "Felt brukt for fulltekstsøk"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4161,6 +4273,11 @@ msgctxt "pageLayoutWidget.title"
 msgid "Fields"
 msgstr "Felter"
 
+#. js-lingui-id: 3txiAO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Fields \"{fieldName}\" and \"{workspaceMemberFieldName}\" must be relations pointing to the same object to be compared"
+msgstr "Feltene \"{fieldName}\" og \"{workspaceMemberFieldName}\" må være relasjoner som peker på samme objekt for å kunne sammenlignes"
+
 #. js-lingui-id: 9HjeLQ
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Fields widget has no associated view"
@@ -4212,6 +4329,11 @@ msgstr "Filen ble ikke funnet i SDK-klientarkivet."
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Fil ikke funnet."
+
+#. js-lingui-id: eAFKw+
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "File storage did not confirm the processed file. Please retry."
+msgstr "Fillagringen bekreftet ikke den behandlede filen. Prøv på nytt."
 
 #. js-lingui-id: MtzD8b
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -4270,6 +4392,11 @@ msgstr "Filtrering eller sortering gjennom denne relasjonen støttes ikke."
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Find"
 msgstr "Finn"
+
+#. js-lingui-id: klz9oi
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Find Connected Accounts"
+msgstr "Finn tilknyttede kontoer"
 
 #. js-lingui-id: 4GaFCQ
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -4387,11 +4514,22 @@ msgstr "frontComponentId må ikke angis for motorkomponentnøkkel {engineCompone
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "frontComponentId må ikke angis når engineComponentKey er TRIGGER_WORKFLOW_VERSION"
 
+#. js-lingui-id: mbshN9
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Full"
+msgstr "Full"
+
 #. js-lingui-id: DnqPI8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Full path"
 msgstr "Full sti"
+
+#. js-lingui-id: oj6EVd
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
+msgid "Full-height widgets must be placed after fit-content widgets"
+msgstr "Moduler med full høyde må plasseres etter moduler med tilpasset innholdshøyde"
 
 #. js-lingui-id: yQDBsf
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -4642,10 +4780,10 @@ msgstr "Handler-navnet er ugyldig"
 msgid "handlerName must be a valid JavaScript identifier or dotted path"
 msgstr "handlerName må være en gyldig JavaScript-identifikator eller punktseparert sti"
 
-#. js-lingui-id: bZ2ltE
+#. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Header message Id"
+msgid "Header message ID"
 msgstr "Meldingshode-ID"
 
 #. js-lingui-id: YXvdC2
@@ -4683,7 +4821,7 @@ msgctxt "fieldMetadata.label"
 msgid "iCal UID"
 msgstr "iCal-UID"
 
-#. js-lingui-id: tO7kqE
+#. js-lingui-id: OtYhMx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -4705,6 +4843,7 @@ msgstr "iCal-UID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4714,10 +4853,10 @@ msgstr "iCal-UID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Id"
-msgstr "Id"
+msgid "ID"
+msgstr "ID"
 
-#. js-lingui-id: Jq9kVe
+#. js-lingui-id: dB826o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -4739,6 +4878,7 @@ msgstr "Id"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4748,8 +4888,13 @@ msgstr "Id"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Id"
-msgstr "Id"
+msgid "ID"
+msgstr "ID"
+
+#. js-lingui-id: pSd/U1
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
+msgid "ID field cannot be searched"
+msgstr "ID-feltet kan ikke søkes i"
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -5046,11 +5191,6 @@ msgstr "Ugyldig e-postadresse."
 msgid "Invalid email or domain."
 msgstr "Ugyldig e-post eller domene."
 
-#. js-lingui-id: pOHI+b
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "Invalid enterprise key."
-msgstr "Ugyldig Enterprise-nøkkel."
-
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
 msgid "Invalid event input."
@@ -5182,6 +5322,11 @@ msgstr "Ugyldig inndata for applikasjonsregistrering."
 msgid "Invalid input provided."
 msgstr "Ugyldig inndata oppgitt."
 
+#. js-lingui-id: vtBwCe
+#: src/engine/core-modules/sso/services/sso.service.ts
+msgid "Invalid issuer URL: {reason}"
+msgstr "Ugyldig utsteder-URL: {reason}"
+
 #. js-lingui-id: 4MWDA2
 #: src/engine/core-modules/sso/sso.exception.ts
 msgid "Invalid issuer URL."
@@ -5258,6 +5403,11 @@ msgstr "Ugyldig order-by-parameter."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
 msgstr "Ugyldig order-by med group-by-parameter."
+
+#. js-lingui-id: 4rRyz1
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid Organization key."
+msgstr "Ugyldig organisasjonsnøkkel."
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -5450,6 +5600,7 @@ msgstr "Ugyldig URL-format."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
+#: src/engine/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Ugyldig UUID-format."
 
@@ -5503,7 +5654,7 @@ msgstr "Ugyldig verdi for e-postadresser."
 #. js-lingui-id: qvqNco
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
 msgid "Invalid value for field \"{fieldName}\""
-msgstr "Ugyldig verdi for feltet \"{fieldName}\"}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}```}]}\"}]} ?>"
+msgstr "Ugyldig verdi for feltet \"{fieldName}\""
 
 #. js-lingui-id: tfoEIq
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
@@ -5752,27 +5903,27 @@ msgctxt "fieldMetadata.label"
 msgid "Joining"
 msgstr "Kobler til"
 
-#. js-lingui-id: fPoVsQ
+#. js-lingui-id: SPutbd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Json object to provide steps"
+msgid "JSON object to provide steps"
 msgstr "JSON-objekt for å angi steg"
 
-#. js-lingui-id: 2tgyTi
+#. js-lingui-id: aXjVR4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Json object to provide trigger"
-msgstr "JSON-objekt for å angi trigger"
+msgid "JSON object to provide trigger"
+msgstr "JSON-objekt for å angi utløser"
 
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "JSON response format requires a schema"
 msgstr "JSON-responsformat krever et skjema"
 
-#. js-lingui-id: 2aIAwH
+#. js-lingui-id: Bg1xen
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Json value for event details"
+msgid "JSON value for event details"
 msgstr "JSON-verdi for hendelsesdetaljer"
 
 #. js-lingui-id: u4ex5r
@@ -5857,6 +6008,12 @@ msgstr "Nøkkel kan ikke endres"
 msgid "Key is required"
 msgstr "Nøkkel er påkrevd"
 
+#. js-lingui-id: 6hoCbx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Kind of principal receiving the access"
+msgstr "Type prinsipal som mottar tilgangen"
+
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -5869,6 +6026,11 @@ msgstr "Etikett kan ikke være tom"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Label identifier field cannot be deactivated"
 msgstr "Etikettidentifikatorfelt kan ikke deaktiveres"
+
+#. js-lingui-id: +LPcfA
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
+msgid "Label identifier field cannot be removed from search"
+msgstr "Etikettidentifikatorfelt kan ikke fjernes fra søk"
 
 #. js-lingui-id: Qx822J
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -5926,11 +6088,11 @@ msgctxt "fieldMetadata.label"
 msgid "Language"
 msgstr "Språk"
 
-#. js-lingui-id: YGewWJ
+#. js-lingui-id: qqD3aX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Last published Version Id"
-msgstr "ID for siste publiserte versjon"
+msgid "Last published Version ID"
+msgstr "ID for sist publiserte versjon"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -5954,6 +6116,7 @@ msgstr "ID for siste publiserte versjon"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5988,6 +6151,7 @@ msgstr "Siste gang posten ble endret"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6032,16 +6196,16 @@ msgstr "knyttet til en relatert oppgave"
 msgid "Linked and unlinked timeline activity emitters require a target relation"
 msgstr "Tilknyttede og ikke-tilknyttede utstedere av tidslinjeaktivitet krever en målrelasjon."
 
-#. js-lingui-id: TUocGa
+#. js-lingui-id: q/aQnl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Linked Object Metadata Id"
+msgid "Linked Object Metadata ID"
 msgstr "Metadata-ID for koblet objekt"
 
-#. js-lingui-id: 8FSeC1
+#. js-lingui-id: mx/sVd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Linked Object Metadata Id"
+msgid "Linked Object Metadata ID"
 msgstr "Metadata-ID for koblet objekt"
 
 #. js-lingui-id: Vo3NrU
@@ -6104,6 +6268,17 @@ msgstr "Listemedlemsoppføringens posisjon"
 msgctxt "objectMetadata.labelPlural"
 msgid "List Members"
 msgstr "Listemedlemmer"
+
+#. js-lingui-id: SGXb+l
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-person-views.util.ts
+msgctxt "view.name"
+msgid "List Members Table"
+msgstr "Tabell over listemedlemmer"
+
+#. js-lingui-id: 92F/Is
+#: src/modules/emailing/exceptions/message-list.exception.ts
+msgid "List not found."
+msgstr "Listen ble ikke funnet."
 
 #. js-lingui-id: GRxWmN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -6195,6 +6370,12 @@ msgstr "Logikkfunksjon ikke funnet."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function with same universal identifier already exists"
 msgstr "Logikkfunksjon med samme universelle identifikator eksisterer allerede"
+
+#. js-lingui-id: paJTob
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Manual"
+msgstr "Manuell"
 
 #. js-lingui-id: dgxlIJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -6291,6 +6472,12 @@ msgctxt "fieldMetadata.label"
 msgid "Members"
 msgstr "Medlemmer"
 
+#. js-lingui-id: DbgpIO
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgctxt "pageLayoutTab.title"
+msgid "Members"
+msgstr "Medlemmer"
+
 #. js-lingui-id: CBMkZg
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
@@ -6308,6 +6495,11 @@ msgstr "Slå sammen"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "Flett {objectLabelPlural}"
+
+#. js-lingui-id: 27Moeu
+#: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
+msgid "Merging blocklist entries is not allowed."
+msgstr "Sammenslåing av blokkeringslisteoppføringer er ikke tillatt."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -6340,16 +6532,16 @@ msgctxt "fieldMetadata.label"
 msgid "Message Channel Association"
 msgstr "Meldingskanaltilknytning"
 
-#. js-lingui-id: yRJEYl
+#. js-lingui-id: PyXSki
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Message Channel Id"
+msgid "Message Channel ID"
 msgstr "Meldingskanal-ID"
 
-#. js-lingui-id: LzM6pP
+#. js-lingui-id: W7U+3U
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Message Channel Id"
+msgid "Message Channel ID"
 msgstr "Meldingskanal-ID"
 
 #. js-lingui-id: pFC0xF
@@ -6411,10 +6603,10 @@ msgctxt "fieldMetadata.description"
 msgid "Message Direction"
 msgstr "Meldingsretning"
 
-#. js-lingui-id: ROkvrV
+#. js-lingui-id: 0tU+QX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Message External Id"
+msgid "Message External ID"
 msgstr "Ekstern meldings-ID"
 
 #. js-lingui-id: 4+wqNB
@@ -6446,16 +6638,16 @@ msgctxt "fieldMetadata.description"
 msgid "Message Folders (supports multiple folders/labels)"
 msgstr "Meldingsmapper (støtter flere mapper/etiketter)"
 
-#. js-lingui-id: ly4IhE
+#. js-lingui-id: NVb3dF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Message Id"
+msgid "Message ID"
 msgstr "Meldings-ID"
 
-#. js-lingui-id: 0oA/lJ
+#. js-lingui-id: R9kqg9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Message Id"
+msgid "Message ID"
 msgstr "Meldings-ID"
 
 #. js-lingui-id: u/Q/SE
@@ -6540,18 +6732,18 @@ msgctxt "objectMetadata.labelSingular"
 msgid "Message Thread"
 msgstr "Meldingstråd"
 
-#. js-lingui-id: zURS+B
+#. js-lingui-id: HgIhjm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Message Thread Id"
+msgid "Message Thread ID"
 msgstr "Meldingstråd-ID"
 
-#. js-lingui-id: UQKo1w
+#. js-lingui-id: EUVVrl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Message Thread Id"
+msgid "Message Thread ID"
 msgstr "Meldingstråd-ID"
 
 #. js-lingui-id: qgC2Dq
@@ -6694,10 +6886,10 @@ msgstr "Mangler hovedaliasmål."
 msgid "Missing request body."
 msgstr "Forespørselsbody mangler."
 
-#. js-lingui-id: SzCMUQ
+#. js-lingui-id: gwIXRX
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
-msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
-msgstr "Mangler nødvendige felter: minst én unik begrensning må være fullstendig utfylt for '{connectFieldName}'."
+msgid "Missing required fields: at least one unique constraint have to be fully populated for \"{connectFieldName}\"."
+msgstr "Mangler nødvendige felter: Minst én unik begrensning må være fullstendig utfylt for \"{connectFieldName}\"."
 
 #. js-lingui-id: AHuHeg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -6931,6 +7123,11 @@ msgstr "Ingen identifikator å søke etter ble funnet."
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "No input provided in form step"
 msgstr "Ingen inndata oppgitt i skjematrinnet"
+
+#. js-lingui-id: jNd9S2
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "No mailbox is connected for this action. Connect one in Settings."
+msgstr "Ingen postboks er koblet til for denne handlingen. Koble til en i Innstillinger."
 
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7254,6 +7451,12 @@ msgstr "Objektetiketten er for lang"
 msgid "Object label is too short"
 msgstr "Objektetiketten er for kort"
 
+#. js-lingui-id: gB0eae
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Object metadata ID"
+msgstr "Objektmetadata-ID"
+
 #. js-lingui-id: xrblgA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -7298,6 +7501,12 @@ msgstr "Objektmetadata ikke funnet."
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Object not found."
 msgstr "Objekt ikke funnet."
+
+#. js-lingui-id: zWTotA
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Object of the shared record"
+msgstr "Objektet til den delte posten"
 
 #. js-lingui-id: 4ib9PY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
@@ -7415,10 +7624,10 @@ msgstr "En eller flere omdirigerings-URI-er er ugyldige."
 msgid "One or more requested scopes are invalid."
 msgstr "Ett eller flere forespurte omfang er ugyldige."
 
-#. js-lingui-id: EkozT1
+#. js-lingui-id: B73M2h
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
-msgid "Only a campaign that is currently sending can be canceled."
-msgstr "Bare en kampanje som for øyeblikket sendes, kan avbrytes."
+msgid "Only a scheduled or sending campaign can be canceled."
+msgstr "Bare en planlagt eller sendende kampanje kan avbrytes."
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -7445,11 +7654,21 @@ msgstr "Eneste feil"
 msgid "Only field restrictions are allowed."
 msgstr "Kun feltbegrensninger er tillatt."
 
+#. js-lingui-id: xzfBXd
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
+msgid "Only one full-height widget is allowed per tab"
+msgstr "Bare én modul med full høyde er tillatt per fane"
+
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Open Records In"
 msgstr "Åpne poster i"
+
+#. js-lingui-id: j1We5+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand \"{operand}\" is not supported on a relation field, use IS or IS_NOT"
+msgstr "Operandet \"{operand}\" støttes ikke i et relasjonsfelt. Bruk IS eller IS_NOT"
 
 #. js-lingui-id: e/+ykp
 #. placeholder {0}: allowedOperands.join(', ')
@@ -7562,6 +7781,11 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Mulighetens fase"
 
+#. js-lingui-id: znHKeT
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
+msgid "Option \"{optionLabel}\" has an unsupported color"
+msgstr "Alternativet \"{optionLabel}\" har en farge som ikke støttes"
+
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -7671,6 +7895,7 @@ msgstr "Eide muligheter"
 
 #. js-lingui-id: l/RVZK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Owner"
 msgstr "Eier"
@@ -7680,6 +7905,12 @@ msgstr "Eier"
 msgctxt "pageLayoutWidget.title"
 msgid "Owner"
 msgstr "Eier"
+
+#. js-lingui-id: ZeJb73
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Owner, sharing rule or application that granted the access"
+msgstr "Eier, delingsregel eller applikasjon som ga tilgangen"
 
 #. js-lingui-id: s3wAxw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
@@ -8016,6 +8247,11 @@ msgctxt "fieldMetadata.label"
 msgid "Phones"
 msgstr "Telefoner"
 
+#. js-lingui-id: T1yaeQ
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "Pick a send time in the future."
+msgstr "Velg et sendingstidspunkt i fremtiden."
+
 #. js-lingui-id: RrxR7k
 #. placeholder {0}: flatField.label
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
@@ -8124,6 +8360,7 @@ msgstr "Kontaktpunkt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -8215,6 +8452,18 @@ msgstr "Primæraksens grupperingsfelt er påkrevd for linjediagram"
 msgid "Primary axis group by field is required for line chart widget \"{widgetTitle}\""
 msgstr "Primæraksens grupperingsfelt er påkrevd for linjediagram-widgeten \"{widgetTitle}\""
 
+#. js-lingui-id: RY0T63
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Principal ID"
+msgstr "Prinsipal-ID"
+
+#. js-lingui-id: OGUlI6
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Principal type"
+msgstr "Prinsipaltype"
+
 #. js-lingui-id: cTz6/1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8304,6 +8553,18 @@ msgstr "Grense for forespørsler er nådd. Vennligst prøv igjen senere."
 msgid "Raw SQL queries are not allowed."
 msgstr "Rå SQL-spørringer er ikke tillatt."
 
+#. js-lingui-id: 0PWREF
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Read"
+msgstr "Les"
+
+#. js-lingui-id: ZsNi6Y
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Read and write"
+msgstr "Les og skriv"
+
 #. js-lingui-id: KX0Su8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8327,10 +8588,34 @@ msgstr "Mottakere"
 msgid "Record does not satisfy security constraints."
 msgstr "Oppføringen oppfyller ikke sikkerhetsbegrensningene."
 
+#. js-lingui-id: a2mBTT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Record ID"
+msgstr "Oppførings-ID"
+
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Record not found."
 msgstr "Oppføring ikke funnet."
+
+#. js-lingui-id: 9ZMtCZ
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Record share"
+msgstr "Postdeling"
+
+#. js-lingui-id: 806WTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Record share position"
+msgstr "Posisjon for postdeling"
+
+#. js-lingui-id: d7Q0Lz
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Record shares"
+msgstr "Postdelinger"
 
 #. js-lingui-id: LVUF8D
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
@@ -8438,6 +8723,7 @@ msgstr "Relasjonsfilteret støttes ikke her"
 
 #. js-lingui-id: L8AY9P
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Relation filters can only traverse one relation deep"
 msgstr "Relasjonsfiltre kan bare gå én relasjon dypt"
@@ -8642,6 +8928,7 @@ msgstr "Rolle"
 
 #. js-lingui-id: YHMiZJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Role"
 msgstr "Rolle"
@@ -8804,6 +9091,12 @@ msgstr "Rute ikke funnet."
 msgid "Route path already exists."
 msgstr "Stien for ruten eksisterer allerede."
 
+#. js-lingui-id: dFzdKL
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Row cause"
+msgstr "Radårsak"
+
 #. js-lingui-id: /ruB5e
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate already exists"
@@ -8872,6 +9165,12 @@ msgstr "Tillatelsespredikat på radnivå som skal oppdateres ble ikke funnet"
 msgid "Row level permission predicate with this universal identifier already exists"
 msgstr "Tillatelsespredikat på radnivå med denne universelle identifikatoren eksisterer allerede"
 
+#. js-lingui-id: 2feo6q
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Rule"
+msgstr "Regel"
+
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8919,6 +9218,12 @@ msgstr "Lagre dashbord"
 msgctxt "fieldMetadata.label"
 msgid "Scheduled"
 msgstr "Planlagt"
+
+#. js-lingui-id: jYVtFG
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Scheduled at"
+msgstr "Planlagt til"
 
 #. js-lingui-id: V1y7Hg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -9016,6 +9321,7 @@ msgstr "Søkevektor"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9048,18 +9354,6 @@ msgstr "Søkevektorfelt ikke funnet"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Security"
 msgstr "Sikkerhet"
-
-#. js-lingui-id: BqBYOO
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Active Version"
-msgstr "Se aktiv versjon"
-
-#. js-lingui-id: BWZaOR
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Active Version"
-msgstr "Se aktiv versjon"
 
 #. js-lingui-id: BCRQC8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9254,6 +9548,27 @@ msgctxt "fieldMetadata.label"
 msgid "Settings"
 msgstr "Innstillinger"
 
+#. js-lingui-id: yS/zBf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Shared record"
+msgstr "Delt post"
+
+#. js-lingui-id: 4FadYd
+#: src/engine/record-share/utils/validate-share-with-principals-or-throw.util.ts
+msgid "shareWith names a role that does not belong to this workspace"
+msgstr "shareWith angir en rolle som ikke tilhører dette arbeidsområdet"
+
+#. js-lingui-id: 4PQnEW
+#: src/engine/record-share/utils/validate-share-with-principals-or-throw.util.ts
+msgid "shareWith names a workspace member that does not belong to this workspace"
+msgstr "shareWith angir et arbeidsområdemedlem som ikke tilhører dette arbeidsområdet"
+
+#. js-lingui-id: qTLqMS
+#: src/engine/record-share/utils/validate-share-with-arg-or-throw.util.ts
+msgid "shareWith names the same principal more than once"
+msgstr "shareWith angir samme hovedenhet mer enn én gang"
+
 #. js-lingui-id: e1k+No
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Sign up is disabled."
@@ -9357,6 +9672,12 @@ msgstr "Kildekomponentsti er ugyldig"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Source handler path is invalid"
 msgstr "Kildehandlersti er ugyldig"
+
+#. js-lingui-id: kQeWQ3
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Source ID"
+msgstr "Kilde-ID"
 
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -9943,11 +10264,6 @@ msgstr "Nøkkel-verdi-oppføringen for applikasjonen kunne ikke lagres. Prøv ig
 msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
 msgstr "Applikasjonens produksjonsavhengigheter er for store til å installeres. Flytt pakker som ikke importeres av logikkfunksjonene (UI-biblioteker, utviklerverktøy) ut av \"dependencies\"."
 
-#. js-lingui-id: IIdxjy
-#: src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/calendar-event-webhook-sync.exception.ts
-msgid "The calendar is already syncing."
-msgstr "Kalenderen synkroniseres allerede."
-
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
 msgid "The calendar provider rejected the event creation request."
@@ -10016,6 +10332,7 @@ msgstr "Tilkoblingsleverandør-manifestet mangler påkrevde felt."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10054,10 +10371,10 @@ msgstr "Standardrollen kan ikke slettes."
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "Standardrollen for arbeidsplassen kunne ikke bli funnet. Vennligst kontakt support for hjelp."
 
-#. js-lingui-id: hmg/aY
+#. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "The development instance slot for this enterprise key is already in use on another server."
-msgstr "Plassen for utviklingsinstans for denne enterprise-nøkkelen er allerede i bruk på en annen server."
+msgid "The development instance slot for this Organization key is already in use on another server."
+msgstr "Plassen for utviklingsinstansen for denne organisasjonsnøkkelen er allerede i bruk på en annen server."
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10084,6 +10401,11 @@ msgstr "Feltet som er konfigurert for denne widgeten, ble ikke funnet."
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "Feltet du prøver å sette tillatelser for, kunne ikke bli funnet. Det kan ha blitt slettet."
+
+#. js-lingui-id: APJkak
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "The file changed while it was being processed."
+msgstr "Filen ble endret mens den ble behandlet."
 
 #. js-lingui-id: bAGU1r
 #: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
@@ -10116,7 +10438,8 @@ msgid "The happensAt field used by this timeline activity type is not available"
 msgstr "happensAt-feltet som brukes av denne tidslinjeaktivitetstypen, er ikke tilgjengelig"
 
 #. js-lingui-id: EJUSll
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Den opprinnelige versjonen av en arbeidsflyt kan ikke slettes"
 
@@ -10413,6 +10736,7 @@ msgstr "Status for arbeidsflytversjon"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10450,6 +10774,11 @@ msgstr "Det finnes ingen tidligere onboarding-steg å gå tilbake til."
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Disse feltene kan ikke oppdateres før arbeidsområdet er aktivert: {fieldsList}."
 
+#. js-lingui-id: YZk5x6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "These two relation fields do not point to the same object"
+msgstr "Disse to relasjonsfeltene peker ikke på samme objekt"
+
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
@@ -10470,6 +10799,11 @@ msgstr "Denne adressen kan ikke fjernes fra sperrelisten."
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Denne API-nøkkelen er blitt tilbakekalt og kan ikke lenger brukes."
+
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr "Denne API-nøkkelen er tilbakekalt og kan ikke reaktiveres. Opprett en ny API-nøkkel."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
@@ -10507,6 +10841,16 @@ msgstr "Denne appen krever en nyere versjon enn det dette arbeidsområdet er fer
 msgid "This application is already owned by a workspace."
 msgstr "Denne applikasjonen eies allerede av et arbeidsområde."
 
+#. js-lingui-id: HfhpFw
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being installed. Please wait for it to finish before uninstalling it."
+msgstr "Dette programmet installeres. Vent til det er ferdig før du avinstallerer det."
+
+#. js-lingui-id: 63s1OL
+#: src/engine/core-modules/application/application-install/services/application-lifecycle-job.service.ts
+msgid "This application is being uninstalled. Please wait for it to finish before installing it again."
+msgstr "Dette programmet avinstalleres. Vent til det er ferdig før du installerer det på nytt."
+
 #. js-lingui-id: SRnMG0
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
@@ -10523,6 +10867,7 @@ msgid "This campaign no longer exists."
 msgstr "Denne kampanjen finnes ikke lenger."
 
 #. js-lingui-id: 5MvgEo
+#: src/modules/emailing/utils/compile-campaign-batch-template.util.ts
 #: src/modules/emailing/utils/compile-campaign-email-content.util.ts
 msgid "This campaign's email content is invalid."
 msgstr "E-postinnholdet i denne kampanjen er ugyldig."
@@ -10531,6 +10876,11 @@ msgstr "E-postinnholdet i denne kampanjen er ugyldig."
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "Denne kolonnen er allerede merket som unik. Slå av feltets \"Unique\" først hvis du vil håndtere begrensningen her."
+
+#. js-lingui-id: /abJpu
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "This connected account cannot be used for this action."
+msgstr "Denne tilkoblede kontoen kan ikke brukes for denne handlingen."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -10583,20 +10933,15 @@ msgstr "Dette endepunktet er flyttet. Kall det på {publicFunctionUrl} i stedet.
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "Dette endepunktet er ikke lenger tilgjengelig på /s/. Bruk den dedikerte URL-en på det offentlige domenet i stedet."
 
-#. js-lingui-id: i4wotH
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr "Denne enterprise-nøkkelen er allerede i bruk på en annen serverinstans. Frigjør den fra den serveren, eller overfør den til denne."
-
 #. js-lingui-id: mjE4RD
 #: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
 msgid "This evaluation target could not be found."
 msgstr "Dette evalueringsmålet ble ikke funnet."
 
-#. js-lingui-id: uNp8ZA
+#. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr "Denne funksjonen er kostnadsfri for opptil {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} brukere. Instansen din har flere enn det, så en enterprise-nøkkel er påkrevd."
+msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
+msgstr "Denne funksjonen er gratis for opptil {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} brukere. Instansen din har flere enn dette, så en organisasjonsnøkkel er påkrevd."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10609,9 +10954,14 @@ msgid "This field cannot be modified."
 msgstr "Dette feltet kan ikke endres."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Dette feltet kan ikke oppdateres direkte på en arbeidsflytversjon"
+
+#. js-lingui-id: NDBu6g
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field does not belong to the workspace member object"
+msgstr "Dette feltet tilhører ikke arbeidsområdemedlemsobjektet"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -10629,6 +10979,11 @@ msgstr "Denne felttillatelsen er allerede satt for rollen"
 msgid "This field references an object that could not be found"
 msgstr "Dette feltet refererer til et objekt som ikke ble funnet"
 
+#. js-lingui-id: CIqMf4
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
+msgid "This field type cannot be searched"
+msgstr "Denne felttypen kan ikke søkes i"
+
 #. js-lingui-id: 5F02zD
 #: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
@@ -10638,6 +10993,11 @@ msgstr "Dette filformatet støttes ikke."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file has already been uploaded."
 msgstr "Denne filen er allerede lastet opp."
+
+#. js-lingui-id: VGePIR
+#: src/engine/core-modules/file/file-upload/services/file-upload-target.service.ts
+msgid "This file path is too long to upload."
+msgstr "Denne filbanen er for lang til å lastes opp."
 
 #. js-lingui-id: 6ekAtL
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -10679,6 +11039,11 @@ msgstr "Denne grensen kan ikke lagres."
 msgid "This method is not allowed."
 msgstr "Denne metoden er ikke tillatt."
 
+#. js-lingui-id: +AQIHh
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "This model cannot be used for this tier."
+msgstr "Denne modellen kan ikke brukes for dette nivået."
+
 #. js-lingui-id: /XKGep
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -10707,11 +11072,21 @@ msgstr "Dette objektet har allerede en standardvisning"
 msgid "This object cannot be modified."
 msgstr "Dette objektet kan ikke endres."
 
+#. js-lingui-id: I8RhBL
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util.ts
+msgid "This object has no search vector"
+msgstr "Dette objektet har ingen søkevektor"
+
 #. js-lingui-id: X2Xp8v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "This object permission is already set for the role"
 msgstr "Denne objekttillatelsen er allerede satt for rollen"
+
+#. js-lingui-id: RZF775
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported on a relation field"
+msgstr "Dette operanden støttes ikke i et relasjonsfelt"
 
 #. js-lingui-id: 7ZdJO2
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -10727,6 +11102,11 @@ msgstr "Denne operasjonen støttes ikke."
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Denne operasjonen refererer til en oppføring som ikke finnes eller ikke kan endres på grunn av eksisterende relasjoner."
+
+#. js-lingui-id: 8TiDJj
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+msgstr "Denne organisasjonsnøkkelen er allerede i bruk på en annen serverinstans. Frigjør den fra den serveren, eller overfør den til denne."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -10768,6 +11148,11 @@ msgstr "Denne oppføringen kan ikke slettes fordi den fortsatt refereres av andr
 #: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr "Denne oppføringen finnes ikke eller er slettet."
+
+#. js-lingui-id: 9F8Ddo
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This relation field cannot be used in a record rule"
+msgstr "Dette relasjonsfeltet kan ikke brukes i en oppføringsregel"
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10840,6 +11225,11 @@ msgstr "Denne typen oppføring kan ikke slås sammen."
 msgid "This universal identifier is already claimed by another registration."
 msgstr "Denne universelle identifikatoren er allerede tatt i bruk av en annen registrering."
 
+#. js-lingui-id: xL5g9G
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "This upload expired before it was confirmed. Please upload the file again."
+msgstr "Denne opplastingen utløp før den ble bekreftet. Last opp filen på nytt."
+
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "This user is already a member of the workspace."
@@ -10860,6 +11250,16 @@ msgstr "Denne versjonen er ikke nyere enn den nåværende distribuerte versjonen
 msgid "This version of the application is already installed in this workspace."
 msgstr "Denne versjonen av applikasjonen er allerede installert i dette arbeidsområdet."
 
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Denne arbeidsflytversjonen inneholder feilformatede data og kan ikke lagres."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Denne arbeidsflytversjonen er ikke klar til å aktiveres."
+
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
@@ -10876,6 +11276,11 @@ msgstr "Dette arbeidsområdet har ikke noe aktivt abonnement."
 msgid "This workspace is suspended."
 msgstr "Dette arbeidsområdet er suspendert."
 
+#. js-lingui-id: L7DDtt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This workspace member field cannot be compared"
+msgstr "Dette arbeidsområdemedlemsfeltet kan ikke sammenlignes"
+
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading."
@@ -10887,10 +11292,10 @@ msgctxt "pageLayoutWidget.title"
 msgid "Thread"
 msgstr "Tråd"
 
-#. js-lingui-id: N63rng
+#. js-lingui-id: cVSzoa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Thread External Id"
+msgid "Thread External ID"
 msgstr "Ekstern tråd-ID"
 
 #. js-lingui-id: lMbT9y
@@ -11391,6 +11796,7 @@ msgstr "oppdaterte en relatert oppgave"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11482,17 +11888,11 @@ msgstr "Brukers e-post"
 msgid "User friendly error message"
 msgstr "Brukervennlig feilmelding"
 
-#. js-lingui-id: 7OY0g+
+#. js-lingui-id: wzW7ww
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "User Id"
+msgid "User ID"
 msgstr "Bruker-ID"
-
-#. js-lingui-id: NJT8W8
-#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
-#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
-msgid "User id is required."
-msgstr "Bruker-ID er påkrevd."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -12102,11 +12502,29 @@ msgstr "Onsdag"
 msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "Velkommen til Twenty: Vennligst bekreft din e-post"
 
+#. js-lingui-id: lKboI8
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "What the principal may do with the record"
+msgstr "Hva prinsipalen kan gjøre med posten"
+
+#. js-lingui-id: 80/6BQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "What this list is for"
+msgstr "Hva denne listen brukes til"
+
 #. js-lingui-id: ofdfh5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "When the campaign finished sending"
 msgstr "Når kampanjen var ferdig med å sende"
+
+#. js-lingui-id: +tMBha
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "When the campaign is due to start sending"
+msgstr "Når kampanjen skal begynne å sende"
 
 #. js-lingui-id: Kx3ltI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -12138,6 +12556,24 @@ msgctxt "fieldMetadata.description"
 msgid "Whether this message is an unsent draft synced from the provider"
 msgstr "Om denne meldingen er et usendt utkast synkronisert fra leverandøren"
 
+#. js-lingui-id: 5JE8rv
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Who may read a record of a private object"
+msgstr "Hvem som kan lese en post i et privat objekt"
+
+#. js-lingui-id: 8pSHTA
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Who receives the access"
+msgstr "Hvem som mottar tilgangen"
+
+#. js-lingui-id: /paixI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Why the access was granted"
+msgstr "Hvorfor tilgangen ble gitt"
+
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget extends beyond grid height"
@@ -12163,6 +12599,11 @@ msgstr "Handlinger i widgetoverskriften må tilhøre samme applikasjon som widge
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "Widget header command menu item references must be unique"
 msgstr "Referanser til kommando-menyelementer i widgetoverskriften må være unike"
+
+#. js-lingui-id: makoF6
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
+msgid "Widget height behavior is not supported"
+msgstr "Modulens høydeatferd støttes ikke"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12396,6 +12837,7 @@ msgid "Workflow version does not contain trigger"
 msgstr "Arbeidsflytversjonen inneholder ikke utløsing"
 
 #. js-lingui-id: bqFL4g
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "Arbeidsflytversjonen er ikke i kladdestatus"
@@ -12542,10 +12984,10 @@ msgstr "Arbeidsområdet er ikke klart for å ta imot nye medlemmer"
 msgid "Workspace is suspended."
 msgstr "Arbeidsområdet er suspendert."
 
-#. js-lingui-id: iN7doz
+#. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
-msgstr "Grensen for arbeidsområder er nådd. En gyldig bedriftsnøkkel kreves for å opprette flere arbeidsområder."
+msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
+msgstr "Grensen for arbeidsområder er nådd. En gyldig organisasjonsnøkkel kreves for å opprette flere arbeidsområder."
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -12555,6 +12997,7 @@ msgstr "Arbeidsområdemedlem"
 
 #. js-lingui-id: gfOHib
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Workspace member"
 msgstr "Arbeidsområdemedlem"
@@ -12589,6 +13032,17 @@ msgstr "Arbeidsområdemedlems avatar"
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Workspace member cannot be updated."
 msgstr "Arbeidsområdemedlem kan ikke oppdateres."
+
+#. js-lingui-id: w/yUkA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member field \"{workspaceMemberFieldName}\" is not a many-to-one relation, its value cannot be resolved for the current user"
+msgstr "Arbeidsområdemedlemsfeltet \"{workspaceMemberFieldName}\" er ikke en mange-til-én-relasjon, og verdien kan ikke løses for den nåværende brukeren"
+
+#. js-lingui-id: y0vEqt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member field metadata not found"
+msgstr "Feltmetadata for arbeidsområdemedlem ble ikke funnet"
 
 #. js-lingui-id: YvE7G6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -12873,6 +13327,16 @@ msgstr "Du har ikke tillatelse til å logge inn som brukere i dette arbeidsområ
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Du har ikke tillatelse til å gjøre brukere. Kontakt arbeidsplassadministratoren din for tilgang."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Du har ikke tillatelse til å administrere tilkoblinger som deles med arbeidsområdet. Kontakt arbeidsområdeadministratoren din for tilgang."
+
+#. js-lingui-id: cpivo2
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
+msgid "You do not have permission to manage the workspace blocklist."
+msgstr "Du har ikke tillatelse til å administrere blokkeringslisten for arbeidsområdet."
+
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -12931,19 +13395,19 @@ msgstr "Du har brukt opp kredittene dine. Vennligst oppgrader abonnementet ditt 
 msgid "You have reached the maximum number of invitations for this step."
 msgstr "Du har nådd maksimalt antall invitasjoner for dette steget."
 
-#. js-lingui-id: 4kMeNM
+#. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
-msgstr "Du har nådd maksimalt antall lisensoppfriskninger som er tillatt i dag for denne enterprise-nøkkelen. Prøv igjen senere."
+msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
+msgstr "Du har nådd maksimalt antall lisensoppdateringer som er tillatt i dag for denne organisasjonsnøkkelen. Prøv igjen senere."
 
-#. js-lingui-id: 475gCs
+#. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
-msgstr "Du har nådd maksimalt antall serveroverføringer som er tillatt de siste 30 dagene for denne enterprise-nøkkelen. Prøv igjen senere."
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
+msgstr "Du har nådd maksimalt antall serveroverføringer som er tillatt de siste 30 dagene for denne organisasjonsnøkkelen. Prøv igjen senere."
 
-#. js-lingui-id: nq15cs
-#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
-msgid "You must be authenticated to manage blocklist."
+#. js-lingui-id: GFlHFf
+#: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
+msgid "You must be authenticated to manage the blocklist."
 msgstr "Du må være autentisert for å administrere blokkeringslisten."
 
 #. js-lingui-id: z+7x/s

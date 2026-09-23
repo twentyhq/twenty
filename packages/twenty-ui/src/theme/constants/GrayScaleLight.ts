@@ -1,3 +1,5 @@
+// Generated from design-tokens by scripts/generateThemeTokens.ts.
+// Do not edit manually. Regenerate with: npx nx generateTokens twenty-ui.
 export const GRAY_SCALE_LIGHT = {
   gray1: 'color(display-p3 1 1 1)',
   gray2: 'color(display-p3 0.988 0.988 0.988)',

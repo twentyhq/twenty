@@ -8,13 +8,11 @@ import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 
 type PinAiChatScrollToBottomParams = {
   scrollWrapperElement: HTMLElement;
-  onContentSettled?: () => void;
   onPinningStopped?: () => void;
 };
 
 export const pinAiChatScrollToBottom = ({
   scrollWrapperElement,
-  onContentSettled,
   onPinningStopped,
 }: PinAiChatScrollToBottomParams) => {
   const startedAtInMs = performance.now();
@@ -24,17 +22,7 @@ export const pinAiChatScrollToBottom = ({
   let lastClientWidthInPx = -1;
   let lastChangeAtInMs = startedAtInMs;
   let animationFrameId: number | undefined;
-  let hasSettled = false;
   let hasStopped = false;
-
-  const settle = () => {
-    if (hasSettled) {
-      return;
-    }
-
-    hasSettled = true;
-    onContentSettled?.();
-  };
 
   const stop = () => {
     if (hasStopped) {
@@ -53,7 +41,6 @@ export const pinAiChatScrollToBottom = ({
       scrollWrapperElement.removeEventListener(eventName, stop),
     );
 
-    settle();
     onPinningStopped?.();
   };
 
@@ -78,10 +65,6 @@ export const pinAiChatScrollToBottom = ({
 
     const isQuiet =
       nowInMs - lastChangeAtInMs >= AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS;
-
-    if (isQuiet) {
-      settle();
-    }
 
     if (
       isQuiet &&

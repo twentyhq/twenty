@@ -1,6 +1,6 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { CSV_INJECTION_PREVENTION_ZWJ } from '@/spreadsheet-import/constants/CsvInjectionPreventionZwj';
+import { CSV_INJECTION_PREVENTION_ZWJ } from 'twenty-shared/constants';
 
 import {
   csvDownloader,

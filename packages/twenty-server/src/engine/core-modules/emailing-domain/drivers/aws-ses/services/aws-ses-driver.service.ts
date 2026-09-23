@@ -20,6 +20,8 @@ import {
   type EmailingDomainResourceInput,
   type EmailingDomainVerificationResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
+import { type EmailingDomainSendEmailBatchRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-request.type';
+import { type EmailingDomainSendEmailBatchResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-result.type';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { getUnsubscribeBaseUrl } from 'src/engine/core-modules/emailing-domain/drivers/utils/get-unsubscribe-base-url.util';
@@ -103,6 +105,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       const verificationRecords = buildAwsSesVerificationRecords({
         domain: input.domain,
         dkimTokens: identityResponse.DkimAttributes?.Tokens ?? [],
+        mailFromDomain: identityResponse.MailFromAttributes?.MailFromDomain,
         region: this.config.region,
       });
 
@@ -154,13 +157,34 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   async sendEmail(
     input: EmailingDomainSendEmailRequest,
   ): Promise<EmailingDomainSendEmailResult> {
-    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(input.emailingDomain);
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(
+      input.emailingDomain,
+      input.sendKind,
+    );
     const emailToSend = this.unsubscribeContentService.addTo(
       input,
       unsubscribeBaseUrl,
     );
 
     return this.awsSesSendEmailService.sendEmail(emailToSend, {
+      tenantName: this.buildTenantName(input.workspaceId),
+      configurationSetName: this.buildConfigurationSetName(input.workspaceId),
+    });
+  }
+
+  async sendEmailBatch(
+    input: EmailingDomainSendEmailBatchRequest,
+  ): Promise<EmailingDomainSendEmailBatchResult> {
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(
+      input.emailingDomain,
+      input.sendKind,
+    );
+    const batchToSend = this.unsubscribeContentService.addToBatch(
+      input,
+      unsubscribeBaseUrl,
+    );
+
+    return this.awsSesSendEmailService.sendEmailBatch(batchToSend, {
       tenantName: this.buildTenantName(input.workspaceId),
       configurationSetName: this.buildConfigurationSetName(input.workspaceId),
     });
@@ -268,6 +292,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       const verificationRecords = buildAwsSesVerificationRecords({
         domain,
         dkimTokens: existingIdentity.DkimAttributes?.Tokens ?? [],
+        mailFromDomain: existingIdentity.MailFromAttributes?.MailFromDomain,
         region: this.config.region,
       });
 

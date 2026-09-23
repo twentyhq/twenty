@@ -7,7 +7,7 @@ export const LATEST_RELEASE: {
   title: string;
   previewImage: string;
 } = {
-  release: '2.26.0',
-  title: 'Richer relation layouts',
-  previewImage: '/images/releases/2.0/2.0.0-custom-layouts.webp',
+  release: '2.40.0',
+  title: 'Pick an AI model by tier',
+  previewImage: '/images/releases/2.0/2.0.0-ai.webp',
 };

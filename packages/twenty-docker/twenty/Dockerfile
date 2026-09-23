@@ -33,6 +33,7 @@ COPY ./packages/twenty-server/package.json /app/packages/twenty-server/
 COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
+COPY ./packages/twenty-oxlint-rules/package.json /app/packages/twenty-oxlint-rules/
 
 RUN yarn workspaces focus twenty twenty-server twenty-emails twenty-shared twenty-client-sdk && yarn cache clean && npx nx reset
 
@@ -91,12 +92,12 @@ FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491
 # OpenSSL, but psql/curl link these system libs, so the upgrade hardens
 # runtime TLS and clears the scanner.
 RUN apk add --no-cache \
-    'curl>=8.20.0-r0' \
+    'curl>=8.22.0-r0' \
     'nghttp2-libs>=1.69.0-r0' \
     'libcrypto3>=3.5.8-r0' \
     'libssl3>=3.5.8-r0' \
     'postgresql18-client>=18.5-r0' \
-    jq
+    'jq>=1.8.2-r0'
 
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
@@ -240,7 +241,7 @@ RUN apk add --no-cache \
     redis \
     'libcrypto3>=3.5.8-r0' \
     'libssl3>=3.5.8-r0' \
-    'curl>=8.20.0-r0' jq su-exec
+    'curl>=8.22.0-r0' 'jq>=1.8.2-r0' su-exec
 
 # Workspace root config
 COPY --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/

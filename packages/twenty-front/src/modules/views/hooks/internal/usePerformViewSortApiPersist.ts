@@ -1,18 +1,16 @@
 import { useCallback } from 'react';
 
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { usePerformViewEntityApiPersistOperation } from '@/views/hooks/internal/usePerformViewEntityApiPersistOperation';
 import { useMutation } from '@apollo/client/react';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CreateViewSortMutationVariables,
-  type DeleteViewSortMutationVariables,
   type DestroyViewSortMutationVariables,
   type UpdateViewSortMutationVariables,
   CreateViewSortDocument,
-  DeleteViewSortDocument,
   DestroyViewSortDocument,
   UpdateViewSortDocument,
 } from '~/generated-metadata/graphql';
@@ -20,7 +18,6 @@ import {
 export const usePerformViewSortApiPersist = () => {
   const [createViewSortMutation] = useMutation(CreateViewSortDocument);
   const [updateViewSortMutation] = useMutation(UpdateViewSortDocument);
-  const [deleteViewSortMutation] = useMutation(DeleteViewSortDocument);
   const [destroyViewSortMutation] = useMutation(DestroyViewSortDocument);
 
   const { performViewEntityApiPersistBatchOperation } =
@@ -74,27 +71,6 @@ export const usePerformViewSortApiPersist = () => {
     [updateViewSortMutation, performViewEntityApiPersistBatchOperation],
   );
 
-  const performViewSortApiDelete = useCallback(
-    async (
-      deleteViewSortInputs: DeleteViewSortMutationVariables[],
-    ): Promise<
-      MetadataRequestResult<
-        Awaited<ReturnType<typeof deleteViewSortMutation>>[]
-      >
-    > =>
-      performViewEntityApiPersistBatchOperation({
-        inputs: deleteViewSortInputs,
-        mutate: (variables) => deleteViewSortMutation({ variables }),
-        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
-          removeFromDraft({
-            key: 'viewSorts',
-            itemIds: fulfilledMutations.map(({ input }) => input.input.id),
-          }),
-        operationType: CrudOperationType.DELETE,
-      }),
-    [deleteViewSortMutation, performViewEntityApiPersistBatchOperation],
-  );
-
   const performViewSortApiDestroy = useCallback(
     async (
       destroyViewSortInputs: DestroyViewSortMutationVariables[],
@@ -119,7 +95,6 @@ export const usePerformViewSortApiPersist = () => {
   return {
     performViewSortApiCreate,
     performViewSortApiUpdate,
-    performViewSortApiDelete,
     performViewSortApiDestroy,
   };
 };

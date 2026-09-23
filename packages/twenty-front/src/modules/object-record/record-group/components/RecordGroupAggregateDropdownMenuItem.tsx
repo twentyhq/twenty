@@ -1,5 +1,6 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type IconComponent } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 
 export const RecordGroupAggregateDropdownMenuItem = ({
   onContentChange,
@@ -13,11 +14,12 @@ export const RecordGroupAggregateDropdownMenuItem = ({
   RightIcon?: IconComponent | null;
 }) => {
   return (
-    <MenuItem
+    <ListItem
       onClick={onContentChange}
-      text={text}
-      hasSubMenu={hasSubMenu}
-      RightIcon={RightIcon}
-    />
+      hasSubmenu={hasSubMenu}
+      endIcon={<SelectOptionIcon Icon={RightIcon} />}
+    >
+      {text}
+    </ListItem>
   );
 };

@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -19,8 +21,7 @@ import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/sea
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconX, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;
@@ -97,24 +98,26 @@ export const WorkflowVariablesDropdownSteps = ({
           <DropdownMenuSeparator />
         )}
         {availableSteps.map((item) => (
-          <MenuItemSelect
+          <ListItem
             key={`step-${item.id}`}
-            selected={false}
             focused={false}
             onClick={() => onSelect({ stepId: item.id })}
-            text={item.name}
-            LeftIcon={item.icon ? getIcon(item.icon) : undefined}
-            hasSubMenu
-          />
+            role="option"
+            aria-selected={false}
+            selected={false}
+            indicator="check"
+            hasSubmenu
+            startIcon={
+              <SelectOptionIcon
+                Icon={item.icon ? getIcon(item.icon) : undefined}
+              />
+            }
+          >
+            {item.name}
+          </ListItem>
         ))}
         {matchingVariables.length === 0 && availableSteps.length === 0 && (
-          <MenuItem
-            key="no-steps"
-            onClick={() => {}}
-            text={t`No variables available`}
-            LeftIcon={undefined}
-            hasSubMenu={false}
-          />
+          <ListItem disabled>{t`No variables available`}</ListItem>
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>

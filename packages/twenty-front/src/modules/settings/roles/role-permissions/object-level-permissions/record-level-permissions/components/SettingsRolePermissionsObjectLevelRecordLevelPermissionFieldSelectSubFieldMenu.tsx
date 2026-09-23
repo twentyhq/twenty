@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 /* @license Enterprise */
 
 import {
@@ -6,7 +8,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
@@ -30,7 +31,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenuProps =
   {
@@ -90,14 +90,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
     const { advancedFilterFieldSelectDropdownId } =
       useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-    const scopedAdvancedFilterFieldSelectDropdownId =
-      useWorkspaceSurfaceScopedComponentInstanceId(
-        advancedFilterFieldSelectDropdownId,
-      );
-
     const selectedItemId = useAtomComponentStateValue(
       selectedItemIdComponentState,
-      scopedAdvancedFilterFieldSelectDropdownId,
+      advancedFilterFieldSelectDropdownId,
     );
 
     if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
@@ -162,10 +157,10 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
                     );
                   }}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === subFieldName}
                     key={`select-filter-${index}`}
-                    testId={`select-filter-${index}`}
+                    data-testid={`select-filter-${index}`}
                     onClick={() => {
                       if (isDefined(fieldMetadataItemUsedInDropdown)) {
                         handleSelectFilter(
@@ -174,15 +169,20 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
                         );
                       }
                     }}
-                    text={getCompositeSubFieldLabel(
+                    startIcon={
+                      <SelectOptionIcon
+                        Icon={getIcon(
+                          ICON_NAME_BY_SUB_FIELD[subFieldName] ??
+                            fieldMetadataItemUsedInDropdown?.icon,
+                        )}
+                      />
+                    }
+                  >
+                    {getCompositeSubFieldLabel(
                       objectFilterDropdownSubMenuFieldType,
                       subFieldName,
                     )}
-                    LeftIcon={getIcon(
-                      ICON_NAME_BY_SUB_FIELD[subFieldName] ??
-                        fieldMetadataItemUsedInDropdown?.icon,
-                    )}
-                  />
+                  </ListItem>
                 </SelectableListItem>
               ))}
           </SelectableList>

@@ -67,23 +67,23 @@ jest.mock(
     useAtomComponentStateValue: jest.fn(() => null),
   }),
 );
-jest.mock('twenty-ui/navigation', () => ({
-  MenuItemSelect: ({
-    contextualText,
+jest.mock('twenty-ui/primitives/navigation', () => ({
+  ListItem: ({
+    description,
     disabled,
     onClick,
     selected,
-    text,
+    children,
   }: {
-    contextualText?: React.ReactNode;
+    description?: React.ReactNode;
     disabled?: boolean;
     onClick?: () => void;
     selected: boolean;
-    text: string;
+    children: React.ReactNode;
   }) => (
     <button data-selected={selected} disabled={disabled} onClick={onClick}>
-      <span>{text}</span>
-      {contextualText}
+      <span>{children}</span>
+      {description}
     </button>
   ),
 }));

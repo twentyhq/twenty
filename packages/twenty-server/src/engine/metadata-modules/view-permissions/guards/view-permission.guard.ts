@@ -8,6 +8,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
+import { resolveViewAccessContext } from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-access-context.util';
 
 @Injectable()
 export class ViewPermissionGuard implements CanActivate {
@@ -23,9 +24,7 @@ export class ViewPermissionGuard implements CanActivate {
 
     return this.viewAccessService.canUserModifyView(
       viewId,
-      request.userWorkspaceId,
-      request.workspace.id,
-      request.apiKey?.id,
+      resolveViewAccessContext(request),
     );
   }
 }

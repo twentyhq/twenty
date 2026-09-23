@@ -4,8 +4,6 @@ import { DiscoveryService } from '@nestjs/core';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
-import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
   CacheLockException,
@@ -14,6 +12,8 @@ import {
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/consume-quota-counters-script.constant';
 import {
   UsageLimitException,
@@ -21,18 +21,19 @@ import {
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
-import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
-import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
-import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
+import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
-import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
+import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
+import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/flat-quota-limit.type';
+import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
+import { type LimitConsumption } from 'src/engine/core-modules/usage-limit/types/limit-consumption.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
-import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/types/quota-consumption-row.type';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
+import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
 import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-limit-warmed-entries.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
@@ -40,22 +41,28 @@ import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/bu
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
+import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
+import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
+import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
 import { fromConsumeResultsToRemainings } from 'src/engine/core-modules/usage-limit/utils/from-consume-results-to-remainings.util';
+import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
-import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const QUOTA_WARM_LOCK_OPTIONS = { ms: 50, maxRetries: 20, ttl: 10_000 };
 
-type AllowanceSumRow = {
-  total: string | number | null;
+type QuotaEnforcement = {
+  operation: 'assert' | 'consume';
+  resourceType: UsageResourceType;
+  cost?: QuotaCost;
 };
 
 type QuotaConsumeArgs = {
@@ -69,17 +76,18 @@ type QuotaConsumeArgs = {
 export class UsageLimitQuotaService implements OnModuleInit {
   private readonly logger = new Logger(UsageLimitQuotaService.name);
 
-  private creditAllowanceProvider: CreditAllowanceProvider | null = null;
+  private creditAllowanceProvider: CreditAllowanceProvider;
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
-    private readonly clickHouseService: ClickHouseService,
     private readonly usagePeriodService: UsagePeriodService,
+    private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly discoveryService: DiscoveryService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   onModuleInit() {
@@ -128,7 +136,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
   async dropAllowanceCounter(workspaceId: string): Promise<void> {
     const period =
-      await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId);
+      await this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
 
     if (!isDefined(period)) {
       return;
@@ -153,7 +161,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
     const keys = buildIntraWorkspaceLimitCounterKeys({
       workspaceId,
       limits,
-      periodByUnit: this.getCurrentPeriodsByUnit(limits),
+      periodByUnit: await this.usagePeriodService.findCurrentPeriodsByUnit({
+        workspaceId,
+        limits,
+      }),
     });
 
     if (keys.length === 0) {
@@ -166,14 +177,19 @@ export class UsageLimitQuotaService implements OnModuleInit {
   async dropLimitCounter(usageLimit: UsageLimitCounterScope): Promise<void> {
     if (
       usageLimit.limitKind !== 'quota' ||
-      usageLimit.periodUnit === 'second'
+      !isAnchoredPeriodUnit(usageLimit.periodUnit)
     ) {
       return;
     }
 
-    const period = this.usagePeriodService.getCurrentPeriod(
-      usageLimit.periodUnit,
-    );
+    const period = await this.usagePeriodService.findCurrentPeriod({
+      workspaceId: usageLimit.workspaceId,
+      periodUnit: usageLimit.periodUnit,
+    });
+
+    if (!isDefined(period)) {
+      return;
+    }
 
     await this.delUnderWarmLock({
       workspaceId: usageLimit.workspaceId,
@@ -190,6 +206,54 @@ export class UsageLimitQuotaService implements OnModuleInit {
         }),
       ],
     });
+  }
+
+  async getAllowanceUsage(workspaceId: string): Promise<{
+    limitValue: number;
+    consumedValue: number | null;
+    periodEnd: Date;
+  } | null> {
+    const counter = await this.buildAllowanceCounter(workspaceId);
+
+    if (!isDefined(counter)) {
+      return null;
+    }
+
+    const allowance =
+      await this.creditAllowanceProvider.getCreditAllowance(workspaceId);
+
+    if (!isDefined(allowance)) {
+      return null;
+    }
+
+    if (allowance.periodStart.getTime() !== counter.periodStart.getTime()) {
+      return {
+        limitValue: allowance.allowanceMicro,
+        consumedValue: null,
+        periodEnd: allowance.periodEnd,
+      };
+    }
+
+    let consumedValue: number | null = null;
+
+    try {
+      const [remaining] = await this.readRemainings({
+        workspaceId,
+        counters: [counter],
+      });
+
+      consumedValue = isDefined(remaining)
+        ? Math.max(0, allowance.allowanceMicro - remaining)
+        : null;
+    } catch (error) {
+      this.admitOnFailure({ error, workspaceId, admitted: null });
+    }
+
+    return {
+      limitValue: allowance.allowanceMicro,
+      consumedValue,
+      periodEnd: allowance.periodEnd,
+    };
   }
 
   async getAllowanceRemainingMicro(
@@ -211,6 +275,62 @@ export class UsageLimitQuotaService implements OnModuleInit {
     } catch (error) {
       return this.admitOnFailure({ error, workspaceId, admitted: null });
     }
+  }
+
+  async readLimitConsumptions({
+    workspaceId,
+    limits,
+  }: {
+    workspaceId: string;
+    limits: FlatUsageLimit[];
+  }): Promise<Map<string, LimitConsumption>> {
+    if (limits.length === 0) {
+      return new Map();
+    }
+
+    const periodByUnit = await this.usagePeriodService.findCurrentPeriodsByUnit(
+      { workspaceId, limits },
+    );
+
+    const entries = limits.filter(isQuotaLimit).flatMap((limit) => {
+      const period = periodByUnit[limit.periodUnit];
+
+      return isDefined(period)
+        ? [
+            {
+              limit,
+              counter: buildLimitQuotaCounter({ workspaceId, limit, period }),
+            },
+          ]
+        : [];
+    });
+
+    if (entries.length === 0) {
+      return new Map();
+    }
+
+    const consumedValues = await this.readConsumedValuesAdmittingOnFailure({
+      workspaceId,
+      counters: entries.map(({ counter }) => counter),
+    });
+
+    return new Map(
+      entries.map(({ limit, counter }, index) => {
+        const consumedValue = consumedValues[index] ?? null;
+
+        return [
+          limit.id,
+          {
+            consumedValue,
+            remainingValue: isDefined(consumedValue)
+              ? limit.limitValue - consumedValue
+              : null,
+            periodStart: counter.periodStart,
+            periodEnd: counter.periodEnd,
+          },
+        ] as const;
+      }),
+    );
   }
 
   private async delUnderWarmLock({
@@ -277,6 +397,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return this.admitOnFailure({
         error,
         workspaceId: args.workspaceId,
+        enforcement: { operation: 'assert', resourceType: args.resourceType },
         admitted: [],
       });
     }
@@ -315,6 +436,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return this.admitOnFailure({
         error,
         workspaceId: args.workspaceId,
+        enforcement: {
+          operation: 'consume',
+          resourceType: args.resourceType,
+          cost,
+        },
         admitted: [],
       });
     }
@@ -338,9 +464,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     const allowance = exhaustedCounters.some(
       (counter) => counter.kind === 'allowance',
     )
-      ? ((await this.creditAllowanceProvider?.getCreditAllowance(
-          args.workspaceId,
-        )) ?? null)
+      ? await this.creditAllowanceProvider.getCreditAllowance(args.workspaceId)
       : null;
 
     return exhaustedCounters.map((counter) =>
@@ -374,10 +498,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private admitOnFailure<TAdmitted>({
     error,
     workspaceId,
+    enforcement,
     admitted,
   }: {
     error: unknown;
     workspaceId: string;
+    enforcement?: QuotaEnforcement;
     admitted: TAdmitted;
   }): TAdmitted {
     if (
@@ -391,7 +517,33 @@ export class UsageLimitQuotaService implements OnModuleInit {
       `Usage quota enforcement degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
     );
 
+    if (isDefined(enforcement)) {
+      this.countAdmitOnFailure(enforcement);
+    }
+
     return admitted;
+  }
+
+  private countAdmitOnFailure({
+    operation,
+    resourceType,
+    cost,
+  }: QuotaEnforcement): void {
+    const attributes = { operation, resourceType };
+
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
+      amount: 1,
+      attributes,
+    });
+
+    if (isDefined(cost) && cost.creditsUsedMicro > 0) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.UsageLimitQuotaAdmittedOnFailureCreditsMicro,
+        amount: cost.creditsUsedMicro,
+        attributes,
+      });
+    }
   }
 
   private async buildCounters(args: QuotaConsumeArgs): Promise<QuotaCounter[]> {
@@ -433,26 +585,25 @@ export class UsageLimitQuotaService implements OnModuleInit {
       limits: quotaLimits,
       usageSpenders: spenders,
       workspaceId,
-      resourceType,
       operationType,
-      periodByUnit: this.getCurrentPeriodsByUnit(quotaLimits),
+      periodByUnit: await this.usagePeriodService.findCurrentPeriodsByUnit({
+        workspaceId,
+        limits: quotaLimits,
+      }),
     });
   }
 
   private async buildAllowanceCounter(
     workspaceId: string,
   ): Promise<AllowanceQuotaCounter | null> {
-    const creditAllowanceProvider = this.creditAllowanceProvider;
-
-    if (
-      !isDefined(creditAllowanceProvider) ||
-      !(await creditAllowanceProvider.isCreditAllowanceEnabled(workspaceId))
-    ) {
+    if (!(await this.creditAllowanceProvider.isCreditAllowanceEnabled())) {
       return null;
     }
 
-    const period =
-      await creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
+    const period = await this.usagePeriodService.findCurrentPeriod({
+      workspaceId,
+      periodUnit: 'allowancePeriod',
+    });
 
     if (!isDefined(period)) {
       return null;
@@ -470,47 +621,81 @@ export class UsageLimitQuotaService implements OnModuleInit {
     };
   }
 
-  private getCurrentPeriodsByUnit(
-    quotaLimits: FlatUsageLimit[],
-  ): Partial<Record<PeriodUnit, UsagePeriod>> {
-    const periodUnits = [
-      ...new Set(
-        quotaLimits
-          .map((limit) => limit.periodUnit)
-          .filter(
-            (periodUnit): periodUnit is AnchoredPeriodUnit =>
-              periodUnit !== 'second',
-          ),
-      ),
-    ];
-
-    return Object.fromEntries(
-      periodUnits.map((periodUnit) => [
-        periodUnit,
-        this.usagePeriodService.getCurrentPeriod(periodUnit),
-      ]),
-    );
-  }
-
   private async findQuotaLimits({
     workspaceId,
     resourceType,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-  }): Promise<FlatUsageLimit[]> {
+  }): Promise<FlatQuotaLimit[]> {
     const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['usageLimits'],
     );
 
     const quotaLimits = (usageLimits.byResourceType[resourceType] ?? []).filter(
-      (limit) => limit.limitKind === 'quota',
+      isQuotaLimit,
     );
 
     return this.usageLimitEntitlementService.findEnforceableLimits({
       workspaceId,
       limits: quotaLimits,
+    });
+  }
+
+  private async readConsumedValuesAdmittingOnFailure({
+    workspaceId,
+    counters,
+  }: {
+    workspaceId: string;
+    counters: LimitQuotaCounter[];
+  }): Promise<(number | null)[]> {
+    try {
+      return await this.readConsumedValues({ workspaceId, counters });
+    } catch (error) {
+      return this.admitOnFailure<(number | null)[]>({
+        error,
+        workspaceId,
+        admitted: [],
+      });
+    }
+  }
+
+  private async readConsumedValues({
+    workspaceId,
+    counters,
+  }: {
+    workspaceId: string;
+    counters: LimitQuotaCounter[];
+  }): Promise<(number | null)[]> {
+    const remainings = await this.cacheStorage.mget<number>(
+      counters.map((counter) => counter.key),
+    );
+
+    const coldLimitCounters = counters.filter(
+      (_, index) => !isDefined(remainings[index]),
+    );
+
+    const rowsByPeriod =
+      coldLimitCounters.length > 0
+        ? await this.fetchConsumptionRowsByPeriod({
+            workspaceId,
+            coldLimitCounters,
+          })
+        : new Map<string, UsageConsumptionRow[]>();
+
+    return counters.map((counter, index) => {
+      const remaining = remainings[index];
+
+      if (isDefined(remaining)) {
+        return counter.limitValue - remaining;
+      }
+
+      const rows = rowsByPeriod.get(buildPeriodGroupKey(counter));
+
+      return isDefined(rows)
+        ? computeQuotaConsumed({ rows, scope: counter })
+        : null;
     });
   }
 
@@ -622,18 +807,12 @@ export class UsageLimitQuotaService implements OnModuleInit {
     counter: AllowanceQuotaCounter | undefined;
     now: number;
   }): Promise<{ key: string; value: number; ttl: number }[]> {
-    if (!isDefined(counter)) {
-      return [];
-    }
-
-    const ttl = counter.periodEnd.getTime() - now;
-
-    if (ttl <= 0) {
+    if (!isDefined(counter) || counter.periodEnd.getTime() <= now) {
       return [];
     }
 
     const allowance =
-      await this.creditAllowanceProvider?.getCreditAllowance(workspaceId);
+      await this.creditAllowanceProvider.getCreditAllowance(workspaceId);
 
     if (
       !isDefined(allowance) ||
@@ -642,10 +821,19 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return [];
     }
 
-    const consumedMicro = await this.fetchAllowanceConsumedMicro({
-      workspaceId,
-      periodStart: counter.periodStart,
-    });
+    const ttl =
+      Math.min(counter.periodEnd.getTime(), allowance.validUntil.getTime()) -
+      now;
+
+    if (ttl <= 0) {
+      return [];
+    }
+
+    const consumedMicro =
+      await this.usageAnalyticsService.getCreditsUsedMicroForBillingPeriod({
+        workspaceId,
+        periodStart: counter.periodStart,
+      });
 
     return [
       {
@@ -656,41 +844,20 @@ export class UsageLimitQuotaService implements OnModuleInit {
     ];
   }
 
-  private async fetchAllowanceConsumedMicro({
-    workspaceId,
-    periodStart,
-  }: {
-    workspaceId: string;
-    periodStart: Date;
-  }): Promise<number> {
-    const rows = await this.clickHouseService.selectOrThrow<AllowanceSumRow>(
-      `SELECT sum(creditsUsedMicro) AS total
-       FROM usageEvent
-       WHERE workspaceId = {workspaceId:String}
-         AND periodStart = {periodStart:DateTime64(3)}`,
-      {
-        workspaceId,
-        periodStart: formatDateTimeForClickHouse(periodStart),
-      },
-    );
-
-    return Number(rows[0]?.total ?? 0);
-  }
-
   private async fetchConsumptionRowsByPeriod({
     workspaceId,
     coldLimitCounters,
   }: {
     workspaceId: string;
     coldLimitCounters: LimitQuotaCounter[];
-  }): Promise<Map<string, QuotaConsumptionRow[]>> {
+  }): Promise<Map<string, UsageConsumptionRow[]>> {
     const countersByPeriod = new Map<string, LimitQuotaCounter>();
 
     for (const counter of coldLimitCounters) {
       countersByPeriod.set(buildPeriodGroupKey(counter), counter);
     }
 
-    const rowsByPeriod = new Map<string, QuotaConsumptionRow[]>();
+    const rowsByPeriod = new Map<string, UsageConsumptionRow[]>();
 
     await Promise.all(
       [...countersByPeriod.entries()].map(async ([periodGroupKey, counter]) => {
@@ -704,31 +871,19 @@ export class UsageLimitQuotaService implements OnModuleInit {
     return rowsByPeriod;
   }
 
-  private async fetchConsumptionRows({
+  private fetchConsumptionRows({
     workspaceId,
     counter,
   }: {
     workspaceId: string;
     counter: LimitQuotaCounter;
-  }): Promise<QuotaConsumptionRow[]> {
-    return this.clickHouseService.selectOrThrow<QuotaConsumptionRow>(
-      `SELECT operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
-              workflowId, logicFunctionId,
-              sum(creditsUsedMicro) AS creditsUsedMicro,
-              sum(quantity) AS quantity
-       FROM usageEvent
-       WHERE workspaceId = {workspaceId:String}
-         AND resourceType = {resourceType:String}
-         AND toStartOfDay(timestamp, 'UTC') >= {periodStart:DateTime64(3)}
-         AND toStartOfDay(timestamp, 'UTC') < {periodEnd:DateTime64(3)}
-       GROUP BY operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
-                workflowId, logicFunctionId`,
-      {
-        workspaceId,
-        resourceType: counter.resourceType,
-        periodStart: formatDateTimeForClickHouse(counter.periodStart),
-        periodEnd: formatDateTimeForClickHouse(counter.periodEnd),
-      },
-    );
+  }): Promise<UsageConsumptionRow[]> {
+    return this.usageAnalyticsService.getConsumptionRowsForAllScopes({
+      workspaceId,
+      resourceType: counter.resourceType,
+      periodStart: counter.periodStart,
+      periodEnd: counter.periodEnd,
+      periodAnchor: getPeriodAnchor(counter.periodUnit),
+    });
   }
 }

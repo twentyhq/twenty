@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
-import { IconButtonWithTooltip } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/components';
 import {
   getOsControlSymbol,
   getOsShortcutSeparator,
@@ -33,25 +33,30 @@ const SidePanelExpandButtonContent = () => {
     return null;
   }
 
-  const tooltipContent = expandTarget.hasExpandShortcut
-    ? `${expandTarget.label} | ${[getOsControlSymbol(), '⏎'].join(
-        getOsShortcutSeparator(),
-      )}`
-    : expandTarget.label;
+  const isDisabled = isDefined(expandTarget.disabledReason);
+  const tooltipContent =
+    expandTarget.disabledReason ??
+    (expandTarget.hasExpandShortcut
+      ? `${expandTarget.label} | ${[getOsControlSymbol(), '⏎'].join(
+          getOsShortcutSeparator(),
+        )}`
+      : expandTarget.label);
 
   return (
     <>
-      {expandTarget.hasExpandShortcut && (
+      {expandTarget.hasExpandShortcut && !isDisabled && (
         <SidePanelExpandShortcutEffect expand={expandTarget.expand} />
       )}
-      <IconButtonWithTooltip
-        tooltipContent={tooltipContent}
-        Icon={IconMaximize}
-        size="small"
-        variant="tertiary"
+      <IconButton
+        tooltip={tooltipContent}
+        disabled={isDisabled}
+        size="sm"
+        variant="ghost"
         onClick={expandTarget.expand}
-        ariaLabel={expandTarget.label}
-      />
+        aria-label={expandTarget.label}
+      >
+        <IconMaximize />
+      </IconButton>
     </>
   );
 };

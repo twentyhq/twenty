@@ -63,9 +63,7 @@ import { type OnboardingEnrichmentCreditRewardTier } from 'src/engine/core-modul
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import {
   DEFAULT_DISABLED_MODELS,
-  DEFAULT_FAST_MODELS,
-  DEFAULT_RECOMMENDED_MODELS,
-  DEFAULT_SMART_MODELS,
+  DEFAULT_MODELS_BY_TIER,
 } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 
 export class ConfigVariables {
@@ -98,7 +96,16 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Enable safe mode for outbound requests (prevents private IPs and other security risks). Applies to HTTP workflow actions, webhooks, and IMAP/SMTP/CalDAV connections.',
+      'Hostnames or IP literals on a private network that outbound connections may reach, e.g. an on-premise mail server or identity provider (keycloak, mail.internal, 192.168.1.10). Exact hostname match, no patterns; a full URL is reduced to its hostname. Every other private address is blocked (SSRF protection) for HTTP workflow actions, webhooks, SSO and IMAP/SMTP/CalDAV connections. Set to * to allow all.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Deprecated: set OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS to * instead. While this is false every private address is reachable and OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS is ignored.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -683,6 +690,26 @@ export class ConfigVariables {
   MAX_TARBALL_UPLOAD_SIZE_BYTES: number = 100 * 1024 * 1024;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description:
+      'Maximum bytes of file storage a single workspace may hold, all its files counted. An upload that would cross it is refused',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  WORKSPACE_STORAGE_LIMIT_BYTES: number = 100 * 1024 * 1024 * 1024;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description:
+      'Maximum number of records a single workspace may hold across its objects, system objects other than messages and calendar events left out, soft-deleted records included. A write that would cross it is refused',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  WORKSPACE_RECORD_LIMIT: number = 10_000_000;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Type of function execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
@@ -1146,6 +1173,16 @@ export class ConfigVariables {
   })
   @IsOptional()
   LOGGER_IS_BUFFER_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Log one line per API request with the actor, the endpoint and the trace ids',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  API_ACCESS_LOG_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
@@ -1678,6 +1715,42 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
+      'Time-to-live for the per-workspace outbound email send rate limiting window, in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_WORKSPACE_RATE_LIMITING_TTL_IN_MS = 10_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of emails a single workspace may send in the rate limiting window. Applies on top of the server-wide limit, so set it below that one to stop a single workspace consuming the whole instance budget with one campaign. Left equal to the server-wide limit it never binds first',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_WORKSPACE_RATE_LIMITING_LIMIT = 100;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time-to-live for the outbound webhook call rate limiting window, in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS = 60_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of outbound webhook calls a single workspace may make in the rate limiting window. Calls above it are never enqueued and are recorded as a failed webhook response',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RATE_LIMITING_LIMIT = 60;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
       'Time-to-live for application job enqueue rate limiting in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
@@ -1881,6 +1954,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
+    description: 'API key for TypeSafe AI classification models (Jev)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  TYPESAFE_AI_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
     description:
       'AI provider configurations. Custom providers are deep-merged on top of the built-in catalog (ai-providers.json). Use for custom endpoints, extra regions, or credentials set via admin panel.',
     type: ConfigVariableType.JSON,
@@ -1900,29 +1982,47 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of fast model IDs to use as defaults. Managed via admin panel or env.',
+      'Ordered list of model IDs backing the Extra Fast tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_FAST_MODELS;
+  AI_MODELS_DEFAULT_EXTRA_FAST: string[] = DEFAULT_MODELS_BY_TIER.extraFast;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of smart model IDs to use as defaults. Managed via admin panel or env.',
+      'Ordered list of model IDs backing the Fast tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_SMART_MODELS;
+  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_MODELS_BY_TIER.fast;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'List of recommended model IDs shown to workspaces using curated model selection. Managed via admin panel or env.',
+      'Ordered list of model IDs backing the Balanced tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODELS_DEFAULT_RECOMMENDED: string[] = DEFAULT_RECOMMENDED_MODELS;
+  AI_MODELS_DEFAULT_BALANCED: string[] = DEFAULT_MODELS_BY_TIER.balanced;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ordered list of model IDs backing the Smart tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_MODELS_BY_TIER.smart;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ordered list of model IDs backing the Extra Smart tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_EXTRA_SMART: string[] = DEFAULT_MODELS_BY_TIER.extraSmart;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,

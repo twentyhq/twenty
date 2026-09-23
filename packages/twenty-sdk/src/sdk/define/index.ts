@@ -88,6 +88,7 @@ export type {
   IndexManifest,
 } from 'twenty-shared/application';
 
+export { defineHealthCheck } from '@/sdk/define/logic-functions/define-health-check';
 export { defineLogicFunction } from '@/sdk/define/logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from '@/sdk/define/logic-functions/define-post-install-logic-function';
 export { definePreInstallLogicFunction } from '@/sdk/define/logic-functions/define-pre-install-logic-function';
@@ -100,6 +101,13 @@ export type {
   UninstallHandler,
   UninstallPayload,
 } from '@/sdk/define/logic-functions/uninstall-payload-type';
+export type { HealthCheckHandler } from '@/sdk/define/logic-functions/health-check-handler-type';
+export type { HealthCheckLogicFunctionConfig } from '@/sdk/define/logic-functions/health-check-logic-function-config';
+export type {
+  ApplicationHealthCheckAction,
+  ApplicationHealthCheckResult,
+} from 'twenty-shared/application';
+export { ApplicationHealthStatus } from 'twenty-shared/application';
 export type {
   LogicFunctionConfig,
   LogicFunctionHandler,
@@ -108,6 +116,7 @@ export type {
 export type { ServerRouteDispatchResult } from 'twenty-shared/application';
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 export type {
+  DatabaseEventBatchPayload,
   DatabaseEventPayload,
   ObjectRecordBaseEvent,
   ObjectRecordCreateEvent,
@@ -134,6 +143,7 @@ export type { TwentyRecord } from '@/sdk/define/objects/twenty-record.type';
 
 export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
 export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
+export { definePageLayoutWidget } from '@/sdk/define/page-layouts/define-page-layout-widget';
 export type { PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 export type { PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 export {
@@ -144,6 +154,7 @@ export type {
   PageLayoutManifest,
   PageLayoutTabManifest,
   PageLayoutWidgetManifest,
+  StandalonePageLayoutWidgetManifest,
 } from 'twenty-shared/application';
 
 export { definePermissionFlag } from '@/sdk/define/permission-flags/define-permission-flag';
@@ -170,6 +181,8 @@ export { defineSkill } from '@/sdk/define/skills/define-skill';
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
 export {
+  getSystemPageLayoutTabUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   SYSTEM_VIEW_KEYS,
@@ -202,6 +215,7 @@ export {
   ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,

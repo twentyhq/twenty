@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
@@ -44,6 +46,10 @@ import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modul
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -60,14 +66,27 @@ import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/ty
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { CustomException } from 'src/utils/custom-exception';
 
-export class LogicFunctionExecutionException extends Error {
+export class LogicFunctionExecutionException extends CustomException<LogicFunctionExecutionExceptionCode> {
   constructor(
     message: string,
     public readonly code: LogicFunctionExecutionExceptionCode,
+    {
+      userFriendlyMessage,
+      statusCode,
+    }: { userFriendlyMessage?: MessageDescriptor; statusCode?: number } = {},
   ) {
-    super(message);
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ??
+        (code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+          ? msg`Logic function not found.`
+          : msg`An error occurred.`),
+      statusCode,
+    });
     this.name = 'LogicFunctionExecutionException';
   }
 }
@@ -83,6 +102,7 @@ export class LogicFunctionExecutorService {
 
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
+    private readonly logicFunctionPrebuiltWarmUpService: LogicFunctionPrebuiltWarmUpService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -160,11 +180,12 @@ export class LogicFunctionExecutorService {
     });
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
-      await this.ensurePrebuiltBundleInstalled({
-        driver,
-        flatLogicFunction,
-        flatApplication,
-      });
+      await this.logicFunctionPrebuiltWarmUpService.ensurePrebuiltBundleInstalled(
+        {
+          flatLogicFunction,
+          flatApplication,
+        },
+      );
     }
 
     let resultLogicFunction: LogicFunctionExecuteResult;
@@ -229,46 +250,6 @@ export class LogicFunctionExecutorService {
     return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
   }
 
-  private async ensurePrebuiltBundleInstalled({
-    driver,
-    flatLogicFunction,
-    flatApplication,
-  }: {
-    driver: ReturnType<LogicFunctionDriverFactory['getCurrentDriver']>;
-    flatLogicFunction: FlatLogicFunction;
-    flatApplication: FlatApplication;
-  }): Promise<void> {
-    const installedChecksum =
-      await driver.getInstalledBundleChecksum(flatLogicFunction);
-
-    if (installedChecksum === flatLogicFunction.checksum) {
-      return;
-    }
-
-    try {
-      await driver.installPrebuiltBundle({
-        flatLogicFunction,
-        flatApplication,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      });
-    } catch (error) {
-      const cause = error instanceof Error ? error.message : String(error);
-
-      this.logger.error(
-        `Failed to install prebuilt bundle on-demand for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
-          `${cause}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-      throw new LogicFunctionException(
-        `Failed to install the prebuilt bundle for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
-          `${cause}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
-      );
-    }
-  }
-
   async transpile(
     params: LogicFunctionTranspileParams,
   ): Promise<LogicFunctionTranspileResult> {
@@ -300,10 +281,21 @@ export class LogicFunctionExecutorService {
         this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_TTL'),
       );
-    } catch {
+    } catch (error) {
+      if (
+        !(error instanceof ThrottlerException) ||
+        error.code !== ThrottlerExceptionCode.LIMIT_REACHED
+      ) {
+        throw error;
+      }
+
       throw new LogicFunctionExecutionException(
         'Logic function execution rate limit exceeded',
         LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
+        {
+          userFriendlyMessage: error.userFriendlyMessage,
+          statusCode: error.statusCode,
+        },
       );
     }
   }

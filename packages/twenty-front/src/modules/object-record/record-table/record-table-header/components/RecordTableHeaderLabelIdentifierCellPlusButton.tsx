@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -8,7 +9,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledHeaderIcon = styled.div`
@@ -49,11 +50,13 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     }) && (
       <StyledHeaderIcon>
         <LightIconButton
-          Icon={IconPlus}
-          size="small"
-          accent="tertiary"
+          size="sm"
+          emphasis="subtle"
           onClick={handlePlusButtonClick}
-        />
+          aria-label={t`Add field`}
+        >
+          <IconPlus />
+        </LightIconButton>
       </StyledHeaderIcon>
     )
   );

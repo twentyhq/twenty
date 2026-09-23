@@ -42,6 +42,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
         writability
         isNullable
         isUnique
+        isSearchable
         createdAt
         updatedAt
         defaultValue
@@ -108,6 +109,7 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       icon
       isActive
       isUnique
+      isSearchable
       isNullable
       writability
       createdAt
@@ -180,6 +182,7 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       icon
       isActive
       isUnique
+      isSearchable
       isNullable
       writability
       createdAt
@@ -256,6 +259,7 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       icon
       isActive
       isUnique
+      isSearchable
       isNullable
       writability
       createdAt

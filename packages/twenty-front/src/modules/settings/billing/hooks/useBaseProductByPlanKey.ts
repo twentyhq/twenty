@@ -1,20 +1,12 @@
-import {
-  BillingProductKey,
-  type BillingPlanKey,
-} from '~/generated-metadata/graphql';
-import { findOrThrow } from 'twenty-shared/utils';
+import { type BillingPlanKey } from '~/generated-metadata/graphql';
 import { usePlanByPlanKey } from '@/settings/billing/hooks/usePlanByPlanKey';
+import { findSellableBaseProductOrThrow } from '@/settings/billing/utils/findSellableBaseProductOrThrow';
 
 export const useBaseProductByPlanKey = () => {
   const { getPlanByPlanKey } = usePlanByPlanKey();
 
   const getBaseProductByPlanKey = (planKey: BillingPlanKey) =>
-    findOrThrow(
-      getPlanByPlanKey(planKey).baseProducts,
-      (product) =>
-        product.metadata.productKey === BillingProductKey.BASE_PRODUCT,
-      new Error('Base product not found'),
-    );
+    findSellableBaseProductOrThrow(getPlanByPlanKey(planKey).baseProducts);
 
   return { getBaseProductByPlanKey };
 };

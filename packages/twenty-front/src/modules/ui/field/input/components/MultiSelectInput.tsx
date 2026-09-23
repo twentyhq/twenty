@@ -1,5 +1,7 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRef, useState } from 'react';
+import { useRef, useState, createElement } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -16,11 +18,9 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -49,14 +49,9 @@ export const MultiSelectInput = ({
     selectableListComponentInstanceId,
   );
 
-  const scopedSelectableListComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(
-      selectableListComponentInstanceId,
-    );
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedSelectableListComponentInstanceId,
+    selectableListComponentInstanceId,
   );
 
   const [searchFilter, setSearchFilter] = useState('');
@@ -139,9 +134,9 @@ export const MultiSelectInput = ({
           autoFocus
         />
         <DropdownMenuSeparator />
-        <DropdownMenuItemsContainer hasMaxHeight>
+        <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
           {filteredOptionsInDropDown.length === 0 ? (
-            <MenuItem text={t`No option found`} />
+            <ListItem disabled>{t`No option found`}</ListItem>
           ) : (
             filteredOptionsInDropDown.map((option) => {
               return (
@@ -152,17 +147,28 @@ export const MultiSelectInput = ({
                     onOptionSelected(formatNewSelectedOptions(option.value));
                   }}
                 >
-                  <MenuItemMultiSelectTag
+                  <ListItem
                     key={option.value}
-                    selected={values?.includes(option.value) || false}
-                    text={option.label}
-                    color={option.color ?? 'transparent'}
-                    Icon={option.Icon ?? undefined}
                     onClick={() =>
                       onOptionSelected(formatNewSelectedOptions(option.value))
                     }
-                    isKeySelected={selectedItemId === option.value}
-                  />
+                    focused={selectedItemId === option.value}
+                    role="option"
+                    aria-selected={values?.includes(option.value) || false}
+                    selected={values?.includes(option.value) || false}
+                    indicator="checkbox"
+                  >
+                    <Tag
+                      color={option.color ?? 'transparent'}
+                      startIcon={
+                        isDefined(option.Icon)
+                          ? createElement(option.Icon)
+                          : undefined
+                      }
+                    >
+                      {option.label}
+                    </Tag>
+                  </ListItem>
                 </SelectableListItem>
               );
             })

@@ -22,8 +22,10 @@ export const DeactivateWorkflowSingleRecordCommand = () => {
       return;
     }
 
-    deactivateWorkflowVersion({
-      workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+    return deactivateWorkflowVersion({
+      workflowVersionId:
+        workflowWithCurrentVersion.lastPublishedVersionId ??
+        workflowWithCurrentVersion.currentVersion.id,
     });
   };
 

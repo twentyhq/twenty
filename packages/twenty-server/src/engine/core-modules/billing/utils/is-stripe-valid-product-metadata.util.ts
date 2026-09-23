@@ -8,7 +8,7 @@ import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-
 import { type BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 
 export function isStripeValidProductMetadata(
-  metadata: Stripe.Metadata,
+  metadata: Stripe.Metadata | BillingProductMetadata,
 ): metadata is BillingProductMetadata {
   if (Object.keys(metadata).length === 0) {
     return true;

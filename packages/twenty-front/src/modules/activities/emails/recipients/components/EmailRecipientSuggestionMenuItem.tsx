@@ -1,7 +1,7 @@
-import { Avatar } from 'twenty-ui/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
-import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/hooks/useEmailRecipientSuggestions';
+import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -26,22 +26,26 @@ export const EmailRecipientSuggestionMenuItem = ({
 
   return (
     <SelectableListItem itemId={suggestion.suggestionId}>
-      <MenuItemSelectAvatar
+      <ListItem
         onClick={() => onPick(suggestion)}
-        text={suggestion.label}
-        contextualText={suggestion.secondaryText}
-        selected={false}
         focused={isSelectedItemId}
-        avatar={
+        role="option"
+        aria-selected={false}
+        selected={false}
+        indicator="check"
+        description={suggestion.secondaryText}
+        startIcon={
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(suggestion.avatarUrl)}
-            placeholder={suggestion.label}
-            placeholderColorSeed={suggestion.avatarColorSeed}
+            src={getAbsoluteImageUrl(suggestion.avatarUrl)}
+            name={suggestion.label}
+            colorSeed={suggestion.avatarColorSeed}
             size="md"
-            type="rounded"
+            shape="circle"
           />
         }
-      />
+      >
+        {suggestion.label}
+      </ListItem>
     </SelectableListItem>
   );
 };

@@ -9,7 +9,7 @@ import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   IconInfoCircle,
   IconKey,
@@ -100,11 +100,12 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
       title={registration.name}
       icon={
         <Avatar
-          type="app"
+          shape="square"
+          variant="outline"
           size="md"
-          avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
-          placeholder={registration.name}
-          placeholderColorSeed={registration.name}
+          src={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
+          name={registration.name}
+          colorSeed={registration.name}
         />
       }
       links={[
@@ -120,6 +121,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
       ]}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Application registration`}
           tabs={tabs}
           componentInstanceId={REGISTRATION_DETAIL_TAB_LIST_ID}
         />

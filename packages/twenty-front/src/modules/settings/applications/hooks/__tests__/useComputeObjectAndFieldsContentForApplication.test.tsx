@@ -2,7 +2,6 @@ import { renderHook } from '@testing-library/react';
 
 import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
 import { type Manifest } from 'twenty-shared/application';
-import { ApplicationState } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -30,7 +29,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         objects: [{ id: personObject.id }],
         name: 'Test App',
         logo: null,
-        state: ApplicationState.INSTALLED,
         canBeUninstalled: true,
         autoUpgrade: false,
         availablePackages: {},
@@ -62,7 +60,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         objects: [],
         name: 'Test App',
         logo: null,
-        state: ApplicationState.INSTALLED,
         canBeUninstalled: true,
         autoUpgrade: false,
         availablePackages: {},
@@ -92,7 +89,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         objects: [{ id: personObject.id }],
         name: 'Test App',
         logo: null,
-        state: ApplicationState.INSTALLED,
         canBeUninstalled: true,
         autoUpgrade: false,
         availablePackages: {},
@@ -123,7 +119,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         objects: [],
         name: 'Test App',
         logo: null,
-        state: ApplicationState.INSTALLED,
         canBeUninstalled: true,
         autoUpgrade: false,
         availablePackages: {},
@@ -282,7 +277,6 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         objects: [{ id: personObject.id }],
         name: 'Test App',
         logo: null,
-        state: ApplicationState.INSTALLED,
         canBeUninstalled: true,
         autoUpgrade: false,
         availablePackages: {},

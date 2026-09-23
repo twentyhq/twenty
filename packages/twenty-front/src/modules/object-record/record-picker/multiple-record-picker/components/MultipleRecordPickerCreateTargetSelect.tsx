@@ -1,17 +1,16 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type MultipleRecordPickerCreateTargetSelectProps = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -30,11 +29,9 @@ export const MultipleRecordPickerCreateTargetSelect = ({
   onBack,
   onSelect,
 }: MultipleRecordPickerCreateTargetSelectProps) => {
-  const scopedSelectableListInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(selectableListInstanceId);
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedSelectableListInstanceId,
+    selectableListInstanceId,
   );
 
   const handleSelect = (objectMetadataItemId: string) => {
@@ -69,15 +66,16 @@ export const MultipleRecordPickerCreateTargetSelect = ({
               itemId={objectMetadataItem.id}
               onEnter={() => handleSelect(objectMetadataItem.id)}
             >
-              <MenuItem
-                LeftComponent={
+              <ListItem
+                startIcon={
                   <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
                 }
-                text={objectMetadataItem.labelSingular}
                 focused={selectedItemId === objectMetadataItem.id}
                 disabled={disabled}
                 onClick={() => handleSelect(objectMetadataItem.id)}
-              />
+              >
+                {objectMetadataItem.labelSingular}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

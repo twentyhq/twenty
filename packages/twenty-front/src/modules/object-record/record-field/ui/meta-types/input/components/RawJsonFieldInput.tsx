@@ -10,8 +10,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconPencil } from 'twenty-ui/icon';
-import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
-import { JsonTree, isTwoFirstDepths } from 'twenty-ui/json-visualizer';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { IconButton } from 'twenty-ui/components';
+import {
+  JsonTree,
+  isTwoFirstDepths,
+} from 'twenty-ui/primitives/json-visualizer';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useJsonField } from '@/object-record/record-field/ui/meta-types/hooks/useJsonField';
@@ -176,10 +180,14 @@ export const RawJsonFieldInput = () => {
         <>
           {showEditingButton && (
             <StyledSwitchModeButtonContainer>
-              <FloatingIconButton
-                Icon={IconPencil}
+              <IconButton
+                elevated
+                size="sm"
                 onClick={handleStartEditing}
-              />
+                aria-label={t`Edit JSON`}
+              >
+                <IconPencil />
+              </IconButton>
             </StyledSwitchModeButtonContainer>
           )}
 

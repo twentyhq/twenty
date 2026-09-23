@@ -1,10 +1,9 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
+import { Section } from 'twenty-ui/components';
 import { IconKey, IconLego, IconUsers } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Checkbox } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -69,8 +68,8 @@ export const SettingsRoleApplicability = ({
     },
   ];
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Applicability`}
         description={t`Control which types of entities this role can be assigned to`}
       />
@@ -89,16 +88,17 @@ export const SettingsRoleApplicability = ({
               <span>{option.label}</span>
             </StyledCheckboxLabel>
             <Checkbox
+              aria-label={option.label}
               checked={values[option.key]}
-              onChange={(event) => {
-                event.stopPropagation();
-                onApplicabilityChange(option.key, event.target.checked);
+              onCheckedChange={(isChecked) => {
+                onApplicabilityChange(option.key, isChecked);
               }}
               disabled={!isEditable}
+              onClick={(event) => event.stopPropagation()}
             />
           </StyledCheckboxContainer>
         ))}
       </div>
-    </Section>
+    </Section.Root>
   );
 };

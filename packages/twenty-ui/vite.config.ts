@@ -9,32 +9,20 @@ import svgr from 'vite-plugin-svgr';
 
 type Checkers = Parameters<typeof checker>[0];
 
+import { THEME_CSS_FILE_NAME_BY_SCHEME } from './design-tokens/themeCssFileNameByScheme';
 import packageJson from './package.json';
+import { isDefined } from './src/utilities/utils/isDefined';
 
-const entries = Object.keys(packageJson.exports)
-  .filter((el) => !el.endsWith('.css'))
-  .map((module) => `src/${module}/index.ts`);
+const isVitest = isDefined(process.env.VITEST);
 
-const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
-  if (!chunk.isEntry) {
-    throw new Error(
-      `Should never occurs, encountered a non entry chunk ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
-  if (splitFaceModuleId === undefined) {
-    throw new Error(
-      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
-  if (moduleDirectory === 'src') {
-    return `${chunk.name}.${extension}`;
-  }
-  return `${moduleDirectory}.${extension}`;
-};
+const entries = Object.fromEntries(
+  Object.keys(packageJson.exports)
+    .filter((subpath) => !subpath.endsWith('.css'))
+    .map((subpath) => [
+      subpath === '.' ? 'index' : subpath.slice(2),
+      `src/${subpath}/index.ts`,
+    ]),
+);
 
 export default defineConfig(({ command }) => {
   const isBuildCommand = command === 'build';
@@ -88,10 +76,11 @@ export default defineConfig(({ command }) => {
       },
     },
     optimizeDeps: {
-      // Pre-bundle React up front so Vite's dep optimizer doesn't re-bundle it
+      // Pre-bundle React and Jotai so Vite's dep optimizer doesn't re-bundle them
       // mid-run during browser-mode Storybook tests — re-bundling rotates the
       // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
       include: [
+        '@base-ui/utils/store',
         'react',
         'react-dom',
         'react-dom/client',
@@ -109,14 +98,14 @@ export default defineConfig(({ command }) => {
       // sass-embedded). CI/build relies on the ambient src/scss-modules.d.ts.
       sassDts({ esmExport: true, legacyFileFormat: true }),
       dts(dtsConfig),
-      checker(checkersConfig),
+      ...(isVitest ? [] : [checker(checkersConfig)]),
       {
         name: 'copy-theme-css',
+        apply: 'build',
         closeBundle() {
           const distDir = path.resolve(__dirname, 'dist');
           fs.mkdirSync(distDir, { recursive: true });
-          const themeCssFiles = ['theme-light.css', 'theme-dark.css'];
-          for (const file of themeCssFiles) {
+          for (const file of Object.values(THEME_CSS_FILE_NAME_BY_SCHEME)) {
             fs.copyFileSync(
               path.resolve(__dirname, `src/theme-constants/${file}`),
               path.resolve(distDir, file),
@@ -139,7 +128,7 @@ export default defineConfig(({ command }) => {
         requireReturnsDefault: 'auto',
       },
       lib: {
-        entry: ['src/index.ts', ...entries],
+        entry: entries,
         name: 'twenty-ui',
       },
       rollupOptions: {
@@ -153,7 +142,7 @@ export default defineConfig(({ command }) => {
               'react-dom': 'ReactDOM',
             },
             format: 'es',
-            entryFileNames: (chunk) => entryFileNames(chunk, 'mjs'),
+            entryFileNames: '[name].mjs',
           },
           {
             assetFileNames: 'style.css',
@@ -164,7 +153,7 @@ export default defineConfig(({ command }) => {
             },
             esModule: true,
             exports: 'named',
-            entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),
+            entryFileNames: '[name].cjs',
           },
         ],
       },

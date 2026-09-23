@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -20,18 +22,16 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   IconArrowUpRight,
   IconChevronRight,
   IconHierarchy,
   IconListDetails,
 } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -164,8 +164,8 @@ export const SettingsWorkspaceMembersTeamTab = () => {
   }, [workspaceMembers, searchFilter]);
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Manage Members`}
         description={t`Manage the members of your workspace here`}
       />
@@ -179,37 +179,34 @@ export const SettingsWorkspaceMembersTeamTab = () => {
           dropdownId="workspace-members-open-dropdown"
           clickableComponent={
             <Button
-              Icon={IconArrowUpRight}
-              title={t`Open`}
-              variant="secondary"
-              size="medium"
-            />
+              startIcon={<IconArrowUpRight />}
+              size="md"
+              variant="outline"
+            >{t`Open`}</Button>
           }
           dropdownPlacement="bottom-end"
           dropdownOffset={{ y: 8 }}
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItem
-                  LeftIcon={IconListDetails}
-                  text={t`See records`}
+                <ListItem
+                  startIcon={<IconListDetails />}
                   onClick={() => {
                     navigateApp(AppPath.RecordIndexPage, {
                       objectNamePlural: 'workspaceMembers',
                     });
                     closeDropdown('workspace-members-open-dropdown');
                   }}
-                />
-                <MenuItem
-                  LeftIcon={IconHierarchy}
-                  text={t`See data model settings`}
+                >{t`See records`}</ListItem>
+                <ListItem
+                  startIcon={<IconHierarchy />}
                   onClick={() => {
                     navigateSettings(SettingsPath.ObjectDetail, {
                       objectNamePlural: 'workspaceMembers',
                     });
                     closeDropdown('workspace-members-open-dropdown');
                   }}
-                />
+                >{t`See data model settings`}</ListItem>
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }
@@ -246,33 +243,30 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                     });
                   }}
                 >
-                  <TableCell>
+                  <TableCell color={themeCssVariables.font.color.primary}>
                     <StyledIconWrapper>
                       <Avatar
-                        avatarUrl={getAbsoluteImageUrl(
-                          workspaceMember.avatarUrl,
-                        )}
-                        placeholderColorSeed={workspaceMember.id}
-                        placeholder={workspaceMember.name.firstName ?? ''}
-                        type="rounded"
+                        src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                        colorSeed={workspaceMember.id}
+                        name={workspaceMember.name.firstName ?? ''}
+                        shape="circle"
                         size="sm"
                       />
                     </StyledIconWrapper>
-                    <StyledTextContainerWithEllipsis
-                      id={`hover-text-${workspaceMember.id}`}
-                    >
-                      {workspaceMember.name.firstName +
-                        ' ' +
-                        workspaceMember.name.lastName}
-                    </StyledTextContainerWithEllipsis>
-                    <AppTooltip
-                      anchorSelect={`#hover-text-${workspaceMember.id}`}
+                    <Tooltip
                       content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-                      noArrow
-                      place="top"
-                      positionStrategy="fixed"
+                      side="top"
+                      positionMethod="fixed"
                       delay={TooltipDelay.shortDelay}
-                    />
+                    >
+                      <StyledTextContainerWithEllipsis
+                        id={`hover-text-${workspaceMember.id}`}
+                      >
+                        {workspaceMember.name.firstName +
+                          ' ' +
+                          workspaceMember.name.lastName}
+                      </StyledTextContainerWithEllipsis>
+                    </Tooltip>
                   </TableCell>
                   <TableCell>
                     <StyledTextContainerWithEllipsis>
@@ -310,6 +304,6 @@ export const SettingsWorkspaceMembersTeamTab = () => {
           )}
         </Table>
       </StyledTableContainer>
-    </Section>
+    </Section.Root>
   );
 };

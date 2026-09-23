@@ -10,8 +10,8 @@ import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPart
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialogOpenedComponentState';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import {
@@ -60,11 +60,11 @@ const ScopedStateProbe = ({
     settingsPersistedRoleFamilyState,
     ROLE_ID,
   );
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
+  const isDialogOpened = useAtomComponentStateValue(
+    isDialogOpenedComponentState,
     modalId,
   );
-  const { openModal, toggleModal } = useModal();
+  const { openDialog, toggleDialog } = useDialog();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
@@ -91,7 +91,7 @@ const ScopedStateProbe = ({
       <span data-testid={`${name}-persisted`}>
         {settingsPersistedRole?.label ?? 'unset'}
       </span>
-      <span data-testid={`${name}-modal`}>{String(isModalOpened)}</span>
+      <span data-testid={`${name}-modal`}>{String(isDialogOpened)}</span>
       <span data-testid={`${name}-dropdown`}>{String(isDropdownOpen)}</span>
       <span data-testid={`${name}-sort`}>
         {sortedFieldByTable?.fieldName ?? 'unset'}
@@ -109,11 +109,11 @@ const ScopedStateProbe = ({
       >
         {name} draft
       </button>
-      <button onClick={() => openModal(MODAL_ID)}>{name} modal</button>
-      <button onClick={() => toggleModal(MODAL_ID)}>{name} toggle modal</button>
+      <button onClick={() => openDialog(modalId)}>{name} modal</button>
+      <button onClick={() => toggleDialog(modalId)}>{name} toggle modal</button>
       <button
         onClick={() =>
-          openDropdown({ dropdownComponentInstanceIdFromProps: DROPDOWN_ID })
+          openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId })
         }
       >
         {name} dropdown

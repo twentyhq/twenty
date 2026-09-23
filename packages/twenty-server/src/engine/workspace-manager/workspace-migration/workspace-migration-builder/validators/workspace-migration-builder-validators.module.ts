@@ -1,3 +1,5 @@
+import { FlatWorkflowVersionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service';
+import { FlatWorkflowValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service';
 import { Module } from '@nestjs/common';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -36,6 +38,8 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
 @Module({
   imports: [FeatureFlagModule],
   providers: [
+    FlatWorkflowValidatorService,
+    FlatWorkflowVersionValidatorService,
     FlatViewFieldValidatorService,
     FlatViewFilterGroupValidatorService,
     FlatViewGroupValidatorService,
@@ -69,6 +73,8 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatSearchFieldMetadataValidatorService,
   ],
   exports: [
+    FlatWorkflowValidatorService,
+    FlatWorkflowVersionValidatorService,
     FlatViewFieldValidatorService,
     FlatViewFilterGroupValidatorService,
     FlatViewGroupValidatorService,

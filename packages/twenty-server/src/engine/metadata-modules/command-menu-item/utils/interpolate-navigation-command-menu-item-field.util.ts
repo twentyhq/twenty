@@ -8,7 +8,7 @@ import {
   buildNavigationPlaceholderValues,
   type NavigationPlaceholderObjectMetadata,
 } from 'src/engine/metadata-modules/command-menu-item/utils/build-navigation-placeholder-values.util';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 
 // NAVIGATION items are the only ones whose placeholders the server can fill:
 // they carry their target object as a foreign key. Every other availability

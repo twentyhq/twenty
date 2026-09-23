@@ -1,3 +1,5 @@
+import { type ModelMessage } from 'ai';
+
 import {
   getCallLevelProviderOptions,
   getCacheProviderOptions,
@@ -19,6 +21,47 @@ describe('provider-options.util', () => {
         anthropic: {
           cacheControl: { type: 'ephemeral' },
         },
+      });
+    });
+
+    it('keeps the thinking config the executor passes for Anthropic', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_ANTHROPIC,
+          providerOptions: { anthropic: { thinking: { type: 'adaptive' } } },
+        }),
+      ).toEqual({
+        anthropic: {
+          thinking: { type: 'adaptive' },
+          cacheControl: { type: 'ephemeral' },
+        },
+      });
+    });
+
+    it('keeps existing OpenAI options alongside store false', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_OPENAI,
+          providerOptions: { openai: { reasoningEffort: 'high' } },
+          promptCacheKey: 'thread-123',
+        }),
+      ).toEqual({
+        openai: {
+          reasoningEffort: 'high',
+          store: false,
+          promptCacheKey: 'thread-123',
+        },
+      });
+    });
+
+    it('keeps existing Azure options alongside store false', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_AZURE,
+          providerOptions: { azure: { reasoningEffort: 'high' } },
+        }),
+      ).toEqual({
+        azure: { reasoningEffort: 'high', store: false },
       });
     });
 
@@ -153,6 +196,84 @@ describe('provider-options.util', () => {
           },
         },
       ]);
+    });
+
+    it('moves the cache point off earlier messages that already carry one', () => {
+      expect(
+        injectCacheBreakpoint(
+          [
+            {
+              role: 'user',
+              content: 'first',
+              providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+            },
+            {
+              role: 'tool',
+              content: [],
+              providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+            },
+            { role: 'tool', content: [] },
+          ],
+          AI_SDK_BEDROCK,
+        ),
+      ).toEqual([
+        { role: 'user', content: 'first' },
+        { role: 'tool', content: [] },
+        {
+          role: 'tool',
+          content: [],
+          providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+        },
+      ]);
+    });
+
+    it('keeps bedrock provider options other than the cache point', () => {
+      expect(
+        injectCacheBreakpoint(
+          [
+            {
+              role: 'user',
+              content: 'first',
+              providerOptions: {
+                bedrock: { cachePoint: { type: 'default' }, guardrail: 'on' },
+              },
+            },
+            {
+              role: 'user',
+              content: 'last',
+              providerOptions: { bedrock: { guardrail: 'off' } },
+            },
+          ],
+          AI_SDK_BEDROCK,
+        ),
+      ).toEqual([
+        {
+          role: 'user',
+          content: 'first',
+          providerOptions: { bedrock: { guardrail: 'on' } },
+        },
+        {
+          role: 'user',
+          content: 'last',
+          providerOptions: {
+            bedrock: { guardrail: 'off', cachePoint: { type: 'default' } },
+          },
+        },
+      ]);
+    });
+
+    it('leaves messages untouched for non-Bedrock providers', () => {
+      const messages: ModelMessage[] = [
+        { role: 'user', content: 'first' },
+        {
+          role: 'user',
+          content: 'last',
+          providerOptions: { bedrock: { cachePoint: { type: 'default' } } },
+        },
+      ];
+
+      expect(injectCacheBreakpoint(messages, AI_SDK_ANTHROPIC)).toBe(messages);
+      expect(injectCacheBreakpoint(messages, AI_SDK_OPENAI)).toBe(messages);
     });
   });
 });

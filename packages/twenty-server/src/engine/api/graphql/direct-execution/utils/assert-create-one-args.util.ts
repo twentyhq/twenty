@@ -7,6 +7,7 @@ import {
   GraphqlDirectExecutionExceptionCode,
 } from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { assertShareWithArg } from 'src/engine/api/graphql/direct-execution/utils/assert-share-with-arg.util';
 import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 export function assertCreateOneArgs(
@@ -22,7 +23,7 @@ export function assertCreateOneArgs(
 
   const argKeys = Object.keys(args);
 
-  const allowedKeys = new Set(['data', 'upsert']);
+  const allowedKeys = new Set(['data', 'upsert', 'shareWith']);
 
   for (const key of argKeys) {
     if (!allowedKeys.has(key)) {
@@ -48,5 +49,9 @@ export function assertCreateOneArgs(
       GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
+  }
+
+  if ('shareWith' in args) {
+    assertShareWithArg(args.shareWith);
   }
 }

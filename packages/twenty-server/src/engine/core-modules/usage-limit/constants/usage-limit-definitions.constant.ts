@@ -2,10 +2,7 @@ import { type UsageLimitDefinitions } from 'src/engine/core-modules/usage-limit/
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-export const USAGE_LIMIT_DEFINITIONS: Record<
-  UsageResourceType,
-  UsageLimitDefinitions
-> = {
+export const USAGE_LIMIT_DEFINITIONS = {
   [UsageResourceType.API]: {
     speed: {
       allowedOperationTypes: [UsageOperationType.API_REQUEST],
@@ -47,20 +44,49 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
         'userWorkspace',
         'apiKey',
         'application',
-        'agent',
       ],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
   },
   [UsageResourceType.WORKFLOW]: {},
   [UsageResourceType.APP]: {},
-  [UsageResourceType.STORAGE]: {},
+  [UsageResourceType.STORAGE]: {
+    stock: {
+      allowedOperationTypes: [UsageOperationType.STORAGE_FILE],
+      allowedSpenderTypes: ['workspace', 'application'],
+      allowedMeters: ['bytes', 'quantity'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          meter: 'bytes',
+          limitValueConfigVariable: 'WORKSPACE_STORAGE_LIMIT_BYTES',
+          isOverridable: true,
+        },
+      ],
+    },
+  },
   [UsageResourceType.LOGIC_FUNCTION]: {},
   [UsageResourceType.EMAIL]: {
     speed: {
-      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedOperationTypes: [
+        UsageOperationType.EMAIL_SEND,
+        UsageOperationType.MESSAGE_CAMPAIGN_SEND,
+      ],
       allowedSpenderTypes: ['workspace'],
+      // Two buckets, and a send has to fit both. The workspace one keeps a
+      // single tenant's campaign from spending the whole instance budget; the
+      // server-wide one is what actually protects the provider account. The
+      // narrower scope is declared first so it names the scope when a refusal
+      // reports which limit was hit.
       defaults: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'perWorkspace',
+          limitValueConfigVariable: 'EMAIL_SEND_WORKSPACE_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable:
+            'EMAIL_SEND_WORKSPACE_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: true,
+        },
         {
           spenderType: 'workspace',
           counterScope: 'crossWorkspace',
@@ -71,4 +97,34 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
       ],
     },
   },
-};
+  [UsageResourceType.WEBHOOK]: {
+    speed: {
+      allowedOperationTypes: [UsageOperationType.WEBHOOK_CALL],
+      allowedSpenderTypes: ['workspace'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'perWorkspace',
+          limitValueConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: true,
+        },
+      ],
+    },
+  },
+  [UsageResourceType.RECORD]: {
+    stock: {
+      allowedOperationTypes: [UsageOperationType.RECORD_WRITE],
+      allowedSpenderTypes: ['workspace'],
+      allowedMeters: ['quantity'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          meter: 'quantity',
+          limitValueConfigVariable: 'WORKSPACE_RECORD_LIMIT',
+          isOverridable: true,
+        },
+      ],
+    },
+  },
+} satisfies Record<UsageResourceType, UsageLimitDefinitions>;

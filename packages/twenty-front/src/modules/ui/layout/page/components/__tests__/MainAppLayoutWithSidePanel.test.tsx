@@ -1,3 +1,10 @@
+jest.mock(
+  '@/onboarding/effect-components/WorkspaceSetupChatSidePanelEffect',
+  () => ({
+    WorkspaceSetupChatSidePanelEffect: () => null,
+  }),
+);
+
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { useEffect } from 'react';
 import {

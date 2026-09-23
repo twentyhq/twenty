@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkerMediaBridge } from '@/polyfills/media/types/WorkerMediaBridge';
-import { createDomException } from '@/polyfills/media/utils/createDomException';
+import { createDomException } from '@/polyfills/utils/createDomException';
 import { createMediaRecorderClass } from '@/polyfills/media/utils/createMediaRecorderClass';
 import {
   createMediaStreamClass,

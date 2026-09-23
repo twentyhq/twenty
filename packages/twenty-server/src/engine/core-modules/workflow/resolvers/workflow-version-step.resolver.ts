@@ -20,8 +20,10 @@ import { UpdateWorkflowVersionTriggerInput } from 'src/engine/core-modules/workf
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
 import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { WorkflowVersionTriggerDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-trigger.dto';
+import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -29,9 +31,11 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-handle.dto';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
@@ -44,6 +48,8 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   WorkflowVersionStepGraphqlApiExceptionFilter,
+  WorkflowVersionValidationGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
 )
 export class WorkflowVersionStepResolver {
   constructor(
@@ -52,6 +58,7 @@ export class WorkflowVersionStepResolver {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly httpTool: HttpTool,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
   // Related to https://github.com/twentyhq/private-issues/issues/478
@@ -79,10 +86,20 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async createWorkflowVersionStep(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     input: CreateWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [input.workflowVersionId],
+      },
+    );
+
     return this.workflowVersionStepWorkspaceService.createWorkflowVersionStep({
       workspaceId,
       input,
@@ -91,10 +108,20 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowActionDTO)
   async updateWorkflowVersionStep(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { step, workflowVersionId }: UpdateWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     return this.workflowVersionStepWorkspaceService.updateWorkflowVersionStep({
       workspaceId,
       workflowVersionId,
@@ -104,10 +131,20 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowVersionTriggerDTO)
   async updateWorkflowVersionTrigger(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { trigger, workflowVersionId }: UpdateWorkflowVersionTriggerInput,
   ): Promise<WorkflowVersionTriggerDTO> {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     return this.workflowVersionStepWorkspaceService.updateWorkflowVersionTrigger(
       {
         workspaceId,
@@ -119,10 +156,20 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async deleteWorkflowVersionStep(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { stepId, workflowVersionId }: DeleteWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     return this.workflowVersionStepWorkspaceService.deleteWorkflowVersionStep({
       workspaceId,
       workflowVersionId,
@@ -163,10 +210,20 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async duplicateWorkflowVersionStep(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { stepId, workflowVersionId }: DuplicateWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
     return this.workflowVersionStepWorkspaceService.duplicateWorkflowVersionStep(
       {
         workspaceId,

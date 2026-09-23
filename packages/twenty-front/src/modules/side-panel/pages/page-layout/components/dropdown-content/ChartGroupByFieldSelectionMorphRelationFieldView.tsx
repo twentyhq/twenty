@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ChartGroupByFieldSelectionTargetObjectFieldsView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView';
@@ -11,12 +13,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type MorphRelationTarget = {
@@ -57,12 +57,9 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
   const availableTargets = useMemo<MorphRelationTarget[]>(() => {
     return (morphField.morphRelations ?? [])
@@ -132,7 +129,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {availableTargets.length === 0 ? (
-          <MenuItem text={t`No targets available`} />
+          <ListItem disabled>{t`No targets available`}</ListItem>
         ) : (
           <SelectableList
             selectableListInstanceId={dropdownId}
@@ -149,17 +146,24 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
                   setSelectedTarget(target);
                 }}
               >
-                <MenuItem
-                  text={target.label}
+                <ListItem
                   focused={selectedItemId === target.perTargetFieldId}
-                  LeftIcon={
-                    isDefined(target.icon) ? getIcon(target.icon) : undefined
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={
+                        isDefined(target.icon)
+                          ? getIcon(target.icon)
+                          : undefined
+                      }
+                    />
                   }
-                  hasSubMenu
+                  hasSubmenu
                   onClick={() => {
                     setSelectedTarget(target);
                   }}
-                />
+                >
+                  {target.label}
+                </ListItem>
               </SelectableListItem>
             ))}
           </SelectableList>

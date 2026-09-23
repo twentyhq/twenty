@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useEffect } from 'react';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -24,11 +25,7 @@ import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
-import {
-  MenuItem,
-  MenuItemSelect,
-  UndecoratedLink,
-} from 'twenty-ui/navigation';
+import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
@@ -128,22 +125,32 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {isRecordGroupingOptionalForViewType(viewType) && (
-          <MenuItemSelect
-            text={t`None`}
-            selected={!isDefined(recordIndexGroupFieldMetadataItem)}
+          <ListItem
             onClick={handleResetRecordGroupField}
-          />
+            role="option"
+            aria-selected={!isDefined(recordIndexGroupFieldMetadataItem)}
+            selected={!isDefined(recordIndexGroupFieldMetadataItem)}
+            indicator="check"
+          >{t`None`}</ListItem>
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
-          <MenuItemSelect
+          <ListItem
             key={fieldMetadataItem.id}
+            onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
+            role="option"
+            aria-selected={
+              fieldMetadataItem.id === recordIndexGroupFieldMetadataItem?.id
+            }
             selected={
               fieldMetadataItem.id === recordIndexGroupFieldMetadataItem?.id
             }
-            onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
-            LeftIcon={getIcon(fieldMetadataItem.icon)}
-            text={fieldMetadataItem.label}
-          />
+            indicator="check"
+            startIcon={
+              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+            }
+          >
+            {fieldMetadataItem.label}
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
@@ -155,7 +162,9 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
             closeDropdown();
           }}
         >
-          <MenuItem LeftIcon={IconSettings} text={t`Create select field`} />
+          <ListItem
+            startIcon={<IconSettings />}
+          >{t`Create select field`}</ListItem>
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </DropdownContent>

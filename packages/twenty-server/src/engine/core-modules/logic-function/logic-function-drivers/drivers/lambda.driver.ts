@@ -67,6 +67,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       this.toolFunctions,
       options.logicFunctionResourceService,
       options.sdkClientArchiveService,
+      options.cacheLockService,
+      options.workspaceCacheService,
     );
     this.executorManager = new LambdaExecutorManagerService(
       options,

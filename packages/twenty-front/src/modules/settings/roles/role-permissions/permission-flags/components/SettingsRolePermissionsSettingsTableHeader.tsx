@@ -1,7 +1,7 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -59,7 +59,7 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
           }
           disabled={!isEditable}
           aria-label={t`Toggle all settings permissions`}
-          onChange={() => {
+          onCheckedChange={() => {
             const newValue = !allSettingsPermissionsEnabled;
 
             setSettingsDraftRole({

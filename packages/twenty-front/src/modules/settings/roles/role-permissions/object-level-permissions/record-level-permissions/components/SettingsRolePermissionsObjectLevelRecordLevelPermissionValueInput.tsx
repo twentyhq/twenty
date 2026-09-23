@@ -6,7 +6,7 @@ import { useContext, useMemo } from 'react';
 import { FieldMetadataType, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEraser } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { type JsonValue } from 'type-fest';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
@@ -24,6 +24,7 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -208,30 +209,27 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
         : 'Me';
 
       return (
-        <>
-          <StyledContainer>
+        <StyledContainer>
+          <Tooltip
+            content={fullLabel}
+            delay={TooltipDelay.shortDelay}
+            side="bottom"
+            positionMethod="fixed"
+          >
             <StyledReadOnlyInput id={tooltipId}>
               <StyledMeText>{t`Me`}</StyledMeText>
               {isDefined(workspaceMemberFieldLabel) && (
                 <StyledFieldLabel>{` / ${workspaceMemberFieldLabel}`}</StyledFieldLabel>
               )}
             </StyledReadOnlyInput>
-            <StyledIconContainer
-              onClick={handleResetToStaticValue}
-              aria-label={t`Reset to static value`}
-            >
-              <IconEraser size={theme.icon.size.sm} />
-            </StyledIconContainer>
-          </StyledContainer>
-          <AppTooltip
-            anchorSelect={`#${tooltipId}`}
-            content={fullLabel}
-            delay={TooltipDelay.shortDelay}
-            noArrow
-            place="bottom"
-            positionStrategy="fixed"
-          />
-        </>
+          </Tooltip>
+          <StyledIconContainer
+            onClick={handleResetToStaticValue}
+            aria-label={t`Reset to static value`}
+          >
+            <IconEraser size={theme.icon.size.sm} />
+          </StyledIconContainer>
+        </StyledContainer>
       );
     }
 

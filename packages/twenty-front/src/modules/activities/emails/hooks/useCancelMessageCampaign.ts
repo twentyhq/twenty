@@ -1,12 +1,12 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 
 import { CANCEL_MESSAGE_CAMPAIGN } from '@/activities/emails/graphql/mutations/cancelMessageCampaign';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { plural, t } from '@lingui/core/macro';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   type CancelMessageCampaignMutation,
   type CancelMessageCampaignMutationVariables,
@@ -18,14 +18,18 @@ export const useCancelMessageCampaign = () => {
     CancelMessageCampaignMutationVariables
   >(CANCEL_MESSAGE_CAMPAIGN);
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const cancelMessageCampaign = async ({
     campaignId,
+    campaignStatus,
   }: {
     campaignId: string;
+    campaignStatus: MessageCampaignStatus;
   }): Promise<boolean> => {
+    const wasScheduled = campaignStatus === MessageCampaignStatus.SCHEDULED;
+
     try {
       const result = await cancelMessageCampaignMutation({
         variables: { input: { campaignId } },
@@ -34,7 +38,10 @@ export const useCancelMessageCampaign = () => {
       const canceled = result.data?.cancelMessageCampaign;
 
       if (!isDefined(canceled)) {
-        enqueueErrorSnackBar({ message: t`Failed to cancel campaign` });
+        enqueueToast({
+          variant: 'error',
+          children: t`Failed to cancel campaign`,
+        });
 
         return false;
       }
@@ -44,13 +51,26 @@ export const useCancelMessageCampaign = () => {
           {
             __typename: 'MessageCampaign',
             id: campaignId,
-            status: MessageCampaignStatus.CANCELED,
+            status: wasScheduled
+              ? MessageCampaignStatus.DRAFT
+              : MessageCampaignStatus.CANCELED,
+            scheduledAt: null,
           },
         ],
       });
 
-      enqueueSuccessSnackBar({
-        message: plural(canceled.canceledMessageCount, {
+      if (wasScheduled) {
+        enqueueToast({
+          variant: 'success',
+          children: t`Campaign unscheduled and back in your drafts`,
+        });
+
+        return true;
+      }
+
+      enqueueToast({
+        variant: 'success',
+        children: plural(canceled.canceledMessageCount, {
           one: `Campaign canceled, ${canceled.canceledMessageCount} pending email stopped`,
           other: `Campaign canceled, ${canceled.canceledMessageCount} pending emails stopped`,
         }),
@@ -58,9 +78,7 @@ export const useCancelMessageCampaign = () => {
 
       return true;
     } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
 
       return false;
     }

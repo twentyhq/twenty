@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -15,12 +16,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const StyledDropdownMenuContainer = styled.div`
@@ -64,12 +63,9 @@ export const RecordIndexCommandMenuDropdown = () => {
     ...(shouldShowMoreActions ? ['more-actions'] : []),
   ];
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   return (
@@ -77,7 +73,6 @@ export const RecordIndexCommandMenuDropdown = () => {
       dropdownId={dropdownId}
       data-select-disable
       dropdownPlacement="bottom-start"
-      dropdownStrategy="absolute"
       dropdownOffset={{
         x: recordIndexCommandMenuDropdownPosition.x ?? 0,
         y: recordIndexCommandMenuDropdownPosition.y ?? 0,
@@ -105,15 +100,14 @@ export const RecordIndexCommandMenuDropdown = () => {
                       openSidePanelMenu();
                     }}
                   >
-                    <MenuItem
-                      LeftIcon={IconLayoutSidebarRightExpand}
+                    <ListItem
+                      startIcon={<IconLayoutSidebarRightExpand />}
                       onClick={() => {
                         closeDropdown(dropdownId);
                         openSidePanelMenu();
                       }}
                       focused={selectedItemId === 'more-actions'}
-                      text={t`More actions`}
-                    />
+                    >{t`More actions`}</ListItem>
                   </SelectableListItem>
                 )}
               </SelectableList>

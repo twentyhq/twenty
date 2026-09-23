@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -13,7 +14,6 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,8 +25,8 @@ import {
   IconTable,
   IconWebhook,
 } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 
@@ -49,12 +49,9 @@ export const WebhookEntitySelect = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const { closeDropdown } = useCloseDropdown();
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const metadataOptions: SelectOption<string>[] = [
@@ -149,14 +146,22 @@ export const WebhookEntitySelect = ({
                       itemId={option.value}
                       onEnter={() => handleSelect(option.value)}
                     >
-                      <MenuItemSelect
-                        LeftIcon={option.Icon}
-                        leftIconColor={option.iconThemeColor}
-                        text={option.label}
-                        selected={value === option.value}
+                      <ListItem
                         focused={selectedItemId === option.value}
                         onClick={() => handleSelect(option.value)}
-                      />
+                        role="option"
+                        aria-selected={value === option.value}
+                        selected={value === option.value}
+                        indicator="check"
+                        startIcon={
+                          <SelectOptionIcon
+                            Icon={option.Icon}
+                            color={option.iconThemeColor}
+                          />
+                        }
+                      >
+                        {option.label}
+                      </ListItem>
                     </SelectableListItem>
                   ))}
                 </>
@@ -171,13 +176,17 @@ export const WebhookEntitySelect = ({
                       itemId={option.value}
                       onEnter={() => handleSelect(option.value)}
                     >
-                      <MenuItemSelect
-                        LeftIcon={option.Icon}
-                        text={option.label}
-                        selected={value === option.value}
+                      <ListItem
                         focused={selectedItemId === option.value}
                         onClick={() => handleSelect(option.value)}
-                      />
+                        role="option"
+                        aria-selected={value === option.value}
+                        selected={value === option.value}
+                        indicator="check"
+                        startIcon={<SelectOptionIcon Icon={option.Icon} />}
+                      >
+                        {option.label}
+                      </ListItem>
                     </SelectableListItem>
                   ))}
                 </>

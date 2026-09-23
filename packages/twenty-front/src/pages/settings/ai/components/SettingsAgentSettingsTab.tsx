@@ -1,28 +1,23 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
-import {
-  useAiModelLabel,
-  useAiModelOptions,
-} from '@/ai/hooks/useAiModelOptions';
+import { AiModelPicker } from '@/ai/components/AiModelPicker';
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
-import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent } from '~/generated-metadata/graphql';
 import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
+import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledFormContainer = styled.div`
@@ -66,26 +61,10 @@ export const SettingsAgentSettingsTab = ({
   agent,
 }: SettingsAgentSettingsTabProps) => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const aiModels = useAtomStateValue(aiModelsState);
-  const { options: activeModelOptions } = useAiModelOptions();
-  const currentModelLabel = useAiModelLabel(formValues.modelId);
-
-  const currentModel = aiModels.find((m) => m.modelId === formValues.modelId);
-  const isCurrentModelDeprecated = currentModel?.isDeprecated === true;
-
-  const modelOptions = isCurrentModelDeprecated
-    ? [
-        {
-          value: formValues.modelId,
-          label: `${currentModelLabel} (deprecated)`,
-        },
-        ...activeModelOptions,
-      ]
-    : activeModelOptions;
-
-  const noModelsAvailable = modelOptions.length === 0;
+  const noModelsAvailable = aiModels.length === 0;
 
   const fillNameFromLabel = (label: string) => {
     if (isDefined(label)) {
@@ -133,16 +112,13 @@ export const SettingsAgentSettingsTab = ({
       <StyledFormContainer>
         {noModelsAvailable ? (
           <StyledErrorMessage>
-            {t`No models available. Please configure AI models in your workspace settings.`}
+            {t`No AI provider is configured on this instance.`}
           </StyledErrorMessage>
         ) : (
-          <Select
-            dropdownId="ai-model-select"
-            label={t`AI Model`}
-            value={formValues.modelId}
-            onChange={(value) => onFieldChange('modelId', value)}
-            options={modelOptions}
-            disabled={noModelsAvailable || disabled}
+          <AiModelPicker
+            modelId={formValues.modelId}
+            onModelIdChange={(value) => onFieldChange('modelId', value)}
+            disabled={disabled}
           />
         )}
       </StyledFormContainer>
@@ -180,16 +156,18 @@ export const SettingsAgentSettingsTab = ({
         />
       </StyledFormContainer>
       {!disabled && agent && formValues.isCustom && (
-        <Section>
-          <H2Title title={t`Danger zone`} description={t`Delete this agent`} />
-          <Button
-            accent="danger"
-            variant="secondary"
-            title={t`Delete Agent`}
-            Icon={IconTrash}
-            onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+        <Section.Root>
+          <Section.Header
+            title={t`Danger zone`}
+            description={t`Delete this agent`}
           />
-        </Section>
+          <Button
+            startIcon={<IconTrash />}
+            onClick={() => openDialog(DELETE_AGENT_MODAL_ID)}
+            variant="outline"
+            color="danger"
+          >{t`Delete Agent`}</Button>
+        </Section.Root>
       )}
       {!disabled && agent && (
         <SettingsAgentDeleteConfirmationModal

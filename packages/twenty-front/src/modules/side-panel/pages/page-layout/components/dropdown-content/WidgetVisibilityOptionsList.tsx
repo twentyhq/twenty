@@ -7,8 +7,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WidgetVisibilityOptionsListProps = {
   currentOptionId: string;
@@ -23,12 +22,9 @@ export const WidgetVisibilityOptionsList = ({
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const visibilityLabels = useVisibilityLabels();
@@ -48,14 +44,18 @@ export const WidgetVisibilityOptionsList = ({
               onSelectVisibility(option.id);
             }}
           >
-            <MenuItemSelect
-              text={visibilityLabels[option.id]}
-              selected={currentOptionId === option.id}
+            <ListItem
               focused={selectedItemId === option.id}
               onClick={() => {
                 onSelectVisibility(option.id);
               }}
-            />
+              role="option"
+              aria-selected={currentOptionId === option.id}
+              selected={currentOptionId === option.id}
+              indicator="check"
+            >
+              {visibilityLabels[option.id]}
+            </ListItem>
           </SelectableListItem>
         ))}
       </SelectableList>

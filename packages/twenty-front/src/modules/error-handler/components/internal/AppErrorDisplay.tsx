@@ -1,14 +1,14 @@
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import { t } from '@lingui/core/macro';
 import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 
 export const AppErrorDisplay = ({
   resetErrorBoundary,
@@ -24,11 +24,10 @@ export const AppErrorDisplay = ({
         </AnimatedPlaceholderEmptySubTitle>
       </AnimatedPlaceholderEmptyTextContainer>
       <Button
-        Icon={IconRefresh}
-        title={t`Reload`}
-        variant="secondary"
+        startIcon={<IconRefresh />}
         onClick={resetErrorBoundary}
-      />
+        variant="outline"
+      >{t`Reload`}</Button>
     </AnimatedPlaceholderEmptyContainer>
   );
 };

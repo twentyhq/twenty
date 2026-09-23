@@ -2,14 +2,21 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModel, type TranscriptionModel } from 'ai';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AiSdkPackage } from 'twenty-shared/ai';
+import {
+  AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  DEFAULT_AI_AGENT_MODEL_TIER,
+  getAiModelTierFromModelId,
+  type AiModelEffort,
+  type AiModelTier,
+  type AiSdkPackage,
+  AI_MODEL_EFFORT_LABELS,
+  parseAiModelVariantId,
+} from 'twenty-shared/ai';
 
-import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
+import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-organization-key.constant';
 import { CustomAiProviderAccessService } from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
-import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
-
 import {
   AiException,
   AiExceptionCode,
@@ -21,33 +28,34 @@ import {
   type AiSdkProviderInstance,
 } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { type AiEvaluationModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model-config.type';
+import { type AiEvaluationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 import { type AiTranscriptionModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-transcription-model-config.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { DEFAULT_CONTEXT_WINDOW_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-context-window-tokens.const';
 import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
-import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
+  isAutoSelectModelId,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
+import { getAiModelTiersByDistance } from 'src/engine/metadata-modules/ai/ai-models/utils/get-ai-model-tiers-by-distance.util';
+import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
-import {
-  isModelAllowedByWorkspace,
-  type WorkspaceModelAvailabilitySettings,
-} from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
-import { workspaceHasEnabledModels } from 'src/engine/metadata-modules/ai/ai-models/utils/workspace-has-enabled-models.util';
+import { type WorkspaceAiModelSettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-model-settings.type';
 
 export interface RegisteredAiModel {
   modelId: string;
   sdkPackage: AiSdkPackage;
   model: LanguageModel;
   supportsReasoning?: boolean;
+  effort?: AiModelEffort;
   providerName?: string;
   modelsDevName?: string;
 }
@@ -56,6 +64,13 @@ export type RegisteredAiTranscriptionModel = {
   modelId: string;
   sdkPackage: AiSdkPackage;
   model: TranscriptionModel;
+  providerName: string;
+};
+
+export type RegisteredAiEvaluationModel = {
+  modelId: string;
+  sdkPackage: AiSdkPackage;
+  model: AiEvaluationModel;
   providerName: string;
 };
 
@@ -69,6 +84,13 @@ export class AiModelRegistryService {
   private transcriptionRegistry: Map<string, RegisteredAiTranscriptionModel> =
     new Map();
   private transcriptionConfigCache: Map<string, AiTranscriptionModelConfig> =
+    new Map();
+  // Kept apart for the same reason as transcription: an evaluation model has no
+  // context window and cannot answer a chat turn, so it must never surface in
+  // the model picker or reach language-model costing.
+  private evaluationRegistry: Map<string, RegisteredAiEvaluationModel> =
+    new Map();
+  private evaluationConfigCache: Map<string, AiEvaluationModelConfig> =
     new Map();
   private providerModelDefCache: Map<
     string,
@@ -116,6 +138,8 @@ export class AiModelRegistryService {
     this.modelConfigCache.clear();
     this.transcriptionRegistry.clear();
     this.transcriptionConfigCache.clear();
+    this.evaluationRegistry.clear();
+    this.evaluationConfigCache.clear();
     this.providerModelDefCache.clear();
 
     const providers = this.providerConfigService.getResolvedProviders({
@@ -123,6 +147,7 @@ export class AiModelRegistryService {
     });
 
     this.registerModelsFromProviders(providers);
+    this.registerSupportedVariants();
   }
 
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
@@ -159,6 +184,18 @@ export class AiModelRegistryService {
           continue;
         }
 
+        if (modelDef.kind === 'evaluation') {
+          this.registerEvaluationModel({
+            compositeId,
+            providerKey,
+            config,
+            modelDef,
+            sdkInstance,
+          });
+
+          continue;
+        }
+
         this.modelConfigCache.set(
           compositeId,
           this.toAiModelConfig(compositeId, config, modelDef),
@@ -169,11 +206,13 @@ export class AiModelRegistryService {
           modelDef,
         });
 
-        if (sdkInstance) {
+        const createModel = sdkInstance?.createModel;
+
+        if (isDefined(createModel)) {
           this.modelRegistry.set(compositeId, {
             modelId: compositeId,
             sdkPackage: config.npm,
-            model: sdkInstance.createModel(modelDef.name),
+            model: createModel(modelDef.name),
             supportsReasoning: modelDef.supportsReasoning,
             providerName: providerKey,
             modelsDevName: config.name,
@@ -181,6 +220,80 @@ export class AiModelRegistryService {
         }
       }
     }
+  }
+
+  private registerSupportedVariants(): void {
+    // The client catalog must resolve every selectable effort before a pin is
+    // saved, not only variants that have already been used by the server.
+    for (const modelConfig of Array.from(this.modelConfigCache.values())) {
+      for (const effort of getAvailableEfforts(modelConfig)) {
+        this.registerVariant(`${modelConfig.modelId}@${effort}`);
+      }
+    }
+  }
+
+  // Any effort the catalog declares for a model is reachable by id, whether it
+  // sits in a chain, a workspace pin or an agent. An undeclared one never is.
+  private registerVariant(variantId: string): void {
+    const variant = this.resolveConfiguredVariant(variantId);
+
+    if (!isDefined(variant)) {
+      return;
+    }
+
+    const { baseConfig, effort } = variant;
+
+    this.modelConfigCache.set(variantId, {
+      ...baseConfig,
+      modelId: variantId,
+      label: `${baseConfig.label} (${AI_MODEL_EFFORT_LABELS[effort]})`,
+      effort,
+      // A reading describes the effort it was taken at, so the variant gets
+      // the one taken at its effort or none, never the base model's ceiling.
+      benchmark: baseConfig.benchmarkByEffort?.[effort],
+    });
+
+    const baseModelDef = this.providerModelDefCache.get(baseConfig.modelId);
+
+    if (isDefined(baseModelDef)) {
+      this.providerModelDefCache.set(variantId, baseModelDef);
+    }
+
+    const baseModel = this.modelRegistry.get(baseConfig.modelId);
+
+    if (isDefined(baseModel)) {
+      this.modelRegistry.set(variantId, {
+        ...baseModel,
+        modelId: variantId,
+        effort,
+      });
+    }
+  }
+
+  private resolveConfiguredVariant(
+    variantId: string,
+  ): { baseConfig: AiModelConfig; effort: AiModelEffort } | undefined {
+    if (this.modelConfigCache.has(variantId)) {
+      return undefined;
+    }
+
+    const { modelId, effort } = parseAiModelVariantId(variantId);
+
+    if (!isDefined(effort)) {
+      return undefined;
+    }
+
+    const baseConfig = this.modelConfigCache.get(modelId);
+
+    if (!isDefined(baseConfig)) {
+      return undefined;
+    }
+
+    if (!getAvailableEfforts(baseConfig).includes(effort)) {
+      return undefined;
+    }
+
+    return { baseConfig, effort };
   }
 
   private registerTranscriptionModel({
@@ -211,7 +324,8 @@ export class AiModelRegistryService {
       sdkPackage: config.npm,
       label: modelDef.label,
       description: modelDef.description ?? compositeId,
-      dataResidency: config.dataResidency,
+      dataResidency: modelDef.dataResidency ?? config.dataResidency,
+      zeroDataRetention: modelDef.zeroDataRetention,
       costPerMinute: modelDef.costPerMinute,
       isDeprecated: modelDef.isDeprecated,
     });
@@ -276,6 +390,118 @@ export class AiModelRegistryService {
     return isDefined(this.getDefaultTranscriptionModel());
   }
 
+  private registerEvaluationModel({
+    compositeId,
+    providerKey,
+    config,
+    modelDef,
+    sdkInstance,
+  }: {
+    compositeId: string;
+    providerKey: string;
+    config: AiProviderConfig;
+    modelDef: AiProviderModelConfig;
+    sdkInstance: AiSdkProviderInstance | undefined;
+  }): void {
+    const { supportedQuestionTypes } = modelDef;
+
+    // The schema already requires these, but a custom provider merged in at
+    // runtime reaches here too, and a model with no declared question types
+    // would accept every node and fail at the provider instead.
+    if (!isNonEmptyArray(supportedQuestionTypes)) {
+      this.logger.error(
+        `Skipping evaluation model "${compositeId}": supportedQuestionTypes is required`,
+      );
+
+      return;
+    }
+
+    if (
+      !isDefined(modelDef.inputCostPerMillionTokens) ||
+      !isDefined(modelDef.outputCostPerMillionTokens)
+    ) {
+      this.logger.error(
+        `Skipping evaluation model "${compositeId}": token costs are required`,
+      );
+
+      return;
+    }
+
+    this.evaluationConfigCache.set(compositeId, {
+      modelId: compositeId,
+      providerName: providerKey,
+      name: modelDef.name,
+      sdkPackage: config.npm,
+      label: modelDef.label,
+      description: modelDef.description ?? compositeId,
+      inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens,
+      outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens,
+      supportedQuestionTypes: [...supportedQuestionTypes],
+      maxCriteriaPerQuestion: modelDef.maxCriteriaPerQuestion,
+      maxScoreLevels: modelDef.maxScoreLevels,
+      medianLatencyMs: modelDef.medianLatencyMs,
+      dataResidency: modelDef.dataResidency ?? config.dataResidency,
+      zeroDataRetention: modelDef.zeroDataRetention,
+      isDeprecated: modelDef.isDeprecated,
+    });
+
+    const createEvaluationModel = sdkInstance?.createEvaluationModel;
+
+    if (!isDefined(createEvaluationModel)) {
+      return;
+    }
+
+    this.evaluationRegistry.set(compositeId, {
+      modelId: compositeId,
+      sdkPackage: config.npm,
+      model: createEvaluationModel(modelDef.name),
+      providerName: providerKey,
+    });
+  }
+
+  getEvaluationModel(modelId: string): RegisteredAiEvaluationModel | undefined {
+    this.ensureFresh();
+
+    return this.evaluationRegistry.get(modelId);
+  }
+
+  getAvailableEvaluationModels(): RegisteredAiEvaluationModel[] {
+    this.ensureFresh();
+
+    return Array.from(this.evaluationRegistry.values());
+  }
+
+  // Registration order follows the provider config, so the first entry is the
+  // one an operator listed first. Admin-disabled models are skipped the way
+  // getFirstAvailableModelFromList skips them for language tiers: withdrawing
+  // the only evaluation model has to send unpinned steps to the language
+  // fallback, not keep running them on the model that was withdrawn.
+  getDefaultEvaluationModel(): RegisteredAiEvaluationModel | undefined {
+    return this.getAvailableEvaluationModels().find(
+      (model) =>
+        !this.getEvaluationModelConfig(model.modelId)?.isDeprecated &&
+        this.isModelAdminAllowed(model.modelId),
+    );
+  }
+
+  getEvaluationModelConfig(
+    modelId: string,
+  ): AiEvaluationModelConfig | undefined {
+    this.ensureFresh();
+
+    return this.evaluationConfigCache.get(modelId);
+  }
+
+  getAvailableEvaluationModelConfigs(): AiEvaluationModelConfig[] {
+    this.ensureFresh();
+
+    return Array.from(this.evaluationConfigCache.values());
+  }
+
+  hasEvaluationModel(): boolean {
+    return isDefined(this.getDefaultEvaluationModel());
+  }
+
   private toAiModelConfig(
     compositeId: string,
     providerConfig: AiProviderConfig,
@@ -289,7 +515,10 @@ export class AiModelRegistryService {
       modelFamily:
         modelDef.modelFamily ??
         inferModelFamily(providerConfig.name ?? '', modelDef.name),
-      dataResidency: providerConfig.dataResidency,
+      // The provider value is only a fallback: one Bedrock provider serves both
+      // eu.* and global.* models, which do not route to the same place.
+      dataResidency: modelDef.dataResidency ?? providerConfig.dataResidency,
+      zeroDataRetention: modelDef.zeroDataRetention,
       inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens ?? 0,
       outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens ?? 0,
       cachedInputCostPerMillionTokens: modelDef.cachedInputCostPerMillionTokens,
@@ -306,12 +535,16 @@ export class AiModelRegistryService {
       ),
       modalities: modelDef.modalities,
       supportsReasoning: modelDef.supportsReasoning,
+      efforts: modelDef.efforts,
+      benchmark: modelDef.benchmark,
+      benchmarkByEffort: modelDef.benchmarkByEffort,
       isDeprecated: modelDef.isDeprecated,
     };
   }
 
   getModel(modelId: string): RegisteredAiModel | undefined {
     this.ensureFresh();
+    this.registerVariant(modelId);
 
     return this.modelRegistry.get(modelId);
   }
@@ -324,12 +557,9 @@ export class AiModelRegistryService {
 
   getModelConfig(modelId: string): AiModelConfig | undefined {
     this.ensureFresh();
+    this.registerVariant(modelId);
 
     return this.modelConfigCache.get(modelId);
-  }
-
-  getRecommendedModelIds(): Set<string> {
-    return this.preferencesService.getRecommendedModelIds();
   }
 
   private getFirstAvailableModelFromList(
@@ -338,7 +568,7 @@ export class AiModelRegistryService {
     for (const modelId of modelIds) {
       const model = this.getModel(modelId);
 
-      if (model) {
+      if (isDefined(model) && this.isModelAdminAllowed(modelId)) {
         return model;
       }
     }
@@ -346,24 +576,34 @@ export class AiModelRegistryService {
     return undefined;
   }
 
-  getDefaultSpeedModel(): RegisteredAiModel {
-    return this.getDefaultModelForRole(AiModelRole.FAST);
-  }
+  // A rung whose chain names nothing available borrows the nearest rung's
+  // chain, so an instance with two models lands on the neighbouring tier
+  // rather than on whatever the catalog happens to list first. The last
+  // resort is any model the admin still allows, a current one before a
+  // deprecated one: a chain that names only disabled models must not hand a
+  // disabled one to the client.
+  findDefaultModelForTier(tier: AiModelTier): RegisteredAiModel | undefined {
+    for (const candidateTier of getAiModelTiersByDistance(tier)) {
+      const model = this.getFirstAvailableModelFromList(
+        this.preferencesService.getDefaultModelIdsForTier(candidateTier),
+      );
 
-  getDefaultPerformanceModel(): RegisteredAiModel {
-    return this.getDefaultModelForRole(AiModelRole.SMART);
-  }
-
-  private getDefaultModelForRole(role: AiModelRole): RegisteredAiModel {
-    const prefs = this.preferencesService.getPreferences();
-    const preferenceKey =
-      role === AiModelRole.FAST ? 'defaultFastModels' : 'defaultSmartModels';
-
-    let model = this.getFirstAvailableModelFromList(prefs[preferenceKey] ?? []);
-
-    if (!model) {
-      model = this.getAvailableModels()[0];
+      if (isDefined(model)) {
+        return model;
+      }
     }
+
+    const allowedModels = this.getAdminFilteredModels();
+
+    return (
+      allowedModels.find(
+        (model) => this.getModelConfig(model.modelId)?.isDeprecated !== true,
+      ) ?? allowedModels[0]
+    );
+  }
+
+  getDefaultModelForTier(tier: AiModelTier): RegisteredAiModel {
+    const model = this.findDefaultModelForTier(tier);
 
     if (!model) {
       throw new AiException(
@@ -375,18 +615,61 @@ export class AiModelRegistryService {
     return model;
   }
 
-  getEffectiveModelConfig(modelId: string): AiModelConfig {
+  // A pin only applies while the pinned model still resolves and is not
+  // disabled, so a workspace never loses a tier because a provider key went
+  // away or an admin disabled the model after it was pinned.
+  private resolveModelForTier(
+    tier: AiModelTier,
+    workspaceSettings?: WorkspaceAiModelSettings,
+  ): RegisteredAiModel {
+    const pinnedModelId =
+      isDefined(workspaceSettings) &&
+      !workspaceSettings.isAutoModelSelectionEnabled
+        ? workspaceSettings.aiModelIdByTier[tier]
+        : undefined;
+
+    if (isDefined(pinnedModelId) && this.isModelAdminAllowed(pinnedModelId)) {
+      const pinnedModel = this.getModel(pinnedModelId);
+
+      if (isDefined(pinnedModel)) {
+        return pinnedModel;
+      }
+    }
+
+    return this.getDefaultModelForTier(tier);
+  }
+
+  private resolveAutoSelectModel(
+    modelId: string,
+    workspaceSettings?: WorkspaceAiModelSettings,
+  ): RegisteredAiModel | undefined {
+    const tier =
+      modelId === AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID
+        ? (workspaceSettings?.aiAgentModelTier ?? DEFAULT_AI_AGENT_MODEL_TIER)
+        : getAiModelTierFromModelId(modelId);
+
+    if (!isDefined(tier)) {
+      return undefined;
+    }
+
+    return this.resolveModelForTier(tier, workspaceSettings);
+  }
+
+  getEffectiveModelConfig(
+    modelId: string,
+    workspaceSettings?: WorkspaceAiModelSettings,
+  ): AiModelConfig {
     this.ensureFresh();
 
-    if (isAutoSelectModelId(modelId)) {
-      const defaultModel =
-        modelId === AUTO_SELECT_FAST_MODEL_ID
-          ? this.getDefaultSpeedModel()
-          : this.getDefaultPerformanceModel();
+    const autoSelectedModel = this.resolveAutoSelectModel(
+      modelId,
+      workspaceSettings,
+    );
 
+    if (isDefined(autoSelectedModel)) {
       return (
-        this.modelConfigCache.get(defaultModel.modelId) ??
-        this.createDefaultConfigForCustomModel(defaultModel)
+        this.modelConfigCache.get(autoSelectedModel.modelId) ??
+        this.createDefaultConfigForCustomModel(autoSelectedModel)
       );
     }
 
@@ -454,16 +737,19 @@ export class AiModelRegistryService {
       return true;
     }
 
-    const prefs = this.preferencesService.getPreferences();
-    const disabledModels = prefs.disabledModels ?? [];
+    const disabledModels = this.preferencesService.getDisabledModelIds();
+    // Disabling a model disables every effort it can be pinned at.
+    const { modelId: baseModelId } = parseAiModelVariantId(modelId);
 
-    return !disabledModels.includes(modelId);
+    return (
+      !disabledModels.includes(modelId) && !disabledModels.includes(baseModelId)
+    );
   }
 
-  validateModelAvailability(
-    modelId: string,
-    availabilitySettings: WorkspaceModelAvailabilitySettings,
-  ): void {
+  // Catalog membership rather than registration: an instance can name a
+  // model before it holds the provider key, and a key added later makes the
+  // stored id work without touching the agent.
+  validateModelAvailability(modelId: string): void {
     if (!this.isModelAdminAllowed(modelId)) {
       throw new AiException(
         'The selected model has been disabled by the administrator.',
@@ -471,19 +757,12 @@ export class AiModelRegistryService {
       );
     }
 
-    const recommendedModelIds = this.getRecommendedModelIds();
-
-    const isAvailable = isAutoSelectModelId(modelId)
-      ? workspaceHasEnabledModels(availabilitySettings, recommendedModelIds)
-      : isModelAllowedByWorkspace(
-          modelId,
-          availabilitySettings,
-          recommendedModelIds,
-        );
-
-    if (!isAvailable) {
+    if (
+      !isAutoSelectModelId(modelId) &&
+      !isDefined(this.getModelConfig(modelId))
+    ) {
       throw new AiException(
-        'The selected model is not available in this workspace.',
+        this.buildModelNotFoundMessage(modelId),
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
@@ -499,71 +778,91 @@ export class AiModelRegistryService {
     modelConfig: AiModelConfig;
     isAvailable: boolean;
     isAdminEnabled: boolean;
-    isRecommended: boolean;
     providerName?: string;
     name?: string;
   }> {
     this.ensureFresh();
-    const recommended = this.getRecommendedModelIds();
 
-    return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
-      const registered = this.modelRegistry.get(modelConfig.modelId);
-      const cached = this.providerModelDefCache.get(modelConfig.modelId);
+    // Effort variants share the base model's management and deletion target.
+    return Array.from(this.modelConfigCache.values())
+      .filter((modelConfig) => !isDefined(modelConfig.effort))
+      .map((modelConfig) => {
+        const registered = this.modelRegistry.get(modelConfig.modelId);
+        const cached = this.providerModelDefCache.get(modelConfig.modelId);
 
-      return {
+        return {
+          modelConfig,
+          isAvailable: !!registered,
+          isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
+          providerName: registered?.providerName ?? cached?.providerName,
+          name: cached?.modelDef.name,
+        };
+      });
+  }
+
+  // Evaluation models are cached apart from language models so nothing that
+  // resolves a chat or an agent can reach them, which also keeps them out of
+  // getAllModelsWithStatus. The admin panel lists both, so it asks separately.
+  getAllEvaluationModelsWithStatus(): Array<{
+    modelConfig: AiEvaluationModelConfig;
+    isAvailable: boolean;
+    isAdminEnabled: boolean;
+  }> {
+    this.ensureFresh();
+
+    return Array.from(this.evaluationConfigCache.values()).map(
+      (modelConfig) => ({
         modelConfig,
-        isAvailable: !!registered,
+        isAvailable: isDefined(
+          this.evaluationRegistry.get(modelConfig.modelId),
+        ),
         isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
-        isRecommended: recommended.has(modelConfig.modelId),
-        providerName: registered?.providerName ?? cached?.providerName,
-        name: cached?.modelDef.name,
-      };
-    });
+      }),
+    );
   }
 
   async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {
-    this.validateModelInRegistry(modelId);
+    this.validateModelIsKnown(modelId);
     await this.preferencesService.setModelAdminEnabled(modelId, enabled);
-  }
-
-  async setModelRecommended(
-    modelId: string,
-    recommended: boolean,
-  ): Promise<void> {
-    this.validateModelInRegistry(modelId);
-    await this.preferencesService.setModelRecommended(modelId, recommended);
   }
 
   async setModelsAdminEnabled(
     modelIds: string[],
     enabled: boolean,
   ): Promise<void> {
-    modelIds.forEach((id) => this.validateModelInRegistry(id));
+    modelIds.forEach((id) => this.validateModelIsKnown(id));
     await this.preferencesService.setModelsAdminEnabled(modelIds, enabled);
   }
 
-  async setModelsRecommended(
-    modelIds: string[],
-    recommended: boolean,
-  ): Promise<void> {
-    modelIds.forEach((id) => this.validateModelInRegistry(id));
-    await this.preferencesService.setModelsRecommended(modelIds, recommended);
+  async setDefaultModel(tier: AiModelTier, modelId: string): Promise<void> {
+    this.validateLanguageModelIsKnown(modelId);
+    await this.preferencesService.setDefaultModel(tier, modelId);
   }
 
-  async setDefaultModel(role: AiModelRole, modelId: string): Promise<void> {
-    this.validateModelInRegistry(modelId);
-    await this.preferencesService.setDefaultModel(role, modelId);
-  }
-
-  private validateModelInRegistry(modelId: string): void {
+  private validateLanguageModelIsKnown(modelId: string): void {
     this.ensureFresh();
 
-    if (!this.providerModelDefCache.has(modelId)) {
+    if (
+      !this.providerModelDefCache.has(modelId) &&
+      !isDefined(this.resolveConfiguredVariant(modelId))
+    ) {
       throw new AiException(
         `Cannot update model "${modelId}": not found in registry`,
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
+  }
+
+  // Enabling and disabling reaches every kind, unlike a tier default, which
+  // only a language model can serve.
+  private validateModelIsKnown(modelId: string): void {
+    this.ensureFresh();
+
+    if (this.evaluationConfigCache.has(modelId)) {
+      return;
+    }
+
+    this.validateLanguageModelIsKnown(modelId);
   }
 
   getResolvedProvidersForAdmin(): AiProvidersConfig {
@@ -574,9 +873,13 @@ export class AiModelRegistryService {
     return this.providerConfigService.getCatalogProviderNames();
   }
 
-  resolveModelForAgent(agent: { modelId: string } | null): RegisteredAiModel {
+  resolveModelForAgent(
+    agent: { modelId: string } | null,
+    workspaceSettings?: WorkspaceAiModelSettings,
+  ): RegisteredAiModel {
     const aiModel = this.getEffectiveModelConfig(
-      agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
+      agent?.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+      workspaceSettings,
     );
 
     const registeredModel = this.getModel(aiModel.modelId);

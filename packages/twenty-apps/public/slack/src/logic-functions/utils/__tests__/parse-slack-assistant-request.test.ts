@@ -227,7 +227,9 @@ describe('parseSlackAssistantRequest', () => {
       },
     });
 
-    expect(result.request?.requestText).toBe('ping <@UBOT> about the ACME deal');
+    expect(result.request?.requestText).toBe(
+      'ping <@UBOT> about the ACME deal',
+    );
   });
 
   it('should skip messages sent by bots so the assistant never answers itself', () => {
@@ -276,6 +278,7 @@ describe('parseSlackAssistantRequest', () => {
         slackMessageTimestamp: '1700000000.000100',
         parentMessageTimestamp: '1700000000.000100',
         isInExistingThread: false,
+        sharedFileNames: [],
       },
     });
   });
@@ -318,6 +321,7 @@ describe('parseSlackAssistantRequest', () => {
         slackMessageTimestamp: '1700000000.000200',
         parentMessageTimestamp: '1700000000.000200',
         isInExistingThread: false,
+        sharedFileNames: [],
       },
     });
   });
@@ -340,6 +344,107 @@ describe('parseSlackAssistantRequest', () => {
     expect(result).toEqual({
       request: null,
       skipReason: 'Empty request text',
+    });
+  });
+
+  it('should parse a mention that carries a file and a caption', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({
+        eventOverrides: {
+          text: '<@UBOT> log this against ACME',
+          files: [{ id: 'F1', name: 'proposal.pdf' }],
+        },
+      }),
+    );
+
+    expect(result.request?.requestText).toBe('log this against ACME');
+  });
+
+  it('should name the shared files when a mention carries a file and no caption', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({
+        eventOverrides: {
+          text: '<@UBOT>',
+          files: [
+            { id: 'F1', name: 'proposal.pdf' },
+            { id: 'F2', title: 'Q3 chart' },
+          ],
+        },
+      }),
+    );
+
+    expect(result).toEqual({
+      request: null,
+      skipReason: 'Empty request text',
+      emptyRequest: {
+        slackChannelId: 'C123',
+        slackMessageTimestamp: '1700000000.000100',
+        parentMessageTimestamp: '1700000000.000100',
+        isInExistingThread: false,
+        sharedFileNames: ['proposal.pdf', 'Q3 chart'],
+      },
+    });
+  });
+
+  it('should fall back to a placeholder for a shared file with no name', () => {
+    const result = parseSlackAssistantRequest(
+      buildMentionBody({
+        eventOverrides: {
+          text: '<@UBOT>',
+          files: [{ id: 'F1', file_access: 'check_file_info' }],
+        },
+      }),
+    );
+
+    expect(result).toMatchObject({
+      emptyRequest: { sharedFileNames: ['an unnamed file'] },
+    });
+  });
+
+  it('should parse a direct message uploaded with the file_share subtype', () => {
+    const result = parseSlackAssistantRequest({
+      type: 'event_callback',
+      event_id: 'EvFile',
+      event: {
+        type: 'message',
+        subtype: 'file_share',
+        channel_type: 'im',
+        user: 'U123',
+        text: 'what do you make of this?',
+        files: [{ id: 'F1', name: 'proposal.pdf' }],
+        ts: '1700000000.000600',
+        channel: 'D123',
+      },
+    });
+
+    expect(result.request?.requestText).toBe('what do you make of this?');
+  });
+
+  it('should flag a file_share direct message with no caption for a file hint reply', () => {
+    const result = parseSlackAssistantRequest({
+      type: 'event_callback',
+      event_id: 'EvFileOnly',
+      event: {
+        type: 'message',
+        subtype: 'file_share',
+        channel_type: 'im',
+        user: 'U123',
+        text: '',
+        files: [{ id: 'F1', name: 'screenshot.png' }],
+        ts: '1700000000.000700',
+        channel: 'D123',
+      },
+    });
+
+    expect(result).toMatchObject({
+      request: null,
+      emptyRequest: {
+        slackChannelId: 'D123',
+        slackMessageTimestamp: '1700000000.000700',
+        parentMessageTimestamp: '1700000000.000700',
+        isInExistingThread: false,
+        sharedFileNames: ['screenshot.png'],
+      },
     });
   });
 

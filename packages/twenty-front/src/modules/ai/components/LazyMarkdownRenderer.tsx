@@ -104,6 +104,11 @@ const MARKDOWN_COMPONENTS = {
   ),
 };
 
+const MARKDOWN_COMPONENTS_WITHOUT_IMAGES = {
+  ...MARKDOWN_COMPONENTS,
+  img: () => null,
+};
+
 const MarkdownRenderer = lazy(async () => {
   const [{ default: Markdown }, { default: remarkGfm }] = await Promise.all([
     import('react-markdown'),
@@ -113,15 +118,26 @@ const MarkdownRenderer = lazy(async () => {
   const remarkPlugins = [remarkGfm];
 
   return {
-    default: ({ children }: { children: string }) => (
-      <Markdown remarkPlugins={remarkPlugins} components={MARKDOWN_COMPONENTS}>
+    default: ({
+      children,
+      noImage,
+    }: {
+      children: string;
+      noImage?: boolean;
+    }) => (
+      <Markdown
+        remarkPlugins={remarkPlugins}
+        components={
+          noImage ? MARKDOWN_COMPONENTS_WITHOUT_IMAGES : MARKDOWN_COMPONENTS
+        }
+      >
         {children}
       </Markdown>
     ),
   };
 });
 
-const LoadingSkeleton = () => {
+export const MarkdownLoadingSkeleton = () => {
   const { theme } = useContext(ThemeContext);
   return (
     <SkeletonTheme
@@ -131,23 +147,7 @@ const LoadingSkeleton = () => {
     >
       <StyledSkeletonContainer>
         <Skeleton
-          width="70%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-        />
-
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-        <Skeleton
-          width="90%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-
-        <Skeleton
-          width="85%"
-          height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-        />
-        <Skeleton
-          width="80%"
+          width={200}
           height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
         />
       </StyledSkeletonContainer>
@@ -158,15 +158,22 @@ const LoadingSkeleton = () => {
 // Protecting per block behind the memo means only the streaming tail blocks
 // pay the reference-parsing cost on each flush; settled blocks never re-run it.
 const MemoizedMarkdownBlock = memo(
-  ({ blockText }: { blockText: string }) => (
-    <MarkdownRenderer>
+  ({ blockText, noImage }: { blockText: string; noImage?: boolean }) => (
+    <MarkdownRenderer noImage={noImage}>
       {protectChatReferencesForMarkdown(blockText)}
     </MarkdownRenderer>
   ),
-  (previousProps, nextProps) => previousProps.blockText === nextProps.blockText,
 );
 
-export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
+type LazyMarkdownContentProps = {
+  text: string;
+  noImage?: boolean;
+};
+
+export const LazyMarkdownContent = ({
+  text,
+  noImage,
+}: LazyMarkdownContentProps) => {
   // Not state: the blocks are a pure function of `text`, the ref only caches
   // the previous split so streaming appends skip re-tokenizing settled blocks.
   // oxlint-disable-next-line twenty/no-state-useref
@@ -184,11 +191,24 @@ export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
       className="markdown-section"
       data-replay-ignore-mutations="true"
     >
-      <Suspense fallback={<LoadingSkeleton />}>
-        {markdownBlocks.map((blockText, blockIndex) => (
-          <MemoizedMarkdownBlock key={blockIndex} blockText={blockText} />
-        ))}
-      </Suspense>
+      {markdownBlocks.map((blockText, blockIndex) => (
+        <MemoizedMarkdownBlock
+          key={blockIndex}
+          blockText={blockText}
+          noImage={noImage}
+        />
+      ))}
     </StyledMarkdownContainer>
   );
 };
+
+type LazyMarkdownRendererProps = LazyMarkdownContentProps;
+
+export const LazyMarkdownRenderer = ({
+  text,
+  noImage,
+}: LazyMarkdownRendererProps) => (
+  <Suspense fallback={<MarkdownLoadingSkeleton />}>
+    <LazyMarkdownContent text={text} noImage={noImage} />
+  </Suspense>
+);

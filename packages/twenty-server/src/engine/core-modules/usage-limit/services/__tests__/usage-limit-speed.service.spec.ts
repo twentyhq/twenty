@@ -72,6 +72,22 @@ describe('UsageLimitSpeedService', () => {
       operationType: UsageOperationType.API_REQUEST,
     });
 
+  const consumeCost = (cost: number) =>
+    service.tryConsume({
+      resourceType: UsageResourceType.API,
+      authContext: apiKeyContext,
+      operationType: UsageOperationType.API_REQUEST,
+      cost,
+    });
+
+  const consumeUpTo = (maxCost: number) =>
+    service.tryConsumeUpTo({
+      resourceType: UsageResourceType.API,
+      authContext: apiKeyContext,
+      operationType: UsageOperationType.API_REQUEST,
+      maxCost,
+    });
+
   beforeEach(async () => {
     jest.clearAllMocks();
     entitlementProvider = new TestUsageLimitEntitlementProvider();
@@ -137,6 +153,25 @@ describe('UsageLimitSpeedService', () => {
     cacheStorage.runScript.mockResolvedValueOnce([0, 1, 1500]);
 
     await expect(consume()).rejects.toThrow(/Rate limit exceeded/);
+  });
+
+  it('admits a multi-cost request when the buckets cover all of it', async () => {
+    cacheStorage.runScript.mockResolvedValueOnce([5, 0, 0]);
+
+    await expect(consumeCost(5)).resolves.toEqual({
+      admitted: true,
+      admittedCount: 5,
+    });
+  });
+
+  it('admits part of a batch when the buckets cannot cover all of it', async () => {
+    cacheStorage.runScript.mockResolvedValueOnce([2, 1, 1500]);
+
+    await expect(consumeUpTo(5)).resolves.toMatchObject({
+      admitted: false,
+      admittedCount: 2,
+      retryAfterMs: 1500,
+    });
   });
 
   it('enforces a stored apiKey speed override only when the workspace is entitled', async () => {

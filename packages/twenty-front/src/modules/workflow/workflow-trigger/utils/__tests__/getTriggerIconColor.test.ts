@@ -2,21 +2,23 @@ import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTrigge
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 describe('getTriggerIconColor', () => {
-  it('returns the blue css variable for DATABASE_EVENT', () => {
+  it('returns the blue9 css variable for DATABASE_EVENT', () => {
     expect(getTriggerIconColor('DATABASE_EVENT')).toBe(
-      themeCssVariables.color.blue,
+      themeCssVariables.color.blue9,
     );
   });
 
-  it('returns the purple css variable for CRON', () => {
-    expect(getTriggerIconColor('CRON')).toBe(themeCssVariables.color.purple);
+  it('returns the purple9 css variable for CRON', () => {
+    expect(getTriggerIconColor('CRON')).toBe(themeCssVariables.color.purple9);
   });
 
-  it('returns the purple css variable for MANUAL', () => {
-    expect(getTriggerIconColor('MANUAL')).toBe(themeCssVariables.color.purple);
+  it('returns the purple9 css variable for MANUAL', () => {
+    expect(getTriggerIconColor('MANUAL')).toBe(themeCssVariables.color.purple9);
   });
 
-  it('returns the purple css variable for WEBHOOK', () => {
-    expect(getTriggerIconColor('WEBHOOK')).toBe(themeCssVariables.color.purple);
+  it('returns the purple9 css variable for WEBHOOK', () => {
+    expect(getTriggerIconColor('WEBHOOK')).toBe(
+      themeCssVariables.color.purple9,
+    );
   });
 });

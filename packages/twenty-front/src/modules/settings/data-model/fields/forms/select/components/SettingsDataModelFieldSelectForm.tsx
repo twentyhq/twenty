@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -33,6 +34,7 @@ import { t } from '@lingui/core/macro';
 import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { LightButton, LightIconButton } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconPencil,
@@ -40,9 +42,8 @@ import {
   IconPoint,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightButton, LightIconButton } from 'twenty-ui/input';
-import { CardContent, CardFooter } from 'twenty-ui/surfaces';
-import { MenuItem } from 'twenty-ui/navigation';
+
+import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
@@ -368,20 +369,19 @@ export const SettingsDataModelFieldSelectForm = ({
                       dropdownId={OPTIONS_DROPDOWN_ID}
                       clickableComponent={
                         <LightIconButton
-                          Icon={IconDotsVertical}
-                          accent="tertiary"
-                        />
+                          emphasis="subtle"
+                          aria-label={t`More options`}
+                        >
+                          <IconDotsVertical />
+                        </LightIconButton>
                       }
                       dropdownComponents={
                         <DropdownContent
                           widthInPixels={GenericDropdownContentWidth.Narrow}
                         >
                           <DropdownMenuItemsContainer>
-                            <MenuItem
-                              text={
-                                isBulkInputMode ? t`Single edit` : t`Bulk edit`
-                              }
-                              LeftIcon={IconPencil}
+                            <ListItem
+                              startIcon={<IconPencil />}
                               onClick={() => {
                                 if (!isBulkInputMode) {
                                   setBulkInputText(
@@ -393,16 +393,17 @@ export const SettingsDataModelFieldSelectForm = ({
                                 );
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                               }}
-                            />
-                            <MenuItem
-                              text={t`Remove all`}
-                              accent="danger"
-                              LeftIcon={IconTrash}
+                            >
+                              {isBulkInputMode ? t`Single edit` : t`Bulk edit`}
+                            </ListItem>
+                            <ListItem
+                              color="danger"
+                              startIcon={<IconTrash />}
                               onClick={() => {
                                 onChange([]);
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                               }}
-                            />
+                            >{t`Remove all`}</ListItem>
                           </DropdownMenuItemsContainer>
                         </DropdownContent>
                       }
@@ -529,10 +530,9 @@ export const SettingsDataModelFieldSelectForm = ({
                 <CardFooter>
                   <StyledButtonContainer>
                     <LightButton
-                      title={t`Add option`}
-                      Icon={IconPlus}
+                      startIcon={<IconPlus />}
                       onClick={handleAddOption}
-                    />
+                    >{t`Add option`}</LightButton>
                   </StyledButtonContainer>
                 </CardFooter>
               </StyledFooterContainer>

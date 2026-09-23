@@ -1,34 +1,30 @@
-import { useMemo, useState } from 'react';
-
-import { styled } from '@linaria/react';
-import { useMutation, useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { Controller, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Info } from 'twenty-ui/feedback';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { ADD_MODEL_TO_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addModelToProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { GET_MODELS_DEV_SUGGESTIONS } from '@/settings/admin-panel/ai/graphql/queries/getModelsDevSuggestions';
+import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+import { Info, useToast } from 'twenty-ui/primitives/feedback';
+import { Checkbox, Switch } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
-import { Checkbox, Toggle } from 'twenty-ui/input';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -97,7 +93,7 @@ export const SettingsAdminNewAiModel = () => {
   const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCustomModelId, setIsCustomModelId] = useState(false);
   const {
@@ -307,14 +303,13 @@ export const SettingsAdminNewAiModel = () => {
         ],
       });
 
-      enqueueSuccessSnackBar({
-        message: t`Model "${values.label.trim()}" added`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Model "${values.label.trim()}" added`,
       });
       navigate(providerDetailPath);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to add model`,
-      });
+      enqueueToast({ variant: 'error', children: t`Failed to add model` });
     } finally {
       setIsSubmitting(false);
     }
@@ -352,12 +347,12 @@ export const SettingsAdminNewAiModel = () => {
               accent="danger"
               text={customAiProviderGateDescription}
               buttonTitle={t`Activate`}
-              to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
+              to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
             />
           )}
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Model ID`}
               description={
                 showModelSelect
@@ -408,10 +403,10 @@ export const SettingsAdminNewAiModel = () => {
                 )}
               />
             )}
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Label`}
               description={t`Display name for the model`}
             />
@@ -431,10 +426,10 @@ export const SettingsAdminNewAiModel = () => {
                 />
               )}
             />
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Pricing`}
               description={t`Cost per million tokens (USD)`}
             />
@@ -466,10 +461,10 @@ export const SettingsAdminNewAiModel = () => {
                 )}
               />
             </StyledComboInputContainer>
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Cache pricing`}
               description={t`Cost per million tokens for cached input (USD)`}
             />
@@ -501,10 +496,10 @@ export const SettingsAdminNewAiModel = () => {
                 )}
               />
             </StyledComboInputContainer>
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Limits`}
               description={t`Token limits for context and output`}
             />
@@ -544,10 +539,10 @@ export const SettingsAdminNewAiModel = () => {
                 )}
               />
             </StyledComboInputContainer>
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Supported input types`}
               description={t`Types of content this model can process besides text`}
             />
@@ -573,10 +568,10 @@ export const SettingsAdminNewAiModel = () => {
                         }}
                       >
                         <Checkbox
+                          aria-label={option.label}
                           checked={isChecked}
-                          onChange={(event) => {
-                            event.stopPropagation();
-                            const updated = event.target.checked
+                          onCheckedChange={(isChecked) => {
+                            const updated = isChecked
                               ? [...value, option.value]
                               : value.filter(
                                   (modality) => modality !== option.value,
@@ -584,6 +579,7 @@ export const SettingsAdminNewAiModel = () => {
 
                             onChange(updated);
                           }}
+                          onClick={(event) => event.stopPropagation()}
                         />
                         <span>{option.label}</span>
                       </StyledCheckboxRow>
@@ -592,10 +588,10 @@ export const SettingsAdminNewAiModel = () => {
                 </StyledModalitiesContainer>
               )}
             />
-          </Section>
+          </Section.Root>
 
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Supports reasoning`}
               description={t`Whether this model supports chain-of-thought reasoning`}
             />
@@ -603,10 +599,14 @@ export const SettingsAdminNewAiModel = () => {
               name="supportsReasoning"
               control={form.control}
               render={({ field: { onChange, value } }) => (
-                <Toggle value={value} onChange={onChange} />
+                <Switch
+                  aria-label={t`Supports reasoning`}
+                  checked={value}
+                  onCheckedChange={onChange}
+                />
               )}
             />
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     </form>

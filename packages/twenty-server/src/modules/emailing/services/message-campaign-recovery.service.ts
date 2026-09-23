@@ -12,6 +12,13 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 
 const SENDING_STALE_THRESHOLD_MS = 60 * 60 * 1000;
 
+// Must exceed the longest a live row can legitimately sit untouched: a batch
+// deferred by the rate limiter re-queues its rows for up to
+// SEND_SLOT_RETRY.attemptLimit backoffs of maxDelayMs, and a backed-up queue or
+// a worker outage holds rows that were never claimed at all. Being wrong here
+// fails recipients whose jobs were still coming.
+const ORPHANED_QUEUED_THRESHOLD_MS = 24 * 60 * 60 * 1000;
+
 @Injectable()
 export class MessageCampaignRecoveryService {
   private readonly logger = new Logger(MessageCampaignRecoveryService.name);
@@ -124,6 +131,23 @@ export class MessageCampaignRecoveryService {
         if (failedCount > 0) {
           this.logger.warn(
             `Campaign ${campaignId} of workspace ${workspaceId} had ${failedCount} message(s) stalled and they were failed`,
+          );
+        }
+
+        const orphanedCount =
+          await this.messageCampaignLifecycleService.failOrphanedQueuedDeliveries(
+            {
+              workspaceId,
+              campaignId,
+              untouchedSince: new Date(
+                Date.now() - ORPHANED_QUEUED_THRESHOLD_MS,
+              ),
+            },
+          );
+
+        if (orphanedCount > 0) {
+          this.logger.warn(
+            `Campaign ${campaignId} of workspace ${workspaceId} had ${orphanedCount} message(s) queued with no send job left and they were failed`,
           );
         }
 

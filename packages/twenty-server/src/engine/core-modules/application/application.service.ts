@@ -17,7 +17,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
-import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -50,18 +49,18 @@ export class ApplicationService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectWorkspaceScopedRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
-    @InjectRepository(FrontComponentEntity)
-    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
+    @InjectWorkspaceScopedRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
     private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(ApplicationVariableEntity)
-    private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationVariableEntity)
+    private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
@@ -173,7 +172,7 @@ export class ApplicationService {
     );
   }
 
-  async findOneApplication({
+  async findOneApplicationWithRelations({
     id,
     universalIdentifier,
     workspaceId,
@@ -211,14 +210,14 @@ export class ApplicationService {
       objects,
       applicationVariables,
     ] = await Promise.all([
-      this.logicFunctionRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.logicFunctionRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
       this.agentRepository.find(workspaceId, {
         where: { applicationId: application.id },
       }),
-      this.frontComponentRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.frontComponentRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
       this.commandMenuItemRepository.find(workspaceId, {
         where: { applicationId: application.id },
@@ -226,8 +225,8 @@ export class ApplicationService {
       this.objectMetadataRepository.find({
         where: { applicationId: application.id, workspaceId },
       }),
-      this.applicationVariableRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.applicationVariableRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
     ]);
 
@@ -241,7 +240,7 @@ export class ApplicationService {
     return application;
   }
 
-  async findOneApplicationOrThrow({
+  async findOneApplicationWithRelationsOrThrow({
     id,
     universalIdentifier,
     workspaceId,
@@ -250,7 +249,7 @@ export class ApplicationService {
     universalIdentifier?: string;
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    const application = await this.findOneApplication({
+    const application = await this.findOneApplicationWithRelations({
       id,
       universalIdentifier,
       workspaceId,
@@ -300,6 +299,20 @@ export class ApplicationService {
         workspaceId,
       },
     });
+  }
+
+  async countInstalledWorkspacesForApplication(
+    universalIdentifier: string,
+  ): Promise<number> {
+    return this.applicationRepository
+      .createQueryBuilder('application')
+      .innerJoin('application.workspace', 'workspace')
+      .where('application.universalIdentifier = :universalIdentifier', {
+        universalIdentifier,
+      })
+      .andWhere('application.deletedAt IS NULL')
+      .andWhere('workspace.deletedAt IS NULL')
+      .getCount();
   }
 
   // Number of workspaces each external (non-LOCAL) application is installed in,
@@ -465,6 +478,7 @@ export class ApplicationService {
         universalIdentifier: applicationId,
         workspaceId,
         id: applicationId,
+        sourceType: applicationRegistration.sourceType,
         applicationRegistrationId: applicationRegistration.id,
         logicFunctionLayerId: null,
         canBeUninstalled: false,
@@ -681,27 +695,6 @@ export class ApplicationService {
     return updatedApplication;
   }
 
-  async revertStateToInstalledBestEffort({
-    applicationId,
-    universalIdentifier,
-    workspaceId,
-  }: {
-    applicationId: string;
-    universalIdentifier: string;
-    workspaceId: string;
-  }): Promise<void> {
-    try {
-      await this.update(applicationId, {
-        state: ApplicationState.INSTALLED,
-        workspaceId,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `State revert to INSTALLED did not complete for application ${universalIdentifier} in workspace ${workspaceId}, the row may or may not have been updated: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
   async delete(universalIdentifier: string, workspaceId: string) {
     const application = await this.findByUniversalIdentifier({
       universalIdentifier,
@@ -742,6 +735,10 @@ export class ApplicationService {
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
+        await this.fileStorageService.invalidateStorageStock({
+          workspaceId,
+          applicationId: application.id,
+        });
       }
 
       throw error;

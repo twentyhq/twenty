@@ -12,6 +12,7 @@ import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-b
 import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Injectable()
 export class WorkflowVersionStepUpdateWorkspaceService {
@@ -58,18 +59,23 @@ export class WorkflowVersionStepUpdateWorkspaceService {
 
     const isStepTypeChanged = existingStep.type !== step.type;
 
+    const workflowVersionContent = {
+      trigger: workflowVersion.trigger,
+      steps: workflowVersion.steps,
+    };
+
     const { updatedStep, additionalCreatedSteps } = isStepTypeChanged
       ? await this.updateWorkflowVersionStepType({
           existingStep,
           newStep: step,
           workspaceId,
-          workflowVersionId,
+          workflowVersionContent,
         })
       : {
           updatedStep: await this.updateWorkflowVersionStepSettings({
             newStep: step,
             workspaceId,
-            workflowVersionId,
+            workflowVersionContent,
           }),
           additionalCreatedSteps: undefined,
         };
@@ -101,12 +107,15 @@ export class WorkflowVersionStepUpdateWorkspaceService {
     existingStep,
     newStep,
     workspaceId,
-    workflowVersionId,
+    workflowVersionContent,
   }: {
     existingStep: WorkflowAction;
     newStep: WorkflowAction;
     workspaceId: string;
-    workflowVersionId: string;
+    workflowVersionContent: {
+      trigger: WorkflowTrigger | null;
+      steps: WorkflowAction[] | null;
+    };
   }): Promise<{
     updatedStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
@@ -124,7 +133,6 @@ export class WorkflowVersionStepUpdateWorkspaceService {
           type: newStep.type,
           workspaceId,
           position: newStep.position,
-          workflowVersionId,
           defaultSettings: newStep.settings,
         },
       );
@@ -141,7 +149,7 @@ export class WorkflowVersionStepUpdateWorkspaceService {
           position: existingStep.position,
         },
         workspaceId,
-        workflowVersionId,
+        workflowVersionContent,
       });
 
     return { updatedStep, additionalCreatedSteps };
@@ -150,16 +158,19 @@ export class WorkflowVersionStepUpdateWorkspaceService {
   private async updateWorkflowVersionStepSettings({
     newStep,
     workspaceId,
-    workflowVersionId,
+    workflowVersionContent,
   }: {
     newStep: WorkflowAction;
     workspaceId: string;
-    workflowVersionId: string;
+    workflowVersionContent: {
+      trigger: WorkflowTrigger | null;
+      steps: WorkflowAction[] | null;
+    };
   }): Promise<WorkflowAction> {
     return this.workflowSchemaWorkspaceService.enrichOutputSchema({
       step: newStep,
       workspaceId,
-      workflowVersionId,
+      workflowVersionContent,
     });
   }
 }

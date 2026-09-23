@@ -1,3 +1,5 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useState } from 'react';
 
 import { ChartManualSortSubMenuContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartManualSortSubMenuContent';
@@ -19,9 +21,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   GraphOrderBy,
   type GraphOrderBy as GraphOrderByType,
@@ -54,12 +55,9 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const objectMetadataItem = objectMetadataItems.find(
@@ -139,28 +137,40 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
                 handleSelectSortOption(sortOption.value);
               }}
             >
-              <MenuItemSelect
-                text={getGroupBySortOptionLabel({
-                  graphOrderBy: sortOption.value,
-                  groupByFieldMetadataId:
-                    configuration.secondaryAxisGroupByFieldMetadataId ?? '',
-                })}
-                selected={
-                  configuration.secondaryAxisOrderBy === sortOption.value
-                }
+              <ListItem
                 focused={selectedItemId === sortOption.value}
-                LeftIcon={
-                  sortOption.icon ??
-                  getSortIconForFieldType({
-                    fieldType: secondaryAxisField?.type,
-                    orderBy: sortOption.value,
-                  })
-                }
-                hasSubMenu={isManualOption}
                 onClick={() => {
                   handleSelectSortOption(sortOption.value);
                 }}
-              />
+                role="option"
+                aria-selected={
+                  configuration.secondaryAxisOrderBy === sortOption.value
+                }
+                selected={
+                  configuration.secondaryAxisOrderBy === sortOption.value
+                }
+                indicator="check"
+                hasSubmenu={isManualOption}
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={
+                      sortOption.icon ??
+                      getSortIconForFieldType({
+                        fieldType: secondaryAxisField?.type,
+                        orderBy: sortOption.value,
+                      })
+                    }
+                  />
+                }
+              >
+                <OverflowingTextWithTooltip
+                  text={getGroupBySortOptionLabel({
+                    graphOrderBy: sortOption.value,
+                    groupByFieldMetadataId:
+                      configuration.secondaryAxisGroupByFieldMetadataId ?? '',
+                  })}
+                />
+              </ListItem>
             </SelectableListItem>
           );
         })}

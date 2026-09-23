@@ -71,6 +71,16 @@ filters: [
 ],
 ```
 
+Three optional properties refine a filter:
+
+| Property | Description |
+|----------|-------------|
+| `subFieldName` | Targets one part of a composite field, such as `amountMicros` on a `CURRENCY` field or `primaryLinkUrl` on a `LINKS` field. |
+| `relationTargetFieldMetadataUniversalIdentifier` | On a filter over a `RELATION` field, the field of the related object the value is compared against, as the advanced filter sets it when you pick a field of the related record. Leave it out to filter on the related record itself. |
+| `viewFilterGroupUniversalIdentifier` + `positionInViewFilterGroup` | Place the filter in one of the view's `filterGroups` (each with a `logicalOperator` of `AND`, `OR` or `NOT` and an optional `parentViewFilterGroupUniversalIdentifier`) and order it within that group. |
+
+`yarn twenty pull` writes all three back exactly as the workspace stored them.
+
 ### Supported operands per field type
 
 | Field type                                                                                         | Supported operands                                                                                                 |

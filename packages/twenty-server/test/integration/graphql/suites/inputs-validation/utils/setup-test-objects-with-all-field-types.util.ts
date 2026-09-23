@@ -2,12 +2,14 @@ import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
-import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { type FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { computeMorphRelationFlatFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-flat-field-name.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_OBJECT_METADATA_NAME_SINGULAR = 'apiInputValidationTestObject';
 const TEST_OBJECT_METADATA_NAME_PLURAL = 'apiInputValidationTestObjects';
@@ -80,18 +82,17 @@ export const setupTestObjectsWithAllFieldTypes = async (
     targetObjectMetadata2Id,
   );
 
-  let filesFieldMetadataId: string | undefined;
-
-  for (const input of fieldMetadataCreationInputs) {
-    const result = await createOneFieldMetadata({
-      input,
-      gqlFields: 'id name type',
+  const createdFlatFieldMetadatas =
+    await getAppProviderByClassName<FieldMetadataService>(
+      'FieldMetadataService',
+    ).createManyFields({
+      createFieldInputs: fieldMetadataCreationInputs,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
     });
 
-    if (input.type === FieldMetadataType.FILES) {
-      filesFieldMetadataId = result.data.createOneField.id;
-    }
-  }
+  const filesFieldMetadataId = createdFlatFieldMetadatas.find(
+    (flatFieldMetadata) => flatFieldMetadata.type === FieldMetadataType.FILES,
+  )?.id;
 
   await makeGraphqlAPIRequest(
     createManyOperationFactory({

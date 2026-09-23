@@ -1,4 +1,4 @@
-import { useRefetchOnApplicationLifecycleSettled } from '@/applications/hooks/useRefetchOnApplicationLifecycleSettled';
+import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { applicationsSelector } from '@/applications/states/applicationsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -9,7 +9,7 @@ import { type ApplicationWithoutRelation } from '~/pages/settings/applications/t
 export const useInstalledApplications = (): ApplicationWithoutRelation[] => {
   const { data, refetch } = useQuery(FindManyApplicationsDocument);
 
-  useRefetchOnApplicationLifecycleSettled({ refetch });
+  useRefetchOnApplicationOperation({ refetch });
   useRefetchOnApplicationRegistrationChange({ refetch });
 
   const applications = useAtomStateValue(applicationsSelector);

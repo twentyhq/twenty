@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER } from '@/ai/constants/AgentChatThreadLastActivityFilter';
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS } from '@/ai/constants/AgentChatThreadLastActivityFilterLabels';
@@ -48,15 +48,19 @@ export const AiChatThreadFilterDropdownLastActivityMenu = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_OPTIONS.map((option) => (
-          <MenuItemSelect
+          <ListItem
             key={option}
-            text={t(AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[option])}
-            selected={agentChatThreadLastActivityFilter === option}
             onClick={() => {
               setAgentChatThreadLastActivityFilter(option);
               closeDropdown();
             }}
-          />
+            role="option"
+            aria-selected={agentChatThreadLastActivityFilter === option}
+            selected={agentChatThreadLastActivityFilter === option}
+            indicator="check"
+          >
+            {t(AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[option])}
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
     </DropdownContent>

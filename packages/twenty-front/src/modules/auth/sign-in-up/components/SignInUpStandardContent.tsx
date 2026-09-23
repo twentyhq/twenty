@@ -1,3 +1,4 @@
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
@@ -6,8 +7,7 @@ import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { styled } from '@linaria/react';
 import { type JSX } from 'react';
 import { AppPath } from 'twenty-shared/types';
-import { AnimatedEaseIn } from 'twenty-ui/layout';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
@@ -42,7 +42,7 @@ export const SignInUpStandardContent = ({
   onClickOnLogo,
 }: SignInUpStandardContentProps) => {
   return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
+    <StyledAuthContent>
       <AnimatedEaseIn>
         <Logo
           secondaryLogo={workspacePublicData?.logo}
@@ -67,6 +67,6 @@ export const SignInUpStandardContent = ({
       ].includes(signInUpStep) && (
         <FooterNote secondaryAgreement="dataProcessingAgreement" />
       )}
-    </ModalContent>
+    </StyledAuthContent>
   );
 };

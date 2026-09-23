@@ -7,10 +7,9 @@ import {
   MessageChannelType,
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
+import { Section } from 'twenty-ui/components';
 import { IconBriefcase, IconUsers } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
@@ -18,7 +17,7 @@ import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/com
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { type MessageChannelVisibility } from '~/generated/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
@@ -92,8 +91,8 @@ export const SettingsAccountsMessageChannelDetails = ({
   return (
     <StyledDetailsContainer>
       {supportsFolderImportPolicy && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Import`}
             description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
           />
@@ -101,37 +100,22 @@ export const SettingsAccountsMessageChannelDetails = ({
             onChange={handleMessageFolderImportPolicyChange}
             value={messageChannel.messageFolderImportPolicy}
           />
-        </Section>
+        </Section.Root>
       )}
       {!isGroupMailbox && (
-        <Section>
-          <Card rounded>
-            <SettingsOptionCardContentToggle
-              Icon={IconUsers}
-              title={t`Exclude group emails`}
-              description={t`Don't sync emails from team@ support@ noreply@...`}
-              checked={messageChannel.excludeGroupEmails}
-              onChange={() =>
-                handleIsGroupEmailExcludedToggle(
-                  !messageChannel.excludeGroupEmails,
-                )
-              }
-            />
-          </Card>
-        </Section>
+        <Section.Root>
+          <Section.Header
+            title={t`Visibility`}
+            description={t`Define what will be visible to other users in your workspace`}
+          />
+          <SettingsAccountsMessageVisibilityCard
+            value={messageChannel.visibility}
+            onChange={handleVisibilityChange}
+          />
+        </Section.Root>
       )}
-      <Section>
-        <H2Title
-          title={t`Visibility`}
-          description={t`Define what will be visible to other users in your workspace`}
-        />
-        <SettingsAccountsMessageVisibilityCard
-          value={messageChannel.visibility}
-          onChange={handleVisibilityChange}
-        />
-      </Section>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Contact auto-creation`}
           description={t`Automatically create People records when receiving or sending emails`}
         />
@@ -139,10 +123,26 @@ export const SettingsAccountsMessageChannelDetails = ({
           value={messageChannel.contactAutoCreationPolicy}
           onChange={handleContactAutoCreationChange}
         />
-      </Section>
-      <Section>
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
+          title={t`Options`}
+          description={t`Configure what emails should get synced`}
+        />
         <Card rounded>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
+            Icon={IconUsers}
+            title={t`Exclude group emails`}
+            description={t`Don't import emails from team@ support@ noreply@...`}
+            divider
+            checked={messageChannel.excludeGroupEmails}
+            onChange={() =>
+              handleIsGroupEmailExcludedToggle(
+                !messageChannel.excludeGroupEmails,
+              )
+            }
+          />
+          <SettingsOptionCardContentSwitch
             Icon={IconBriefcase}
             title={t`Exclude non-professional emails`}
             description={t`Don't create contacts from/to Gmail, Outlook emails`}
@@ -154,7 +154,7 @@ export const SettingsAccountsMessageChannelDetails = ({
             }}
           />
         </Card>
-      </Section>
+      </Section.Root>
     </StyledDetailsContainer>
   );
 };

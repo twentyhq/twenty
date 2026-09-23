@@ -11,6 +11,7 @@ import { fetchCurrentWorkspaceId } from 'src/logic-functions/utils/fetch-current
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 import { getSlackApiErrorCode } from 'src/logic-functions/utils/get-slack-api-error-code';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
+import { reportSlackConnectionAuthFailure } from 'src/logic-functions/utils/report-slack-connection-auth-failure';
 
 export type SlackConnectionHealthReport = {
   connectionHealth: SlackConnectionHealth | undefined;
@@ -19,7 +20,11 @@ export type SlackConnectionHealthReport = {
 
 type SlackAuthProbe =
   | { isAuthenticated: true; installedTeamId: string | undefined }
-  | { isAuthenticated: false; isTokenRejected: boolean };
+  | {
+      isAuthenticated: false;
+      isTokenRejected: boolean;
+      slackErrorCode: string | undefined;
+    };
 
 type SlackTeamClaimLookup =
   | { isReadable: true; claimedWorkspaceId: string | null }
@@ -43,9 +48,22 @@ const probeSlackAuth = async (
       isTokenRejected:
         isNonEmptyString(slackErrorCode) &&
         SLACK_AUTH_ERROR_CODES.includes(slackErrorCode),
+      slackErrorCode,
     };
   }
 };
+
+const reportSlackTokenRejected = async ({
+  connectionId,
+  slackErrorCode,
+}: {
+  connectionId: string;
+  slackErrorCode: string | undefined;
+}): Promise<void> =>
+  await reportSlackConnectionAuthFailure({
+    connectionId,
+    reason: `Slack rejected the stored bot token (${slackErrorCode ?? 'auth error'}). Reconnect to restore the integration.`,
+  });
 
 const readSlackTeamClaim = (
   installedTeamId: string,
@@ -58,18 +76,29 @@ const readSlackTeamClaim = (
 // An undefined health means unverified, not healthy: a transient Slack or
 // claim-store failure must never tell an admin to reconnect a working
 // integration.
-export const resolveSlackConnectionHealth = async (
-  slackClient: WebClient,
-): Promise<SlackConnectionHealthReport> => {
+export const resolveSlackConnectionHealth = async ({
+  slackClient,
+  connectionId,
+}: {
+  slackClient: WebClient;
+  connectionId: string;
+}): Promise<SlackConnectionHealthReport> => {
   const authProbe = await probeSlackAuth(slackClient);
 
   if (!authProbe.isAuthenticated) {
-    return {
-      connectionHealth: authProbe.isTokenRejected
-        ? SLACK_CONNECTION_HEALTH.TOKEN_REJECTED
-        : undefined,
-      installedSlackTeamId: undefined,
-    };
+    if (authProbe.isTokenRejected) {
+      await reportSlackTokenRejected({
+        connectionId,
+        slackErrorCode: authProbe.slackErrorCode,
+      });
+
+      return {
+        connectionHealth: SLACK_CONNECTION_HEALTH.TOKEN_REJECTED,
+        installedSlackTeamId: undefined,
+      };
+    }
+
+    return { connectionHealth: undefined, installedSlackTeamId: undefined };
   }
 
   const installedSlackTeamId = authProbe.installedTeamId;

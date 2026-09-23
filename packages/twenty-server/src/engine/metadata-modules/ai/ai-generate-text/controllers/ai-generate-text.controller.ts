@@ -22,9 +22,12 @@ import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 
 @Controller(`${ApiPath.Rest}/ai`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
@@ -34,6 +37,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
   AiRestApiExceptionFilter,
   UsageLimitRestApiExceptionFilter,
   BillingRestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
 )
 export class AiGenerateTextController {
   constructor(
@@ -61,17 +65,15 @@ export class AiGenerateTextController {
       spenders: { userWorkspaceId },
     });
 
-    const resolvedModelId = body.modelId ?? workspace.fastModel;
+    const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
 
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
-      workspace,
-    );
+    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
     const registeredModel =
-      await this.aiModelRegistryService.resolveModelForAgent({
-        modelId: resolvedModelId,
-      });
+      await this.aiModelRegistryService.resolveModelForAgent(
+        { modelId: resolvedModelId },
+        workspace,
+      );
 
     let result: Awaited<ReturnType<typeof generateText>> | undefined;
 
@@ -79,9 +81,10 @@ export class AiGenerateTextController {
       result = await withDedicatedAiTrace(() =>
         generateText({
           model: registeredModel.model,
-          system: body.systemPrompt,
+          providerOptions: buildReasoningProviderOptions(registeredModel),
+          instructions: body.systemPrompt,
           prompt: body.userPrompt,
-          experimental_telemetry: buildAiTelemetry({
+          ...buildAiTelemetry({
             functionId: 'ai-generate-text',
             workspaceId: workspace.id,
             userWorkspaceId,
@@ -99,7 +102,7 @@ export class AiGenerateTextController {
     } finally {
       if (result) {
         void this.aiBillingService.calculateAndBillUsage(
-          resolvedModelId,
+          registeredModel.modelId,
           {
             usage: result.usage,
             cacheCreationTokens:

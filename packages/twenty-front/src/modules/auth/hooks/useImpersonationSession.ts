@@ -3,6 +3,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { clearSessionLocalStorageKeys } from '@/auth/utils/clearSessionLocalStorageKeys';
 import { StopImpersonationDocument } from '~/generated-metadata/graphql';
@@ -23,6 +24,7 @@ const reloadWithSession = (returnPath: string) => {
 export const useImpersonationSession = () => {
   const store = useStore();
   const { getAuthTokensFromLoginToken, signOut } = useAuth();
+  const markSessionActive = useMarkSessionActive();
   const [stopImpersonationMutation] = useMutation(StopImpersonationDocument);
 
   const startImpersonating = useCallback(
@@ -66,6 +68,7 @@ export const useImpersonationSession = () => {
       const { data } = await stopImpersonationMutation();
 
       if (data?.stopImpersonation.canRestoreImpersonatorSession === true) {
+        markSessionActive();
         clearSessionLocalStorageKeys();
         reloadWithSession(returnPath);
 
@@ -76,7 +79,7 @@ export const useImpersonationSession = () => {
     // Cross-workspace: the admin session on its own origin was never replaced.
     window.close();
     await signOut();
-  }, [signOut, stopImpersonationMutation]);
+  }, [markSessionActive, signOut, stopImpersonationMutation]);
 
   const hasStoredSession = useCallback(() => {
     return sessionStorage.getItem(IMPERSONATION_SESSION_KEY) !== null;

@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
@@ -11,12 +12,11 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 const NO_GROUP_BY_ITEM_ID = 'no-group-by';
@@ -49,12 +49,9 @@ export const RecordTableGroupByDropdownContent = ({
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const { closeDropdown } = useCloseDropdown();
@@ -101,15 +98,17 @@ export const RecordTableGroupByDropdownContent = ({
                 closeDropdown();
               }}
             >
-              <MenuItemSelect
-                text={t`None`}
-                selected={!isDefined(currentMainGroupByFieldMetadataId)}
+              <ListItem
                 focused={selectedItemId === NO_GROUP_BY_ITEM_ID}
                 onClick={() => {
                   handleGroupByFieldChange(null);
                   closeDropdown();
                 }}
-              />
+                role="option"
+                aria-selected={!isDefined(currentMainGroupByFieldMetadataId)}
+                selected={!isDefined(currentMainGroupByFieldMetadataId)}
+                indicator="check"
+              >{t`None`}</ListItem>
             </SelectableListItem>
           )}
           {filteredFields.map((fieldMetadataItem) => (
@@ -121,18 +120,26 @@ export const RecordTableGroupByDropdownContent = ({
                 closeDropdown();
               }}
             >
-              <MenuItemSelect
-                text={fieldMetadataItem.label}
-                LeftIcon={getIcon(fieldMetadataItem.icon)}
-                selected={
-                  currentMainGroupByFieldMetadataId === fieldMetadataItem.id
-                }
+              <ListItem
                 focused={selectedItemId === fieldMetadataItem.id}
                 onClick={() => {
                   handleGroupByFieldChange(fieldMetadataItem);
                   closeDropdown();
                 }}
-              />
+                role="option"
+                aria-selected={
+                  currentMainGroupByFieldMetadataId === fieldMetadataItem.id
+                }
+                selected={
+                  currentMainGroupByFieldMetadataId === fieldMetadataItem.id
+                }
+                indicator="check"
+                startIcon={
+                  <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+                }
+              >
+                {fieldMetadataItem.label}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

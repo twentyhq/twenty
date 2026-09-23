@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { IconAddressBook, IconPencil } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCanvas = styled.div`
@@ -40,12 +40,13 @@ const renderCard = (colorScheme: 'light' | 'dark') => (
             description="Customize how your record page looks."
             action={
               <Button
-                title="Customize"
-                variant="primary"
-                accent="blue"
-                size="small"
-                Icon={IconPencil}
-              />
+                size="sm"
+                startIcon={<IconPencil />}
+                variant="solid"
+                color="accent"
+              >
+                {'Customize'}
+              </Button>
             }
           />
         }
@@ -63,7 +64,7 @@ export const Light: Story = {
     expect(
       canvas.getByText('Customize how your record page looks.'),
     ).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Customize ...' })).toBeEnabled();
+    expect(canvas.getByRole('button', { name: 'Customize' })).toBeEnabled();
   },
 };
 
@@ -76,6 +77,6 @@ export const Dark: Story = {
     expect(
       canvas.getByText('Customize how your record page looks.'),
     ).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Customize ...' })).toBeEnabled();
+    expect(canvas.getByRole('button', { name: 'Customize' })).toBeEnabled();
   },
 };

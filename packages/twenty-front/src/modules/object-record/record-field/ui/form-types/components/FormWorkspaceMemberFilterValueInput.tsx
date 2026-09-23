@@ -29,7 +29,7 @@ import {
 } from '@/object-record/record-field/ui/form-types/utils/parseWorkspaceMemberFilterValue';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { Field } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/primitives/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 

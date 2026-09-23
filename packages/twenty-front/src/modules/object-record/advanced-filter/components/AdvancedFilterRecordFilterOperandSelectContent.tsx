@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -18,11 +19,9 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { type ViewFilterOperand } from 'twenty-shared/types';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {
   recordFilterId: string;
@@ -57,12 +56,9 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
     setRecordFilterUsedInAdvancedFilterDropdownRow(filter);
   };
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const { userTimeZoneAbbreviation } =
@@ -108,13 +104,14 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
                     handleOperandChange(filterOperand);
                   }}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === filterOperand}
                     onClick={() => {
                       handleOperandChange(filterOperand);
                     }}
-                    text={getOperandLabel(filterOperand, timeZoneAbbreviation)}
-                  />
+                  >
+                    {getOperandLabel(filterOperand, timeZoneAbbreviation)}
+                  </ListItem>
                 </SelectableListItem>
               ))}
             </SelectableList>

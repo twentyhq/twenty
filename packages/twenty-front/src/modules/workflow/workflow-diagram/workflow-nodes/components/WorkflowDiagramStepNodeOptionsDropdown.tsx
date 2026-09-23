@@ -6,13 +6,12 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems';
 import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOptionsButtonContainer = styled.div`
@@ -46,12 +45,9 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
     WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode,
   ];
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const closeDropdownThen = (action: () => void) => () => {
@@ -74,11 +70,9 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
           dropdownId={dropdownId}
           selectableItemIdArray={selectableItemIds}
           clickableComponent={
-            <FloatingIconButton
-              size="medium"
-              Icon={IconDotsVertical}
-              ariaLabel={t`Node options`}
-            />
+            <IconButton elevated size="md" aria-label={t`Node options`}>
+              <IconDotsVertical />
+            </IconButton>
           }
           dropdownPlacement="right-start"
           shouldRegisterOptionsHotkey={false}

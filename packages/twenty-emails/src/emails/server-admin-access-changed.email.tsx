@@ -35,29 +35,23 @@ export const ServerAdminAccessChangedEmail = ({
       <Title value={i18n._('Server administrator access changed')} />
       <MainText>
         <Trans
-          id="serverAdminAccessChanged.summary"
-          message="{actorName} updated server administrator access for {targetName} ({targetEmail})."
+          id="{actorName} updated server administrator access for {targetName} ({targetEmail})."
           values={{ actorName, targetName, targetEmail }}
         />
         <br />
         <br />
         <Trans
-          id="serverAdminAccessChanged.fullAdmin"
-          message="Full admin panel access: {fullAdminStatus}"
+          id="Full admin panel access: {fullAdminStatus}"
           values={{ fullAdminStatus }}
         />
         <br />
         <Trans
-          id="serverAdminAccessChanged.impersonation"
-          message="Impersonation: {impersonateStatus}"
+          id="Impersonation: {impersonateStatus}"
           values={{ impersonateStatus }}
         />
         <br />
         <br />
-        <Trans
-          id="serverAdminAccessChanged.warning"
-          message="If you did not expect this change, review your server administrators immediately."
-        />
+        <Trans id="If you did not expect this change, review your server administrators immediately." />
         <br />
       </MainText>
       <br />

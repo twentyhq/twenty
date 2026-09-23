@@ -15,7 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
-import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
+import { ListItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const { t } = useLingui();
@@ -57,7 +57,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
         }}
       >
         <DropdownMenuItemsContainer scrollable={false}>
-          <MenuItem LeftIcon={IconSettings} text={t`Edit Fields`} />
+          <ListItem startIcon={<IconSettings />}>{t`Edit Fields`}</ListItem>
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
     </DropdownContent>

@@ -57,6 +57,7 @@ export const enqueueBackfillJobs = async (
         logicFunctionUniversalIdentifier:
           BACKFILL_PHASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS[phase],
         payload: { batchId },
+        jobId: `last-contact-backfill-${phase}-${batchSize}-${batchId}`,
         delayMs: Math.min(enqueuedCount * sleepMs, MAX_ENQUEUE_DELAY_MS),
         retryLimit: BACKFILL_JOB_RETRY_LIMIT,
       });

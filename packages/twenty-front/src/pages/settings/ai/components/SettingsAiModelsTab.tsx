@@ -1,209 +1,129 @@
-import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { t } from '@lingui/core/macro';
+import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
+import { Section } from 'twenty-ui/components';
+import { IconMessage, IconRobot, IconWand } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
+import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
+import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
+import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
+import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
-import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
-import { SettingsCard } from '@/settings/components/SettingsCard';
+import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
+import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
+import { NestedSettingsRow } from '@/settings/components/SettingsOptions/NestedSettingsRow';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconBolt, IconCpu, IconPrompt, IconStar } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
+import { SettingsAiModelTiersPreview } from '~/pages/settings/ai/components/SettingsAiModelTiersPreview';
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
-import { formatNumber } from '~/utils/format/formatNumber';
-
-const StyledCustomModelsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  padding-top: ${themeCssVariables.spacing[4]};
-`;
 
 export const SettingsAiModelsTab = () => {
-  const { theme } = useContext(ThemeContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const { data: previewData } = useQuery(GetAiSystemPromptPreviewDocument);
   const aiModels = useAtomStateValue(aiModelsState);
-  const { useRecommendedModels, realModels, enabledModels } =
-    useWorkspaceAiModelAvailability();
+  const tiers = useAiModelTiers();
+  const { chatTier, agentTier } = useWorkspaceAiModelTiers();
   const {
-    handleModelFieldChange,
-    handleUseRecommendedToggle,
-    handleModelToggle,
-    handleToggleAllVisibleModels,
+    handleChatTierChange,
+    handleAgentTierChange,
+    handleAutoModelSelectionToggle,
+    handlePinnedModelChange,
   } = useSettingsAiModelsActions();
 
-  const systemPromptTokenCount =
-    previewData?.getAiSystemPromptPreview.estimatedTokenCount;
-  const systemPromptDescription = isDefined(systemPromptTokenCount)
-    ? t`Read the system prompts to understand how the AI works (~${formatNumber(
-        systemPromptTokenCount,
-        { abbreviate: true, decimals: 1 },
-      )} tokens)`
-    : t`Read the system prompts to understand how the AI works`;
+  const isAutoModelSelectionEnabled =
+    currentWorkspace?.isAutoModelSelectionEnabled ?? true;
+  const aiModelIdByTier: Partial<Record<AiModelTier, string>> =
+    currentWorkspace?.aiModelIdByTier ?? {};
 
-  const currentSmartModel = currentWorkspace?.smartModel;
-  const currentFastModel = currentWorkspace?.fastModel;
-
-  const buildPinnedOption = (autoSelectModelId: string) => {
-    const autoSelectEntry = aiModels.find(
-      (model) => model.modelId === autoSelectModelId,
-    );
-    if (!autoSelectEntry) return undefined;
-    return {
-      value: autoSelectModelId,
-      label: autoSelectEntry.label,
-      Icon: getModelIcon(
-        autoSelectEntry.modelFamily,
-        autoSelectEntry.providerName,
-      ),
-      contextualText: t`Best`,
-    };
-  };
-
-  const smartPinnedOption = buildPinnedOption(AUTO_SELECT_SMART_MODEL_ID);
-  const fastPinnedOption = buildPinnedOption(AUTO_SELECT_FAST_MODEL_ID);
-
-  const modelOptions = enabledModels.map((model) => {
-    const residencyFlag = model.dataResidency
-      ? ` ${getDataResidencyDisplay(model.dataResidency)}`
-      : '';
-    return {
-      value: model.modelId,
-      label: `${model.label}${residencyFlag}`,
-      Icon: getModelIcon(model.modelFamily, model.providerName),
-    };
-  });
-
-  const enabledModelIdSet = new Set(currentWorkspace?.enabledAiModelIds ?? []);
-
-  const filteredModels = searchQuery.trim()
-    ? realModels.filter((model) => {
-        const query = searchQuery.toLowerCase();
-        return (
-          model.label.toLowerCase().includes(query) ||
-          (model.modelFamily?.toLowerCase().includes(query) ?? false) ||
-          (model.sdkPackage?.toLowerCase().includes(query) ?? false)
-        );
-      })
-    : realModels;
+  const tierOptions = AI_MODEL_TIERS.map((tier) => ({
+    value: tier,
+    label: getAiModelTierLabel(tier),
+    LeftComponent: <AiModelTierIndicator tier={tier} />,
+  }));
 
   return (
     <>
-      <Section>
-        <H2Title
-          title={t`Default model`}
-          description={t`The default AI model used for chats, agents, and workflows`}
+      <Section.Root>
+        <Section.Header
+          title={t`Models`}
+          description={t`Choose the default modes for people and agents`}
         />
-        <Card rounded>
-          <SettingsOptionCardContentSelect
-            Icon={IconCpu}
-            title={t`Smart Model`}
-            description={t`Used for chats, agents, and complex reasoning`}
-            divider
-          >
-            <Select
-              dropdownId="models-tab-smart-model-select"
-              value={currentSmartModel}
-              onChange={(value) => handleModelFieldChange('smartModel', value)}
-              options={modelOptions}
-              pinnedOption={smartPinnedOption}
-              selectSizeVariant="small"
-              dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            />
-          </SettingsOptionCardContentSelect>
-          <SettingsOptionCardContentSelect
-            Icon={IconBolt}
-            title={t`Fast Model`}
-            description={t`Used for lightweight tasks like title generation`}
-          >
-            <Select
-              dropdownId="models-tab-fast-model-select"
-              value={currentFastModel}
-              onChange={(value) => handleModelFieldChange('fastModel', value)}
-              options={modelOptions}
-              pinnedOption={fastPinnedOption}
-              selectSizeVariant="small"
-              dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            />
-          </SettingsOptionCardContentSelect>
-        </Card>
-      </Section>
-
-      <Section>
-        <H2Title
-          title={t`Available models`}
-          description={t`Models available in the agent node and chat model pickers`}
-        />
-        <Card rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconStar}
-            title={t`Use best models only`}
-            description={t`Restrict available models to a curated list`}
-            checked={useRecommendedModels}
-            onChange={handleUseRecommendedToggle}
-            divider={!useRecommendedModels}
+        <Card rounded backgroundColor={themeCssVariables.background.secondary}>
+          <StyledSettingsSelectGroup controlWidth={160}>
+            <SettingsOptionCardContentSelect
+              Icon={IconMessage}
+              title={t`AI chat`}
+              description={t`Model used when you chat with Twenty`}
+              divider
+            >
+              <Select
+                dropdownId="models-tab-chat-tier-select"
+                value={chatTier}
+                onChange={handleChatTierChange}
+                options={tierOptions}
+                selectSizeVariant="small"
+              />
+            </SettingsOptionCardContentSelect>
+            <SettingsOptionCardContentSelect
+              Icon={IconRobot}
+              title={t`Agents`}
+              description={t`Model agents use when they run on their own`}
+              divider
+            >
+              <Select
+                dropdownId="models-tab-agent-tier-select"
+                value={agentTier}
+                onChange={handleAgentTierChange}
+                options={tierOptions}
+                selectSizeVariant="small"
+              />
+            </SettingsOptionCardContentSelect>
+          </StyledSettingsSelectGroup>
+          <SettingsOptionCardContentSwitch
+            Icon={IconWand}
+            title={t`Choose automatically`}
+            description={t`Twenty fills each level with the best model that meets your requirements`}
+            checked={isAutoModelSelectionEnabled}
+            onChange={handleAutoModelSelectionToggle}
           />
+          {!isAutoModelSelectionEnabled && (
+            <StyledSettingsSelectGroup controlWidth={260}>
+              {tiers.map((tier, index) => (
+                <NestedSettingsRow
+                  key={tier.tier}
+                  isLast={index === tiers.length - 1}
+                >
+                  <SettingsOptionCardContentSelect
+                    LeftComponent={<AiModelTierIndicator tier={tier.tier} />}
+                    title={tier.label}
+                    description={getAiModelModeDescription(tier)}
+                    divider={index < tiers.length - 1}
+                  >
+                    <AiModelPinSelect
+                      dropdownId={`models-tab-pinned-model-select-${tier.tier}`}
+                      modelId={aiModelIdByTier[tier.tier] ?? null}
+                      onChange={(modelId) =>
+                        handlePinnedModelChange(tier.tier, modelId)
+                      }
+                      aiModels={aiModels}
+                      emptyOptionLabel={t`Automatic`}
+                      selectSizeVariant="small"
+                      dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+                    />
+                  </SettingsOptionCardContentSelect>
+                </NestedSettingsRow>
+              ))}
+            </StyledSettingsSelectGroup>
+          )}
         </Card>
+      </Section.Root>
 
-        {!useRecommendedModels && (
-          <StyledCustomModelsContainer>
-            <SearchInput
-              placeholder={t`Search a model...`}
-              value={searchQuery}
-              onChange={setSearchQuery}
-            />
-
-            <SettingsAiModelsTable
-              models={filteredModels}
-              isChecked={(model) => enabledModelIdSet.has(model.modelId)}
-              onToggle={handleModelToggle}
-              onToggleAll={(shouldCheckAll) =>
-                handleToggleAllVisibleModels(
-                  shouldCheckAll,
-                  new Set(filteredModels.map((m) => m.modelId)),
-                )
-              }
-              anchorPrefix="workspace-model-row"
-            />
-          </StyledCustomModelsContainer>
-        )}
-      </Section>
-
-      <Section>
-        <H2Title
-          title={t`System Prompt`}
-          description={systemPromptDescription}
-        />
-        <UndecoratedLink to={getSettingsPath(SettingsPath.AiPrompts)}>
-          <SettingsCard
-            Icon={<IconPrompt size={theme.icon.size.md} />}
-            title={t`Read system prompts`}
-          />
-        </UndecoratedLink>
-      </Section>
+      <SettingsAiModelTiersPreview />
     </>
   );
 };

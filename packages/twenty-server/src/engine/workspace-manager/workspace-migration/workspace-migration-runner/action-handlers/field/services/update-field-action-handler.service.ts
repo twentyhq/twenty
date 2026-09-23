@@ -155,7 +155,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     // payload only so per-type validators (e.g. FILES rejection) can run
     // — the actual state change is handled by the metadata side-effect
     // engine, which owns the backing unique index lifecycle.
-    const { isUnique: _droppedIsUnique, ...persistedUpdate } = update;
+    const {
+      isUnique: _droppedIsUnique,
+      isSearchable: _droppedIsSearchable,
+      ...persistedUpdate
+    } = update;
 
     if (Object.keys(persistedUpdate).length === 0) {
       return;

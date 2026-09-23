@@ -12,8 +12,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ChartNumberFormat } from '~/generated-metadata/graphql';
 
 export const ChartNumberFormatSelectionDropdownContent = () => {
@@ -42,12 +41,9 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const numberFormatOptions: ChartNumberFormat[] = [
@@ -86,14 +82,18 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
               handleSelectNumberFormatOption(option);
             }}
           >
-            <MenuItemSelect
-              text={getChartNumberFormatLabel(option)}
-              selected={currentNumberFormat === option}
+            <ListItem
               focused={selectedItemId === option}
               onClick={() => {
                 handleSelectNumberFormatOption(option);
               }}
-            />
+              role="option"
+              aria-selected={currentNumberFormat === option}
+              selected={currentNumberFormat === option}
+              indicator="check"
+            >
+              {getChartNumberFormatLabel(option)}
+            </ListItem>
           </SelectableListItem>
         ))}
       </SelectableList>

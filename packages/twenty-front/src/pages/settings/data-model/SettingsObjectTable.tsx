@@ -30,9 +30,9 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -176,25 +176,21 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItemToggle
-                        LeftIcon={IconArchive}
-                        onToggleChange={() =>
+                      <SettingsRow
+                        startIcon={<IconArchive />}
+                        onCheckedChange={() =>
                           setShowDeactivated(!showDeactivated)
                         }
-                        toggled={showDeactivated}
-                        text={t`Deactivated`}
-                        toggleSize="small"
-                      />
+                        checked={showDeactivated}
+                      >{t`Deactivated`}</SettingsRow>
                       {isAdvancedModeEnabled && (
-                        <MenuItemToggle
-                          LeftIcon={IconSettings}
-                          onToggleChange={() =>
+                        <SettingsRow
+                          startIcon={<IconSettings />}
+                          onCheckedChange={() =>
                             setShowSystemObjects(!showSystemObjects)
                           }
-                          toggled={showSystemObjects}
-                          text={t`System objects`}
-                          toggleSize="small"
-                        />
+                          checked={showSystemObjects}
+                        >{t`System objects`}</SettingsRow>
                       )}
                     </DropdownMenuItemsContainer>
                   </DropdownContent>

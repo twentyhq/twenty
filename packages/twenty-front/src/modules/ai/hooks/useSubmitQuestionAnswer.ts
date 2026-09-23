@@ -11,21 +11,26 @@ import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChat
 import { ANSWER_AGENT_CHAT_QUESTION } from '@/ai/graphql/mutations/answerAgentChatQuestion';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { markQuestionAnswered } from '@/ai/utils/markQuestionAnswered';
 import { markQuestionPending } from '@/ai/utils/markQuestionPending';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useSubmitQuestionAnswer = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { modelIdForRequest } = useAgentChatModelId();
 
   const submitAnswer = useCallback(
@@ -49,8 +54,9 @@ export const useSubmitQuestionAnswer = () => {
       );
 
       if (isNonEmptyArray(agentChatSelectedFiles)) {
-        enqueueInfoSnackBar({
-          message: t`Wait for files to finish uploading before answering.`,
+        enqueueToast({
+          variant: 'info',
+          children: t`Wait for files to finish uploading before answering.`,
         });
 
         return;
@@ -65,6 +71,10 @@ export const useSubmitQuestionAnswer = () => {
           instanceId: AGENT_CHAT_INSTANCE_ID,
           familyKey: { threadId },
         });
+      const errorAtom = agentChatErrorComponentFamilyState.atomFamily({
+        instanceId: AGENT_CHAT_INSTANCE_ID,
+        familyKey: { threadId },
+      });
       const previousMessages = store.get(messagesAtom);
 
       const uploadedFiles = store.get(agentChatUploadedFilesState.atom);
@@ -102,6 +112,17 @@ export const useSubmitQuestionAnswer = () => {
           ...currentUploadedFiles,
         ]);
 
+        // The banner reads the workspace flag, then the thread error when no resource credit item carries that flag
+        if (isAiChatCreditsExhaustedError(error)) {
+          store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
+          store.set(
+            errorAtom,
+            CombinedGraphQLErrors.is(error) || error instanceof Error
+              ? error
+              : new Error('An unexpected error occurred'),
+          );
+        }
+
         if (isGraphqlErrorOfType(error, AiChatErrorCode.QUESTION_NOT_PENDING)) {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
         } else {
@@ -113,18 +134,10 @@ export const useSubmitQuestionAnswer = () => {
           );
         }
 
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
-    [
-      apolloClient,
-      store,
-      enqueueErrorSnackBar,
-      enqueueInfoSnackBar,
-      modelIdForRequest,
-    ],
+    [apolloClient, store, enqueueToast, modelIdForRequest],
   );
 
   return { submitAnswer };

@@ -1,3 +1,6 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useMemo, useRef, useState } from 'react';
 
@@ -18,12 +21,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -37,6 +38,7 @@ export type CallToActionButton = {
 
 export type SelectProps<Value extends SelectValue> = {
   className?: string;
+  renderAsTag?: boolean;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
@@ -57,6 +59,7 @@ export type SelectProps<Value extends SelectValue> = {
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
   showContextualTextInControl?: boolean;
+  showIconInControl?: boolean;
   isDropdownInModal?: boolean;
   variant?: FormFieldInputVariant;
 };
@@ -100,8 +103,10 @@ export const Select = <Value extends SelectValue>({
   dropdownOffset,
   hasRightElement,
   showContextualTextInControl = true,
+  showIconInControl = true,
   isDropdownInModal = false,
   variant = 'default',
+  renderAsTag = false,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -162,25 +167,26 @@ export const Select = <Value extends SelectValue>({
 
   const selectableItemIdArray = filteredOptions.map((option) => option.label);
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
   const controlSelectedOption = useMemo(() => {
-    if (!isDefined(selectedOption) || showContextualTextInControl) {
+    if (!isDefined(selectedOption)) {
       return selectedOption;
     }
 
-    const { contextualText: _, ...rest } = selectedOption;
-
-    return rest;
-  }, [selectedOption, showContextualTextInControl]);
+    return {
+      ...selectedOption,
+      contextualText: showContextualTextInControl
+        ? selectedOption.contextualText
+        : undefined,
+      Icon: showIconInControl ? selectedOption.Icon : undefined,
+    };
+  }, [selectedOption, showContextualTextInControl, showIconInControl]);
 
   const handleDropdownOpen = () => {
     if (
@@ -206,6 +212,7 @@ export const Select = <Value extends SelectValue>({
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
         <SelectControl
+          renderAsTag={renderAsTag}
           selectedOption={controlSelectedOption}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
@@ -221,6 +228,7 @@ export const Select = <Value extends SelectValue>({
           onOpen={handleDropdownOpen}
           clickableComponent={
             <SelectControl
+              renderAsTag={renderAsTag}
               selectedOption={controlSelectedOption}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
@@ -242,21 +250,34 @@ export const Select = <Value extends SelectValue>({
               )}
               {isDefined(pinnedOption) && (
                 <DropdownMenuItemsContainer scrollable={false}>
-                  <MenuItemSelect
-                    LeftIcon={pinnedOption.Icon}
-                    leftIconColor={pinnedOption.iconThemeColor}
-                    text={pinnedOption.label}
-                    contextualText={pinnedOption.contextualText}
-                    selected={
-                      controlSelectedOption.value === pinnedOption.value
-                    }
-                    needIconCheck={needIconCheck}
+                  <ListItem
                     onClick={() => {
                       onChange?.(pinnedOption.value);
                       onBlur?.();
                       closeDropdown(dropdownId);
                     }}
-                  />
+                    role="option"
+                    aria-selected={
+                      controlSelectedOption.value === pinnedOption.value
+                    }
+                    selected={
+                      needIconCheck &&
+                      controlSelectedOption.value === pinnedOption.value
+                    }
+                    indicator={needIconCheck ? 'check' : 'none'}
+                    description={pinnedOption.contextualText}
+                    startIcon={
+                      <>
+                        <SelectOptionIcon
+                          Icon={pinnedOption.Icon}
+                          color={pinnedOption.iconThemeColor}
+                        />
+                        {pinnedOption.LeftComponent}
+                      </>
+                    }
+                  >
+                    {pinnedOption.label}
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
               {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
@@ -269,34 +290,70 @@ export const Select = <Value extends SelectValue>({
                     focusId={dropdownId}
                     selectableItemIdArray={selectableItemIdArray}
                   >
-                    {filteredOptions.map((option) => (
-                      <SelectableListItem
-                        key={`${option.value}-${option.label}`}
-                        itemId={option.label}
-                        onEnter={() => {
-                          onChange?.(option.value);
-                          onBlur?.();
-                          closeDropdown(dropdownId);
-                        }}
-                      >
-                        <MenuItemSelect
-                          LeftIcon={option.Icon}
-                          leftIconColor={option.iconThemeColor}
-                          text={option.label}
-                          contextualText={option.contextualText}
-                          selected={
-                            controlSelectedOption.value === option.value
-                          }
-                          focused={selectedItemId === option.label}
-                          needIconCheck={needIconCheck}
-                          onClick={() => {
-                            onChange?.(option.value);
-                            onBlur?.();
-                            closeDropdown(dropdownId);
-                          }}
-                        />
-                      </SelectableListItem>
-                    ))}
+                    {filteredOptions.map((option) => {
+                      const handleSelectOption = () => {
+                        onChange?.(option.value);
+                        onBlur?.();
+                        closeDropdown(dropdownId);
+                      };
+
+                      return (
+                        <SelectableListItem
+                          key={`${option.value}-${option.label}`}
+                          itemId={option.label}
+                          onEnter={handleSelectOption}
+                        >
+                          {renderAsTag && isDefined(option.color) ? (
+                            <ListItem
+                              focused={selectedItemId === option.label}
+                              onClick={handleSelectOption}
+                              role="option"
+                              aria-selected={
+                                controlSelectedOption.value === option.value
+                              }
+                              selected={
+                                controlSelectedOption.value === option.value
+                              }
+                              indicator="check"
+                            >
+                              <Tag
+                                color={option.color}
+                                borderStyle="dashed"
+                                variant={'soft'}
+                              >
+                                {option.label}
+                              </Tag>
+                            </ListItem>
+                          ) : (
+                            <ListItem
+                              focused={selectedItemId === option.label}
+                              onClick={handleSelectOption}
+                              role="option"
+                              aria-selected={
+                                controlSelectedOption.value === option.value
+                              }
+                              selected={
+                                needIconCheck &&
+                                controlSelectedOption.value === option.value
+                              }
+                              indicator={needIconCheck ? 'check' : 'none'}
+                              description={option.contextualText}
+                              startIcon={
+                                <>
+                                  <SelectOptionIcon
+                                    Icon={option.Icon}
+                                    color={option.iconThemeColor}
+                                  />
+                                  {option.LeftComponent}
+                                </>
+                              }
+                            >
+                              {option.label}
+                            </ListItem>
+                          )}
+                        </SelectableListItem>
+                      );
+                    })}
                   </SelectableList>
                 </DropdownMenuItemsContainer>
               )}
@@ -304,11 +361,14 @@ export const Select = <Value extends SelectValue>({
                 isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
               {isDefined(callToActionButton) && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <MenuItem
+                  <ListItem
                     onClick={callToActionButton.onClick}
-                    LeftIcon={callToActionButton.Icon}
-                    text={callToActionButton.text}
-                  />
+                    startIcon={
+                      <SelectOptionIcon Icon={callToActionButton.Icon} />
+                    }
+                  >
+                    {callToActionButton.text}
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
             </DropdownContent>

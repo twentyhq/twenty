@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import { LightIconButton } from 'twenty-ui/components';
 import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
 import { useReorderRecordTableWidgetFields } from '@/page-layout/widgets/record-table/hooks/useReorderRecordTableWidgetFields';
 import { useToggleRecordTableWidgetFieldVisibility } from '@/page-layout/widgets/record-table/hooks/useToggleRecordTableWidgetFieldVisibility';
@@ -7,7 +9,7 @@ import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/D
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldListContainer = styled.div`
@@ -95,17 +97,19 @@ export const RecordTableSettingsFieldVisibility = ({
                   itemComponent={
                     <MenuItemDraggable
                       LeftIcon={getIcon(fieldItem.fieldMetadataItem.icon)}
-                      iconButtons={[
-                        {
-                          Icon: IconEyeOff,
-                          onClick: () => {
+                      iconButtons={
+                        <LightIconButton
+                          aria-label={t`Hide field`}
+                          onClick={() => {
                             toggleRecordTableWidgetFieldVisibility(
                               fieldItem.viewField.id,
                               false,
                             );
-                          },
-                        },
-                      ]}
+                          }}
+                        >
+                          <IconEyeOff />
+                        </LightIconButton>
+                      }
                       text={fieldItem.fieldMetadataItem.label}
                       gripMode="always"
                     />
@@ -123,17 +127,19 @@ export const RecordTableSettingsFieldVisibility = ({
             <MenuItemDraggable
               key={fieldItem.viewField.id}
               LeftIcon={getIcon(fieldItem.fieldMetadataItem.icon)}
-              iconButtons={[
-                {
-                  Icon: IconEye,
-                  onClick: () => {
+              iconButtons={
+                <LightIconButton
+                  aria-label={t`Show field`}
+                  onClick={() => {
                     toggleRecordTableWidgetFieldVisibility(
                       fieldItem.viewField.id,
                       true,
                     );
-                  },
-                },
-              ]}
+                  }}
+                >
+                  <IconEye />
+                </LightIconButton>
+              }
               text={fieldItem.fieldMetadataItem.label}
               accent="placeholder"
               isDragDisabled

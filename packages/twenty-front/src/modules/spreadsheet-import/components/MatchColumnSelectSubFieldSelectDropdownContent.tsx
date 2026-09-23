@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
 import { getSubFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportGetSubFieldOptions';
@@ -11,8 +13,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useState } from 'react';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { MenuItem } from 'twenty-ui/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 
 export const MatchColumnSelectSubFieldSelectDropdownContent = ({
   fieldMetadataItem,
@@ -73,13 +74,14 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
       <DropdownMenuItemsContainer hasMaxHeight>
         {subFieldOptions.map(
           ({ value, shortLabelForNestedField, Icon, disabled }) => (
-            <MenuItem
+            <ListItem
               key={value}
               onClick={() => handleSubFieldSelect(value)}
-              LeftIcon={Icon}
-              text={shortLabelForNestedField}
+              startIcon={<SelectOptionIcon Icon={Icon} />}
               disabled={disabled}
-            />
+            >
+              {shortLabelForNestedField}
+            </ListItem>
           ),
         )}
       </DropdownMenuItemsContainer>

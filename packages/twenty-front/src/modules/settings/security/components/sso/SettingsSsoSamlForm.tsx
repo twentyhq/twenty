@@ -1,20 +1,20 @@
-/* @license Enterprise */
-
 import { parseSamlMetadataFromXmlFile } from '@/settings/security/utils/parseSamlMetadataFromXmlFile';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { type ChangeEvent, useContext, useRef } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type ChangeEvent, useContext, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
-import { HorizontalSeparator, Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+/* @license Enterprise */
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;
@@ -51,7 +51,7 @@ const StyledButtonCopy = styled.div`
 
 export const SettingsSsoSamlForm = () => {
   const { theme } = useContext(ThemeContext);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { setValue, getValues, watch, trigger } = useFormContext();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
@@ -62,11 +62,10 @@ export const SettingsSsoSamlForm = () => {
       const samlMetadataParsed = parseSamlMetadataFromXmlFile(text);
       e.target.value = '';
       if (!samlMetadataParsed.success) {
-        return enqueueErrorSnackBar({
-          message: t`Invalid file: ${samlMetadataParsed.reason}`,
-          options: {
-            duration: 5000,
-          },
+        return enqueueToast({
+          variant: 'error',
+          children: t`Invalid file: ${samlMetadataParsed.reason}`,
+          duration: 5000,
         });
       }
       setValue('ssoURL', samlMetadataParsed.data.ssoUrl);
@@ -100,11 +99,10 @@ export const SettingsSsoSamlForm = () => {
       `${REACT_APP_SERVER_BASE_URL}/auth/saml/metadata/${getValues('id')}`,
     );
     if (!response.ok) {
-      return enqueueErrorSnackBar({
-        message: t`Metadata file generation failed`,
-        options: {
-          duration: 2000,
-        },
+      return enqueueToast({
+        variant: 'error',
+        children: t`Metadata file generation failed`,
+        duration: 2000,
       });
     }
     const text = await response.text();
@@ -120,8 +118,8 @@ export const SettingsSsoSamlForm = () => {
   };
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Identity Provider Metadata XML`}
           description={t`Upload the XML file with your connection infos`}
         />
@@ -133,11 +131,10 @@ export const SettingsSsoSamlForm = () => {
             accept=".xml"
           />
           <Button
-            Icon={IconUpload}
+            startIcon={<IconUpload />}
             onClick={handleUploadFileClick}
-            title={t`Upload file`}
             type="button"
-          ></Button>
+          >{t`Upload file`}</Button>
           {isXMLMetadataValid() && (
             <IconCheck
               size={theme.icon.size.md}
@@ -146,20 +143,19 @@ export const SettingsSsoSamlForm = () => {
             />
           )}
         </StyledUploadFileContainer>
-      </Section>
-      <Section>
-        <H2Title
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Service Provider Details`}
           description={t`Enter the infos to set the connection`}
         />
         <StyledInputsContainer>
           <StyledContainer>
             <Button
-              Icon={IconDownload}
+              startIcon={<IconDownload />}
               onClick={downloadMetadata}
-              title={t`Download file`}
               type="button"
-            />
+            >{t`Download file`}</Button>
           </StyledContainer>
           <HorizontalSeparator text={t`Or`} />
           <StyledContainer>
@@ -167,20 +163,19 @@ export const SettingsSsoSamlForm = () => {
               <SettingsTextInput
                 instanceId="sso-saml-acs-url"
                 disabled={true}
-                label={t`ACS Url`}
+                label={t`ACS URL`}
                 value={acsUrl}
                 fullWidth
               />
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
-                  copyToClipboard(acsUrl, t`ACS Url copied to clipboard`);
+                  copyToClipboard(acsUrl, t`ACS URL copied to clipboard`);
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
           <StyledContainer>
@@ -195,17 +190,16 @@ export const SettingsSsoSamlForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(entityID, t`Entity ID copied to clipboard`);
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
         </StyledInputsContainer>
-      </Section>
+      </Section.Root>
     </>
   );
 };

@@ -1,9 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { SettingsRow } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconCube } from 'twenty-ui/icon';
-import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
@@ -20,7 +21,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const ALL_OBJECTS_ITEM_ID = 'all-objects';
 
@@ -67,13 +67,10 @@ export const SidePanelObjectFilterDropdownContent = ({
     ALL_OBJECTS_ITEM_ID,
     ...displayedObjects.map((item) => item.nameSingular),
   ];
-  const scopedSelectableListId = useWorkspaceSurfaceScopedComponentInstanceId(
-    OBJECT_FILTER_DROPDOWN_ID,
-  );
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedSelectableListId,
+    OBJECT_FILTER_DROPDOWN_ID,
   );
 
   return (
@@ -95,13 +92,15 @@ export const SidePanelObjectFilterDropdownContent = ({
             itemId={ALL_OBJECTS_ITEM_ID}
             onEnter={() => handleSelect(null)}
           >
-            <MenuItemSelectAvatar
-              avatar={<TintedIconTile Icon={IconCube} />}
-              text={t`All objects`}
-              selected={selectedObjectNameSingular === null}
+            <ListItem
               onClick={() => handleSelect(null)}
               focused={selectedItemId === ALL_OBJECTS_ITEM_ID}
-            />
+              role="option"
+              aria-selected={selectedObjectNameSingular === null}
+              selected={selectedObjectNameSingular === null}
+              indicator="check"
+              startIcon={<TintedIconTile Icon={IconCube} />}
+            >{t`All objects`}</ListItem>
           </SelectableListItem>
           {displayedObjects.map((objectMetadataItem) => {
             return (
@@ -110,20 +109,27 @@ export const SidePanelObjectFilterDropdownContent = ({
                 itemId={objectMetadataItem.nameSingular}
                 onEnter={() => handleSelect(objectMetadataItem.nameSingular)}
               >
-                <MenuItemSelectAvatar
-                  avatar={
-                    <ObjectMetadataIcon
-                      objectMetadataItem={objectMetadataItem}
-                    />
+                <ListItem
+                  onClick={() => handleSelect(objectMetadataItem.nameSingular)}
+                  focused={selectedItemId === objectMetadataItem.nameSingular}
+                  role="option"
+                  aria-selected={
+                    selectedObjectNameSingular ===
+                    objectMetadataItem.nameSingular
                   }
-                  text={objectMetadataItem.labelPlural}
                   selected={
                     selectedObjectNameSingular ===
                     objectMetadataItem.nameSingular
                   }
-                  onClick={() => handleSelect(objectMetadataItem.nameSingular)}
-                  focused={selectedItemId === objectMetadataItem.nameSingular}
-                />
+                  indicator="check"
+                  startIcon={
+                    <ObjectMetadataIcon
+                      objectMetadataItem={objectMetadataItem}
+                    />
+                  }
+                >
+                  {objectMetadataItem.labelPlural}
+                </ListItem>
               </SelectableListItem>
             );
           })}
@@ -131,15 +137,13 @@ export const SidePanelObjectFilterDropdownContent = ({
       </SelectableList>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <MenuItemToggle
-          LeftIcon={IconCube}
-          onToggleChange={() =>
+        <SettingsRow
+          startIcon={<IconCube />}
+          onCheckedChange={() =>
             setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
           }
-          toggled={sidePanelShowHiddenObjects}
-          text={t`Show hidden objects`}
-          toggleSize="small"
-        />
+          checked={sidePanelShowHiddenObjects}
+        >{t`Show hidden objects`}</SettingsRow>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

@@ -1,6 +1,7 @@
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
-import { InputLabel, LightIconButton } from 'twenty-ui/input';
+import { InputLabel } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
 import { FORM_SELECT_FIELD_TYPE_OPTIONS } from '@/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
@@ -75,12 +76,14 @@ export const WorkflowEditActionFormFieldSettings = ({
         </StyledTitleContainer>
         <StyledCloseButtonContainer>
           <LightIconButton
-            testId="close-button"
-            Icon={IconX}
-            size="small"
-            accent="secondary"
+            data-testid="close-button"
+            size="sm"
+            emphasis="standard"
             onClick={onClose}
-          />
+            aria-label={t`Close`}
+          >
+            <IconX />
+          </LightIconButton>
         </StyledCloseButtonContainer>
       </StyledSettingsHeader>
       <StyledSettingsContent>

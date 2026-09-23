@@ -27,6 +27,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "label",
       "isSecret",
       "isDeprecated",
+      "isRequired",
       "type",
       "options",
     ],
@@ -80,6 +81,8 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
       "isLabelSyncedWithName",
       "isUnique",
+      "isSearchable",
+      "isAuditLogged",
       "label",
       "name",
       "options",
@@ -188,12 +191,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isUIEditable",
       "writability",
       "readability",
+      "readabilityParentFieldUniversalIdentifiers",
       "isUICreatable",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "overrides",
+      "readabilityParentFieldUniversalIdentifiers",
     ],
   },
   "objectPermission": {
@@ -335,6 +340,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "description",
       "content",
       "isActive",
+      "isSystem",
     ],
     "propertiesToStringify": [],
   },
@@ -469,6 +475,27 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [
       "operations",
+    ],
+  },
+  "workflow": {
+    "propertiesToCompare": [
+      "name",
+      "visibility",
+      "lastPublishedVersionId",
+      "lastPublishedCoreWorkflowVersionId",
+    ],
+    "propertiesToStringify": [],
+  },
+  "workflowVersion": {
+    "propertiesToCompare": [
+      "status",
+      "triggers",
+      "steps",
+      "coreWorkflowId",
+    ],
+    "propertiesToStringify": [
+      "triggers",
+      "steps",
     ],
   },
 }

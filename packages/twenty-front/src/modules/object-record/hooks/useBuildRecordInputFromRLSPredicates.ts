@@ -72,7 +72,9 @@ export const useBuildRecordInputFromRLSPredicates = ({
     }
 
     let workspaceMemberFieldValue =
-      currentWorkspaceMemberRecord?.[workspaceMemberFieldMetadataItem.name];
+      currentWorkspaceMemberRecord?.[
+        getRecordInputFieldName(workspaceMemberFieldMetadataItem)
+      ];
 
     if (isCompositeFieldType(workspaceMemberFieldMetadataItem.type)) {
       if (!workspaceMemberSubFieldName) {

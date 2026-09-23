@@ -8,10 +8,11 @@ import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/pag
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  type DashboardToolContext,
+  type DashboardToolContextWithPermissions,
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { buildResolvedGroupBy } from 'src/modules/dashboard/tools/utils/build-resolved-group-by.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 const getDashboardSchema = z.object({
   dashboardId: z.string().uuid().describe('The UUID of the dashboard to fetch'),
@@ -22,7 +23,7 @@ export const createGetDashboardTool = (
     DashboardToolDependencies,
     'pageLayoutService' | 'workspaceOrmManager' | 'flatEntityMapsCacheService'
   >,
-  context: DashboardToolContext,
+  context: DashboardToolContextWithPermissions,
 ) => ({
   name: 'get_dashboard' as const,
   description: `Get a dashboard with its full layout structure including tabs and widgets.`,
@@ -42,7 +43,13 @@ export const createGetDashboardTool = (
         flatFieldMetadataMaps.byUniversalIdentifier,
       )
         .filter(isDefined)
-        .filter((field) => field.isActive);
+        .filter((field) =>
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'fieldMetadata',
+            flatEntity: field,
+            property: 'isActive',
+          }),
+        );
 
       const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
 
@@ -70,9 +77,10 @@ export const createGetDashboardTool = (
 
       const dashboard =
         await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const repo = deps.workspaceOrmManager.getRepository('dashboard', {
-            shouldBypassPermissionChecks: true,
-          });
+          const repo = deps.workspaceOrmManager.getRepository(
+            'dashboard',
+            context.rolePermissionConfig,
+          );
 
           return repo.findOne({ where: { id: parameters.dashboardId } });
         }, authContext);

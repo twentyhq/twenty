@@ -14,6 +14,7 @@ export enum EmailingDomainExceptionCode {
   MESSAGE_CAMPAIGN_NOT_SENDABLE = 'MESSAGE_CAMPAIGN_NOT_SENDABLE',
   MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS = 'MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS',
   MESSAGE_CAMPAIGN_NOT_CANCELABLE = 'MESSAGE_CAMPAIGN_NOT_CANCELABLE',
+  MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE = 'MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE',
 }
 
 const getEmailingDomainExceptionUserFriendlyMessage = (
@@ -21,7 +22,7 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
 ) => {
   switch (code) {
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED:
-      return msg`This domain is already registered.`;
+      return msg`Registered by another workspace.`;
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
       return msg`No verified sending domain matches this from address.`;
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
@@ -37,7 +38,9 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
       return msg`This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
-      return msg`Only a campaign that is currently sending can be canceled.`;
+      return msg`Only a scheduled or sending campaign can be canceled.`;
+    case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE:
+      return msg`Pick a send time in the future.`;
     default:
       assertUnreachable(code);
   }

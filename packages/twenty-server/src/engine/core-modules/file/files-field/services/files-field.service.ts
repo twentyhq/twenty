@@ -163,7 +163,7 @@ export class FilesFieldService {
     const resourcePath = `${fieldMetadata.universalIdentifier}/${copiedFileId}${extension}`;
     const sourceFileFolder = sourceFile.path.split('/')[0] as FileFolder;
 
-    await this.fileStorageService.copy({
+    return this.fileStorageService.copyFile({
       from: {
         workspaceId,
         applicationUniversalIdentifier: sourceApplication.universalIdentifier,
@@ -177,15 +177,10 @@ export class FilesFieldService {
         fileFolder: FileFolder.FilesField,
         resourcePath,
       },
-    });
-
-    return this.fileRepository.insertAndReturnOne(workspaceId, {
-      id: copiedFileId,
-      path: `${FileFolder.FilesField}/${resourcePath}`,
+      fileId: copiedFileId,
       applicationId: fieldMetadata.applicationId,
       mimeType: sourceFile.mimeType,
       size: sourceFile.size,
-      status: FILE_STATUS.UPLOADED,
       settings: {
         isTemporaryFile: true,
         toDelete: false,

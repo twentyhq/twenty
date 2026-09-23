@@ -4,9 +4,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
-import { Avatar } from 'twenty-ui/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type RecordTableWidgetRelationPickerMenuItemProps = {
@@ -22,13 +21,10 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     relationRecord.id,
-    scopedDropdownId,
+    dropdownId,
   );
 
   return (
@@ -36,21 +32,25 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
       itemId={relationRecord.id}
       onEnter={() => onSelect(relationRecord.id)}
     >
-      <MenuItemSelectAvatar
+      <ListItem
         onClick={() => onSelect(relationRecord.id)}
-        text={relationRecord.name}
-        selected={false}
         focused={isSelectedItemId}
-        avatar={
+        role="option"
+        aria-selected={false}
+        selected={false}
+        indicator="check"
+        startIcon={
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(relationRecord.avatarUrl)}
-            placeholderColorSeed={relationRecord.id}
-            placeholder={relationRecord.name}
+            src={getAbsoluteImageUrl(relationRecord.avatarUrl)}
+            colorSeed={relationRecord.id}
+            name={relationRecord.name}
             size="md"
-            type={relationRecord.avatarType ?? 'rounded'}
+            shape={relationRecord.avatarShape ?? 'circle'}
           />
         }
-      />
+      >
+        {relationRecord.name}
+      </ListItem>
     </SelectableListItem>
   );
 };

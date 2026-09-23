@@ -20,10 +20,15 @@ import { mapResendDomainRecords } from 'src/engine/core-modules/emailing-domain/
 import { mapResendSendingStatus } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-sending-status.util';
 import { RESEND_WORKSPACE_TAG_NAME } from 'src/engine/core-modules/emailing-domain/drivers/resend/constants/resend-workspace-tag-name.constant';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { type EmailingDomainSendEmailBatchRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-request.type';
+import { type EmailingDomainSendEmailBatchResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-batch-result.type';
+import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { getUnsubscribeBaseUrl } from 'src/engine/core-modules/emailing-domain/drivers/utils/get-unsubscribe-base-url.util';
 import { type UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
+
+const RESEND_BATCH_MAX_EMAILS = 100;
 
 export class ResendDriver implements EmailingDomainDriverInterface {
   private readonly logger = new Logger(ResendDriver.name);
@@ -123,7 +128,10 @@ export class ResendDriver implements EmailingDomainDriverInterface {
       );
     }
 
-    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(input.emailingDomain);
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(
+      input.emailingDomain,
+      input.sendKind,
+    );
     const emailToSend = this.unsubscribeContentService.addTo(
       input,
       unsubscribeBaseUrl,
@@ -159,12 +167,106 @@ export class ResendDriver implements EmailingDomainDriverInterface {
 
     return {
       messageId: id,
+      headerMessageId: await this.findHeaderMessageId(id),
       deliveredRecipients: {
         to: emailToSend.to,
         cc: emailToSend.cc ?? [],
         bcc: emailToSend.bcc ?? [],
       },
     };
+  }
+
+  async sendEmailBatch(
+    input: EmailingDomainSendEmailBatchRequest,
+  ): Promise<EmailingDomainSendEmailBatchResult> {
+    if (!isNonEmptyArray(input.recipients)) {
+      throw new EmailingDomainDriverException(
+        'sendEmailBatch requires at least one recipient',
+        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
+      );
+    }
+
+    if (input.recipients.length > RESEND_BATCH_MAX_EMAILS) {
+      throw new EmailingDomainDriverException(
+        `sendEmailBatch accepts at most ${RESEND_BATCH_MAX_EMAILS} recipients, received ${input.recipients.length}`,
+        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
+      );
+    }
+
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(
+      input.emailingDomain,
+      input.sendKind,
+    );
+    const batchToSend = this.unsubscribeContentService.addToBatch(
+      input,
+      unsubscribeBaseUrl,
+    );
+
+    const payloads: ResendSendEmailPayload[] = batchToSend.recipients.map(
+      (recipient) => ({
+        from: batchToSend.from,
+        to: [recipient.email],
+        reply_to: batchToSend.replyTo,
+        subject: applyReplacementTags(
+          batchToSend.template.subject,
+          recipient.replacements,
+        ),
+        text: applyReplacementTags(
+          batchToSend.template.text,
+          recipient.replacements,
+        ),
+        html: isNonEmptyString(batchToSend.template.html)
+          ? applyReplacementTags(
+              batchToSend.template.html,
+              recipient.replacements,
+            )
+          : undefined,
+        headers: isNonEmptyArray(recipient.headers)
+          ? Object.fromEntries(
+              recipient.headers.map((header) => [header.name, header.value]),
+            )
+          : undefined,
+        tags: [
+          { name: RESEND_WORKSPACE_TAG_NAME, value: batchToSend.workspaceId },
+        ],
+      }),
+    );
+
+    const { data } = await this.resendApiClientService.sendEmailBatch(payloads);
+
+    return {
+      entries: batchToSend.recipients.map((_recipient, index) => {
+        const id = data?.[index]?.id;
+
+        return isNonEmptyString(id)
+          ? {
+              recipientIndex: index,
+              messageId: id,
+              headerMessageId: null,
+              errorMessage: null,
+            }
+          : {
+              recipientIndex: index,
+              messageId: null,
+              headerMessageId: null,
+              errorMessage: 'Resend returned no id for this destination',
+            };
+      }),
+    };
+  }
+
+  private async findHeaderMessageId(emailId: string): Promise<string | null> {
+    const sentEmail = await this.resendApiClientService
+      .getSentEmail(emailId)
+      .catch(() => null);
+
+    const messageId = sentEmail?.message_id;
+
+    if (!isNonEmptyString(messageId)) {
+      return null;
+    }
+
+    return messageId.startsWith('<') ? messageId : `<${messageId}>`;
   }
 
   private async findOrCreateDomain(domainName: string): Promise<ResendDomain> {

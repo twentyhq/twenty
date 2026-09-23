@@ -2,12 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
+import { truncateOnGraphemeBoundary } from 'src/logic-functions/utils/truncate-on-grapheme-boundary';
 
 const BODY_PREVIEW_MAX_LENGTH = 300;
-
-const GRAPHEME_SEGMENTER = new Intl.Segmenter(undefined, {
-  granularity: 'grapheme',
-});
 
 export const readSlackBodyPreview = ({
   bodyValue,
@@ -26,12 +23,5 @@ export const readSlackBodyPreview = ({
     return markdown;
   }
 
-  // Slack counts the characters it stores, so the budget is code units, cut on
-  // grapheme boundaries to keep sequences such as 👨‍👩‍👧‍👦 whole
-  const truncated = [...GRAPHEME_SEGMENTER.segment(markdown)]
-    .filter(({ index, segment }) => index + segment.length <= maxLength - 1)
-    .map(({ segment }) => segment)
-    .join('');
-
-  return `${truncated}…`;
+  return `${truncateOnGraphemeBoundary({ text: markdown, maxLength: maxLength - 1 })}…`;
 };

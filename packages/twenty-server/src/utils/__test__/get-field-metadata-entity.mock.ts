@@ -23,6 +23,8 @@ export const getMockFieldMetadataEntity = <
   overrides: GetMockFieldMetadataEntityOverride<T>,
 ): FieldMetadataEntity => {
   return {
+    isSearchable: false,
+    isAuditLogged: true,
     isSystemSideEffect: false,
     workspace: {} as WorkspaceEntity,
     calendarViews: [],

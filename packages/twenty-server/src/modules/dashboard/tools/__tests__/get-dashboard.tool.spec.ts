@@ -143,6 +143,7 @@ describe('get_dashboard tool', () => {
       >,
       {
         workspaceId: WORKSPACE_ID,
+        rolePermissionConfig: { shouldBypassPermissionChecks: true },
       },
     );
 

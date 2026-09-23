@@ -1,3 +1,4 @@
+import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { RouteContextStoreProviderEffect } from '@/context-store/components/RouteContextStoreProviderEffect';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
@@ -6,24 +7,38 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
+import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
+import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
+import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewKey, ViewType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, ViewType } from '~/generated-metadata/graphql';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-const getViewId = (
-  viewIdFromQueryParams: string | null,
-  indexViewId?: string,
-  lastVisitedViewId?: string,
-  firstAvailableViewId?: string,
-) => {
+const getViewId = ({
+  viewIdFromQueryParams,
+  indexViewId,
+  lastVisitedViewId,
+  firstAvailableViewId,
+  firstSelectableViewId,
+}: {
+  viewIdFromQueryParams: string | null;
+  indexViewId?: string;
+  lastVisitedViewId?: string;
+  firstAvailableViewId?: string;
+  firstSelectableViewId?: string;
+}) => {
   if (isDefined(viewIdFromQueryParams)) {
     return viewIdFromQueryParams;
   }
 
   if (isDefined(lastVisitedViewId)) {
     return lastVisitedViewId;
+  }
+
+  if (isDefined(firstSelectableViewId)) {
+    return firstSelectableViewId;
   }
 
   if (isDefined(indexViewId)) {
@@ -39,17 +54,31 @@ const getViewId = (
 
 export const RouteContextStoreProvider = () => {
   const location = useLocation();
-  const isRecordIndexPage = isMatchingLocation(
+  const routeObjects = useWorkspaceRouteObjects();
+  const isCoreWorkflowIndexPage = isMatchingLocation(
     location,
-    AppPath.RecordIndexPage,
+    AppPath.WorkflowCoreIndexPage,
   );
-  const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
+  const isRecordIndexPage =
+    isCoreWorkflowIndexPage ||
+    isMatchingLocation(location, AppPath.RecordIndexPage);
+  const isCoreWorkflowShowPage = isMatchingLocation(
+    location,
+    AppPath.WorkflowCoreShowPage,
+  );
+  const isRecordShowPage =
+    isCoreWorkflowShowPage ||
+    isMatchingLocation(location, AppPath.RecordShowPage);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
   const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
   const isSettingsPage = useIsSettingsPage();
 
-  const objectNamePlural = useParams().objectNamePlural ?? '';
-  const objectNameSingular = useParams().objectNameSingular ?? '';
+  const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
+  const objectNamePlural = routeParams?.objectNamePlural;
+  const isCoreWorkflowPage = isCoreWorkflowIndexPage || isCoreWorkflowShowPage;
+  const objectNameSingular = isCoreWorkflowPage
+    ? CoreObjectNameSingular.Workflow
+    : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
@@ -86,30 +115,31 @@ export const RouteContextStoreProvider = () => {
     (view) => view.id === lastVisitedViewIdRaw,
   );
 
-  const lastVisitedViewId =
-    isDefined(lastVisitedView) &&
-    lastVisitedView.type !== ViewType.FIELDS_WIDGET
-      ? lastVisitedViewIdRaw
-      : undefined;
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+  );
 
-  const indexViewId = views.find(
-    (view) =>
-      view.objectMetadataId === objectMetadataItem?.id &&
-      view.key === ViewKey.INDEX,
-  )?.id;
+  const lastVisitedViewId = isUsableLastVisitedView({
+    lastVisitedView,
+    isInitialObjectViewEnabled,
+  })
+    ? lastVisitedViewIdRaw
+    : undefined;
 
-  const firstAvailableViewId = views.find(
-    (view) =>
-      view.objectMetadataId === objectMetadataItem?.id &&
-      view.type !== ViewType.FIELDS_WIDGET,
-  )?.id;
+  const { firstSelectableViewId, indexViewId, firstAvailableViewId } =
+    computeObjectViewTargetIds({
+      views,
+      objectMetadataId: objectMetadataItem?.id,
+      isInitialObjectViewEnabled,
+    });
 
-  const viewId = getViewId(
-    viewIdQueryParam,
+  const viewId = getViewId({
+    viewIdFromQueryParams: viewIdQueryParam,
     indexViewId,
     lastVisitedViewId,
     firstAvailableViewId,
-  );
+    firstSelectableViewId,
+  });
 
   const shouldComputeContextStore =
     (isRecordIndexPage ||
@@ -125,7 +155,7 @@ export const RouteContextStoreProvider = () => {
 
   return (
     <RouteContextStoreProviderEffect
-      viewId={viewId}
+      viewId={isCoreWorkflowPage ? undefined : viewId}
       objectMetadataItem={objectMetadataItem}
       isRecordIndexPage={isRecordIndexPage}
       isRecordShowPage={isRecordShowPage}
