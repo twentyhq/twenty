@@ -717,6 +717,50 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
       });
 
+      it('should not treat an empty value as zero', () => {
+        const nullLessThanOrEqual = createFilter(
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
+          null,
+          100,
+          'NUMBER',
+        );
+        const emptyStringGreaterThanOrEqual = createFilter(
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+          '',
+          -1,
+          'NUMBER',
+        );
+        const undefinedIsZero = createFilter(
+          ViewFilterOperand.IS,
+          undefined,
+          0,
+          'NUMBER',
+        );
+        const nullIsNotZero = createFilter(
+          ViewFilterOperand.IS_NOT,
+          null,
+          0,
+          'NUMBER',
+        );
+        const zeroIsZero = createFilter(ViewFilterOperand.IS, 0, 0, 'NUMBER');
+
+        expect(
+          evaluateFilterConditions({ filters: [nullLessThanOrEqual] }),
+        ).toBe(false);
+        expect(
+          evaluateFilterConditions({
+            filters: [emptyStringGreaterThanOrEqual],
+          }),
+        ).toBe(false);
+        expect(evaluateFilterConditions({ filters: [undefinedIsZero] })).toBe(
+          false,
+        );
+        expect(evaluateFilterConditions({ filters: [nullIsNotZero] })).toBe(
+          true,
+        );
+        expect(evaluateFilterConditions({ filters: [zeroIsZero] })).toBe(true);
+      });
+
       it('should handle LessThanOrEqual operand correctly', () => {
         const filter1 = createFilter(
           ViewFilterOperand.LESS_THAN_OR_EQUAL,
@@ -879,6 +923,37 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
+      });
+
+      it('should handle Contains operand with array values that look like JSON scalars', () => {
+        const numericValue = createFilter(
+          ViewFilterOperand.CONTAINS,
+          ['2024', '2025'],
+          '2024',
+          'ARRAY',
+        );
+        const booleanValue = createFilter(
+          ViewFilterOperand.CONTAINS,
+          ['true', 'false'],
+          'true',
+          'ARRAY',
+        );
+        const missingNumericValue = createFilter(
+          ViewFilterOperand.DOES_NOT_CONTAIN,
+          ['2024', '2025'],
+          '2026',
+          'ARRAY',
+        );
+
+        expect(evaluateFilterConditions({ filters: [numericValue] })).toBe(
+          true,
+        );
+        expect(evaluateFilterConditions({ filters: [booleanValue] })).toBe(
+          true,
+        );
+        expect(
+          evaluateFilterConditions({ filters: [missingNumericValue] }),
+        ).toBe(true);
       });
 
       it('should handle DoesNotContain operand with arrays', () => {
