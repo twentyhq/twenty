@@ -305,15 +305,15 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
     isSensitive: false,
     description:
-      'Microsoft Entra tenant ID. Use a directory (tenant) GUID for single-tenant app registrations. Defaults to "common" for multi-tenant.',
+      'Microsoft Entra tenant ID. Use a directory (tenant) GUID or a verified domain name (e.g. contoso.onmicrosoft.com) for single-tenant app registrations. Defaults to "common" for multi-tenant.',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   @Matches(
-    /^(common|organizations|consumers|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i,
+    /^(common|organizations|consumers|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,})$/i,
     {
       message:
-        'AUTH_MICROSOFT_TENANT_ID must be "common", "organizations", "consumers", or a valid UUID (tenant GUID)',
+        'AUTH_MICROSOFT_TENANT_ID must be "common", "organizations", "consumers", a valid UUID (tenant GUID), or a domain name (e.g. contoso.onmicrosoft.com)',
     },
   )
   @IsOptional()

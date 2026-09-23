@@ -226,6 +226,7 @@ You need to add the following redirect URIs to your project:
    - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
    - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
    - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+   - `AUTH_MICROSOFT_TENANT_ID={tenant}` (optional, defaults to `common`): use `common` for multi-tenant apps, or your directory (tenant) GUID or a verified domain name (e.g. `contoso.onmicrosoft.com`) for single-tenant apps
 
 <Warning>
 **Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
