@@ -1,7 +1,6 @@
-import { type EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import request from 'supertest';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -38,7 +37,7 @@ describe('workflow version core mirror metadata events (e2e)', () => {
   };
 
   beforeAll(async () => {
-    eventEmitter = getAppProviderByClassName<EventEmitter2>('EventEmitter2');
+    eventEmitter = global.app.get(EventEmitter2, { strict: false });
     eventEmitter.on('metadata.workflowVersion.updated', recordBatch);
 
     const createResponse = await graphql(`
