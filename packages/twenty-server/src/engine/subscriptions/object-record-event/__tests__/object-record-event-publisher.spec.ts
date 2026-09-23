@@ -34,6 +34,7 @@ import { type EventStreamData } from 'src/engine/subscriptions/types/event-strea
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 jest.mock(
   'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util',
@@ -454,12 +455,21 @@ describe('ObjectRecordEventPublisher', () => {
     });
 
     it('publishes events of a record named for a subscriber whose role cannot read the object', async () => {
+      const rolePermissions = mockRolesPermissions[roleId];
+
+      jestExpectToBeDefined(rolePermissions);
+
+      const companyObjectPermissions =
+        rolePermissions[companyObjectMetadata.id];
+
+      jestExpectToBeDefined(companyObjectPermissions);
+
       mockWorkspaceCacheService.getOrRecompute.mockImplementation(
         createCacheMock({
           rolesPermissions: {
             [roleId]: {
               [companyObjectMetadata.id]: {
-                ...mockRolesPermissions[roleId][companyObjectMetadata.id],
+                ...companyObjectPermissions,
                 canReadObjectRecords: false,
               },
             },

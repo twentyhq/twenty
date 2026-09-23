@@ -2,7 +2,11 @@ import {
   type FeatureFlagKey,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  pascalCase,
+} from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
@@ -412,6 +416,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       return this;
     }
 
+    assertIsDefinedOrThrow(parentAlias);
+
     const parentTableShape = this.getTableShapeForAlias(parentAlias);
 
     if (!isDefined(parentTableShape)) {
@@ -489,6 +495,10 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private resolveColumnSelections(): ColumnSelection[] {
     return this.pendingColumnSelections.map((expression) => {
       const [alias, columnName] = expression.split('.');
+
+      assertIsDefinedOrThrow(alias);
+      assertIsDefinedOrThrow(columnName);
+
       const tableShape = this.getTableShapeForAlias(alias);
 
       if (!isDefined(tableShape)) {
@@ -633,9 +643,13 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       return null;
     }
 
+    assertIsDefinedOrThrow(rows[0]);
+
     const [entity] = this.materializeEntities<T>([rows[0]]);
 
     if (options?.noFormatting) {
+      assertIsDefinedOrThrow(entity);
+
       return entity;
     }
 

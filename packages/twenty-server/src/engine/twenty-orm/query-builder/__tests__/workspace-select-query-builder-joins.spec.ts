@@ -3,6 +3,7 @@ import {
   SCHEMA_NAME,
   buildQueryBuilder,
 } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('WorkspaceSelectQueryBuilder joins', () => {
   it('should join a to-one relation on its foreign key', () => {
@@ -96,7 +97,7 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
 
     await queryBuilder.getRawMany();
 
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       `INNER JOIN "${SCHEMA_NAME}"."company" AS "people" ` +
         'ON ("people"."personId" = "person"."id") AND ("people"."deletedAt" IS NULL)',
     );
@@ -111,7 +112,7 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
 
     await queryBuilder.getRawMany();
 
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       `LEFT JOIN "${SCHEMA_NAME}"."company" AS "people" ` +
         'ON ("people"."personId" = "person"."id")',
     );
@@ -143,7 +144,7 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
     queryBuilder.addSelect('person.id', 'id');
     await queryBuilder.getRawMany();
 
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       'ON ("people"."personId" = "person"."id")',
     );
   });
@@ -160,12 +161,14 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
     const count = await queryBuilder.getCount();
 
     expect(count).toBe(3);
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       'SELECT COUNT(DISTINCT "person"."id") AS "count"',
     );
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       `INNER JOIN "${SCHEMA_NAME}"."company" AS "people"`,
     );
+    jestExpectToBeDefined(executedStatements[0]);
+
     expect(executedStatements[0].text).not.toContain('GROUP BY');
   });
 
@@ -182,7 +185,7 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
     const count = await queryBuilder.getCount();
 
     expect(count).toBe(7);
-    expect(executedStatements[0].text).toBe(
+    expect(executedStatements[0]?.text).toBe(
       'SELECT COUNT(1) AS "count" ' +
         `FROM "${SCHEMA_NAME}"."person" AS "person" ` +
         'WHERE "person"."deletedAt" IS NULL',
@@ -200,7 +203,7 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
 
     await queryBuilder.getRawMany();
 
-    expect(executedStatements[0].text).toContain(
+    expect(executedStatements[0]?.text).toContain(
       '("people"."personId" = "person"."id") AND ("people"."name" = $1)',
     );
   });

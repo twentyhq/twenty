@@ -10,6 +10,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/twenty-orm/constants/unsatisfiable-record-filter.constant';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const createFlatFieldMetadata = (
   overrides: Partial<FlatFieldMetadata>,
@@ -203,6 +204,8 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     const [accountOwnerIdParameterKey] = Object.keys(parameters);
 
     expect(accountOwnerIdParameterKey).toMatch(/^accountOwnerId[0-9a-f]{10}$/);
+    jestExpectToBeDefined(accountOwnerIdParameterKey);
+
     expect(parameters[accountOwnerIdParameterKey]).toEqual(['id-1']);
     expect(result?.sql).toBe(
       `NOT (("company"."accountOwnerId" IN (:...${accountOwnerIdParameterKey})))`,

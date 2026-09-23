@@ -1,5 +1,6 @@
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { packIdleVersions } from 'src/engine/workspace-cache/utils/pack-idle-versions.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const FIELD_METADATA = 'flatFieldMetadataMaps';
 const ORM = 'ORMEntityMetadatas';
@@ -192,8 +193,13 @@ describe('packIdleVersions', () => {
     ]);
 
     const result = run(localCache, 4, {
-      ponderationOf: (localKey) =>
-        ponderationBySuffix[localKey.split(':')[1]] ?? 1,
+      ponderationOf: (localKey) => {
+        const firstSegment = localKey.split(':')[1];
+
+        jestExpectToBeDefined(firstSegment);
+
+        return ponderationBySuffix[firstSegment] ?? 1;
+      },
     });
 
     expect(result.packed).toBe(2);

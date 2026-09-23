@@ -77,10 +77,12 @@ export const validateWritabilityOrThrow = ({
       continue;
     }
 
-    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const fieldMetadata = isDefined(fieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
 
     if (!isDefined(fieldMetadata)) {
       continue;

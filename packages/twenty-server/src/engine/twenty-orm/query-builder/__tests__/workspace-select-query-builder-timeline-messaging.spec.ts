@@ -6,6 +6,7 @@ import {
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
   const buildShape = (
@@ -167,8 +168,13 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
         },
       },
       objectRecordsPermissions: {},
-      tableShapeByObjectMetadataId: (objectMetadataId) =>
-        shapeByObjectMetadataId[objectMetadataId],
+      tableShapeByObjectMetadataId: (objectMetadataId) => {
+        const objectTableShape = shapeByObjectMetadataId[objectMetadataId];
+
+        jestExpectToBeDefined(objectTableShape);
+
+        return objectTableShape;
+      },
       onBeforeExecute: () => undefined,
       formatResult: (records) => records as never,
     });
@@ -194,18 +200,20 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
 
     expect(count).toBe(2);
 
-    const sql = executedStatements[0].text;
-
-    expect(sql).toContain('SELECT COUNT(DISTINCT "messageThread"."id")');
-    expect(sql).toContain(
+    expect(executedStatements[0]?.text).toContain(
+      'SELECT COUNT(DISTINCT "messageThread"."id")',
+    );
+    expect(executedStatements[0]?.text).toContain(
       `INNER JOIN "${SCHEMA_NAME}"."message" AS "messages" ` +
         'ON ("messages"."messageThreadId" = "messageThread"."id")',
     );
-    expect(sql).toContain(
+    expect(executedStatements[0]?.text).toContain(
       `INNER JOIN "${SCHEMA_NAME}"."messageParticipant" AS "messageParticipants" ` +
         'ON ("messageParticipants"."messageId" = "messages"."id")',
     );
-    expect(sql).toContain('"messageParticipants"."personId" IN($1)');
+    expect(executedStatements[0]?.text).toContain(
+      '"messageParticipants"."personId" IN($1)',
+    );
   });
 
   it('should page thread ids ordered by an aggregate select alias', async () => {
@@ -234,16 +242,18 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
       max_received_at: new Date('2026-01-01'),
     });
 
-    const sql = executedStatements[0].text;
-
-    expect(sql).toContain(
+    expect(executedStatements[0]?.text).toContain(
       'SELECT "messageThread"."id" AS "id", ' +
         'MAX("messages"."receivedAt") AS "max_received_at"',
     );
-    expect(sql).toContain('GROUP BY "messageThread"."id"');
-    expect(sql).toContain('ORDER BY "max_received_at" DESC');
-    expect(sql).toContain('LIMIT $');
-    expect(sql).toContain('OFFSET $');
+    expect(executedStatements[0]?.text).toContain(
+      'GROUP BY "messageThread"."id"',
+    );
+    expect(executedStatements[0]?.text).toContain(
+      'ORDER BY "max_received_at" DESC',
+    );
+    expect(executedStatements[0]?.text).toContain('LIMIT $');
+    expect(executedStatements[0]?.text).toContain('OFFSET $');
   });
 
   it('should load distinct thread participants with hydrated relations', async () => {
@@ -312,18 +322,22 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
       },
     ]);
 
-    const sql = executedStatements[0].text;
-
-    expect(sql).toContain(
+    expect(executedStatements[0]?.text).toContain(
       'SELECT DISTINCT ON ("message"."messageThreadId", "messageParticipant"."handle")',
     );
-    expect(sql).toContain(
+    expect(executedStatements[0]?.text).toContain(
       `LEFT JOIN "${SCHEMA_NAME}"."person" AS "person" ` +
         'ON ("messageParticipant"."personId" = "person"."id")',
     );
-    expect(sql).toContain('"message"."messageThreadId" = ANY($1)');
-    expect(sql).toContain('("messageParticipant"."role" = $2)');
-    expect(sql).toContain('ORDER BY "message"."messageThreadId" ASC');
+    expect(executedStatements[0]?.text).toContain(
+      '"message"."messageThreadId" = ANY($1)',
+    );
+    expect(executedStatements[0]?.text).toContain(
+      '("messageParticipant"."role" = $2)',
+    );
+    expect(executedStatements[0]?.text).toContain(
+      'ORDER BY "message"."messageThreadId" ASC',
+    );
   });
 
   it('should map thread visibility rows through raw to-many left joins', async () => {
@@ -351,21 +365,21 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
 
     expect(rows).toEqual([{ id: 'thread-1', messageChannelId: 'channel-1' }]);
 
-    const sql = executedStatements[0].text;
-
-    expect(sql).toContain(
+    expect(executedStatements[0]?.text).toContain(
       'SELECT "messageThread"."id" AS "id", ' +
         '"messageChannelMessageAssociation"."messageChannelId" AS "messageChannelId"',
     );
-    expect(sql).toContain(
+    expect(executedStatements[0]?.text).toContain(
       `LEFT JOIN "${SCHEMA_NAME}"."message" AS "message" ` +
         'ON ("message"."messageThreadId" = "messageThread"."id")',
     );
-    expect(sql).toContain(
+    expect(executedStatements[0]?.text).toContain(
       `LEFT JOIN "${SCHEMA_NAME}"."messageChannelMessageAssociation" ` +
         'AS "messageChannelMessageAssociation" ' +
         'ON ("messageChannelMessageAssociation"."messageId" = "message"."id")',
     );
-    expect(sql).toContain('"messageThread"."id" = ANY($1)');
+    expect(executedStatements[0]?.text).toContain(
+      '"messageThread"."id" = ANY($1)',
+    );
   });
 });

@@ -67,7 +67,7 @@ export const compileNamedParameters = (
 
     while (
       nameEndIndex < sql.length &&
-      PARAMETER_NAME_CHARACTER.test(sql[nameEndIndex])
+      PARAMETER_NAME_CHARACTER.test(sql.charAt(nameEndIndex))
     ) {
       nameEndIndex += 1;
     }

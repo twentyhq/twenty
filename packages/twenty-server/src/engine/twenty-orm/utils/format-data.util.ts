@@ -2,7 +2,7 @@ import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -46,10 +46,12 @@ export function formatData<T>(
   for (const [key, value] of Object.entries(data)) {
     const fieldMetadataId = fieldIdByName[key] || fieldIdByJoinColumnName[key];
 
-    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const fieldMetadata = isDefined(fieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
 
     if (!fieldMetadata) {
       throw new Error(

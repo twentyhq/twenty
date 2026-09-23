@@ -70,7 +70,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolePermissionConfig: {
           intersectionOf: ['default-role-id', 'agent-role-id'],
         },
-      })[OBJECT_ID].canReadObjectRecords,
+      })[OBJECT_ID]?.canReadObjectRecords,
     ).toBe(false);
   });
 

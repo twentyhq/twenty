@@ -5,7 +5,7 @@ import {
   type ObjectsPermissions,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -145,8 +145,14 @@ export const validateOperationIsPermittedOrThrow = ({
         );
 
         const updatedColumnsWithoutRlsFields = updatedColumns.filter(
-          (column) =>
-            !rlsFieldMetadataIds.has(columnNameToFieldMetadataIdMap[column]),
+          (column) => {
+            const columnFieldMetadataId =
+              columnNameToFieldMetadataIdMap[column];
+
+            assertIsDefinedOrThrow(columnFieldMetadataId);
+
+            return !rlsFieldMetadataIds.has(columnFieldMetadataId);
+          },
         );
 
         if (updatedColumnsWithoutRlsFields.length > 0) {
@@ -200,10 +206,12 @@ const buildFieldPermissionDeniedMessage = ({
   entityName: string;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): string => {
-  const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: fieldMetadataId,
-    flatEntityMaps: flatFieldMetadataMaps,
-  });
+  const fieldMetadata = isDefined(fieldMetadataId)
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      })
+    : undefined;
   const fieldName = fieldMetadata?.name ?? column;
 
   return `${PermissionsExceptionMessage.PERMISSION_DENIED}: no permission to ${action} field "${fieldName}" on "${entityName}"`;

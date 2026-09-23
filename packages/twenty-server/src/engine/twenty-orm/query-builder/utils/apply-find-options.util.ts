@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import {
@@ -72,6 +72,8 @@ const applyWhere = (
   }
 
   if (where.length === 1) {
+    assertIsDefinedOrThrow(where[0]);
+
     queryBuilder.where(where[0]);
 
     return;

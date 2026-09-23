@@ -5,7 +5,11 @@ import {
   compositeTypeDefinitions,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  capitalize,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
@@ -148,6 +152,8 @@ const joinConditions = (
   }
 
   if (conditions.length === 1) {
+    assertIsDefinedOrThrow(conditions[0]);
+
     return conditions[0];
   }
 

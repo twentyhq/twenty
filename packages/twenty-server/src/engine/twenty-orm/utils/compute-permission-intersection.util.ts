@@ -3,6 +3,7 @@ import {
   type RestrictedFieldPermissions,
   type RowLevelPermissionPredicate,
 } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 // Keeping a field constrained by one role alone would let it cancel another role's deny in the insert guard
 const intersectRowLevelPermissionPredicates = (
@@ -31,6 +32,8 @@ export const computePermissionIntersection = (
   }
 
   if (permissionsArray.length === 1) {
+    assertIsDefinedOrThrow(permissionsArray[0]);
+
     return permissionsArray[0];
   }
 

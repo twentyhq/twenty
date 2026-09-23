@@ -6,6 +6,7 @@ import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.
 import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
   it('should filter a to-many relation with a correlated EXISTS instead of a join', () => {
@@ -172,6 +173,8 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
     queryBuilder.where({ people: { name: Equal('Twenty') } });
 
     await expect(queryBuilder.getCount()).resolves.toBe(2);
+
+    jestExpectToBeDefined(executedStatements[0]);
 
     expect(executedStatements[0].text).toContain('EXISTS (');
     expect(executedStatements[0].text).not.toContain('DISTINCT');

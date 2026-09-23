@@ -8,6 +8,7 @@ import {
   type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
 import {
+  assertIsDefinedOrThrow,
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
@@ -316,6 +317,8 @@ export const buildRowLevelPermissionRecordFilter = ({
   }
 
   if (recordFilters.length === 1) {
+    assertIsDefinedOrThrow(recordFilters[0]);
+
     return recordFilters[0];
   }
 

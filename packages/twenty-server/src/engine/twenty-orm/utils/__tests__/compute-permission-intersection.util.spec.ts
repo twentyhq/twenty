@@ -267,7 +267,7 @@ describe('computePermissionIntersection', () => {
         role2Permissions,
       ]);
 
-      expect(result[objectMetadataId1].restrictedFields).toEqual({
+      expect(result[objectMetadataId1]?.restrictedFields).toEqual({
         email: {
           canRead: null,
           canUpdate: false,
@@ -319,7 +319,7 @@ describe('computePermissionIntersection', () => {
         role2Permissions,
       ]);
 
-      expect(result[objectMetadataId1].restrictedFields).toEqual({
+      expect(result[objectMetadataId1]?.restrictedFields).toEqual({
         email: {
           canRead: false,
           canUpdate: false,
@@ -410,7 +410,7 @@ describe('computePermissionIntersection', () => {
     });
 
     const constrainedFieldMetadataIdsOf = (permissions: ObjectsPermissions) =>
-      permissions[objectMetadataId1].rowLevelPermissionPredicates.map(
+      permissions[objectMetadataId1]?.rowLevelPermissionPredicates.map(
         (predicate) => predicate.fieldMetadataId,
       );
 
@@ -448,7 +448,7 @@ describe('computePermissionIntersection', () => {
       ]);
 
       expect(
-        result[objectMetadataId1].rowLevelPermissionPredicateGroups,
+        result[objectMetadataId1]?.rowLevelPermissionPredicateGroups,
       ).toEqual([]);
     });
 

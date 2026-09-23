@@ -1,6 +1,6 @@
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
@@ -207,10 +207,14 @@ export class RelationNestedQueries {
       relationCreateQueryFieldsByEntityIndex,
     )) {
       for (const [fieldName, createObject] of Object.entries(fields)) {
-        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldIdByName[fieldName],
-          flatEntityMaps: this.internalContext.flatFieldMetadataMaps,
-        });
+        const fieldMetadataId = fieldIdByName[fieldName];
+
+        const fieldMetadata = isDefined(fieldMetadataId)
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: fieldMetadataId,
+              flatEntityMaps: this.internalContext.flatFieldMetadataMaps,
+            })
+          : undefined;
 
         if (
           !isDefined(fieldMetadata) ||
@@ -292,7 +296,11 @@ export class RelationNestedQueries {
       );
 
       entries.forEach(({ entityIndex, fieldName }, index) => {
-        const createdRecordId = recordsWithIds[index].id;
+        const recordsWithId = recordsWithIds[index];
+
+        assertIsDefinedOrThrow(recordsWithId);
+
+        const createdRecordId = recordsWithId.id;
 
         if (!createdRecordIds.has(createdRecordId)) {
           throw new TwentyOrmException(
@@ -301,8 +309,12 @@ export class RelationNestedQueries {
           );
         }
 
+        const updatedEntity = updatedEntities[entityIndex];
+
+        assertIsDefinedOrThrow(updatedEntity);
+
         updatedEntities[entityIndex] = {
-          ...updatedEntities[entityIndex],
+          ...updatedEntity,
           [getAssociatedRelationFieldName(fieldName)]: createdRecordId,
           [fieldName]: null,
         };
@@ -389,6 +401,8 @@ export class RelationNestedQueries {
     targetQueryBuilder.select([]);
     targetQueryBuilder.addSelect(`"${targetObjectName}"."id"`, 'id');
 
+    assertIsDefinedOrThrow(connectQueryConfig.recordToConnectConditions[0]);
+
     for (const [field] of connectQueryConfig.recordToConnectConditions[0]) {
       targetQueryBuilder.addSelect(`"${targetObjectName}"."${field}"`, field);
     }
@@ -413,11 +427,16 @@ export class RelationNestedQueries {
             connectQueryConfig.recordToConnectConditionByEntityIndex[index],
           )
         ) {
-          const recordToConnect = recordsToConnect.filter((record) =>
-            connectQueryConfig.recordToConnectConditionByEntityIndex[
-              index
-            ].every(([field, value]) => record[field] === value),
-          );
+          const recordToConnect = recordsToConnect.filter((record) => {
+            const recordToConnectCondition =
+              connectQueryConfig.recordToConnectConditionByEntityIndex[index];
+
+            assertIsDefinedOrThrow(recordToConnectCondition);
+
+            return recordToConnectCondition.every(
+              ([field, value]) => record[field] === value,
+            );
+          });
 
           if (recordToConnect.length !== 1) {
             const { errorMessage, userFriendlyMessage } =
@@ -435,6 +454,8 @@ export class RelationNestedQueries {
               },
             );
           }
+
+          assertIsDefinedOrThrow(recordToConnect[0]);
 
           entity = {
             ...entity,

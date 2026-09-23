@@ -1,5 +1,5 @@
 import { isNull, isObject, isString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { formatBytes } from 'src/engine/core-modules/tool/utils/format-bytes.util';
 
@@ -72,6 +72,8 @@ const buildPreview = (
     const signatures = new Set(entries.map(([, val]) => shapeSignature(val)));
 
     if (signatures.size === 1) {
+      assertIsDefinedOrThrow(entries[0]);
+
       const [representativeKey, representativeValue] = entries[0];
 
       return {

@@ -14,6 +14,7 @@ type WorkspaceRepositoryOptions = ConstructorParameters<
 >[0];
 
 const OBJECT_METADATA_ID = 'delivery-object-id';
+const RECORD_SHARE_OBJECT_METADATA_ID = 'record-share-object-id';
 
 const buildField = (name: string, type: FieldMetadataType) =>
   getFlatFieldMetadataMock({
@@ -103,7 +104,10 @@ const buildRepository = ({
       featureFlagsMap: {},
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      objectIdByNameSingular: { delivery: OBJECT_METADATA_ID },
+      objectIdByNameSingular: {
+        delivery: OBJECT_METADATA_ID,
+        recordShare: RECORD_SHARE_OBJECT_METADATA_ID,
+      },
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
       coreDataSource: { getRepository: () => ({}) },
       userWorkspaceRoleMap: {},

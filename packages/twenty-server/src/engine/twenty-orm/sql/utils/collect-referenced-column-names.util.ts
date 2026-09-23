@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import {
   type OrderByClause,
   type SelectClause,
@@ -42,6 +44,9 @@ export const collectReferencedColumnNames = ({
 
     if (qualifiedReferences.length > 0) {
       for (const [, alias, columnName] of qualifiedReferences) {
+        assertIsDefinedOrThrow(alias);
+        assertIsDefinedOrThrow(columnName);
+
         addColumnName(alias, columnName);
       }
 

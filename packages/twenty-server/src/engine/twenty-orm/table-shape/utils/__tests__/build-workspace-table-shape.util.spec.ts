@@ -116,7 +116,7 @@ describe('buildWorkspaceTableShape', () => {
   it('should record the parent field of every composite sub-column', () => {
     expect(
       tableShape.columnShapeByColumnName['nameFirstName']
-        .compositeParentFieldName,
+        ?.compositeParentFieldName,
     ).toBe('name');
   });
 
@@ -124,11 +124,12 @@ describe('buildWorkspaceTableShape', () => {
     expect(tableShape.columnNames).toContain('companyId');
     expect(tableShape.columnNames).not.toContain('petsId');
 
-    expect(tableShape.relationShapeByFieldName['company'].joinColumnName).toBe(
+    expect(tableShape.relationShapeByFieldName['company']?.joinColumnName).toBe(
       'companyId',
     );
+    expect(tableShape.relationShapeByFieldName['pets']).toBeDefined();
     expect(
-      tableShape.relationShapeByFieldName['pets'].joinColumnName,
+      tableShape.relationShapeByFieldName['pets']?.joinColumnName,
     ).toBeUndefined();
   });
 
