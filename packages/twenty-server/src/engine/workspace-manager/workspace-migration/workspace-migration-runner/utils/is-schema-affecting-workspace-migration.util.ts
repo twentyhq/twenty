@@ -2,10 +2,11 @@ import { SCHEMA_AFFECTING_WORKSPACE_MIGRATION_METADATA_NAMES } from 'src/engine/
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
 export const isSchemaAffectingWorkspaceMigration = (
-  actions: AllUniversalWorkspaceMigrationAction[],
+  actions: Pick<AllUniversalWorkspaceMigrationAction, 'metadataName'>[],
 ): boolean =>
   actions.some(({ metadataName }) =>
-    (
-      SCHEMA_AFFECTING_WORKSPACE_MIGRATION_METADATA_NAMES as readonly string[]
-    ).includes(metadataName),
+    SCHEMA_AFFECTING_WORKSPACE_MIGRATION_METADATA_NAMES.some(
+      (schemaAffectingMetadataName) =>
+        schemaAffectingMetadataName === metadataName,
+    ),
   );

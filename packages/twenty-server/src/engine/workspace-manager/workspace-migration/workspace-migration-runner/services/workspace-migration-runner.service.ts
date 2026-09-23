@@ -198,7 +198,7 @@ export class WorkspaceMigrationRunnerService {
     hasSchemaMetadataChanged: boolean;
   }> => {
     const runStart = performance.now();
-    const hasTakenSchemaMigrationLock =
+    const schemaMigrationLockedAt =
       await this.acquireSchemaMigrationLockIfNeeded(args);
 
     try {
@@ -224,10 +224,11 @@ export class WorkspaceMigrationRunnerService {
 
       throw error;
     } finally {
-      if (hasTakenSchemaMigrationLock) {
-        await this.workspaceSchemaMigrationLockService.release(
-          args.workspaceId,
-        );
+      if (isDefined(schemaMigrationLockedAt)) {
+        await this.workspaceSchemaMigrationLockService.release({
+          workspaceId: args.workspaceId,
+          lockedAt: schemaMigrationLockedAt,
+        });
       }
     }
   };
@@ -238,7 +239,7 @@ export class WorkspaceMigrationRunnerService {
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
-  }): Promise<boolean> => {
+  }): Promise<Date | undefined> => {
     const featureFlagsMap =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
@@ -248,12 +249,12 @@ export class WorkspaceMigrationRunnerService {
       ] ||
       !isSchemaAffectingWorkspaceMigration(actions)
     ) {
-      return false;
+      return undefined;
     }
 
-    await this.workspaceSchemaMigrationLockService.acquireOrThrow(workspaceId);
-
-    return true;
+    return await this.workspaceSchemaMigrationLockService.acquireOrThrow(
+      workspaceId,
+    );
   };
 
   private executeRun = async ({

@@ -27,11 +27,56 @@ export class WorkspaceSchemaMigrationLockService {
     private readonly deferredWorkspaceMigrationActionRepository: WorkspaceScopedRepository<DeferredWorkspaceMigrationActionEntity>,
   ) {}
 
-  async acquireOrThrow(workspaceId: string): Promise<void> {
+  async acquireOrThrow(workspaceId: string): Promise<Date> {
     await this.throwIfDeferredActionsAreInProgress(workspaceId);
 
+    const lockedAt = await this.takeLockOrThrow(workspaceId);
+
+    try {
+      // Deferred actions are only ever persisted by a migration holding the
+      // lock, so re-reading them under it closes the window between the first
+      // check and the lock.
+      await this.throwIfDeferredActionsAreInProgress(workspaceId);
+    } catch (error) {
+      await this.release({ workspaceId, lockedAt });
+
+      throw error;
+    }
+
+    return lockedAt;
+  }
+
+  async release({
+    workspaceId,
+    lockedAt,
+  }: {
+    workspaceId: string;
+    lockedAt: Date;
+  }): Promise<void> {
+    try {
+      // Scoped to the stamp this run took: a migration that overran the
+      // takeover timeout must not release the lock of the run that replaced it.
+      const { affected } = await this.workspaceRepository.update(
+        { id: workspaceId, schemaMigrationStartedAt: lockedAt },
+        { schemaMigrationStatus: 'IDLE', schemaMigrationStartedAt: null },
+      );
+
+      if (affected !== 1) {
+        this.logger.warn(
+          `Schema migration lock of workspace ${workspaceId} was taken over by another run, leaving it untouched`,
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to release the schema migration lock of workspace ${workspaceId}, it will be taken over after ${WORKSPACE_SCHEMA_MIGRATION_LOCK_TAKEOVER_TIMEOUT_MS}ms: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private async takeLockOrThrow(workspaceId: string): Promise<Date> {
+    const lockedAt = new Date();
     const takeoverBefore = new Date(
-      Date.now() - WORKSPACE_SCHEMA_MIGRATION_LOCK_TAKEOVER_TIMEOUT_MS,
+      lockedAt.getTime() - WORKSPACE_SCHEMA_MIGRATION_LOCK_TAKEOVER_TIMEOUT_MS,
     );
 
     const { affected } = await this.workspaceRepository
@@ -39,7 +84,7 @@ export class WorkspaceSchemaMigrationLockService {
       .update()
       .set({
         schemaMigrationStatus: 'MIGRATING',
-        schemaMigrationStartedAt: new Date(),
+        schemaMigrationStartedAt: lockedAt,
       })
       .where('id = :workspaceId', { workspaceId })
       .andWhere(
@@ -54,19 +99,8 @@ export class WorkspaceSchemaMigrationLockService {
         code: WorkspaceMigrationRunnerExceptionCode.SCHEMA_MIGRATION_IN_PROGRESS,
       });
     }
-  }
 
-  async release(workspaceId: string): Promise<void> {
-    try {
-      await this.workspaceRepository.update(
-        { id: workspaceId },
-        { schemaMigrationStatus: 'IDLE', schemaMigrationStartedAt: null },
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to release the schema migration lock of workspace ${workspaceId}, it will be taken over after ${WORKSPACE_SCHEMA_MIGRATION_LOCK_TAKEOVER_TIMEOUT_MS}ms: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+    return lockedAt;
   }
 
   private async throwIfDeferredActionsAreInProgress(
