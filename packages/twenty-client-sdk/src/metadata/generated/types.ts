@@ -9019,6 +9019,15 @@ export default {
                     ]
                 }
             ],
+            "disconnectConnectedAccount": [
+                193,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "updateOneApplicationVariable": [
                 8,
                 {
