@@ -102,7 +102,7 @@ export class FileUploadService {
       );
     }
 
-    assertValidDirectUploadSize(size, fileFolder);
+    assertValidDirectUploadSize({ size, fileFolder });
 
     const { ext } = buildFileInfo(filename);
 

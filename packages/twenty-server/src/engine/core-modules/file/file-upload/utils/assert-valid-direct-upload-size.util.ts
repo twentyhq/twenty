@@ -8,10 +8,13 @@ import {
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 
-export const assertValidDirectUploadSize = (
-  size: number,
-  fileFolder: FileFolder,
-): void => {
+export const assertValidDirectUploadSize = ({
+  size,
+  fileFolder,
+}: {
+  size: number;
+  fileFolder: FileFolder;
+}): void => {
   const maxFileSize =
     bytes(
       fileFolder === FileFolder.CorePicture
