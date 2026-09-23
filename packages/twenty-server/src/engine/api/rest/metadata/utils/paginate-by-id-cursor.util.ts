@@ -1,4 +1,4 @@
-import { type FindOptionsWhere, type Repository } from 'typeorm';
+import { type FindOptionsWhere, type SelectQueryBuilder } from 'typeorm';
 
 import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
 import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
@@ -13,7 +13,7 @@ export const paginateByIdCursor = async <
   where,
   request,
 }: {
-  repository: Repository<T>;
+  repository: { createQueryBuilder: (alias?: string) => SelectQueryBuilder<T> };
   workspaceId: string;
   where?: FindOptionsWhere<T>;
   request: AuthenticatedRequest;

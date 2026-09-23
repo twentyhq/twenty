@@ -24,6 +24,8 @@ import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { formatPgCopyField } from './utils/format-pg-copy-value.util';
 
@@ -54,10 +56,10 @@ export class WorkspaceExportService {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- Ignored
     @InjectRepository(SearchFieldMetadataEntity)
     private readonly searchFieldMetadataRepository: Repository<SearchFieldMetadataEntity>,
@@ -80,14 +82,12 @@ export class WorkspaceExportService {
 
     this.logger.log(`Exporting workspace ${workspaceId} (${schemaName})`);
 
-    const objectMetadatas = await this.objectMetadataRepository.find({
-      where: { workspaceId },
-      relations: { application: true },
-    });
+    const objectMetadatas = await this.objectMetadataRepository.find(
+      workspaceId,
+      { relations: { application: true } },
+    );
 
-    const fieldMetadatas = await this.fieldMetadataRepository.find({
-      where: { workspaceId },
-    });
+    const fieldMetadatas = await this.fieldMetadataRepository.find(workspaceId);
 
     const fieldsByObjectId = new Map<string, FieldMetadataEntity[]>();
 

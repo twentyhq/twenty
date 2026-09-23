@@ -38,10 +38,6 @@ export const WORKSPACE_SCOPED_EXEMPTIONS = [
   // 20+ call sites across calendar/messaging modules; staged for a dedicated PR.
   'CalendarChannelEntity',
   'MessageChannelEntity',
-  // The owning services `extends TypeOrmQueryService<E>` and pass the raw
-  // repo to `super(...)`; the superclass type doesn't accept the wrapper.
-  'FieldMetadataEntity',
-  'ObjectMetadataEntity',
   // The domain column is globally unique across workspaces, so duplicate
   // preflight checks must query cross-workspace; writes stay on the wrapper.
   'EmailingDomainEntity',
