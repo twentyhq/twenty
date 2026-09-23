@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -304,7 +304,9 @@ export class AgentChatThreadParticipantService {
       },
     );
 
-    if (rows.length !== 1) {
+    const [row] = rows;
+
+    if (rows.length !== 1 || !isDefined(row)) {
       return throwAgentChatThreadNotFound();
     }
 
@@ -316,7 +318,7 @@ export class AgentChatThreadParticipantService {
       });
     }
 
-    return rows[0];
+    return row;
   }
 
   private async scheduleSnoozeEnd({
@@ -368,7 +370,7 @@ export class AgentChatThreadParticipantService {
     workspaceId: string;
     snoozedUntil: string;
   }): Promise<number> {
-    const [{ remainingDelay }] = await this.threadRepository.query(
+    const [row] = await this.threadRepository.query(
       workspaceId,
       ({ manager }) =>
         manager.query<{ remainingDelay: number }[]>(
@@ -377,7 +379,9 @@ export class AgentChatThreadParticipantService {
         ),
     );
 
-    return remainingDelay;
+    assertIsDefinedOrThrow(row);
+
+    return row.remainingDelay;
   }
 
   private setArchive(

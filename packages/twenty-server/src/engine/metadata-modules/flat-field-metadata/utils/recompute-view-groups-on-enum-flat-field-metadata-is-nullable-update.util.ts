@@ -1,5 +1,5 @@
 import { type FromTo } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -56,9 +56,12 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
   });
 
   for (const viewUniversalIdentifier in flatViewGroupRecordByViewUniversalIdentifier) {
-    const flatViewGroupsForView = Object.values(
-      flatViewGroupRecordByViewUniversalIdentifier[viewUniversalIdentifier],
-    );
+    const flatViewGroupRecord =
+      flatViewGroupRecordByViewUniversalIdentifier[viewUniversalIdentifier];
+
+    assertIsDefinedOrThrow(flatViewGroupRecord);
+
+    const flatViewGroupsForView = Object.values(flatViewGroupRecord);
 
     const emptyValueFlatViewGroup = flatViewGroupsForView.find(
       (flatViewGroup) => flatViewGroup.fieldValue === '',
@@ -71,7 +74,7 @@ export const recomputeViewGroupsOnEnumFlatFieldMetadataIsNullableUpdate = ({
       const highestViewGroupPosition =
         highestViewGroupPositionByViewUniversalIdentifier[
           viewUniversalIdentifier
-        ];
+        ] ?? 0;
       const viewGroupId = v4();
       const createdAt = new Date().toISOString();
 

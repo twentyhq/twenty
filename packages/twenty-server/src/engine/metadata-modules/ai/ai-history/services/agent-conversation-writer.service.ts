@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
@@ -80,7 +80,12 @@ export class AgentConversationWriterService {
       ...values,
     });
 
-    return (id ?? turnInsertResult.identifiers[0].id) as string;
+    const turnId: string | undefined =
+      id ?? turnInsertResult.identifiers[0]?.id;
+
+    assertIsDefinedOrThrow(turnId);
+
+    return turnId;
   }
 
   // A turn the agent opens has no user message: a system message gives the

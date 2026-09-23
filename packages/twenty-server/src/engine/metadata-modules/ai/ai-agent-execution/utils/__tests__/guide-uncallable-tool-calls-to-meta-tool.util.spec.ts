@@ -1,6 +1,7 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const DIRECTLY_CALLABLE = new Set(['execute_tool', 'learn_tools']);
 
@@ -26,9 +27,12 @@ describe('guideUncallableToolCallsToMetaTool', () => {
       DIRECTLY_CALLABLE,
     );
 
+    jestExpectToBeDefined(part);
+
     expect(errorTextOf(part)).toContain(
       'learn_tools({ toolNames: ["extract_json_paths"] })',
     );
+
     expect(errorTextOf(part)).toContain(
       'execute_tool({ toolName: "extract_json_paths", arguments: { ... } })',
     );
@@ -45,6 +49,8 @@ describe('guideUncallableToolCallsToMetaTool', () => {
       ],
       DIRECTLY_CALLABLE,
     );
+
+    jestExpectToBeDefined(part);
 
     expect(errorTextOf(part)).toContain(
       'execute_tool({ toolName: "search_output", arguments: { ... } })',

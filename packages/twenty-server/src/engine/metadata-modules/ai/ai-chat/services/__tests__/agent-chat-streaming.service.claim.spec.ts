@@ -4,6 +4,7 @@ import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/a
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const QUESTIONS = [
   {
@@ -191,6 +192,10 @@ describe('AgentChatStreamingService claim & reap', () => {
         threadId: 'thread-id',
         event: { type: 'message-persisted', messageId: 'user-message-id' },
       });
+      jestExpectToBeDefined(
+        messageQueueService.add.mock.invocationCallOrder[0],
+      );
+
       expect(
         eventPublisherService.publish.mock.invocationCallOrder[0],
       ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
@@ -214,6 +219,10 @@ describe('AgentChatStreamingService claim & reap', () => {
         { activeStreamId: expect.any(String) },
       );
       expect(streamHeartbeatService.markClaimed).toHaveBeenCalled();
+      jestExpectToBeDefined(
+        threadRepository.update.mock.invocationCallOrder[0],
+      );
+
       expect(
         streamHeartbeatService.markClaimed.mock.invocationCallOrder[0],
       ).toBeLessThan(threadRepository.update.mock.invocationCallOrder[0]);
@@ -275,9 +284,14 @@ describe('AgentChatStreamingService claim & reap', () => {
         workspaceId: 'workspace-id',
         where: { activeStreamId: IsNull() },
       });
-      expect(
-        agentChatService.closePendingToolCalls.mock.invocationCallOrder[0],
-      ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
+      const closePendingToolCallsCallOrder =
+        agentChatService.closePendingToolCalls.mock.invocationCallOrder[0];
+      const addCallOrder = messageQueueService.add.mock.invocationCallOrder[0];
+
+      jestExpectToBeDefined(closePendingToolCallsCallOrder);
+      jestExpectToBeDefined(addCallOrder);
+
+      expect(closePendingToolCallsCallOrder).toBeLessThan(addCallOrder);
     });
 
     it('refuses a message while a caller waits on the pending call', async () => {

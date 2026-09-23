@@ -28,7 +28,7 @@ describe('parseStoredAiCatalog', () => {
     });
 
     expect(Object.keys(providers)).toEqual(['openai']);
-    expect(providers.openai.models?.map((model) => model.name)).toEqual([
+    expect(providers.openai?.models?.map((model) => model.name)).toEqual([
       'gpt-5.6-luna',
       'gpt-5.6-sol',
     ]);
@@ -48,11 +48,11 @@ describe('parseStoredAiCatalog', () => {
       },
     });
 
-    expect(providers.openai.models?.map((model) => model.name)).toEqual([
+    expect(providers.openai?.models?.map((model) => model.name)).toEqual([
       'gpt-5.6-luna',
       'gpt-5.6-sol',
     ]);
-    expect(providers.openai.apiKey).toBe('{{OPENAI_API_KEY}}');
+    expect(providers.openai?.apiKey).toBe('{{OPENAI_API_KEY}}');
     expect(skipped).toEqual([
       { entry: 'openai/gpt-future', reason: expect.stringContaining('kind') },
     ]);

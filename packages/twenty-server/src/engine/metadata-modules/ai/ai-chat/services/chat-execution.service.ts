@@ -763,6 +763,11 @@ export class ChatExecutionService {
     }
 
     const lastUserMessage = messages[lastUserIndex];
+
+    if (!isDefined(lastUserMessage)) {
+      return messages;
+    }
+
     const browsingContextPart = {
       type: 'text' as const,
       text: `<browsing_context note="Only use this if the user explicitly asks about the current page, record, or view. Do not call any tools based on this context.">\n${contextString}\n</browsing_context>`,

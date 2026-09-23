@@ -103,13 +103,13 @@ describe('injectCacheBreakpoint against the Bedrock Converse payload', () => {
     expect(cachePointsPerCall).toEqual(new Array(TOOL_STEPS + 1).fill(2));
 
     const lastPayload = payloads[payloads.length - 1];
-    const messages = lastPayload.messages ?? [];
+    const messages = lastPayload?.messages ?? [];
 
-    expect(countCachePoints(lastPayload.system)).toBe(1);
+    expect(countCachePoints(lastPayload?.system)).toBe(1);
     expect(
       messages.slice(0, -1).flatMap((message) => message.content ?? []),
     ).not.toContainEqual({ cachePoint: { type: 'default' } });
-    expect(messages[messages.length - 1].content).toContainEqual({
+    expect(messages[messages.length - 1]?.content).toContainEqual({
       cachePoint: { type: 'default' },
     });
   });

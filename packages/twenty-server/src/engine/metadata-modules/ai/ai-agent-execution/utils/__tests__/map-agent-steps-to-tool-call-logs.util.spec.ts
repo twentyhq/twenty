@@ -64,8 +64,8 @@ describe('mapAgentStepsToToolCallLogs', () => {
     const result = mapAgentStepsToToolCallLogs(steps);
 
     expect(result).toHaveLength(1);
-    expect(result[0].state).toBe('error');
-    expect(result[0].errorMessage).toContain('Validation failed');
+    expect(result[0]?.state).toBe('error');
+    expect(result[0]?.errorMessage).toContain('Validation failed');
   });
 
   it('marks a tool-result whose output reports a failure as error', () => {
@@ -122,8 +122,12 @@ describe('mapAgentStepsToToolCallLogs', () => {
 
     const result = mapAgentStepsToToolCallLogs(steps);
 
-    const serializedInput = JSON.stringify(result[0].input);
-    const serializedOutput = JSON.stringify(result[0].output);
+    const input = result[0]?.input;
+
+    const serializedInput = JSON.stringify(input);
+    const resultOutput = result[0]?.output;
+
+    const serializedOutput = JSON.stringify(resultOutput);
 
     expect(serializedInput.length).toBeLessThan(33_000);
     expect(serializedInput).toContain('truncated');
@@ -177,7 +181,7 @@ describe('mapAgentStepsToToolCallLogs', () => {
     ];
 
     const result = mapAgentStepsToToolCallLogs(steps);
-    const output = result[0].output as {
+    const output = result[0]?.output as {
       sources: unknown[];
       sourcesDroppedCount?: number;
     };
@@ -217,12 +221,12 @@ describe('mapAgentStepsToToolCallLogs', () => {
     ];
 
     const result = mapAgentStepsToToolCallLogs(steps);
-    const output = result[0].output as {
+    const output = result[0]?.output as {
       result: { records: Array<Record<string, unknown>> };
     };
 
     expect(output.result.records[0]).not.toHaveProperty('searchVector');
-    expect(output.result.records[0].name).toBe('Apple');
+    expect(output.result.records[0]?.name).toBe('Apple');
   });
 
   it('ignores text / reasoning / source parts', () => {
@@ -246,6 +250,6 @@ describe('mapAgentStepsToToolCallLogs', () => {
     const result = mapAgentStepsToToolCallLogs(steps);
 
     expect(result).toHaveLength(1);
-    expect(result[0].toolName).toBe('foo');
+    expect(result[0]?.toolName).toBe('foo');
   });
 });

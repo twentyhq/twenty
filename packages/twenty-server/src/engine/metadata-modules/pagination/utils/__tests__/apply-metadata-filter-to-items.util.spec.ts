@@ -1,5 +1,6 @@
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { applyMetadataFilterToItems } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-items.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('applyMetadataFilterToItems', () => {
   it('applies nested filters to batched in-memory relations', () => {
@@ -41,7 +42,7 @@ describe('applyMetadataFilterToItems', () => {
     const columnByFilterField = {
       id: { column: 'id', type: 'uuid' },
     } as const;
-    const upperCasedId = items[0].id.toUpperCase();
+    const upperCasedId = items[0]?.id.toUpperCase();
 
     const matching = (filter: UuidFilter) =>
       applyMetadataFilterToItems<(typeof items)[number], UuidFilter>({
@@ -51,8 +52,11 @@ describe('applyMetadataFilterToItems', () => {
       });
 
     expect(matching({ id: { eq: upperCasedId } })).toEqual(items);
+    jestExpectToBeDefined(upperCasedId);
+
     expect(matching({ id: { in: [upperCasedId] } })).toEqual(items);
     expect(matching({ id: { neq: upperCasedId } })).toEqual([]);
+
     expect(matching({ id: { notIn: [upperCasedId] } })).toEqual([]);
   });
 

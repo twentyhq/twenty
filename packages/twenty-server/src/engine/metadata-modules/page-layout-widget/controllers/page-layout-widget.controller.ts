@@ -16,6 +16,7 @@ import { isDefined } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -128,6 +129,8 @@ export class PageLayoutWidgetController {
           workspaceId: workspace.id,
         },
       );
+
+    assertIsDefinedOrThrow(resolvedPageLayoutWidget);
 
     return resolvedPageLayoutWidget;
   }

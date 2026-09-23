@@ -100,9 +100,7 @@ describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
 
     expect(bundles).toHaveLength(1);
 
-    const [chatBundle] = bundles;
-
-    expect(chatBundle.forwardFlatFieldMetadata).toMatchObject({
+    expect(bundles[0]?.forwardFlatFieldMetadata).toMatchObject({
       name: 'agentChatThreadTargets',
       type: FieldMetadataType.RELATION,
       icon: 'IconMessage',
@@ -110,7 +108,7 @@ describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
         petFlatObjectMetadata.universalIdentifier,
       universalSettings: { relationType: RelationType.ONE_TO_MANY },
     });
-    expect(chatBundle.reverseFlatFieldMetadata).toMatchObject({
+    expect(bundles[0]?.reverseFlatFieldMetadata).toMatchObject({
       name: 'targetPet',
       type: FieldMetadataType.MORPH_RELATION,
       icon: 'IconMessage',
@@ -125,8 +123,8 @@ describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
         joinColumnName: 'targetPetId',
       },
     });
-    expect(chatBundle.flatIndexMetadata.objectMetadataUniversalIdentifier).toBe(
-      STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
-    );
+    expect(
+      bundles[0]?.flatIndexMetadata.objectMetadataUniversalIdentifier,
+    ).toBe(STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier);
   });
 });

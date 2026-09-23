@@ -49,6 +49,7 @@ import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import {
   toLegacyObjectMetadataCreateResponse,
   toLegacyObjectMetadataDeleteResponse,
@@ -167,6 +168,8 @@ export class ObjectMetadataController {
       locale,
       workspaceId,
     });
+
+    assertIsDefinedOrThrow(result);
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result

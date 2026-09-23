@@ -6,6 +6,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-view-filters-on-flat-field-metadata-options-update.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const FILTER_ID = '11111111-1111-4111-8111-111111111111';
 
@@ -26,9 +27,11 @@ const fromFlatFieldMetadata = getFlatFieldMetadataMock({
   viewFilterIds: [FILTER_ID],
 }) as FlatFieldMetadata<FieldMetadataType.SELECT>;
 
+jestExpectToBeDefined(fromFlatFieldMetadata.options[0]);
+
 const toOptions = [
   {
-    ...fromFlatFieldMetadata.options![0],
+    ...fromFlatFieldMetadata.options[0],
     label: 'Selected',
     value: 'SELECTED',
   },

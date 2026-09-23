@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -151,7 +151,7 @@ export class RoleService {
       workspaceId,
     );
 
-    return roleDto;
+    return roleDto ?? null;
   }
 
   public async getRoleByUniversalIdentifier({
@@ -340,6 +340,8 @@ export class RoleService {
     });
 
     const [deletedRole] = deletedRoles;
+
+    assertIsDefinedOrThrow(deletedRole);
 
     return deletedRole;
   }

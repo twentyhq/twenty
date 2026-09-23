@@ -8,6 +8,7 @@ import { type ActorMetadata, FileFolder } from 'twenty-shared/types';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
 import {
+  assertIsDefinedOrThrow,
   isDefined,
   isNonEmptyArray,
   isNonEmptyString,
@@ -363,7 +364,10 @@ export class AgentChatService {
       messageValues,
     );
 
-    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
+    const savedMessageId: string | undefined =
+      id ?? insertResult.identifiers[0]?.id;
+
+    assertIsDefinedOrThrow(savedMessageId);
 
     const validFiles =
       fileAttachments && fileAttachments.length > 0

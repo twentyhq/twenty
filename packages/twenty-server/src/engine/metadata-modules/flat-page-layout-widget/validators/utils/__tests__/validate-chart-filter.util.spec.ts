@@ -94,9 +94,9 @@ describe('validateChartFilter', () => {
     ]);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('is not valid for operand');
-    expect(errors[0].message).toContain('Deals per month');
-    expect(errors[0].message).toContain('NEXT_30_DAY');
+    expect(errors[0]?.message).toContain('is not valid for operand');
+    expect(errors[0]?.message).toContain('Deals per month');
+    expect(errors[0]?.message).toContain('NEXT_30_DAY');
   });
 
   it('should reject an operand that is not supported by the field type', () => {
@@ -109,7 +109,7 @@ describe('validateChartFilter', () => {
     ]);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('is not supported on field type');
+    expect(errors[0]?.message).toContain('is not supported on field type');
   });
 
   it('should reject an operand that is not a known operand at all', () => {
@@ -122,7 +122,7 @@ describe('validateChartFilter', () => {
     ]);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('is not supported on field type');
+    expect(errors[0]?.message).toContain('is not supported on field type');
   });
 
   it.each([
@@ -142,7 +142,7 @@ describe('validateChartFilter', () => {
       ]);
 
       expect(errors).toHaveLength(1);
-      expect(errors[0].message).toContain('DATE');
+      expect(errors[0]?.message).toContain('DATE');
     },
   );
 
@@ -171,7 +171,7 @@ describe('validateChartFilter', () => {
     ]);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('is not supported on field type');
+    expect(errors[0]?.message).toContain('is not supported on field type');
   });
 
   it('should validate a RICH_TEXT filter instead of skipping it', () => {
@@ -184,7 +184,7 @@ describe('validateChartFilter', () => {
     ]);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('is not supported on field type');
+    expect(errors[0]?.message).toContain('is not supported on field type');
   });
 
   it('should report an error per invalid filter', () => {
@@ -226,7 +226,7 @@ describe('validateChartFilter', () => {
     ]);
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('has no field metadata');
+    expect(errors[0]?.message).toContain('has no field metadata');
   });
 
   it('should accept a configuration without any filter', () => {

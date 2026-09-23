@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
@@ -266,6 +266,8 @@ export class AgentService {
     }
 
     const [deletedAgent] = deletedAgents;
+
+    assertIsDefinedOrThrow(deletedAgent);
 
     return deletedAgent;
   }

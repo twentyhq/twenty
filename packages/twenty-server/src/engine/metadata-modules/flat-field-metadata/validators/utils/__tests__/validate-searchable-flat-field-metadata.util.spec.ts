@@ -72,7 +72,7 @@ describe('validateSearchableFlatFieldMetadata', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toBe(
+    expect(errors[0]?.message).toBe(
       'Object has no search vector field, in both existing and about to be created field metadatas',
     );
   });
@@ -120,6 +120,6 @@ describe('validateSearchableFlatFieldMetadata', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].message).toBe('Object has no search vector field');
+    expect(errors[0]?.message).toBe('Object has no search vector field');
   });
 });

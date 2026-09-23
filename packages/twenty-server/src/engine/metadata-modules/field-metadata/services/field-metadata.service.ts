@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -131,6 +131,8 @@ export class FieldMetadataService {
       flatIndexMaps: existingFlatIndexMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
+
+    assertIsDefinedOrThrow(flatFieldMetadatasToDelete[0]);
 
     const deletedFlatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow(
       {
@@ -356,6 +358,8 @@ export class FieldMetadataService {
         },
       );
 
+    assertIsDefinedOrThrow(flatFieldMetadatasToUpdate[0]);
+
     return findFlatEntityByUniversalIdentifierOrThrow({
       universalIdentifier: flatFieldMetadatasToUpdate[0].universalIdentifier,
       flatEntityMaps: recomputedFlatFieldMetadataMaps,
@@ -467,8 +471,11 @@ export class FieldMetadataService {
     return findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
       {
         universalIdentifiers: allTranspiledTranspilationInputs.map(
-          ({ result: { flatFieldMetadatas } }) =>
-            flatFieldMetadatas[0].universalIdentifier,
+          ({ result: { flatFieldMetadatas } }) => {
+            assertIsDefinedOrThrow(flatFieldMetadatas[0]);
+
+            return flatFieldMetadatas[0].universalIdentifier;
+          },
         ),
         flatEntityMaps: recomputedFlatFieldMetadataMaps,
       },

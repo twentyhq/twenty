@@ -4,7 +4,11 @@ import {
   STANDARD_OBJECTS,
 } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  capitalize,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -90,6 +94,7 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
       STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT[
         standardObjectNameSingular
       ];
+
     const reverseFieldIcon =
       STANDARD_OBJECT_ICONS[
         targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
@@ -142,6 +147,10 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
 
     const [forwardFlatFieldMetadata, reverseFlatFieldMetadata] =
       flatFieldMetadatas;
+
+    assertIsDefinedOrThrow(forwardFlatFieldMetadata);
+    assertIsDefinedOrThrow(reverseFlatFieldMetadata);
+    assertIsDefinedOrThrow(indexMetadatas[0]);
 
     return [
       {

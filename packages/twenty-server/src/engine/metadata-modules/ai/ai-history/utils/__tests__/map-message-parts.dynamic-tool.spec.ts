@@ -71,7 +71,7 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
       'message-1',
     );
 
-    expect(row.toolInput).toEqual({});
+    expect(row?.toolInput).toEqual({});
   });
 
   it('round-trips a dynamic-tool part through DB and back', () => {

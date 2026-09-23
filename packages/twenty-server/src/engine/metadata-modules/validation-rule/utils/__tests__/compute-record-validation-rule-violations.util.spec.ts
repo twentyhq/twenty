@@ -100,7 +100,7 @@ describe('computeRecordValidationRuleViolations', () => {
           stage: 'WON',
           amount: { amountMicros: null, currencyCode: 'USD' },
         },
-      ]).violations[0].inputIndex,
+      ]).violations[0]?.inputIndex,
     ).toBeNull();
   });
 

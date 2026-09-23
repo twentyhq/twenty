@@ -15,7 +15,7 @@ import {
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { ApiPath } from 'twenty-shared/types';
 import { hasObjectMetadataLabelPlaceholder } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
@@ -137,6 +137,8 @@ export class ViewController {
       locale,
     );
 
+    assertIsDefinedOrThrow(processedViews[0]);
+
     return processedViews[0];
   }
 
@@ -157,6 +159,8 @@ export class ViewController {
       workspace.id,
       locale,
     );
+
+    assertIsDefinedOrThrow(processedViews[0]);
 
     return processedViews[0];
   }
@@ -185,6 +189,8 @@ export class ViewController {
       workspace.id,
       locale,
     );
+
+    assertIsDefinedOrThrow(processedViews[0]);
 
     return processedViews[0];
   }

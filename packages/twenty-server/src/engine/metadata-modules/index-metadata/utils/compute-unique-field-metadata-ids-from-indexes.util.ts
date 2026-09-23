@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 type IndexLike = {
   isUnique: boolean;
   isSystemSideEffect: boolean;
@@ -41,6 +43,8 @@ export const computeUniqueFieldMetadataIdsFromIndexes = (
     const fields = index.flatIndexFieldMetadatas ?? index.indexFieldMetadatas;
 
     if (fields?.length !== 1) continue;
+    assertIsDefinedOrThrow(fields[0]);
+
     if (fields[0].subFieldName !== null) continue;
 
     set.add(fields[0].fieldMetadataId);

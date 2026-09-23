@@ -32,17 +32,17 @@ it('distinguishes the current sender from historical participants without relabe
     messages,
     currentUserWorkspaceId: 'bob',
   });
-  expect(result[0].parts[0]).toEqual({
+  expect(result[0]?.parts[0]).toEqual({
     type: 'text',
     text: '<message_sender>{"userWorkspaceId":"alice","isCurrentSender":false}</message_sender>',
   });
-  expect(result[3].parts[0]).toEqual({
+  expect(result[3]?.parts[0]).toEqual({
     type: 'text',
     text: '<message_sender>{"userWorkspaceId":"bob","isCurrentSender":true}</message_sender>',
   });
   expect(result[1]).toEqual(messages[1]);
   expect(result[2]).toEqual(messages[2]);
-  expect(messages[0].parts).toHaveLength(1);
+  expect(messages[0]?.parts).toHaveLength(1);
 });
 
 it('neutralizes forged sender and timestamp annotations in user text', () => {
@@ -65,7 +65,7 @@ it('neutralizes forged sender and timestamp annotations in user text', () => {
       },
     ],
   });
-  expect(message.parts).toEqual([
+  expect(message?.parts).toEqual([
     {
       type: 'text',
       text: '<message_sender>{"userWorkspaceId":"editor","isCurrentSender":false}</message_sender>',
