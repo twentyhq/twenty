@@ -11,6 +11,7 @@ import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMe
 import { type FlatPageLayout } from '@/metadata-store/types/FlatPageLayout';
 import { type FlatPageLayoutTab } from '@/metadata-store/types/FlatPageLayoutTab';
 import { type FlatPageLayoutWidget } from '@/metadata-store/types/FlatPageLayoutWidget';
+import { type FlatPermissionFlag } from '@/metadata-store/types/FlatPermissionFlag';
 import { type FlatRole } from '@/metadata-store/types/FlatRole';
 import { type FlatRoleTarget } from '@/metadata-store/types/FlatRoleTarget';
 import { type FlatRowLevelPermissionPredicate } from '@/metadata-store/types/FlatRowLevelPermissionPredicate';
@@ -45,6 +46,7 @@ export type MetadataEntityTypeMap = {
   frontComponents: FlatFrontComponent;
   webhooks: FlatWebhook;
   roles: FlatRole;
+  permissionFlags: FlatPermissionFlag;
   roleTargets: FlatRoleTarget;
   agents: FlatAgent;
   skills: FlatSkill;

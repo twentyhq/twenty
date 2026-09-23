@@ -1,16 +1,29 @@
+import { currentUserState } from '@/auth/states/currentUserState';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
+import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
+import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
+import { MetadataStoreSSEEffect } from '@/metadata-store/effect-components/MetadataStoreSSEEffect';
+import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStaleMetadataEntities';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { graphql, HttpResponse } from 'msw';
+import { useEffect } from 'react';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsRolePermissionsSettingsSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection';
 import { SettingsRolePermissionsToolSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { graphql, HttpResponse } from 'msw';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
-import { mockedApolloClient } from '~/testing/mockedApolloClient';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
 
 const ROLE_ID = 'role-id';
 const APP_SETTINGS_FLAG = 'APP_MANAGE_CONFIGURATION';
@@ -53,6 +66,7 @@ const SettingsRolePermissionsFlagSections = ({
   assignment: 'users' | 'agents' | 'apiKeys';
 }) => (
   <>
+    <MetadataStoreSSEEffect />
     <section aria-label="Layout permissions">
       <SettingsRolePermissionsSettingsSection
         roleId={ROLE_ID}
@@ -74,8 +88,12 @@ const meta: Meta<typeof SettingsRolePermissionsFlagSections> = {
   component: SettingsRolePermissionsFlagSections,
   decorators: [ComponentDecorator],
   args: { isEditable: true, assignment: 'users' },
-  beforeEach: async ({ args }) => {
-    await mockedApolloClient.clearStore();
+  beforeEach: ({ args }) => {
+    jotaiStore.set(metadataStoreState.atomFamily('permissionFlags'), {
+      current: permissionFlags,
+      draft: [],
+      status: 'up-to-date',
+    });
     const roleAtom = settingsDraftRoleFamilyState.atomFamily(ROLE_ID);
     jotaiStore.set(roleAtom, {
       ...jotaiStore.get(roleAtom),
@@ -104,15 +122,6 @@ const meta: Meta<typeof SettingsRolePermissionsFlagSections> = {
         },
       ],
     });
-  },
-  parameters: {
-    msw: {
-      handlers: [
-        graphql.query('GetPermissionFlags', () =>
-          HttpResponse.json({ data: { getPermissionFlags: permissionFlags } }),
-        ),
-      ],
-    },
   },
 };
 
@@ -225,15 +234,104 @@ export const ReadOnly: Story = {
   },
 };
 
+export const LiveMetadataUpdates: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const permissionFlag = {
+      ...permissionFlags[0],
+      id: 'new-app-settings',
+      key: 'APP_MANAGE_TEMPLATES',
+      label: 'Manage templates',
+    };
+    dispatchMetadataOperationBrowserEvent({
+      metadataName: 'permissionFlag',
+      operation: { type: 'create', createdRecord: permissionFlag },
+    });
+    const checkbox = await canvas.findByRole('checkbox', {
+      name: 'Manage templates',
+    });
+    await userEvent.click(checkbox);
+    await expect(checkbox).toBeChecked();
+
+    dispatchMetadataOperationBrowserEvent({
+      metadataName: 'permissionFlag',
+      operation: {
+        type: 'update',
+        updatedRecord: { ...permissionFlag, label: 'Configure templates' },
+      },
+    });
+    await expect(
+      await canvas.findByRole('checkbox', { name: 'Configure templates' }),
+    ).toBeChecked();
+    await expect(
+      canvas.queryByText('Manage templates'),
+    ).not.toBeInTheDocument();
+
+    dispatchMetadataOperationBrowserEvent({
+      metadataName: 'permissionFlag',
+      operation: { type: 'delete', deletedRecordId: permissionFlag.id },
+    });
+    await waitFor(() =>
+      expect(canvas.queryByText('Configure templates')).not.toBeInTheDocument(),
+    );
+    await expect(canvas.getByText('Configure notifications')).toBeVisible();
+  },
+};
+
+const SharedMetadataLoading = () => {
+  const { loadStaleMetadataEntities } = useLoadStaleMetadataEntities();
+  const isMinimalMetadataReady = useAtomStateValue(isMinimalMetadataReadyState);
+
+  useEffect(() => {
+    void loadStaleMetadataEntities(['permissionFlags']);
+  }, [loadStaleMetadataEntities]);
+
+  return (
+    <>
+      <IsMinimalMetadataReadyEffect />
+      {isMinimalMetadataReady ? (
+        <SettingsRolePermissionsFlagSections isEditable assignment="users" />
+      ) : (
+        <div role="status">Loading metadata</div>
+      )}
+    </>
+  );
+};
+
 let releasePermissionFlags: () => void;
 let permissionFlagsReady: Promise<void>;
 
-export const Loading: Story = {
-  beforeEach: () => {
+export const InitialMetadataLoading: Story = {
+  render: () => <SharedMetadataLoading />,
+  beforeEach: async () => {
+    await mockedApolloClient.clearStore();
+    jotaiStore.set(isCookieAuthActiveState.atom, true);
+    jotaiStore.set(currentUserState.atom, mockedUserData);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, false);
+    for (const key of [
+      'objectMetadataItems',
+      'fieldMetadataItems',
+      'views',
+      'viewFields',
+    ] as const) {
+      jotaiStore.set(metadataStoreState.atomFamily(key), {
+        current: [],
+        draft: [],
+        status: 'up-to-date',
+      });
+    }
+    jotaiStore.set(metadataStoreState.atomFamily('permissionFlags'), {
+      current: [],
+      draft: [],
+      status: 'empty',
+    });
     permissionFlagsReady = new Promise<void>((resolve) => {
       releasePermissionFlags = resolve;
     });
-    return () => releasePermissionFlags();
+    return () => {
+      releasePermissionFlags();
+      jotaiStore.set(isCookieAuthActiveState.atom, false);
+    };
   },
   parameters: {
     msw: {
@@ -249,47 +347,25 @@ export const Loading: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    for (const checkbox of canvas.getAllByRole('checkbox', {
-      name: 'Toggle all permissions',
-    })) {
-      await expect(checkbox).toHaveAttribute('aria-disabled', 'true');
-    }
-    releasePermissionFlags();
-    await canvas.findByText('Configure notifications');
-    for (const checkbox of canvas.getAllByRole('checkbox', {
-      name: 'Toggle all permissions',
-    })) {
-      await expect(checkbox).not.toHaveAttribute('aria-disabled', 'true');
-    }
-  },
-};
-
-const onQueryError = fn();
-
-export const QueryError: Story = {
-  parameters: {
-    msw: {
-      handlers: [
-        graphql.query('GetPermissionFlags', () => {
-          onQueryError();
-          return HttpResponse.json({
-            errors: [{ message: 'Metadata unavailable' }],
-          });
-        }),
-      ],
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await waitFor(() => expect(onQueryError).toHaveBeenCalled());
-    for (const checkbox of canvas.getAllByRole('checkbox', {
-      name: 'Toggle all permissions',
-    })) {
-      await userEvent.click(checkbox);
-      await expect(checkbox).toHaveAttribute('aria-disabled', 'true');
-    }
+    await expect(await canvas.findByRole('status')).toHaveTextContent(
+      'Loading metadata',
+    );
     await expect(
-      canvas.queryByText('Configure notifications'),
+      canvas.queryByRole('checkbox', { name: 'Toggle all permissions' }),
     ).not.toBeInTheDocument();
+    releasePermissionFlags();
+    await expect(
+      await canvas.findByRole('checkbox', { name: 'Configure notifications' }),
+    ).toBeVisible();
+    await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
+    const layout = within(
+      canvas.getByRole('region', { name: 'Layout permissions' }),
+    );
+    await userEvent.click(
+      layout.getByRole('checkbox', { name: 'Toggle all permissions' }),
+    );
+    await expect(
+      layout.getByRole('checkbox', { name: 'Configure notifications' }),
+    ).toBeChecked();
   },
 };

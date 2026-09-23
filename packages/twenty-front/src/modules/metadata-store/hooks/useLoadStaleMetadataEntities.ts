@@ -18,6 +18,7 @@ import {
   FindManyFrontComponentsDocument,
   FindManyLogicFunctionsDocument,
   FindManyNavigationMenuItemsDocument,
+  GetPermissionFlagsDocument,
   type ObjectMetadataItemsQuery,
   ViewType,
 } from '~/generated-metadata/graphql';
@@ -247,6 +248,23 @@ export const useLoadStaleMetadataEntities = () => {
               }
 
               replaceDraft('frontComponents', result.data.frontComponents);
+            }),
+        );
+      }
+
+      if (staleEntityKeys.includes('permissionFlags')) {
+        fetchPromises.push(
+          client
+            .query({
+              query: GetPermissionFlagsDocument,
+              fetchPolicy: 'network-only',
+            })
+            .then((result) => {
+              if (!isDefined(result.data?.getPermissionFlags)) {
+                return;
+              }
+
+              replaceDraft('permissionFlags', result.data.getPermissionFlags);
             }),
         );
       }

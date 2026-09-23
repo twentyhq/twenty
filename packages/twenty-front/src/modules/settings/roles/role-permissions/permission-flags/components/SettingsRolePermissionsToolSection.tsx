@@ -54,11 +54,10 @@ export const SettingsRolePermissionsToolSection = ({
     },
   });
 
-  const { permissions: toolPermissionsConfig, isReady } =
-    useRolePermissionFlagConfig({
-      permissionType: 'tool',
-      standardPermissionsConfig: standardToolPermissionsConfig,
-    });
+  const toolPermissionsConfig = useRolePermissionFlagConfig({
+    permissionType: 'tool',
+    standardPermissionsConfig: standardToolPermissionsConfig,
+  });
 
   const shouldShowAllAccessToggle =
     !settingsDraftRole.canBeAssignedToAgents ||
@@ -102,7 +101,7 @@ export const SettingsRolePermissionsToolSection = ({
           <SettingsRolePermissionsSettingsTableHeader
             roleId={roleId}
             settingsPermissionsConfig={toolPermissionsConfig}
-            isEditable={isEditable && isReady}
+            isEditable={isEditable}
           />
           <StyledTableRows>
             {toolPermissionsConfig.map((permission) => (
