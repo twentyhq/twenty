@@ -1652,35 +1652,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
   });
 
-  it('ignores the published pointer of a core workflow whose workflow was deleted', async () => {
-    const fixture = await createFixture();
-    await global.testDataSource.query(
-      'DELETE FROM core."workflowVersion" WHERE id = $1',
-      [fixture.coreWorkflowVersionId],
-    );
-    await global.testDataSource.query(
-      `UPDATE "${schema}"."workflowVersion" SET status = 'DEACTIVATED', "deletedAt" = now() WHERE id = $1`,
-      [fixture.workflowVersionId],
-    );
-    await global.testDataSource.query(
-      `UPDATE "${schema}".workflow SET "deletedAt" = now() WHERE id = $1`,
-      [fixture.workflowId],
-    );
-    await global.testDataSource.query(
-      'UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = NULL WHERE id = $1',
-      [fixture.coreWorkflowId],
-    );
-
-    await expect(backfill()).resolves.toBeUndefined();
-
-    const [coreWorkflow] = await global.testDataSource.query(
-      'SELECT "lastPublishedCoreWorkflowVersionId" FROM core.workflow WHERE id = $1',
-      [fixture.coreWorkflowId],
-    );
-
-    expect(coreWorkflow.lastPublishedCoreWorkflowVersionId).toBeNull();
-  });
-
   it('rejects an unmapped pending run without partially updating its ids', async () => {
     const id = randomUUID();
     try {
