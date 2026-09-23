@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { IconComment, IconHome } from '@ui/icon';
 import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
@@ -61,6 +62,18 @@ export const IconOnly: Story = {
       { startIcon: <IconHome />, 'aria-label': 'Home', value: 'home' },
       { startIcon: <IconComment />, 'aria-label': 'Chat', value: 'chat' },
     ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const home = canvas.getByRole('radio', { name: 'Home' });
+    const chat = canvas.getByRole('radio', { name: 'Chat' });
+
+    await expect(home).toBeChecked();
+    await expect(chat).not.toBeChecked();
+    await expect(canvas.queryByRole('img')).not.toBeInTheDocument();
+    await userEvent.click(chat);
+    await expect(chat).toBeChecked();
+    await expect(home).not.toBeChecked();
   },
 };
 
