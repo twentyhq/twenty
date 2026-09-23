@@ -30,7 +30,7 @@ export const prepareForOrderByRelationFieldParsing = ({
   groupByFields: GroupByField[];
 }) => {
   const relationFieldName = Object.keys(orderByArg)[0];
-  const nestedFieldOrderByObject = orderByArg[relationFieldName];
+  const nestedFieldOrderByObject = orderByArg[relationFieldName]!;
 
   if (
     !isDefined(nestedFieldOrderByObject) ||
@@ -46,7 +46,7 @@ export const prepareForOrderByRelationFieldParsing = ({
   }
 
   const nestedFieldName = Object.keys(nestedFieldOrderByObject)[0];
-  const nestedFieldOrderByValue = nestedFieldOrderByObject[nestedFieldName];
+  const nestedFieldOrderByValue = nestedFieldOrderByObject[nestedFieldName]!;
 
   if (!isDefined(nestedFieldOrderByValue)) {
     return {};
@@ -75,7 +75,7 @@ export const prepareForOrderByRelationFieldParsing = ({
       targetObjectMetadata,
     );
 
-  const nestedFieldMetadataId = targetFieldIdByName[nestedFieldName];
+  const nestedFieldMetadataId = targetFieldIdByName[nestedFieldName]!;
 
   if (!isDefined(nestedFieldMetadataId)) {
     throw new UserInputError(

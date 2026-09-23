@@ -520,7 +520,7 @@ describe('CommonSelectFieldsBuilder', () => {
         'company-id',
       ]);
 
-      objectsPermissions['company-id'].restrictedFields = {
+      objectsPermissions['company-id']!.restrictedFields = {
         'field-3': { canRead: false, canUpdate: false },
       };
 
@@ -583,7 +583,7 @@ describe('CommonSelectFieldsBuilder', () => {
         'company-id',
       ]);
 
-      objectsPermissions['company-id'].restrictedFields = {
+      objectsPermissions['company-id']!.restrictedFields = {
         'field-2': { canRead: false, canUpdate: false },
       };
 
@@ -644,7 +644,7 @@ describe('CommonSelectFieldsBuilder', () => {
         'company-id',
       ]);
 
-      objectsPermissions['person-id'].restrictedFields = {
+      objectsPermissions['person-id']!.restrictedFields = {
         'field-1': { canRead: false, canUpdate: false },
       };
 

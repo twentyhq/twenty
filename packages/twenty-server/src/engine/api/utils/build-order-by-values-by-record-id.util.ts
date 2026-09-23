@@ -1,5 +1,5 @@
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { computeOrderByLeafColumn } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
 import {
@@ -68,7 +68,11 @@ export const buildOrderByValuesByRecordId = ({
         container[key] = isDefined(container[key]) ? container[key] : {};
         container = container[key] as Record<string, unknown>;
       }
-      container[leaf.path[leaf.path.length - 1]] = rawValue;
+      const firstPath = leaf.path[leaf.path.length - 1];
+
+      assertIsDefinedOrThrow(firstPath);
+
+      container[firstPath] = rawValue;
     }
 
     orderByValuesByRecordId[record.id] = orderByValues;

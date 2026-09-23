@@ -206,7 +206,7 @@ describe('resolveOrderByLeaves', () => {
     ]);
 
     expect(leaves).toHaveLength(1);
-    expect(leaves[0].direction).toBe(OrderByDirection.AscNullsLast);
+    expect(leaves[0]?.direction!).toBe(OrderByDirection.AscNullsLast);
   });
 
   it('should let a caller-provided id ordering win over the appended tie-breaker', () => {
@@ -216,7 +216,7 @@ describe('resolveOrderByLeaves', () => {
     ]);
 
     expect(leaves).toHaveLength(1);
-    expect(leaves[0].direction).toBe(OrderByDirection.DescNullsLast);
+    expect(leaves[0]?.direction!).toBe(OrderByDirection.DescNullsLast);
   });
 
   it('should rebuild the canonical orderBy from the leaves', () => {

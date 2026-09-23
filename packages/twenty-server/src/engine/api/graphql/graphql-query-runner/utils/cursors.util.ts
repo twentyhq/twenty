@@ -61,7 +61,7 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   }).filter(checkIfLeafCanCarryCursorValue)) {
     const [rootKey, ...nestedKeys] = leaf.path;
     const valueSource = orderByValuesFromScan ?? objectRecord;
-    let leafValue: unknown = valueSource[rootKey];
+    let leafValue: unknown = valueSource[rootKey]!;
 
     for (const key of nestedKeys) {
       if (leafValue === null) {
@@ -80,7 +80,7 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
       container[key] = isPlainObject(container[key]) ? container[key] : {};
       container = container[key];
     }
-    container[leaf.path[leaf.path.length - 1]] = leafValue;
+    container[leaf.path[leaf.path.length - 1]!] = leafValue;
   }
 
   const cursorData: CursorData = {

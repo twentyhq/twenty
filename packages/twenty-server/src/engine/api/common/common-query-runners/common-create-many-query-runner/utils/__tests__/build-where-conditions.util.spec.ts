@@ -42,10 +42,10 @@ describe('buildWhereConditions', () => {
 
     expect(where).toHaveLength(1);
 
-    const operator = where[0].uniqueText;
+    const operator = where[0]?.uniqueText!;
 
-    expect(operator.type.toLowerCase()).toBe('in');
-    expect(operator.value).toEqual(['alpha', 'beta']);
+    expect(operator?.type.toLowerCase()).toBe('in');
+    expect(operator?.value).toEqual(['alpha', 'beta']);
   });
 
   it('deduplicates values within a single-column IN condition', () => {
@@ -68,7 +68,7 @@ describe('buildWhereConditions', () => {
     );
 
     expect(where).toHaveLength(1);
-    expect(where[0].uniqueText.value).toEqual(['alpha', 'beta']);
+    expect(where[0]?.uniqueText.value!).toEqual(['alpha', 'beta']);
   });
 
   it('skips adding a condition when all values for a field are undefined', () => {
@@ -103,10 +103,10 @@ describe('buildWhereConditions', () => {
 
     expect(where).toHaveLength(1);
 
-    const operator = where[0].emailsFieldPrimaryEmail;
+    const operator = where[0]?.emailsFieldPrimaryEmail!;
 
-    expect(operator.type.toLowerCase()).toBe('in');
-    expect(operator.value).toEqual(['alpha@example.com', 'beta@example.com']);
+    expect(operator?.type.toLowerCase()).toBe('in');
+    expect(operator?.value).toEqual(['alpha@example.com', 'beta@example.com']);
   });
 
   it('builds one IN condition per single-column conflicting field group', () => {
@@ -154,7 +154,7 @@ describe('buildWhereConditions', () => {
     );
 
     expect(where).toHaveLength(1);
-    expect(where[0].externalId.value).toEqual([42, 43]);
+    expect(where[0]?.externalId.value!).toEqual([42, 43]);
   });
 
   it('builds composite group conditions with all properties ANDed together per record', () => {

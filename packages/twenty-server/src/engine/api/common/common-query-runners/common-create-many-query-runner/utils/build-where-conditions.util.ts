@@ -1,5 +1,5 @@
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Equal, In, type FindOperator } from 'typeorm';
 
 import {
@@ -70,6 +70,8 @@ export const buildWhereConditions = (
     const { conflictingProperties } = conflictingFieldGroup;
 
     if (conflictingProperties.length === 1) {
+      assertIsDefinedOrThrow(conflictingProperties[0]);
+
       const condition = buildSingleColumnCondition(
         records,
         conflictingProperties[0],
