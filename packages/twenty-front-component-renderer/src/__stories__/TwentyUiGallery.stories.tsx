@@ -1,3 +1,5 @@
+import { inputPreactTest } from '@/__stories__/twenty-ui-gallery/utils/inputPreactTest';
+import { inputReactTest } from '@/__stories__/twenty-ui-gallery/utils/inputReactTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
@@ -30,8 +32,6 @@ import {
   codeEditorTest,
   displayHelpersTest,
   galleryRenderTest,
-  inputPreactTest,
-  inputReactTest,
   themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {

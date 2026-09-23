@@ -6,14 +6,17 @@
   corner-shape: round;
   box-sizing: border-box;
   display: inline-flex;
+  flex-direction: row;
   flex-shrink: 0;
   gap: 2px;
-  height: var(--t-spacing-7);
+  block-size: var(--t-spacing-7);
   padding: 3px;
-  width: var(--segmented-control-width, auto);
+  inline-size: auto;
 }
 
 .item {
+  @include focus-ring;
+
   align-items: center;
   background: transparent;
   border: 0;
@@ -27,29 +30,29 @@
   font-size: var(--t-font-size-md);
   font-weight: var(--t-font-weight-medium);
   gap: var(--t-spacing-1);
-  height: 100%;
+  block-size: 100%;
   justify-content: center;
   line-height: 1.4;
-  min-width: 0;
+  min-inline-size: 0;
   padding: 0 var(--t-spacing-2);
   transition:
     background 0.1s ease,
     color 0.1s ease;
   white-space: nowrap;
 
-  &:hover {
+  &:hover:not([data-disabled]) {
     background: var(--t-background-transparent-lighter);
   }
 
-  &:disabled {
+  &[data-disabled] {
     cursor: not-allowed;
   }
 
-  &[data-active] {
+  &[data-checked] {
     background: var(--t-background-transparent-light);
     color: var(--t-font-color-primary);
 
-    &:hover {
+    &:hover:not([data-disabled]) {
       background: var(--t-background-transparent-light);
     }
   }
@@ -60,7 +63,7 @@
 }
 
 .iconOnly {
-  min-width: var(--t-spacing-5);
+  min-inline-size: var(--t-spacing-5);
   padding: 0;
 }
 
@@ -68,13 +71,18 @@
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  height: var(--t-spacing-5);
+  block-size: var(--t-spacing-5);
   justify-content: center;
-  width: var(--t-spacing-5);
+  inline-size: var(--t-spacing-5);
+
+  > svg {
+    block-size: calc(var(--t-icon-size-md) * 1px);
+    inline-size: calc(var(--t-icon-size-md) * 1px);
+  }
 }
 
 .label {
-  min-width: 0;
+  min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

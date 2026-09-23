@@ -1,76 +1,81 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+
 import { IconComment, IconHome } from '@ui/icon';
+import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { Tabs } from '@ui/primitives/navigation/Tabs/Tabs';
 import { ComponentDecorator } from '@ui/testing';
-import { useState } from 'react';
 
-import {
-  SegmentedControl,
-  type SegmentedControlOption,
-} from '@ui/primitives/input/SegmentedControl/SegmentedControl';
+import { SegmentedControl } from '../SegmentedControl';
 
-type InteractiveSegmentedControlProps = {
-  initialValue: string;
-  options: SegmentedControlOption<string>[];
-  role?: 'group' | 'tablist';
-};
-
-const InteractiveSegmentedControl = ({
-  initialValue,
-  options,
-  role,
-}: InteractiveSegmentedControlProps) => {
-  const [value, setValue] = useState(initialValue);
-
-  return (
-    <SegmentedControl
-      ariaLabel="Segmented control"
-      onChange={setValue}
-      options={options}
-      role={role}
-      value={value}
-    />
-  );
-};
-
-const meta: Meta<typeof InteractiveSegmentedControl> = {
+const meta: Meta<typeof SegmentedControl> = {
   title: 'UI/Input/SegmentedControl',
-  component: InteractiveSegmentedControl,
-};
-
-export default meta;
-type Story = StoryObj<typeof InteractiveSegmentedControl>;
-
-export const Default: Story = {
+  component: SegmentedControl,
+  decorators: [ComponentDecorator],
   args: {
-    initialValue: 'annual',
+    'aria-label': 'Billing period',
+    defaultValue: 'annual',
     options: [
       { label: 'Annual', value: 'annual' },
       { label: 'Monthly', value: 'monthly' },
     ],
   },
-  decorators: [ComponentDecorator],
+};
+
+export default meta;
+type Story = StoryObj<typeof SegmentedControl>;
+
+export const Default: Story = {};
+
+export const Dark: Story = {
+  globals: { colorScheme: 'dark' },
 };
 
 export const IconOnlyTabList: Story = {
-  args: {
-    initialValue: 'home',
-    options: [
-      { Icon: IconHome, ariaLabel: 'Home', value: 'home' },
-      { Icon: IconComment, ariaLabel: 'Chat', value: 'chat' },
-    ],
-    role: 'tablist',
-  },
-  decorators: [ComponentDecorator],
+  render: () => (
+    <Tabs.Root defaultValue="home">
+      <Tabs.List aria-label="Workspace" activateOnFocus>
+        <Tabs.Tab value="home" aria-label="Home" startIcon={<IconHome />} />
+        <Tabs.Tab value="chat" aria-label="Chat" startIcon={<IconComment />} />
+      </Tabs.List>
+      <Tabs.Panel value="home">Home content</Tabs.Panel>
+      <Tabs.Panel value="chat">Chat content</Tabs.Panel>
+    </Tabs.Root>
+  ),
 };
 
 export const WithDisabledOption: Story = {
   args: {
-    initialValue: 'annual',
     options: [
       { label: 'Annual', value: 'annual' },
       { label: 'Monthly', value: 'monthly' },
       { disabled: true, label: 'Weekly', value: 'weekly' },
     ],
   },
-  decorators: [ComponentDecorator],
+};
+
+export const IconOnly: Story = {
+  args: {
+    'aria-label': 'Start page',
+    defaultValue: 'home',
+    options: [
+      { startIcon: <IconHome />, 'aria-label': 'Home', value: 'home' },
+      { startIcon: <IconComment />, 'aria-label': 'Chat', value: 'chat' },
+    ],
+  },
+};
+
+export const ContentWidth: Story = {
+  args: { itemWidth: 'content' },
+};
+
+export const EqualWidth: Story = {
+  args: { style: { width: 280 } },
+};
+
+export const RightToLeft: Story = {
+  render: (args) => (
+    <TextDirectionProvider direction="rtl">
+      <SegmentedControl {...args} dir="rtl" />
+    </TextDirectionProvider>
+  ),
 };
