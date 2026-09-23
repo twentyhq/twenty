@@ -58,18 +58,23 @@ describe('applicationCoreGraphqlSchema', () => {
   });
 
   it('returns a subset of what the caller can already introspect', async () => {
-    const [scopedBody, fullSchemaResponse] = await Promise.all([
-      getStandardApplicationSchema(),
-      makeGraphqlAPIRequest({ query: FULL_SCHEMA_INTROSPECTION }),
-    ]);
+    // The application SDL appends the core workflow operations, which live on
+    // the metadata schema, so the reference set is both schemas together.
+    const [scopedBody, fullSchemaResponse, metadataSchemaResponse] =
+      await Promise.all([
+        getStandardApplicationSchema(),
+        makeGraphqlAPIRequest({ query: FULL_SCHEMA_INTROSPECTION }),
+        makeMetadataAPIRequest({ query: FULL_SCHEMA_INTROSPECTION }),
+      ]);
 
     expect(fullSchemaResponse.body.errors).toBeUndefined();
+    expect(metadataSchemaResponse.body.errors).toBeUndefined();
 
     const scopedSchema: string = scopedBody.data.applicationCoreGraphqlSchema;
-    const fullSchemaTypeNames: string[] =
-      fullSchemaResponse.body.data.__schema.types.map(
-        (type: { name: string }) => type.name,
-      );
+    const fullSchemaTypeNames: string[] = [
+      ...fullSchemaResponse.body.data.__schema.types,
+      ...metadataSchemaResponse.body.data.__schema.types,
+    ].map((type: { name: string }) => type.name);
 
     const scopedTypeNames = Array.from(
       scopedSchema.matchAll(/^type (\w+)/gm),
