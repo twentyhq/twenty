@@ -1,11 +1,12 @@
 import { reconcileRoleDraft } from '@/settings/roles/role/utils/reconcileRoleDraft';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { createStore } from 'jotai';
+import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 
-const emptyRole = createStore().get(
-  settingsDraftRoleFamilyState.atomFamily('role-id'),
-);
+const emptyRole = {
+  ...mockedRoles[1],
+  fieldPermissions: [],
+  objectPermissions: [],
+};
 
 describe('reconcileRoleDraft', () => {
   it('merges concurrent field edits by field identity while retaining canonical IDs', () => {

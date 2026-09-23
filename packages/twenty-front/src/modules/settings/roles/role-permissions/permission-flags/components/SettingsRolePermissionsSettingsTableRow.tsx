@@ -123,6 +123,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
         onClick={(e) => e.stopPropagation()}
       >
         <Checkbox
+          aria-label={permission.name}
           checked={isChecked}
           disabled={isDisabled}
           onCheckedChange={(isChecked) => handleChange(isChecked)}

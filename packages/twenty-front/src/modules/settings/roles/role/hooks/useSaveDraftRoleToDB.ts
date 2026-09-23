@@ -5,7 +5,7 @@ import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
-import { reconcileRoleDraft } from '@/settings/roles/role/utils/reconcileRoleDraft';
+import { reconcileRoleDraftAfterSave } from '@/settings/roles/role/utils/reconcileRoleDraftAfterSave';
 import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
@@ -498,17 +498,12 @@ export const useSaveDraftRoleToDB = ({
         const savedRole = data?.getRoles.find((role) => role.id === roleId);
 
         if (isDefined(savedRole)) {
-          const submittedRoleAfterSave = saveFailed
-            ? reconcileRoleDraft({
-                savedRole,
-                baselineRole: persistedRoleBeforeSave,
-                draftRole: submittedDraftRole,
-              })
-            : savedRole;
-          const reconciledDraftRole = reconcileRoleDraft({
-            savedRole: submittedRoleAfterSave,
-            baselineRole: submittedDraftRole,
-            draftRole: store.get(draftRoleAtom),
+          const reconciledDraftRole = reconcileRoleDraftAfterSave({
+            savedRole,
+            persistedRoleBeforeSave,
+            submittedDraftRole,
+            currentDraftRole: store.get(draftRoleAtom),
+            saveFailed,
           });
 
           store.set(
