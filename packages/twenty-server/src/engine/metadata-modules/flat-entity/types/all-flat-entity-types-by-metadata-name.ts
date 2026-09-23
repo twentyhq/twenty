@@ -929,6 +929,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatSettingsMenuItem;
     universalFlatEntity: UniversalFlatSettingsMenuItem;
     entity: MetadataEntity<'settingsMenuItem'>;
+  };
   validationRule: {
     flatEntityMaps: FlatValidationRuleMaps;
     universalActions: {
