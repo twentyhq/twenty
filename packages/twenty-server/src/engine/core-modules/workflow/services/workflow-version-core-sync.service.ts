@@ -208,14 +208,21 @@ export class WorkflowVersionCoreSyncService {
         );
       }
 
+      const coreWorkflowId =
+        coreRow.coreWorkflowId ?? existingFlatWorkflowVersion?.coreWorkflowId;
+
+      if (!isNonEmptyString(coreWorkflowId)) {
+        throw new CoreWorkflowMetadataException(
+          `Core workflow for workflow ${coreRow.workflowId} not found in workspace ${workspaceId}`,
+          CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_MISSING_WORKFLOW,
+        );
+      }
+
       const flatWorkflowVersion: UniversalFlatWorkflowVersion & {
         id: string;
       } = {
         ...coreRow,
-        coreWorkflowId:
-          coreRow.coreWorkflowId ??
-          existingFlatWorkflowVersion?.coreWorkflowId ??
-          null,
+        coreWorkflowId,
         universalIdentifier:
           existingFlatWorkflowVersion?.universalIdentifier ??
           coreRow.universalIdentifier,
@@ -259,7 +266,7 @@ export class WorkflowVersionCoreSyncService {
   private async resolveOwnedCoreVersions(
     workspaceId: string,
     workflowVersions: WorkflowVersionWorkspaceEntity[],
-  ): Promise<Map<string, string | null>> {
+  ): Promise<Map<string, string>> {
     const candidateIds = workflowVersions
       .map((workflowVersion) => workflowVersion.coreWorkflowVersionId)
       .filter(isNonEmptyString);
@@ -276,9 +283,7 @@ export class WorkflowVersionCoreSyncService {
       },
     );
 
-    return new Map(
-      ownedRows.map((row) => [row.id, row.coreWorkflowId ?? null]),
-    );
+    return new Map(ownedRows.map((row) => [row.id, row.coreWorkflowId]));
   }
 
   async deleteFromCore(
@@ -442,12 +447,13 @@ export class WorkflowVersionCoreSyncService {
     const candidateCoreVersionId = workflowVersion.coreWorkflowVersionId;
     const candidateRows = isNonEmptyString(candidateCoreVersionId)
       ? ((await transactionScope.executeRawQuery(
-          `SELECT "id", "workspaceId", "workflowId"${hasWorkspaceVersionMapping ? ', "workspaceWorkflowVersionId"' : ''} FROM core."workflowVersion" WHERE id = $1 FOR UPDATE`,
+          `SELECT "id", "workspaceId", "workflowId", "coreWorkflowId"${hasWorkspaceVersionMapping ? ', "workspaceWorkflowVersionId"' : ''} FROM core."workflowVersion" WHERE id = $1 FOR UPDATE`,
           [candidateCoreVersionId],
         )) as {
           id: string;
           workspaceId: string;
           workflowId: string | null;
+          coreWorkflowId: string | null;
           workspaceWorkflowVersionId?: string | null;
         }[])
       : [];
@@ -467,9 +473,9 @@ export class WorkflowVersionCoreSyncService {
 
     const reverseRows = hasWorkspaceVersionMapping
       ? ((await transactionScope.executeRawQuery(
-          `SELECT id FROM core."workflowVersion" WHERE "workspaceId" = $1 AND "workspaceWorkflowVersionId" = $2 FOR UPDATE`,
+          `SELECT id, "coreWorkflowId" FROM core."workflowVersion" WHERE "workspaceId" = $1 AND "workspaceWorkflowVersionId" = $2 FOR UPDATE`,
           [workspaceId, workflowVersion.id],
-        )) as { id: string }[])
+        )) as { id: string; coreWorkflowId: string | null }[])
       : [];
 
     if (
@@ -488,11 +494,19 @@ export class WorkflowVersionCoreSyncService {
     const isNewLink =
       workflowVersion.coreWorkflowVersionId !== coreWorkflowVersionId;
 
-    const coreWorkflowId = await this.resolveCoreWorkflowIdInTransaction({
-      workspaceId,
-      workflowId: workflowVersion.workflowId,
-      transactionScope,
-    });
+    const coreWorkflowId =
+      (await this.resolveCoreWorkflowIdInTransaction({
+        workspaceId,
+        workflowId: workflowVersion.workflowId,
+        transactionScope,
+      })) ?? (reverseRows[0] ?? candidate)?.coreWorkflowId;
+
+    if (!isNonEmptyString(coreWorkflowId)) {
+      throw new CoreWorkflowMetadataException(
+        `Core workflow for workflow ${workflowVersion.workflowId} not found in workspace ${workspaceId}`,
+        CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_MISSING_WORKFLOW,
+      );
+    }
 
     // The conflict target is the primary key alone, so without the workspaceId
     // predicate a core row owned by another workspace would have its triggers
@@ -506,7 +520,7 @@ export class WorkflowVersionCoreSyncService {
          "triggers" = EXCLUDED."triggers",
          "steps" = EXCLUDED."steps",
          "status" = EXCLUDED."status",
-         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId")
+         "coreWorkflowId" = EXCLUDED."coreWorkflowId"
        WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId" RETURNING id`,
       [
         coreWorkflowVersionId,

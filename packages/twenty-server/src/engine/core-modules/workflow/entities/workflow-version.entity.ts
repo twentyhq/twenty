@@ -29,7 +29,7 @@ export enum WorkflowVersionStatus {
 @Index('IDX_WORKFLOW_VERSION_WORKSPACE_ID', ['workspaceId'])
 @Index(
   'IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW',
-  ['workspaceId', 'workflowId'],
+  ['workspaceId', 'coreWorkflowId'],
   {
     unique: true,
     where: `"status" = 'ACTIVE'`,
@@ -69,8 +69,8 @@ export class WorkflowVersionEntity extends SyncableEntity {
     upgradeCommandName:
       ADD_CORE_WORKFLOW_ID_TO_WORKFLOW_VERSION_UPGRADE_COMMAND_NAME,
   })
-  @Column({ type: 'uuid', nullable: true })
-  coreWorkflowId: string | null;
+  @Column({ type: 'uuid', nullable: false })
+  coreWorkflowId: string;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
