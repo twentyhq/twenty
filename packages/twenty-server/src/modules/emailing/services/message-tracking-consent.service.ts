@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { ILike, In, Not, QueryFailedError } from 'typeorm';
+import { ILike, In, QueryFailedError } from 'typeorm';
 import {
   escapeForIlike,
   isDefined,
@@ -9,10 +9,6 @@ import {
 } from 'twenty-shared/utils';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import {
-  EmailingDomainException,
-  EmailingDomainExceptionCode,
-} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { MessageTrackingConsentEntity } from 'src/engine/core-modules/emailing-domain/message-tracking-consent.entity';
 import { MessageTrackingConsentDecision } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-decision.type';
 import { MessageTrackingConsentSource } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-source.type';
@@ -216,46 +212,10 @@ export class MessageTrackingConsentService {
     decision: MessageTrackingConsentDecision;
     source: MessageTrackingConsentSource;
   }): Promise<void> {
-    if (source === MessageTrackingConsentSource.PREFERENCES_PAGE) {
-      await this.consentRepository.update(
-        workspaceId,
-        { id: consentId },
-        { decision, source },
-      );
-
-      return;
-    }
-
-    // The conditional writes preserve a recipient's refusal even if it arrives
-    // after a workspace member read the row.
-    const outsidePreferencesPage = await this.consentRepository.update(
+    await this.consentRepository.update(
       workspaceId,
-      {
-        id: consentId,
-        source: Not(MessageTrackingConsentSource.PREFERENCES_PAGE),
-      },
+      { id: consentId },
       { decision, source },
     );
-    const grantedOnPreferencesPage = await this.consentRepository.update(
-      workspaceId,
-      {
-        id: consentId,
-        source: MessageTrackingConsentSource.PREFERENCES_PAGE,
-        decision: Not(MessageTrackingConsentDecision.DENIED),
-      },
-      { decision, source },
-    );
-
-    if (
-      decision === MessageTrackingConsentDecision.GRANTED &&
-      (outsidePreferencesPage.affected ?? 0) +
-        (grantedOnPreferencesPage.affected ?? 0) ===
-        0
-    ) {
-      throw new EmailingDomainException(
-        'A recipient opted out of tracking themselves',
-        EmailingDomainExceptionCode.MESSAGE_TRACKING_CONSENT_REFUSED_BY_RECIPIENT,
-      );
-    }
   }
 }

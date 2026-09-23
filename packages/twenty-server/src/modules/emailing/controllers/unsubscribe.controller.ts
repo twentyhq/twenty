@@ -229,11 +229,9 @@ export class UnsubscribeController {
     const isDefaultDecision =
       !isDefined(storedConsent) &&
       decision === MessageTrackingConsentDecision.GRANTED;
-    const isRecipientDecision =
-      storedConsent?.decision === decision &&
-      storedConsent.source === MessageTrackingConsentSource.PREFERENCES_PAGE;
+    const isStoredDecision = storedConsent?.decision === decision;
 
-    if (isDefaultDecision || isRecipientDecision) {
+    if (isDefaultDecision || isStoredDecision) {
       return;
     }
 

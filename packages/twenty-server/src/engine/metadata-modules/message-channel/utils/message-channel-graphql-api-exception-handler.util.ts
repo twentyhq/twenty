@@ -44,7 +44,6 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
       case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND:
         throw new NotFoundError(error);
       case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE:
-      case EmailingDomainExceptionCode.MESSAGE_TRACKING_CONSENT_REFUSED_BY_RECIPIENT:
         throw new ForbiddenError(error);
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND:
         throw new NotFoundError(error);
