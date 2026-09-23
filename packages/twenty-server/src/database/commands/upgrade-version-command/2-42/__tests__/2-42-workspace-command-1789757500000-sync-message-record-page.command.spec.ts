@@ -394,6 +394,54 @@ describe('SyncMessageRecordPageCommand', () => {
     },
   );
 
+  it('adds a previously omitted view field on an explicit rerun after its metadata is restored', async () => {
+    const createdByViewFieldIdentifier =
+      MESSAGE.views.messageRecordPageFields.viewFields.createdBy
+        .universalIdentifier;
+
+    mockWorkspaceCache({
+      existingViews: [
+        {
+          id: EXISTING_FIELDS_VIEW_ID,
+          universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+      existingViewFieldGroups: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
+      existingViewFields: FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
+        (identifier) => identifier !== createdByViewFieldIdentifier,
+      ),
+      existingPageLayouts: [
+        { universalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER },
+      ],
+      existingPageLayoutTabs: [
+        { universalIdentifier: HOME_TAB_UNIVERSAL_IDENTIFIER },
+      ],
+      existingPageLayoutWidgets: [FIELDS_WIDGET_UNIVERSAL_IDENTIFIER],
+    });
+
+    await runOnWorkspace();
+
+    const payload = getMigrationPayload();
+
+    expect(payload.viewField.flatEntityToCreate).toEqual([
+      expect.objectContaining({
+        universalIdentifier: createdByViewFieldIdentifier,
+        fieldMetadataUniversalIdentifier:
+          MESSAGE.fields.createdBy.universalIdentifier,
+      }),
+    ]);
+    expect(payload.fieldMetadata).toBeUndefined();
+    for (const metadataName of [
+      'view',
+      'viewFieldGroup',
+      'pageLayout',
+      'pageLayoutTab',
+      'pageLayoutWidget',
+    ]) {
+      expect(payload[metadataName].flatEntityToCreate).toEqual([]);
+    }
+  });
+
   it('binds the fields widget to the fields view the workspace already holds', async () => {
     mockWorkspaceCache({
       existingViews: [

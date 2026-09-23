@@ -12,7 +12,6 @@ import { DataSource, MoreThanOrEqual, Raw, Repository } from 'typeorm';
 
 import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
-import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -150,18 +149,16 @@ export class WorkspaceIteratorService {
     }
 
     report.fail.forEach(({ error, workspaceId }) => {
-      if (error instanceof WorkspaceMigrationBuilderException) {
-        this.logger.error(
-          `Error in workspace ${workspaceId}: ${formatUpgradeErrorForStorage(error)}`,
-        );
-
-        return;
-      }
-
       this.logger.error(
         `Error in workspace ${workspaceId}: ${error.message}`,
         error.stack,
       );
+
+      if (error instanceof WorkspaceMigrationBuilderException) {
+        this.logger.error(
+          `Migration validation report for workspace ${workspaceId}: ${JSON.stringify(error.failedWorkspaceMigrationBuildResult.report, null, 2)}`,
+        );
+      }
 
       if (error instanceof WorkspaceMigrationRunnerException && error.errors) {
         for (const [label, innerError] of Object.entries(error.errors)) {

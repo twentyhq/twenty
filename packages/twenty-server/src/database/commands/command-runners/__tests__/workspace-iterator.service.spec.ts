@@ -99,52 +99,60 @@ describe('WorkspaceIteratorService', () => {
     ).toHaveBeenCalledWith('workspace-1');
   });
 
-  it('logs the rejected metadata and validation reason when a migration cannot be built', async () => {
-    const error = new WorkspaceMigrationBuilderException(
-      {
-        status: 'fail',
-        report: {
-          ...EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
-          viewField: [
-            {
-              metadataName: 'viewField',
-              type: 'create',
-              flatEntityMinimalInformation: {
-                universalIdentifier: 'missing-field-view',
-                fieldMetadataUniversalIdentifier: 'missing-field',
-              },
-              errors: [
-                {
-                  code: ViewExceptionCode.INVALID_VIEW_DATA,
-                  message: 'Field metadata not found',
+  it.each([1, 200])(
+    'logs all %s validation errors and the stack when a migration cannot be built',
+    async (errorCount) => {
+      const error = new WorkspaceMigrationBuilderException(
+        {
+          status: 'fail',
+          report: {
+            ...EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
+            viewField: [
+              {
+                metadataName: 'viewField',
+                type: 'create',
+                flatEntityMinimalInformation: {
+                  universalIdentifier: 'missing-field-view',
+                  fieldMetadataUniversalIdentifier: 'missing-field',
                 },
-              ],
-            },
-          ],
+                errors: Array.from({ length: errorCount }, (_, index) => ({
+                  code: ViewExceptionCode.INVALID_VIEW_DATA,
+                  message: `Field metadata not found ${index}`,
+                })),
+              },
+            ],
+          },
         },
-      },
-      'Failed to sync the message record page',
-    );
+        'Failed to sync the message record page',
+      );
 
-    const report = await service.iterate({
-      workspaceIds: ['workspace-1', 'workspace-2'],
-      callback: async ({ workspaceId }) => {
-        if (workspaceId === 'workspace-1') {
-          throw error;
-        }
-      },
-    });
+      const report = await service.iterate({
+        workspaceIds: ['workspace-1', 'workspace-2'],
+        callback: async ({ workspaceId }) => {
+          if (workspaceId === 'workspace-1') {
+            throw error;
+          }
+        },
+      });
 
-    expect(report.fail).toEqual([{ workspaceId: 'workspace-1', error }]);
-    expect(report.success).toEqual([{ workspaceId: 'workspace-2' }]);
-    expect(Logger.prototype.error).toHaveBeenCalledWith(
-      expect.stringContaining('Field metadata not found'),
-    );
-    expect(Logger.prototype.error).toHaveBeenCalledWith(
-      expect.stringContaining('missing-field'),
-    );
-    expect(Logger.prototype.error).toHaveBeenCalledWith(
-      expect.stringContaining('workspace-1'),
-    );
-  });
+      expect(report.fail).toEqual([{ workspaceId: 'workspace-1', error }]);
+      expect(report.success).toEqual([{ workspaceId: 'workspace-2' }]);
+      expect(Logger.prototype.error).toHaveBeenCalledWith(
+        expect.stringContaining('Field metadata not found'),
+      );
+      expect(Logger.prototype.error).toHaveBeenCalledWith(
+        expect.stringContaining('missing-field'),
+      );
+      expect(Logger.prototype.error).toHaveBeenCalledWith(
+        expect.stringContaining('workspace-1'),
+      );
+      expect(Logger.prototype.error).toHaveBeenCalledWith(
+        `Migration validation report for workspace workspace-1: ${JSON.stringify(error.failedWorkspaceMigrationBuildResult.report, null, 2)}`,
+      );
+      expect(Logger.prototype.error).toHaveBeenCalledWith(
+        'Error in workspace workspace-1: Failed to sync the message record page',
+        error.stack,
+      );
+    },
+  );
 });
