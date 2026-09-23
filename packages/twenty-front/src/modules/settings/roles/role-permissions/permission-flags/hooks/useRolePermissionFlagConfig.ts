@@ -17,6 +17,12 @@ export const useRolePermissionFlagConfig = ({
   );
   const { getIcon } = useIcons();
   const standardPermissionKeys: string[] = Object.values(PermissionFlagType);
+  const permissionFlagDefinitionsByKey = new Map(
+    settingsPermissionFlagDefinitions.map((permissionFlag) => [
+      permissionFlag.key,
+      permissionFlag,
+    ]),
+  );
 
   const applicationPermissionsConfig = settingsPermissionFlagDefinitions
     .filter(
@@ -36,9 +42,8 @@ export const useRolePermissionFlagConfig = ({
   return [
     ...standardPermissionsConfig.map((permission) => ({
       ...permission,
-      applicationId: settingsPermissionFlagDefinitions.find(
-        (permissionFlag) => permissionFlag.key === permission.key,
-      )?.applicationId,
+      applicationId: permissionFlagDefinitionsByKey.get(permission.key)
+        ?.applicationId,
     })),
     ...applicationPermissionsConfig,
   ];

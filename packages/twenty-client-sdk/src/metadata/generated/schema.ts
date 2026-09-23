@@ -3206,6 +3206,20 @@ export interface TimelineActivityType {
     __typename: 'TimelineActivityType'
 }
 
+export interface PermissionFlag {
+    id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    key: Scalars['String']
+    label: Scalars['String']
+    description?: Scalars['String']
+    icon?: Scalars['String']
+    permissionType: Scalars['String']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'PermissionFlag'
+}
+
 export interface CollectionHash {
     collectionName: AllMetadataName
     hash: Scalars['String']
@@ -3338,6 +3352,7 @@ export interface Query {
     webhook?: Webhook
     myMessageFolders: MessageFolder[]
     myCalendarChannels: CalendarChannel[]
+    getPermissionFlags: PermissionFlag[]
     minimalMetadata: MinimalMetadata
     appKeyValue?: AppKeyValue
     getJobs: JobStatus[]
@@ -6999,6 +7014,21 @@ export interface TimelineActivityTypeGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PermissionFlagGenqlSelection{
+    id?: boolean | number
+    universalIdentifier?: boolean | number
+    key?: boolean | number
+    label?: boolean | number
+    description?: boolean | number
+    icon?: boolean | number
+    permissionType?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CollectionHashGenqlSelection{
     collectionName?: boolean | number
     hash?: boolean | number
@@ -7145,6 +7175,7 @@ export interface QueryGenqlSelection{
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    getPermissionFlags?: PermissionFlagGenqlSelection
     minimalMetadata?: MinimalMetadataGenqlSelection
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
     getJobs?: (JobStatusGenqlSelection & { __args: {jobIds: Scalars['String'][]} })
@@ -10323,6 +10354,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isTimelineActivityType = (obj?: { __typename?: any } | null): obj is TimelineActivityType => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityType"')
       return TimelineActivityType_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PermissionFlag_possibleTypes: string[] = ['PermissionFlag']
+    export const isPermissionFlag = (obj?: { __typename?: any } | null): obj is PermissionFlag => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPermissionFlag"')
+      return PermissionFlag_possibleTypes.includes(obj.__typename)
     }
     
 
