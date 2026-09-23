@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/StyledBubbleMenuContainer';
 import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
-import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
+import { EditLinkDropdown } from '@/advanced-text-editor/components/EditLinkDropdown';
 import { TurnIntoBlockDropdown } from '@/advanced-text-editor/components/TurnIntoBlockDropdown';
 import { useTextBubbleState } from '@/advanced-text-editor/hooks/useTextBubbleState';
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { isTextSelected } from '@/advanced-text-editor/utils/isTextSelected';
-import { getEditLinkPopoverDropdownId } from '@/advanced-text-editor/utils/getEditLinkPopoverDropdownId';
+import { getEditLinkDropdownId } from '@/advanced-text-editor/utils/getEditLinkDropdownId';
 import { type Editor } from '@tiptap/core';
 import { NodeSelection } from '@tiptap/pm/state';
 import { BubbleMenu } from '@tiptap/react/menus';
@@ -106,8 +106,8 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
           );
         })}
         {hasEditorExtension(editor, 'link') && (
-          <EditLinkPopover
-            dropdownId={getEditLinkPopoverDropdownId({
+          <EditLinkDropdown
+            dropdownId={getEditLinkDropdownId({
               editorInstanceId: editor.instanceId,
               bubbleMenuType: 'text',
             })}

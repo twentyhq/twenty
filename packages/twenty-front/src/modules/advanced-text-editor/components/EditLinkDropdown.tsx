@@ -1,4 +1,4 @@
-import { EditLinkPopoverForm } from '@/advanced-text-editor/components/EditLinkPopoverForm';
+import { EditLinkDropdownForm } from '@/advanced-text-editor/components/EditLinkDropdownForm';
 import { type EditLinkEditor } from '@/advanced-text-editor/types/EditLinkEditor';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useLingui } from '@lingui/react/macro';
@@ -6,17 +6,17 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconLink, IconPencil } from 'twenty-ui/icon';
 
-type EditLinkPopoverProps = {
+type EditLinkDropdownProps = {
   dropdownId: string;
   defaultValue: string | undefined;
   editor: EditLinkEditor;
 };
 
-export const EditLinkPopover = ({
+export const EditLinkDropdown = ({
   dropdownId,
   defaultValue = '',
   editor,
-}: EditLinkPopoverProps) => {
+}: EditLinkDropdownProps) => {
   const isActive = isNonEmptyString(defaultValue);
   const { t } = useLingui();
 
@@ -43,7 +43,7 @@ export const EditLinkPopover = ({
         aria-label={isActive ? t`Edit link` : t`Add link`}
       >
         <Dropdown.Section>
-          <EditLinkPopoverForm defaultValue={defaultValue} editor={editor} />
+          <EditLinkDropdownForm defaultValue={defaultValue} editor={editor} />
         </Dropdown.Section>
       </Dropdown.Content>
     </DropdownRoot>

@@ -8,15 +8,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState, type FocusEvent, type FormEvent } from 'react';
 import { getSafeUrl } from 'twenty-shared/utils';
 
-type EditLinkPopoverFormProps = {
+type EditLinkDropdownFormProps = {
   defaultValue: string;
   editor: Pick<EditLinkEditor, 'chain'>;
 };
 
-export const EditLinkPopoverForm = ({
+export const EditLinkDropdownForm = ({
   defaultValue,
   editor,
-}: EditLinkPopoverFormProps) => {
+}: EditLinkDropdownFormProps) => {
   const { t } = useLingui();
   const [value, setValue] = useState(defaultValue);
   const isDropdownOpen = useAtomComponentStateValue(

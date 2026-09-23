@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
+import { EditLinkDropdown } from '@/advanced-text-editor/components/EditLinkDropdown';
 import { type EditLinkEditor } from '@/advanced-text-editor/types/EditLinkEditor';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 
@@ -49,7 +49,7 @@ const createEditor = () => {
   return { editor, commands };
 };
 
-describe('EditLinkPopover', () => {
+describe('EditLinkDropdown', () => {
   it('submits the link and preserves focus in the editor', async () => {
     const user = userEvent.setup();
     const { editor, commands } = createEditor();
@@ -57,7 +57,7 @@ describe('EditLinkPopover', () => {
     const { store } = renderWithStore(
       <>
         <input aria-label="Editor" />
-        <EditLinkPopover
+        <EditLinkDropdown
           dropdownId="edit-link-test"
           editor={editor}
           defaultValue=""
@@ -95,7 +95,7 @@ describe('EditLinkPopover', () => {
       <>
         <input aria-label="Editor" />
         <button type="button">Outside</button>
-        <EditLinkPopover
+        <EditLinkDropdown
           dropdownId="edit-link-test"
           editor={editor}
           defaultValue="https://old.example"
@@ -127,7 +127,7 @@ describe('EditLinkPopover', () => {
     renderWithStore(
       <>
         <input aria-label="Editor" />
-        <EditLinkPopover
+        <EditLinkDropdown
           dropdownId="edit-link-test"
           editor={editor}
           defaultValue="https://twenty.com"
@@ -150,7 +150,7 @@ describe('EditLinkPopover', () => {
     const { rerender, store } = renderWithStore(
       <>
         <input aria-label="Editor" />
-        <EditLinkPopover
+        <EditLinkDropdown
           dropdownId="edit-link-test"
           editor={editor}
           defaultValue="https://old.example"
@@ -174,7 +174,7 @@ describe('EditLinkPopover', () => {
     rerender(
       <>
         <input aria-label="Editor" />
-        <EditLinkPopover
+        <EditLinkDropdown
           dropdownId="edit-link-test"
           editor={editor}
           defaultValue="https://new.example"
