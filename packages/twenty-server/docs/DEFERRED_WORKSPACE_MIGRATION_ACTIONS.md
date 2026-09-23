@@ -119,7 +119,7 @@ Index on `(workspaceId, status)`. A row is deleted once its action succeeds. The
 1. loads the workspace's `PENDING` rows once, ordered by creation then `position` (actions created later come with their own job);
 2. claims each row with a conditional update (`PENDING` to `IN_PROGRESS`, `attempts + 1`);
 3. resolves the handler with `actionHandlerKey` (`executeDeferredActionHandler`, registry `:118`) and calls `executeDeferredAction` with the flat entity maps loaded once per run through `WorkspaceManyOrAllFlatEntityMapsCacheService`, for the same metadata names the migration runner would load (`getMetadataNamesToLoadForWorkspaceMigration`), on a dedicated connection without the client `query_timeout` and with a server-side `statement_timeout` of one hour, so Postgres cancels a stuck statement itself;
-4. deletes the row on success, or sets it back to `PENDING` (`FAILED` after the last attempt) with `lastError`;
+4. deletes the row on success, or sets it back to `PENDING` (`FAILED` after the last attempt) with `lastError`, both scoped to the claim it took (`IN_PROGRESS` with its own attempt number) so a worker resuming after its row was recovered cannot overwrite the newer run;
 5. stops at the first failure and fails the job, so the queue retries it and the remaining actions keep running in order.
 
 `create_index` reads the index from the maps it receives and completes as obsolete if it is absent. The maps are fresh because the runner invalidates the cache after commit, before enqueueing the job. On a retry it runs `DROP INDEX CONCURRENTLY IF EXISTS` first, since a failed concurrent build leaves an invalid index behind.
@@ -128,7 +128,7 @@ Each execution records `deferred-workspace-migration-action/duration-ms` with `a
 
 ### Recovery
 
-`DeferredWorkspaceMigrationActionRecoveryCronJob` runs every 10 minutes (`cron:deferred-workspace-migration-action-recovery`, registered by `cron:register:all`):
+`DeferredWorkspaceMigrationActionRecoveryService`, driven by `DeferredWorkspaceMigrationActionRecoveryCronJob`, runs every 10 minutes (`cron:deferred-workspace-migration-action-recovery`, registered by `cron:register:all`):
 
 1. an `IN_PROGRESS` row started more than the statement timeout plus 15 minutes ago belongs to a worker that died mid-run, since Postgres has cancelled its statement by then; it goes back to `PENDING`, or to `FAILED` if it used its last attempt;
 2. every workspace with `PENDING` rows is enqueued, which covers lost enqueues and the actions left behind a failure once the job ran out of attempts.
