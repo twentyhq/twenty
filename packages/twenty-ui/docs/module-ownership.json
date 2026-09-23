@@ -53,6 +53,7 @@
     "CodeEditorHeader",
     "ColorSchemePicker",
     "CommandBlock",
+    "Dropdown",
     "IconButton",
     "Info",
     "InlineBanner",
