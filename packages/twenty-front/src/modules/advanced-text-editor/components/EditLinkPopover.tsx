@@ -1,15 +1,15 @@
 import { EditLinkPopoverForm } from '@/advanced-text-editor/components/EditLinkPopoverForm';
+import { type EditLinkEditor } from '@/advanced-text-editor/types/EditLinkEditor';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type Editor } from '@tiptap/core';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconLink, IconPencil } from 'twenty-ui/icon';
 
 type EditLinkPopoverProps = {
   dropdownId: string;
   defaultValue: string | undefined;
-  editor: Editor;
+  editor: EditLinkEditor;
 };
 
 export const EditLinkPopover = ({

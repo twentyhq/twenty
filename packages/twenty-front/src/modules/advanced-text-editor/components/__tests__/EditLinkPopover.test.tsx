@@ -2,11 +2,11 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { type Editor } from '@tiptap/core';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
+import { type EditLinkEditor } from '@/advanced-text-editor/types/EditLinkEditor';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 
 const renderWithStore = (children: ReactNode) => {
@@ -25,7 +25,7 @@ const renderWithStore = (children: ReactNode) => {
 };
 
 const createEditor = () => {
-  const commands = {
+  const commands: jest.Mocked<ReturnType<EditLinkEditor['chain']>> = {
     focus: jest.fn().mockImplementation(() => {
       setTimeout(
         () => screen.getByRole('textbox', { name: 'Editor' }).focus(),
@@ -36,15 +36,15 @@ const createEditor = () => {
     extendMarkRange: jest.fn().mockReturnThis(),
     setLink: jest.fn().mockReturnThis(),
     unsetLink: jest.fn().mockReturnThis(),
-    run: jest.fn(),
+    run: jest.fn().mockReturnValue(true),
   };
 
-  const editor = {
+  const editor: EditLinkEditor = {
     chain: () => commands,
     get view() {
       return { dom: screen.getByRole('textbox', { name: 'Editor' }) };
     },
-  } as unknown as Editor;
+  };
 
   return { editor, commands };
 };

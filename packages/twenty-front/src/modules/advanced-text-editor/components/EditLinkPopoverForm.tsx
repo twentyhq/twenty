@@ -1,16 +1,16 @@
+import { type EditLinkEditor } from '@/advanced-text-editor/types/EditLinkEditor';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type Editor } from '@tiptap/core';
 import { useState, type FocusEvent, type FormEvent } from 'react';
 import { getSafeUrl } from 'twenty-shared/utils';
 
 type EditLinkPopoverFormProps = {
   defaultValue: string;
-  editor: Editor;
+  editor: Pick<EditLinkEditor, 'chain'>;
 };
 
 export const EditLinkPopoverForm = ({
