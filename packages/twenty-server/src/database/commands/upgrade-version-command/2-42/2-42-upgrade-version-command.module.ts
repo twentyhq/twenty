@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BackfillMissingStandardSystemFieldsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790157507537-backfill-missing-standard-system-fields.command';
 
 import { MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
@@ -37,6 +38,7 @@ import { GateWorkflowFavoritesByCoreIndexFlagCommand } from 'src/database/comman
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
   ],
   providers: [
+    BackfillMissingStandardSystemFieldsCommand,
     GateWorkflowFavoritesByCoreIndexFlagCommand,
     MigrateAgentHistoryToWorkspaceCommand,
     UnpinCreationCommandsOnRecordSelectionCommand,

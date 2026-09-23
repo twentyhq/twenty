@@ -12,10 +12,12 @@ import { DataSource, MoreThanOrEqual, Raw, Repository } from 'typeorm';
 
 import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
+import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 export type WorkspaceIteratorShard = {
@@ -148,6 +150,14 @@ export class WorkspaceIteratorService {
     }
 
     report.fail.forEach(({ error, workspaceId }) => {
+      if (error instanceof WorkspaceMigrationBuilderException) {
+        this.logger.error(
+          `Error in workspace ${workspaceId}: ${formatUpgradeErrorForStorage(error)}`,
+        );
+
+        return;
+      }
+
       this.logger.error(
         `Error in workspace ${workspaceId}: ${error.message}`,
         error.stack,

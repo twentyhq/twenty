@@ -7,6 +7,9 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 describe('WorkspaceIteratorService', () => {
   let workspaceCacheService: jest.Mocked<
@@ -94,5 +97,54 @@ describe('WorkspaceIteratorService', () => {
     expect(
       workspaceCacheService.evictWorkspaceFromLocalCache,
     ).toHaveBeenCalledWith('workspace-1');
+  });
+
+  it('logs the rejected metadata and validation reason when a migration cannot be built', async () => {
+    const error = new WorkspaceMigrationBuilderException(
+      {
+        status: 'fail',
+        report: {
+          ...EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
+          viewField: [
+            {
+              metadataName: 'viewField',
+              type: 'create',
+              flatEntityMinimalInformation: {
+                universalIdentifier: 'missing-field-view',
+                fieldMetadataUniversalIdentifier: 'missing-field',
+              },
+              errors: [
+                {
+                  code: ViewExceptionCode.INVALID_VIEW_DATA,
+                  message: 'Field metadata not found',
+                },
+              ],
+            },
+          ],
+        },
+      },
+      'Failed to sync the message record page',
+    );
+
+    const report = await service.iterate({
+      workspaceIds: ['workspace-1', 'workspace-2'],
+      callback: async ({ workspaceId }) => {
+        if (workspaceId === 'workspace-1') {
+          throw error;
+        }
+      },
+    });
+
+    expect(report.fail).toEqual([{ workspaceId: 'workspace-1', error }]);
+    expect(report.success).toEqual([{ workspaceId: 'workspace-2' }]);
+    expect(Logger.prototype.error).toHaveBeenCalledWith(
+      expect.stringContaining('Field metadata not found'),
+    );
+    expect(Logger.prototype.error).toHaveBeenCalledWith(
+      expect.stringContaining('missing-field'),
+    );
+    expect(Logger.prototype.error).toHaveBeenCalledWith(
+      expect.stringContaining('workspace-1'),
+    );
   });
 });
