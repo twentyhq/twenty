@@ -26,7 +26,7 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
-import { useContext, useId, useRef, useState } from 'react';
+import { type FocusEvent, useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -179,8 +179,14 @@ export const FormArrayFieldInput = ({
     return true;
   };
 
-  const handleFirstItemInputBlur = () => {
-    commitFirstItemDraft();
+  const handleRowBlur = (event: FocusEvent<HTMLDivElement>) => {
+    const isFocusMovingOutsideRow =
+      event.relatedTarget instanceof Node &&
+      !event.currentTarget.contains(event.relatedTarget);
+
+    if (isFocusMovingOutsideRow) {
+      commitFirstItemDraft();
+    }
   };
 
   const handleFirstItemInputEnter = () => {
@@ -235,7 +241,18 @@ export const FormArrayFieldInput = ({
     });
   };
 
-  const handleNewItemInputBlur = () => {
+  const handleNewItemInputBlur = (event: FocusEvent<HTMLInputElement>) => {
+    const isFocusMovingToAnotherElement = event.relatedTarget instanceof Node;
+
+    if (
+      isAddingNewItem &&
+      isFocusMovingToAnotherElement &&
+      isNonEmptyString(inputValue.trim())
+    ) {
+      handleNewItemInputSubmit();
+      return;
+    }
+
     removeFocusItemFromFocusStackById({
       focusId: newItemInputInstanceId,
     });
@@ -331,7 +348,7 @@ export const FormArrayFieldInput = ({
     <FormFieldInputContainer data-testid={testId}>
       {label ? <Field.Label>{label}</Field.Label> : null}
 
-      <FormFieldInputRowContainer>
+      <FormFieldInputRowContainer onBlur={handleRowBlur}>
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
@@ -349,13 +366,13 @@ export const FormArrayFieldInput = ({
                 )}
               </StyledDisplayModeReadonlyContainer>
             ) : draftValue.value.length === 0 ? (
-              <StyledInputContainer onBlur={handleFirstItemInputBlur}>
+              <StyledInputContainer>
                 <TextInput
                   instanceId={formFieldInputInstanceId}
                   placeholder={t`Enter an item`}
                   value={newItemDraftValue}
                   copyButton={false}
-                  isNativeTabNavigationEnabled
+                  isKeyboardAccessible
                   onChange={handleFirstItemInputChange}
                   onEnter={handleFirstItemInputEnter}
                   shouldTrim={false}

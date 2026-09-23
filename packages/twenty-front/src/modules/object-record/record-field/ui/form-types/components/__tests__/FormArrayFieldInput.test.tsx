@@ -19,17 +19,19 @@ const renderWithProviders = (children: ReactNode) => {
   });
 };
 
-const renderArrayField = () => {
+const renderArrayField = ({
+  defaultValue = [],
+}: { defaultValue?: string[] } = {}) => {
   const onChange = jest.fn();
   renderWithProviders(
     <>
       <button>Before</button>
-      <FormArrayFieldInput defaultValue={[]} onChange={onChange} />
+      <FormArrayFieldInput defaultValue={defaultValue} onChange={onChange} />
       <button>After</button>
     </>,
   );
 
-  return { onChange, itemInput: screen.getByPlaceholderText('Enter an item') };
+  return { onChange };
 };
 
 it.each([
@@ -39,7 +41,8 @@ it.each([
   'adds the typed first item when %s leaves the array field',
   async (_key, tabOptions, nextButtonName) => {
     const user = userEvent.setup();
-    const { onChange, itemInput } = renderArrayField();
+    const { onChange } = renderArrayField();
+    const itemInput = screen.getByPlaceholderText('Enter an item');
     await user.click(itemInput);
     await user.type(itemInput, ' Draft item ');
 
@@ -54,7 +57,8 @@ it.each([
 
 it('keeps the surrounding whitespace of the first item added with Enter', async () => {
   const user = userEvent.setup();
-  const { onChange, itemInput } = renderArrayField();
+  const { onChange } = renderArrayField();
+  const itemInput = screen.getByPlaceholderText('Enter an item');
   await user.click(itemInput);
   await user.type(itemInput, '  Draft item ');
 
@@ -64,21 +68,49 @@ it('keeps the surrounding whitespace of the first item added with Enter', async 
   expect(onChange).toHaveBeenCalledWith(['  Draft item ']);
 });
 
-it('adds the typed first item when the array field loses focus', async () => {
+it('adds the typed first item when focus moves to another element', async () => {
   const user = userEvent.setup();
-  const { onChange, itemInput } = renderArrayField();
+  const { onChange } = renderArrayField();
+  const itemInput = screen.getByPlaceholderText('Enter an item');
   await user.click(itemInput);
   await user.type(itemInput, 'Draft item');
 
-  await user.click(document.body);
+  await user.click(screen.getByRole('button', { name: 'After' }));
 
   expect(onChange).toHaveBeenCalledTimes(1);
   expect(onChange).toHaveBeenCalledWith(['Draft item']);
 });
 
+it('keeps the typed first item in the input when focus leaves to nothing focusable', async () => {
+  const user = userEvent.setup();
+  const { onChange } = renderArrayField();
+  const itemInput = screen.getByPlaceholderText('Enter an item');
+  await user.click(itemInput);
+  await user.type(itemInput, 'Draft item');
+
+  await user.click(document.body);
+
+  expect(onChange).not.toHaveBeenCalled();
+  expect(itemInput).toHaveValue('Draft item');
+});
+
+it('adds the typed new item when focus moves to another element', async () => {
+  const user = userEvent.setup();
+  const { onChange } = renderArrayField({ defaultValue: ['First item'] });
+  await user.click(screen.getByText('First item'));
+  await user.click(await screen.findByText('Add item'));
+  await user.type(screen.getByRole('textbox'), 'Second item');
+
+  await user.click(screen.getByRole('button', { name: 'After' }));
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(['First item', 'Second item']);
+});
+
 it('adds the first item only once when Enter is pressed before leaving the field', async () => {
   const user = userEvent.setup();
-  const { onChange, itemInput } = renderArrayField();
+  const { onChange } = renderArrayField();
+  const itemInput = screen.getByPlaceholderText('Enter an item');
   await user.click(itemInput);
   await user.type(itemInput, 'Draft item');
 
@@ -91,11 +123,13 @@ it('adds the first item only once when Enter is pressed before leaving the field
 
 it('keeps a blank first item draft in place without adding it when Tab leaves the field', async () => {
   const user = userEvent.setup();
-  const { onChange, itemInput } = renderArrayField();
+  const { onChange } = renderArrayField();
+  const itemInput = screen.getByPlaceholderText('Enter an item');
   await user.click(itemInput);
   await user.type(itemInput, '   ');
 
   await user.tab();
+  expect(screen.getByRole('button', { name: 'After' })).toHaveFocus();
   await user.tab({ shift: true });
 
   expect(onChange).not.toHaveBeenCalled();

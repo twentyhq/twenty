@@ -116,7 +116,7 @@ export const FormNumberFieldInput = ({
               }
               value={draftValue.value}
               copyButton={false}
-              isNativeTabNavigationEnabled
+              isKeyboardAccessible
               onChange={handleChange}
               disabled={readonly}
             />
