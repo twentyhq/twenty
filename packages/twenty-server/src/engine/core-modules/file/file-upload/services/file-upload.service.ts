@@ -7,7 +7,7 @@ import { pipeline } from 'stream/promises';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import bytes from 'bytes';
-import { FileFolder } from 'twenty-shared/types';
+import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -21,6 +21,7 @@ import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/f
 import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
 import { type CompletedFileUpload } from 'src/engine/core-modules/file/file-upload/types/completed-file-upload.type';
+import { type FileUploadPrincipal } from 'src/engine/core-modules/file/file-upload/types/file-upload-principal.type';
 import {
   FileUploadException,
   FileUploadExceptionCode,
@@ -28,12 +29,18 @@ import {
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
 import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
+import { isSameFileUploadPrincipal } from 'src/engine/core-modules/file/file-upload/utils/is-same-file-upload-principal.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { withDeadline } from 'src/utils/with-deadline';
@@ -62,6 +69,7 @@ export class FileUploadService {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async createFileUpload({
@@ -71,6 +79,7 @@ export class FileUploadService {
     fileFolder,
     fieldMetadataId,
     fieldMetadataUniversalIdentifier,
+    principal,
   }: {
     workspaceId: string;
     filename: string;
@@ -78,6 +87,7 @@ export class FileUploadService {
     fileFolder: FileFolder;
     fieldMetadataId?: string;
     fieldMetadataUniversalIdentifier?: string;
+    principal: FileUploadPrincipal;
   }): Promise<FileUploadTargetDTO> {
     if (
       !DIRECT_UPLOAD_FILE_FOLDERS.includes(
@@ -128,6 +138,7 @@ export class FileUploadService {
         name,
         fieldMetadataId,
         fieldMetadataUniversalIdentifier,
+        principal,
       });
 
     await this.fileStorageService.createPendingFile({
@@ -141,6 +152,7 @@ export class FileUploadService {
       settings: {
         isTemporaryFile: true,
         toDelete: false,
+        uploadPrincipal: principal,
       },
     });
 
@@ -247,9 +259,11 @@ export class FileUploadService {
   async completeFileUpload({
     workspaceId,
     fileId,
+    principal,
   }: {
     workspaceId: string;
     fileId: string;
+    principal: FileUploadPrincipal;
   }): Promise<CompletedFileUpload> {
     const file = await this.findFileOrThrow({ workspaceId, fileId });
     const [fileFolder] = file.path.split('/');
@@ -267,6 +281,8 @@ export class FileUploadService {
         },
       );
     }
+
+    this.assertPrincipalInitiatedUploadOrThrow({ file, principal });
 
     if (file.status === FILE_STATUS.UPLOADED) {
       if (!file.settings?.isTemporaryFile) {
@@ -333,12 +349,14 @@ export class FileUploadService {
     name,
     fieldMetadataId,
     fieldMetadataUniversalIdentifier,
+    principal,
   }: {
     workspaceId: string;
     fileFolder: FileFolder;
     name: string;
     fieldMetadataId?: string;
     fieldMetadataUniversalIdentifier?: string;
+    principal: FileUploadPrincipal;
   }): Promise<{
     applicationUniversalIdentifier: string;
     resourcePath: string;
@@ -354,15 +372,16 @@ export class FileUploadService {
         );
       }
 
-      const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
-        select: ['applicationId', 'universalIdentifier'],
-        where: {
-          ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
-          ...(fieldMetadataUniversalIdentifier
-            ? { universalIdentifier: fieldMetadataUniversalIdentifier }
-            : {}),
-          workspaceId,
-        },
+      const fieldMetadata = await this.findFilesFieldMetadataOrThrow({
+        workspaceId,
+        fieldMetadataId,
+        fieldMetadataUniversalIdentifier,
+      });
+
+      await this.assertApplicationPrincipalCanUpdateFieldOrThrow({
+        workspaceId,
+        fieldMetadata,
+        principal,
       });
 
       const application = await this.applicationRepository.findOneOrFail({
@@ -390,6 +409,111 @@ export class FileUploadService {
         workspaceCustomFlatApplication.universalIdentifier,
       resourcePath: name,
     };
+  }
+
+  private async findFilesFieldMetadataOrThrow({
+    workspaceId,
+    fieldMetadataId,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    fieldMetadataId?: string;
+    fieldMetadataUniversalIdentifier?: string;
+  }): Promise<FieldMetadataEntity> {
+    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+      select: [
+        'id',
+        'applicationId',
+        'universalIdentifier',
+        'type',
+        'objectMetadataId',
+      ],
+      where: {
+        ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
+        ...(fieldMetadataUniversalIdentifier
+          ? { universalIdentifier: fieldMetadataUniversalIdentifier }
+          : {}),
+        workspaceId,
+      },
+    });
+
+    if (!isDefined(fieldMetadata)) {
+      throw new FileUploadException(
+        `Files field ${fieldMetadataId ?? fieldMetadataUniversalIdentifier} not found`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`The target files field could not be found.`,
+        },
+      );
+    }
+
+    if (fieldMetadata.type !== FieldMetadataType.FILES) {
+      throw new FileUploadException(
+        `Field ${fieldMetadata.id} is not a files field`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`Files can only be uploaded into a files field.`,
+        },
+      );
+    }
+
+    return fieldMetadata;
+  }
+
+  private async assertApplicationPrincipalCanUpdateFieldOrThrow({
+    workspaceId,
+    fieldMetadata,
+    principal,
+  }: {
+    workspaceId: string;
+    fieldMetadata: Pick<FieldMetadataEntity, 'id' | 'objectMetadataId'>;
+    principal: FileUploadPrincipal;
+  }): Promise<void> {
+    if (!isDefined(principal.applicationId)) {
+      return;
+    }
+
+    const canUpdateField =
+      await this.permissionsService.principalCanUpdateField({
+        workspaceId,
+        objectMetadataId: fieldMetadata.objectMetadataId,
+        fieldMetadataId: fieldMetadata.id,
+        userWorkspaceId: principal.userWorkspaceId,
+        applicationId: principal.applicationId,
+      });
+
+    if (canUpdateField) {
+      return;
+    }
+
+    throw new PermissionsException(
+      `Application ${principal.applicationId} cannot update records of the object owning field ${fieldMetadata.id}`,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+    );
+  }
+
+  // A pending row is confirmable by any UPLOAD_FILE holder who knows its id,
+  // so only the principal that initiated the upload may complete it.
+  private assertPrincipalInitiatedUploadOrThrow({
+    file,
+    principal,
+  }: {
+    file: FileEntity;
+    principal: FileUploadPrincipal;
+  }): void {
+    const uploadPrincipal = file.settings?.uploadPrincipal;
+
+    if (
+      !isDefined(uploadPrincipal) ||
+      isSameFileUploadPrincipal(uploadPrincipal, principal)
+    ) {
+      return;
+    }
+
+    throw new PermissionsException(
+      `Principal completing file ${file.id} differs from the one that initiated its upload`,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+    );
   }
 
   private async findFileOrThrow({

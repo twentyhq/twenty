@@ -28,6 +28,7 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -266,6 +267,52 @@ export class PermissionsService {
       {
         userFriendlyMessage: msg`Authentication is required to access this feature. Please sign in and try again.`,
       },
+    );
+  }
+
+  // Mirrors the update permission the attach step will enforce, so an
+  // application cannot park files under a field it could never write.
+  public async principalCanUpdateField({
+    workspaceId,
+    objectMetadataId,
+    fieldMetadataId,
+    userWorkspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    fieldMetadataId: string;
+    userWorkspaceId: string | null;
+    applicationId: string;
+  }): Promise<boolean> {
+    const applicationRoleId = await this.findApplicationDefaultRoleIdOrThrow({
+      applicationId,
+      workspaceId,
+    });
+
+    const roleIds = isDefined(userWorkspaceId)
+      ? resolveRoleIdsForUser({
+          userRoleId: await this.userRoleService.getRoleIdForUserWorkspace({
+            userWorkspaceId,
+            workspaceId,
+          }),
+          applicationRoleId,
+        })
+      : [applicationRoleId].filter(isDefined);
+
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
+
+    const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
+      rolesPermissions,
+      rolePermissionConfig: { intersectionOf: roleIds },
+    })[objectMetadataId];
+
+    return (
+      objectPermissions?.canUpdateObjectRecords === true &&
+      objectPermissions.restrictedFields[fieldMetadataId]?.canUpdate !== false
     );
   }
 
