@@ -37,7 +37,7 @@ const describeGrant = ({
   permissionFlags,
 }: {
   grant: RoleManifestGrant;
-  objects: ObjectManifest[];
+  objects: Pick<ObjectManifest, 'universalIdentifier' | 'nameSingular'>[];
   permissionFlags: PermissionFlagManifest[];
 }): string => {
   const describeObject = (objectUniversalIdentifier: string) =>
@@ -88,7 +88,7 @@ export const validateAgentRolesWithinApplicationRole = ({
 }: {
   agents: AgentManifest[];
   roles: RoleManifest[];
-  objects: ObjectManifest[];
+  objects: Pick<ObjectManifest, 'universalIdentifier' | 'nameSingular'>[];
   permissionFlags: PermissionFlagManifest[];
   defaultRoleUniversalIdentifier: string;
 }): string[] => {

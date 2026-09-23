@@ -14,15 +14,13 @@ export type EffectiveObjectPermissions = Record<
   boolean
 >;
 
-const ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION = {
+export const ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION = {
   canReadObjectRecords: 'canReadAllObjectRecords',
   canUpdateObjectRecords: 'canUpdateAllObjectRecords',
   canSoftDeleteObjectRecords: 'canSoftDeleteAllObjectRecords',
   canDestroyObjectRecords: 'canDestroyAllObjectRecords',
 } as const satisfies Record<ObjectPermissionAction, keyof RoleManifest>;
 
-// An object permission entry overrides the role-level flag action by action;
-// an action it leaves undefined falls back to that flag.
 export const getEffectiveObjectPermissionsFromRoleManifest = ({
   role,
   objectUniversalIdentifier,

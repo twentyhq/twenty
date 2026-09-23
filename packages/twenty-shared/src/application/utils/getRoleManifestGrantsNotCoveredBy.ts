@@ -3,6 +3,7 @@ import {
   getEffectiveObjectPermissionsFromRoleManifest,
   OBJECT_PERMISSION_ACTIONS,
   type ObjectPermissionAction,
+  ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
 } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
 import { SystemPermissionFlag } from '@/constants/SystemPermissionFlag';
 import { TOOL_PERMISSION_FLAGS } from '@/constants/ToolPermissionFlags';
@@ -36,13 +37,6 @@ export type RoleManifestGrant =
       type: 'ROW_LEVEL_RESTRICTION';
       objectUniversalIdentifier: string;
     };
-
-const ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION = {
-  canReadObjectRecords: 'canReadAllObjectRecords',
-  canUpdateObjectRecords: 'canUpdateAllObjectRecords',
-  canSoftDeleteObjectRecords: 'canSoftDeleteAllObjectRecords',
-  canDestroyObjectRecords: 'canDestroyAllObjectRecords',
-} as const satisfies Record<ObjectPermissionAction, keyof RoleManifest>;
 
 const SYSTEM_TOOL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS: readonly string[] =
   TOOL_PERMISSION_FLAGS.map((flag) => SystemPermissionFlag[flag]);

@@ -1,7 +1,6 @@
 import { validateAgentRolesWithinApplicationRole } from '@/cli/utilities/build/manifest/utils/validate-agent-roles-within-application-role';
 import {
   type AgentManifest,
-  type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -42,11 +41,7 @@ const buildAgent = (overrides: Partial<AgentManifest> = {}): AgentManifest => ({
 const customObject = {
   universalIdentifier: CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER,
   nameSingular: 'ticket',
-  namePlural: 'tickets',
-  labelSingular: 'Ticket',
-  labelPlural: 'Tickets',
-  fields: [],
-} as unknown as ObjectManifest;
+};
 
 describe('validateAgentRolesWithinApplicationRole', () => {
   it('accepts an agent role the application role covers', () => {

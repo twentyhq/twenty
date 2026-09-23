@@ -229,6 +229,7 @@ export type {
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export {
   OBJECT_PERMISSION_ACTIONS,
+  ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export type { RoleManifestGrant } from './utils/getRoleManifestGrantsNotCoveredBy';
