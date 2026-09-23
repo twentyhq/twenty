@@ -247,6 +247,20 @@ export const DOCUMENTED_COMPONENTS = [
       'SubmenuTrigger',
       'Section',
     ],
+    partPropDefaults: {
+      ActionItem: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+      OptionItem: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+      Back: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+      SubmenuTrigger: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+    },
   },
   {
     name: 'Section',

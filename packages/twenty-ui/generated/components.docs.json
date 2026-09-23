@@ -6191,7 +6191,7 @@
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
-            "defaultValue": "NaN",
+            "defaultValue": "true when render is omitted; false otherwise",
             "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
           },
           {
@@ -6294,7 +6294,7 @@
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
-            "defaultValue": "NaN",
+            "defaultValue": "true when render is omitted; false otherwise",
             "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
           },
           {
@@ -6428,7 +6428,7 @@
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "true when render is omitted; false otherwise",
             "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
           },
           {
@@ -6578,7 +6578,7 @@
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
-            "defaultValue": "NaN",
+            "defaultValue": "true when render is omitted; false otherwise",
             "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
           },
           {
