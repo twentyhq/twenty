@@ -59,7 +59,7 @@ export class UpdateRecordCreationCommandLabelsCommand extends ProvisionedWorkspa
       return;
     }
 
-    if (options.dryRun ?? false) {
+    if (options.dryRun) {
       this.logger.log(
         `[DRY RUN] Workspace ${workspaceId}: record creation command labels would be updated`,
       );
