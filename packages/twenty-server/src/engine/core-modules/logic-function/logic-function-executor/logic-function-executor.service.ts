@@ -133,6 +133,7 @@ export class LogicFunctionExecutorService {
     executionMode,
     workspaceDeletionRequestTimestamp,
     retry = { retryCount: 0, maxRetries: 0 },
+    shouldEnforceUsageLimits = true,
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -142,6 +143,7 @@ export class LogicFunctionExecutorService {
     executionMode?: LogicFunctionExecutionMode;
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
+    shouldEnforceUsageLimits?: boolean;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -154,6 +156,14 @@ export class LogicFunctionExecutorService {
     await this.assertApplicationNotStopped(flatApplication);
 
     await this.throttleExecution(workspaceId);
+
+    if (shouldEnforceUsageLimits) {
+      await this.assertExecutionAllowed({
+        workspaceId,
+        flatApplication,
+        flatLogicFunction,
+      });
+    }
 
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
@@ -271,6 +281,40 @@ export class LogicFunctionExecutorService {
         LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
       );
     }
+  }
+
+  private async assertExecutionAllowed({
+    workspaceId,
+    flatApplication,
+    flatLogicFunction,
+  }: {
+    workspaceId: string;
+    flatApplication: FlatApplication;
+    flatLogicFunction: FlatLogicFunction;
+  }): Promise<void> {
+    if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
+      return;
+    }
+
+    const isExecutionQuotaEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
+        workspaceId,
+      );
+
+    if (!isExecutionQuotaEnabled) {
+      return;
+    }
+
+    await this.billingUsageService.assertUsageAllowed({
+      workspaceId,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenders: {
+        logicFunctionId: flatLogicFunction.id,
+        applicationId: flatApplication.id,
+      },
+    });
   }
 
   private async throttleExecution(workspaceId: string) {
