@@ -7,7 +7,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
 import { resolveViewAccessContext } from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-access-context.util';
-import { resolveViewChildEntityViewId } from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-child-entity-view-id.util';
+import { resolveViewChildEntityViewIds } from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-child-entity-view-id.util';
 
 @Injectable()
 export class CreateViewChildEntityPermissionGuard implements CanActivate {
@@ -18,11 +18,31 @@ export class CreateViewChildEntityPermissionGuard implements CanActivate {
     const request = gqlContext.getContext().req;
     const args = gqlContext.getArgs();
 
-    const viewId = resolveViewChildEntityViewId({ args, body: request.body });
+    const viewIds = resolveViewChildEntityViewIds({
+      args,
+      body: request.body,
+    });
+    const accessContext = resolveViewAccessContext(request);
 
-    return this.viewAccessService.canUserModifyViewByChildEntity(
-      viewId,
-      resolveViewAccessContext(request),
-    );
+    if (viewIds.length === 0) {
+      return this.viewAccessService.canUserModifyViewByChildEntity(
+        null,
+        accessContext,
+      );
+    }
+
+    for (const viewId of viewIds) {
+      const canModify =
+        await this.viewAccessService.canUserModifyViewByChildEntity(
+          viewId,
+          accessContext,
+        );
+
+      if (!canModify) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

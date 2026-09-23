@@ -44,6 +44,9 @@ describe('ViewEntityLookupService', () => {
     expect(result).toBe(expectedViewId);
     expect(
       mockFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      mockFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
     ).toHaveBeenCalledWith({
       workspaceId,
       flatMapsKeys: ['flatViewFieldGroupMaps'],
@@ -70,5 +73,14 @@ describe('ViewEntityLookupService', () => {
     );
 
     expect(result).toBeNull();
+    expect(
+      mockFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      mockFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
+    ).toHaveBeenCalledWith({
+      workspaceId,
+      flatMapsKeys: ['flatViewFieldGroupMaps'],
+    });
   });
 });
