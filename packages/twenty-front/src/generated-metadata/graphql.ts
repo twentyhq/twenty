@@ -3146,7 +3146,6 @@ export type Mutation = {
   evaluateAgentTurn: AgentTurnEvaluation;
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
-  generateApplicationToken: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
   generateTransientToken: TransientToken;
   getAuthTokensFromLoginToken: AuthTokens;
@@ -3899,11 +3898,6 @@ export type MutationExecuteOneLogicFunctionArgs = {
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['UUID']['input'];
   expiresAt: Scalars['String']['input'];
-};
-
-
-export type MutationGenerateApplicationTokenArgs = {
-  applicationId: Scalars['UUID']['input'];
 };
 
 
@@ -5110,6 +5104,7 @@ export type Query = {
   appMessageChannels: Array<MessageChannel>;
   applicationConnectedAccounts: Array<ApplicationConnectedAccountDto>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
+  applicationCoreGraphqlSchema: Scalars['String']['output'];
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
@@ -5271,6 +5266,11 @@ export type QueryApplicationConnectedAccountsArgs = {
 
 export type QueryApplicationConnectionProvidersArgs = {
   applicationId: Scalars['UUID']['input'];
+};
+
+
+export type QueryApplicationCoreGraphqlSchemaArgs = {
+  applicationUniversalIdentifier: Scalars['String']['input'];
 };
 
 
