@@ -15,4 +15,5 @@ export enum SyncableEntity {
   PageLayoutWidget = 'pageLayoutWidget',
   CommandMenuItem = 'commandMenuItem',
   TimelineActivityType = 'timelineActivityType',
+  SettingsMenuItem = 'settingsMenuItem',
 }

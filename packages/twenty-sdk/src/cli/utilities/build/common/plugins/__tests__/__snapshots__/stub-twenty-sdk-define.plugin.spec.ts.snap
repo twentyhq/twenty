@@ -68,6 +68,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "definePreInstallLogicFunction",
     "defineRole",
     "defineSettingsFrontComponent",
+    "defineSettingsMenuItem",
     "defineSkill",
     "defineTimelineActivityType",
     "defineUninstallLogicFunction",

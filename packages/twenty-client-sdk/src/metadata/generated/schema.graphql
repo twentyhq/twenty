@@ -225,6 +225,24 @@ type ObjectMetadataCommandMenuItemPayload {
   objectMetadataItemId: UUID! @deprecated(reason: "Never returned anymore: navigation targets moved to CommandMenuItem.navigationTargetObjectMetadataId. This variant only remains one release so frontends deployed after the server keep validating; it will be removed in the next release.")
 }
 
+type SettingsMenuItem {
+  id: UUID!
+  frontComponentId: UUID!
+  title: String!
+  icon: String
+  position: Float!
+  scope: SettingsMenuItemScope!
+  universalIdentifier: UUID!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum SettingsMenuItemScope {
+  WORKSPACE
+  USER
+}
+
 type LogicFunction {
   id: UUID!
   name: String!
@@ -555,6 +573,7 @@ type Application {
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
   commandMenuItems: [CommandMenuItem!]!
+  settingsMenuItems: [SettingsMenuItem!]
   logicFunctions: [LogicFunction!]!
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
@@ -3666,6 +3685,7 @@ enum AllMetadataName {
   connectionProvider
   searchFieldMetadata
   timelineActivityType
+  settingsMenuItem
   workflow
   workflowVersion
 }
