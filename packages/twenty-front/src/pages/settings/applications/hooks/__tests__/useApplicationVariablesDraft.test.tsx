@@ -62,6 +62,7 @@ const buildApplication = (
   agents: [],
   frontComponents: [],
   commandMenuItems: [],
+  settingsMenuItems: [],
   objects: [],
   logicFunctions: [],
 });
