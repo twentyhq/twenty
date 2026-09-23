@@ -19,7 +19,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray } from '@sniptt/guards';
-import { useContext, useId, useState } from 'react';
+import { useContext, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { IconChevronDown } from 'twenty-ui/icon';
@@ -130,6 +130,9 @@ export const FormMultiSelectFieldInput = ({
         },
   );
 
+  const displayModeButtonRef = useRef<HTMLButtonElement>(null);
+  const selectInputContainerRef = useRef<HTMLDivElement>(null);
+
   const handleDisplayModeClick = () => {
     if (draftValue.type !== 'static') {
       throw new Error(
@@ -173,12 +176,20 @@ export const FormMultiSelectFieldInput = ({
       throw new Error('Can only be called when editing a static value');
     }
 
+    const isFocusInSelectInput =
+      isDefined(selectInputContainerRef.current) &&
+      selectInputContainerRef.current.contains(document.activeElement);
+
     setDraftValue({
       ...draftValue,
       editingMode: 'view',
     });
 
     removeFocusItemFromFocusStackById({ focusId: instanceId });
+
+    if (isFocusInSelectInput) {
+      displayModeButtonRef.current?.focus({ preventScroll: true });
+    }
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -247,6 +258,7 @@ export const FormMultiSelectFieldInput = ({
               </StyledDisplayModeReadonlyContainer>
             ) : (
               <StyledDisplayModeContainer
+                ref={displayModeButtonRef}
                 type="button"
                 data-open={draftValue.editingMode === 'edit'}
                 onClick={handleDisplayModeClick}
@@ -278,7 +290,7 @@ export const FormMultiSelectFieldInput = ({
             />
           )}
         </FormFieldInputInnerContainer>
-        <StyledSelectInputContainer>
+        <StyledSelectInputContainer ref={selectInputContainerRef}>
           {draftValue.type === 'static' &&
             draftValue.editingMode === 'edit' && (
               <OverlayContainer>

@@ -347,7 +347,8 @@ it('closes an open multi-select list first, then leaves the creation form', asyn
       options={SELECT_OPTIONS}
     />,
   );
-  await user.click(screen.getByText('Option A'));
+  await user.tab();
+  await user.keyboard('{Enter}');
   expect(await screen.findByText('Option B')).toBeInTheDocument();
 
   await user.keyboard('{Escape}');
@@ -355,6 +356,7 @@ it('closes an open multi-select list first, then leaves the creation form', asyn
   await waitFor(() =>
     expect(screen.queryByText('Option B')).not.toBeInTheDocument(),
   );
+  expect(screen.getByRole('button', { name: /Option A/ })).toHaveFocus();
   expect(mockHandleSidePanelEscape).not.toHaveBeenCalled();
 
   await user.keyboard('{Escape}');
