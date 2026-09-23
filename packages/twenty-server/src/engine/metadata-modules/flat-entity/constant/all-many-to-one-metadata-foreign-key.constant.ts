@@ -316,6 +316,13 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
+  settingsMenuItem: {
+    workspace: null,
+    application: null,
+    frontComponent: {
+      foreignKey: 'frontComponentId',
+    },
+  },
   searchFieldMetadata: {
     workspace: null,
     application: null,

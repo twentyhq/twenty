@@ -234,6 +234,39 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
   },
   {
+    name: 'Dropdown',
+    source: 'components/navigation/Dropdown/Dropdown.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/dropdown',
+    parts: [
+      'Root',
+      'Trigger',
+      'Content',
+      'ActionItem',
+      'OptionItem',
+      'Search',
+      'Page',
+      'Back',
+      'Submenu',
+      'SubmenuTrigger',
+      'Section',
+    ],
+    partPropDefaults: {
+      ActionItem: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+      OptionItem: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+      Back: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+      SubmenuTrigger: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+    },
+  },
+  {
     name: 'Section',
     source: 'components/layout/Section/Section.tsx',
     entryPoint: 'twenty-ui/components',

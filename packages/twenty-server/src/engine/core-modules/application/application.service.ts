@@ -27,6 +27,7 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
 import { serializeApplicationForBroadcast } from 'src/engine/core-modules/application/utils/serialize-application-for-broadcast.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -57,6 +58,8 @@ export class ApplicationService {
     private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
     private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
+    @InjectWorkspaceScopedRepository(SettingsMenuItemEntity)
+    private readonly settingsMenuItemRepository: WorkspaceScopedRepository<SettingsMenuItemEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectWorkspaceScopedRepository(ApplicationVariableEntity)
@@ -207,6 +210,7 @@ export class ApplicationService {
       agents,
       frontComponents,
       commandMenuItems,
+      settingsMenuItems,
       objects,
       applicationVariables,
     ] = await Promise.all([
@@ -222,6 +226,9 @@ export class ApplicationService {
       this.commandMenuItemRepository.find(workspaceId, {
         where: { applicationId: application.id },
       }),
+      this.settingsMenuItemRepository.find(workspaceId, {
+        where: { applicationId: application.id },
+      }),
       this.objectMetadataRepository.find({
         where: { applicationId: application.id, workspaceId },
       }),
@@ -234,6 +241,7 @@ export class ApplicationService {
     application.agents = agents;
     application.frontComponents = frontComponents;
     application.commandMenuItems = commandMenuItems;
+    application.settingsMenuItems = settingsMenuItems;
     application.objects = objects;
     application.applicationVariables = applicationVariables;
 

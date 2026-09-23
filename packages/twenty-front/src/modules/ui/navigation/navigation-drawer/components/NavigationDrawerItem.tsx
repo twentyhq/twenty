@@ -451,7 +451,16 @@ export const NavigationDrawerItem = ({
                     stopPropagation blocks Link's own preventDefault */}
                 <StyledRightOptionsContainer
                   onMouseDown={(e) => e.stopPropagation()}
-                  onClickCapture={(e) => e.preventDefault()}
+                  onClickCapture={(event) => {
+                    const isClickInsideLinkedOptions =
+                      isDefined(to) &&
+                      event.target instanceof Node &&
+                      event.currentTarget.contains(event.target);
+
+                    if (isClickInsideLinkedOptions) {
+                      event.preventDefault();
+                    }
+                  }}
                 >
                   <StyledRightOptionsVisbility
                     data-visible={

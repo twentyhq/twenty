@@ -149,6 +149,22 @@ export interface ObjectMetadataCommandMenuItemPayload {
     __typename: 'ObjectMetadataCommandMenuItemPayload'
 }
 
+export interface SettingsMenuItem {
+    id: Scalars['UUID']
+    frontComponentId: Scalars['UUID']
+    title: Scalars['String']
+    icon?: Scalars['String']
+    position: Scalars['Float']
+    scope: SettingsMenuItemScope
+    universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'SettingsMenuItem'
+}
+
+export type SettingsMenuItemScope = 'WORKSPACE' | 'USER'
+
 export interface LogicFunction {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -370,6 +386,7 @@ export interface Application {
     agents: Agent[]
     frontComponents: FrontComponent[]
     commandMenuItems: CommandMenuItem[]
+    settingsMenuItems?: SettingsMenuItem[]
     logicFunctions: LogicFunction[]
     objects: Object[]
     applicationVariables: ApplicationVariable[]
@@ -3207,13 +3224,27 @@ export interface TimelineActivityType {
     __typename: 'TimelineActivityType'
 }
 
+export interface PermissionFlag {
+    id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    key: Scalars['String']
+    label: Scalars['String']
+    description?: Scalars['String']
+    icon?: Scalars['String']
+    permissionType: Scalars['String']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'PermissionFlag'
+}
+
 export interface CollectionHash {
     collectionName: AllMetadataName
     hash: Scalars['String']
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'settingsMenuItem' | 'workflow' | 'workflowVersion'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -3339,6 +3370,7 @@ export interface Query {
     webhook?: Webhook
     myMessageFolders: MessageFolder[]
     myCalendarChannels: CalendarChannel[]
+    getPermissionFlags: PermissionFlag[]
     minimalMetadata: MinimalMetadata
     appKeyValue?: AppKeyValue
     getJobs: JobStatus[]
@@ -3504,6 +3536,8 @@ export interface Mutation {
     createApplicationRegistrationVariable: ApplicationRegistrationVariable
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
     deleteApplicationRegistrationVariable: Scalars['Boolean']
+    completeAppTarballUpload: ApplicationRegistration
+    /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
@@ -3813,6 +3847,21 @@ export interface ObjectMetadataCommandMenuItemPayloadGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SettingsMenuItemGenqlSelection{
+    id?: boolean | number
+    frontComponentId?: boolean | number
+    title?: boolean | number
+    icon?: boolean | number
+    position?: boolean | number
+    scope?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface LogicFunctionGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -4045,6 +4094,7 @@ export interface ApplicationGenqlSelection{
     agents?: AgentGenqlSelection
     frontComponents?: FrontComponentGenqlSelection
     commandMenuItems?: CommandMenuItemGenqlSelection
+    settingsMenuItems?: SettingsMenuItemGenqlSelection
     logicFunctions?: LogicFunctionGenqlSelection
     objects?: ObjectGenqlSelection
     applicationVariables?: ApplicationVariableGenqlSelection
@@ -7001,6 +7051,21 @@ export interface TimelineActivityTypeGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PermissionFlagGenqlSelection{
+    id?: boolean | number
+    universalIdentifier?: boolean | number
+    key?: boolean | number
+    label?: boolean | number
+    description?: boolean | number
+    icon?: boolean | number
+    permissionType?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CollectionHashGenqlSelection{
     collectionName?: boolean | number
     hash?: boolean | number
@@ -7147,6 +7212,7 @@ export interface QueryGenqlSelection{
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    getPermissionFlags?: PermissionFlagGenqlSelection
     minimalMetadata?: MinimalMetadataGenqlSelection
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
     getJobs?: (JobStatusGenqlSelection & { __args: {jobIds: Scalars['String'][]} })
@@ -7349,6 +7415,8 @@ export interface MutationGenqlSelection{
     createApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: CreateApplicationRegistrationVariableInput} })
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
     deleteApplicationRegistrationVariable?: { __args: {id: Scalars['String']} }
+    completeAppTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['UUID']} })
+    /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
@@ -8037,6 +8105,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isObjectMetadataCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is ObjectMetadataCommandMenuItemPayload => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectMetadataCommandMenuItemPayload"')
       return ObjectMetadataCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SettingsMenuItem_possibleTypes: string[] = ['SettingsMenuItem']
+    export const isSettingsMenuItem = (obj?: { __typename?: any } | null): obj is SettingsMenuItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSettingsMenuItem"')
+      return SettingsMenuItem_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10329,6 +10405,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const PermissionFlag_possibleTypes: string[] = ['PermissionFlag']
+    export const isPermissionFlag = (obj?: { __typename?: any } | null): obj is PermissionFlag => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPermissionFlag"')
+      return PermissionFlag_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const CollectionHash_possibleTypes: string[] = ['CollectionHash']
     export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
@@ -10473,6 +10557,11 @@ export const enumCommandMenuItemAvailabilityType = {
    GLOBAL_OBJECT_CONTEXT: 'GLOBAL_OBJECT_CONTEXT' as const,
    RECORD_SELECTION: 'RECORD_SELECTION' as const,
    FALLBACK: 'FALLBACK' as const
+}
+
+export const enumSettingsMenuItemScope = {
+   WORKSPACE: 'WORKSPACE' as const,
+   USER: 'USER' as const
 }
 
 export const enumLogicFunctionExecutionMode = {
@@ -11237,6 +11326,7 @@ export const enumAllMetadataName = {
    connectionProvider: 'connectionProvider' as const,
    searchFieldMetadata: 'searchFieldMetadata' as const,
    timelineActivityType: 'timelineActivityType' as const,
+   settingsMenuItem: 'settingsMenuItem' as const,
    workflow: 'workflow' as const,
    workflowVersion: 'workflowVersion' as const
 }

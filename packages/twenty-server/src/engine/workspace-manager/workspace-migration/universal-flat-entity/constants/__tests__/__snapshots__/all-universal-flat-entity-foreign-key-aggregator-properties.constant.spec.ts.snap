@@ -61,6 +61,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "rowLevelPermissionPredicateUniversalIdentifiers",
   ],
   "searchFieldMetadata": [],
+  "settingsMenuItem": [],
   "skill": [],
   "timelineActivityType": [],
   "view": [
