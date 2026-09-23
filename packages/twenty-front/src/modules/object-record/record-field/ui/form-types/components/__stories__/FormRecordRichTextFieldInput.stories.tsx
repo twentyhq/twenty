@@ -1,11 +1,14 @@
 import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
 import { FormRecordRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import {
   type Decorator,
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
+import { type ReactNode } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { Key } from 'ts-key-enum';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -148,10 +151,26 @@ export const Disabled: Story = {
 
 const onFieldEscape = fn();
 
-const FormFieldEscapeDecorator: Decorator = (Story) => (
-  <FormFieldEscapeContext.Provider value={onFieldEscape}>
+const CreationFormHotkeyScope = ({ children }: { children: ReactNode }) => {
+  const containerRef = useHotkeysOnFocusedElement({
+    keys: [`${Key.Meta}+${Key.Enter}`],
+    focusId: 'record-creation-form',
+    callback: () => {},
+  });
+
+  return (
+    <div ref={containerRef}>
+      <FormFieldEscapeContext.Provider value={onFieldEscape}>
+        {children}
+      </FormFieldEscapeContext.Provider>
+    </div>
+  );
+};
+
+const CreationFormDecorator: Decorator = (Story) => (
+  <CreationFormHotkeyScope>
     <Story />
-  </FormFieldEscapeContext.Provider>
+  </CreationFormHotkeyScope>
 );
 
 const focusEditor = async (canvasElement: HTMLElement) => {
@@ -174,7 +193,7 @@ export const LeavesFormOnEscape: Story = {
   args: {
     onChange: fn(),
   },
-  decorators: [FormFieldEscapeDecorator],
+  decorators: [CreationFormDecorator],
   beforeEach: () => {
     onFieldEscape.mockClear();
   },
@@ -193,7 +212,7 @@ export const ClosesSlashMenuBeforeLeavingForm: Story = {
   args: {
     onChange: fn(),
   },
-  decorators: [FormFieldEscapeDecorator],
+  decorators: [CreationFormDecorator],
   beforeEach: () => {
     onFieldEscape.mockClear();
   },

@@ -116,9 +116,15 @@ export const FormRecordRichTextFieldInput = ({
 
   const onFieldEscape = useContext(FormFieldEscapeContext);
 
-  const handleKeyDown = (event: KeyboardEvent) => {
+  const handleKeyDownCapture = (event: KeyboardEvent) => {
+    const isEscapeInEditor =
+      event.key === Key.Escape &&
+      event.target instanceof Node &&
+      isDefined(editor.domElement) &&
+      editor.domElement.contains(event.target);
+
     if (
-      event.key !== Key.Escape ||
+      !isEscapeInEditor ||
       !isDefined(onFieldEscape) ||
       editor.getExtension(SuggestionMenu)?.shown()
     ) {
@@ -145,7 +151,7 @@ export const FormRecordRichTextFieldInput = ({
   }, [hasUnreadableStoredValue, enqueueToast, t]);
 
   return (
-    <FormFieldInputContainer onKeyDown={handleKeyDown}>
+    <FormFieldInputContainer onKeyDownCapture={handleKeyDownCapture}>
       {label ? <Field.Label>{label}</Field.Label> : null}
       <BlockEditor
         editor={editor}
