@@ -21,6 +21,7 @@ export type CodeExecutionResult = {
 export type ExecutionContext = {
   env?: Record<string, string>;
   sessionId?: string;
+  actorKey?: string;
 };
 
 export type StreamCallbacks = {
