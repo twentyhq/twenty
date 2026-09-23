@@ -120,7 +120,7 @@ export const FormRecordRichTextFieldInput = ({
     if (
       event.key !== Key.Escape ||
       !isDefined(onFieldEscape) ||
-      editor.getExtension(SuggestionMenu)?.shown() === true
+      editor.getExtension(SuggestionMenu)?.shown()
     ) {
       return;
     }
