@@ -1,3 +1,4 @@
+import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
@@ -47,7 +48,7 @@ const COMPANY_RULE = {
 
 const compute = (
   draftRecord: Record<string, unknown>,
-  validationRules = [AMOUNT_RULE],
+  validationRules: ValidationRule[] = [AMOUNT_RULE],
   serverFilledFieldNames: string[] = [],
 ) =>
   computeDraftValidationRuleViolations({
