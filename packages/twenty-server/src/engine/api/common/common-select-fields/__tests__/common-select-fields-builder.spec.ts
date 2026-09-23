@@ -12,6 +12,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('CommonSelectFieldsBuilder', () => {
   let handler: CommonSelectFieldsBuilder;
@@ -520,7 +521,9 @@ describe('CommonSelectFieldsBuilder', () => {
         'company-id',
       ]);
 
-      objectsPermissions['company-id']!.restrictedFields = {
+      jestExpectToBeDefined(objectsPermissions['company-id']);
+
+      objectsPermissions['company-id'].restrictedFields = {
         'field-3': { canRead: false, canUpdate: false },
       };
 
@@ -583,7 +586,9 @@ describe('CommonSelectFieldsBuilder', () => {
         'company-id',
       ]);
 
-      objectsPermissions['company-id']!.restrictedFields = {
+      jestExpectToBeDefined(objectsPermissions['company-id']);
+
+      objectsPermissions['company-id'].restrictedFields = {
         'field-2': { canRead: false, canUpdate: false },
       };
 
@@ -644,7 +649,9 @@ describe('CommonSelectFieldsBuilder', () => {
         'company-id',
       ]);
 
-      objectsPermissions['person-id']!.restrictedFields = {
+      jestExpectToBeDefined(objectsPermissions['person-id']);
+
+      objectsPermissions['person-id'].restrictedFields = {
         'field-1': { canRead: false, canUpdate: false },
       };
 

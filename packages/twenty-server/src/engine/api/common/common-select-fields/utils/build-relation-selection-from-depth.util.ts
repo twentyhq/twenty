@@ -100,9 +100,10 @@ export const buildRelationSelectionFromDepth = ({
         flatEntityId: flatField.relationTargetObjectMetadataId,
       });
 
-    if (
-      !objectsPermissions[relationTargetObjectMetadata.id]?.canReadObjectRecords
-    ) {
+    const relationTargetObjectPermissions =
+      objectsPermissions[relationTargetObjectMetadata.id];
+
+    if (!relationTargetObjectPermissions?.canReadObjectRecords) {
       continue;
     }
 
@@ -116,8 +117,7 @@ export const buildRelationSelectionFromDepth = ({
     });
 
     const relationFieldSelectFields = buildFieldSelection({
-      restrictedFields:
-        objectsPermissions[relationTargetObjectMetadata.id]!.restrictedFields,
+      restrictedFields: relationTargetObjectPermissions.restrictedFields,
       flatObjectMetadata: relationTargetObjectMetadata,
       flatFields: relationFlatFields,
       onlyUseLabelIdentifierFieldsInRelations,

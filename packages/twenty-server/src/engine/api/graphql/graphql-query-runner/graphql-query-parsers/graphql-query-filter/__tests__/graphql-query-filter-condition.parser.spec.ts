@@ -9,6 +9,7 @@ import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphq
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const createFlatFieldMetadata = (
   overrides: Partial<FlatFieldMetadata>,
@@ -100,10 +101,10 @@ describe('GraphqlQueryFilterConditionParser', () => {
       });
 
       expect(calls).toHaveLength(2);
-      expect(calls[0]?.method!).toBe('where');
-      expect(calls[1]?.method!).toBe('andWhere');
-      expect(calls[0]?.node.kind!).toBe('sql');
-      expect(calls[1]?.node.kind!).toBe('sql');
+      expect(calls[0]?.method).toBe('where');
+      expect(calls[1]?.method).toBe('andWhere');
+      expect(calls[0]?.node.kind).toBe('sql');
+      expect(calls[1]?.node.kind).toBe('sql');
     });
 
     it('passes the leaf condition and its parameters through to the query builder', () => {
@@ -111,7 +112,9 @@ describe('GraphqlQueryFilterConditionParser', () => {
 
       expect(calls).toHaveLength(1);
 
-      const node = calls[0]?.node!;
+      jestExpectToBeDefined(calls[0]);
+
+      const node = calls[0].node;
 
       if (node.kind !== 'sql') {
         throw new Error('Expected a sql node');

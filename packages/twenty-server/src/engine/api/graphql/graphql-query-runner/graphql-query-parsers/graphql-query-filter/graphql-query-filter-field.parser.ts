@@ -1,7 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { Brackets, type WhereExpressionBuilder } from 'typeorm';
 import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  capitalize,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -137,7 +141,10 @@ export class GraphqlQueryFilterFieldParser {
         useDirectTableReference,
       );
     }
-    const [[operator, value]] = Object.entries(filterValue);
+    const [operatorEntry] = Object.entries(filterValue);
+    assertIsDefinedOrThrow(operatorEntry);
+
+    const [operator, value] = operatorEntry;
 
     assertArrayOperatorValueIsNonEmptyArray({ operator, value, key });
 
@@ -315,10 +322,13 @@ export class GraphqlQueryFilterFieldParser {
 
       const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-      const [[operator, value]] = Object.entries(
+      const [operatorEntry] = Object.entries(
         // oxlint-disable-next-line typescript/no-explicit-any
         subFieldFilter as Record<string, any>,
       );
+      assertIsDefinedOrThrow(operatorEntry);
+
+      const [operator, value] = operatorEntry;
 
       assertArrayOperatorValueIsNonEmptyArray({
         operator,

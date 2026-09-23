@@ -2,7 +2,7 @@ import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
-import { isSafeUrl } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isSafeUrl } from 'twenty-shared/utils';
 
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
 import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
@@ -19,6 +19,8 @@ const hasDangerousUrl = (json: string): boolean => {
   let match;
 
   while ((match = URL_VALUE_PATTERN.exec(json)) !== null) {
+    assertIsDefinedOrThrow(match[1]);
+
     const url = match[1].trim();
 
     if (url.length > 0 && !isSafeUrl(url)) {

@@ -159,10 +159,14 @@ export class ProcessNestedRelationsHelper {
       parentObjectMetadataItem,
     );
 
-    const sourceFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMaps.fieldIdByName[sourceFieldName],
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const sourceFieldMetadataId = fieldMaps.fieldIdByName[sourceFieldName];
+
+    const sourceFieldMetadata = isDefined(sourceFieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: sourceFieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
 
     if (!sourceFieldMetadata) {
       return;
@@ -354,10 +358,14 @@ export class ProcessNestedRelationsHelper {
     sourceFieldName: string;
     fieldMaps: FieldMapsForObject;
   }) {
-    const targetFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMaps.fieldIdByName[sourceFieldName],
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const sourceFieldMetadataId = fieldMaps.fieldIdByName[sourceFieldName];
+
+    const targetFieldMetadata = isDefined(sourceFieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: sourceFieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
 
     if (!targetFieldMetadata) {
       throw new GraphqlQueryRunnerException(

@@ -5,7 +5,12 @@ import {
   type OrderByDirection,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+  isPlainObject,
+} from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -32,7 +37,7 @@ export type OrderByLeaf = {
   fieldMetadata: OrmFlatFieldMetadata;
 } & (
   | // Scalar columns, including join columns addressed directly (e.g. companyId)
-    { kind: 'scalar' }
+  { kind: 'scalar' }
   | { kind: 'composite'; compositeProperty: CompositeProperty }
   | {
       kind: 'relation';
@@ -109,10 +114,13 @@ const resolveRelationLeaf = ({
   }
 
   const [, targetFieldName, targetPropertyName, ...extraPath] = path;
+  assertIsDefinedOrThrow(targetFieldName);
+
   const targetFieldMetadataId = buildFieldMapsFromFlatObjectMetadata(
     flatFieldMetadataMaps,
     targetObjectMetadata,
   ).fieldIdByName[targetFieldName];
+
   const targetFieldMetadata = isDefined(targetFieldMetadataId)
     ? findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: targetFieldMetadataId,

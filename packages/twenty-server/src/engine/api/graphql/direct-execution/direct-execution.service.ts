@@ -16,7 +16,11 @@ import {
   type GraphQLResolveInfo,
 } from 'graphql';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import graphqlFields from 'graphql-fields';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
@@ -280,6 +284,8 @@ export class DirectExecutionService {
           const responseKey = field.alias?.value ?? field.name.value;
 
           try {
+            assertIsDefinedOrThrow(entry);
+
             const args = extractArgumentsFromAst(field.arguments, variables);
 
             const graphqlPartialResolveInfo = graphQLBuildPartialResolveInfo(

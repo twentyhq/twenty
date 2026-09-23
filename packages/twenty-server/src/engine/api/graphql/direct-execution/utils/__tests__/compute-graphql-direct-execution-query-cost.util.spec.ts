@@ -5,6 +5,7 @@ import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution
 import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util';
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('computeGraphQLDirectExecutionQueryCost', () => {
   it('multiplies selected fields by the requested row count', () => {
@@ -30,12 +31,14 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
     const variables = { first: 25 };
     const [field] = graphQLExtractTopLevelFields(document, 'FindPeople');
 
+    jestExpectToBeDefined(field);
+
     const result = computeGraphQLDirectExecutionQueryCost({
       rootFields: [
         {
           field,
           method: RESOLVER_METHOD_NAMES.FIND_MANY,
-          args: extractArgumentsFromAst(field?.arguments, variables),
+          args: extractArgumentsFromAst(field.arguments, variables),
         },
       ],
       fragmentMap: graphQLBuildFragmentMap(document),
@@ -64,6 +67,8 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
       }
     `);
     const [field] = graphQLExtractTopLevelFields(document, 'FindPeople');
+
+    jestExpectToBeDefined(field);
 
     const result = computeGraphQLDirectExecutionQueryCost({
       rootFields: [
@@ -106,17 +111,20 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
     `);
     const fields = graphQLExtractTopLevelFields(document, 'FindRecords');
 
+    jestExpectToBeDefined(fields[0]);
+    jestExpectToBeDefined(fields[1]);
+
     const result = computeGraphQLDirectExecutionQueryCost({
       rootFields: [
         {
           field: fields[0],
           method: RESOLVER_METHOD_NAMES.FIND_MANY,
-          args: extractArgumentsFromAst(fields[0]?.arguments!, {}),
+          args: extractArgumentsFromAst(fields[0].arguments, {}),
         },
         {
           field: fields[1],
           method: RESOLVER_METHOD_NAMES.FIND_ONE,
-          args: extractArgumentsFromAst(fields[1]?.arguments!, {}),
+          args: extractArgumentsFromAst(fields[1].arguments, {}),
         },
       ],
       fragmentMap: graphQLBuildFragmentMap(document),
@@ -157,6 +165,8 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
     const [field] = graphQLExtractTopLevelFields(document, 'FindPeople');
     const fragmentMap = graphQLBuildFragmentMap(document);
     const fragmentLookupSpy = jest.spyOn(fragmentMap, 'get');
+
+    jestExpectToBeDefined(field);
 
     const result = computeGraphQLDirectExecutionQueryCost({
       rootFields: [

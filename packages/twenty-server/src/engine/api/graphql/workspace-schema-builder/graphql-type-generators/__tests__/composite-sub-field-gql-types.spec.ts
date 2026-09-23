@@ -18,6 +18,7 @@ import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { computeCompositeFieldObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-object-type-key.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('composite sub-field gql types', () => {
   let gqlTypesStorage: GqlTypesStorage;
@@ -69,33 +70,35 @@ describe('composite sub-field gql types', () => {
     objectTypeGenerator.buildAndStore(phonesCompositeType);
     objectTypeGenerator.buildAndStore(linksCompositeType);
 
-    expect(
-      String(
-        getObjectType(FieldMetadataType.EMAILS).getFields().additionalEmails
-          .type,
-      ),
-    ).toBe('[String!]');
-    expect(
-      String(
-        getObjectType(FieldMetadataType.PHONES).getFields().additionalPhones
-          .type,
-      ),
-    ).toBe('[AdditionalPhone!]');
-    expect(
-      String(
-        getObjectType(FieldMetadataType.LINKS).getFields().secondaryLinks.type,
-      ),
-    ).toBe('[SecondaryLink!]');
+    const additionalEmails = getObjectType(FieldMetadataType.EMAILS).getFields()
+      .additionalEmails;
+
+    jestExpectToBeDefined(additionalEmails);
+
+    expect(String(additionalEmails.type)).toBe('[String!]');
+    const additionalPhones = getObjectType(FieldMetadataType.PHONES).getFields()
+      .additionalPhones;
+
+    jestExpectToBeDefined(additionalPhones);
+
+    expect(String(additionalPhones.type)).toBe('[AdditionalPhone!]');
+    const secondaryLinks = getObjectType(FieldMetadataType.LINKS).getFields()
+      .secondaryLinks;
+
+    jestExpectToBeDefined(secondaryLinks);
+
+    expect(String(secondaryLinks.type)).toBe('[SecondaryLink!]');
   });
 
   it('types raw json sub-fields in create input types', () => {
     createInputTypeGenerator.buildAndStore(phonesCompositeType);
 
-    expect(
-      String(
-        getCreateInputType(FieldMetadataType.PHONES).getFields()
-          .additionalPhones.type,
-      ),
-    ).toBe('[AdditionalPhoneInput!]');
+    const fieldAdditionalPhones = getCreateInputType(
+      FieldMetadataType.PHONES,
+    ).getFields().additionalPhones;
+
+    jestExpectToBeDefined(fieldAdditionalPhones);
+
+    expect(String(fieldAdditionalPhones.type)).toBe('[AdditionalPhoneInput!]');
   });
 });

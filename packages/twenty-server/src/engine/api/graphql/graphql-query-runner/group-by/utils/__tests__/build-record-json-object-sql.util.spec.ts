@@ -5,6 +5,7 @@ import {
   SUB_QUERY_ALIAS,
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const buildGroupByDefinition = (
   overrides: Partial<GroupByDefinition> = {},
@@ -61,10 +62,12 @@ describe('buildRecordJsonObjectSql', () => {
     const chunks = sql.split(' || ');
 
     expect(chunks).toHaveLength(2);
-    expect(chunks[0]?.split(', ').length / 2).toBe(
-      JSONB_BUILD_OBJECT_MAX_PAIRS,
-    );
-    expect(chunks[1]?.split(', ').length / 2).toBe(
+    jestExpectToBeDefined(chunks[0]);
+
+    expect(chunks[0].split(', ').length / 2).toBe(JSONB_BUILD_OBJECT_MAX_PAIRS);
+    jestExpectToBeDefined(chunks[1]);
+
+    expect(chunks[1].split(', ').length / 2).toBe(
       columnCount + 1 - JSONB_BUILD_OBJECT_MAX_PAIRS,
     );
     expect(

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -108,6 +108,8 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         ...this.getNestedRelationsReadPathOptions(),
       });
     }
+
+    assertIsDefinedOrThrow(objectRecords[0]);
 
     return objectRecords[0];
   }

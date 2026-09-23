@@ -3,7 +3,11 @@ import {
   FieldMetadataType,
   type ObjectRecord,
 } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isPlainObject,
+} from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
@@ -74,6 +78,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     orderByValuesByRecordId?: OrderByValuesByRecordId;
   }): IConnection<T> {
     const objectMetadataId = this.objectIdByNameSingular[objectName];
+    assertIsDefinedOrThrow(objectMetadataId);
+
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: objectMetadataId,
       flatEntityMaps: this.flatObjectMetadataMaps,
@@ -182,6 +188,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     }
 
     const objectMetadataId = this.objectIdByNameSingular[objectName];
+
+    assertIsDefinedOrThrow(objectMetadataId);
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: objectMetadataId,
