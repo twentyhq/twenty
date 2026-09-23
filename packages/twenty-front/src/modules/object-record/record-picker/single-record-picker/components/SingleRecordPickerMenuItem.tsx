@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useMemo } from 'react';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -105,7 +104,7 @@ export const SingleRecordPickerMenuItem = ({
           />
         }
       >
-        <OverflowingTextWithTooltip text={searchRecordStore.label} />
+        {searchRecordStore.label}
       </ListItem>
     </SelectableListItem>
   );

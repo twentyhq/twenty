@@ -28,6 +28,11 @@ export {
   isRecurringChargeAmount,
   isRecurringCharge,
 } from './applicationBillingType';
+export type { ApplicationCapability } from './applicationCapabilityType';
+export {
+  APPLICATION_CAPABILITIES,
+  isApplicationCapability,
+} from './applicationCapabilityType';
 export type {
   KnownApplicationCategory,
   ApplicationCategory,
@@ -36,6 +41,14 @@ export {
   APPLICATION_CATEGORIES,
   isKnownApplicationCategory,
 } from './applicationCategoryType';
+export { ApplicationHealthStatus } from './applicationHealthStatus';
+export type {
+  ApplicationHealthCheckReportedStatus,
+  ApplicationHealthCheckReportedBannerStatus,
+  ApplicationHealthCheckAction,
+  ApplicationHealthCheckResult,
+} from './applicationHealthType';
+export { isApplicationHealthCheckResult } from './applicationHealthType';
 export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
@@ -140,6 +153,7 @@ export type {
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
+export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {

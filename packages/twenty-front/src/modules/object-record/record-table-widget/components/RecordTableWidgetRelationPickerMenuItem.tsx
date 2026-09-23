@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -50,7 +49,7 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
           />
         }
       >
-        <OverflowingTextWithTooltip text={relationRecord.name} />
+        {relationRecord.name}
       </ListItem>
     </SelectableListItem>
   );

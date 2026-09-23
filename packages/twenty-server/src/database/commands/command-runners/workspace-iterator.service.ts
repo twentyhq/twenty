@@ -15,6 +15,7 @@ import { activationStatusIn } from 'src/database/commands/command-runners/utils/
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 export type WorkspaceIteratorShard = {
@@ -64,6 +65,7 @@ export class WorkspaceIteratorService {
     private readonly coreDataSource: DataSource,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly commandShutdownService: CommandShutdownService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   listenToShutdownSignals(): void {
@@ -138,6 +140,10 @@ export class WorkspaceIteratorService {
         report.success.push({ workspaceId });
       } catch (error: unknown) {
         report.fail.push({ error: error as Error, workspaceId });
+      } finally {
+        await this.workspaceCacheService.evictWorkspaceFromLocalCache(
+          workspaceId,
+        );
       }
     }
 

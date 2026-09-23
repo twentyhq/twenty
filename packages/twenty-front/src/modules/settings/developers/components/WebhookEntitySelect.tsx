@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -161,7 +160,7 @@ export const WebhookEntitySelect = ({
                           />
                         }
                       >
-                        <OverflowingTextWithTooltip text={option.label} />
+                        {option.label}
                       </ListItem>
                     </SelectableListItem>
                   ))}
@@ -186,7 +185,7 @@ export const WebhookEntitySelect = ({
                         indicator="check"
                         startIcon={<SelectOptionIcon Icon={option.Icon} />}
                       >
-                        <OverflowingTextWithTooltip text={option.label} />
+                        {option.label}
                       </ListItem>
                     </SelectableListItem>
                   ))}

@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 
@@ -11,7 +12,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
 import { IconPlus } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
 import { WorkflowOutputSchemaFieldHeader } from './WorkflowOutputSchemaFieldHeader';
@@ -141,7 +141,7 @@ export const WorkflowOutputSchemaBuilder = ({
         <StyledOutputSchemaFieldContainer>
           <StyledMessageContentContainer>
             <StyledMessageDescription data-testid="empty-output-schema-message-description">
-              {t`Click on "Add Output Field" below to define the structure of your AI agent's response. These fields will be used to format and validate the AI's output when the workflow is executed, and can be referenced by subsequent workflow steps.`}
+              {t`Click on "Add Output Field" below to define the structure of your agent's response. These fields will be used to format and validate the agent's output when the workflow is executed, and can be referenced by subsequent workflow steps.`}
             </StyledMessageDescription>
           </StyledMessageContentContainer>
         </StyledOutputSchemaFieldContainer>
@@ -215,11 +215,10 @@ export const WorkflowOutputSchemaBuilder = ({
 
       {!readonly && (
         <StyledAddFieldButtonContainer>
-          <MenuItem
-            LeftIcon={IconPlus}
-            text={t`Add Output Field`}
+          <ListItem
+            startIcon={<IconPlus />}
             onClick={addField}
-          />
+          >{t`Add Output Field`}</ListItem>
         </StyledAddFieldButtonContainer>
       )}
     </StyledOutputSchemaContainer>

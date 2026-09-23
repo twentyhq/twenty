@@ -36,10 +36,7 @@ const validateWorkflowVersion = (workflowVersionId: string) =>
     { workflowVersionId },
   );
 
-const updateStep = (
-  workflowVersionId: string,
-  step: Record<string, unknown>,
-) =>
+const updateStep = (workflowVersionId: string, step: Record<string, unknown>) =>
   graphql(
     `
       mutation UpdateWorkflowVersionStep(
@@ -178,7 +175,13 @@ describe('Classify step activation (e2e)', () => {
     expect(classifyStep.settings.input.state).toBe('');
     expect(classifyStep.settings.input.questions).toHaveLength(1);
     expect(classifyStep.settings.input.questions[0].instructions).toBe('');
-    expect(classifyStep.settings.input.questions[0].criteria).toEqual([]);
+    expect(classifyStep.settings.input.questions[0].criteria).toEqual([
+      {
+        id: expect.any(String),
+        name: 'Lawyer',
+        description: 'Advises clients on legal matters',
+      },
+    ]);
   });
 
   it('should refuse to validate the step as it ships', async () => {

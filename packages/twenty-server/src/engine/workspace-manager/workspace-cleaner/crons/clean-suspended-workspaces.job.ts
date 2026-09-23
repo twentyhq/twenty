@@ -35,7 +35,6 @@ export class CleanSuspendedWorkspacesJob {
   @SentryCronMonitor(
     CleanSuspendedWorkspacesJob.name,
     cleanSuspendedWorkspaceCronPattern,
-    { maxRuntimeInMinutes: 15 },
   )
   async handle(): Promise<void> {
     const advisoryLockResult =
