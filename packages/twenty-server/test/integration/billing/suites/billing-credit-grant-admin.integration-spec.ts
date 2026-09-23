@@ -18,6 +18,7 @@ import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/bi
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -136,7 +137,7 @@ describe('Admin credit grant and revoke (integration)', () => {
 
     const grants = await listCreditGrants(workspaceId);
 
-    expect(grants[0].expiresAt).toBeNull();
+    expect(grants[0]?.expiresAt).toBeNull();
   });
 
   // Credits settle a period at a time, so a mid-period deadline would be invisible to the counter and carry-forward
@@ -162,7 +163,7 @@ describe('Admin credit grant and revoke (integration)', () => {
       interval: SubscriptionInterval.Month,
     });
 
-    expect(storedGrant.expiresAt).toEqual(expectedExpiresAt);
+    expect(storedGrant?.expiresAt).toEqual(expectedExpiresAt);
     expect(expectedExpiresAt.getTime()).toBeGreaterThanOrEqual(
       addDays(new Date(), 30).getTime(),
     );
@@ -216,6 +217,8 @@ describe('Admin credit grant and revoke (integration)', () => {
     ).not.toBeNull();
 
     const grants = await listCreditGrants(workspaceId);
+
+    jestExpectToBeDefined(grants[0]);
 
     expect(grants[0].revokedAt).not.toBeNull();
     expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();

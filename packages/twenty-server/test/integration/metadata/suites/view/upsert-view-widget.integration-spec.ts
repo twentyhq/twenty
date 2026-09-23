@@ -660,7 +660,7 @@ describe('upsertViewWidget', () => {
           widgetId: testSetup.widgetId,
           viewFilters: [
             {
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               operand: ViewFilterOperand.CONTAINS,
               value: 'test-value',
             },
@@ -698,7 +698,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               operand: ViewFilterOperand.CONTAINS,
               value: 'initial',
             },
@@ -713,7 +713,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               operand: ViewFilterOperand.DOES_NOT_CONTAIN,
               value: 'updated',
             },
@@ -748,13 +748,13 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterToKeepId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               operand: ViewFilterOperand.CONTAINS,
               value: 'keep',
             },
             {
               id: filterToRemoveId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               operand: ViewFilterOperand.CONTAINS,
               value: 'remove',
             },
@@ -769,7 +769,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterToKeepId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               operand: ViewFilterOperand.CONTAINS,
               value: 'keep',
             },
@@ -814,7 +814,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               operand: ViewFilterOperand.CONTAINS,
               value: 'grouped-filter',
               viewFilterGroupId: filterGroupId,
@@ -857,7 +857,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               direction: ViewSortDirection.DESC,
             },
           ],
@@ -887,7 +887,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               direction: ViewSortDirection.ASC,
             },
           ],
@@ -901,7 +901,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               direction: ViewSortDirection.DESC,
             },
           ],
@@ -932,7 +932,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortToKeepId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               direction: ViewSortDirection.ASC,
             },
             {
@@ -951,7 +951,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortToKeepId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               direction: ViewSortDirection.ASC,
             },
           ],
@@ -1025,7 +1025,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               operand: ViewFilterOperand.CONTAINS,
               value: 'combined-test',
               viewFilterGroupId: filterGroupId,
@@ -1034,7 +1034,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               direction: ViewSortDirection.DESC,
             },
           ],
@@ -1129,7 +1129,7 @@ describe('upsertViewWidget', () => {
           viewFilters: [
             {
               id: filterId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               operand: ViewFilterOperand.CONTAINS,
               value: 'to-be-removed',
             },
@@ -1181,7 +1181,7 @@ describe('upsertViewWidget', () => {
           viewSorts: [
             {
               id: sortId,
-              fieldMetadataId,
+              fieldMetadataId: fieldMetadataId!,
               direction: ViewSortDirection.ASC,
             },
           ],

@@ -98,7 +98,7 @@ describe('SEND_EMAIL workflow action on Microsoft (integration)', () => {
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         'messageChannelId messageExternalId',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual([
       expect.objectContaining({
@@ -111,7 +111,7 @@ describe('SEND_EMAIL workflow action on Microsoft (integration)', () => {
         'messageParticipant',
         'messageParticipants',
         'handle role',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual(
       expect.arrayContaining([

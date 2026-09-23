@@ -70,8 +70,8 @@ describe('successful user sessions API (integration)', () => {
     const currentSessions = sessions.filter((session) => session.isCurrent);
 
     expect(currentSessions).toHaveLength(1);
-    expect(currentSessions[0].authProvider).toBe('password');
-    expect(currentSessions[0].isImpersonating).toBe(false);
+    expect(currentSessions[0]?.authProvider).toBe('password');
+    expect(currentSessions[0]?.isImpersonating).toBe(false);
   });
 
   it('should revoke a targeted session by id', async () => {
@@ -129,6 +129,6 @@ describe('successful user sessions API (integration)', () => {
     const sessions = await fetchSessions();
 
     expect(sessions).toHaveLength(1);
-    expect(sessions[0].isCurrent).toBe(true);
+    expect(sessions[0]?.isCurrent).toBe(true);
   });
 });

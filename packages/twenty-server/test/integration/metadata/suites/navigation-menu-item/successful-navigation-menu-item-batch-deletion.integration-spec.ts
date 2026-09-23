@@ -114,7 +114,8 @@ describe('NavigationMenuItem batch deletion should succeed', () => {
 
     jestExpectToBeDefined(createData?.createManyNavigationMenuItems);
     const items = createData.createManyNavigationMenuItems;
-    const childId = items[1].id;
+    const childId = items[1]?.id;
+    jestExpectToBeDefined(childId);
 
     pendingCleanupIds = items.map((item) => item.id);
 
@@ -155,7 +156,8 @@ describe('NavigationMenuItem batch deletion should succeed', () => {
     });
 
     jestExpectToBeDefined(createData?.createManyNavigationMenuItems);
-    const itemId = createData.createManyNavigationMenuItems[0].id;
+    const itemId = createData.createManyNavigationMenuItems[0]?.id;
+    jestExpectToBeDefined(itemId);
 
     pendingCleanupIds = [itemId];
 

@@ -50,10 +50,10 @@ const RECORDS = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((position) => ({
 }));
 const ORDERED_RECORDS = [...RECORDS].reverse();
 const ADDRESS_SUBFIELD_COUNT = Object.keys(
-  ADDRESS_VALUES[ADDRESS_FIELD_NAMES[0]],
+  ADDRESS_VALUES[ADDRESS_FIELD_NAMES[0]!],
 ).length;
 const SCALAR_FIELD_COUNT =
-  Object.keys(RECORDS[0]).length - ADDRESS_FIELD_NAMES.length;
+  Object.keys(RECORDS[0]!).length - ADDRESS_FIELD_NAMES.length;
 const SELECTED_RECORD_COLUMN_COUNT =
   SCALAR_FIELD_COUNT + ADDRESS_FIELD_NAMES.length * ADDRESS_SUBFIELD_COUNT;
 const RECORD_GQL_FIELDS = `

@@ -66,7 +66,7 @@ describe('Tab viewport widgets in metadata mutation batches', () => {
     });
 
     expect(errors).toBeUndefined();
-    return data.updatePageLayoutWithTabsAndWidgets.tabs?.[0].widgets;
+    return data.updatePageLayoutWithTabsAndWidgets.tabs?.[0]?.widgets;
   };
 
   beforeEach(async () => {

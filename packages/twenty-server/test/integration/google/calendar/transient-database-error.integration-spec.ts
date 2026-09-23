@@ -150,7 +150,9 @@ describe('Calendar import transient database errors (integration)', () => {
           'SELECT pg_backend_pid() AS pid',
         );
 
-        importBackendPid = Number(backends[0].pid);
+        const pid = backends[0]?.pid;
+
+        importBackendPid = Number(pid);
 
         return writeCalendarEventParticipants(args);
       });

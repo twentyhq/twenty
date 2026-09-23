@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -106,9 +107,10 @@ const learnToolSchema = async (
 
   expect(payload.notFound).toEqual([]);
   expect(payload.tools).toHaveLength(1);
-  expect(payload.tools[0].name).toBe(toolName);
+  expect(payload.tools[0]?.name).toBe(toolName);
 
-  const inputSchema = payload.tools[0].inputSchema;
+  const inputSchema = payload.tools[0]?.inputSchema;
+  jestExpectToBeDefined(inputSchema);
 
   expect(inputSchema).toBeDefined();
 
@@ -225,10 +227,10 @@ describe('MCP tool execution (integration)', () => {
       }>;
 
       expect(rows).toHaveLength(1);
-      expect(rows[0].noteId).toBe(createdNoteId);
-      expect(rows[0].targetCompanyId).toBe(createdCompanyId);
-      expect(rows[0].targetPersonId).toBeNull();
-      expect(rows[0].targetOpportunityId).toBeNull();
+      expect(rows[0]?.noteId).toBe(createdNoteId);
+      expect(rows[0]?.targetCompanyId).toBe(createdCompanyId);
+      expect(rows[0]?.targetPersonId).toBeNull();
+      expect(rows[0]?.targetOpportunityId).toBeNull();
     });
   });
 

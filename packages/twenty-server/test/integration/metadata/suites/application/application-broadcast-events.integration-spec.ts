@@ -140,9 +140,9 @@ describe('Application broadcast events', () => {
 
     expect(registrationUpdatedEvents).toHaveLength(1);
     expect(
-      Object.keys(registrationUpdatedEvents[0].properties.after ?? {}).sort(),
+      Object.keys(registrationUpdatedEvents[0]?.properties.after ?? {}).sort(),
     ).toEqual(APPLICATION_REGISTRATION_PAYLOAD_KEYS);
-    expect(registrationUpdatedEvents[0].properties.after).toMatchObject({
+    expect(registrationUpdatedEvents[0]?.properties.after).toMatchObject({
       name: 'Broadcast test application renamed',
     });
 

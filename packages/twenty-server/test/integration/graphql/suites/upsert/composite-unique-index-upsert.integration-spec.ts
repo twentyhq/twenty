@@ -8,6 +8,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { type Manifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 // A composite UNIQUE index can't be created through the public index API
 // (createOneIndex forces isUnique: false). Application manifest sync is the only
@@ -254,8 +255,8 @@ describe('upsert with composite unique index', () => {
       ),
     )[0];
 
-    expect(created.id).toBe(recordId);
-    expect(created.payload).toBe('original');
+    expect(created?.id).toBe(recordId);
+    expect(created?.payload).toBe('original');
 
     const upserted = getRecords(
       await upsertRecords(
@@ -265,8 +266,8 @@ describe('upsert with composite unique index', () => {
     );
 
     expect(upserted).toHaveLength(1);
-    expect(upserted[0].id).toBe(recordId);
-    expect(upserted[0].payload).toBe('updated');
+    expect(upserted[0]?.id).toBe(recordId);
+    expect(upserted[0]?.payload).toBe('updated');
   }, 60000);
 
   it('inserts a new record when only part of the composite key matches', async () => {
@@ -288,9 +289,12 @@ describe('upsert with composite unique index', () => {
     );
 
     expect(upserted).toHaveLength(1);
-    expect(upserted[0].id).toBe(newId);
+    expect(upserted[0]?.id).toBe(newId);
+    jestExpectToBeDefined(upserted[0]);
+    jestExpectToBeDefined(created);
+
     expect(upserted[0].id).not.toBe(created.id);
-    expect(upserted[0].payload).toBe('second');
+    expect(upserted[0]?.payload).toBe('second');
   }, 60000);
 
   describe('with two composite unique indexes', () => {
@@ -313,8 +317,8 @@ describe('upsert with composite unique index', () => {
         ),
       )[0];
 
-      expect(created.id).toBe(recordId);
-      expect(created.payload).toBe('original');
+      expect(created?.id).toBe(recordId);
+      expect(created?.payload).toBe('original');
 
       // The payload matches this single row through both composite indexes,
       // so there is no ambiguity and the existing record is updated in place.
@@ -334,8 +338,8 @@ describe('upsert with composite unique index', () => {
       );
 
       expect(upserted).toHaveLength(1);
-      expect(upserted[0].id).toBe(recordId);
-      expect(upserted[0].payload).toBe('updated');
+      expect(upserted[0]?.id).toBe(recordId);
+      expect(upserted[0]?.payload).toBe('updated');
     }, 60000);
 
     it('fails when the payload matches different rows across the two composite indexes', async () => {

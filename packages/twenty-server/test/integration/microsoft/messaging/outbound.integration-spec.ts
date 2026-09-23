@@ -114,7 +114,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         'messageChannelId messageExternalId',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual([
       expect.objectContaining({
@@ -127,7 +127,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
         'messageParticipant',
         'messageParticipants',
         'handle role',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual(
       expect.arrayContaining([
@@ -157,7 +157,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         'messageChannelId messageExternalId',
-        { messageId: { eq: draft.id } },
+        { messageId: { eq: draft?.id } },
       ),
     ).toEqual([
       expect.objectContaining({
@@ -170,7 +170,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
         'messageParticipant',
         'messageParticipants',
         'handle role',
-        { messageId: { eq: draft.id } },
+        { messageId: { eq: draft?.id } },
       ),
     ).toEqual(
       expect.arrayContaining([
@@ -187,7 +187,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
       bcc: RECIPIENTS.bcc,
       subject: DRAFT_SUBJECT,
       body: 'Microsoft draft body',
-      draftMessageId: draft.id,
+      draftMessageId: draft?.id,
     });
 
     expect(result).toMatchObject({ success: true });
@@ -222,7 +222,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         'messageChannelId messageExternalId',
-        { messageId: { eq: sentMessage.id } },
+        { messageId: { eq: sentMessage?.id } },
       ),
     ).toEqual([
       expect.objectContaining({

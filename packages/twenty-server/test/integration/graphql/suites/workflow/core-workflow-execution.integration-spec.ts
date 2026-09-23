@@ -2475,7 +2475,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             input: {
               coreWorkflowVersionId: fixture.coreWorkflowVersionId,
               positions: [
-                { id: fixture.steps[0].id, position: { x: 321, y: 654 } },
+                { id: fixture.steps[0]?.id!, position: { x: 321, y: 654 } },
               ],
             },
           },
@@ -2485,7 +2485,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     readSpy.mockRestore();
     expect(results.filter((response) => !response.body.errors)).toHaveLength(1);
     const failedIndex = results.findIndex((response) => response.body.errors);
-    expect(JSON.stringify(results[failedIndex].body.errors)).toContain(
+    expect(JSON.stringify(results[failedIndex]?.body.errors!)).toContain(
       'changed',
     );
     expect((await edits[failedIndex]()).body.errors).toBeUndefined();

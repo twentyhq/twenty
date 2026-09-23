@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const APPLICATION_CONNECTED_ACCOUNTS_QUERY = gql`
   query ApplicationConnectedAccounts($applicationId: UUID!) {
@@ -100,7 +101,10 @@ describe('applicationConnectedAccounts resolver (e2e)', () => {
 
     const [provider] = await findConnectionProvidersByApplication(APP_ID);
 
+    jestExpectToBeDefined(provider);
+
     applicationDbId = provider.applicationId;
+
     providerDbId = provider.id;
 
     await insertAppConnection({

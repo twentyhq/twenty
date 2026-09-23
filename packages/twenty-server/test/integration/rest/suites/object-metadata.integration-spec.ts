@@ -115,8 +115,8 @@ describe.each([
       expect(items.length).toBe(1);
       expect(pageInfo.hasNextPage).toBe(true);
       expect(pageInfo.hasPreviousPage).toBe(false);
-      expect(pageInfo.startCursor).toBe(items[0].id);
-      expect(pageInfo.endCursor).toBe(items[0].id);
+      expect(pageInfo.startCursor).toBe(items[0]?.id);
+      expect(pageInfo.endCursor).toBe(items[0]?.id);
     });
 
     it('paginates forward with starting_after without overlap', async () => {

@@ -11,6 +11,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const REPORT_AUTH_FAILURE_MUTATION = gql`
   mutation ReportAppConnectionAuthFailure(
@@ -178,9 +179,15 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
     const [otherProvider] =
       await findConnectionProvidersByApplication(OTHER_APP_ID);
 
+    jestExpectToBeDefined(owningProvider);
+
     owningApplicationDbId = owningProvider.applicationId;
+
     owningProviderDbId = owningProvider.id;
+    jestExpectToBeDefined(otherProvider);
+
     otherApplicationDbId = otherProvider.applicationId;
+
     otherProviderDbId = otherProvider.id;
 
     const [userWorkspace] = await globalThis.testDataSource.query(

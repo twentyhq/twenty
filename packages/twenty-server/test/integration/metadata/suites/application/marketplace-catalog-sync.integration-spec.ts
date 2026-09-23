@@ -184,14 +184,14 @@ describe('Marketplace Catalog Sync (integration)', () => {
           );
         const universalIdentifier = isVetted
           ? crypto.randomUUID()
-          : MARKETPLACE_VETTED_APPLICATIONS[0].universalIdentifier;
+          : MARKETPLACE_VETTED_APPLICATIONS[0]?.universalIdentifier!;
         const catalogParams = {
           universalIdentifier,
           name: 'Vetted catalog sync test',
           sourceType: ApplicationRegistrationSourceType.NPM,
           sourcePackage: isVetted
             ? '@test/vetted-catalog-sync'
-            : MARKETPLACE_VETTED_APPLICATIONS[0].sourcePackage,
+            : MARKETPLACE_VETTED_APPLICATIONS[0]?.sourcePackage!,
           latestAvailableVersion: '1.0.0',
           manifest: buildBaseManifest({
             appId: universalIdentifier,

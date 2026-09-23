@@ -5,6 +5,7 @@ import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-lay
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
 import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const WIDGET_OVERRIDE_GQL_FIELDS = `
   id
@@ -52,7 +53,10 @@ describe('Page layout widget override behavior', () => {
 
     expect(tabsData.getPageLayoutTabs.length).toBeGreaterThanOrEqual(1);
 
-    const firstTabId = tabsData.getPageLayoutTabs[0].id;
+    const firstTabId = tabsData.getPageLayoutTabs[0]?.id;
+    jestExpectToBeDefined(firstTabId);
+
+    jestExpectToBeDefined(tabsData.getPageLayoutTabs[0]);
 
     seededWidgetOriginalTabLayoutMode = tabsData.getPageLayoutTabs[0]
       .layoutMode as PageLayoutTabLayoutMode;
@@ -67,8 +71,12 @@ describe('Page layout widget override behavior', () => {
 
     const firstWidget = widgetsData.getPageLayoutWidgets[0];
 
+    jestExpectToBeDefined(firstWidget);
+
     seededWidgetId = firstWidget.id;
+
     seededWidgetOriginalPageLayoutTabId = firstWidget.pageLayoutTabId;
+
     seededWidgetOriginalTitle = firstWidget.title;
   });
 
@@ -182,9 +190,13 @@ describe('Page layout widget override behavior', () => {
       },
     });
 
+    const id = tabsData.getPageLayoutTabs[0]?.id;
+
+    jestExpectToBeDefined(id);
+
     const { data: widgetsData } = await findPageLayoutWidgets({
       expectToFail: false,
-      input: { pageLayoutTabId: tabsData.getPageLayoutTabs[0].id },
+      input: { pageLayoutTabId: id },
       gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
     });
 

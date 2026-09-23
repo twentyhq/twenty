@@ -41,7 +41,7 @@ export const extractColumnNamesFromAggregateExpression = (
   const singleColumnMatch = selection.match(/"([^".]+)"/);
 
   if (singleColumnMatch) {
-    return [singleColumnMatch[1]];
+    return [singleColumnMatch[1]!];
   }
 
   return null;

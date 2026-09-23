@@ -7,6 +7,7 @@ import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { setTestConnectedAccountHandleAliases } from 'test/integration/utils/set-test-connected-account-handle-aliases.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'gmail-send-email-action@apple.dev';
 const ALIAS = 'gmail-send-email-action-alias@apple.dev';
@@ -70,7 +71,10 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
     });
     expect(google.sentMessages).toHaveLength(1);
 
-    const [{ raw }] = google.sentMessages;
+    const [destructuredRow] = google.sentMessages;
+    jestExpectToBeDefined(destructuredRow);
+
+    const { raw } = destructuredRow;
 
     expect(raw).toContain(`To: ${RECIPIENTS.to}`);
     expect(raw).toContain(`Cc: ${RECIPIENTS.cc}`);
@@ -94,7 +98,7 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         'messageChannelId',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual([
       expect.objectContaining({ messageChannelId: channel.channelId }),
@@ -104,7 +108,7 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
         'messageParticipant',
         'messageParticipants',
         'handle role',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual(
       expect.arrayContaining([
@@ -135,7 +139,10 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
       stepStatus: 'SUCCESS',
     });
 
-    const [{ raw }] = google.sentMessages.slice(-1);
+    const [destructuredRow] = google.sentMessages.slice(-1);
+    jestExpectToBeDefined(destructuredRow);
+
+    const { raw } = destructuredRow;
 
     expect(raw).toContain(`<${ALIAS}>`);
   }, 60000);

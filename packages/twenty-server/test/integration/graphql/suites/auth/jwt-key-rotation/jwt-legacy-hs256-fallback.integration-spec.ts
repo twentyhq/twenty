@@ -22,6 +22,7 @@ import { type WorkspaceAgnosticTokenJwtPayload } from 'src/engine/core-modules/a
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const buildAccessTokenPayload = (payload: AccessTokenJwtPayload) => ({
   sub: payload.sub,
@@ -151,9 +152,10 @@ describe('JWT Legacy HS256 no-kid fallback (integration)', () => {
     });
 
     expect(errors).toBeUndefined();
+
     expect(
       isNonEmptyString(
-        data?.getAuthTokensFromLoginToken.tokens.accessOrWorkspaceAgnosticToken
+        data.getAuthTokensFromLoginToken.tokens.accessOrWorkspaceAgnosticToken
           .token,
       ),
     ).toBe(true);
@@ -185,9 +187,8 @@ describe('JWT Legacy HS256 no-kid fallback (integration)', () => {
     });
 
     expect(errors).toBeUndefined();
-    expect(isNonEmptyString(data?.signUpInNewWorkspace.workspace.id)).toBe(
-      true,
-    );
+
+    expect(isNonEmptyString(data.signUpInNewWorkspace.workspace.id)).toBe(true);
   });
 
   it('verifies a hand-crafted no-kid HS256 REFRESH token via the legacy fallback (round-trip through renewToken)', async () => {
@@ -218,9 +219,11 @@ describe('JWT Legacy HS256 no-kid fallback (integration)', () => {
     const response = await renewToken(forgedToken);
 
     expect(response.body.errors).toBeUndefined();
+    jestExpectToBeDefined(response.body.data.renewToken);
+
     expect(
       isNonEmptyString(
-        response.body.data?.renewToken.tokens.accessOrWorkspaceAgnosticToken
+        response.body.data.renewToken.tokens.accessOrWorkspaceAgnosticToken
           .token,
       ),
     ).toBe(true);
@@ -240,6 +243,8 @@ describe('JWT Legacy HS256 no-kid fallback - seeded-workspace tokens (integratio
     const firstApplication = applicationsData.findManyApplications[0];
 
     expect(firstApplication).toBeDefined();
+
+    jestExpectToBeDefined(firstApplication);
 
     seededApplicationId = firstApplication.id;
   });

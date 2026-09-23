@@ -49,6 +49,7 @@ import { type RecordExportWorkspaceService } from 'src/engine/core-modules/recor
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const client = request(`http://localhost:${APP_PORT}`);
 const companies = Array.from({ length: 1005 }, (_, index) => ({
@@ -348,10 +349,15 @@ describe('record export lifecycle (integration)', () => {
   });
 
   it('exports every selected page in column and record order, then deletes the download', async () => {
+    jestExpectToBeDefined(input.filter);
+    const companyId = companies[0]?.id;
+
+    jestExpectToBeDefined(companyId);
+
     const recordExport = await exportToCompletion({
       ...input,
       filter: {
-        and: [input.filter!, { not: { id: { eq: companies[0].id } } }],
+        and: [input.filter, { not: { id: { eq: companyId } } }],
       },
     });
     expect(recordExport.progress).toBe(100);
@@ -712,7 +718,7 @@ describe('record export lifecycle (integration)', () => {
       expect(await fileExists(stored)).toBe(true);
     } finally {
       releaseRead();
-      expect((await first).text).toContain(companies[0].name);
+      expect((await first).text).toContain(companies[0]?.name);
     }
     await waitUntil(async () => !(await fileExists(stored)));
   });
@@ -821,11 +827,15 @@ describe('record export lifecycle (integration)', () => {
         if (permission === 'export') {
           await changeRole({ canAccessAllTools: false });
         } else {
+          const companyName = companies[0]?.name;
+
+          jestExpectToBeDefined(companyName);
+
           await upsertContainsRlsPredicate({
             roleId,
             objectNameSingular: 'company',
             fieldName: 'name',
-            value: companies[0].name,
+            value: companyName,
           });
         }
         releasePage();
@@ -841,11 +851,15 @@ describe('record export lifecycle (integration)', () => {
   );
 
   it('applies row permissions to both the count and the exported records', async () => {
+    const firstCompanyName = companies[0]?.name;
+
+    jestExpectToBeDefined(firstCompanyName);
+
     await upsertContainsRlsPredicate({
       roleId,
       objectNameSingular: 'company',
       fieldName: 'name',
-      value: companies[0].name,
+      value: firstCompanyName,
     });
     const recordExport = await exportToCompletion(
       input,
@@ -853,8 +867,9 @@ describe('record export lifecycle (integration)', () => {
     );
     expect(recordExport.progress).toBe(100);
     const response = await download(recordExport).expect(200);
+
     expect(response.text.replace(/^\uFEFF/, '')).toBe(
-      `Id,Name\n${companies[0].id},${companies[0].name}\n`,
+      `Id,Name\n${companies[0]?.id},${companies[0]?.name}\n`,
     );
   });
 
@@ -1027,13 +1042,18 @@ describe('record export lifecycle (integration)', () => {
       );
       const stored = await getExport(recordExport.id);
       expect(recordExport.progress).toBe(100);
-      const restrictRows = () =>
-        upsertContainsRlsPredicate({
+      const restrictRows = () => {
+        const firstCompanyName = companies[0]?.name;
+
+        jestExpectToBeDefined(firstCompanyName);
+
+        return upsertContainsRlsPredicate({
           roleId,
           objectNameSingular: 'company',
           fieldName: 'name',
-          value: companies[0].name,
+          value: firstCompanyName,
         });
+      };
       if (when === 'during-storage-open') {
         const readFile = storage.readFile.bind(storage);
         jest
@@ -1051,7 +1071,7 @@ describe('record export lifecycle (integration)', () => {
           .mockRejectedValueOnce(new Error('Storage deletion unavailable'));
       }
       const response = await download(recordExport).expect(403);
-      expect(response.text).not.toContain(companies[1].id);
+      expect(response.text).not.toContain(companies[1]?.id);
       if (cleanupFails) {
         expect(await fileExists(stored)).toBe(true);
         await globalThis.testDataSource.query(
@@ -1080,13 +1100,18 @@ describe('record export lifecycle (integration)', () => {
       );
       const stored = await getExport(ready.id);
       const claims = await authorization(ready);
-      const restrictRows = () =>
-        upsertContainsRlsPredicate({
+      const restrictRows = () => {
+        const firstCompanyName = companies[0]?.name;
+
+        jestExpectToBeDefined(firstCompanyName);
+
+        return upsertContainsRlsPredicate({
           roleId,
           objectNameSingular: 'company',
           fieldName: 'name',
-          value: companies[0].name,
+          value: firstCompanyName,
         });
+      };
       if (when === 'access-check') {
         const resolveRequester = query.resolveRequester.bind(query);
         jest

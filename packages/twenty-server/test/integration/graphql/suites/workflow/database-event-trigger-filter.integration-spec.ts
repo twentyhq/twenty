@@ -189,10 +189,10 @@ describe('Database event trigger filter (e2e)', () => {
 
     const automatedTrigger = automatedTriggers[0];
 
-    expect(automatedTrigger.type).toBe('DATABASE_EVENT');
-    expect(automatedTrigger.settings.eventName).toBe('company.created');
+    expect(automatedTrigger?.type).toBe('DATABASE_EVENT');
+    expect(automatedTrigger?.settings.eventName).toBe('company.created');
 
-    const filter = automatedTrigger.settings.filter;
+    const filter = automatedTrigger?.settings.filter;
 
     expect(filter).toBeDefined();
     expect(filter?.stepFilterGroups).toHaveLength(1);

@@ -354,9 +354,9 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
     });
 
     const createdPredicateId =
-      createData.upsertRowLevelPermissionPredicates.predicates[0].id;
+      createData.upsertRowLevelPermissionPredicates.predicates[0]?.id!;
     const createdPredicateGroupId =
-      createData.upsertRowLevelPermissionPredicates.predicateGroups[0].id;
+      createData.upsertRowLevelPermissionPredicates.predicateGroups[0]?.id!;
 
     const deleteInput: UpsertRowLevelPermissionPredicatesInput = {
       roleId: createdRoleId,

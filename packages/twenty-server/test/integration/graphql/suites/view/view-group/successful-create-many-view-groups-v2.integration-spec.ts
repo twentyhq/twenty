@@ -10,6 +10,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('View Group Resolver - Successful Create Many Operations - v2', () => {
   let testSetup: {
@@ -200,9 +201,9 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
     createdViewGroups.forEach((viewGroup, index) => {
       expect(viewGroup).toMatchObject({
         viewId: testSetup.testViewId,
-        position: inputs[index].position,
-        isVisible: inputs[index].isVisible,
-        fieldValue: inputs[index].fieldValue,
+        position: inputs[index]?.position,
+        isVisible: inputs[index]?.isVisible,
+        fieldValue: inputs[index]?.fieldValue,
       });
 
       createdViewGroupIds.push(viewGroup.id);
@@ -239,6 +240,8 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
       isVisible: true,
       fieldValue: 'Single Group',
     });
+
+    jestExpectToBeDefined(viewGroup);
 
     createdViewGroupIds.push(viewGroup.id);
   });

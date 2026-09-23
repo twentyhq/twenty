@@ -11,6 +11,7 @@ import {
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type UserSessionApiEntry = { id: string; isCurrent: boolean };
 
@@ -69,7 +70,8 @@ describe('workspace-scoped user sessions API (integration)', () => {
 
   it('should refuse to revoke a session belonging to another workspace', async () => {
     const ycSessions = await fetchSessions(ycCookieHeader);
-    const ycSessionId = ycSessions[0].id;
+    const ycSessionId = ycSessions[0]?.id;
+    jestExpectToBeDefined(ycSessionId);
 
     const response = await postMetadataOperationWithHeaders(
       revokeUserSessionQueryFactory({ userSessionId: ycSessionId }),

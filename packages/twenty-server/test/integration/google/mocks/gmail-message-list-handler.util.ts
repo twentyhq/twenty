@@ -1,5 +1,6 @@
 import { type gmail_v1 } from 'googleapis';
 import { http, HttpResponse } from 'msw';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type MswHandler } from 'test/integration/utils/http-mock.util';
 
@@ -11,9 +12,13 @@ const matchesSearchFilter = (
   message: gmail_v1.Schema$Message,
   searchFilter: string,
 ): boolean =>
-  [...searchFilter.matchAll(INCLUDED_LABEL_REGEX)].every(([, labelName]) =>
-    message.labelIds?.includes(labelName.toUpperCase()),
-  );
+  [...searchFilter.matchAll(INCLUDED_LABEL_REGEX)].every(([, labelName]) => {
+    assertIsDefinedOrThrow(message.labelIds);
+
+    assertIsDefinedOrThrow(labelName);
+
+    return message.labelIds.includes(labelName.toUpperCase());
+  });
 
 export const gmailMessageListHandler = (
   messages: gmail_v1.Schema$Message[],

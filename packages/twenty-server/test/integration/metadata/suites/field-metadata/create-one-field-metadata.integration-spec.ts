@@ -4,6 +4,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('createOne FieldMetadataService name/label sync', () => {
   let createdObjectMetadataId = '';
@@ -105,6 +106,8 @@ describe('createOne FieldMetadataService name/label sync', () => {
 
     expect(response.errors.length).toBe(1);
     const [firstError] = response.errors;
+
+    jestExpectToBeDefined(firstError);
 
     expect(firstError).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny(firstError),

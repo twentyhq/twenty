@@ -18,6 +18,7 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const SCHEMA_NAME = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const HEADROOM = 2;
@@ -94,7 +95,7 @@ describe('Record stock limit', () => {
       [SCHEMA_NAME, await findTrackedTableNames()],
     );
 
-    return Number(row.quantity);
+    return Number(row?.quantity);
   };
 
   const waitForRecordCount = (expected: number) =>
@@ -174,6 +175,8 @@ describe('Record stock limit', () => {
         burstValue: null,
       },
     ]);
+
+    jestExpectToBeDefined(usageLimit);
 
     usageLimitId = usageLimit.id;
 

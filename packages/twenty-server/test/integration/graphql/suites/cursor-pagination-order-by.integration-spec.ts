@@ -256,7 +256,7 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
     ).expect(200);
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors?.[0].message).toContain(
+    expect(response.body.errors?.[0]?.message).toContain(
       'Cursor is missing the value for orderBy field "closeDate"',
     );
   });

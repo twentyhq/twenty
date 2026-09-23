@@ -7,6 +7,7 @@ import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { setTestConnectedAccountHandleAliases } from 'test/integration/utils/set-test-connected-account-handle-aliases.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'gmail-draft-email-action@apple.dev';
 const ALIAS = 'gmail-draft-email-action-alias@apple.dev';
@@ -68,7 +69,10 @@ describe('DRAFT_EMAIL workflow action on Gmail (integration)', () => {
     });
     expect(google.draftMessages).toHaveLength(1);
 
-    const [{ raw }] = google.draftMessages;
+    const [destructuredRow] = google.draftMessages;
+    jestExpectToBeDefined(destructuredRow);
+
+    const { raw } = destructuredRow;
 
     expect(raw).toContain(`To: ${RECIPIENTS.to}`);
     expect(raw).toContain(`Cc: ${RECIPIENTS.cc}`);
@@ -107,7 +111,10 @@ describe('DRAFT_EMAIL workflow action on Gmail (integration)', () => {
       stepStatus: 'SUCCESS',
     });
 
-    const [{ raw }] = google.draftMessages.slice(-1);
+    const [destructuredRow] = google.draftMessages.slice(-1);
+    jestExpectToBeDefined(destructuredRow);
+
+    const { raw } = destructuredRow;
 
     expect(raw).toContain(`<${ALIAS}>`);
     expect(google.sentMessages).toEqual([]);

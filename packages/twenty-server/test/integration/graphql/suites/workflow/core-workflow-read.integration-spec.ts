@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { pollWorkflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/poll-workflow-graphql-request.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const CORE_WORKFLOW_QUERY = `
   query CoreWorkflow($workspaceWorkflowId: UUID!) {
@@ -186,7 +187,7 @@ describe('coreWorkflow (e2e)', () => {
       extract: (data) => data?.coreWorkflowVersions ?? [],
       until: (polledVersions) =>
         polledVersions.length === 1 &&
-        isDefined(polledVersions[0].workspaceWorkflowVersionId),
+        isDefined(polledVersions[0]?.workspaceWorkflowVersionId),
     });
 
     expect(versions).toEqual([
@@ -200,17 +201,26 @@ describe('coreWorkflow (e2e)', () => {
       },
     ]);
 
+    const workspaceWorkflowVersionId = versions[0]?.workspaceWorkflowVersionId;
+
+    jestExpectToBeDefined(workspaceWorkflowVersionId);
+
     const versionResponse = await workflowGraphqlRequest(
       CORE_WORKFLOW_VERSION_QUERY,
       {
-        workspaceWorkflowVersionId: versions[0].workspaceWorkflowVersionId,
+        workspaceWorkflowVersionId,
       },
     );
 
     expect(versionResponse.body.errors).toBeUndefined();
+    const versionWorkspaceWorkflowVersionId =
+      versions[0]?.workspaceWorkflowVersionId;
+
+    jestExpectToBeDefined(versionWorkspaceWorkflowVersionId);
+
     expect(versionResponse.body.data.coreWorkflowVersion).toEqual(
       expect.objectContaining({
-        workspaceWorkflowVersionId: versions[0].workspaceWorkflowVersionId,
+        workspaceWorkflowVersionId: versionWorkspaceWorkflowVersionId,
         status: 'DRAFT',
         updatedAt: expect.any(String),
       }),

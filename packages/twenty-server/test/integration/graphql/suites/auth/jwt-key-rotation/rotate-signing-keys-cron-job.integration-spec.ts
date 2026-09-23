@@ -13,6 +13,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const SIGNING_KEY_ROTATION_DAYS_KEY = 'SIGNING_KEY_ROTATION_DAYS';
 
@@ -40,8 +41,10 @@ describe('RotateSigningKeysCronJob (integration)', () => {
 
     expect(initialTokenResponse.body.errors).toBeUndefined();
 
+    jestExpectToBeDefined(initialTokenResponse.body.data.generateApiKeyToken);
+
     const initialApiKeyToken: string =
-      initialTokenResponse.body.data?.generateApiKeyToken.token ?? '';
+      initialTokenResponse.body.data.generateApiKeyToken.token ?? '';
 
     expect(isNonEmptyString(initialApiKeyToken)).toBe(true);
 
@@ -74,8 +77,10 @@ describe('RotateSigningKeysCronJob (integration)', () => {
 
       expect(rotatedTokenResponse.body.errors).toBeUndefined();
 
+      jestExpectToBeDefined(rotatedTokenResponse.body.data.generateApiKeyToken);
+
       rotatedApiKeyToken =
-        rotatedTokenResponse.body.data?.generateApiKeyToken.token ?? '';
+        rotatedTokenResponse.body.data.generateApiKeyToken.token ?? '';
 
       expect(isNonEmptyString(rotatedApiKeyToken)).toBe(true);
 

@@ -170,9 +170,9 @@ describe('NavigationMenuItem batch creation should succeed', () => {
     createdIds = items.map((item) => item.id);
 
     expect(items).toHaveLength(3);
-    expect(items[0].targetRecordId).toBe(targetRecordId1);
-    expect(items[1].targetRecordId).toBe(targetRecordId2);
-    expect(items[2].targetRecordId).toBe(targetRecordId3);
+    expect(items[0]?.targetRecordId).toBe(targetRecordId1);
+    expect(items[1]?.targetRecordId).toBe(targetRecordId2);
+    expect(items[2]?.targetRecordId).toBe(targetRecordId3);
   });
 
   it('should return empty array for empty inputs', async () => {

@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { isDefined } from 'twenty-shared/utils';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -285,6 +286,8 @@ describe('coreWorkflow mutations (e2e)', () => {
       );
 
     expect(workflowVersionRows).toHaveLength(1);
+    jestExpectToBeDefined(workflowVersionRows[0]);
+
     expect(workflowVersionRows[0].deletedAt).not.toBeNull();
 
     await graphql(

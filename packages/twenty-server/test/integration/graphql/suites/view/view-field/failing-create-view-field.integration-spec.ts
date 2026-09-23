@@ -14,6 +14,7 @@ import {
 } from 'twenty-shared/testing';
 
 import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const normalizeErrorMessage = (error: any) => {
   const UUID_REGEX =
@@ -87,6 +88,8 @@ describe('View Field Resolver - Failing Create Operation', () => {
       expect(response.errors.length).toBe(1);
       const [firstError] = response.errors;
 
+      jestExpectToBeDefined(firstError);
+
       expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
 
       const normalizedError = normalizeErrorMessage(firstError);
@@ -145,6 +148,8 @@ describe('View Field Resolver - Failing Create Operation', () => {
     expect(response.errors).toBeDefined();
     expect(response.errors.length).toBe(1);
     const [firstError] = response.errors;
+
+    jestExpectToBeDefined(firstError);
 
     expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
 

@@ -123,7 +123,7 @@ export const extractSessionCookie = (
       continue;
     }
 
-    const sessionToken = rawCookie
+    const sessionToken = rawCookie!
       .split(';')[0]
       .slice(`${candidateName}=`.length);
 

@@ -27,6 +27,7 @@ import {
   PREVIOUS_PUBLIC_KEY_PEM,
   REVOKED_KID,
 } from './jwt-key-rotation.fixture';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const buildAccessTokenPayload = (payload: AccessTokenJwtPayload) => ({
   sub: payload.sub,
@@ -213,16 +214,17 @@ describe('JWT Asymmetric Signing - new ES256 + kid implementation (integration)'
     const response = await renewToken(sharedRefreshToken);
 
     expect(response.body.errors).toBeUndefined();
+    jestExpectToBeDefined(response.body.data.renewToken);
+
     expect(
       isNonEmptyString(
-        response.body.data?.renewToken.tokens.accessOrWorkspaceAgnosticToken
+        response.body.data.renewToken.tokens.accessOrWorkspaceAgnosticToken
           .token,
       ),
     ).toBe(true);
+
     expect(
-      isNonEmptyString(
-        response.body.data?.renewToken.tokens.refreshToken.token,
-      ),
+      isNonEmptyString(response.body.data.renewToken.tokens.refreshToken.token),
     ).toBe(true);
   });
 });
@@ -248,6 +250,8 @@ describe('JWT Asymmetric Signing - seeded-workspace tokens (integration)', () =>
 
     expect(firstApplication).toBeDefined();
 
+    jestExpectToBeDefined(firstApplication);
+
     seededApplicationId = firstApplication.id;
   });
 
@@ -259,8 +263,10 @@ describe('JWT Asymmetric Signing - seeded-workspace tokens (integration)', () =>
 
     expect(response.body.errors).toBeUndefined();
 
+    jestExpectToBeDefined(response.body.data.generateApiKeyToken);
+
     const apiKeyToken: string =
-      response.body.data?.generateApiKeyToken.token ?? '';
+      response.body.data.generateApiKeyToken.token ?? '';
 
     expect(isNonEmptyString(apiKeyToken)).toBe(true);
 

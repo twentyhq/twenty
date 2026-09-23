@@ -1,5 +1,9 @@
 import { createClient, type RedisClientType } from 'redis';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -115,13 +119,15 @@ export const setupResourceCreditSubscription = async ({
        SET "stripePriceId" = EXCLUDED."stripePriceId",
            "stripeProductId" = EXCLUDED."stripeProductId"`,
     [
-      subscription.id,
+      subscription?.id,
       TEST_STRIPE_SUBSCRIPTION_ID,
       TEST_STRIPE_PRODUCT_ID,
       TEST_STRIPE_PRICE_ID,
       TEST_STRIPE_SUBSCRIPTION_ITEM_ID,
     ],
   );
+
+  assertIsDefinedOrThrow(subscription);
 
   return { subscriptionId: subscription.id };
 };
@@ -148,6 +154,8 @@ export const insertCreditGrant = async ({
      RETURNING id`,
     [workspaceId, amountMicro, type, effectiveAt, expiresAt, idempotencyKey],
   );
+
+  assertIsDefinedOrThrow(row);
 
   return row.id;
 };

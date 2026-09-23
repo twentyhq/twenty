@@ -7,6 +7,7 @@ import { findViewFieldGroups } from 'test/integration/metadata/suites/view-field
 import { upsertFieldsWidget } from 'test/integration/metadata/suites/view-field-group/utils/upsert-fields-widget.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { v4 as uuidv4 } from 'uuid';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type FieldsWidgetTestSetup = {
   widgetId: string;
@@ -42,6 +43,8 @@ const fetchFieldsWidgetTestSetup = async (): Promise<FieldsWidgetTestSetup> => {
   );
 
   expect(widgets.length).toBeGreaterThan(0);
+
+  jestExpectToBeDefined(widgets[0]);
 
   const { id: widgetId, viewId } = widgets[0];
 
@@ -129,6 +132,13 @@ describe('upsertFieldsWidget', () => {
 
       const twoFields = testSetup.viewFields.slice(0, 2);
 
+      const id = twoFields[0]?.id;
+
+      jestExpectToBeDefined(id);
+      const twoFieldId = twoFields[1]?.id;
+
+      jestExpectToBeDefined(twoFieldId);
+
       await upsertFieldsWidget({
         expectToFail: false,
         input: {
@@ -141,7 +151,7 @@ describe('upsertFieldsWidget', () => {
               isVisible: true,
               fields: [
                 {
-                  viewFieldId: twoFields[0].id,
+                  viewFieldId: id,
                   isVisible: true,
                   position: 0,
                 },
@@ -154,7 +164,7 @@ describe('upsertFieldsWidget', () => {
               isVisible: true,
               fields: [
                 {
-                  viewFieldId: twoFields[1].id,
+                  viewFieldId: twoFieldId,
                   isVisible: true,
                   position: 0,
                 },
@@ -163,6 +173,10 @@ describe('upsertFieldsWidget', () => {
           ],
         },
       });
+
+      const secondFieldId = twoFields[1]?.id;
+
+      jestExpectToBeDefined(secondFieldId);
 
       await upsertFieldsWidget({
         expectToFail: false,
@@ -176,7 +190,7 @@ describe('upsertFieldsWidget', () => {
               isVisible: true,
               fields: [
                 {
-                  viewFieldId: twoFields[1].id,
+                  viewFieldId: secondFieldId,
                   isVisible: true,
                   position: 0,
                 },
@@ -281,6 +295,8 @@ describe('upsertFieldsWidget', () => {
     it('should hard-delete all existing groups when using flat fields', async () => {
       const groupId = uuidv4();
       const targetField = testSetup.viewFields[0];
+
+      jestExpectToBeDefined(targetField);
 
       await upsertFieldsWidget({
         expectToFail: false,
@@ -424,6 +440,8 @@ describe('upsertFieldsWidget', () => {
     it('should fail when both groups and fields are provided', async () => {
       const targetField = testSetup.viewFields[0];
 
+      jestExpectToBeDefined(targetField);
+
       const { errors } = await upsertFieldsWidget({
         expectToFail: true,
         input: {
@@ -470,13 +488,17 @@ describe('upsertFieldsWidget', () => {
     });
 
     it('should fail when widget id does not exist', async () => {
+      const viewFieldId = testSetup.viewFields[0]?.id;
+
+      jestExpectToBeDefined(viewFieldId);
+
       const { errors } = await upsertFieldsWidget({
         expectToFail: true,
         input: {
           widgetId: uuidv4(),
           fields: [
             {
-              viewFieldId: testSetup.viewFields[0].id,
+              viewFieldId,
               isVisible: true,
               position: 0,
             },
@@ -492,6 +514,8 @@ describe('upsertFieldsWidget', () => {
   describe('return type', () => {
     it('should return a view with the expected fields', async () => {
       const targetField = testSetup.viewFields[0];
+
+      jestExpectToBeDefined(targetField);
 
       const { data } = await upsertFieldsWidget({
         expectToFail: false,

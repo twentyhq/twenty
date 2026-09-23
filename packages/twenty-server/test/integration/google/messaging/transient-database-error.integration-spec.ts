@@ -18,6 +18,7 @@ import { readBackendState } from 'test/integration/utils/read-backend-state.util
 import { queryMessageChannel } from 'test/integration/utils/query-messaging.util';
 import { resetMessageChannelSyncState } from 'test/integration/utils/reset-channel-sync-state.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'messaging-transient-database-error@apple.dev';
 
@@ -36,7 +37,11 @@ describe('Messaging import transient database errors (integration)', () => {
   let messageParticipantService: MessagingMessageParticipantService;
 
   const serveInboundMessage = async (messageIndex: number): Promise<void> => {
-    google.serveMessageList([INBOX_MESSAGES[messageIndex]]);
+    const inboxMessage = INBOX_MESSAGES[messageIndex];
+
+    jestExpectToBeDefined(inboxMessage);
+
+    google.serveMessageList([inboxMessage]);
 
     await resetMessageChannelSyncState(channel.channelId, '');
   };
@@ -112,7 +117,9 @@ describe('Messaging import transient database errors (integration)', () => {
             'SELECT pg_backend_pid() AS pid',
           );
 
-          importBackendPid = Number(backends[0].pid);
+          const pid = backends[0]?.pid;
+
+          importBackendPid = Number(pid);
 
           return saveMessageParticipants(
             participants,

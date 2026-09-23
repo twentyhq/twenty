@@ -138,6 +138,8 @@ describe('API rate limiting', () => {
       },
     ]);
 
+    jestExpectToBeDefined(usageLimit);
+
     usageLimitId = usageLimit.id;
 
     await invalidateWorkspaceCaches();

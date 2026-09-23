@@ -119,7 +119,7 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         'messageChannelId',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual([expect.objectContaining({ messageChannelId })]);
     expect(
@@ -127,7 +127,7 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
         'messageParticipant',
         'messageParticipants',
         'handle role',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual(
       expect.arrayContaining([

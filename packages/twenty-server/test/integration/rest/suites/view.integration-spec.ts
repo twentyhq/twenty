@@ -15,6 +15,7 @@ import { assertViewStructure } from 'test/integration/utils/view-test.util';
 import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('View REST API', () => {
   let testObjectMetadataId: string;
@@ -94,6 +95,8 @@ describe('View REST API', () => {
       const views = assertMetadataRestListResponse<ViewDTO>(response);
 
       if (views.length > 0) {
+        jestExpectToBeDefined(views[0]);
+
         assertViewStructure(views[0]);
       }
     });

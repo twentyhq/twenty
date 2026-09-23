@@ -65,7 +65,13 @@ async function hasMigrationBeenRun(
   });
   const result = await resultSet.json<{ count: number }>();
 
-  return result.data[0].count > 0;
+  const [row] = result.data;
+
+  if (row === undefined) {
+    throw new Error('Migration lookup returned no row');
+  }
+
+  return row.count > 0;
 }
 
 async function recordMigration(filename: string, client: ClickHouseClient) {

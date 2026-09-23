@@ -234,7 +234,7 @@ const findCommandMenuItemForWorkflowVersion = async (
     gqlFields: COMMAND_MENU_ITEM_GQL_FIELDS,
   });
 
-  return data?.commandMenuItems.find(
+  return data.commandMenuItems.find(
     (item) => item.workflowVersionId === workflowVersionId,
   );
 };

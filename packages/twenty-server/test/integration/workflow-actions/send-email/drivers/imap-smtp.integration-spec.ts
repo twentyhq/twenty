@@ -133,7 +133,7 @@ describe('SEND_EMAIL workflow action on SMTP (integration)', () => {
         'messageChannelMessageAssociation',
         'messageChannelMessageAssociations',
         'messageChannelId',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual([expect.objectContaining({ messageChannelId })]);
     expect(
@@ -141,7 +141,7 @@ describe('SEND_EMAIL workflow action on SMTP (integration)', () => {
         'messageParticipant',
         'messageParticipants',
         'handle role',
-        { messageId: { eq: message.id } },
+        { messageId: { eq: message?.id } },
       ),
     ).toEqual(
       expect.arrayContaining([

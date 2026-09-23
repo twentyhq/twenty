@@ -10,6 +10,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const CALLBACK_PATH = '/application-registration-claim/github/callback';
 const PUBLISHER_ORG = 'publisher-org';
@@ -141,7 +142,7 @@ describe('Application registration claim state binding (integration)', () => {
 
     return {
       state: authorizationUrl.searchParams.get('state') as string,
-      cookie: (setCookie as unknown as string[])[0].split(';')[0],
+      cookie: (setCookie as unknown as string[])[0]?.split(';')[0],
     };
   };
 
@@ -189,8 +190,10 @@ describe('Application registration claim state binding (integration)', () => {
           'set-cookie'
         ] as unknown as string[];
 
+        jestExpectToBeDefined(claimCookie);
+
         expect(claimCookie.toLowerCase()).not.toContain('samesite=strict');
-        expect(claimCookie.toLowerCase()).toContain(
+        expect(claimCookie?.toLowerCase()).toContain(
           sameSite === 'none' ? 'samesite=none' : 'samesite=lax',
         );
       } finally {

@@ -138,7 +138,7 @@ describe('2-41 workspace command 1789373200002 - MakeNotesAndTasksInheritTheirTa
     for (const [nameSingular, state] of Object.entries(LEGACY_STATE)) {
       const objectMetadataId = objectMetadataIdByNameSingular[nameSingular];
 
-      await objectMetadataRepository().update(objectMetadataId, state);
+      await objectMetadataRepository().update(objectMetadataId!, state);
 
       const { errors } = await updateOneObjectMetadata({
         expectToFail: false,

@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -58,9 +59,13 @@ const getAttachmentFileIds = async (
     [attachmentIds],
   );
 
-  return rows.map(
-    (row: { file: Array<{ fileId: string }> }) => row.file[0].fileId,
-  );
+  return rows.map((row: { file: Array<{ fileId: string }> }) => {
+    const fileId = row.file[0]?.fileId;
+
+    jestExpectToBeDefined(fileId);
+
+    return fileId;
+  });
 };
 
 describe('agent chat files in record CRUD tools (integration)', () => {

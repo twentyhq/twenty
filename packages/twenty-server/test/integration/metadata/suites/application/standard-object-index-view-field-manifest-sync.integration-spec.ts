@@ -65,7 +65,7 @@ const findIndexViewId = async (personObjectId: string) => {
     expectToFail: false,
   });
 
-  const indexView = data?.getViews.find((view) => view.key === ViewKey.INDEX);
+  const indexView = data.getViews.find((view) => view.key === ViewKey.INDEX);
 
   if (!indexView) {
     throw new Error('Standard INDEX view not found for Person');

@@ -158,7 +158,7 @@ describe('MCP Controller (integration)', () => {
           jsonrpc: '2.0',
           method: 'tools/call',
           id,
-          params: { name: tool.name, arguments: {} },
+          params: { name: tool?.name, arguments: {} },
         }).expect(200);
 
         expect(res.body.jsonrpc).toBe('2.0');

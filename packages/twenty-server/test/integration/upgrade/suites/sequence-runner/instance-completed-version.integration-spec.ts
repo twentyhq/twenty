@@ -17,7 +17,7 @@ import {
 // The sequence only ever covers supported versions, and the skip rule walks
 // that same list, so the fixture has to be built from real ones.
 const [OLDEST_VERSION, MIDDLE_VERSION, NEWEST_VERSION] =
-  TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.slice(-3);
+  TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.slice(-3) as [string, string, string];
 
 const OLDEST_INSTANCE_COMMAND = makeVersionedStep('fast-instance', {
   version: OLDEST_VERSION,

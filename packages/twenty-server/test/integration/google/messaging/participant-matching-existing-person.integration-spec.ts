@@ -22,6 +22,7 @@ import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calen
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HANDLE = 'gmail-existing-person-matching@apple.dev';
 
@@ -148,7 +149,9 @@ describe('Participant matching when the person already exists (integration)', ()
     const [participant] = participants;
 
     expect(participants).toHaveLength(1);
-    expect(participant.personId).toBe(senderPersonId);
+    expect(participant?.personId).toBe(senderPersonId);
+
+    jestExpectToBeDefined(participant);
 
     const timelineActivities = await findLinkedTimelineActivities({
       personId: senderPersonId,
@@ -175,7 +178,9 @@ describe('Participant matching when the person already exists (integration)', ()
     const [participant] = participants;
 
     expect(participants).toHaveLength(1);
-    expect(participant.personId).toBe(attendeePersonId);
+    expect(participant?.personId).toBe(attendeePersonId);
+
+    jestExpectToBeDefined(participant);
 
     const timelineActivities = await findLinkedTimelineActivities({
       personId: attendeePersonId,

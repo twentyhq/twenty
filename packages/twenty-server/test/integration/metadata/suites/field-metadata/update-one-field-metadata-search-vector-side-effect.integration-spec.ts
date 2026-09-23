@@ -89,7 +89,11 @@ describe('Field metadata update - search vector rename rebuild', () => {
       expectToFail: false,
     });
 
-    createdRecordId = data.createdRecords[0].id;
+    const id = data.createdRecords[0]?.id;
+
+    jestExpectToBeDefined(id);
+
+    createdRecordId = id;
   });
 
   afterAll(async () => {
@@ -133,10 +137,10 @@ describe('Field metadata update - search vector rename rebuild', () => {
     });
 
     expect(searchResult.data.search.edges.length).toBe(1);
-    expect(searchResult.data.search.edges[0].node.recordId).toBe(
+    expect(searchResult.data.search.edges[0]?.node.recordId).toBe(
       createdRecordId,
     );
-    expect(searchResult.data.search.edges[0].node.objectNameSingular).toBe(
+    expect(searchResult.data.search.edges[0]?.node.objectNameSingular).toBe(
       OBJECT_NAME_SINGULAR,
     );
 

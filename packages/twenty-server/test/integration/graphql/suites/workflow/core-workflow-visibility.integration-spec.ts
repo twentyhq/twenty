@@ -337,7 +337,7 @@ describe('core workflow visibility (e2e)', () => {
         isDefined(coreWorkflowVersions?.[0]?.workspaceWorkflowVersionId),
     });
 
-    workspaceWorkflowVersionId = versions![0].workspaceWorkflowVersionId!;
+    workspaceWorkflowVersionId = versions![0]?.workspaceWorkflowVersionId!;
   });
 
   afterAll(async () => {

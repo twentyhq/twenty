@@ -73,7 +73,7 @@ describe('claim state cookie on a production-like secure deployment (integration
 
     return {
       claimCookie,
-      nonce: claimCookie.split(';')[0].split('=')[1],
+      nonce: claimCookie?.split(';')[0]?.split('=')[1],
       state: new URL(
         response.body.data.githubClaimAuthorizationUrl,
       ).searchParams.get('state') as string,
@@ -101,7 +101,7 @@ describe('claim state cookie on a production-like secure deployment (integration
     );
     expect(claimCookie).toContain('Secure');
     expect(claimCookie).toContain('HttpOnly');
-    expect(claimCookie.toLowerCase()).toContain('samesite=lax');
+    expect(claimCookie?.toLowerCase()).toContain('samesite=lax');
   });
 
   // A sibling subdomain can set a cookie under the plain name but never under

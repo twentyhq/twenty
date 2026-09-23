@@ -9,6 +9,7 @@ import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe.each(fieldMetadataEnumTypes)(
   'Failing create field metadata %s tests suite v2',
@@ -85,6 +86,8 @@ describe.each(fieldMetadataEnumTypes)(
         expect(errors).toMatchSnapshot(
           extractRecordIdsAndDatesAsExpectAny(errors),
         );
+        jestExpectToBeDefined(errors[0]);
+
         expect(errors[0].extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
       },
     );

@@ -66,7 +66,7 @@ const findRecordPageViewId = async (personObjectId: string) => {
     expectToFail: false,
   });
 
-  const recordPageView = data?.getViews.find(
+  const recordPageView = data.getViews.find(
     (view) => view.type === ViewType.FIELDS_WIDGET,
   );
 

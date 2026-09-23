@@ -79,9 +79,11 @@ describe('Failing create field metadata tests suite', () => {
       expect(errors).toMatchSnapshot(
         extractRecordIdsAndDatesAsExpectAny(errors),
       );
-      expect(errors[0].extensions.code).toBe('METADATA_VALIDATION_FAILED');
+      expect(errors[0]?.extensions.code).toBe('METADATA_VALIDATION_FAILED');
 
-      const errorDetails = JSON.stringify(errors[0].extensions.errors);
+      const extensionErrors = errors[0]?.extensions.errors;
+
+      const errorDetails = JSON.stringify(extensionErrors);
 
       expect(errorDetails).toContain(expectedMessage);
     },
