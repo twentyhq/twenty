@@ -39,6 +39,13 @@ export { defineTimelineActivityType } from '@/sdk/define/timeline-activity-types
 export type { TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 export type { TimelineActivityTypeManifest } from 'twenty-shared/application';
 
+export { defineSettingsMenuItem } from '@/sdk/define/settings-menu-items/define-settings-menu-item';
+export type { SettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
+export type {
+  SettingsMenuItemManifest,
+  SettingsMenuItemScope,
+} from 'twenty-shared/application';
+
 export {
   canAccessFullAdminPanel,
   canImpersonate,
