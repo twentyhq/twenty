@@ -118,6 +118,9 @@ export class ConnectionProviderLifecycleHookService {
         logicFunctionId,
         workspaceId,
         payload: this.buildPayload({ provider, connectedAccountId }),
+        // The account and its token are deleted right after this returns, so a
+        // refused hook orphans whatever onConnect provisioned remotely.
+        shouldEnforceUsageLimits: false,
       });
 
       if (isDefined(executionResult.error)) {

@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/workflow';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -51,6 +52,11 @@ import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
+
+type WorkflowBillingSpenders = {
+  workflowId: string;
+  applicationId: string;
+};
 
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
@@ -135,7 +141,10 @@ export class WorkflowExecutorWorkspaceService {
       );
     }
 
-    const billingWorkflowId = workflow.workspaceWorkflowId ?? workflow.id;
+    const billingSpenders = {
+      workflowId: workflow.workspaceWorkflowId ?? workflow.id,
+      applicationId: workflow.applicationId,
+    };
 
     let actionOutput: WorkflowActionOutput;
 
@@ -153,7 +162,7 @@ export class WorkflowExecutorWorkspaceService {
         stepInfos,
         workflowRunId,
         workspaceId,
-        billingWorkflowId,
+        billingSpenders,
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -176,7 +185,9 @@ export class WorkflowExecutorWorkspaceService {
         }
       }
 
-      if (isDefined(actionOutput.error)) {
+      // A refused node run will be refused for every following node too, so
+      // continueOnFailure must not turn an unspent run into a COMPLETED one.
+      if (isDefined(actionOutput.error) && !actionOutput.isUsageRefused) {
         const enclosingIterator = findEnclosingIteratorWithContinueOnFailure({
           failedStepId: stepId,
           steps,
@@ -221,7 +232,7 @@ export class WorkflowExecutorWorkspaceService {
       !actionOutput.shouldFailSafely &&
       !actionOutput.shouldSkipStepExecution
     ) {
-      await this.sendWorkflowNodeRunEvent(workspaceId, billingWorkflowId);
+      await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -356,15 +367,36 @@ export class WorkflowExecutorWorkspaceService {
     });
   }
 
+  private async assertNodeRunAllowed({
+    workspaceId,
+    billingSpenders,
+  }: {
+    workspaceId: string;
+    billingSpenders: WorkflowBillingSpenders;
+  }) {
+    if (
+      !(await this.billingUsageService.isExecutionQuotaEnabled(workspaceId))
+    ) {
+      return;
+    }
+
+    await this.billingUsageService.assertUsageAllowed({
+      workspaceId,
+      resourceType: UsageResourceType.WORKFLOW,
+      operationType: UsageOperationType.WORKFLOW_EXECUTION,
+      spenders: billingSpenders,
+    });
+  }
+
   private async sendWorkflowNodeRunEvent(
     workspaceId: string,
-    workflowId: string,
+    billingSpenders: WorkflowBillingSpenders,
   ) {
     await this.billingUsageService.consumeUsageQuota({
       workspaceId,
       resourceType: UsageResourceType.WORKFLOW,
       operationType: UsageOperationType.WORKFLOW_EXECUTION,
-      spenders: { workflowId },
+      spenders: billingSpenders,
       cost: { creditsUsedMicro: 100, quantity: 1 },
     });
 
@@ -375,8 +407,8 @@ export class WorkflowExecutorWorkspaceService {
         creditsUsedMicro: 100,
         quantity: 1,
         unit: UsageUnit.INVOCATION,
-        resourceId: workflowId,
-        spenders: { workflowId },
+        resourceId: billingSpenders.workflowId,
+        spenders: billingSpenders,
       },
     ]);
   }
@@ -455,14 +487,14 @@ export class WorkflowExecutorWorkspaceService {
     stepInfos,
     workflowRunId,
     workspaceId,
-    billingWorkflowId,
+    billingSpenders,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
     stepInfos: WorkflowRunStepInfos;
     workflowRunId: string;
     workspaceId: string;
-    billingWorkflowId: string;
+    billingSpenders: WorkflowBillingSpenders;
   }) {
     const stepId = step.id;
 
@@ -479,12 +511,7 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
-      await this.billingUsageService.assertUsageAllowed({
-        workspaceId,
-        resourceType: UsageResourceType.WORKFLOW,
-        operationType: UsageOperationType.WORKFLOW_EXECUTION,
-        spenders: { workflowId: billingWorkflowId },
-      });
+      await this.assertNodeRunAllowed({ workspaceId, billingSpenders });
 
       return await workflowAction.execute({
         currentStepId: stepId,
@@ -513,6 +540,7 @@ export class WorkflowExecutorWorkspaceService {
       return {
         error: error.message ?? 'Execution result error, no data or error',
         isUserError,
+        isUsageRefused: isUsageRefusedError(error),
       };
     }
   }

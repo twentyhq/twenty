@@ -51,7 +51,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
   [UsageResourceType.WORKFLOW]: {
     quota: {
       allowedOperationTypes: [UsageOperationType.WORKFLOW_EXECUTION],
-      allowedSpenderTypes: ['workspace', 'workflow'],
+      allowedSpenderTypes: ['workspace', 'application'],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
   },

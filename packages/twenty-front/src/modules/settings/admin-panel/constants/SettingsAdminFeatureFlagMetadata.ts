@@ -58,4 +58,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Webhook rate limits`,
     description: msg`Limit the rate of outgoing webhook deliveries.`,
   },
+  [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: {
+    label: msg`Execution quotas`,
+    description: msg`Enforce usage quotas on workflow node runs and logic function executions.`,
+  },
 };

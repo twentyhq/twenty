@@ -100,6 +100,13 @@ export class BillingUsageService {
     );
   }
 
+  async isExecutionQuotaEnabled(workspaceId: string): Promise<boolean> {
+    return this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
+      workspaceId,
+    );
+  }
+
   private async isAvailableCreditsCounterEnabled(
     workspaceId: string,
   ): Promise<boolean> {
