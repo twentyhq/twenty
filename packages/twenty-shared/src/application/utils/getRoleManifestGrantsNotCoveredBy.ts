@@ -115,10 +115,13 @@ const getRowLevelRestrictionSignature = ({
     .sort();
 };
 
-const haveSameRowLevelRestriction = (
-  roleSignature: string[],
-  supersetSignature: string[],
-): boolean =>
+const haveSameRowLevelRestriction = ({
+  roleSignature,
+  supersetSignature,
+}: {
+  roleSignature: string[];
+  supersetSignature: string[];
+}): boolean =>
   roleSignature.length === supersetSignature.length &&
   roleSignature.every(
     (predicateSignature, index) =>
@@ -143,13 +146,13 @@ export const getRoleManifestGrantsNotCoveredBy = ({
   for (const action of OBJECT_PERMISSION_ACTIONS) {
     const roleLevelFlag = ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action];
 
-    if (role[roleLevelFlag] === true && superset[roleLevelFlag] !== true) {
+    if (role[roleLevelFlag] && !superset[roleLevelFlag]) {
       grants.push({ type: 'ALL_OBJECT_RECORDS', action });
     }
   }
 
   for (const flag of ['canUpdateAllSettings', 'canAccessAllTools'] as const) {
-    if (role[flag] === true && superset[flag] !== true) {
+    if (role[flag] && !superset[flag]) {
       grants.push({ type: 'ALL_SETTINGS', flag });
     }
   }
@@ -168,8 +171,8 @@ export const getRoleManifestGrantsNotCoveredBy = ({
     const isCoveredByRoleLevelFlag = toolFlagUniversalIdentifiers.has(
       permissionFlagUniversalIdentifier,
     )
-      ? superset.canAccessAllTools === true
-      : superset.canUpdateAllSettings === true;
+      ? superset.canAccessAllTools
+      : superset.canUpdateAllSettings;
 
     if (
       !isCoveredByRoleLevelFlag &&
@@ -232,10 +235,10 @@ export const getRoleManifestGrantsNotCoveredBy = ({
     if (
       roleReachesObject &&
       supersetRowLevelRestriction.length > 0 &&
-      !haveSameRowLevelRestriction(
-        roleRowLevelRestriction,
-        supersetRowLevelRestriction,
-      )
+      !haveSameRowLevelRestriction({
+        roleSignature: roleRowLevelRestriction,
+        supersetSignature: supersetRowLevelRestriction,
+      })
     ) {
       grants.push({
         type: 'ROW_LEVEL_RESTRICTION',

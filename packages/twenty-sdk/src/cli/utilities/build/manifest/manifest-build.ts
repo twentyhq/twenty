@@ -656,7 +656,10 @@ export const buildManifest = async (
     }),
   );
 
-  if (isDefined(resolvedDefaultRoleUniversalIdentifier)) {
+  if (
+    isDefined(applicationConfig) &&
+    isDefined(resolvedDefaultRoleUniversalIdentifier)
+  ) {
     errors.push(
       ...validateAgentRolesWithinApplicationRole({
         agents,

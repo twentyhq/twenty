@@ -158,7 +158,7 @@ export const computeRoleManifestUnion = ({
       | 'canBeAssignedToUsers'
       | 'canBeAssignedToAgents'
       | 'canBeAssignedToApiKeys',
-  ) => allRoles.some((role) => role[flag] === true);
+  ) => allRoles.some((role) => role[flag]);
 
   return {
     ...baseRole,
