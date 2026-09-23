@@ -1,0 +1,2 @@
+export const ADD_SERVER_CRON_TRIGGER_SETTINGS_TO_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME =
+  '2.43.0_AddServerCronTriggerSettingsToLogicFunctionFastInstanceCommand_1790188080449';

@@ -75,7 +75,10 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          if (isDefined(logicFunction.deletedAt)) {
+          if (
+            isDefined(logicFunction.deletedAt) ||
+            isDefined(logicFunction.serverCronTriggerSettings)
+          ) {
             continue;
           }
 

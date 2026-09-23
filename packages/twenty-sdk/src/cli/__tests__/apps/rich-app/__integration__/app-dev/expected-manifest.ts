@@ -909,6 +909,20 @@ export const EXPECTED_MANIFEST: Manifest = {
   logicFunctions: [
     {
       builtHandlerChecksum: '[checksum]',
+      builtHandlerPath:
+        'src/logic-functions/dispatch-nightly-sync.function.mjs',
+      handlerName: 'default.config.handler',
+      name: 'dispatch-nightly-sync',
+      sourceHandlerPath:
+        'src/logic-functions/dispatch-nightly-sync.function.ts',
+      timeoutSeconds: 5,
+      serverCronTriggerSettings: {
+        pattern: '0 3 * * *',
+      },
+      universalIdentifier: 'a1b2c3d4-5c01-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      builtHandlerChecksum: '[checksum]',
       builtHandlerPath: 'src/root.function.mjs',
       handlerName: 'default.config.handler',
       name: 'root-function',

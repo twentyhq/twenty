@@ -12,11 +12,14 @@ import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
+  ServerCronTriggerSettings,
   ServerRouteTriggerSettings,
   ToolTriggerSettings,
   WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
 
+import { ADD_SERVER_CRON_TRIGGER_SETTINGS_TO_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-43/add-server-cron-trigger-settings-to-logic-function-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
@@ -34,6 +37,9 @@ export enum LogicFunctionExecutionMode {
 
 @Entity('logicFunction')
 @Index('IDX_LOGIC_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
+@Index('IDX_LOGIC_FUNCTION_SERVER_CRON_TRIGGER_SETTINGS', ['workspaceId'], {
+  where: '"serverCronTriggerSettings" IS NOT NULL AND "deletedAt" IS NULL',
+})
 export class LogicFunctionEntity
   extends SyncableEntity
   implements Required<LogicFunctionEntity>
@@ -88,6 +94,13 @@ export class LogicFunctionEntity
 
   @Column({ nullable: true, type: 'jsonb' })
   serverRouteTriggerSettings: JsonbProperty<ServerRouteTriggerSettings> | null;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_SERVER_CRON_TRIGGER_SETTINGS_TO_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
+  })
+  serverCronTriggerSettings: JsonbProperty<ServerCronTriggerSettings> | null;
 
   @Column({ nullable: true, type: 'jsonb' })
   toolTriggerSettings: JsonbProperty<ToolTriggerSettings> | null;

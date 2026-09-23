@@ -218,7 +218,7 @@ export class ApplicationRegistrationVariableService {
       result.set(
         id,
         areVariablesConfigured &&
-          this.isServerRouteConfigured(
+          this.isServerLevelLogicFunctionConfigured(
             registration,
             isInstalledOnOwnerWorkspace,
           ),
@@ -228,16 +228,18 @@ export class ApplicationRegistrationVariableService {
     return result;
   }
 
-  private isServerRouteConfigured(
+  private isServerLevelLogicFunctionConfigured(
     registration: ApplicationRegistrationEntity | undefined,
     isInstalledOnOwnerWorkspace: boolean,
   ): boolean {
-    const hasServerRouteFunction =
-      registration?.manifest?.logicFunctions?.some((logicFunction) =>
-        isDefined(logicFunction.serverRouteTriggerSettings),
+    const hasServerLevelLogicFunction =
+      registration?.manifest?.logicFunctions?.some(
+        (logicFunction) =>
+          isDefined(logicFunction.serverRouteTriggerSettings) ||
+          isDefined(logicFunction.serverCronTriggerSettings),
       ) ?? false;
 
-    if (!hasServerRouteFunction) {
+    if (!hasServerLevelLogicFunction) {
       return true;
     }
 

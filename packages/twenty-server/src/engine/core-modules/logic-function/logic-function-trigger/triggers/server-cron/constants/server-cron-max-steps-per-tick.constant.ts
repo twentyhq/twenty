@@ -1,0 +1,1 @@
+export const SERVER_CRON_MAX_STEPS_PER_TICK = 100;

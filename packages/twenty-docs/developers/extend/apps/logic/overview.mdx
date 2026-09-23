@@ -59,6 +59,8 @@ A logic function picks one or more triggers — every entry below is a separate 
 | **Database event** | A workspace record is created, updated, or deleted | `databaseEventTriggerSettings` |
 | **AI tool** | A Twenty AI feature decides to call your function | `toolTriggerSettings` |
 | **Workflow action** | A workflow step invokes your function | `workflowActionTriggerSettings` |
+| **Server route** | A third-party provider calls one URL shared by every install; a resolver picks the workspace | `serverRouteTriggerSettings` |
+| **Server cron** | A CRON expression matches, once per server; the function dispatches work to each workspace | `serverCronTriggerSettings` |
 
 Functions run sandboxed in isolated Node.js processes and access the workspace through a typed API client scoped to the role declared on [`defineApplication()`](/developers/extend/apps/config/application).
 

@@ -10,6 +10,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { getServerCronTriggerSettingsValidationErrors } from 'src/engine/metadata-modules/logic-function/utils/get-server-cron-trigger-settings-validation-errors.util';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -117,6 +118,13 @@ export class FlatLogicFunctionValidatorService {
         userFriendlyMessage: msg`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
       });
     }
+
+    validationResult.errors.push(
+      ...getServerCronTriggerSettingsValidationErrors({
+        ...existingFlatLogicFunction,
+        ...flatEntityUpdate,
+      }),
+    );
 
     return validationResult;
   }
@@ -236,6 +244,12 @@ export class FlatLogicFunctionValidatorService {
         userFriendlyMessage: msg`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
       });
     }
+
+    validationResult.errors.push(
+      ...getServerCronTriggerSettingsValidationErrors(
+        flatLogicFunctionToValidate,
+      ),
+    );
 
     return validationResult;
   }

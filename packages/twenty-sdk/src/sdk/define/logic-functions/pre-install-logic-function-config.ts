@@ -8,6 +8,8 @@ export type PreInstallLogicFunctionConfig = Omit<
   | 'httpRouteTriggerSettings'
   | 'toolTriggerSettings'
   | 'workflowActionTriggerSettings'
+  | 'serverRouteTriggerSettings'
+  | 'serverCronTriggerSettings'
   | 'handler'
 > & {
   handler: InstallHandler;

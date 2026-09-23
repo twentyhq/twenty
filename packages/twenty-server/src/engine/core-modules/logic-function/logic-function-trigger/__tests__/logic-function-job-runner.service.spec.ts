@@ -33,15 +33,17 @@ describe('LogicFunctionJobRunnerService', () => {
     persistRetryCount: jest.fn(),
   });
 
-  it('does not retry a successful execution', async () => {
-    const execute = jest.fn().mockResolvedValue({});
+  it('does not retry a successful execution and returns its result', async () => {
+    const execute = jest.fn().mockResolvedValue({ data: { dispatches: [] } });
     const { service, persistRetryCount } = buildService(execute);
 
-    await service.run({
+    const executionResult = await service.run({
       logicFunctionPayload,
       retryLimit: 3,
       persistRetryCount,
     });
+
+    expect(executionResult).toEqual({ data: { dispatches: [] } });
 
     expect(execute).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -85,7 +87,7 @@ describe('LogicFunctionJobRunnerService', () => {
     });
     const { service, persistRetryCount } = buildService(execute);
 
-    await service.run({
+    const executionResult = await service.run({
       logicFunctionPayload: {
         ...logicFunctionPayload,
         applicationRetryCount: 3,
@@ -94,6 +96,7 @@ describe('LogicFunctionJobRunnerService', () => {
       persistRetryCount,
     });
 
+    expect(executionResult?.error?.errorMessage).toBe('sandbox unavailable');
     expect(persistRetryCount).not.toHaveBeenCalled();
   });
 
@@ -108,12 +111,13 @@ describe('LogicFunctionJobRunnerService', () => {
       );
     const { service, persistRetryCount } = buildService(execute);
 
-    await service.run({
+    const executionResult = await service.run({
       logicFunctionPayload,
       retryLimit: 3,
       persistRetryCount,
     });
 
+    expect(executionResult).toBeUndefined();
     expect(persistRetryCount).not.toHaveBeenCalled();
   });
 

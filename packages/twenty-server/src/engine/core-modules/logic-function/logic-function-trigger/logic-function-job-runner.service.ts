@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
+import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
 import { isRetryableLogicFunctionExecutionError } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/is-retryable-logic-function-execution-error.util';
@@ -36,7 +37,7 @@ export class LogicFunctionJobRunnerService {
     logicFunctionPayload: LogicFunctionJobPayload;
     retryLimit: number;
     persistRetryCount: (applicationRetryCount: number) => Promise<void>;
-  }): Promise<void> {
+  }): Promise<LogicFunctionExecuteResult | undefined> {
     try {
       const retryCount = logicFunctionPayload.applicationRetryCount ?? 0;
       const maxRetries = Math.min(
@@ -59,7 +60,7 @@ export class LogicFunctionJobRunnerService {
         ) ||
         retryCount >= maxRetries
       ) {
-        return;
+        return logicFunctionExecutionResult;
       }
 
       await persistRetryCount(retryCount + 1);

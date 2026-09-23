@@ -1,3 +1,4 @@
+import { type ServerCronTriggerSettings } from '@/application/serverCronTriggerSettingsType';
 import { type ServerRouteTriggerSettings } from '@/application/serverRouteTriggerSettingsType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type ToolTriggerSettings } from '@/application/toolTriggerSettingsType';
@@ -12,6 +13,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
   serverRouteTriggerSettings?: ServerRouteTriggerSettings;
+  serverCronTriggerSettings?: ServerCronTriggerSettings;
   toolTriggerSettings?: ToolTriggerSettings;
   workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
   sourceHandlerPath: string;

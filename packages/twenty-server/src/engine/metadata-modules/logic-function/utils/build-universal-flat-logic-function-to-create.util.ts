@@ -51,6 +51,7 @@ export const buildUniversalFlatLogicFunctionToCreate = (
     databaseEventTriggerSettings: input.databaseEventTriggerSettings ?? null,
     httpRouteTriggerSettings: input.httpRouteTriggerSettings ?? null,
     serverRouteTriggerSettings: input.serverRouteTriggerSettings ?? null,
+    serverCronTriggerSettings: input.serverCronTriggerSettings ?? null,
     toolTriggerSettings: input.toolTriggerSettings ?? null,
     workflowActionTriggerSettings: input.workflowActionTriggerSettings ?? null,
     createdAt: now,

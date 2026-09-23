@@ -1,0 +1,1 @@
+export const SERVER_CRON_MAX_DISPATCH_DELAY_MS = 24 * 60 * 60 * 1000;

@@ -9,6 +9,13 @@ import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/
 import { LogicFunctionJobRunnerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-job-runner.service';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { CronTriggerCronJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.job';
+import { ServerCronTriggerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/server-cron/jobs/server-cron-trigger.job';
+import { ServerCronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/server-cron/server-cron-trigger.cron.command';
+import { ServerCronTriggerCronJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/server-cron/server-cron-trigger.cron.job';
+import { ServerCronDispatchRateLimiterService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/server-cron/services/server-cron-dispatch-rate-limiter.service';
+import { ServerCronDispatchTargetResolverService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/server-cron/services/server-cron-dispatch-target-resolver.service';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
@@ -26,6 +33,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     WorkspaceCacheModule,
     CronModule,
     RecordShareModule,
+    MetricsModule,
+    ThrottlerModule,
   ],
   providers: [
     provideWorkspaceScopedRepository(LogicFunctionEntity),
@@ -34,12 +43,18 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     LogicFunctionJobRunnerService,
     CronTriggerCronJob,
     CronTriggerCronCommand,
+    ServerCronTriggerCronJob,
+    ServerCronTriggerCronCommand,
+    ServerCronTriggerJob,
+    ServerCronDispatchTargetResolverService,
+    ServerCronDispatchRateLimiterService,
     CallDatabaseEventTriggerJobsJob,
     LogicFunctionTriggerService,
     RouteTriggerService,
   ],
   exports: [
     CronTriggerCronCommand,
+    ServerCronTriggerCronCommand,
     LogicFunctionTriggerService,
     RouteTriggerService,
   ],

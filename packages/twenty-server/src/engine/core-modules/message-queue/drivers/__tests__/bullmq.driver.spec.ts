@@ -130,6 +130,29 @@ describe('BullMQDriver deduplication', () => {
       expect(mockGetJobs).not.toHaveBeenCalled();
       expect(mockAddBulk).toHaveBeenCalledTimes(1);
     });
+
+    it('uses the per-job delay over the batch delay', async () => {
+      await driver.bulkAdd(
+        MessageQueue.workspaceQueue,
+        'job',
+        [
+          { data: {}, jobId: 'ws-1.delayed-job', delay: 5_000 },
+          { data: {}, jobId: 'ws-1.batch-delayed-job' },
+        ],
+        { allowDuplicatedPrefixes: true, delay: 1_000 },
+      );
+
+      const [addedJobs] = mockAddBulk.mock.calls[0];
+
+      expect(addedJobs[0].opts).toMatchObject({
+        jobId: 'ws-1.delayed-job',
+        delay: 5_000,
+      });
+      expect(addedJobs[1].opts).toMatchObject({
+        jobId: 'ws-1.batch-delayed-job',
+        delay: 1_000,
+      });
+    });
   });
 });
 

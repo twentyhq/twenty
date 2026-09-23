@@ -1,5 +1,9 @@
 import {
   type LogicFunctionManifest,
+  type ServerCronCursor,
+  type ServerCronDispatchResult,
+  type ServerCronPayload,
+  type ServerCronTriggerSettings,
   type ServerRouteDispatchResult,
   type ServerRouteTriggerSettings,
 } from 'twenty-shared/application';
@@ -26,6 +30,13 @@ export type ServerRouteResolverHandler<TPayload = any> = (
   context: LogicFunctionExecutionContext,
 ) => ServerRouteResolverResult | Promise<ServerRouteResolverResult>;
 
+export type ServerCronHandler<TCursor extends ServerCronCursor = any> = (
+  payload: ServerCronPayload<TCursor>,
+  context: LogicFunctionExecutionContext,
+) =>
+  | ServerCronDispatchResult<TCursor>
+  | Promise<ServerCronDispatchResult<TCursor>>;
+
 type LogicFunctionConfigBase = Omit<
   LogicFunctionManifest,
   | 'sourceHandlerPath'
@@ -33,16 +44,39 @@ type LogicFunctionConfigBase = Omit<
   | 'builtHandlerChecksum'
   | 'handlerName'
   | 'serverRouteTriggerSettings'
+  | 'serverCronTriggerSettings'
 >;
 
-export type LogicFunctionConfig = LogicFunctionConfigBase &
-  (
-    | {
-        serverRouteTriggerSettings?: undefined;
-        handler: LogicFunctionHandler;
-      }
-    | {
-        serverRouteTriggerSettings: ServerRouteTriggerSettings;
-        handler: ServerRouteResolverHandler;
-      }
-  );
+type ServerCronLogicFunctionConfig = Omit<
+  LogicFunctionConfigBase,
+  | 'cronTriggerSettings'
+  | 'databaseEventTriggerSettings'
+  | 'httpRouteTriggerSettings'
+  | 'toolTriggerSettings'
+  | 'workflowActionTriggerSettings'
+> & {
+  cronTriggerSettings?: undefined;
+  databaseEventTriggerSettings?: undefined;
+  httpRouteTriggerSettings?: undefined;
+  toolTriggerSettings?: undefined;
+  workflowActionTriggerSettings?: undefined;
+  serverRouteTriggerSettings?: undefined;
+  serverCronTriggerSettings: ServerCronTriggerSettings;
+  handler: ServerCronHandler;
+};
+
+export type LogicFunctionConfig =
+  | (LogicFunctionConfigBase &
+      (
+        | {
+            serverRouteTriggerSettings?: undefined;
+            serverCronTriggerSettings?: undefined;
+            handler: LogicFunctionHandler;
+          }
+        | {
+            serverRouteTriggerSettings: ServerRouteTriggerSettings;
+            serverCronTriggerSettings?: undefined;
+            handler: ServerRouteResolverHandler;
+          }
+      ))
+  | ServerCronLogicFunctionConfig;

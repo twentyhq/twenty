@@ -89,6 +89,8 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
       logicFunctionManifest.httpRouteTriggerSettings ?? null,
     serverRouteTriggerSettings:
       logicFunctionManifest.serverRouteTriggerSettings ?? null,
+    serverCronTriggerSettings:
+      logicFunctionManifest.serverCronTriggerSettings ?? null,
     toolTriggerSettings: logicFunctionManifest.toolTriggerSettings ?? null,
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,

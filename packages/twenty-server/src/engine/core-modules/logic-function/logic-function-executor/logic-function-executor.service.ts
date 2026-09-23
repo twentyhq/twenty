@@ -26,6 +26,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
@@ -124,6 +125,8 @@ export class LogicFunctionExecutorService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
+    @InjectRepository(ApplicationRegistrationEntity)
+    private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
   ) {}
 
   async execute({
@@ -152,6 +155,12 @@ export class LogicFunctionExecutorService {
         workspaceId,
         logicFunctionId,
       });
+
+    await this.assertServerLevelLogicFunctionRunsInOwnerWorkspace({
+      workspaceId,
+      flatApplication,
+      flatLogicFunction,
+    });
 
     // Checked before the shared workspace throttle so a flood from a stopped
     // application cannot exhaust the token bucket of the other applications.
@@ -268,6 +277,39 @@ export class LogicFunctionExecutorService {
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
     return driver.transpile(params);
+  }
+
+  private async assertServerLevelLogicFunctionRunsInOwnerWorkspace({
+    workspaceId,
+    flatApplication,
+    flatLogicFunction,
+  }: {
+    workspaceId: string;
+    flatApplication: FlatApplication;
+    flatLogicFunction: FlatLogicFunction;
+  }): Promise<void> {
+    if (
+      !isDefined(flatLogicFunction.serverCronTriggerSettings) &&
+      !isDefined(flatLogicFunction.serverRouteTriggerSettings)
+    ) {
+      return;
+    }
+
+    const applicationRegistration = isDefined(
+      flatApplication.applicationRegistrationId,
+    )
+      ? await this.applicationRegistrationRepository.findOne({
+          where: { id: flatApplication.applicationRegistrationId },
+          select: { id: true, ownerWorkspaceId: true },
+        })
+      : null;
+
+    if (applicationRegistration?.ownerWorkspaceId !== workspaceId) {
+      throw new LogicFunctionExecutionException(
+        `Server-level logic function ${flatLogicFunction.id} can only run in the owner workspace of its application registration`,
+        LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
   }
 
   private async assertApplicationNotStopped(

@@ -47,4 +47,52 @@ export class CronTriggerDeduplicationService {
       CRON_DISPATCH_DEDUP_TTL_MS,
     );
   }
+
+  async acquireDueUtcFireTime({
+    keyPrefix,
+    pattern,
+    now,
+    catchUpWindowMs,
+    lockTtlMs,
+  }: {
+    keyPrefix: string;
+    pattern: string;
+    now: Date;
+    catchUpWindowMs: number;
+    lockTtlMs: number;
+  }): Promise<number | undefined> {
+    let lastFireTimestamp: number;
+
+    try {
+      lastFireTimestamp = CronExpressionParser.parse(pattern, {
+        currentDate: now,
+        tz: 'UTC',
+      })
+        .prev()
+        .getTime();
+    } catch {
+      return undefined;
+    }
+
+    if (now.getTime() - lastFireTimestamp >= catchUpWindowMs) {
+      return undefined;
+    }
+
+    const isAcquired = await this.cacheStorageService.acquireLock(
+      `${keyPrefix}:${lastFireTimestamp}`,
+      lockTtlMs,
+    );
+
+    return isAcquired ? lastFireTimestamp : undefined;
+  }
+
+  async releaseFireTime({
+    keyPrefix,
+    fireTimestamp,
+  }: {
+    keyPrefix: string;
+    fireTimestamp: number;
+  }): Promise<void> {
+    await this.cacheStorageService.releaseLock(`${keyPrefix}:${fireTimestamp}`);
+  }
 }

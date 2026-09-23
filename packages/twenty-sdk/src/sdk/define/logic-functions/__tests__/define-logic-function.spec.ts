@@ -290,4 +290,66 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(true);
   });
+  it('should accept a serverCronTriggerSettings dispatcher', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Nightly dispatcher',
+      serverCronTriggerSettings: { pattern: '30 4 * * *' },
+      handler: async ({ cursor }: { cursor?: { nextPath: string } }) => ({
+        dispatches: [
+          {
+            workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+            targetLogicFunctionUniversalIdentifier:
+              'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+            payload: { nextPath: cursor?.nextPath },
+          },
+        ],
+        next: { cursor: { nextPath: '/bot/?cursor=abc' }, delayMs: 20_000 },
+      }),
+    });
+
+    expect(result.errors).toEqual([]);
+    expect(result.config.serverCronTriggerSettings?.pattern).toBe('30 4 * * *');
+  });
+
+  it('should return error when server cron pattern does not have 5 fields', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Nightly dispatcher',
+      serverCronTriggerSettings: { pattern: '0 30 4 * * *' },
+      handler: async () => ({ dispatches: [] }),
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Server cron trigger pattern must have exactly 5 fields',
+    );
+  });
+
+  it('should return error when server cron is combined with another trigger', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Nightly dispatcher',
+      serverCronTriggerSettings: { pattern: '30 4 * * *' },
+      cronTriggerSettings: { pattern: '30 4 * * *' },
+      handler: async () => ({ dispatches: [] }),
+    } as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Server cron trigger cannot be combined with another trigger',
+    );
+  });
+
+  it('compile-time rejects a serverCronTriggerSettings handler returning the wrong shape', () => {
+    // @ts-expect-error handler must return { dispatches } when serverCronTriggerSettings is set
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Bad dispatcher',
+      serverCronTriggerSettings: { pattern: '30 4 * * *' },
+      handler: async () => ({ workspaceId: 'ws-1' }),
+    });
+
+    expect(result.success).toBe(true);
+  });
 });

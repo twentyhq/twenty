@@ -11,6 +11,7 @@ export const FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES = [
   'databaseEventTriggerSettings',
   'httpRouteTriggerSettings',
   'serverRouteTriggerSettings',
+  'serverCronTriggerSettings',
   'toolTriggerSettings',
   'workflowActionTriggerSettings',
   'isBuildUpToDate',

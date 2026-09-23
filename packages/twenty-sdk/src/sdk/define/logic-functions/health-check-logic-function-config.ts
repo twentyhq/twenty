@@ -9,6 +9,7 @@ export type HealthCheckLogicFunctionConfig = Omit<
   | 'toolTriggerSettings'
   | 'workflowActionTriggerSettings'
   | 'serverRouteTriggerSettings'
+  | 'serverCronTriggerSettings'
   | 'handler'
 > & {
   handler: HealthCheckHandler;

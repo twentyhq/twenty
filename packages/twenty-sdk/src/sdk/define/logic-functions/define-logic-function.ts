@@ -1,4 +1,5 @@
 import { HTTPMethod } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
@@ -50,6 +51,29 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
   if (config.databaseEventTriggerSettings) {
     if (!config.databaseEventTriggerSettings.eventName) {
       errors.push('Database event trigger must have an eventName');
+    }
+  }
+
+  if (config.serverCronTriggerSettings) {
+    const { pattern } = config.serverCronTriggerSettings;
+
+    if (!pattern || pattern.trim().split(/\s+/).length !== 5) {
+      errors.push('Server cron trigger pattern must have exactly 5 fields');
+    }
+
+    const hasOtherTrigger = [
+      config.cronTriggerSettings,
+      config.databaseEventTriggerSettings,
+      config.httpRouteTriggerSettings,
+      config.serverRouteTriggerSettings,
+      config.toolTriggerSettings,
+      config.workflowActionTriggerSettings,
+    ].some(isDefined);
+
+    if (hasOtherTrigger) {
+      errors.push(
+        'Server cron trigger cannot be combined with another trigger',
+      );
     }
   }
 

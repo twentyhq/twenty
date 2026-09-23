@@ -58,6 +58,7 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
         createLogicFunctionFromSourceInput.httpRouteTriggerSettings ?? null,
       serverRouteTriggerSettings:
         createLogicFunctionFromSourceInput.serverRouteTriggerSettings ?? null,
+      serverCronTriggerSettings: null,
       toolTriggerSettings:
         createLogicFunctionFromSourceInput.toolTriggerSettings ?? null,
       workflowActionTriggerSettings:

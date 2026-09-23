@@ -1,0 +1,1 @@
+export const SERVER_CRON_MAX_CURSOR_SIZE_BYTES = 64 * 1024;

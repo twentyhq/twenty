@@ -1797,6 +1797,15 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   APPLICATION_REGISTRATION_JOB_ENQUEUE_RATE_LIMITING_LIMIT = 2000;
 
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of jobs a server cron trigger dispatches per application registration in the rate limiting window before further dispatches are delayed',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  APPLICATION_REGISTRATION_SERVER_CRON_DISPATCH_RATE_LIMITING_LIMIT = 2000;
+
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,

@@ -13,9 +13,16 @@
 export type {
   LogicFunctionConfig,
   LogicFunctionHandler,
+  ServerCronHandler,
   ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
-export type { ServerRouteDispatchResult } from 'twenty-shared/application';
+export type {
+  ServerCronCursor,
+  ServerCronDispatch,
+  ServerCronDispatchResult,
+  ServerCronPayload,
+  ServerRouteDispatchResult,
+} from 'twenty-shared/application';
 
 export type {
   InstallHandler,

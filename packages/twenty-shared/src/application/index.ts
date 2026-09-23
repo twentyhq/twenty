@@ -202,6 +202,13 @@ export type {
   RunAgentResult,
 } from './runAgentType';
 export type { ServerVariables } from './server-variables.type';
+export type {
+  ServerCronCursor,
+  ServerCronPayload,
+  ServerCronDispatch,
+  ServerCronDispatchResult,
+} from './serverCronDispatchResultType';
+export type { ServerCronTriggerSettings } from './serverCronTriggerSettingsType';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';
 export type { SettingsFrontComponentApplicationManifest } from './settingsFrontComponentApplicationType';

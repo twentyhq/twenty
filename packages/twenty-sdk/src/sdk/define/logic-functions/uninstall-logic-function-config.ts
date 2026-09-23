@@ -8,6 +8,8 @@ export type UninstallLogicFunctionConfig = Omit<
   | 'httpRouteTriggerSettings'
   | 'toolTriggerSettings'
   | 'workflowActionTriggerSettings'
+  | 'serverRouteTriggerSettings'
+  | 'serverCronTriggerSettings'
   | 'handler'
 > & {
   handler: UninstallHandler;

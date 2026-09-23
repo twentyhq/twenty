@@ -20,7 +20,7 @@ export const defineManifestTests = (appPath: string): void => {
       expect(manifest).not.toBeNull();
 
       expect(manifest.objects).toHaveLength(4);
-      expect(manifest.logicFunctions).toHaveLength(7);
+      expect(manifest.logicFunctions).toHaveLength(8);
       expect(manifest.frontComponents).toHaveLength(4);
       expect(manifest.roles).toHaveLength(2);
       expect(manifest.fields).toHaveLength(7);

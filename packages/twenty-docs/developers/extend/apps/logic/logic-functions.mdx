@@ -60,6 +60,7 @@ To invoke a route-triggered logic function from a (headless) front component, se
 - **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 > e.g. `person.updated`, `*.created`, `company.*`
 - **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and either returns a sync `Response` or the target workspace AND logic function to enqueue; on the enqueue path the platform acks with `202` and runs that **target** on the worker queue. See [Server route trigger](#server-route-trigger).
+- **serverCron**: Runs your function once per server, not once per install, in the owner workspace. The function returns per-workspace dispatches and the platform enqueues each **target** in its workspace. See [Server cron trigger](#server-cron-trigger).
 
 <Note>
 You can also manually execute a function using the CLI:
@@ -326,6 +327,8 @@ const handler = async (event: RoutePayload) => {
 **The application must be claimed and installed on its owner workspace.** Follow [Claiming your app](/developers/extend/apps/operations/publishing#claiming-your-app) to assign an owner, then install the app in that workspace. Until both are true, the resolver has nowhere to run and the server route returns `404` (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed elsewhere. Marketplace search hides apps with server routes until this setup and all required server variables are complete. See [owner workspace costs and availability](/developers/extend/apps/operations/publishing#owner-workspace-costs-and-availability) for billing and operational details.
 </Note>
 
+A resolver only ever runs in the owner workspace. Executing its copy in any other workspace where the app is installed, for example from the logic function settings or the API, is rejected with `LOGIC_FUNCTION_NOT_FOUND`.
+
 **Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return either a `Response`, or `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of either). On the dispatch path, the `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`. A result that matches neither shape — including one whose identifiers are not UUIDs — is rejected with `502`.
 
 | Field | Type | Notes |
@@ -356,6 +359,83 @@ When the resolver returns a dispatch object, the route responds `202 { queued: t
 The resolver runs in the owner workspace and spends its credits, so the route answers `402` when that workspace has exhausted its allowance or has no active subscription, and `429` when a usage limit is hit. Senders that retry on `5xx` will not retry these, which is what you want: the refusal will not clear on the next attempt.
 
 When the caller must read the response body on the same request (challenge handshakes, interactive acknowledgements), return a `Response` from the **resolver** instead. The platform echoes it synchronously and skips the queue; its headers go through the same allow-list as HTTP route responses. Keep the resolver fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
+</Note>
+
+#### Server cron trigger
+
+`cronTriggerSettings` runs your function once **per install**: with your app installed in 2,000 workspaces, every tick runs 2,000 times. When each run calls the same third-party account (one API key stored in [server variables](/developers/extend/apps/config/application)), that multiplies your calls against the provider's rate limits. Use `serverCronTriggerSettings` to run the function **once per server** instead, and hand each workspace only its share of the data.
+
+A server cron function is a **dispatcher**:
+
+1. It runs in your **owner workspace**, once per tick of its cron pattern. The pattern has exactly 5 fields and is evaluated in UTC. The handler receives `{ scheduledAt, step, cursor? }`.
+2. It returns `{ dispatches, next? }`. Each dispatch names a workspace and a logic function of your app, and the platform enqueues that **target** in that workspace with the dispatch `payload`.
+3. When it returns `next`, the platform runs it again for the same tick with `next.cursor` after `next.delayMs`. Use this to page through a large third-party list in bounded steps instead of one long run.
+
+```ts src/logic-functions/dispatch-nightly-sync.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type ServerCronPayload } from 'twenty-sdk/logic-function';
+
+type ProviderListCursor = { nextPageUrl: string };
+
+export default defineLogicFunction({
+  universalIdentifier: '5f1c2a3b-6d7e-4f80-9a1b-2c3d4e5f6a7b',
+  name: 'dispatch-nightly-sync',
+  timeoutSeconds: 120,
+  serverCronTriggerSettings: { pattern: '30 4 * * *' },
+  handler: async ({ scheduledAt, cursor }: ServerCronPayload<ProviderListCursor>) => {
+    const page = await listProviderRecords({
+      url: cursor?.nextPageUrl ?? buildFirstPageUrl(scheduledAt),
+    });
+
+    return {
+      dispatches: groupByWorkspaceId(page.records).map(
+        ([workspaceId, records]) => ({
+          workspaceId,
+          targetLogicFunctionUniversalIdentifier: SYNC_WORKSPACE_RECORDS_UNIVERSAL_IDENTIFIER,
+          payload: { records },
+        }),
+      ),
+      next: page.nextPageUrl
+        ? { cursor: { nextPageUrl: page.nextPageUrl }, delayMs: 20_000 }
+        : undefined,
+    };
+  },
+});
+```
+
+The target is a regular logic function without trigger. It runs in its own workspace with the dispatch `payload`, and reads that workspace's application variables and records as usual.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `dispatches[].workspaceId` | `string` | Workspace UUID where the target runs. |
+| `dispatches[].targetLogicFunctionUniversalIdentifier` | `string` | `universalIdentifier` of a logic function of the same app. |
+| `dispatches[].payload` | `object` (optional) | Payload of the target, `{}` when unset. |
+| `dispatches[].delayMs` | `number` (optional) | Delay before the target runs, up to 24 hours. |
+| `next.cursor` | `object` | Passed back as `cursor` on the next step of the same tick. |
+| `next.delayMs` | `number` (optional) | Delay before the next step, up to 15 minutes. |
+
+How the platform handles the result:
+
+- A dispatch whose workspace does not have the app installed, is not active, or has no such target is dropped. The other dispatches still go through.
+- A target cannot be a server cron or server route function.
+- A result that does not match the shape above, or exceeds a limit, is rejected as a whole: nothing is dispatched and the step is not retried. A `RetryableLogicFunctionError` thrown by the handler is retried.
+- Dispatches above the registration's dispatch rate (`APPLICATION_REGISTRATION_SERVER_CRON_DISPATCH_RATE_LIMITING_LIMIT`, 2,000 per minute by default) are delayed, never dropped.
+- `scheduledAt` is the same for every step of a tick, so compute time windows from it rather than from the current time.
+
+| Limit | Value |
+|-------|-------|
+| Dispatches per step | 1,000 |
+| Steps per tick | 100 |
+| Result size | 5 MiB |
+| Payload per dispatch | 256 KiB |
+| Cursor size | 64 KiB |
+
+<Warning>
+**Targets run at least once, not exactly once.** Make them idempotent: a retried step or a restarted worker can deliver the same dispatch twice. Only send a workspace its own data, since the dispatch payload is stored with the target's job and appears in its logs.
+</Warning>
+
+<Note>
+**The application must be claimed and installed on its owner workspace**, the same as for a [server route trigger](#server-route-trigger). The dispatcher runs there and spends the owner workspace's credits, while each target spends its own workspace's credits. Ticks are skipped while the owner workspace is suspended. A server cron function cannot declare any other trigger, and executing it in any workspace other than the owner is rejected, so test it with `yarn twenty dev:function:exec` against the owner workspace.
 </Note>
 
 #### Database event trigger payload

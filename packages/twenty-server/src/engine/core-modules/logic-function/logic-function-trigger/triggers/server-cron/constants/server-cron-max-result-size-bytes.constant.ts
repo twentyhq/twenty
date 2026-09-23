@@ -1,0 +1,1 @@
+export const SERVER_CRON_MAX_RESULT_SIZE_BYTES = 5 * 1024 * 1024;

@@ -13,6 +13,7 @@ import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/c
 import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file-upload/crons/commands/pending-file-cleanup.cron.command';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
+import { ServerCronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/server-cron/server-cron-trigger.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCleanupCronCommand } from 'src/engine/core-modules/user-session/crons/commands/user-session-cleanup.cron.command';
@@ -71,6 +72,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
     private readonly checkEmailingDomainVerificationCronCommand: CheckEmailingDomainVerificationCronCommand,
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
+    private readonly serverCronTriggerCronCommand: ServerCronTriggerCronCommand,
     private readonly cleanSuspendedWorkspacesCronCommand: CleanSuspendedWorkspacesCronCommand,
     private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,
     private readonly trashCleanupCronCommand: TrashCleanupCronCommand,
@@ -182,6 +184,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'CronTrigger',
         command: this.cronTriggerCronCommand,
+      },
+      {
+        name: 'ServerCronTrigger',
+        command: this.serverCronTriggerCronCommand,
       },
       {
         name: 'CleanSuspendedWorkspaces',
