@@ -62,6 +62,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -116,7 +117,12 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => WorkspaceEntity)
-  @UseGuards(UserAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    UserAuthGuard,
+    RequireUserSessionGuard,
+    WorkspaceAuthGuard,
+    NoPermissionGuard,
+  )
   async activateWorkspace(
     // Deprecated: the workspace name is set at creation. This argument is kept
     // for backward compatibility (removing it would be a breaking schema change)

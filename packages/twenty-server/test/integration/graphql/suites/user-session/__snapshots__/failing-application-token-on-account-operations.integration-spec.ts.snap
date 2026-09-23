@@ -1,0 +1,619 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse a client config query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse a company enrichment mutation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse a timeline messaging query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse an admin panel AI provider query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse an admin panel query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse an enterprise query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse an onboarding query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse currentUser selecting availableWorkspaces 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse currentUser selecting supportUserHash 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse currentUser selecting userWorkspaces 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse currentUser selecting workspaces 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to activate the workspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to change the email, which is unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to consent to an OAuth client, minting no authorization code 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to create a workspace, minting no login token 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to delete a two-factor method 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to delete the account, which still exists 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to impersonate a member 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to list the application authorizations 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to list the sessions 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to mint a transient token 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to remove the bound member from the workspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to revoke an application authorization 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to revoke every other session, leaving the count unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to revoke one session, which stays live 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to start a two-factor provisioning 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to stop impersonation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to nobody should refuse to verify a two-factor method 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Forbidden resource",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse a client config query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse a company enrichment mutation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse a timeline messaging query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse an admin panel AI provider query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse an admin panel query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse an enterprise query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse an onboarding query 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse currentUser selecting availableWorkspaces 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse currentUser selecting supportUserHash 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse currentUser selecting userWorkspaces 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse currentUser selecting workspaces 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to activate the workspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to change the email, which is unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to consent to an OAuth client, minting no authorization code 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to create a workspace, minting no login token 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to delete a two-factor method 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to delete the account, which still exists 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to impersonate a member 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to list the application authorizations 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to list the sessions 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to mint a transient token 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to remove the bound member from the workspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to revoke an application authorization 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to revoke every other session, leaving the count unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to revoke one session, which stays live 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to start a two-factor provisioning 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to stop impersonation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Account operations with an application token should fail with an application token bound to the admin should refuse to verify a two-factor method 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint requires a user session",
+  "name": "ForbiddenError",
+}
+`;

@@ -11,14 +11,18 @@ export type ApplicationWithVariable = {
   variableKey: string;
 };
 
-// Syncs an application whose default role holds APPLICATIONS, as the official
-// apps with a settings component do, and declares one non-secret variable.
+// Syncs an application whose default role holds APPLICATIONS by default, as the
+// official apps with a settings component do, and declares one non-secret
+// variable. The flags are a parameter so a caller can give the application role
+// a workspace permission instead.
 export const setupApplicationWithVariable = async ({
   name,
   variableKey,
+  permissionFlagUniversalIdentifiers = [SystemPermissionFlag.APPLICATIONS],
 }: {
   name: string;
   variableKey: string;
+  permissionFlagUniversalIdentifiers?: string[];
 }): Promise<ApplicationWithVariable> => {
   const applicationUniversalIdentifier = uuidv4();
   const roleUniversalIdentifier = uuidv4();
@@ -54,9 +58,7 @@ export const setupApplicationWithVariable = async ({
             universalIdentifier: roleUniversalIdentifier,
             label: `${name} role`,
             description: 'Manages applications',
-            permissionFlagUniversalIdentifiers: [
-              SystemPermissionFlag.APPLICATIONS,
-            ],
+            permissionFlagUniversalIdentifiers,
           },
         ],
       },
