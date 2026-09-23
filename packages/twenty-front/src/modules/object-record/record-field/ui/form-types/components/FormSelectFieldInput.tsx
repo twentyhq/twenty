@@ -149,6 +149,7 @@ export const FormSelectFieldInput = ({
             renderAsTag
             hasRightElement={isDefined(VariablePicker) && !readonly}
             withSearchInput
+            isKeyboardAccessible
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             dropdownOffset={{

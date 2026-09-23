@@ -61,6 +61,7 @@ export type SelectProps<Value extends SelectValue> = {
   showContextualTextInControl?: boolean;
   showIconInControl?: boolean;
   isDropdownInModal?: boolean;
+  isKeyboardAccessible?: boolean;
   variant?: FormFieldInputVariant;
 };
 
@@ -105,6 +106,7 @@ export const Select = <Value extends SelectValue>({
   showContextualTextInControl = true,
   showIconInControl = true,
   isDropdownInModal = false,
+  isKeyboardAccessible = false,
   variant = 'default',
   renderAsTag = false,
 }: SelectProps<Value>) => {
@@ -205,6 +207,7 @@ export const Select = <Value extends SelectValue>({
     <StyledContainer
       className={className}
       fullWidth={fullWidth}
+      tabIndex={isKeyboardAccessible ? undefined : 0}
       onBlur={onBlur}
       ref={selectContainerRef}
     >
@@ -220,7 +223,7 @@ export const Select = <Value extends SelectValue>({
         />
       ) : (
         <Dropdown
-          clickableComponentTabIndex={0}
+          clickableComponentTabIndex={isKeyboardAccessible ? 0 : undefined}
           dropdownId={dropdownId}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}

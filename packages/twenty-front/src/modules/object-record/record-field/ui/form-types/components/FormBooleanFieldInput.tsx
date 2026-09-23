@@ -132,6 +132,7 @@ export const FormBooleanFieldInput = ({
             emptyOption={defaultEmptyOption}
             fullWidth
             hasRightElement={isDefined(VariablePicker) && !readonly}
+            isKeyboardAccessible
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             dropdownOffset={{
