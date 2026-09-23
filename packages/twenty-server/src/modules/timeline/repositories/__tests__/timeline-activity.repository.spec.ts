@@ -2,6 +2,7 @@ import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const RECORD_ID = '20202020-0000-4000-8000-000000000002';
@@ -162,6 +163,8 @@ describe('TimelineActivityRepository', () => {
         ]),
       ],
     ]);
+    jestExpectToBeDefined(executeRawQuery.mock.invocationCallOrder[0]);
+
     expect(
       workspaceRepository.find.mock.invocationCallOrder[0],
     ).toBeGreaterThan(executeRawQuery.mock.invocationCallOrder[0]);

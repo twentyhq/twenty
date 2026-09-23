@@ -15,8 +15,8 @@ describe('generateDateGroupsInRange', () => {
 
       expect(result.dates).toHaveLength(5);
       expect(result.wasTruncated).toBe(false);
-      expect(result.dates[0].toString()).toBe('2024-01-01');
-      expect(result.dates[4].toString()).toBe('2024-01-05');
+      expect(result.dates[0]?.toString()).toBe('2024-01-01');
+      expect(result.dates[4]?.toString()).toBe('2024-01-05');
     });
 
     it('should return single date when start equals end', () => {
@@ -28,7 +28,7 @@ describe('generateDateGroupsInRange', () => {
 
       expect(result.dates).toHaveLength(1);
       expect(result.wasTruncated).toBe(false);
-      expect(result.dates[0].toString()).toBe('2024-01-01');
+      expect(result.dates[0]?.toString()).toBe('2024-01-01');
     });
   });
 
@@ -42,11 +42,11 @@ describe('generateDateGroupsInRange', () => {
 
       expect(result.dates).toHaveLength(5);
       expect(result.wasTruncated).toBe(false);
-      expect(result.dates[0].toString()).toBe('2024-01-01');
-      expect(result.dates[1].toString()).toBe('2024-01-08');
-      expect(result.dates[2].toString()).toBe('2024-01-15');
-      expect(result.dates[3].toString()).toBe('2024-01-22');
-      expect(result.dates[4].toString()).toBe('2024-01-29');
+      expect(result.dates[0]?.toString()).toBe('2024-01-01');
+      expect(result.dates[1]?.toString()).toBe('2024-01-08');
+      expect(result.dates[2]?.toString()).toBe('2024-01-15');
+      expect(result.dates[3]?.toString()).toBe('2024-01-22');
+      expect(result.dates[4]?.toString()).toBe('2024-01-29');
     });
   });
 
@@ -60,10 +60,10 @@ describe('generateDateGroupsInRange', () => {
 
       expect(result.dates).toHaveLength(4);
       expect(result.wasTruncated).toBe(false);
-      expect(result.dates[0].toString()).toBe('2024-01-01');
-      expect(result.dates[1].toString()).toBe('2024-02-01');
-      expect(result.dates[2].toString()).toBe('2024-03-01');
-      expect(result.dates[3].toString()).toBe('2024-04-01');
+      expect(result.dates[0]?.toString()).toBe('2024-01-01');
+      expect(result.dates[1]?.toString()).toBe('2024-02-01');
+      expect(result.dates[2]?.toString()).toBe('2024-03-01');
+      expect(result.dates[3]?.toString()).toBe('2024-04-01');
     });
 
     it('should handle year boundaries', () => {
@@ -74,10 +74,10 @@ describe('generateDateGroupsInRange', () => {
       });
 
       expect(result.dates).toHaveLength(4);
-      expect(result.dates[0].toString()).toBe('2023-11-01');
-      expect(result.dates[1].toString()).toBe('2023-12-01');
-      expect(result.dates[2].toString()).toBe('2024-01-01');
-      expect(result.dates[3].toString()).toBe('2024-02-01');
+      expect(result.dates[0]?.toString()).toBe('2023-11-01');
+      expect(result.dates[1]?.toString()).toBe('2023-12-01');
+      expect(result.dates[2]?.toString()).toBe('2024-01-01');
+      expect(result.dates[3]?.toString()).toBe('2024-02-01');
     });
   });
 
@@ -91,10 +91,10 @@ describe('generateDateGroupsInRange', () => {
 
       expect(result.dates).toHaveLength(4);
       expect(result.wasTruncated).toBe(false);
-      expect(result.dates[0].toString()).toBe('2024-01-01');
-      expect(result.dates[1].toString()).toBe('2024-04-01');
-      expect(result.dates[2].toString()).toBe('2024-07-01');
-      expect(result.dates[3].toString()).toBe('2024-10-01');
+      expect(result.dates[0]?.toString()).toBe('2024-01-01');
+      expect(result.dates[1]?.toString()).toBe('2024-04-01');
+      expect(result.dates[2]?.toString()).toBe('2024-07-01');
+      expect(result.dates[3]?.toString()).toBe('2024-10-01');
     });
   });
 
@@ -108,11 +108,11 @@ describe('generateDateGroupsInRange', () => {
 
       expect(result.dates).toHaveLength(5);
       expect(result.wasTruncated).toBe(false);
-      expect(result.dates[0].toString()).toBe('2020-01-01');
-      expect(result.dates[1].toString()).toBe('2021-01-01');
-      expect(result.dates[2].toString()).toBe('2022-01-01');
-      expect(result.dates[3].toString()).toBe('2023-01-01');
-      expect(result.dates[4].toString()).toBe('2024-01-01');
+      expect(result.dates[0]?.toString()).toBe('2020-01-01');
+      expect(result.dates[1]?.toString()).toBe('2021-01-01');
+      expect(result.dates[2]?.toString()).toBe('2022-01-01');
+      expect(result.dates[3]?.toString()).toBe('2023-01-01');
+      expect(result.dates[4]?.toString()).toBe('2024-01-01');
     });
   });
 

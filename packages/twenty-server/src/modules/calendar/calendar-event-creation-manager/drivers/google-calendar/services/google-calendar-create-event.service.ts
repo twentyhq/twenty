@@ -1,3 +1,5 @@
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import { Injectable } from '@nestjs/common';
 
 import { google } from 'googleapis';
@@ -43,7 +45,11 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
         requestBody: toGoogleEventInput(input),
       });
 
-      return formatGoogleCalendarEvents([data])[0];
+      const [formattedCalendarEvent] = formatGoogleCalendarEvents([data]);
+
+      assertIsDefinedOrThrow(formattedCalendarEvent);
+
+      return formattedCalendarEvent;
     } catch (error) {
       throw new CalendarEventCreationException(
         `Failed to create Google calendar event: ${error instanceof Error ? error.message : 'unknown error'}`,

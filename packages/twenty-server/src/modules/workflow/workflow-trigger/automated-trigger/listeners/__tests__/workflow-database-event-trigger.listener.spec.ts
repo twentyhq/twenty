@@ -21,6 +21,7 @@ import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objec
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('WorkflowDatabaseEventTriggerListener', () => {
   let listener: WorkflowDatabaseEventTriggerListener;
@@ -203,6 +204,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should trigger workflow when no fields are specified', async () => {
+      jestExpectToBeDefined(mockEventListeners[0]);
+
       setTriggerMap([
         {
           ...mockEventListeners[0],
@@ -219,6 +222,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should trigger workflow when fields array is empty', async () => {
+      jestExpectToBeDefined(mockEventListeners[0]);
+
       setTriggerMap([
         {
           ...mockEventListeners[0],
@@ -235,6 +240,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should not trigger workflow when fields are specified but none match updated fields', async () => {
+      jestExpectToBeDefined(mockEventListeners[0]);
+
       setTriggerMap([
         {
           ...mockEventListeners[0],
@@ -617,6 +624,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         ],
       };
 
+      jestExpectToBeDefined(mockEventListeners[0]);
+
       setTriggerMap([
         {
           ...mockEventListeners[0],
@@ -657,6 +666,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         ],
       };
 
+      jestExpectToBeDefined(mockEventListeners[0]);
+
       setTriggerMap([
         {
           ...mockEventListeners[0],
@@ -686,6 +697,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           },
         ],
       };
+
+      jestExpectToBeDefined(mockEventListeners[0]);
 
       setTriggerMap([
         {

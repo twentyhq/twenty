@@ -125,7 +125,7 @@ describe('sortBySelectOptionPosition', () => {
       direction: 'ASC',
     });
 
-    expect(result[0].label).toBe('Option A');
-    expect(result[1].label).toBe('Not In Lookup');
+    expect(result[0]?.label).toBe('Option A');
+    expect(result[1]?.label).toBe('Not In Lookup');
   });
 });

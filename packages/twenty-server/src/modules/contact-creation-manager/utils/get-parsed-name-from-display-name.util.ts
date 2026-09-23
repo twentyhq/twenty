@@ -29,8 +29,8 @@ export const getParsedNameFromDisplayName = (
   const commaMatch = cleaned.match(/^([^,]+),\s*(.+)$/);
 
   if (isDefined(commaMatch)) {
-    const lastName = commaMatch[1].trim();
-    const firstName = commaMatch[2]
+    const lastName = (commaMatch[1] ?? '').trim();
+    const firstName = (commaMatch[2] ?? '')
       .trim()
       .replace(/\s*,\s*/g, ' ')
       .replace(/\s+/g, ' ');
@@ -46,7 +46,7 @@ export const getParsedNameFromDisplayName = (
   const [firstToken, ...rest] = cleaned.split(/\s+/);
   const restAsLastName = rest.join(' ');
   const { firstName: head, lastName: dotTail } =
-    getParsedNameFromEmailLocalPart(firstToken);
+    getParsedNameFromEmailLocalPart(firstToken ?? '');
 
   if (!isNonEmptyString(dotTail)) {
     return withGroupTagsStripped({

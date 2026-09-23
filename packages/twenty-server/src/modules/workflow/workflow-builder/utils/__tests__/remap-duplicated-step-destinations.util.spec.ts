@@ -43,7 +43,7 @@ describe('remapDuplicatedStepDestinations', () => {
     });
 
     expect(trigger.nextStepIds).toEqual(['cloned-a']);
-    expect(steps[0].nextStepIds).toEqual(['cloned-b']);
+    expect(steps[0]?.nextStepIds).toEqual(['cloned-b']);
   });
 
   it('remaps the destinations of connected if/else branches', () => {
@@ -95,8 +95,8 @@ describe('remapDuplicatedStepDestinations', () => {
       }
     ).settings.input.branches;
 
-    expect(branches[0].nextStepIds).toEqual(['cloned-then']);
-    expect(branches[1].nextStepIds).toEqual(['cloned-otherwise']);
+    expect(branches[0]?.nextStepIds).toEqual(['cloned-then']);
+    expect(branches[1]?.nextStepIds).toEqual(['cloned-otherwise']);
   });
 
   it('remaps the initial loop steps of an iterator', () => {
@@ -190,14 +190,14 @@ describe('remapDuplicatedStepDestinations', () => {
       settings: { input: Record<string, unknown> };
     }[];
 
-    expect(find.nextStepIds).toEqual(['cloned-iterator']);
-    expect(iterator.settings.input).toEqual({
+    expect(find?.nextStepIds).toEqual(['cloned-iterator']);
+    expect(iterator?.settings.input).toEqual({
       items: '{{cloned-find.all}}',
       initialLoopStepIds: ['cloned-loop'],
     });
-    expect(loop.name).toBe('Log {{source-iterator.currentItem.id}}');
-    expect(loop.nextStepIds).toEqual(['cloned-iterator']);
-    expect(loop.settings.input).toEqual({
+    expect(loop?.name).toBe('Log {{source-iterator.currentItem.id}}');
+    expect(loop?.nextStepIds).toEqual(['cloned-iterator']);
+    expect(loop?.settings.input).toEqual({
       logicFunctionInput: {
         companyId: '{{cloned-iterator.currentItem.id}}',
         triggerId: '{{trigger.recordId}}',

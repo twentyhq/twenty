@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
@@ -40,6 +42,10 @@ export class WorkflowHandleStaledRunsCommand extends CommandRunner {
 
     for (let i = 0; i < workspaceIds.length; i++) {
       const workspaceId = workspaceIds[i];
+
+      if (!isDefined(workspaceId)) {
+        continue;
+      }
 
       this.logger.log(
         `Processing workspace ${workspaceId} (${i + 1}/${workspaceIds.length})`,

@@ -1,5 +1,6 @@
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const HREF = 'https://caldav.example.com/calendars/user/event-1.ics';
 
@@ -54,7 +55,7 @@ describe('parseICalEvents', () => {
       'DTEND:20260601T110000Z',
     ]);
 
-    expect(parseICalEvents(ics, HREF)[0].title).toBe('Untitled Event');
+    expect(parseICalEvents(ics, HREF)[0]?.title).toBe('Untitled Event');
   });
 
   it('flags isFullDay when DTSTART carries VALUE=DATE', () => {
@@ -65,7 +66,7 @@ describe('parseICalEvents', () => {
       'DTEND;VALUE=DATE:20260705',
     ]);
 
-    expect(parseICalEvents(ics, HREF)[0].isFullDay).toBe(true);
+    expect(parseICalEvents(ics, HREF)[0]?.isFullDay).toBe(true);
   });
 
   it('classifies isFullDay per-event when a full-day master has a timed recurrence override', () => {
@@ -88,8 +89,8 @@ describe('parseICalEvents', () => {
 
     const [master, override] = parseICalEvents(ics, HREF);
 
-    expect(master.isFullDay).toBe(true);
-    expect(override.isFullDay).toBe(false);
+    expect(master?.isFullDay).toBe(true);
+    expect(override?.isFullDay).toBe(false);
   });
 
   it('flags isCanceled when STATUS:CANCELLED is present', () => {
@@ -103,8 +104,8 @@ describe('parseICalEvents', () => {
 
     const [event] = parseICalEvents(ics, HREF);
 
-    expect(event.isCanceled).toBe(true);
-    expect(event.status).toBe('CANCELLED');
+    expect(event?.isCanceled).toBe(true);
+    expect(event?.status).toBe('CANCELLED');
   });
 
   it('attaches recurringEventExternalId in ISO format when RECURRENCE-ID is present', () => {
@@ -116,7 +117,7 @@ describe('parseICalEvents', () => {
       'RECURRENCE-ID:20260601T100000Z',
     ]);
 
-    expect(parseICalEvents(ics, HREF)[0].recurringEventExternalId).toBe(
+    expect(parseICalEvents(ics, HREF)[0]?.recurringEventExternalId).toBe(
       '2026-06-01T10:00:00.000Z',
     );
   });
@@ -164,7 +165,7 @@ describe('parseICalEvents', () => {
       'ORGANIZER:mailto:bare@example.com',
     ]);
 
-    expect(parseICalEvents(ics, HREF)[0].participants[0]).toMatchObject({
+    expect(parseICalEvents(ics, HREF)[0]?.participants[0]).toMatchObject({
       handle: 'bare@example.com',
       displayName: 'bare@example.com',
       isOrganizer: true,
@@ -181,7 +182,11 @@ describe('parseICalEvents', () => {
       'ATTENDEE:mailto:John.Doe@Example.com',
     ]);
 
-    const participants = parseICalEvents(ics, HREF)[0].participants;
+    const parseICalEvent = parseICalEvents(ics, HREF)[0];
+
+    jestExpectToBeDefined(parseICalEvent);
+
+    const participants = parseICalEvent.participants;
 
     expect(participants.map((participant) => participant.handle)).toEqual([
       'jane.roe@example.com',
@@ -198,7 +203,7 @@ describe('parseICalEvents', () => {
       'ATTENDEE:mailto:bare@example.com',
     ]);
 
-    const attendee = parseICalEvents(ics, HREF)[0].participants.find(
+    const attendee = parseICalEvents(ics, HREF)[0]?.participants.find(
       (p) => !p.isOrganizer,
     );
 
@@ -218,7 +223,7 @@ describe('parseICalEvents', () => {
       'ORGANIZER;CN=Alice Org:mailto:alice@example.com',
     ]);
 
-    expect(parseICalEvents(ics, HREF)[0].participants[0]).toMatchObject({
+    expect(parseICalEvents(ics, HREF)[0]?.participants[0]).toMatchObject({
       handle: 'alice@example.com',
       displayName: 'Alice Org',
       isOrganizer: true,
@@ -240,6 +245,8 @@ describe('parseICalEvents', () => {
     ]);
 
     const [event] = parseICalEvents(ics, HREF);
+    jestExpectToBeDefined(event);
+
     const byHandle = Object.fromEntries(
       event.participants.map((p) => [p.handle, p.responseStatus]),
     );

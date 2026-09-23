@@ -28,7 +28,7 @@ import { isSuppressionBlockingSend } from 'src/engine/core-modules/emailing-doma
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class EmailingDomainSenderService {
@@ -164,12 +164,19 @@ export class EmailingDomainSenderService {
       });
 
     return {
-      entries: entries.map((entry) => ({
-        recipientIndex: deliverableRecipientIndexes[entry.recipientIndex],
-        messageId: entry.messageId,
-        headerMessageId: entry.headerMessageId,
-        errorMessage: entry.errorMessage,
-      })),
+      entries: entries.map((entry) => {
+        const recipientIndex =
+          deliverableRecipientIndexes[entry.recipientIndex];
+
+        assertIsDefinedOrThrow(recipientIndex);
+
+        return {
+          recipientIndex,
+          messageId: entry.messageId,
+          headerMessageId: entry.headerMessageId,
+          errorMessage: entry.errorMessage,
+        };
+      }),
       suppressedRecipientIndexes,
     };
   }

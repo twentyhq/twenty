@@ -249,7 +249,7 @@ describe('buildCalendarEventSaveOperations', () => {
     expect(plan.saveOperations.calendarEventsToInsert).toHaveLength(1);
     expect(plan.saveOperations.associationsToInsert).toEqual([
       {
-        calendarEventId: plan.saveOperations.calendarEventsToInsert[0].id,
+        calendarEventId: plan.saveOperations.calendarEventsToInsert[0]?.id,
         eventExternalId: 'external-event-id',
         calendarChannelId: CALENDAR_CHANNEL_ID,
         recurringEventExternalId: '',

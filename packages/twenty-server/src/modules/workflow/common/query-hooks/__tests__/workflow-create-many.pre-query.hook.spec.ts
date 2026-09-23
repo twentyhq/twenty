@@ -49,9 +49,9 @@ describe('WorkflowCreateManyPreQueryHook', () => {
 
     expect(result.data).toHaveLength(2);
     expect(result.data[0]).not.toHaveProperty('statuses');
-    expect(result.data[0].name).toBe('Workflow 1');
+    expect(result.data[0]?.name).toBe('Workflow 1');
     expect(result.data[1]).not.toHaveProperty('statuses');
-    expect(result.data[1].name).toBe('Workflow 2');
+    expect(result.data[1]?.name).toBe('Workflow 2');
   });
 
   it('should strip statuses when it is an empty array', async () => {
@@ -62,7 +62,7 @@ describe('WorkflowCreateManyPreQueryHook', () => {
     );
 
     expect(result.data[0]).not.toHaveProperty('statuses');
-    expect(result.data[0].name).toBe('Workflow 1');
+    expect(result.data[0]?.name).toBe('Workflow 1');
   });
 
   it('should leave entries untouched when statuses is not set', async () => {
@@ -73,9 +73,9 @@ describe('WorkflowCreateManyPreQueryHook', () => {
     );
 
     expect(result.data[0]).not.toHaveProperty('statuses');
-    expect(result.data[0].name).toBe('Workflow 1');
+    expect(result.data[0]?.name).toBe('Workflow 1');
     expect(result.data[1]).not.toHaveProperty('statuses');
-    expect(result.data[1].name).toBe('Workflow 2');
+    expect(result.data[1]?.name).toBe('Workflow 2');
   });
 
   it('should preserve other top-level payload fields (e.g. upsert)', async () => {
@@ -91,7 +91,7 @@ describe('WorkflowCreateManyPreQueryHook', () => {
 
     expect(result.upsert).toBe(true);
     expect(result.data[0]).not.toHaveProperty('statuses');
-    expect(result.data[0].name).toBe('Workflow 1');
+    expect(result.data[0]?.name).toBe('Workflow 1');
   });
 
   it('should return an empty data array unchanged', async () => {

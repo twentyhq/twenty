@@ -34,6 +34,10 @@ export const extractReferencedMessageIds = (
 
   const [rootMessageId, ...laterMessageIds] = referencedMessageIds;
 
+  if (!isDefined(rootMessageId)) {
+    return referencedMessageIds;
+  }
+
   return [
     rootMessageId,
     ...laterMessageIds.slice(-(MAX_REFERENCED_MESSAGE_IDS - 1)),

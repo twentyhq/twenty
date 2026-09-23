@@ -72,9 +72,14 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
         );
 
         for (let i = calendarEvents.length - 1; i >= 0; i--) {
+          const calendarEvent = calendarEvents[i];
+
+          if (!isDefined(calendarEvent)) {
+            continue;
+          }
+
           const associations = calendarChannelCalendarEventsAssociations.filter(
-            (association) =>
-              association.calendarEventId === calendarEvents[i].id,
+            (association) => association.calendarEventId === calendarEvent.id,
           );
 
           const calendarChannels = associations
@@ -125,9 +130,9 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
               CalendarChannelVisibility.METADATA
             ]
           ) {
-            calendarEvents[i].title =
+            calendarEvent.title =
               FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
-            calendarEvents[i].description =
+            calendarEvent.description =
               FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
             continue;
           }

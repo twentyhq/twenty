@@ -169,7 +169,7 @@ export const buildTimelineActivityTypeResolution = (
 
     const [candidate] = candidates;
 
-    if (!isDefined(candidate.action)) {
+    if (!isDefined(candidate) || !isDefined(candidate.action)) {
       continue;
     }
 

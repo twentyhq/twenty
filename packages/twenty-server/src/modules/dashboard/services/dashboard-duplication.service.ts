@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
+import {
+  appendCopySuffix,
+  assertIsDefinedOrThrow,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -167,10 +171,14 @@ export class DashboardDuplicationService {
       return;
     }
 
-    const dashboardObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: workspaceContext.objectIdByNameSingular.dashboard,
-      flatEntityMaps: workspaceContext.flatObjectMetadataMaps,
-    });
+    const dashboardObjectId = workspaceContext.objectIdByNameSingular.dashboard;
+
+    const dashboardObjectMetadata = isDefined(dashboardObjectId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: dashboardObjectId,
+          flatEntityMaps: workspaceContext.flatObjectMetadataMaps,
+        })
+      : undefined;
 
     if (
       !isDefined(dashboardObjectMetadata) ||
@@ -246,9 +254,11 @@ export class DashboardDuplicationService {
         authContext,
       });
 
+    assertIsDefinedOrThrow(recordWithActor);
+
     const insertResult = await dashboardRepository.insert(recordWithActor);
 
-    const newDashboardId = insertResult.identifiers[0].id;
+    const newDashboardId = insertResult.identifiers[0]?.id;
 
     const newDashboard = await dashboardRepository.findOne({
       where: { id: newDashboardId },

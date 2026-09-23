@@ -8,6 +8,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('shouldExecuteStep', () => {
   const steps = [
@@ -59,6 +60,8 @@ describe('shouldExecuteStep', () => {
       },
     };
 
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldExecuteStep({
       stepInfos,
       steps,
@@ -70,6 +73,8 @@ describe('shouldExecuteStep', () => {
   });
 
   it('should return false if one parent is not succeeded', () => {
+    jestExpectToBeDefined(steps[2]);
+
     expect(
       shouldExecuteStep({
         stepInfos: {
@@ -129,6 +134,8 @@ describe('shouldExecuteStep', () => {
   });
 
   it('should return false if step has already ran', () => {
+    jestExpectToBeDefined(steps[2]);
+
     expect(
       shouldExecuteStep({
         stepInfos: {
@@ -225,6 +232,8 @@ describe('shouldExecuteStep', () => {
       WorkflowRunStatus.COMPLETED,
       WorkflowRunStatus.NOT_STARTED,
     ]) {
+      jestExpectToBeDefined(steps[2]);
+
       const result = shouldExecuteStep({
         stepInfos,
         steps,
@@ -264,6 +273,8 @@ describe('shouldExecuteStep', () => {
       },
     };
 
+    jestExpectToBeDefined(stepsWithoutParents[0]);
+
     const result = shouldExecuteStep({
       stepInfos,
       steps: stepsWithoutParents,
@@ -275,6 +286,8 @@ describe('shouldExecuteStep', () => {
   });
 
   it('should return false when one parent is RUNNING', () => {
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldExecuteStep({
       stepInfos: {
         'step-1': {
@@ -331,6 +344,8 @@ describe('shouldExecuteStep', () => {
       },
     };
 
+    jestExpectToBeDefined(stepsWithUndefined[2]);
+
     const result = shouldExecuteStep({
       stepInfos,
       steps: stepsWithUndefined,
@@ -342,6 +357,8 @@ describe('shouldExecuteStep', () => {
   });
 
   it('should return false when at least one parent is FAILED', () => {
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldExecuteStep({
       stepInfos: {
         'step-1': {
@@ -417,6 +434,8 @@ describe('shouldExecuteStep', () => {
       'step-4': { status: StepStatus.NOT_STARTED },
     };
 
+    jestExpectToBeDefined(multiParentSteps[3]);
+
     const result = shouldExecuteStep({
       stepInfos,
       steps: multiParentSteps,
@@ -428,6 +447,8 @@ describe('shouldExecuteStep', () => {
   });
 
   it('should return false when step status is SKIPPED', () => {
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldExecuteStep({
       stepInfos: {
         'step-1': {
@@ -449,6 +470,8 @@ describe('shouldExecuteStep', () => {
   });
 
   it('should return false when step status is STOPPED', () => {
+    jestExpectToBeDefined(steps[2]);
+
     const result = shouldExecuteStep({
       stepInfos: {
         'step-1': {

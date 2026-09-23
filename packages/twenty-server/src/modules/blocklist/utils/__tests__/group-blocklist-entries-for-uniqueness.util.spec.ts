@@ -89,8 +89,8 @@ describe('groupBlocklistEntriesForUniqueness', () => {
       context,
     });
 
-    expect(groups[0].handles).toEqual(['new@acme.com']);
-    expect(groups[0].retainedHandles).toEqual(['old@acme.com']);
+    expect(groups[0]?.handles).toEqual(['new@acme.com']);
+    expect(groups[0]?.retainedHandles).toEqual(['old@acme.com']);
   });
 
   it('groups an existing record under its own owner, not the caller', () => {
@@ -107,7 +107,7 @@ describe('groupBlocklistEntriesForUniqueness', () => {
       context,
     });
 
-    expect(groups[0].workspaceMemberId).toBe('other-member-id');
+    expect(groups[0]?.workspaceMemberId).toBe('other-member-id');
   });
 
   it('ignores entries without a handle', () => {

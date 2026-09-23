@@ -23,7 +23,7 @@ describe('safeParseEmailAddresses', () => {
   it('should default an absent display name to empty string, not undefined', () => {
     const [first] = safeParseEmailAddresses('alice@example.com');
 
-    expect(first.name).toBe('');
+    expect(first?.name).toBe('');
   });
 
   it('should drop entries that parse without an address', () => {

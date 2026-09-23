@@ -42,9 +42,9 @@ describe('computeFoldersToCreate', () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(result[0].externalId).toBe('SENT');
-    expect(result[0].messageChannelId).toBe(messageChannelId);
-    expect(result[0].syncCursor).toBeNull();
+    expect(result[0]?.externalId).toBe('SENT');
+    expect(result[0]?.messageChannelId).toBe(messageChannelId);
+    expect(result[0]?.syncCursor).toBeNull();
   });
 
   it('should normalize empty parentFolderId to null', () => {
@@ -64,6 +64,6 @@ describe('computeFoldersToCreate', () => {
       messageChannelId,
     });
 
-    expect(result[0].parentFolderId).toBeNull();
+    expect(result[0]?.parentFolderId).toBeNull();
   });
 });

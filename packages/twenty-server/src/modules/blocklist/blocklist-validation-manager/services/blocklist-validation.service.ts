@@ -186,7 +186,7 @@ export class BlocklistValidationService {
 
       if (!result.success) {
         throw new CommonQueryRunnerException(
-          result.error.issues[0].message,
+          result.error.issues[0]?.message ?? 'Invalid handle',
           CommonQueryRunnerExceptionCode.BAD_REQUEST,
           { userFriendlyMessage: msg`Invalid email or domain.` },
         );

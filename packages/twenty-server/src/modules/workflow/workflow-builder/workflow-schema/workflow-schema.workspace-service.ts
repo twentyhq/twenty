@@ -7,7 +7,11 @@ import {
   getOutputSchemaFromValue,
   inputSchemaToOutputSchema,
 } from 'twenty-shared/logic-function';
-import { isDefined, isValidVariable } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isValidVariable,
+} from 'twenty-shared/utils';
 import {
   BaseOutputSchemaV2,
   buildManualTriggerMetadataNode,
@@ -313,7 +317,11 @@ export class WorkflowSchemaWorkspaceService {
   }): Promise<OutputSchema> {
     const [nameSingular, action] = eventName.split('.');
 
-    if (!checkStringIsDatabaseEventAction(action)) {
+    if (
+      !isDefined(nameSingular) ||
+      !isDefined(action) ||
+      !checkStringIsDatabaseEventAction(action)
+    ) {
       return {};
     }
 
@@ -403,6 +411,8 @@ export class WorkflowSchemaWorkspaceService {
     }
 
     const [objectType, action] = eventName.split('.');
+
+    assertIsDefinedOrThrow(objectType);
 
     const objectMetadataInfo =
       await this.workflowCommonWorkspaceService.getObjectMetadataInfo(

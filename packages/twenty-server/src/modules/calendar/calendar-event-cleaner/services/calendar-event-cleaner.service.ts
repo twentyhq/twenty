@@ -159,7 +159,7 @@ export class CalendarEventCleanerService {
                 break;
               }
 
-              cursor = page[page.length - 1].id;
+              cursor = page[page.length - 1]?.id;
 
               const pageIds = page.map(({ id }) => id);
 

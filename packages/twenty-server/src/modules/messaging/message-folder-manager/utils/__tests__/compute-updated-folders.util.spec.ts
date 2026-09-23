@@ -45,17 +45,17 @@ describe('computeUpdatedFolders', () => {
       folderIdsToDelete,
     });
 
-    expect(result[0].name).toBe('New Name');
-    expect(result[0].pendingSyncAction).toBe(
+    expect(result[0]?.name).toBe('New Name');
+    expect(result[0]?.pendingSyncAction).toBe(
       MessageFolderPendingSyncAction.NONE,
     );
 
-    expect(result[1].pendingSyncAction).toBe(
+    expect(result[1]?.pendingSyncAction).toBe(
       MessageFolderPendingSyncAction.FOLDER_DELETION,
     );
 
-    expect(result[2].name).toBe('Unchanged');
-    expect(result[2].pendingSyncAction).toBe(
+    expect(result[2]?.name).toBe('Unchanged');
+    expect(result[2]?.pendingSyncAction).toBe(
       MessageFolderPendingSyncAction.NONE,
     );
   });
@@ -82,9 +82,9 @@ describe('computeUpdatedFolders', () => {
       folderIdsToDelete: [],
     });
 
-    expect(result[0].name).toBe('Updated');
-    expect(result[0].isSentFolder).toBe(true);
-    expect(result[0].parentFolderId).toBe('parent-123');
-    expect(result[0].syncCursor).toBe('cursor-abc');
+    expect(result[0]?.name).toBe('Updated');
+    expect(result[0]?.isSentFolder).toBe(true);
+    expect(result[0]?.parentFolderId).toBe('parent-123');
+    expect(result[0]?.syncCursor).toBe('cursor-abc');
   });
 });

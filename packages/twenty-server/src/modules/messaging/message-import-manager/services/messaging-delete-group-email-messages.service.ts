@@ -122,7 +122,7 @@ export class MessagingDeleteGroupEmailMessagesService {
             break;
           }
 
-          cursorId = associations[associations.length - 1].id;
+          cursorId = associations[associations.length - 1]?.id;
         }
 
         this.logger.log(

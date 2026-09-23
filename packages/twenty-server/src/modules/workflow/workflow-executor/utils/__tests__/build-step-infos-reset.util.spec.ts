@@ -62,7 +62,7 @@ describe('buildStepInfosReset', () => {
       },
     });
 
-    expect(result.step1.history).toEqual([
+    expect(result.step1?.history).toEqual([
       { status: StepStatus.FAILED, error: 'first failure' },
       { status: StepStatus.FAILED, error: 'second failure', result: undefined },
     ]);

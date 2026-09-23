@@ -9,4 +9,7 @@ export const getStepRetryDelayMs = ({
   stepInfo,
 }: {
   stepInfo?: WorkflowRunStepInfo;
-}): number => STEP_RETRY_DELAYS_MS[getStepRetryAttempt({ stepInfo })];
+}): number =>
+  STEP_RETRY_DELAYS_MS[getStepRetryAttempt({ stepInfo })] ??
+  STEP_RETRY_DELAYS_MS[STEP_RETRY_DELAYS_MS.length - 1] ??
+  0;

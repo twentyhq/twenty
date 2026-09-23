@@ -10,7 +10,7 @@ export const parseGmailErrorRetryAfter = (
     return undefined;
   }
 
-  const retryAfter = new Date(match[1]);
+  const retryAfter = new Date(match[1] ?? '');
 
   if (isNaN(retryAfter.getTime())) {
     return undefined;

@@ -94,7 +94,7 @@ export class WorkflowRunWorkspaceService {
       });
       const workflowRunCountMatch = lastWorkflowRun?.name?.match(/#(\d+)/);
       const workflowRunCount = workflowRunCountMatch
-        ? parseInt(workflowRunCountMatch[1], 10)
+        ? parseInt(workflowRunCountMatch[1] ?? '', 10)
         : 0;
       const id = workflowRunId ?? v4();
 

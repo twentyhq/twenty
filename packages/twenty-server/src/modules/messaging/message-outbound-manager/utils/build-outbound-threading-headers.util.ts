@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type EmailingDomainHeader } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-header.type';
@@ -15,6 +16,11 @@ const isMessageId = (value: string | undefined): value is string =>
 
 const fitReferencesToHeaderLength = (messageIds: string[]): string[] => {
   const [rootMessageId, ...laterMessageIds] = messageIds;
+
+  if (!isDefined(rootMessageId)) {
+    return messageIds;
+  }
+
   const keptLaterMessageIds: string[] = [];
   let headerLength = REFERENCES_HEADER_NAME.length + rootMessageId.length;
 

@@ -8,7 +8,7 @@ export const safeParseEmailAddressAddress = (
   const logger = new Logger(safeParseEmailAddressAddress.name);
 
   try {
-    return addressparser(address)[0].address;
+    return addressparser(address)[0]?.address;
   } catch (error) {
     logger.error(`Error parsing address: ${address}`, error);
 

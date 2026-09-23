@@ -78,8 +78,14 @@ export class ApplyMessagesVisibilityRestrictionsService {
           );
 
         for (let i = messages.length - 1; i >= 0; i--) {
+          const message = messages[i];
+
+          if (!isDefined(message)) {
+            continue;
+          }
+
           const associations = messageChannelMessagesAssociations.filter(
-            (association) => association.messageId === messages[i].id,
+            (association) => association.messageId === message.id,
           );
 
           const messageChannels = associations
@@ -158,16 +164,15 @@ export class ApplyMessagesVisibilityRestrictionsService {
           if (
             messageChannelsGroupByVisibility[MessageChannelVisibility.SUBJECT]
           ) {
-            messages[i].text = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
+            message.text = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
             continue;
           }
 
           if (
             messageChannelsGroupByVisibility[MessageChannelVisibility.METADATA]
           ) {
-            messages[i].subject =
-              FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
-            messages[i].text = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
+            message.subject = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
+            message.text = FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED;
             continue;
           }
 

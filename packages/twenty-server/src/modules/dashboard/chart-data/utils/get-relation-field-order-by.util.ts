@@ -4,7 +4,7 @@ import {
   type ObjectRecordOrderByForScalarField,
   type OrderByDirection,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -43,6 +43,8 @@ export const getRelationFieldOrderBy = ({
   const [nestedFieldName, nestedSubFieldName] = groupBySubFieldName.split('.');
 
   if (isNestedDateField === true || isDefined(dateGranularity)) {
+    assertIsDefinedOrThrow(nestedFieldName);
+
     return [
       {
         [groupByFieldMetadata.name]: {
@@ -56,6 +58,8 @@ export const getRelationFieldOrderBy = ({
   }
 
   if (!isDefined(nestedSubFieldName)) {
+    assertIsDefinedOrThrow(nestedFieldName);
+
     return [
       {
         [groupByFieldMetadata.name]: {
@@ -64,6 +68,8 @@ export const getRelationFieldOrderBy = ({
       },
     ];
   }
+
+  assertIsDefinedOrThrow(nestedFieldName);
 
   return [
     {

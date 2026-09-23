@@ -136,7 +136,7 @@ describe('filterEmails', () => {
     const result = filterEmails(primaryHandle, [], messages, []);
 
     expect(result).toHaveLength(1);
-    expect(result[0].externalId).toBe('regular-message');
+    expect(result[0]?.externalId).toBe('regular-message');
   });
 
   it('should filter out bulk mail whose sender does not look like a group address', () => {
