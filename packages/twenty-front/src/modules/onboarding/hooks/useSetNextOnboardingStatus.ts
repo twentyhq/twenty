@@ -1,13 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type CurrentUser,
-  currentUserState,
-} from '@/auth/states/currentUserState';
-import {
-  type CurrentWorkspace,
-  currentWorkspaceState,
-} from '@/auth/states/currentWorkspaceState';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
@@ -16,74 +10,13 @@ import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardi
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
-import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
+import { getNextOnboardingStatus } from '@/onboarding/utils/getNextOnboardingStatus';
 import { getNextPreviousOnboardingStatus } from '@/onboarding/utils/getNextPreviousOnboardingStatus';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
-
-type GetNextOnboardingStatusArgs = {
-  currentUser: CurrentUser | null;
-  currentWorkspace: CurrentWorkspace | null;
-  isBillingEnabled: boolean;
-  isBookCallRequired: boolean;
-};
-
-const getNextOnboardingStatus = ({
-  currentUser,
-  currentWorkspace,
-  isBillingEnabled,
-  isBookCallRequired,
-}: GetNextOnboardingStatusArgs) => {
-  const isPlanRequired = getIsPlanRequired({
-    isBillingEnabled,
-    currentWorkspace,
-  });
-
-  const statusAfterBookCall = isPlanRequired
-    ? OnboardingStatus.PLAN_REQUIRED
-    : OnboardingStatus.COMPLETED;
-
-  const statusAfterInviteTeam =
-    isBookCallRequired && isPlanRequired
-      ? OnboardingStatus.BOOK_CALL
-      : statusAfterBookCall;
-
-  if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
-    return OnboardingStatus.SYNC_EMAIL;
-  }
-
-  if (currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL) {
-    if (currentWorkspace?.workspaceMembersCount === 1) {
-      return OnboardingStatus.APPS_INSTALLATION;
-    }
-    return OnboardingStatus.PROFILE_CREATION;
-  }
-
-  if (currentUser?.onboardingStatus === OnboardingStatus.APPS_INSTALLATION) {
-    return OnboardingStatus.PROFILE_CREATION;
-  }
-
-  if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
-    if (currentWorkspace?.workspaceMembersCount === 1) {
-      return OnboardingStatus.INVITE_TEAM;
-    }
-    return statusAfterInviteTeam;
-  }
-  if (currentUser?.onboardingStatus === OnboardingStatus.INVITE_TEAM) {
-    return statusAfterInviteTeam;
-  }
-  if (
-    currentUser?.onboardingStatus === OnboardingStatus.BOOK_CALL ||
-    currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED
-  ) {
-    return statusAfterBookCall;
-  }
-  return OnboardingStatus.COMPLETED;
-};
 
 export const useSetNextOnboardingStatus = () => {
   const store = useStore();

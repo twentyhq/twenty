@@ -1,5 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { OnboardingHomeIllustration } from '@/onboarding/components/OnboardingHomeIllustration/OnboardingHomeIllustration';
 import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { OnboardingFreeCredits } from '@/onboarding/components/free-credits/OnboardingFreeCredits';
@@ -36,6 +37,7 @@ export const OnboardingStepLayout = () => {
           <OnboardingFreeCredits onboardingConfig={onboardingConfig} />
         )
       }
+      sideComponent={<OnboardingHomeIllustration />}
     >
       <PrefetchBookCallStepEffect />
       <PrefetchPlanRequiredStepEffect />
