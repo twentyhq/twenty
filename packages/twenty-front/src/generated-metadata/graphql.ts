@@ -3034,6 +3034,7 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSession;
   claimApplicationRegistrationOwnership: ApplicationRegistration;
+  completeAppTarballUpload: ApplicationRegistration;
   completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
   completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
@@ -3262,6 +3263,7 @@ export type Mutation = {
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
+  /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
   uploadAppTarball: ApplicationRegistration;
   uploadApplicationFile: File;
   uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl;
@@ -3353,6 +3355,11 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationClaimApplicationRegistrationOwnershipArgs = {
   applicationRegistrationId: Scalars['String']['input'];
+};
+
+
+export type MutationCompleteAppTarballUploadArgs = {
+  fileId: Scalars['UUID']['input'];
 };
 
 

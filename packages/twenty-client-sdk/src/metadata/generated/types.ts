@@ -9567,6 +9567,15 @@ export default {
                     ]
                 }
             ],
+            "completeAppTarballUpload": [
+                76,
+                {
+                    "fileId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "uploadAppTarball": [
                 76,
                 {
