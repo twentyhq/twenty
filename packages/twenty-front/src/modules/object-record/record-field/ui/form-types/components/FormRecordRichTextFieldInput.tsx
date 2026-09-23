@@ -1,7 +1,15 @@
+import { SuggestionMenu } from '@blocknote/core/extensions';
 import { useCreateBlockNote } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useId, useState } from 'react';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  type KeyboardEvent,
+  useContext,
+  useEffect,
+  useId,
+  useState,
+} from 'react';
+import { Key } from 'ts-key-enum';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Field } from 'twenty-ui/primitives/input';
 
@@ -11,6 +19,7 @@ import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants
 import { countBlocksDeep } from '@/blocknote-editor/utils/countBlocksDeep';
 import { filterBlocksSupportedBySchema } from '@/blocknote-editor/utils/filterBlocksSupportedBySchema';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
+import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -105,6 +114,21 @@ export const FormRecordRichTextFieldInput = ({
     removeFocusItemFromFocusStackById({ focusId });
   };
 
+  const onFieldEscape = useContext(FormFieldEscapeContext);
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (
+      event.key !== Key.Escape ||
+      !isDefined(onFieldEscape) ||
+      editor.getExtension(SuggestionMenu)?.shown() === true
+    ) {
+      return;
+    }
+
+    event.stopPropagation();
+    onFieldEscape();
+  };
+
   useEffect(() => {
     return () => {
       removeFocusItemFromFocusStackById({ focusId });
@@ -121,7 +145,7 @@ export const FormRecordRichTextFieldInput = ({
   }, [hasUnreadableStoredValue, enqueueToast, t]);
 
   return (
-    <FormFieldInputContainer>
+    <FormFieldInputContainer onKeyDown={handleKeyDown}>
       {label ? <Field.Label>{label}</Field.Label> : null}
       <BlockEditor
         editor={editor}

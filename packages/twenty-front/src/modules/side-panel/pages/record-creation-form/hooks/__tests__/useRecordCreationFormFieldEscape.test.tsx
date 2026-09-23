@@ -290,34 +290,52 @@ it.each([
   },
 );
 
-it('closes an open select dropdown first, then leaves the creation form from its trigger', async () => {
-  const user = userEvent.setup();
-  renderForm(
+it.each([
+  [
+    'select',
+    'Option B',
     <FormSelectFieldInput
+      key="select"
       label="Stage"
       defaultValue="a"
       onChange={jest.fn()}
       options={SELECT_OPTIONS}
     />,
-  );
-  await user.tab();
-  await user.keyboard('{Enter}');
-  expect(await screen.findByText('Option B')).toBeInTheDocument();
+  ],
+  [
+    'array',
+    'Add item',
+    <FormArrayFieldInput
+      key="array"
+      label="Tags"
+      defaultValue={['First item']}
+      onChange={jest.fn()}
+    />,
+  ],
+])(
+  'closes an open %s dropdown first, then leaves the creation form from its trigger',
+  async (_triggerType, dropdownText, firstField) => {
+    const user = userEvent.setup();
+    renderForm(firstField);
+    await user.tab();
+    await user.keyboard('{Enter}');
+    expect(await screen.findByText(dropdownText)).toBeInTheDocument();
 
-  await user.keyboard('{Escape}');
+    await user.keyboard('{Escape}');
 
-  await waitFor(() =>
-    expect(screen.queryByText('Option B')).not.toBeInTheDocument(),
-  );
-  await new Promise((resolve) => setTimeout(resolve));
-  expect(mockHandleSidePanelEscape).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(screen.queryByText(dropdownText)).not.toBeInTheDocument(),
+    );
+    await new Promise((resolve) => setTimeout(resolve));
+    expect(mockHandleSidePanelEscape).not.toHaveBeenCalled();
 
-  await user.keyboard('{Escape}');
+    await user.keyboard('{Escape}');
 
-  await waitFor(() =>
-    expect(mockHandleSidePanelEscape).toHaveBeenCalledTimes(1),
-  );
-});
+    await waitFor(() =>
+      expect(mockHandleSidePanelEscape).toHaveBeenCalledTimes(1),
+    );
+  },
+);
 
 it('closes an open multi-select list first, then leaves the creation form', async () => {
   const user = userEvent.setup();

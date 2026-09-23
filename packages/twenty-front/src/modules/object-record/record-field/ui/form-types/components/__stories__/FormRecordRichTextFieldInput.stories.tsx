@@ -1,5 +1,10 @@
+import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
 import { FormRecordRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput';
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -138,5 +143,77 @@ export const Disabled: Story = {
 
     expect(args.onChange).not.toHaveBeenCalled();
     expect(defaultValue).toBeVisible();
+  },
+};
+
+const onFieldEscape = fn();
+
+const FormFieldEscapeDecorator: Decorator = (Story) => (
+  <FormFieldEscapeContext.Provider value={onFieldEscape}>
+    <Story />
+  </FormFieldEscapeContext.Provider>
+);
+
+const focusEditor = async (canvasElement: HTMLElement) => {
+  const editor = await waitFor(() => {
+    const editorElement = canvasElement.querySelector('.ProseMirror');
+
+    expect(editorElement).toBeVisible();
+
+    return editorElement;
+  });
+
+  if (!editor) {
+    throw new Error('Editor element not found');
+  }
+
+  await userEvent.click(editor);
+};
+
+export const LeavesFormOnEscape: Story = {
+  args: {
+    onChange: fn(),
+  },
+  decorators: [FormFieldEscapeDecorator],
+  beforeEach: () => {
+    onFieldEscape.mockClear();
+  },
+  play: async ({ canvasElement }) => {
+    await focusEditor(canvasElement);
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(onFieldEscape).toHaveBeenCalledTimes(1);
+    });
+  },
+};
+
+export const ClosesSlashMenuBeforeLeavingForm: Story = {
+  args: {
+    onChange: fn(),
+  },
+  decorators: [FormFieldEscapeDecorator],
+  beforeEach: () => {
+    onFieldEscape.mockClear();
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await focusEditor(canvasElement);
+    await userEvent.keyboard('/');
+    expect(await body.findByText('Heading 1')).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(body.queryByText('Heading 1')).not.toBeInTheDocument();
+    });
+    expect(onFieldEscape).not.toHaveBeenCalled();
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(onFieldEscape).toHaveBeenCalledTimes(1);
+    });
   },
 };
