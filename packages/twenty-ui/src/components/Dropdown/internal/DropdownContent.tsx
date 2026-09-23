@@ -65,16 +65,21 @@ export const DropdownContent = ({
         })}
         initialFocus={
           initialFocus ??
-          (() =>
-            !focusOnOpen
-              ? false
-              : isDefined(contentRef.current)
-                ? getDropdownFocusTarget({
-                    content: contentRef.current,
-                    edge: initialFocusEdge,
-                    type,
-                  })
-                : true)
+          (() => {
+            if (!focusOnOpen) {
+              return false;
+            }
+
+            if (!isDefined(contentRef.current)) {
+              return true;
+            }
+
+            return getDropdownFocusTarget({
+              content: contentRef.current,
+              edge: initialFocusEdge,
+              type,
+            });
+          })
         }
         onKeyDown={(event) => {
           event.stopPropagation();
