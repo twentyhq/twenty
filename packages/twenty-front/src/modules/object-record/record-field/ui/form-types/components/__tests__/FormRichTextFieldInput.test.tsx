@@ -3,10 +3,11 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'jotai';
-import { type ComponentProps, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { FormRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRichTextFieldInput';
+import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { stubProseMirrorLayout } from '~/testing/utils/stubProseMirrorLayout';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -17,15 +18,18 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </I18nProvider>
 );
 
-const renderRichTextInput = (
-  props: Partial<ComponentProps<typeof FormRichTextFieldInput>>,
-) =>
+const renderRichTextInput = ({
+  defaultValue,
+  onChange = jest.fn(),
+}: {
+  defaultValue?: FieldRichTextValue;
+  onChange?: (value: FieldRichTextValue) => void;
+}) =>
   render(
     <FormRichTextFieldInput
       label="Body"
-      defaultValue={undefined}
-      onChange={jest.fn()}
-      {...props}
+      defaultValue={defaultValue}
+      onChange={onChange}
     />,
     { wrapper: Wrapper },
   );
