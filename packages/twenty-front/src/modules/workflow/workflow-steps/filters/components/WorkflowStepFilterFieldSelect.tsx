@@ -4,29 +4,29 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { WorkflowDropdownStepOutputItems } from '@/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems';
-import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { useUpdateStepFilterFromVariable } from '@/workflow/workflow-steps/filters/hooks/useUpdateStepFilterFromVariable';
+import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import {
   type WorkflowVariableSelection,
   type WorkflowVariableStepSelection,
 } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
-import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
+import { InputHint } from '@/ui/input/components/internal/InputHint/InputHint';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  TRIGGER_STEP_ID,
   extractRawVariableNamePart,
   isStandaloneVariableString,
-  TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
-import { InputHint } from 'twenty-ui/primitives/input';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {

@@ -28,8 +28,8 @@ import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/Dra
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useState } from 'react';
+import { MenuItem } from 'twenty-ui/components';
 import { IconNewSection } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 const StyledGroupsDroppable = styled.div`
   display: flex;

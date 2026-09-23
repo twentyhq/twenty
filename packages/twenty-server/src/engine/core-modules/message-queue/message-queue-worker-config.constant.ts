@@ -202,6 +202,15 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.applicationUpgradeQueue]: {
+    priority: 6,
+    workerOptions: {
+      concurrency: 2,
+      lockDuration: 60_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.triggerQueue]: {
     priority: 5,
     workerOptions: {

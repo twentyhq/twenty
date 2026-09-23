@@ -68,6 +68,12 @@ export class AgentMessageEntity {
   @Index()
   agentId: string | null;
 
+  @Column({ type: 'uuid', nullable: true })
+  senderUserWorkspaceId: string | null;
+
+  @Column({ type: 'uuid', nullable: true })
+  senderApplicationId: string | null;
+
   @Column({ type: 'enum', enum: AgentMessageRole })
   role: AgentMessageRole;
 

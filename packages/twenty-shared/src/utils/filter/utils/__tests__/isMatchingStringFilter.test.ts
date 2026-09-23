@@ -38,44 +38,81 @@ describe('isMatchingStringFilter', () => {
     });
   });
 
-  describe('like', () => {
-    it('value matches like pattern', () => {
-      expect(
-        isMatchingStringFilter({
-          stringFilter: { like: 'te%' },
-          value: 'test',
-        }),
-      ).toBe(true);
-    });
+  describe.each(['like', 'ilike'])('%s', (operator) => {
+    it.each([
+      { pattern: 'te%', value: 'test', expected: true },
+      { pattern: 'ab%', value: 'test', expected: false },
+      { pattern: '', value: '', expected: true },
+      { pattern: '', value: '\n', expected: false },
+      { pattern: '%', value: '', expected: true },
+      { pattern: '_', value: '', expected: false },
+      { pattern: 'a_c', value: 'abc', expected: true },
+      { pattern: 'a_c', value: 'ac', expected: false },
+      { pattern: 'a_c', value: 'abxc', expected: false },
+      { pattern: 'a_c', value: 'abc\n', expected: false },
+      { pattern: 'a_c', value: 'a\nc', expected: true },
+      { pattern: 'a_c', value: 'a\rc', expected: true },
+      { pattern: 'a_c', value: 'a\u2028c', expected: true },
+      { pattern: 'a_c', value: 'a\u{1F600}c', expected: true },
+      { pattern: 'a__c', value: 'a\u{1F600}c', expected: false },
+      { pattern: 'a__c', value: 'a\u{1F600}\u{1F600}c', expected: true },
+      { pattern: 'a%c', value: 'ac', expected: true },
+      { pattern: 'a%c', value: 'a\nc', expected: true },
+      { pattern: 'a%c', value: 'a\u{1F600}c', expected: true },
+      { pattern: 'a%c', value: 'a\nc\n', expected: false },
+      { pattern: '50\\%', value: '50%', expected: true },
+      { pattern: '50\\%', value: '50\n', expected: false },
+      { pattern: 'a\\_c', value: 'a_c', expected: true },
+      { pattern: 'a\\_c', value: 'axc', expected: false },
+      { pattern: 'a\\bc', value: 'abc', expected: true },
+      { pattern: 'a\\_%', value: 'a_b\nc', expected: true },
+      { pattern: 'a\\\\', value: 'a\\', expected: true },
+      { pattern: 'a\\\\%', value: 'a\\bc', expected: true },
+      { pattern: 'a\\\nc', value: 'a\nc', expected: true },
+      { pattern: 'a\\😀c', value: 'a😀c', expected: true },
+      { pattern: '.*+?^${}()|[]', value: '.*+?^${}()|[]', expected: true },
+      { pattern: 'a.c', value: 'abc', expected: false },
+    ])(
+      'matches $pattern against $value: $expected',
+      ({ pattern, value, expected }) => {
+        expect(
+          isMatchingStringFilter({
+            stringFilter: { [operator]: pattern },
+            value,
+          }),
+        ).toBe(expected);
+      },
+    );
 
-    it('value does not match like pattern', () => {
-      expect(
-        isMatchingStringFilter({
-          stringFilter: { like: 'ab%' },
-          value: 'test',
-        }),
-      ).toBe(false);
-    });
+    it.each(['\\', 'a\\', 'a\\\\\\'])(
+      'rejects dangling escape in %s',
+      (pattern) => {
+        expect(() =>
+          isMatchingStringFilter({
+            stringFilter: { [operator]: pattern },
+            value: pattern,
+          }),
+        ).toThrow('LIKE pattern must not end with escape character');
+      },
+    );
   });
 
-  describe('ilike', () => {
-    it('value matches ilike pattern case insensitively', () => {
-      expect(
-        isMatchingStringFilter({
-          stringFilter: { ilike: 'TE%' },
-          value: 'test',
-        }),
-      ).toBe(true);
-    });
+  it('keeps LIKE case sensitive', () => {
+    expect(
+      isMatchingStringFilter({ stringFilter: { like: 'A_C' }, value: 'abc' }),
+    ).toBe(false);
+  });
 
-    it('value does not match ilike pattern', () => {
-      expect(
-        isMatchingStringFilter({
-          stringFilter: { ilike: 'AB%' },
-          value: 'test',
-        }),
-      ).toBe(false);
-    });
+  it('matches ILIKE case insensitively', () => {
+    expect(
+      isMatchingStringFilter({ stringFilter: { ilike: 'A_C' }, value: 'abC' }),
+    ).toBe(true);
+  });
+
+  it('does not broaden ILIKE matching with Unicode case folding', () => {
+    expect(
+      isMatchingStringFilter({ stringFilter: { ilike: 's' }, value: 'ſ' }),
+    ).toBe(false);
   });
 
   describe('in', () => {

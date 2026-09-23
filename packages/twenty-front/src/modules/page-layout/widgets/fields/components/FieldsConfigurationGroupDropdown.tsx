@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconDotsVertical,
@@ -6,7 +7,6 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { getFieldsConfigurationGroupEditDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupEditDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -61,24 +61,19 @@ export const FieldsConfigurationGroupDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconPencil}
+            <ListItem
+              startIcon={<IconPencil />}
               onClick={handleRename}
-              accent="default"
-              text={t`Rename`}
-            />
-            <MenuItem
-              LeftIcon={IconTrash}
+            >{t`Rename`}</ListItem>
+            <ListItem
+              startIcon={<IconTrash />}
               onClick={handleDelete}
-              accent="danger"
-              text={t`Delete`}
-            />
-            <MenuItem
-              LeftIcon={IconNewSection}
+              color="danger"
+            >{t`Delete`}</ListItem>
+            <ListItem
+              startIcon={<IconNewSection />}
               onClick={handleAddGroup}
-              accent="default"
-              text={t`Add a Group`}
-            />
+            >{t`Add a Group`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

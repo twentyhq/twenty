@@ -2,8 +2,7 @@ import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/heal
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { Section } from 'twenty-ui/components';
-import { JsonTree } from 'twenty-ui/primitives/json-visualizer';
+import { JsonTree, Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';

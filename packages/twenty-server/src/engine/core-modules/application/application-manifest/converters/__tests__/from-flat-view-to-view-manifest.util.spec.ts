@@ -7,6 +7,7 @@ import {
   type ViewManifest,
   type ViewSortManifest,
 } from 'twenty-shared/application';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   ViewCalendarLayout,
@@ -62,6 +63,7 @@ const VIEW_MANIFEST: Required<
   openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
   mainGroupByFieldMetadataUniversalIdentifier: STAGE_FIELD_UID,
   shouldHideEmptyGroups: true,
+  groupLoadLimit: 25,
   anyFieldFilterValue: 'acme',
   kanbanColumnWidth: 240,
   kanbanAggregateOperation: AggregateOperations.SUM,
@@ -171,6 +173,7 @@ describe('fromFlatViewToViewManifest', () => {
       calendarEndFieldMetadataUniversalIdentifier: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
       shouldHideEmptyGroups: false,
+      groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
       kanbanColumnWidth: null,
       anyFieldFilterValue: null,
       createdByUserWorkspaceId: null,
@@ -206,6 +209,7 @@ describe('fromFlatViewToViewManifest', () => {
       visibility: ViewVisibility.WORKSPACE,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       shouldHideEmptyGroups: false,
+      groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     });
     for (const property of NULLABLE_VIEW_MANIFEST_PROPERTIES) {
       expect(viewManifest).not.toHaveProperty(property);

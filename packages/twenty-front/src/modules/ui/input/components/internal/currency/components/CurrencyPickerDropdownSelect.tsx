@@ -1,15 +1,13 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
-
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const CurrencyPickerDropdownSelect = ({
   selectedCurrency,
@@ -43,7 +41,7 @@ export const CurrencyPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCurrencies.length === 0 ? (
-          <MenuItem text={t`No results`} />
+          <ListItem disabled>{t`No results`}</ListItem>
         ) : (
           <>
             {selectedCurrency && (
@@ -55,7 +53,7 @@ export const CurrencyPickerDropdownSelect = ({
                 selected={true}
                 indicator="check"
               >
-                <OverflowingTextWithTooltip text={selectedCurrency.label} />
+                {selectedCurrency.label}
               </ListItem>
             )}
             {filteredCurrencies.map((item) =>

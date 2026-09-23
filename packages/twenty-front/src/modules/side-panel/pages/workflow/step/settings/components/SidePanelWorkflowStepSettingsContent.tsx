@@ -1,7 +1,7 @@
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { STEP_RETRY_DELAYS_MS } from 'twenty-shared/workflow';
-import { InputLabel } from 'twenty-ui/primitives/input';
 
 import { FormBooleanFieldSwitchInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldSwitchInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';

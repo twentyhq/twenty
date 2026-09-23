@@ -95,6 +95,12 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentMessage,
     ),
     agentId: { universalIdentifier: '880a91ad-4ab1-4067-87f6-970a53aa2234' },
+    senderUserWorkspaceId: {
+      universalIdentifier: 'f4184c3a-b85c-4cef-8181-b2fefdf98fda',
+    },
+    senderApplicationId: {
+      universalIdentifier: 'd204d45a-6ccc-40cb-8281-b6ed635c247b',
+    },
     role: { universalIdentifier: '5dc985f3-edad-4ebf-9844-b34ca686855b' },
     status: { universalIdentifier: '3845ccfa-9394-4cb9-a75c-4ca704414b83' },
     isHidden: { universalIdentifier: 'be06f3d5-edb4-4243-89ad-71810b79b319' },

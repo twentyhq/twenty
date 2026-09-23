@@ -1,3 +1,4 @@
+import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -13,7 +14,6 @@ import {
 import {
   type CodeExecutionData,
   type ExtendedUIMessage,
-  type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -28,7 +28,6 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
@@ -89,6 +88,7 @@ export class StreamAgentChatJob {
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly actorService: AgentChatActorService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -162,8 +162,21 @@ export class StreamAgentChatJob {
         );
       }
 
+      const { message } = await this.actorService.authorizeJob({
+        workspaceId: data.workspaceId,
+        threadId: data.threadId,
+        messageId: data.messageId,
+        turnId: data.existingTurnId,
+        userWorkspaceId: data.userWorkspaceId,
+      });
+      if (!isDefined(message.turnId)) {
+        throw new AiException(
+          'Message turn not found',
+          AiExceptionCode.MESSAGE_NOT_FOUND,
+        );
+      }
       await this.executeStream(
-        data,
+        { ...data, messageId: message.id, existingTurnId: message.turnId },
         workspace,
         abortController.signal,
         turnModelId,
@@ -186,7 +199,7 @@ export class StreamAgentChatJob {
       await this.threadRepository
         .update(
           data.workspaceId,
-          { id: data.threadId },
+          { id: data.threadId, activeStreamId: data.streamId },
           {
             lastStreamError: {
               ...streamError,
@@ -234,12 +247,11 @@ export class StreamAgentChatJob {
 
       if (!abortController.signal.aborted) {
         await this.agentChatStreamingService
-          .flushNextQueuedMessage(
-            data.threadId,
-            data.userWorkspaceId,
-            data.workspaceId,
-            data.hasTitle,
-          )
+          .flushNextQueuedMessage({
+            threadId: data.threadId,
+            workspaceId: data.workspaceId,
+            hasTitle: data.hasTitle,
+          })
           .catch((error) => {
             this.logger.error(
               `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
@@ -322,33 +334,16 @@ export class StreamAgentChatJob {
   }
 
   private async executeStream(
-    data: StreamAgentChatJobData,
+    data: StreamAgentChatJobData & { existingTurnId: string },
     workspace: WorkspaceEntity,
     abortSignal: AbortSignal,
     turnModelId: string,
   ): Promise<void> {
-    // When processing a promoted queued message, the user message already
-    // exists in the DB with a turn — skip persisting it again.
-    const userMessagePromise = data.existingTurnId
-      ? Promise.resolve({ turnId: data.existingTurnId })
-      : this.agentChatService.addMessage({
-          threadId: data.threadId,
-          uiMessage: {
-            role: AgentMessageRole.USER,
-            parts: data.lastUserMessageParts.filter(
-              (part): part is ExtendedUIMessagePart =>
-                part.type === 'text' || part.type === 'file',
-            ),
-          },
-          workspaceId: data.workspaceId,
-        });
-
-    userMessagePromise.catch(() => {});
-
     const titlePromise = data.hasTitle
       ? Promise.resolve(null)
       : this.agentChatService
           .generateTitleIfNeeded({
+            userWorkspaceId: data.userWorkspaceId,
             threadId: data.threadId,
             messageContent: data.lastUserMessageText,
             workspaceId: data.workspaceId,
@@ -358,7 +353,7 @@ export class StreamAgentChatJob {
     await this.buildAndPublishStream({
       workspace,
       data,
-      userMessagePromise,
+      turnId: data.existingTurnId,
       titlePromise,
       abortSignal,
       turnModelId,
@@ -368,14 +363,14 @@ export class StreamAgentChatJob {
   private async buildAndPublishStream({
     workspace,
     data,
-    userMessagePromise,
+    turnId,
     titlePromise,
     abortSignal,
     turnModelId,
   }: {
     workspace: WorkspaceEntity;
     data: StreamAgentChatJobData;
-    userMessagePromise: Promise<{ turnId: string | null }>;
+    turnId: string;
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
     turnModelId: string;
@@ -466,6 +461,7 @@ export class StreamAgentChatJob {
               threadId: data.threadId,
               streamId: data.streamId,
               turnId: data.existingTurnId,
+              messageId: data.messageId,
               messages: data.messages,
               browsingContext: data.browsingContext,
               modelId: data.modelId,
@@ -534,7 +530,7 @@ export class StreamAgentChatJob {
                     totalCacheCreationTokens,
                     modelConfig,
                     turnModelId,
-                    userMessagePromise,
+                    turnId,
                   });
                   await titleWritePromise;
                 } catch (error) {
@@ -579,12 +575,6 @@ export class StreamAgentChatJob {
 
             void enqueueAssistantPersist(async () => {
               if (isFinalizingPersist) {
-                return;
-              }
-
-              const { turnId } = await userMessagePromise;
-
-              if (!isDefined(turnId)) {
                 return;
               }
 
@@ -761,7 +751,7 @@ export class StreamAgentChatJob {
     totalCacheCreationTokens: number;
     modelConfig: AiModelConfig;
     turnModelId: string;
-    userMessagePromise: Promise<{ turnId: string | null }>;
+    turnId: string;
   }): Promise<void> {
     const outcome = await this.persistStreamFinish(args);
 
@@ -787,7 +777,7 @@ export class StreamAgentChatJob {
     totalCacheCreationTokens,
     modelConfig,
     turnModelId,
-    userMessagePromise,
+    turnId,
   }: {
     assistantMessageId: string;
     streamId: string;
@@ -809,7 +799,7 @@ export class StreamAgentChatJob {
     totalCacheCreationTokens: number;
     modelConfig: AiModelConfig;
     turnModelId: string;
-    userMessagePromise: Promise<{ turnId: string | null }>;
+    turnId: string;
   }): Promise<AgentChatTurnOutcome | null> {
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
@@ -855,24 +845,13 @@ export class StreamAgentChatJob {
       return resolveSupersededTurnOutcome(outcome);
     }
 
-    const userMessage = await userMessagePromise;
-
-    if (isDefined(userMessage.turnId)) {
-      await this.agentChatService.upsertAssistantMessage({
-        id: assistantMessageId,
-        threadId,
-        turnId: userMessage.turnId,
-        parts: responseMessage.parts,
-        workspaceId,
-      });
-    } else {
-      await this.agentChatService.addMessage({
-        threadId,
-        uiMessage: responseMessage,
-        id: assistantMessageId,
-        workspaceId,
-      });
-    }
+    await this.agentChatService.upsertAssistantMessage({
+      id: assistantMessageId,
+      threadId,
+      turnId,
+      parts: responseMessage.parts,
+      workspaceId,
+    });
 
     const totalsUpdate = await updateAgentChatThreadUsage({
       repository: this.threadRepository,
