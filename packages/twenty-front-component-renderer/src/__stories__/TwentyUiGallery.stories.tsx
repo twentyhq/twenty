@@ -4,6 +4,7 @@ import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/picke
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
+import { dropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSandboxFailureTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -28,12 +29,10 @@ import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/create
 import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
 import {
   codeEditorTest,
-  dataDisplayTest,
   displayHelpersTest,
   galleryRenderTest,
   inputPreactTest,
   inputReactTest,
-  navigationTest,
   themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {
@@ -65,12 +64,12 @@ export default meta;
 export const DataDisplayReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'react',
-  play: dataDisplayTest,
+  play: galleryRenderTest,
 });
 export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
-  play: dataDisplayTest,
+  play: galleryRenderTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({
@@ -131,12 +130,12 @@ export const LayoutPreact: Story = createGalleryStory({
 export const NavigationReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-navigation-gallery',
   runtime: 'react',
-  play: navigationTest,
+  play: galleryRenderTest,
 });
 export const NavigationPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-navigation-gallery',
   runtime: 'preact',
-  play: navigationTest,
+  play: galleryRenderTest,
 });
 
 export const SurfacesReact: Story = createGalleryStory({
@@ -302,6 +301,18 @@ export const MenuPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-menu',
   runtime: 'preact',
   play: menuTest,
+});
+
+export const DropdownReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'react',
+  play: dropdownSandboxFailureTest,
+});
+
+export const DropdownPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'preact',
+  play: dropdownSandboxFailureTest,
 });
 
 export const SelectReact: Story = createGalleryStory({

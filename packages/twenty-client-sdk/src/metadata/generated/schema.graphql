@@ -225,6 +225,24 @@ type ObjectMetadataCommandMenuItemPayload {
   objectMetadataItemId: UUID! @deprecated(reason: "Never returned anymore: navigation targets moved to CommandMenuItem.navigationTargetObjectMetadataId. This variant only remains one release so frontends deployed after the server keep validating; it will be removed in the next release.")
 }
 
+type SettingsMenuItem {
+  id: UUID!
+  frontComponentId: UUID!
+  title: String!
+  icon: String
+  position: Float!
+  scope: SettingsMenuItemScope!
+  universalIdentifier: UUID!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum SettingsMenuItemScope {
+  WORKSPACE
+  USER
+}
+
 type LogicFunction {
   id: UUID!
   name: String!
@@ -555,6 +573,7 @@ type Application {
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
   commandMenuItems: [CommandMenuItem!]!
+  settingsMenuItems: [SettingsMenuItem!]
   logicFunctions: [LogicFunction!]!
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
@@ -2009,6 +2028,8 @@ enum FeatureFlagKey {
   IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
+  IS_EXECUTION_QUOTA_ENABLED
+  IS_RECORD_CREATION_FORM_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3393,6 +3414,7 @@ type AgentMessage {
   threadId: UUID!
   turnId: UUID
   agentId: UUID
+  senderUserWorkspaceId: UUID
   role: String!
   status: String!
   parts: [AgentMessagePart!]!
@@ -3627,6 +3649,19 @@ type TimelineActivityType {
   updatedAt: DateTime!
 }
 
+type PermissionFlag {
+  id: UUID!
+  universalIdentifier: UUID!
+  key: String!
+  label: String!
+  description: String
+  icon: String
+  permissionType: String!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type CollectionHash {
   collectionName: AllMetadataName!
   hash: String!
@@ -3665,6 +3700,7 @@ enum AllMetadataName {
   connectionProvider
   searchFieldMetadata
   timelineActivityType
+  settingsMenuItem
   workflow
   workflowVersion
 }
@@ -3808,6 +3844,7 @@ type Query {
   webhook(id: UUID!): Webhook
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
+  getPermissionFlags: [PermissionFlag!]!
   minimalMetadata: MinimalMetadata!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
   getJobs(jobIds: [String!]!): [JobStatus!]!
@@ -3843,6 +3880,7 @@ type Query {
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
   findManyPublicDomains: [PublicDomain!]!
   exportApplication(universalIdentifier: UUID!): ApplicationExport!
+  applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
@@ -4085,7 +4123,8 @@ type Mutation {
   createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
   deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration!
+  completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
+  uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
@@ -4221,7 +4260,6 @@ type Mutation {
   createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
-  generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
 }
 

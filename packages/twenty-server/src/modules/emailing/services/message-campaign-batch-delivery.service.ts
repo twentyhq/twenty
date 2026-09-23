@@ -35,7 +35,7 @@ import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
-import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
+import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
 import { buildCampaignThreadExternalId } from 'src/modules/emailing/utils/build-campaign-thread-external-id.util';
 import { buildCampaignDeliverySettleQuery } from 'src/modules/emailing/utils/build-campaign-delivery-settle-query.util';
@@ -83,8 +83,10 @@ export class MessageCampaignBatchDeliveryService {
         await this.messageCampaignLifecycleService.findRunningCampaign(
           campaignId,
         );
-      const creditContext =
-        await this.emailBillingService.getEmailCreditContext(workspaceId);
+      const sendRefusal = await this.emailBillingService.findEmailSendRefusal({
+        workspaceId,
+        spenders: { userWorkspaceId: data.userWorkspaceId },
+      });
 
       const claimToken = v4();
       const claimedDeliveryIds = await this.claimBatch({
@@ -106,7 +108,7 @@ export class MessageCampaignBatchDeliveryService {
         await this.processClaimedBatch({
           data,
           campaign,
-          creditContext,
+          sendRefusal,
           claimToken,
           claimedRecipients,
         });
@@ -137,13 +139,13 @@ export class MessageCampaignBatchDeliveryService {
   private async processClaimedBatch({
     data,
     campaign,
-    creditContext,
+    sendRefusal,
     claimToken,
     claimedRecipients,
   }: {
     data: SendCampaignEmailBatchJobData;
     campaign: MessageCampaignWorkspaceEntity | null;
-    creditContext: EmailCreditContext;
+    sendRefusal: UsageRefusal | null;
     claimToken: string;
     claimedRecipients: BatchRecipient[];
   }): Promise<void> {
@@ -161,7 +163,7 @@ export class MessageCampaignBatchDeliveryService {
       return;
     }
 
-    if (!creditContext.hasCredits) {
+    if (isDefined(sendRefusal)) {
       await this.settleWholeBatchAs({
         workspaceId,
         claimToken,
@@ -481,7 +483,7 @@ export class MessageCampaignBatchDeliveryService {
       .billSentEmails({
         workspaceId,
         sentEmailCount: sentDeliveryIds.length,
-        userWorkspaceId,
+        spenders: { userWorkspaceId },
       })
       .catch((error) => {
         this.logger.error(

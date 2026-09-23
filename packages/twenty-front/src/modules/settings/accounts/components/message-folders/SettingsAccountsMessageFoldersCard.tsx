@@ -15,12 +15,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { Label } from 'twenty-ui/primitives/typography';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledTreeList = styled.ul`
   list-style: none;
@@ -144,11 +142,11 @@ export const SettingsAccountsMessageFoldersCard = () => {
           />
         </StyledSearchInputContainer>
         <StyledLabelContainer>
-          <Label>{t`Folders`}</Label>
+          <StyledDisplayLabel>{t`Folders`}</StyledDisplayLabel>
         </StyledLabelContainer>
 
         <StyledSectionHeader>
-          <Label>{t`Toggle all folders`}</Label>
+          <StyledDisplayLabel>{t`Toggle all folders`}</StyledDisplayLabel>
           <TableCell
             align="right"
             padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
@@ -176,3 +174,9 @@ export const SettingsAccountsMessageFoldersCard = () => {
     </Section.Root>
   );
 };
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;
