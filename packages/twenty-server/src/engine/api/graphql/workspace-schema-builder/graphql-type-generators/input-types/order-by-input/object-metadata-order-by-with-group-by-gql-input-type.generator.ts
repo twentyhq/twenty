@@ -5,7 +5,11 @@ import {
   GraphQLInputObjectType,
   isInputObjectType,
 } from 'graphql';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  pascalCase,
+} from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { ObjectMetadataOrderByBaseGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-base.generator';
@@ -208,9 +212,13 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
     for (const [aggregationKey, aggregationDetails] of Object.entries(
       aggregations,
     )) {
+      const aggregation = aggregations[aggregationKey];
+
+      assertIsDefinedOrThrow(aggregation);
+
       const orderByWithGroupByType =
         this.typeMapperService.mapToOrderByWithGroupByType(
-          aggregations[aggregationKey].aggregateOperation,
+          aggregation.aggregateOperation,
         );
 
       if (!isDefined(orderByWithGroupByType)) {

@@ -233,7 +233,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       if (recordsWithValues.length === 0) {
         return;
       } else if (recordsWithValues.length === 1) {
-        mergedResult[fieldName] = recordsWithValues[0].value;
+        mergedResult[fieldName] = recordsWithValues[0]!.value;
       } else {
         const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: fieldIdByName[fieldName],

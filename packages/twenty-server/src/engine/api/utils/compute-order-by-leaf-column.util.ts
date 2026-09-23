@@ -25,7 +25,7 @@ export const computeOrderByLeafColumn = (
         tableAlias: leaf.path[0],
         columnName: isDefined(leaf.targetCompositeProperty)
           ? computeCompositeColumnName(
-              leaf.path[1],
+              leaf.path[1]!,
               leaf.targetCompositeProperty,
             )
           : leaf.path[1],
@@ -37,7 +37,7 @@ export const computeOrderByLeafColumn = (
       return {
         tableAlias: objectNameSingular,
         columnName: computeCompositeColumnName(
-          leaf.path[0],
+          leaf.path[0]!,
           leaf.compositeProperty,
         ),
         columnType: leaf.compositeProperty.type,

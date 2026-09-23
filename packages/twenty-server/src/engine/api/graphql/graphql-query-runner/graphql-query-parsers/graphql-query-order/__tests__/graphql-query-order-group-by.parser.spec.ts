@@ -18,6 +18,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 // The query builder aliases the FROM table with `getObjectAlias` (= nameSingular),
 // NOT the physical table name (which is `_`-prefixed for custom objects via
@@ -109,10 +110,10 @@ describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', ()
 
     expect(result).toHaveLength(1);
 
-    const orderByKey = Object.keys(result[0])[0];
+    jestExpectToBeDefined(result[0]);
 
-    expect(orderByKey).toBe(`"${objectAlias}"."name"`);
-    expect(orderByKey).not.toContain(physicalTableName);
+    expect(Object.keys(result[0])[0]).toBe(`"${objectAlias}"."name"`);
+    expect(Object.keys(result[0])[0]).not.toContain(physicalTableName);
   });
 
   it('prefixes a date-granularity group-by order-by with the alias, not the physical table', () => {
@@ -137,10 +138,10 @@ describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', ()
 
     expect(result).toHaveLength(1);
 
-    const orderByKey = Object.keys(result[0])[0];
+    jestExpectToBeDefined(result[0]);
 
-    expect(orderByKey).toContain(`"${objectAlias}".`);
-    expect(orderByKey).not.toContain(physicalTableName);
+    expect(Object.keys(result[0])[0]).toContain(`"${objectAlias}".`);
+    expect(Object.keys(result[0])[0]).not.toContain(physicalTableName);
   });
 });
 

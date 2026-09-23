@@ -61,8 +61,10 @@ describe('buildRecordJsonObjectSql', () => {
     const chunks = sql.split(' || ');
 
     expect(chunks).toHaveLength(2);
-    expect(chunks[0].split(', ').length / 2).toBe(JSONB_BUILD_OBJECT_MAX_PAIRS);
-    expect(chunks[1].split(', ').length / 2).toBe(
+    expect(chunks[0]?.split(', ').length / 2).toBe(
+      JSONB_BUILD_OBJECT_MAX_PAIRS,
+    );
+    expect(chunks[1]?.split(', ').length / 2).toBe(
       columnCount + 1 - JSONB_BUILD_OBJECT_MAX_PAIRS,
     );
     expect(
@@ -81,7 +83,7 @@ describe('buildRecordJsonObjectSql', () => {
     });
 
     expect(hashedAlias).not.toContain(longColumnName);
-    expect(hashedAlias.length).toBeLessThanOrEqual(63);
+    expect(hashedAlias?.length).toBeLessThanOrEqual(63);
     expect(sql).toContain(`'${longColumnName}', "${hashedAlias}"`);
   });
 
@@ -95,8 +97,8 @@ describe('buildRecordJsonObjectSql', () => {
     const [firstAlias, secondAlias] = Object.values(subQueryAliasByColumnName);
 
     expect(firstAlias).not.toBe(secondAlias);
-    expect(firstAlias.length).toBeLessThanOrEqual(63);
-    expect(secondAlias.length).toBeLessThanOrEqual(63);
+    expect(firstAlias?.length).toBeLessThanOrEqual(63);
+    expect(secondAlias?.length).toBeLessThanOrEqual(63);
   });
 
   it('should escape single quotes in a column name', () => {

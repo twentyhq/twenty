@@ -102,7 +102,7 @@ export class GraphqlQueryOrderGroupByParser {
       }
 
       const fieldName = Object.keys(orderByArg)[0];
-      const fieldMetadataId = this.fieldIdByName[fieldName];
+      const fieldMetadataId = this.fieldIdByName[fieldName]!;
       const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: fieldMetadataId,
         flatEntityMaps: this.flatFieldMetadataMaps,
@@ -349,7 +349,7 @@ export class GraphqlQueryOrderGroupByParser {
       );
     }
 
-    const aggregateField = availableAggregations[Object.keys(aggregate)[0]];
+    const aggregateField = availableAggregations[Object.keys(aggregate)[0]]!;
 
     if (!aggregateField) {
       throw new UserInputError(
@@ -425,7 +425,7 @@ export class GraphqlQueryOrderGroupByParser {
     fieldMetadata: OrmFlatFieldMetadata;
   }): Record<string, OrderByClause> | null => {
     const fieldName = Object.keys(orderByArg)[0];
-    const orderBySubField = orderByArg[fieldName];
+    const orderBySubField = orderByArg[fieldName]!;
 
     if (!isDefined(orderBySubField)) {
       return null;

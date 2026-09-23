@@ -35,7 +35,7 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
         {
           field,
           method: RESOLVER_METHOD_NAMES.FIND_MANY,
-          args: extractArgumentsFromAst(field.arguments, variables),
+          args: extractArgumentsFromAst(field?.arguments, variables),
         },
       ],
       fragmentMap: graphQLBuildFragmentMap(document),
@@ -111,12 +111,12 @@ describe('computeGraphQLDirectExecutionQueryCost', () => {
         {
           field: fields[0],
           method: RESOLVER_METHOD_NAMES.FIND_MANY,
-          args: extractArgumentsFromAst(fields[0].arguments, {}),
+          args: extractArgumentsFromAst(fields[0]?.arguments!, {}),
         },
         {
           field: fields[1],
           method: RESOLVER_METHOD_NAMES.FIND_ONE,
-          args: extractArgumentsFromAst(fields[1].arguments, {}),
+          args: extractArgumentsFromAst(fields[1]?.arguments!, {}),
         },
       ],
       fragmentMap: graphQLBuildFragmentMap(document),

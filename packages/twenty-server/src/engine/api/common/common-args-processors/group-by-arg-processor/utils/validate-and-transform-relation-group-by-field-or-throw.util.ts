@@ -76,7 +76,7 @@ const getNestedFieldMetadataDetails = ({
     targetObjectMetadata,
   );
 
-  const nestedFieldMetadataId = fieldIdByName[nestedFieldName];
+  const nestedFieldMetadataId = fieldIdByName[nestedFieldName]!;
   const nestedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: nestedFieldMetadataId,
     flatEntityMaps: flatFieldMetadataMaps,

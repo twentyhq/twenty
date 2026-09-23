@@ -1,4 +1,5 @@
 import { createConcurrencyLimiter } from 'src/engine/api/common/common-nested-relations-processor/utils/create-concurrency-limiter.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const createDeferred = <T>() => {
   let resolve: (value: T | PromiseLike<T>) => void;
@@ -32,9 +33,14 @@ describe('createConcurrencyLimiter', () => {
           maximumActiveTaskCount,
           activeTaskCount,
         );
-        taskStartedDeferreds[taskIndex].resolve();
+        taskStartedDeferreds[taskIndex]?.resolve();
 
-        await taskFinishedDeferreds[taskIndex].promise;
+        const taskFinishedDeferredPromise =
+          taskFinishedDeferreds[taskIndex]?.promise;
+
+        jestExpectToBeDefined(taskFinishedDeferredPromise);
+
+        await taskFinishedDeferredPromise;
 
         activeTaskCount--;
 
@@ -50,8 +56,13 @@ describe('createConcurrencyLimiter', () => {
     expect(activeTaskCount).toBe(4);
 
     for (let taskIndex = 0; taskIndex < 8; taskIndex++) {
-      await taskStartedDeferreds[taskIndex].promise;
-      taskFinishedDeferreds[taskIndex].resolve();
+      const taskStartedDeferredPromise =
+        taskStartedDeferreds[taskIndex]?.promise;
+
+      jestExpectToBeDefined(taskStartedDeferredPromise);
+
+      await taskStartedDeferredPromise;
+      taskFinishedDeferreds[taskIndex]?.resolve();
     }
 
     await expect(Promise.all(tasks)).resolves.toEqual([0, 1, 2, 3, 4, 5, 6, 7]);

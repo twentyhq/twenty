@@ -1,4 +1,5 @@
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -37,12 +38,14 @@ export const getPageInfo = ({
       orderByValuesFromScan: orderByValuesByRecordId?.[record.id],
     });
 
+  const firstRecord = records[0];
+  const lastRecord = records[records.length - 1];
+
   return {
-    startCursor: records.length > 0 ? encodeRecordCursor(records[0]) : null,
-    endCursor:
-      records.length > 0
-        ? encodeRecordCursor(records[records.length - 1])
-        : null,
+    startCursor: isDefined(firstRecord)
+      ? encodeRecordCursor(firstRecord)
+      : null,
+    endCursor: isDefined(lastRecord) ? encodeRecordCursor(lastRecord) : null,
     ...pageInfo,
   };
 };

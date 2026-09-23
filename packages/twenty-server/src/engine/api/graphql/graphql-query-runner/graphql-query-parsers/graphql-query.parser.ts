@@ -158,7 +158,7 @@ export class GraphqlQueryParser {
 
         // Relation columns are never in columnsToSelect
         const isMainEntity = alias === objectNameSingular;
-        const isAlreadySelected = isMainEntity && columnsToSelect[column];
+        const isAlreadySelected = isMainEntity && columnsToSelect[column]!;
 
         if (!isAlreadySelected) {
           queryBuilder.addSelect(

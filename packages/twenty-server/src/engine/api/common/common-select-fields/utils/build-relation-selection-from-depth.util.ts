@@ -117,7 +117,7 @@ export const buildRelationSelectionFromDepth = ({
 
     const relationFieldSelectFields = buildFieldSelection({
       restrictedFields:
-        objectsPermissions[relationTargetObjectMetadata.id].restrictedFields,
+        objectsPermissions[relationTargetObjectMetadata.id]!.restrictedFields,
       flatObjectMetadata: relationTargetObjectMetadata,
       flatFields: relationFlatFields,
       onlyUseLabelIdentifierFieldsInRelations,

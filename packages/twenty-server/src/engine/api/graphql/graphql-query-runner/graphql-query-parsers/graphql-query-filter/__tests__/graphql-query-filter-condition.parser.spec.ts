@@ -100,10 +100,10 @@ describe('GraphqlQueryFilterConditionParser', () => {
       });
 
       expect(calls).toHaveLength(2);
-      expect(calls[0].method).toBe('where');
-      expect(calls[1].method).toBe('andWhere');
-      expect(calls[0].node.kind).toBe('sql');
-      expect(calls[1].node.kind).toBe('sql');
+      expect(calls[0]?.method!).toBe('where');
+      expect(calls[1]?.method!).toBe('andWhere');
+      expect(calls[0]?.node.kind!).toBe('sql');
+      expect(calls[1]?.node.kind!).toBe('sql');
     });
 
     it('passes the leaf condition and its parameters through to the query builder', () => {
@@ -111,7 +111,7 @@ describe('GraphqlQueryFilterConditionParser', () => {
 
       expect(calls).toHaveLength(1);
 
-      const node = calls[0].node;
+      const node = calls[0]?.node!;
 
       if (node.kind !== 'sql') {
         throw new Error('Expected a sql node');
