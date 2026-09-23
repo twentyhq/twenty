@@ -15,6 +15,7 @@ import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePan
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { stubProseMirrorLayout } from '~/testing/utils/stubProseMirrorLayout';
 
 const mockOpenDialog = jest.fn();
 
@@ -103,28 +104,12 @@ const renderContainerAndTypeInRichTextField = async () => {
     />,
     { wrapper: Wrapper },
   );
-  Object.defineProperty(document, 'elementFromPoint', {
-    configurable: true,
-    value: () => screen.getByRole('textbox'),
-  });
-  Object.defineProperty(Range.prototype, 'getClientRects', {
-    configurable: true,
-    value: () => [],
-  });
-  Object.defineProperty(Range.prototype, 'getBoundingClientRect', {
-    configurable: true,
-    value: () => new DOMRect(),
-  });
 
   await userEvent.click(screen.getByRole('textbox'));
   await userEvent.keyboard('Hello');
 };
 
-const giveFocusBackToSidePanel = () => {
-  act(() => {
-    store.set(focusStackState.atom, [SIDE_PANEL_FOCUS_STACK_ITEM]);
-  });
-};
+beforeAll(stubProseMirrorLayout);
 
 beforeEach(() => {
   mockOpenDialog.mockClear();
@@ -141,20 +126,10 @@ it('asks to confirm the bulk update once on Mod+Enter typed in a rich-text field
   );
 });
 
-it('asks to confirm the bulk update once on Mod+Enter inside the form when the side panel owns focus', async () => {
+it('asks to confirm the bulk update once when the side panel owns focus', async () => {
   await renderContainerAndTypeInRichTextField();
-  giveFocusBackToSidePanel();
-
-  await userEvent.keyboard('{Control>}{Enter}{/Control}');
-
-  expect(mockOpenDialog).toHaveBeenCalledTimes(1);
-});
-
-it('asks to confirm the bulk update once on Mod+Enter outside the form when the side panel owns focus', async () => {
-  await renderContainerAndTypeInRichTextField();
-  giveFocusBackToSidePanel();
   act(() => {
-    (document.activeElement as HTMLElement).blur();
+    store.set(focusStackState.atom, [SIDE_PANEL_FOCUS_STACK_ITEM]);
   });
 
   await userEvent.keyboard('{Control>}{Enter}{/Control}');

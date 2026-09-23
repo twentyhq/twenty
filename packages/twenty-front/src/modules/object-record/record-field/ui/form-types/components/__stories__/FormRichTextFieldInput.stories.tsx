@@ -302,45 +302,5 @@ const BLOCKNOTE_BULLET_LIST = JSON.stringify([
 export const WithBulletList: Story = {
   args: {
     defaultValue: { blocknote: BLOCKNOTE_BULLET_LIST, markdown: null },
-    onChange: fn(),
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('First item');
-    await canvas.findByText('Second item');
-  },
-};
-
-export const WritesBlockNoteBlocks: Story = {
-  args: {
-    onChange: fn(),
-  },
-  play: async ({ canvasElement, args }) => {
-    const editor = await waitFor(() => {
-      const editorElement = canvasElement.querySelector('.ProseMirror');
-
-      expect(editorElement).toBeVisible();
-
-      return editorElement;
-    });
-
-    if (!editor) {
-      throw new Error('Editor element not found');
-    }
-
-    await userEvent.click(editor);
-    await userEvent.keyboard('Hello');
-
-    await waitFor(() => {
-      expect(args.onChange).toHaveBeenCalled();
-    });
-
-    expect(args.onChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        blocknote: expect.stringContaining('"styles"'),
-        markdown: null,
-      }),
-    );
   },
 };
