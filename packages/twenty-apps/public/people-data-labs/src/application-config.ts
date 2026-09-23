@@ -10,6 +10,10 @@ export default defineApplication({
   category: 'Enrichment',
   author: 'Twenty',
   galleryImages: ['public/gallery/cover.png'],
+  billing: {
+    description:
+      '$0.336 per person match and $0.12 per company match. Not found and skipped records are free. Billed to your Twenty credits.',
+  },
   serverVariables: {
     PDL_API_KEY: {
       description: 'People Data Labs API key',
