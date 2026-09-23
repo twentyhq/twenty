@@ -2,8 +2,8 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { type EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790165119047-enforce-workflow-version-core-parent';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790165119047-enforce-workflow-version-core-parent';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
@@ -13,6 +13,7 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
   let queryRunner: QueryRunner;
   let command: EnforceWorkflowVersionCoreParentSlowInstanceCommand;
   let applicationId: string;
+  let workspaceCacheService: WorkspaceCacheService;
   let flushSpy: jest.SpyInstance;
 
   const seedCoreWorkflow = async (
@@ -87,10 +88,13 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
     });
     await dataSource.initialize();
 
-    command =
-      getAppProviderByClassName<EnforceWorkflowVersionCoreParentSlowInstanceCommand>(
-        'EnforceWorkflowVersionCoreParentSlowInstanceCommand',
-      );
+    workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    );
+
+    command = new EnforceWorkflowVersionCoreParentSlowInstanceCommand(
+      workspaceCacheService,
+    );
 
     const [workspace] = await dataSource.query(
       `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE "id" = $1`,
@@ -102,7 +106,7 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
 
   beforeEach(async () => {
     flushSpy = jest
-      .spyOn(WorkspaceCacheService.prototype, 'flush')
+      .spyOn(workspaceCacheService, 'flush')
       .mockResolvedValue(undefined);
 
     queryRunner = dataSource.createQueryRunner();
