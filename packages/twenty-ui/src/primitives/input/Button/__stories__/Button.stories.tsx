@@ -52,7 +52,9 @@ export const AnimatedIcon: Story = {
     });
     await document.fonts.load('500 1em Inter');
     await document.fonts.ready;
-    const [pencil, cross] = button.querySelectorAll('svg');
+    const svgIcons = button.querySelectorAll('svg');
+    const pencil = svgIcons[0]!;
+    const cross = svgIcons[1]!;
     const originalWidth = button.getBoundingClientRect().width;
 
     await expect(button.getBoundingClientRect().height).toBe(24);
@@ -237,7 +239,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
         {
           name: 'state',
           values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state],
+          props: (state: string) => CATALOG_STATES[state] ?? {},
         },
         {
           name: 'color',

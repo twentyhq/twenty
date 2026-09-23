@@ -27,7 +27,7 @@ export type ThemeColor =
   | 'brown'
   | 'gray';
 
-export const MAIN_COLOR_NAMES: ThemeColor[] = [
+export const MAIN_COLOR_NAMES: [ThemeColor, ...ThemeColor[]] = [
   'red',
   'ruby',
   'crimson',

@@ -128,7 +128,7 @@ export const Catalog: CatalogStory<Story, typeof LightIconButton> = {
         {
           name: 'state',
           values: Object.keys(CATALOG_STATES),
-          props: (state: string) => CATALOG_STATES[state],
+          props: (state: string) => CATALOG_STATES[state] ?? {},
         },
         {
           name: 'emphasis',

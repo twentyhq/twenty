@@ -42,7 +42,7 @@ it('isolates nested provider queues and deduplication', () => {
   });
 
   expect(result.current.toasts).toHaveLength(1);
-  expect(result.current.toasts[0].notification.children).toBe(
+  expect(result.current.toasts[0]?.notification.children).toBe(
     'Child notification',
   );
 

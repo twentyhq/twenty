@@ -96,7 +96,7 @@ it('retains a dismissed toast until its exit finishes and calls onClose once', (
 
   result.current.closeToast(id);
   const [closingToast] = store.state.toasts;
-  expect(closingToast.status).toBe('closing');
+  expect(closingToast?.status).toBe('closing');
   expect(onClose).toHaveBeenCalledOnce();
 
   result.current.closeToast(id);
@@ -104,7 +104,7 @@ it('retains a dismissed toast until its exit finishes and calls onClose once', (
   expect(onClose).toHaveBeenCalledOnce();
   expect(listener).toHaveBeenCalledTimes(2);
 
-  completeToastExit({ store, toast: closingToast });
+  completeToastExit({ store, toast: closingToast! });
   expect(store.state.toasts).toEqual([]);
   expect(onClose).toHaveBeenCalledOnce();
   expect(listener).toHaveBeenCalledTimes(3);
@@ -179,14 +179,14 @@ it('reopens a dismissed toast with a new id and completes each exit independentl
   expect(restoredId).not.toBe(firstId);
   result.current.closeToast(firstId);
   expect(store.state.toasts).toBe(restoredToasts);
-  completeToastExit({ store, toast: firstExit });
-  expect(store.state.toasts[1].notification.children).toBe('Restored');
+  completeToastExit({ store, toast: firstExit! });
+  expect(store.state.toasts[1]?.notification.children).toBe('Restored');
 
   result.current.closeToast(restoredId);
   const snapshot = store.state.toasts;
-  completeToastExit({ store, toast: firstExit });
+  completeToastExit({ store, toast: firstExit! });
   expect(store.state.toasts).toBe(snapshot);
-  completeToastExit({ store, toast: snapshot[1] });
+  completeToastExit({ store, toast: snapshot[1]! });
   expect(store.state.toasts.map(({ notification }) => notification.id)).toEqual(
     [secondId],
   );
@@ -296,7 +296,7 @@ it('ignores unknown dismissals and completion for visible notifications', () => 
   const snapshot = store.state.toasts;
 
   result.current.closeToast('unknown');
-  completeToastExit({ store, toast: snapshot[0] });
+  completeToastExit({ store, toast: snapshot[0]! });
 
   expect(store.state.toasts).toBe(snapshot);
   expect(listener).toHaveBeenCalledOnce();

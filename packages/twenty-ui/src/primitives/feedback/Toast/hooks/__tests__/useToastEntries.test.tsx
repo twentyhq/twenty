@@ -39,7 +39,7 @@ it('rerenders only toast subscribers when the toast list changes', () => {
     actions.result.current.enqueueToast({ children: 'Saved' });
   });
 
-  expect(entries.result.current[0].notification.children).toBe('Saved');
+  expect(entries.result.current[0]?.notification.children).toBe('Saved');
   expect(renderEntries.mock.calls.length).toBeGreaterThan(
     initialEntriesRenderCount,
   );

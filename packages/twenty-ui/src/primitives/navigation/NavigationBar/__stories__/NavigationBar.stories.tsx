@@ -40,7 +40,7 @@ export const Default: Story = {
     expect(search).toHaveAttribute('aria-pressed', 'false');
 
     await userEvent.click(search);
-    expect(args.items[1].onClick).toHaveBeenCalled();
+    expect(args.items[1]?.onClick).toHaveBeenCalled();
   },
 };
 

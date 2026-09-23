@@ -7,6 +7,7 @@ import { DARK_BACKGROUND } from '@ui/primitives/feedback/AnimatedPlaceholder/con
 import { DARK_MOVING_IMAGE } from '@ui/primitives/feedback/AnimatedPlaceholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@ui/primitives/feedback/AnimatedPlaceholder/constants/MovingImage';
 import { useThemeColorScheme } from '@ui/theme-constants';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './AnimatedPlaceholder.module.scss';
 
@@ -36,15 +37,16 @@ export const AnimatedPlaceholder = ({
     };
 
     const handleMove = (event: MouseEvent | TouchEvent) => {
-      const clientX =
-        'touches' in event ? event.touches[0].clientX : event.clientX;
-      const clientY =
-        'touches' in event ? event.touches[0].clientY : event.clientY;
+      // touch events carry no coordinates once the last finger lifts
+      const point = 'touches' in event ? event.touches[0] : event;
+      if (!isDefined(point)) {
+        return;
+      }
 
       setParallax(
-        (clientX / window.innerWidth) * 2 * PARALLAX_OFFSET_IN_PX -
+        (point.clientX / window.innerWidth) * 2 * PARALLAX_OFFSET_IN_PX -
           PARALLAX_OFFSET_IN_PX,
-        (clientY / window.innerHeight) * 2 * PARALLAX_OFFSET_IN_PX -
+        (point.clientY / window.innerHeight) * 2 * PARALLAX_OFFSET_IN_PX -
           PARALLAX_OFFSET_IN_PX,
       );
     };

@@ -8,7 +8,7 @@ export const stringToThemeColor = (string: string): ThemeColor => {
   }
 
   const colorIndex = Math.abs(hash) % MAIN_COLOR_NAMES.length;
-  return MAIN_COLOR_NAMES[colorIndex];
+  return MAIN_COLOR_NAMES[colorIndex] ?? MAIN_COLOR_NAMES[0];
 };
 
 export const stringToThemeColorP3String = ({

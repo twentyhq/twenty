@@ -131,11 +131,17 @@ export const SegmentedControl = <Value extends string>({
       return;
     }
 
+    const nextOption = enabledOptions[nextOptionIndex];
+
+    if (!isDefined(nextOption)) {
+      return;
+    }
+
     event.preventDefault();
     focusAndSelectOption({
       event,
       optionIndex: nextOptionIndex,
-      optionValue: enabledOptions[nextOptionIndex].value,
+      optionValue: nextOption.value,
     });
   };
 
