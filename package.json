@@ -82,7 +82,7 @@
       "packages/twenty-sdk",
       "packages/twenty-front-component-renderer",
       "packages/twenty-client-sdk",
-      "packages/twenty-cli",
+      "packages/twenty-cli-deprecated",
       "packages/create-twenty-app",
       "packages/twenty-agent-skills",
       "packages/twenty-oxlint-rules",
