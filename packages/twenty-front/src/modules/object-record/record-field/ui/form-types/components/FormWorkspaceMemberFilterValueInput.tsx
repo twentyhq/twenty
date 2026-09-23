@@ -246,6 +246,7 @@ export const FormWorkspaceMemberFilterValueInput = ({
           </StyledFormSelectContainerWrapper>
         ) : (
           <Dropdown
+            clickableComponentTabIndex={0}
             dropdownId={dropdownId}
             dropdownPlacement="bottom-start"
             clickableComponentWidth="100%"

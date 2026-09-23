@@ -57,14 +57,16 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div`
+const StyledDisplayModeContainer = styled.button`
   align-items: center;
   background: transparent;
   border: none;
+  color: inherit;
   cursor: pointer;
   display: flex;
-  font-family: inherit;
+  font: inherit;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+  text-align: left;
   width: 100%;
 `;
 
@@ -244,6 +246,7 @@ export const FormMultiSelectFieldInput = ({
               </StyledDisplayModeReadonlyContainer>
             ) : (
               <StyledDisplayModeContainer
+                type="button"
                 data-open={draftValue.editingMode === 'edit'}
                 onClick={handleDisplayModeClick}
               >

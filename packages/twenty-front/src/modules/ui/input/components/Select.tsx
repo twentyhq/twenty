@@ -205,7 +205,6 @@ export const Select = <Value extends SelectValue>({
     <StyledContainer
       className={className}
       fullWidth={fullWidth}
-      tabIndex={0}
       onBlur={onBlur}
       ref={selectContainerRef}
     >
@@ -221,6 +220,7 @@ export const Select = <Value extends SelectValue>({
         />
       ) : (
         <Dropdown
+          clickableComponentTabIndex={0}
           dropdownId={dropdownId}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
