@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -16,8 +16,10 @@ describe('Dropdown menu', () => {
       <Dropdown.Root type="menu">
         <Dropdown.Trigger render={<Button>Record actions</Button>} />
         <Dropdown.Content aria-label="Record actions">
-          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
-          <Dropdown.ActionItem>Export</Dropdown.ActionItem>
+          <Dropdown.Section label="Actions">
+            <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+            <Dropdown.ActionItem>Export</Dropdown.ActionItem>
+          </Dropdown.Section>
         </Dropdown.Content>
       </Dropdown.Root>,
     );
@@ -26,8 +28,12 @@ describe('Dropdown menu', () => {
 
     await user.tab();
     await user.keyboard('{ArrowDown}');
+    const actions = screen.getByRole('group', { name: 'Actions' });
+
     await waitFor(() =>
-      expect(screen.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
+      expect(
+        within(actions).getByRole('menuitem', { name: 'Duplicate' }),
+      ).toHaveFocus(),
     );
     await user.keyboard('{ArrowDown}');
     expect(screen.getByRole('menuitem', { name: 'Export' })).toHaveFocus();

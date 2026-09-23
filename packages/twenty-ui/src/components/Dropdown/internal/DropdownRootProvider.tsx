@@ -1,6 +1,6 @@
-import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 import { useCallback, useContext, useState } from 'react';
 
+import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownRootProps } from '../types/DropdownRootProps';
@@ -97,7 +97,7 @@ export const DropdownRootProvider = ({
   );
 
   return (
-    <PopoverPrimitive.Root
+    <Popover.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
         setFocusOnOpen(eventDetails.reason !== 'trigger-hover');
@@ -131,6 +131,6 @@ export const DropdownRootProvider = ({
       >
         {children}
       </DropdownContext.Provider>
-    </PopoverPrimitive.Root>
+    </Popover.Root>
   );
 };

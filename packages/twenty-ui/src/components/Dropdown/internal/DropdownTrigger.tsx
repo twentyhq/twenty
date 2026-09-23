@@ -1,4 +1,4 @@
-import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
+import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 
 import { type DropdownTriggerProps } from '../types/DropdownTriggerProps';
 import { useDropdownContext } from './useDropdownContext';
@@ -12,7 +12,7 @@ export const DropdownTrigger = ({
     useDropdownContext();
 
   return (
-    <PopoverPrimitive.Trigger
+    <Popover.Trigger
       {...props}
       aria-haspopup={type === 'menu' ? 'menu' : 'dialog'}
       onClick={(event) => {

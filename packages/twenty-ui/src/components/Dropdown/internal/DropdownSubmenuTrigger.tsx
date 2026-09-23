@@ -1,7 +1,7 @@
-import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 import { useId } from 'react';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
+import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTriggerProps';
@@ -37,7 +37,7 @@ export const DropdownSubmenuTrigger = ({
   });
 
   return (
-    <PopoverPrimitive.Trigger
+    <Popover.Trigger
       {...props}
       id={itemId}
       disabled={disabled}

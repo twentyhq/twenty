@@ -6338,11 +6338,46 @@
         "name": "Search",
         "props": [
           {
+            "name": "className",
+            "type": "string | ((state: InputState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | number | readonly string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "The default value of the input. Use when uncontrolled."
+          },
+          {
             "name": "onValueChange",
             "type": "((value: string) => void)",
             "required": false,
             "defaultValue": null,
             "description": ""
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, InputState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: InputState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "value",
+            "type": "string | number | readonly string[]",
+            "required": false,
+            "defaultValue": null,
+            "description": "The value of the input. Use when controlled."
           }
         ]
       },

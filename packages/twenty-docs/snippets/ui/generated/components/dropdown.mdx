@@ -296,8 +296,33 @@
 
 ### Dropdown.Search
 
+<ParamField body="Search.className" type="string | ((state: InputState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Search.defaultValue" type="string | number | readonly string[]">
+  The default value of the input. Use when uncontrolled.
+</ParamField>
+
 <ParamField body="Search.onValueChange" type="((value: string) =&gt; void)">
 
+</ParamField>
+
+<ParamField body="Search.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, InputState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Search.style" type="CSSProperties | ((state: InputState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+<ParamField body="Search.value" type="string | number | readonly string[]">
+  The value of the input. Use when controlled.
 </ParamField>
 
 ### Dropdown.Page

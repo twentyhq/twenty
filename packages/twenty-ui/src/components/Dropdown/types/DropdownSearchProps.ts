@@ -1,5 +1,5 @@
-import { type ComponentPropsWithRef } from 'react';
+import { type InputProps } from '@ui/primitives/input/Input/types/InputProps';
 
-export type DropdownSearchProps = ComponentPropsWithRef<'input'> & {
+export type DropdownSearchProps = Omit<InputProps, 'onValueChange' | 'size'> & {
   onValueChange?: (value: string) => void;
 };
