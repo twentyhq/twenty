@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 
+import gql from 'graphql-tag';
 import { type ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { completeAppTarballUpload } from 'test/integration/metadata/suites/application/utils/complete-app-tarball-upload.util';
@@ -9,6 +10,7 @@ import {
   createAppTarballUpload,
 } from 'test/integration/metadata/suites/application/utils/create-app-tarball-upload.util';
 import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
@@ -95,6 +97,21 @@ describe('Direct app tarball upload', () => {
     }
 
     return { uploadTarget, completion };
+  };
+
+  const completeFileUploadGenerically = async (fileId: string) => {
+    const response = await makeMetadataAPIRequest({
+      query: gql`
+        mutation CompleteFileUpload($fileId: String!) {
+          completeFileUpload(fileId: $fileId) {
+            id
+          }
+        }
+      `,
+      variables: { fileId },
+    });
+
+    return response.body;
   };
 
   const findFileRow = async (fileId: string) => {
@@ -446,6 +463,32 @@ describe('Direct app tarball upload', () => {
       releaseFirstCompletion();
       storeRegistrationAssetsSpy.mockRestore();
     }
+  });
+
+  it('refuses the generic completion for a tarball reservation', async () => {
+    const uploadTarget = await sendToStorage(
+      await buildValidTarball({
+        universalIdentifier: crypto.randomUUID(),
+        version: '1.0.0',
+      }),
+    );
+
+    const { data, errors } = await completeFileUploadGenerically(
+      uploadTarget.fileId,
+    );
+
+    expect(data?.completeFileUpload ?? null).toBeNull();
+    expect(errors?.[0].extensions.code).toBe('BAD_USER_INPUT');
+    expect(errors?.[0].message).toContain('dedicated mutation');
+    expect((await findFileRow(uploadTarget.fileId)).status).toBe('PENDING');
+
+    const completion = await completeAppTarballUpload({
+      fileId: uploadTarget.fileId,
+    });
+
+    expect(completion.errors).toBeUndefined();
+
+    createdRegistrationIds.push(completion.data!.completeAppTarballUpload.id);
   });
 
   it('rejects a tarball without a manifest and drops the promoted file', async () => {

@@ -46,6 +46,13 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.AppTarball,
 ] as const;
 
+// A tarball leaves quarantine through completeAppTarballUpload only, behind
+// the marketplace-apps permission: the generic completion, open to any member
+// allowed to upload files, must not persist bytes in that folder.
+export const DEDICATED_COMPLETION_FILE_FOLDERS = [
+  FileFolder.AppTarball,
+] as const;
+
 @Injectable()
 export class FileUploadService {
   private readonly logger = new Logger(FileUploadService.name);
@@ -254,6 +261,20 @@ export class FileUploadService {
         FileUploadExceptionCode.FILE_NOT_FOUND,
         {
           userFriendlyMessage: msg`File not found.`,
+        },
+      );
+    }
+
+    if (
+      DEDICATED_COMPLETION_FILE_FOLDERS.includes(
+        fileFolder as (typeof DEDICATED_COMPLETION_FILE_FOLDERS)[number],
+      )
+    ) {
+      throw new FileUploadException(
+        `File ${fileId} in folder ${fileFolder} is completed by its dedicated mutation`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`This file must be completed with its dedicated mutation.`,
         },
       );
     }
