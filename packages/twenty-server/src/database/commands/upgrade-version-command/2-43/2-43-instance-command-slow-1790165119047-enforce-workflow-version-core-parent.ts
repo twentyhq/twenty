@@ -13,9 +13,9 @@ export class EnforceWorkflowVersionCoreParentSlowInstanceCommand implements Slow
       `DELETE FROM "core"."workflowVersion" WHERE "coreWorkflowId" IS NULL`,
     );
 
-    const workspaces = (await dataSource.query(
+    const workspaces = await dataSource.query<{ id: string }[]>(
       `SELECT "id" FROM "core"."workspace"`,
-    )) as { id: string }[];
+    );
 
     for (const workspace of workspaces) {
       await this.workspaceCacheService.flush(workspace.id, [
