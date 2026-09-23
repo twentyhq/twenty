@@ -12,6 +12,10 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
@@ -391,16 +395,31 @@ export class FileUploadService {
       };
     }
 
-    const { workspaceCustomApplicationId } =
-      await this.workspaceRepository.findOneOrFail({
-        select: ['id', 'workspaceCustomApplicationId'],
-        where: { id: workspaceId },
-      });
+    const workspace = await this.workspaceRepository.findOne({
+      select: ['id', 'workspaceCustomApplicationId'],
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
 
-    const workspaceCustomApplication =
-      await this.applicationRepository.findOneOrFail({
-        where: { id: workspaceCustomApplicationId, workspaceId },
-      });
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const workspaceCustomApplication = await this.applicationRepository.findOne(
+      {
+        where: { id: workspace.workspaceCustomApplicationId, workspaceId },
+      },
+    );
+
+    if (!isDefined(workspaceCustomApplication)) {
+      throw new ApplicationException(
+        `Could not find workspace custom application ${workspace.workspaceCustomApplicationId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
     return {
       applicationUniversalIdentifier:
