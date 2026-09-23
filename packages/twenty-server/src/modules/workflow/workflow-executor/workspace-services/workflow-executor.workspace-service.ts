@@ -188,8 +188,6 @@ export class WorkflowExecutorWorkspaceService {
         }
       }
 
-      // A refused node run will be refused for every following node too, so
-      // continueOnFailure must not turn an unspent run into a COMPLETED one.
       if (isDefined(actionOutput.error) && !actionOutput.isUsageRefused) {
         const enclosingIterator = findEnclosingIteratorWithContinueOnFailure({
           failedStepId: stepId,

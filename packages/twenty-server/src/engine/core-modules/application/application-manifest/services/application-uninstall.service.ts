@@ -210,8 +210,6 @@ export class ApplicationUninstallService {
         logicFunctionId: application.uninstallLogicFunctionId,
         workspaceId,
         payload,
-        // Teardown is not billable work, and a deleted workspace has no active
-        // subscription, so gating it would strand the application data for good.
         shouldEnforceUsageLimits: false,
         ...(isDefined(workspaceDeletionRequestTimestamp)
           ? { workspaceDeletionRequestTimestamp }
