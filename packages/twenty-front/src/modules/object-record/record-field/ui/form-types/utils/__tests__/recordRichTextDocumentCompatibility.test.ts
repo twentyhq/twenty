@@ -229,6 +229,26 @@ describe('record rich-text document compatibility', () => {
     });
   });
 
+  it('keeps variables read from styled BlockNote text resolvable', () => {
+    const document = parseLegacyRecordRichTextDocument({
+      serializedDocument: JSON.stringify([
+        {
+          type: 'paragraph',
+          props: {},
+          content: [{ ...text('{{step.name}}'), styles: { bold: true } }],
+        },
+      ]),
+      enableVariables: true,
+    });
+
+    expect(
+      resolveRichTextVariables(
+        serializeTipTapDocumentContent(JSON.stringify(document)),
+        { step: { name: 'Alice' } },
+      ),
+    ).not.toContain('variableTag');
+  });
+
   it('keeps workflow variables resolvable without resolving literal mustache text', () => {
     const stored = serializeTipTapDocumentContent(
       JSON.stringify({

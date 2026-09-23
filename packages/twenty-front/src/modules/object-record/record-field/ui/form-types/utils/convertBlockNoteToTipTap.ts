@@ -70,7 +70,7 @@ const convertInlineContent = ({
       return (
         getInitialEditorContent(item.text, { enableVariables }).content?.[0]
           ?.content ?? []
-      ).map((node) => ({ ...node, marks }));
+      ).map((node) => (node.type === 'text' ? { ...node, marks } : node));
     }
     return throwUnsupportedRecordRichTextContent();
   });
