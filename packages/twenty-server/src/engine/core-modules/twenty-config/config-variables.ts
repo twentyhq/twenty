@@ -1221,6 +1221,17 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Interval in milliseconds between two metric exports, for every meter driver. Read before the config store is available, so it cannot be overridden from the database.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  OTEL_METRIC_EXPORT_INTERVAL = 30000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Driver used for logging (only console for now)',
     type: ConfigVariableType.ENUM,
     options: Object.values(LoggerDriverType),

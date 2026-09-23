@@ -45,15 +45,14 @@ const parseSampleRate = ({
     : fallback;
 };
 
-const parseExportIntervalMillis = (value: string | undefined) => {
-  const parsed = Number(value);
-
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : 30000;
-};
-
-const metricExportIntervalMillis = parseExportIntervalMillis(
+const parsedMetricExportInterval = Number(
   process.env.OTEL_METRIC_EXPORT_INTERVAL,
 );
+
+const metricExportIntervalMillis =
+  Number.isInteger(parsedMetricExportInterval) && parsedMetricExportInterval > 0
+    ? parsedMetricExportInterval
+    : 30000;
 
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
   const tracesSampleRate = parseSampleRate({
