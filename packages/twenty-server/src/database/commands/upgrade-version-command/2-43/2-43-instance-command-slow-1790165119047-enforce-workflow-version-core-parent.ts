@@ -9,17 +9,16 @@ export class EnforceWorkflowVersionCoreParentSlowInstanceCommand implements Slow
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
   public async runDataMigration(dataSource: DataSource): Promise<void> {
+    await dataSource.query(
+      `DELETE FROM "core"."workflowVersion" WHERE "coreWorkflowId" IS NULL`,
+    );
+
     const workspaces = (await dataSource.query(
-      `SELECT DISTINCT "workspaceId" FROM "core"."workflowVersion" WHERE "coreWorkflowId" IS NULL`,
-    )) as { workspaceId: string }[];
+      `SELECT "id" FROM "core"."workspace"`,
+    )) as { id: string }[];
 
-    for (const { workspaceId } of workspaces) {
-      await dataSource.query(
-        `DELETE FROM "core"."workflowVersion" WHERE "workspaceId" = $1 AND "coreWorkflowId" IS NULL`,
-        [workspaceId],
-      );
-
-      await this.workspaceCacheService.flush(workspaceId, [
+    for (const workspace of workspaces) {
+      await this.workspaceCacheService.flush(workspace.id, [
         'flatWorkflowVersionMaps',
         'workflowAutomatedTriggerMaps',
       ]);

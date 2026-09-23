@@ -1,8 +1,9 @@
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790165119047-enforce-workflow-version-core-parent';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790165119047-enforce-workflow-version-core-parent';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
@@ -12,8 +13,7 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
   let queryRunner: QueryRunner;
   let command: EnforceWorkflowVersionCoreParentSlowInstanceCommand;
   let applicationId: string;
-
-  const workspaceCacheService = { flush: jest.fn() };
+  let flushSpy: jest.SpyInstance;
 
   const seedCoreWorkflow = async (
     workspaceWorkflowId: string,
@@ -87,9 +87,10 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
     });
     await dataSource.initialize();
 
-    command = new EnforceWorkflowVersionCoreParentSlowInstanceCommand(
-      workspaceCacheService as unknown as WorkspaceCacheService,
-    );
+    command =
+      getAppProviderByClassName<EnforceWorkflowVersionCoreParentSlowInstanceCommand>(
+        'EnforceWorkflowVersionCoreParentSlowInstanceCommand',
+      );
 
     const [workspace] = await dataSource.query(
       `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE "id" = $1`,
@@ -100,7 +101,9 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
   }, 30000);
 
   beforeEach(async () => {
-    workspaceCacheService.flush.mockReset().mockResolvedValue(undefined);
+    flushSpy = jest
+      .spyOn(WorkspaceCacheService.prototype, 'flush')
+      .mockResolvedValue(undefined);
 
     queryRunner = dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -150,15 +153,18 @@ describe('EnforceWorkflowVersionCoreParentSlowInstanceCommand (integration)', ()
     expect(await findCoreVersion(coreVersionId)).toEqual({ coreWorkflowId });
   });
 
-  it('flushes the workflow version and trigger caches of a cleaned workspace', async () => {
-    await seedCoreVersion({ workflowId: v4(), coreWorkflowId: null });
+  it('flushes the workflow version and trigger caches of every workspace', async () => {
+    const [{ count: workspaceCount }] = await dataSource.query(
+      `SELECT count(*)::int AS "count" FROM core."workspace"`,
+    );
 
     await command.runDataMigration(dataSource);
 
-    expect(workspaceCacheService.flush).toHaveBeenCalledWith(
-      SEED_APPLE_WORKSPACE_ID,
-      ['flatWorkflowVersionMaps', 'workflowAutomatedTriggerMaps'],
-    );
+    expect(flushSpy).toHaveBeenCalledTimes(workspaceCount);
+    expect(flushSpy).toHaveBeenCalledWith(SEED_APPLE_WORKSPACE_ID, [
+      'flatWorkflowVersionMaps',
+      'workflowAutomatedTriggerMaps',
+    ]);
   });
 
   it('rejects a version without a core workflow once applied', async () => {
