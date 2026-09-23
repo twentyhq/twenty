@@ -1,4 +1,5 @@
 import { useRedeemSsoExchangeToken } from '@/auth/hooks/useRedeemSsoExchangeToken';
+import { getSsoExchangeTokenFromUrlHash } from '@/auth/utils/getSsoExchangeTokenFromUrlHash';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -6,9 +7,7 @@ export const SignInUpSsoExchangeTokenEffect = () => {
   const { redeemSsoExchangeToken } = useRedeemSsoExchangeToken();
 
   useEffect(() => {
-    const ssoExchangeToken = new URLSearchParams(
-      window.location.hash.substring(1),
-    ).get('ssoExchangeToken');
+    const ssoExchangeToken = getSsoExchangeTokenFromUrlHash();
 
     if (!isDefined(ssoExchangeToken)) {
       return;

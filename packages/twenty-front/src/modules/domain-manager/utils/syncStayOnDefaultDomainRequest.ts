@@ -1,11 +1,10 @@
-import { STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM } from '@/domain-manager/constants/StayOnDefaultDomainSearchParam';
+import { getSsoExchangeTokenFromUrlHash } from '@/auth/utils/getSsoExchangeTokenFromUrlHash';
 import { STAY_ON_DEFAULT_DOMAIN_SESSION_STORAGE_KEY } from '@/domain-manager/constants/StayOnDefaultDomainSessionStorageKey';
 import { forgetStayOnDefaultDomainRequest } from '@/domain-manager/utils/forgetStayOnDefaultDomainRequest';
+import { hasStayOnDefaultDomainSearchParam } from '@/domain-manager/utils/hasStayOnDefaultDomainSearchParam';
+import { isDefined } from 'twenty-shared/utils';
 
-const isSocialSsoReturn = () =>
-  new URLSearchParams(window.location.hash.substring(1)).has(
-    'ssoExchangeToken',
-  );
+const isSocialSsoReturn = () => isDefined(getSsoExchangeTokenFromUrlHash());
 
 const isPageReload = () =>
   window.performance
@@ -19,11 +18,7 @@ const isPageReload = () =>
 // outlive the url that carried it here, but only across that round trip or a
 // reload: arriving any other way (browser back, a typed url) is a plain visit
 export const syncStayOnDefaultDomainRequest = () => {
-  if (
-    !new URLSearchParams(window.location.search).has(
-      STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM,
-    )
-  ) {
+  if (!hasStayOnDefaultDomainSearchParam()) {
     if (!isSocialSsoReturn() && !isPageReload()) {
       forgetStayOnDefaultDomainRequest();
     }
