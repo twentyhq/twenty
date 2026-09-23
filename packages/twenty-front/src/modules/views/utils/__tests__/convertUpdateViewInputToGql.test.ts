@@ -20,4 +20,11 @@ describe('convertUpdateViewInputToGql', () => {
       id: undefined,
     });
   });
+
+  it('includes a null group load limit so it resets to the default', () => {
+    expect(convertUpdateViewInputToGql({ groupLoadLimit: null })).toEqual({
+      groupLoadLimit: null,
+      id: undefined,
+    });
+  });
 });

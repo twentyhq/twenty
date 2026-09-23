@@ -39,7 +39,7 @@ export const convertUpdateViewInputToGql = (
     ...(view.kanbanColumnWidth !== undefined && {
       kanbanColumnWidth: view.kanbanColumnWidth,
     }),
-    ...(isDefined(view.groupLoadLimit) && {
+    ...(view.groupLoadLimit !== undefined && {
       groupLoadLimit: view.groupLoadLimit,
     }),
     ...(view.mainGroupByFieldMetadataId !== undefined && {
