@@ -61,18 +61,25 @@ const StyledAdvancedTextFieldInnerContainer = styled.div<{
   flex-grow: 1;
   overflow: auto;
   width: 100%;
+
+  /* Centers the first line of text on the action icons. */
+  &[data-has-actions='true'] .tiptap {
+    padding-top: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledEditorActionButtonContainer = styled.div<{
   hasVariablePicker?: boolean;
 }>`
-  margin-top: ${themeCssVariables.spacing[1]};
+  align-items: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[7]};
   position: absolute;
   right: ${({ hasVariablePicker }) =>
     hasVariablePicker
       ? `calc(${themeCssVariables.spacing[7]} + ${themeCssVariables.spacing[2]})`
       : themeCssVariables.spacing[1]};
-  top: ${themeCssVariables.spacing[0]};
+  top: ${themeCssVariables.spacing[1]};
   z-index: 1;
 `;
 
@@ -127,6 +134,8 @@ export const FormAdvancedTextFieldInput = ({
 
   const editorMinHeight = minHeight ?? profileMinHeight;
   const isFullScreenEnabled = enableFullScreen ?? profile.enableFullScreen;
+  const hasActions =
+    !readonly && (isFullScreenEnabled || isDefined(VariablePicker));
 
   const instanceId = useId();
   const isMobile = useIsMobile();
@@ -219,6 +228,7 @@ export const FormAdvancedTextFieldInput = ({
           <StyledAdvancedTextFieldFieldContainer>
             <StyledAdvancedTextFieldInnerContainer
               hasFieldChrome={chrome === 'field'}
+              data-has-actions={hasActions}
             >
               {!isFullScreen && (
                 <EditorComponent
