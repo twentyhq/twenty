@@ -7,6 +7,7 @@ import {
 } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
 import { SystemPermissionFlag } from '@/constants/SystemPermissionFlag';
 import { TOOL_PERMISSION_FLAGS } from '@/constants/ToolPermissionFlags';
+import { getUniqueValues } from '@/utils/array/getUniqueValues';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export type RoleManifestGrant =
@@ -40,8 +41,6 @@ export type RoleManifestGrant =
 
 const SYSTEM_TOOL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS: readonly string[] =
   TOOL_PERMISSION_FLAGS.map((flag) => SystemPermissionFlag[flag]);
-
-const getUniqueValues = (values: string[]): string[] => [...new Set(values)];
 
 const stringifyWithSortedKeys = (value: unknown): string =>
   JSON.stringify(value, (_key, nestedValue) =>

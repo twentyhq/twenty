@@ -15,6 +15,7 @@ export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
 export { findOrThrow } from './array/findOrThrow';
 export { getContiguousIncrementalValues } from './array/getContiguousIncrementalValues';
+export { getUniqueValues } from './array/getUniqueValues';
 export { isNonEmptyArray } from './array/isNonEmptyArray';
 export { mapById } from './array/mapById';
 export { mapByProperty } from './array/mapByProperty';

@@ -4,9 +4,8 @@ import {
   type RoleManifest,
 } from '@/application/roleManifestType';
 import { getEffectiveObjectPermissionsFromRoleManifest } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
+import { getUniqueValues } from '@/utils/array/getUniqueValues';
 import { isDefined } from '@/utils/validation/isDefined';
-
-const getUniqueValues = (values: string[]): string[] => [...new Set(values)];
 
 const computeObjectPermissionsUnion = (
   roles: RoleManifest[],
