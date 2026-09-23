@@ -7241,24 +7241,6 @@ export default {
                     ]
                 }
             ],
-            "applicationSdkClientChecksums": [
-                94,
-                {
-                    "applicationId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "isApplicationStopped": [
-                8,
-                {
-                    "applicationUniversalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
             "enterprisePortalSession": [
                 1,
                 {
@@ -7277,6 +7259,24 @@ export default {
             ],
             "enterpriseSubscriptionStatus": [
                 150
+            ],
+            "applicationSdkClientChecksums": [
+                94,
+                {
+                    "applicationId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "isApplicationStopped": [
+                8,
+                {
+                    "applicationUniversalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
             ],
             "usageLimits": [
                 158
@@ -10557,6 +10557,36 @@ export default {
                     "file": [
                         432,
                         "Upload!"
+                    ]
+                }
+            ],
+            "createNewWorkspaceLogoUpload": [
+                160,
+                {
+                    "workspaceId": [
+                        1,
+                        "String!"
+                    ],
+                    "filename": [
+                        1,
+                        "String!"
+                    ],
+                    "size": [
+                        15,
+                        "Float!"
+                    ]
+                }
+            ],
+            "completeNewWorkspaceLogoUpload": [
+                159,
+                {
+                    "workspaceId": [
+                        1,
+                        "String!"
+                    ],
+                    "fileId": [
+                        1,
+                        "String!"
                     ]
                 }
             ],
