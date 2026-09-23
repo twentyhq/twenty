@@ -7,7 +7,9 @@ function* resolveVariables(value: unknown): Generator<string> {
     for (const [, variablePath] of value.matchAll(
       CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
     )) {
-      yield variablePath;
+      if (variablePath !== undefined) {
+        yield variablePath;
+      }
     }
 
     return;

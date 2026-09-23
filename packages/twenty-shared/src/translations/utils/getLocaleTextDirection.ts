@@ -16,4 +16,6 @@ const RIGHT_TO_LEFT_LANGUAGES = [
 ];
 
 export const getLocaleTextDirection = (locale: string): TextDirection =>
-  RIGHT_TO_LEFT_LANGUAGES.includes(locale.split('-')[0]) ? 'rtl' : 'ltr';
+  RIGHT_TO_LEFT_LANGUAGES.includes(locale.split('-')[0] ?? locale)
+    ? 'rtl'
+    : 'ltr';

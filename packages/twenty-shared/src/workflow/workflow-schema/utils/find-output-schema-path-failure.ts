@@ -19,15 +19,20 @@ export const findOutputSchemaPathFailure = ({
   let currentSchema: BaseOutputSchemaV2 = schema;
 
   for (let index = 0; index < propertyPath.length; index++) {
+    const segment = propertyPath[index];
+
+    if (segment === undefined) {
+      return undefined;
+    }
+
     if (!isObject(currentSchema)) {
       return {
         validPrefix: propertyPath.slice(0, index),
-        failedSegment: propertyPath[index],
+        failedSegment: segment,
         availableKeys: [],
       };
     }
 
-    const segment = propertyPath[index];
     const field = currentSchema[segment];
 
     if (!isDefined(field)) {
@@ -39,12 +44,12 @@ export const findOutputSchemaPathFailure = ({
     }
 
     if (field.isLeaf) {
-      const isLastSegment = index === propertyPath.length - 1;
+      const nextSegment = propertyPath[index + 1];
 
-      if (!isLastSegment) {
+      if (nextSegment !== undefined) {
         return {
           validPrefix: propertyPath.slice(0, index + 1),
-          failedSegment: propertyPath[index + 1],
+          failedSegment: nextSegment,
           availableKeys: [],
         };
       }

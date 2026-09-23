@@ -151,7 +151,7 @@ describe('parseEmailDocument', () => {
     expect(result.success).toBe(true);
 
     if (result.success) {
-      expect(result.document.content?.[0].attrs?.futureAttribute).toBe('kept');
+      expect(result.document.content?.[0]?.attrs?.futureAttribute).toBe('kept');
     }
   });
 

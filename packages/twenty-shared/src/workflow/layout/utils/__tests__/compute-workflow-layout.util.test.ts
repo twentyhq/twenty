@@ -49,7 +49,7 @@ describe('computeWorkflowLayout', () => {
       edges: [],
     });
 
-    expect(positions[0].centerPosition).toEqual({
+    expect(positions[0]?.centerPosition).toEqual({
       x: width / 2,
       y: height / 2,
     });

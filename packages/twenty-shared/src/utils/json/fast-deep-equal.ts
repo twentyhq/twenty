@@ -88,11 +88,11 @@ export const fastDeepEqual = (
     if (firstKeys.length !== secondKeys.length) return false;
 
     for (let index = firstKeys.length; index-- !== 0; ) {
-      if (!(firstKeys[index] in secondValue)) return false;
+      if (!(firstKeys[index]! in secondValue)) return false;
     }
 
     for (let index = firstKeys.length; index-- !== 0; ) {
-      const key = firstKeys[index];
+      const key = firstKeys[index]!;
 
       if (
         !fastDeepEqual(

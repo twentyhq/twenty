@@ -12,7 +12,7 @@ export const combineFilters = (
   }
 
   if (nonEmptyFilters.length === 1) {
-    return nonEmptyFilters[0];
+    return nonEmptyFilters[0] ?? {};
   }
 
   return {

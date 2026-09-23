@@ -63,7 +63,7 @@ export const computeRecordGqlOperationFilter = ({
   }
 
   if (recordGqlOperationFilters.length === 1) {
-    return recordGqlOperationFilters[0];
+    return recordGqlOperationFilters[0] ?? {};
   }
 
   const recordGqlOperationFilter = {

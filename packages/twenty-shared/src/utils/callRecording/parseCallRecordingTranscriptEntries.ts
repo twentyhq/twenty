@@ -66,14 +66,17 @@ const readTranscriptEntry = (
     .map(readTranscriptWord)
     .filter(isDefined);
 
-  if (words.length === 0) {
+  const firstWord = words[0];
+  const lastWord = words[words.length - 1];
+
+  if (firstWord === undefined || lastWord === undefined) {
     return undefined;
   }
 
   return {
     speakerName: readSpeakerName(asRecord(candidate.participant)),
-    startSeconds: words[0].startSeconds,
-    endSeconds: words[words.length - 1].endSeconds,
+    startSeconds: firstWord.startSeconds,
+    endSeconds: lastWord.endSeconds,
     text: words.map((word) => word.text).join(' '),
     words,
   };

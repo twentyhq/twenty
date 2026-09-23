@@ -108,7 +108,7 @@ describe('getUniqueConstraintsFields', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toHaveLength(1);
-    expect(result[0][0]).toEqual(mockIdField);
+    expect(result[0]?.[0]).toEqual(mockIdField);
   });
 
   it('should return the primary key constraint field and the unique indexes fields if unique indexes are present', () => {
@@ -132,8 +132,8 @@ describe('getUniqueConstraintsFields', () => {
 
     expect(result).toHaveLength(2);
     expect(result[0]).toHaveLength(1);
-    expect(result[0][0]).toEqual(mockIdField);
+    expect(result[0]?.[0]).toEqual(mockIdField);
     expect(result[1]).toHaveLength(1);
-    expect(result[1][0]).toEqual(mockEmailField);
+    expect(result[1]?.[0]).toEqual(mockEmailField);
   });
 });

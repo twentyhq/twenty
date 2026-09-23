@@ -9,7 +9,7 @@ import { SOURCE_LOCALE } from '@/translations/constants/SourceLocale';
 const languageToLocaleMap = Object.keys(APP_LOCALES).reduce<
   Record<string, string>
 >((map, locale) => {
-  const language = locale.split('-')[0].toLowerCase();
+  const language = (locale.split('-')[0] ?? locale).toLowerCase();
 
   // Only add to the map if not already added or if the current locale is the source locale
   // This ensures language codes map to their full locale version (e.g., 'es' -> 'es-ES')
@@ -38,7 +38,9 @@ export const normalizeLocale = (value: string | null): AppLocale => {
   }
 
   // Try matching just the language part (e.g., 'fr' -> 'fr-FR')
-  const languageCode = value?.trim() ? value.split('-')[0].toLowerCase() : '';
+  const languageCode = value?.trim()
+    ? (value.split('-')[0] ?? value).toLowerCase()
+    : '';
   if (languageToLocaleMap[languageCode]) {
     return languageToLocaleMap[languageCode] as AppLocale;
   }

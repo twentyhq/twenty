@@ -28,7 +28,7 @@ describe('jsonSchemaToInputSchema', () => {
       properties: { count: { type: 'integer' } },
     });
 
-    expect(result[0].properties).toEqual({ count: { type: 'number' } });
+    expect(result[0]?.properties).toEqual({ count: { type: 'number' } });
   });
 
   it('maps null to unknown', () => {
@@ -37,7 +37,7 @@ describe('jsonSchemaToInputSchema', () => {
       properties: { value: { type: 'null' } },
     });
 
-    expect(result[0].properties).toEqual({ value: { type: 'unknown' } });
+    expect(result[0]?.properties).toEqual({ value: { type: 'unknown' } });
   });
 
   it('preserves array items', () => {
@@ -62,7 +62,7 @@ describe('jsonSchemaToInputSchema', () => {
       },
     });
 
-    expect(result[0].properties?.color).toEqual({
+    expect(result[0]?.properties?.color).toEqual({
       type: 'string',
       enum: ['red', 'green', 'blue'],
     });
@@ -76,7 +76,7 @@ describe('jsonSchemaToInputSchema', () => {
       },
     });
 
-    expect(result[0].properties?.mixed).toEqual({
+    expect(result[0]?.properties?.mixed).toEqual({
       type: 'string',
       enum: ['a', 'b'],
     });
@@ -90,7 +90,7 @@ describe('jsonSchemaToInputSchema', () => {
       },
     });
 
-    expect(result[0].properties?.body).toEqual({
+    expect(result[0]?.properties?.body).toEqual({
       type: 'string',
       multiline: true,
     });
@@ -105,8 +105,8 @@ describe('jsonSchemaToInputSchema', () => {
       },
     });
 
-    expect(result[0].properties?.title).toEqual({ type: 'string' });
-    expect(result[0].properties?.other).toEqual({ type: 'string' });
+    expect(result[0]?.properties?.title).toEqual({ type: 'string' });
+    expect(result[0]?.properties?.other).toEqual({ type: 'string' });
   });
 
   it('preserves label on top-level and nested properties', () => {
@@ -125,16 +125,16 @@ describe('jsonSchemaToInputSchema', () => {
       },
     });
 
-    expect(result[0].label).toBe('Slack Message');
-    expect(result[0].properties?.slackChannelId).toEqual({
+    expect(result[0]?.label).toBe('Slack Message');
+    expect(result[0]?.properties?.slackChannelId).toEqual({
       type: 'string',
       label: 'Channel',
     });
-    expect(result[0].properties?.messageText).toEqual({
+    expect(result[0]?.properties?.messageText).toEqual({
       type: 'string',
       label: 'Message text',
     });
-    expect(result[0].properties?.meta?.properties?.count).toEqual({
+    expect(result[0]?.properties?.meta?.properties?.count).toEqual({
       type: 'number',
       label: 'Count',
     });
@@ -158,11 +158,11 @@ describe('jsonSchemaToInputSchema', () => {
       },
     });
 
-    expect(result[0].properties?.company).toEqual({
+    expect(result[0]?.properties?.company).toEqual({
       type: 'object',
       objectUniversalIdentifier: 'company-universal-identifier',
     });
-    expect(result[0].properties?.people).toEqual({
+    expect(result[0]?.properties?.people).toEqual({
       type: 'array',
       items: {
         type: 'object',
@@ -186,11 +186,11 @@ describe('jsonSchemaToInputSchema', () => {
       },
     });
 
-    expect(result[0].properties?.company).toEqual({
+    expect(result[0]?.properties?.company).toEqual({
       type: 'record',
       objectUniversalIdentifier: 'company-universal-identifier',
     });
-    expect(result[0].properties?.people).toEqual({
+    expect(result[0]?.properties?.people).toEqual({
       type: 'records',
       objectUniversalIdentifier: 'person-universal-identifier',
     });
@@ -205,7 +205,7 @@ describe('jsonSchemaToInputSchema', () => {
       },
     });
 
-    expect(result[0].properties?.empty).toEqual({ type: 'string' });
-    expect(result[0].properties?.missing).toEqual({ type: 'string' });
+    expect(result[0]?.properties?.empty).toEqual({ type: 'string' });
+    expect(result[0]?.properties?.missing).toEqual({ type: 'string' });
   });
 });

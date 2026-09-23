@@ -46,10 +46,10 @@ describe('formatEmailAddress', () => {
     const reparsed = parseEmailAddressList(`${formatted}, b@example.com`);
 
     expect(reparsed).toHaveLength(2);
-    expect(reparsed[0].address).toBe('a@example.com');
+    expect(reparsed[0]?.address).toBe('a@example.com');
     // addressparser collapses the escaped backslash: containment is the
     // contract here, not byte fidelity of exotic display names.
-    expect(reparsed[0].name).toBe('x"y');
+    expect(reparsed[0]?.name).toBe('x"y');
     expect(reparsed[1]).toEqual({ address: 'b@example.com', name: '' });
   });
 

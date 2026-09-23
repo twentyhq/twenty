@@ -41,7 +41,7 @@ describe('listCampaignVariablesForFields', () => {
       'name.lastName',
     ]);
 
-    expect(definitions[0].label).toBe('Name · First name');
+    expect(definitions[0]?.label).toBe('Name · First name');
   });
 
   it('should skip system, inactive and unsupported fields', () => {
