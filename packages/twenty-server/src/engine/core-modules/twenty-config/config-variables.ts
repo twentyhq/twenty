@@ -308,6 +308,7 @@ export class ConfigVariables {
       'Microsoft Entra tenant ID. Use a directory (tenant) GUID for single-tenant app registrations. Defaults to "common" for multi-tenant.',
     type: ConfigVariableType.STRING,
   })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   @Matches(
     /^(common|organizations|consumers|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i,
     {
