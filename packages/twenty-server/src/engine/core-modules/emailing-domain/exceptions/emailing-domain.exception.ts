@@ -22,7 +22,7 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
 ) => {
   switch (code) {
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED:
-      return msg`This domain is already registered.`;
+      return msg`Registered by another workspace.`;
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
       return msg`No verified sending domain matches this from address.`;
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:

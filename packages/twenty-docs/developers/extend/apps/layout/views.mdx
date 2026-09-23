@@ -49,6 +49,7 @@ export default defineView({
 | `sorts` | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Default sort order. |
 | `isCompact` | `boolean` | Compact row display. |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups` | — | Group records (e.g. kanban columns) by a field. |
+| `groupLoadLimit` | `8` (default), `25`, `50`, `100` | Records loaded per group before "Load more", on grouped table and list views. Kanban boards page on their own size and ignore it. |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*` | Kanban column aggregates and sizing. |
 | `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH` | Calendar views: layout, the date field that positions records, and an optional end date field. |
 

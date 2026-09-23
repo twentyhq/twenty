@@ -86,6 +86,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "mainGroupByFieldMetadataId",
     "shouldHideEmptyGroups",
     "kanbanColumnWidth",
+    "groupLoadLimit",
     "isActive",
   ],
   "viewField": [
