@@ -125,11 +125,11 @@ export const uploadApplicationFileWithDirectUpload = async ({
     token,
   });
 
-  if (expectToFail === true) {
+  if (expectToFail) {
     expect(errors).toBeDefined();
   }
 
-  if (expectToFail === false) {
+  if (!expectToFail) {
     if (isDefined(errors)) {
       expect(errors).toEqual(
         'Upload application file has failed but should not',
