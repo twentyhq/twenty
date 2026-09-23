@@ -92,15 +92,17 @@ export const validateAgentRolesWithinApplicationRole = ({
   permissionFlags: PermissionFlagManifest[];
   defaultRoleUniversalIdentifier: string;
 }): string[] => {
+  const errors: string[] = [];
   const applicationRole = roles.find(
     (role) => role.universalIdentifier === defaultRoleUniversalIdentifier,
   );
 
   if (!isDefined(applicationRole)) {
-    return [];
+    errors.push(
+      `Application default role "${defaultRoleUniversalIdentifier}" is not defined by this application.`,
+    );
   }
 
-  const errors: string[] = [];
   const toolPermissionFlagUniversalIdentifiers = permissionFlags
     .filter((flag) => flag.permissionType === 'tool')
     .map((flag) => flag.universalIdentifier);
@@ -136,6 +138,10 @@ export const validateAgentRolesWithinApplicationRole = ({
       errors.push(
         `Agent ${agentList} references role "${roleUniversalIdentifier}", which is not defined by this application.`,
       );
+      continue;
+    }
+
+    if (!isDefined(applicationRole)) {
       continue;
     }
 

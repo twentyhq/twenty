@@ -6,6 +6,7 @@ import {
 } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
 import { SystemPermissionFlag } from '@/constants/SystemPermissionFlag';
 import { TOOL_PERMISSION_FLAGS } from '@/constants/ToolPermissionFlags';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export type RoleManifestGrant =
   | {
@@ -48,9 +49,92 @@ const SYSTEM_TOOL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS: readonly string[] =
 
 const getUniqueValues = (values: string[]): string[] => [...new Set(values)];
 
+const stringifyWithSortedKeys = (value: unknown): string =>
+  JSON.stringify(value, (_key, nestedValue) =>
+    nestedValue !== null &&
+    typeof nestedValue === 'object' &&
+    !Array.isArray(nestedValue)
+      ? Object.fromEntries(
+          Object.entries(nestedValue as Record<string, unknown>).sort(
+            ([leftKey], [rightKey]) => leftKey.localeCompare(rightKey),
+          ),
+        )
+      : nestedValue,
+  );
+
+// Two row-level restrictions are only known to select the same rows when
+// their predicates match exactly, including how their groups nest.
+const getRowLevelRestrictionSignature = ({
+  role,
+  objectUniversalIdentifier,
+}: {
+  role: RoleManifest;
+  objectUniversalIdentifier: string;
+}): string[] => {
+  const groupsByUniversalIdentifier = new Map(
+    (role.rowLevelPermissionPredicateGroups ?? []).map((group) => [
+      group.universalIdentifier,
+      group,
+    ]),
+  );
+
+  const getGroupPath = (
+    groupUniversalIdentifier: string | null | undefined,
+  ): string[] => {
+    const path: string[] = [];
+    const visited = new Set<string>();
+    let current = groupUniversalIdentifier;
+
+    while (isDefined(current) && !visited.has(current)) {
+      visited.add(current);
+      const group = groupsByUniversalIdentifier.get(current);
+
+      if (!isDefined(group)) {
+        break;
+      }
+
+      path.push(group.logicalOperator);
+      current = group.parentPredicateGroupUniversalIdentifier;
+    }
+
+    return path;
+  };
+
+  return (role.rowLevelPermissionPredicates ?? [])
+    .filter(
+      (predicate) =>
+        predicate.objectUniversalIdentifier === objectUniversalIdentifier,
+    )
+    .map((predicate) =>
+      stringifyWithSortedKeys({
+        fieldUniversalIdentifier: predicate.fieldUniversalIdentifier,
+        subFieldName: predicate.subFieldName ?? null,
+        operand: predicate.operand,
+        value: predicate.value ?? null,
+        workspaceMemberFieldUniversalIdentifier:
+          predicate.workspaceMemberFieldUniversalIdentifier ?? null,
+        workspaceMemberSubFieldName:
+          predicate.workspaceMemberSubFieldName ?? null,
+        groupPath: getGroupPath(predicate.predicateGroupUniversalIdentifier),
+      }),
+    )
+    .sort();
+};
+
+const haveSameRowLevelRestriction = (
+  roleSignature: string[],
+  supersetSignature: string[],
+): boolean =>
+  roleSignature.length === supersetSignature.length &&
+  roleSignature.every(
+    (predicateSignature, index) =>
+      predicateSignature === supersetSignature[index],
+  );
+
 // Lists what `role` may do that `superset` may not. An empty result means the
-// superset covers the role. Row-level predicates cannot be compared, so a
-// superset predicate on an object the role reaches unrestricted is reported.
+// superset covers the role. A superset row-level restriction is only treated
+// as covered when the role carries the exact same one on that object, since
+// two different predicate sets cannot be proven to select the same rows.
 export const getRoleManifestGrantsNotCoveredBy = ({
   role,
   superset,
@@ -142,18 +226,23 @@ export const getRoleManifestGrantsNotCoveredBy = ({
     const roleReachesObject = OBJECT_PERMISSION_ACTIONS.some(
       (action) => roleEffectivePermissions[action],
     );
-    const supersetRestrictsRows = (
-      superset.rowLevelPermissionPredicates ?? []
-    ).some(
-      (predicate) =>
-        predicate.objectUniversalIdentifier === objectUniversalIdentifier,
-    );
-    const roleRestrictsRows = (role.rowLevelPermissionPredicates ?? []).some(
-      (predicate) =>
-        predicate.objectUniversalIdentifier === objectUniversalIdentifier,
-    );
+    const supersetRowLevelRestriction = getRowLevelRestrictionSignature({
+      role: superset,
+      objectUniversalIdentifier,
+    });
+    const roleRowLevelRestriction = getRowLevelRestrictionSignature({
+      role,
+      objectUniversalIdentifier,
+    });
 
-    if (roleReachesObject && supersetRestrictsRows && !roleRestrictsRows) {
+    if (
+      roleReachesObject &&
+      supersetRowLevelRestriction.length > 0 &&
+      !haveSameRowLevelRestriction(
+        roleRowLevelRestriction,
+        supersetRowLevelRestriction,
+      )
+    ) {
       grants.push({
         type: 'ROW_LEVEL_RESTRICTION',
         objectUniversalIdentifier,

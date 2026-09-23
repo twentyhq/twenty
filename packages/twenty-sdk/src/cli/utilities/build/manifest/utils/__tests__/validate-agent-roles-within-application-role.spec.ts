@@ -136,15 +136,24 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     ]);
   });
 
-  it('returns nothing when the application role itself is missing', () => {
+  it('reports a missing application role and still checks agent role references', () => {
     const errors = validateAgentRolesWithinApplicationRole({
-      agents: [buildAgent()],
-      roles: [buildRole()],
+      agents: [
+        buildAgent(),
+        buildAgent({
+          name: 'lost-assistant',
+          roleUniversalIdentifier: 'missing-role',
+        }),
+      ],
+      roles: [buildRole({ canReadAllObjectRecords: true })],
       objects: [],
       permissionFlags: [],
       defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toEqual([
+      'Application default role "application-role" is not defined by this application.',
+      'Agent "lost-assistant" references role "missing-role", which is not defined by this application.',
+    ]);
   });
 });

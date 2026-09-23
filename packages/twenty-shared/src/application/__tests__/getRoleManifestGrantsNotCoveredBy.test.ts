@@ -184,35 +184,109 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
     ]);
   });
 
-  it('reports an object the superset narrows by row while the role reaches it unnarrowed', () => {
-    const role = buildRole({
-      objectPermissions: [
-        { objectUniversalIdentifier: PERSON, canReadObjectRecords: true },
-      ],
-    });
-    const superset = buildRole({
-      objectPermissions: [
-        { objectUniversalIdentifier: PERSON, canReadObjectRecords: true },
-      ],
-      rowLevelPermissionPredicateGroups: [
-        {
-          universalIdentifier: 'group',
-          objectUniversalIdentifier: PERSON,
-          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
-        },
-      ],
-      rowLevelPermissionPredicates: [
-        {
-          universalIdentifier: 'predicate',
-          objectUniversalIdentifier: PERSON,
-          fieldUniversalIdentifier: EMAIL_FIELD,
-          operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
-        },
-      ],
+  describe('row-level restrictions', () => {
+    const readablePerson = {
+      objectUniversalIdentifier: PERSON,
+      canReadObjectRecords: true,
+    };
+
+    const buildRestrictedRole = ({
+      universalIdentifier,
+      operand,
+      logicalOperator = RowLevelPermissionPredicateGroupLogicalOperator.AND,
+      value,
+    }: {
+      universalIdentifier: string;
+      operand: RowLevelPermissionPredicateOperand;
+      logicalOperator?: RowLevelPermissionPredicateGroupLogicalOperator;
+      value?: string;
+    }) =>
+      buildRole({
+        universalIdentifier,
+        objectPermissions: [readablePerson],
+        rowLevelPermissionPredicateGroups: [
+          {
+            universalIdentifier: `${universalIdentifier}-group`,
+            objectUniversalIdentifier: PERSON,
+            logicalOperator,
+          },
+        ],
+        rowLevelPermissionPredicates: [
+          {
+            universalIdentifier: `${universalIdentifier}-predicate`,
+            objectUniversalIdentifier: PERSON,
+            fieldUniversalIdentifier: EMAIL_FIELD,
+            operand,
+            value,
+            predicateGroupUniversalIdentifier: `${universalIdentifier}-group`,
+          },
+        ],
+      });
+
+    const superset = buildRestrictedRole({
+      universalIdentifier: 'superset',
+      operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
     });
 
-    expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
-      { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier: PERSON },
-    ]);
+    it('reports an object the superset narrows while the role reaches it unnarrowed', () => {
+      const role = buildRole({ objectPermissions: [readablePerson] });
+
+      expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+        { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier: PERSON },
+      ]);
+    });
+
+    it('accepts the same restriction under different identifiers', () => {
+      const role = buildRestrictedRole({
+        universalIdentifier: 'role',
+        operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+      });
+
+      expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([]);
+    });
+
+    it('reports a restriction that differs by operand or value', () => {
+      const differentOperand = buildRestrictedRole({
+        universalIdentifier: 'role',
+        operand: RowLevelPermissionPredicateOperand.IS_EMPTY,
+      });
+      const differentValue = buildRestrictedRole({
+        universalIdentifier: 'role',
+        operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+        value: 'x',
+      });
+
+      for (const role of [differentOperand, differentValue]) {
+        expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+          { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier: PERSON },
+        ]);
+      }
+    });
+
+    it('reports a restriction whose group nests differently', () => {
+      const role = buildRestrictedRole({
+        universalIdentifier: 'role',
+        operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+        logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+      });
+
+      expect(getRoleManifestGrantsNotCoveredBy({ role, superset })).toEqual([
+        { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier: PERSON },
+      ]);
+    });
+
+    it('accepts a role that narrows an object the superset leaves open', () => {
+      const role = buildRestrictedRole({
+        universalIdentifier: 'role',
+        operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+      });
+
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset: buildRole({ objectPermissions: [readablePerson] }),
+        }),
+      ).toEqual([]);
+    });
   });
 });
