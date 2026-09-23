@@ -1,15 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { createRemoteJWKSet, jwtVerify } from 'jose';
+import { decodeProtectedHeader, importJWK, jwtVerify } from 'jose';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_BOT_CONNECTOR_ISSUER } from 'src/features/chat/logic-functions/constants/teams-bot-connector-issuer';
-import { TEAMS_BOT_OPENID_KEYS_URL } from 'src/features/chat/logic-functions/constants/teams-bot-openid-keys-url';
+import { TEAMS_CHANNEL_ID } from 'src/features/chat/logic-functions/constants/teams-channel-id';
 import { TEAMS_JWT_CLOCK_TOLERANCE_SECONDS } from 'src/features/chat/logic-functions/constants/teams-jwt-clock-tolerance-seconds';
 import { normalizeTeamsServiceUrl } from 'src/features/chat/logic-functions/utils/normalize-teams-service-url';
-
-const botConnectorKeySet = createRemoteJWKSet(
-  new URL(TEAMS_BOT_OPENID_KEYS_URL),
-);
+import {
+  type LoadTeamsBotConnectorKeys,
+  resolveTeamsBotConnectorKeyOrThrow,
+} from 'src/features/chat/logic-functions/utils/resolve-teams-bot-connector-key-or-throw';
 
 const extractBearerToken = (
   authorizationHeader: string | undefined,
@@ -33,6 +33,16 @@ const extractBearerToken = (
   return token;
 };
 
+const readKeyId = (token: string): string | null => {
+  try {
+    const { kid } = decodeProtectedHeader(token);
+
+    return isNonEmptyString(kid) ? kid : null;
+  } catch {
+    return null;
+  }
+};
+
 const readServiceUrlClaim = (payload: Record<string, unknown>): string | null =>
   [payload.serviceurl, payload.serviceUrl].find(isNonEmptyString) ?? null;
 
@@ -40,12 +50,12 @@ export const verifyTeamsActivityTokenOrThrow = async ({
   authorizationHeader,
   activityServiceUrl,
   botAppId,
-  keySet = botConnectorKeySet,
+  loadKeys,
 }: {
   authorizationHeader: string | undefined;
   activityServiceUrl: string;
   botAppId: string;
-  keySet?: Parameters<typeof jwtVerify>[1];
+  loadKeys?: LoadTeamsBotConnectorKeys;
 }): Promise<string> => {
   const token = extractBearerToken(authorizationHeader);
 
@@ -55,12 +65,35 @@ export const verifyTeamsActivityTokenOrThrow = async ({
     );
   }
 
-  const { payload } = await jwtVerify(token, keySet, {
-    issuer: TEAMS_BOT_CONNECTOR_ISSUER,
-    audience: botAppId,
-    algorithms: ['RS256'],
-    clockTolerance: TEAMS_JWT_CLOCK_TOLERANCE_SECONDS,
+  const keyId = readKeyId(token);
+
+  if (!isDefined(keyId)) {
+    throw new Error('Teams activity token names no signing key');
+  }
+
+  const signingKey = await resolveTeamsBotConnectorKeyOrThrow({
+    keyId,
+    loadKeys,
   });
+
+  const { payload } = await jwtVerify(
+    token,
+    await importJWK(signingKey, 'RS256'),
+    {
+      issuer: TEAMS_BOT_CONNECTOR_ISSUER,
+      audience: botAppId,
+      algorithms: ['RS256'],
+      clockTolerance: TEAMS_JWT_CLOCK_TOLERANCE_SECONDS,
+    },
+  );
+
+  // Every published key lists the channels it signs for; a valid signature
+  // from a key endorsed for another channel is still not a Teams activity.
+  if (signingKey.endorsements?.includes(TEAMS_CHANNEL_ID) !== true) {
+    throw new Error(
+      'Teams activity token is signed with a key not endorsed for Teams',
+    );
+  }
 
   const serviceUrlClaim = readServiceUrlClaim(payload);
 
