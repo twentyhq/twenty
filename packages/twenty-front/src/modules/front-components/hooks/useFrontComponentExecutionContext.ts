@@ -31,7 +31,7 @@ import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useU
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
-import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
+import { useFrontComponentFileUpload } from '@/front-components/hooks/useFrontComponentFileUpload';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
@@ -50,7 +50,6 @@ import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { FileFolder } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -158,7 +157,9 @@ export const useFrontComponentExecutionContext = ({
   const { enqueueToast } = useToast();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { copyToClipboardWithoutSuccessToast } = useCopyToClipboard();
-  const { uploadFile: uploadFileToFilesField } = useDirectFileUpload();
+  const { uploadFileToFilesField } = useFrontComponentFileUpload({
+    frontComponentId,
+  });
   const { i18n } = useLingui();
   // oxlint-disable-next-line twenty/no-state-useref
   const lastCopyToClipboardCallAtRef = useRef<number>(Number.NEGATIVE_INFINITY);
@@ -510,10 +511,7 @@ export const useFrontComponentExecutionContext = ({
       try {
         const uploadedFile = await uploadFileToFilesField(
           new File([file], fileName, { type: file.type }),
-          {
-            fileFolder: FileFolder.FilesField,
-            fieldMetadataId: params.fieldMetadataId,
-          },
+          { fieldMetadataId: params.fieldMetadataId },
         );
 
         return {
