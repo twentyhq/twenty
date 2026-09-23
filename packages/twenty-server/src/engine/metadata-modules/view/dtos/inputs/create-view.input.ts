@@ -12,6 +12,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   ViewCalendarLayout,
@@ -78,6 +79,13 @@ export class CreateViewInput {
   @Max(KANBAN_COLUMN_MAX_WIDTH)
   @Field(() => Int, { nullable: true })
   kanbanColumnWidth?: number;
+
+  @IsOptional()
+  @Field(() => Int, {
+    nullable: true,
+    defaultValue: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
+  })
+  groupLoadLimit?: number;
 
   @IsOptional()
   @IsEnum(ViewOpenRecordIn)

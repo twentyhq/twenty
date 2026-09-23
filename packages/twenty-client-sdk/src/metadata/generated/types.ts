@@ -1479,6 +1479,9 @@ export default {
             "kanbanColumnWidth": [
                 28
             ],
+            "groupLoadLimit": [
+                28
+            ],
             "calendarFieldMetadataId": [
                 3
             ],
@@ -11348,6 +11351,9 @@ export default {
             "kanbanColumnWidth": [
                 28
             ],
+            "groupLoadLimit": [
+                28
+            ],
             "openRecordIn": [
                 66
             ],
@@ -11429,6 +11435,9 @@ export default {
                 8
             ],
             "kanbanColumnWidth": [
+                28
+            ],
+            "groupLoadLimit": [
                 28
             ],
             "__typename": [
