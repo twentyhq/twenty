@@ -101,6 +101,7 @@ export const FormUuidFieldInput = ({
               value={draftValue.value}
               copyButton={false}
               isNativeTabNavigationEnabled
+              shouldPropagateUnhandledEscape
               disabled={readonly}
               onChange={handleChange}
             />

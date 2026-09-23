@@ -12,12 +12,13 @@ import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/u
 import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useRecordCreationFormFieldEscape } from '@/side-panel/pages/record-creation-form/hooks/useRecordCreationFormFieldEscape';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useContext, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -75,6 +76,7 @@ const SidePanelRecordCreationForm = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const formFieldsRef = useRef<HTMLDivElement>(null);
   const { theme } = useContext(ThemeContext);
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
@@ -132,6 +134,8 @@ const SidePanelRecordCreationForm = ({
     dependencies: [currentFocusId, handleCreateClick],
   });
 
+  useRecordCreationFormFieldEscape({ formFieldsRef });
+
   return (
     <StyledContainer ref={containerRef}>
       <PageCardHeader
@@ -148,7 +152,7 @@ const SidePanelRecordCreationForm = ({
           />
         }
       />
-      <StyledContent>
+      <StyledContent ref={formFieldsRef}>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={recordFormFieldMetadataItems}

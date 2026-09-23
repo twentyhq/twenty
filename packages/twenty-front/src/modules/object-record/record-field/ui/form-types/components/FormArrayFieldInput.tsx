@@ -357,6 +357,7 @@ export const FormArrayFieldInput = ({
                   value={newItemDraftValue}
                   copyButton={false}
                   isNativeTabNavigationEnabled
+                  shouldPropagateUnhandledEscape
                   onChange={handleFirstItemInputChange}
                   onEnter={handleFirstItemInputEnter}
                   shouldTrim={false}

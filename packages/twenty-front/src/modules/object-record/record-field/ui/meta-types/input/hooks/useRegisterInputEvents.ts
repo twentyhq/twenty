@@ -15,6 +15,7 @@ export const useRegisterInputEvents = <T>({
   onClickOutside,
   focusId,
   isNativeTabNavigationEnabled = false,
+  shouldPropagateUnhandledEscape = false,
 }: {
   inputRef: React.RefObject<any>;
   copyRef?: React.RefObject<any>;
@@ -26,6 +27,7 @@ export const useRegisterInputEvents = <T>({
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;
   focusId: string;
   isNativeTabNavigationEnabled?: boolean;
+  shouldPropagateUnhandledEscape?: boolean;
 }) => {
   useListenClickOutside({
     refs: [inputRef, copyRef].filter(isDefined),
@@ -52,6 +54,9 @@ export const useRegisterInputEvents = <T>({
     },
     focusId,
     dependencies: [onEscape, inputValue],
+    options: {
+      preventDefault: !shouldPropagateUnhandledEscape || isDefined(onEscape),
+    },
   });
 
   useHotkeysOnFocusedElement({
