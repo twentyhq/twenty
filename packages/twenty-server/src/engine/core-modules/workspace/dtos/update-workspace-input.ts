@@ -155,12 +155,6 @@ export class UpdateWorkspaceInput {
   aiAdditionalInstructions?: string;
 
   @Field(() => [String], { nullable: true })
-  @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  editableProfileFields?: string[];
-
-  @Field(() => [String], { nullable: true })
   @ValidateIf((_object, value) => value !== undefined)
   @IsArray()
   @ArrayMaxSize(20)
@@ -177,6 +171,12 @@ export class UpdateWorkspaceInput {
     { each: true },
   )
   allowedIframeOrigins?: string[];
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  editableProfileFields?: string[];
 
   @Field({ nullable: true })
   @IsBoolean()

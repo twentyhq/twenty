@@ -301,6 +301,10 @@ export class WorkspaceEntity {
   isInternalMessagesImportEnabled: boolean;
 
   @Field(() => [String], { nullable: true })
+  @Column({ type: 'varchar', array: true, nullable: true, default: '{}' })
+  allowedIframeOrigins: string[] | null;
+
+  @Field(() => [String], { nullable: true })
   @Column({
     type: 'varchar',
     array: true,
@@ -308,10 +312,6 @@ export class WorkspaceEntity {
     default: '{email,profilePicture,firstName,lastName}',
   })
   editableProfileFields: string[] | null;
-
-  @Field(() => [String], { nullable: true })
-  @Column({ type: 'varchar', array: true, nullable: true, default: '{}' })
-  allowedIframeOrigins: string[] | null;
 
   // TODO: set as non nullable
   @Column({ nullable: true, type: 'uuid' })
