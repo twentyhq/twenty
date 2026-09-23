@@ -1,3 +1,7 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -71,6 +75,7 @@ export class AgentChatStreamingService {
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly metricsService: MetricsService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly actorService: AgentChatActorService,
   ) {}
 
   async reapDeadStream({
@@ -173,12 +178,11 @@ export class AgentChatStreamingService {
       });
 
       if (hasQueuedBacklog) {
-        await this.flushNextQueuedMessage(
+        await this.flushNextQueuedMessage({
           threadId,
-          userWorkspaceId,
-          workspace.id,
-          !!thread.title,
-        );
+          workspaceId: workspace.id,
+          hasTitle: !!thread.title,
+        });
       }
 
       return { queued: true, messageId: queuedMessage.id };
@@ -197,6 +201,7 @@ export class AgentChatStreamingService {
 
       const savedUserMessage = await this.agentChatService.addMessage({
         threadId,
+        userWorkspaceId,
         id: messageId,
         uiMessage: {
           role: AgentMessageRole.USER,
@@ -228,10 +233,10 @@ export class AgentChatStreamingService {
           browsingContext,
           modelId,
           lastUserMessageText: text,
-          lastUserMessageParts: userMessageParts,
           hasTitle: !!thread.title,
           conversationSizeTokens: thread.conversationSize,
           existingTurnId: savedUserMessage.turnId ?? undefined,
+          messageId: savedUserMessage.id,
         },
       );
 
@@ -294,12 +299,11 @@ export class AgentChatStreamingService {
 
       if (hasConversationMessages) {
         await this.releaseStreamClaim(threadId, workspace.id, streamId);
-        await this.flushNextQueuedMessage(
+        await this.flushNextQueuedMessage({
           threadId,
-          userWorkspaceId,
-          workspace.id,
-          !!thread.title,
-        );
+          workspaceId: workspace.id,
+          hasTitle: !!thread.title,
+        });
 
         return null;
       }
@@ -309,6 +313,7 @@ export class AgentChatStreamingService {
           threadId,
           workspaceId: workspace.id,
           text,
+          userWorkspaceId,
         });
 
       const messages = await this.loadMessagesFromDB(
@@ -337,10 +342,10 @@ export class AgentChatStreamingService {
           browsingContext: null,
           modelId,
           lastUserMessageText: text,
-          lastUserMessageParts: [{ type: 'text' as const, text }],
           hasTitle: !!thread.title,
           conversationSizeTokens: thread.conversationSize,
           existingTurnId: turnId,
+          messageId,
         },
       );
 
@@ -394,6 +399,22 @@ export class AgentChatStreamingService {
       );
     }
 
+    const latestMessage = await this.agentChatService.findLatestSentUserMessage(
+      { threadId, workspaceId: workspace.id },
+    );
+    if (!isDefined(latestMessage)) {
+      throw new AiException(
+        'There is no failed turn to retry',
+        AiExceptionCode.NO_FAILED_TURN_TO_RETRY,
+      );
+    }
+    await this.actorService.authorizeRetry({
+      workspaceId: workspace.id,
+      threadId,
+      messageId: latestMessage.id,
+      userWorkspaceId,
+    });
+
     const streamId = generateId();
 
     const claimed = await this.tryClaimStream({
@@ -417,12 +438,23 @@ export class AgentChatStreamingService {
           workspaceId: workspace.id,
         });
 
-      if (!isDefined(lastUserMessage) || !isDefined(lastUserMessage.turnId)) {
+      if (
+        !isDefined(lastUserMessage) ||
+        !isDefined(lastUserMessage.turnId) ||
+        lastUserMessage.id !== latestMessage.id
+      ) {
         throw new AiException(
           'There is no failed turn to retry on this thread',
           AiExceptionCode.NO_FAILED_TURN_TO_RETRY,
         );
       }
+
+      await this.actorService.authorizeRetry({
+        workspaceId: workspace.id,
+        threadId,
+        messageId: lastUserMessage.id,
+        userWorkspaceId,
+      });
 
       await this.agentChatService.deleteAssistantMessagesForTurn({
         turnId: lastUserMessage.turnId,
@@ -459,10 +491,10 @@ export class AgentChatStreamingService {
           browsingContext: null,
           modelId,
           lastUserMessageText: textPart?.text ?? '',
-          lastUserMessageParts: retriedMessage.parts,
           hasTitle: !!thread.title,
           conversationSizeTokens: thread.conversationSize,
           existingTurnId: lastUserMessage.turnId,
+          messageId: lastUserMessage.id,
         },
       );
 
@@ -507,6 +539,24 @@ export class AgentChatStreamingService {
     modelId?: string;
     fileAttachments?: AiChatFileAttachment[];
   }): Promise<{ streamId: string; turnId: string | null }> {
+    if (
+      !answers.some(
+        (answer) =>
+          isNonEmptyString(answer.freeText?.trim()) ||
+          isNonEmptyArray(answer.selectedOptionIndices),
+      ) &&
+      !isNonEmptyArray(fileAttachments)
+    ) {
+      throw new AiException(
+        'Provide an answer or attachment',
+        AiExceptionCode.INVALID_QUESTION_ANSWER,
+      );
+    }
+    await this.actorService.authorizeQuestionAnswer({
+      workspaceId: workspace.id,
+      threadId,
+      messageId,
+    });
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId },
       select: ['id', 'activeStreamId'],
@@ -521,6 +571,7 @@ export class AgentChatStreamingService {
     await this.streamHeartbeatService.markClaimed(streamId);
 
     let resolved: {
+      answerText: string;
       turnId: string | null;
       rollback: { partId: string; previousOutput: Record<string, unknown> };
     };
@@ -538,7 +589,7 @@ export class AgentChatStreamingService {
       throw error;
     }
 
-    let attachmentMessageId: string | null = null;
+    let answerMessageId: string | null = null;
 
     try {
       const fileParts = await this.buildFilePartsFromAttachments(
@@ -546,19 +597,23 @@ export class AgentChatStreamingService {
         workspace.id,
       );
 
-      if (isNonEmptyArray(fileParts)) {
-        const attachmentMessage = await this.agentChatService.addMessage({
-          threadId,
-          uiMessage: {
-            role: AgentMessageRole.USER,
-            parts: fileParts,
-          },
-          turnId: resolved.turnId ?? undefined,
-          workspaceId: workspace.id,
-        });
-
-        attachmentMessageId = attachmentMessage.id;
-      }
+      const answerMessage = await this.agentChatService.addMessage({
+        threadId,
+        userWorkspaceId,
+        uiMessage: {
+          role: AgentMessageRole.USER,
+          parts: [
+            {
+              type: 'text',
+              text: resolved.answerText,
+            },
+            ...fileParts,
+          ],
+        },
+        workspaceId: workspace.id,
+      });
+      answerMessageId = answerMessage.id;
+      resolved.turnId = answerMessage.turnId;
 
       await this.enqueueResumeStream({
         threadId,
@@ -567,12 +622,13 @@ export class AgentChatStreamingService {
         turnId: resolved.turnId,
         streamId,
         modelId,
+        messageId: answerMessage.id,
       });
     } catch (error) {
-      if (isDefined(attachmentMessageId)) {
+      if (isDefined(answerMessageId)) {
         await this.agentChatService
           .deleteMessage({
-            messageId: attachmentMessageId,
+            messageId: answerMessageId,
             workspaceId: workspace.id,
           })
           .catch(() => {});
@@ -606,7 +662,9 @@ export class AgentChatStreamingService {
     turnId,
     streamId,
     modelId,
+    messageId,
   }: {
+    messageId: string;
     threadId: string;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
@@ -635,21 +693,23 @@ export class AgentChatStreamingService {
         browsingContext: null,
         modelId,
         lastUserMessageText: '',
-        lastUserMessageParts: [],
         hasTitle: !!thread.title,
         conversationSizeTokens: thread.conversationSize,
         existingTurnId: turnId ?? undefined,
-        isResume: true,
+        messageId,
       },
     );
   }
 
-  async flushNextQueuedMessage(
-    threadId: string,
-    userWorkspaceId: string,
-    workspaceId: string,
-    hasTitle: boolean,
-  ): Promise<void> {
+  async flushNextQueuedMessage({
+    threadId,
+    workspaceId,
+    hasTitle,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    hasTitle: boolean;
+  }): Promise<void> {
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
       select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
@@ -668,27 +728,61 @@ export class AgentChatStreamingService {
       workspaceId,
     });
 
-    const nextQueued = queuedMessages[0];
+    let nextQueued: (typeof queuedMessages)[number] | undefined;
+    let userWorkspaceId: string | undefined;
+    for (const candidate of queuedMessages) {
+      try {
+        const { sender } = await this.actorService.resolveMessage({
+          workspaceId,
+          threadId,
+          messageId: candidate.id,
+        });
+        await this.actorService.authorize({ workspaceId, threadId, sender });
+        nextQueued = candidate;
+        userWorkspaceId = sender.userWorkspaceId;
+        break;
+      } catch (error) {
+        // A rolling upgrade can temporarily leave a worker with an older access
+        // policy. Preserve the request until a worker can authorize it.
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.THREAD_NOT_FOUND
+        ) {
+          continue;
+        }
 
-    if (!nextQueued) {
+        if (
+          !(error instanceof AuthException) &&
+          !(error instanceof PermissionsException) &&
+          !(
+            error instanceof AiException &&
+            error.code === AiExceptionCode.MESSAGE_NOT_FOUND
+          )
+        ) {
+          throw error;
+        }
+        await this.agentChatService.deleteQueuedMessage({
+          messageId: candidate.id,
+          workspaceId,
+        });
+        await this.eventPublisherService.publish({
+          threadId,
+          workspaceId,
+          event: { type: 'queue-updated' },
+        });
+      }
+    }
+    if (!isDefined(nextQueued) || !isDefined(userWorkspaceId)) {
       return;
     }
 
     const textPart = nextQueued.parts?.find((part) => part.type === 'text');
     const messageText = textPart?.textContent ?? '';
-    const fileParts = (nextQueued.parts ?? [])
-      .filter((part) => part.type === 'file')
-      .map(
-        (part): ExtendedFileUIPart => ({
-          type: 'file',
-          mediaType: part.file?.mimeType ?? 'application/octet-stream',
-          filename: part.fileFilename ?? '',
-          url: '',
-          fileId: part.fileId ?? '',
-        }),
-      );
+    const hasFileAttachment = (nextQueued.parts ?? []).some(
+      (part) => part.type === 'file',
+    );
 
-    if (messageText === '' && fileParts.length === 0) {
+    if (messageText === '' && !hasFileAttachment) {
       await this.agentChatService.deleteQueuedMessage({
         messageId: nextQueued.id,
         workspaceId,
@@ -742,13 +836,6 @@ export class AgentChatStreamingService {
         }),
       ]);
 
-      const lastUserMessageParts: ExtendedUIMessagePart[] = [
-        ...(messageText !== ''
-          ? [{ type: 'text' as const, text: messageText }]
-          : []),
-        ...fileParts,
-      ];
-
       await this.messageQueueService.add<StreamAgentChatJobData>(
         STREAM_AGENT_CHAT_JOB_NAME,
         {
@@ -759,10 +846,10 @@ export class AgentChatStreamingService {
           messages: uiMessages,
           browsingContext: null,
           lastUserMessageText: messageText,
-          lastUserMessageParts,
           hasTitle,
           conversationSizeTokens: thread.conversationSize,
           existingTurnId: turnId,
+          messageId: nextQueued.id,
         },
       );
     } catch (error) {
@@ -814,12 +901,20 @@ export class AgentChatStreamingService {
       includeHidden: true,
     });
 
+    const thread = allMessages.some((message) => message.isHidden)
+      ? await this.threadRepository.findOneOrFail(workspaceId, {
+          where: { id: threadId },
+        })
+      : undefined;
     // A hidden row without parts is an interrupted seed attempt: it carries no context and
     // would otherwise reach the model as an empty user message.
     const filteredMessages = allMessages.filter(
       (message) =>
         message.status !== AgentMessageStatus.QUEUED &&
-        (!message.isHidden || isNonEmptyArray(message.parts)),
+        (!message.isHidden ||
+          (isNonEmptyArray(message.parts) &&
+            (message.senderUserWorkspaceId ?? thread?.userWorkspaceId) ===
+              userWorkspaceId)),
     );
 
     return Promise.all(

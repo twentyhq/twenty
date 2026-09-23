@@ -7,6 +7,7 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export type ToolProviderContext = {
+  resolveExecutionContext?: () => Promise<ToolProviderContext>;
   workspaceId: string;
   roleId: string;
   rolePermissionConfig: RolePermissionConfig;

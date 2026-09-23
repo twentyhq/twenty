@@ -3414,6 +3414,7 @@ type AgentMessage {
   threadId: UUID!
   turnId: UUID
   agentId: UUID
+  senderUserWorkspaceId: UUID
   role: String!
   status: String!
   parts: [AgentMessagePart!]!
