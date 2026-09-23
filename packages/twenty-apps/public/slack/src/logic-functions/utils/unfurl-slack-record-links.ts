@@ -33,8 +33,6 @@ export const unfurlSlackRecordLinks = async (
 
   const client = new CoreApiClient();
 
-  // Slack fires the composer event before the message exists, so it carries
-  // no channel and no rule can be resolved for it.
   if (unfurlTarget.source === 'conversations_history') {
     const isSilenced = await isSlackChannelSilenced({
       client,

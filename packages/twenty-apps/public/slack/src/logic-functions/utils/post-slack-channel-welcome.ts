@@ -32,8 +32,6 @@ export const postSlackChannelWelcome = async (
     return { ok: true, skipped: 'Someone other than the bot joined' };
   }
 
-  // The welcome claim is one-shot and outlives the rule, so claiming before
-  // this check would leave a channel permanently unwelcomed once un-silenced.
   const isSilenced = await isSlackChannelSilenced({
     client: new CoreApiClient(),
     slackChannelId,
