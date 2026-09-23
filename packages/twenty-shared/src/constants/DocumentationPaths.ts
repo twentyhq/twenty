@@ -181,6 +181,8 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/billing/capabilities/credits',
   USER_GUIDE_BILLING_CAPABILITIES_PRICING_PLANS:
     '/user-guide/billing/capabilities/pricing-plans',
+  USER_GUIDE_BILLING_CAPABILITIES_USAGE_LIMITS:
+    '/user-guide/billing/capabilities/usage-limits',
   USER_GUIDE_BILLING_HOW_TOS_BILLING_FAQ:
     '/user-guide/billing/how-tos/billing-faq',
   USER_GUIDE_BILLING_OVERVIEW: '/user-guide/billing/overview',

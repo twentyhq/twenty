@@ -1,0 +1,96 @@
+---
+title: Usage Limits
+description: Cap what your workspace, your members, your API keys and your apps can spend on AI, workflows, logic functions and email, per day, week, month or billing period.
+---
+
+## What a limit does
+
+[Credits](/user-guide/billing/capabilities/credits) tell you how much your workspace can spend in total. A limit tells you how that spend is allowed to break down:
+
+- "AI stays under 200 credits a month."
+- "This member never spends more than 20 credits of AI chat per billing period."
+- "This app runs at most 5,000 workflow steps a week."
+
+A limit is checked before the work starts. While there is room, nothing changes. Once the limit is reached, further operations **in that scope only** are refused until the period resets, and the rest of the workspace keeps running as usual.
+
+<Note>
+Limits only ever tighten spending, they never extend it. Your credit balance still applies on top, so deleting a limit means the spend falls back to being capped by your allowance and by whatever other limits are set.
+</Note>
+
+## Where to find them
+
+Go to **Settings → Billing → Limits**. The tab lists every limit with its scope, its cap, and how much of the current period it has already used.
+
+You need the **Workspace** settings permission to see and change limits.
+
+## What you can limit
+
+| Usage | What you can cap | Measured in | Who you can cap |
+|-------|------------------|-------------|-----------------|
+| **AI** | All operations, AI Chat, AI Workflow, Web Search | Credits or operations | Workspace, member, API key, app |
+| **Workflows** | All operations, Workflow Execution | Credits or runs | Workspace, app |
+| **Logic functions** | All operations, Code Execution | Credits or runs | Workspace, app, logic function |
+| **Email** | All operations, Email Send | Credits or emails | Workspace, member |
+
+A workflow "run" is a single node run, the same unit credits are billed on, so a workflow with ten steps counts as ten runs.
+
+**All operations** caps everything the resource spends, whichever operation it came from. It is offered wherever the usage can be measured in credits, and is the right choice when you want one ceiling for a whole area rather than one per operation.
+
+## How much, and how often
+
+Each limit has an amount, a meter and a period.
+
+**Meter.** A limit counts either **credits**, the same unit as your balance, or **operations**, a raw count of messages, searches, runs or emails. Cap credits when what you care about is the bill, cap operations when what you care about is volume.
+
+**Period.** The counter resets at the end of the period, and spending resumes immediately:
+
+| Period | Resets |
+|--------|--------|
+| **Day** | Every day |
+| **Week** | Every week |
+| **Month** | Every month |
+| **Billing period** | With your subscription, at the same moment your credits renew |
+
+**Billing period** is only offered when the workspace has a subscription period to follow. It is the natural choice for credit-metered limits, since the limit and the allowance then refill together.
+
+## Which plan you need
+
+| What you cap | Plan |
+|--------------|------|
+| The **whole workspace** | Any plan |
+| A **member**, an **API key**, an **app** or a **logic function** | Organization (Cloud or Self-Hosted) |
+
+Capping a single member, key, app or function is a Premium feature, so it needs the [Organization plan](/user-guide/billing/capabilities/pricing-plans). Without it, those scopes cannot be picked in the form, and any limit of that kind already stored shows as **Deactivated** and is not enforced. Nothing is lost: it starts being enforced again as soon as the workspace is on a plan that covers it, with no need to recreate it.
+
+Workspace-wide limits are available on every plan.
+
+## Create a limit
+
+1. Go to **Settings → Billing → Limits**.
+2. Click **New limit**.
+3. Under **Scope**, pick the **Usage** (for example *AI · AI Chat*) and who it applies to: the workspace, or a specific member, API key, app or logic function.
+4. Under **Limit**, enter the amount, choose credits or operations, and pick the period.
+5. Click **Save**.
+
+The limit takes effect immediately and counts the usage already recorded in the current period, so a limit set below what has been spent today is exhausted from the start.
+
+To change or remove one, click its row. **Delete limit** sits in the danger zone of the edit page.
+
+## When a limit is hit
+
+The work is refused rather than queued, and the refusal names the limit that stopped it:
+
+- **AI chat** answers with the limit that was reached and a hint to ask a workspace admin to raise it.
+- **API and app calls** answer with a `QUOTA_EXHAUSTED` error (HTTP 402).
+- **Email campaigns** stop sending and mark the remaining deliveries as skipped.
+- **Workflows and logic functions** fail the run with the limit as its reason.
+
+<Note>
+The check runs before the operation and the cost is debited once it finishes, so a single operation already in flight can take a counter slightly past its cap. Batched work such as a campaign send can overshoot by a batch.
+</Note>
+
+There are three ways to get moving again: wait for the period to reset, raise the limit, or delete it.
+
+## Monitoring
+
+The **Limits** table shows, for each limit, what has been used against it in the current period, with a ring that fills as the limit is consumed so a scope about to run out is visible at a glance. Overall consumption, including the breakdown by workflow and AI action, stays in **Settings → Billing**.

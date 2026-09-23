@@ -328,7 +328,8 @@
                     "group": "Reference",
                     "pages": [
                       "user-guide/billing/capabilities/pricing-plans",
-                      "user-guide/billing/capabilities/credits"
+                      "user-guide/billing/capabilities/credits",
+                      "user-guide/billing/capabilities/usage-limits"
                     ]
                   },
                   {
