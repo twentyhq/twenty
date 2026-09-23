@@ -238,7 +238,11 @@ describe('DropdownRoot', () => {
 
   it('opens and closes the declared dropdown through external hooks', async () => {
     const store = createTestStore();
-    const onOpenChange = jest.fn();
+    const onOpenChange = jest.fn((open: boolean) => ({
+      open,
+      focusStack: store.get(focusStackState.atom),
+      globalHotkeysConfig: store.get(currentGlobalHotkeysConfigSelector.atom),
+    }));
     const { result } = renderHook(
       () => ({ ...useOpenDropdown(), ...useCloseDropdown() }),
       {
@@ -273,6 +277,29 @@ describe('DropdownRoot', () => {
       result.current.openDropdown({
         dropdownComponentInstanceIdFromProps: 'external-dropdown',
       });
+
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveLastReturnedWith({
+        open: true,
+        focusStack: [
+          BACKGROUND_FOCUS_ITEM,
+          {
+            focusId: 'external-dropdown',
+            componentInstance: {
+              componentType: FocusComponentType.DROPDOWN,
+              componentInstanceId: 'external-dropdown',
+            },
+            globalHotkeysConfig: DROPDOWN_HOTKEYS_CONFIG,
+          },
+        ],
+        globalHotkeysConfig: DROPDOWN_HOTKEYS_CONFIG,
+      });
+
+      result.current.openDropdown({
+        dropdownComponentInstanceIdFromProps: 'external-dropdown',
+      });
+
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
     });
 
     await waitFor(() =>
@@ -290,6 +317,17 @@ describe('DropdownRoot', () => {
 
     act(() => {
       result.current.closeDropdown('external-dropdown');
+
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(onOpenChange).toHaveLastReturnedWith({
+        open: false,
+        focusStack: [BACKGROUND_FOCUS_ITEM],
+        globalHotkeysConfig: BACKGROUND_FOCUS_ITEM.globalHotkeysConfig,
+      });
+
+      result.current.closeDropdown('external-dropdown');
+
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
     });
 
     expect(onOpenChange).toHaveBeenLastCalledWith(false);
@@ -297,6 +335,86 @@ describe('DropdownRoot', () => {
     await waitFor(() =>
       expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
     );
+  });
+
+  it('uses the latest callback and stops notifying after unmount', () => {
+    const store = createTestStore();
+    const initialOnOpenChange = jest.fn();
+    const latestOnOpenChange = jest.fn();
+    const { result } = renderHook(
+      () => ({ ...useOpenDropdown(), ...useCloseDropdown() }),
+      {
+        wrapper: ({ children }) => (
+          <JotaiProvider store={store}>{children}</JotaiProvider>
+        ),
+      },
+    );
+    const { rerender, unmount } = render(
+      <JotaiProvider store={store}>
+        <DropdownRoot
+          dropdownId="subscribed-dropdown"
+          type="menu"
+          onOpenChange={initialOnOpenChange}
+        >
+          <Dropdown.Trigger>Actions</Dropdown.Trigger>
+        </DropdownRoot>
+      </JotaiProvider>,
+    );
+
+    rerender(
+      <JotaiProvider store={store}>
+        <DropdownRoot
+          dropdownId="subscribed-dropdown"
+          type="menu"
+          onOpenChange={latestOnOpenChange}
+        >
+          <Dropdown.Trigger>Actions</Dropdown.Trigger>
+        </DropdownRoot>
+      </JotaiProvider>,
+    );
+
+    act(() => {
+      result.current.openDropdown({
+        dropdownComponentInstanceIdFromProps: 'subscribed-dropdown',
+      });
+
+      expect(initialOnOpenChange).not.toHaveBeenCalled();
+      expect(latestOnOpenChange).toHaveBeenCalledTimes(1);
+      expect(latestOnOpenChange).toHaveBeenLastCalledWith(true);
+
+      result.current.closeDropdown('subscribed-dropdown');
+
+      expect(latestOnOpenChange).toHaveBeenCalledTimes(2);
+      expect(latestOnOpenChange).toHaveBeenLastCalledWith(false);
+
+      result.current.openDropdown({
+        dropdownComponentInstanceIdFromProps: 'subscribed-dropdown',
+      });
+
+      expect(latestOnOpenChange).toHaveBeenCalledTimes(3);
+      expect(latestOnOpenChange).toHaveBeenLastCalledWith(true);
+    });
+
+    unmount();
+
+    expect(latestOnOpenChange).toHaveBeenCalledTimes(3);
+    expect(
+      store.get(
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: 'subscribed-dropdown',
+        }),
+      ),
+    ).toBe(false);
+
+    act(() => {
+      result.current.openDropdown({
+        dropdownComponentInstanceIdFromProps: 'subscribed-dropdown',
+      });
+      result.current.closeDropdown('subscribed-dropdown');
+    });
+
+    expect(initialOnOpenChange).not.toHaveBeenCalled();
+    expect(latestOnOpenChange).toHaveBeenCalledTimes(3);
   });
 
   it('remounts a declared dropdown closed after its open owner unmounts', async () => {

@@ -1,14 +1,12 @@
-import { type ComponentProps } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
+import { type ComponentProps, useCallback, useSyncExternalStore } from 'react';
 import { Dropdown } from 'twenty-ui/components';
 
 import { DropdownCleanupEffect } from '@/ui/layout/dropdown/components/DropdownCleanupEffect';
-import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/DropdownOnToggleEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type DropdownRootProps = Pick<
   ComponentProps<typeof Dropdown.Root>,
@@ -25,9 +23,25 @@ export const DropdownRoot = ({
   dropdownId,
   onOpenChange,
 }: DropdownRootProps) => {
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
+  const store = useStore();
+  const dropdownOpenState = isDropdownOpenComponentState.atomFamily({
+    instanceId: dropdownId,
+  });
+  const subscribeToDropdownOpenState = useCallback(
+    (onStoreChange: () => void) =>
+      store.sub(dropdownOpenState, () => {
+        const open = store.get(dropdownOpenState);
+
+        onStoreChange();
+        onOpenChange?.(open);
+      }),
+    [dropdownOpenState, onOpenChange, store],
+  );
+  const getIsDropdownOpen = () => store.get(dropdownOpenState);
+  const isDropdownOpen = useSyncExternalStore(
+    subscribeToDropdownOpenState,
+    getIsDropdownOpen,
+    getIsDropdownOpen,
   );
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
@@ -53,12 +67,6 @@ export const DropdownRoot = ({
         onOpenChange={handleOpenChange}
       >
         <DropdownCleanupEffect dropdownId={dropdownId} />
-        {isDefined(onOpenChange) && (
-          <DropdownOnToggleEffect
-            onDropdownOpen={() => onOpenChange(true)}
-            onDropdownClose={() => onOpenChange(false)}
-          />
-        )}
         {children}
       </Dropdown.Root>
     </DropdownComponentInstanceContext.Provider>
