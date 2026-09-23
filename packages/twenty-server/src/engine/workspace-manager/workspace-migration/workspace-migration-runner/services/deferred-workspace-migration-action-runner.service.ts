@@ -285,7 +285,6 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       );
 
       this.recordExecutionDuration({
-        actionHandlerKey: pendingAction.actionHandlerKey,
         status: 'success',
         durationMs: performance.now() - executionStart,
       });
@@ -297,7 +296,6 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       return true;
     } catch (error) {
       this.recordExecutionDuration({
-        actionHandlerKey: pendingAction.actionHandlerKey,
         status: 'fail',
         durationMs: performance.now() - executionStart,
       });
@@ -326,11 +324,9 @@ export class DeferredWorkspaceMigrationActionRunnerService {
   }
 
   private recordExecutionDuration({
-    actionHandlerKey,
     status,
     durationMs,
   }: {
-    actionHandlerKey: PersistedDeferredWorkspaceMigrationAction['actionHandlerKey'];
     status: 'success' | 'fail';
     durationMs: number;
   }): void {
@@ -338,7 +334,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
       key: MetricsKeys.DeferredWorkspaceMigrationActionDurationMs,
       value: durationMs,
       unit: 'ms',
-      attributes: { actionHandlerKey, status },
+      attributes: { status },
       bucketBoundaries:
         DEFERRED_WORKSPACE_MIGRATION_ACTION_DURATION_MS_BUCKET_BOUNDARIES,
     });
