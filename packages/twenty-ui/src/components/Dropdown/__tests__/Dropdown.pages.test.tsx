@@ -3,10 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
 
+import { Input } from '@ui/primitives/input/Input/Input';
+
 import { Dropdown } from '../Dropdown';
+import { type DropdownType } from '../types/DropdownType';
 
 type FilterPagesProps = {
   actions?: { label: string; page?: string }[];
+  keepMounted?: boolean;
 };
 
 const FilterPages = ({
@@ -15,13 +19,14 @@ const FilterPages = ({
     { label: 'Recent people', page: 'people' },
     { label: 'Clear filters' },
   ],
+  keepMounted,
 }: FilterPagesProps) => {
   const [search, setSearch] = useState('');
 
   return (
     <Dropdown.Root type="menu">
       <Dropdown.Trigger>Filters</Dropdown.Trigger>
-      <Dropdown.Content aria-label="Filters">
+      <Dropdown.Content aria-label="Filters" keepMounted={keepMounted}>
         <Dropdown.Page id="root">
           {actions.map(({ label, page }) => (
             <Dropdown.ActionItem key={label} page={page}>
@@ -46,6 +51,125 @@ const FilterPages = ({
 };
 
 describe('Dropdown pages', () => {
+  it('uses the default page type and preserves the initial keyboard focus edge', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="picker" defaultPage="actions">
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.Page id="actions" type="menu">
+            <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+            <Dropdown.ActionItem>Export</Dropdown.ActionItem>
+          </Dropdown.Page>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.tab();
+    await user.keyboard('{ArrowUp}');
+    expect(screen.getByRole('menu', { name: 'Record actions' })).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getByRole('menuitem', { name: 'Export' })).toHaveFocus(),
+    );
+  });
+
+  it('uses native form focus when the default page overrides a menu with a panel', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="menu" defaultPage="edit">
+        <Dropdown.Trigger>Edit details</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Edit details">
+          <Dropdown.Page id="edit" type="panel">
+            <Input aria-label="Name" />
+            <Dropdown.ActionItem>Save</Dropdown.ActionItem>
+          </Dropdown.Page>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.tab();
+    await user.keyboard('{ArrowUp}');
+    expect(screen.getByRole('dialog', { name: 'Edit details' })).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getByRole('textbox', { name: 'Name' })).toHaveFocus(),
+    );
+  });
+
+  it('preserves editing focus when an active page rerenders or changes type', async () => {
+    const user = userEvent.setup();
+    const EditPages = ({ pageType }: { pageType: DropdownType }) => {
+      const [name, setName] = useState('Acme');
+      const [website, setWebsite] = useState('acme.example');
+
+      return (
+        <Dropdown.Root type="menu">
+          <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+          <Dropdown.Content aria-label="Record actions">
+            <Dropdown.Page id="root">
+              <Dropdown.ActionItem page="edit">Edit</Dropdown.ActionItem>
+            </Dropdown.Page>
+            <Dropdown.Page id="edit" type={pageType}>
+              <Input aria-label="Name" value={name} onValueChange={setName} />
+              <Input
+                aria-label="Website"
+                value={website}
+                onValueChange={setWebsite}
+              />
+              <Dropdown.Back>Back to actions</Dropdown.Back>
+            </Dropdown.Page>
+          </Dropdown.Content>
+        </Dropdown.Root>
+      );
+    };
+    const { rerender } = render(<EditPages pageType="panel" />);
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Edit' }));
+
+    const name = screen.getByRole('textbox', { name: 'Name' });
+    const website = screen.getByRole('textbox', { name: 'Website' });
+
+    expect(name).toHaveFocus();
+    await user.keyboard(' company');
+    expect(name).toHaveValue('Acme company');
+    await user.tab();
+    expect(website).toHaveFocus();
+    await user.keyboard('{End}/contact');
+    expect(website).toHaveValue('acme.example/contact');
+    expect(website).toHaveFocus();
+
+    rerender(<EditPages pageType="menu" />);
+
+    expect(screen.getByRole('menu', { name: 'Record actions' })).toBeVisible();
+    expect(website).toHaveFocus();
+    await user.click(screen.getByRole('menuitem', { name: 'Back to actions' }));
+    expect(screen.getByRole('menuitem', { name: 'Edit' })).toHaveFocus();
+  });
+
+  it('respects disabled initial focus when the default page mounts', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Filters</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Filters" initialFocus={false}>
+          <Dropdown.Page id="root" type="picker">
+            <Dropdown.Search aria-label="Search people" />
+          </Dropdown.Page>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    const trigger = screen.getByRole('button', { name: 'Filters' });
+
+    await user.click(trigger);
+
+    expect(screen.getByRole('dialog', { name: 'Filters' })).toBeVisible();
+    expect(trigger).toHaveFocus();
+  });
+
   it('changes interaction type in the same popup and restores the invoking row on back', async () => {
     const user = userEvent.setup();
 
@@ -68,24 +192,27 @@ describe('Dropdown pages', () => {
     );
   });
 
-  it('resets navigation to the root page after dismissal', async () => {
-    const user = userEvent.setup();
+  it.each([false, true])(
+    'resets navigation to the root page after dismissal with keepMounted=%s',
+    async (keepMounted) => {
+      const user = userEvent.setup();
 
-    render(<FilterPages />);
+      render(<FilterPages keepMounted={keepMounted} />);
 
-    const trigger = screen.getByRole('button', { name: 'Filters' });
+      const trigger = screen.getByRole('button', { name: 'Filters' });
 
-    await user.click(trigger);
-    await user.click(screen.getByRole('menuitem', { name: 'People' }));
-    await user.keyboard('{Escape}');
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
-    );
-    expect(trigger).toHaveFocus();
-    await user.click(trigger);
-    expect(screen.getByRole('menuitem', { name: 'People' })).toBeVisible();
-    expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
-  });
+      await user.click(trigger);
+      await user.click(screen.getByRole('menuitem', { name: 'People' }));
+      await user.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+      );
+      expect(trigger).toHaveFocus();
+      await user.click(trigger);
+      expect(screen.getByRole('menuitem', { name: 'People' })).toBeVisible();
+      expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
+    },
+  );
 
   it('returns focus to the selected entrypoint when several actions open the same page', async () => {
     const user = userEvent.setup();

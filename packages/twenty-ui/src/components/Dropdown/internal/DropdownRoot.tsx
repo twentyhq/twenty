@@ -7,6 +7,7 @@ import { type DropdownRootProps } from '../types/DropdownRootProps';
 import { type DropdownType } from '../types/DropdownType';
 import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
+import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -27,7 +28,10 @@ export const DropdownRoot = ({
   const [pageHistory, setPageHistory] = useState<PageHistoryEntry[]>([
     { id: defaultPage },
   ]);
-  const [pageTypes, setPageTypes] = useState<Record<string, DropdownType>>({});
+  const [activePage, setActivePage] = useState<{
+    id: string;
+    type: DropdownType;
+  }>();
   const [activeItemId, setActiveItemId] = useState<string>();
   const pageId = pageHistory[pageHistory.length - 1]?.id;
   const [focusTarget, setFocusTarget] = useState<DropdownFocusTarget>();
@@ -41,6 +45,7 @@ export const DropdownRoot = ({
 
     if (!open) {
       setPageHistory([{ id: defaultPage }]);
+      setActivePage(undefined);
       setFocusTarget(undefined);
       setInitialFocusEdge('first');
       setFocusOnOpen(true);
@@ -83,17 +88,45 @@ export const DropdownRoot = ({
     setPageHistory((history) => history.slice(0, -1));
   };
 
-  const registerPage = useCallback(
-    ({ id, type: pageType }: { id: string; type?: DropdownType }) => {
+  const onPageMount = useCallback(
+    ({
+      id,
+      type: pageType,
+      element,
+    }: {
+      id: string;
+      type?: DropdownType;
+      element: HTMLDivElement;
+    }) => {
+      if (!open) {
+        return;
+      }
+
       const resolvedType = pageType ?? type;
 
-      setPageTypes((previousTypes) =>
-        previousTypes[id] === resolvedType
-          ? previousTypes
-          : { ...previousTypes, [id]: resolvedType },
-      );
+      if (activePage?.id === id && activePage.type === resolvedType) {
+        return;
+      }
+
+      setActivePage({ id, type: resolvedType });
+
+      if (!isDefined(activePage) || activePage.id === id) {
+        return;
+      }
+
+      const content = element.closest<HTMLElement>('[data-dropdown-content]');
+
+      if (!isDefined(content)) {
+        return;
+      }
+
+      getDropdownFocusTarget({
+        content,
+        target: focusTarget,
+        type: resolvedType,
+      }).focus();
     },
-    [type],
+    [activePage, focusTarget, open, type],
   );
 
   return (
@@ -106,7 +139,11 @@ export const DropdownRoot = ({
     >
       <DropdownContext.Provider
         value={{
-          type: isDefined(pageId) ? (pageTypes[pageId] ?? type) : type,
+          type:
+            isDefined(activePage) && activePage.id === pageId
+              ? activePage.type
+              : type,
+          rootType: type,
           open,
           multiple,
           isSubmenu,
@@ -117,7 +154,6 @@ export const DropdownRoot = ({
           setParentActiveItemId: parent?.setActiveItemId,
           pageId,
           canGoBack: pageHistory.length > 1,
-          focusTarget,
           initialFocusEdge,
           setInitialFocusEdge,
           focusOnOpen,
@@ -126,7 +162,7 @@ export const DropdownRoot = ({
           closeTree,
           goToPage,
           goBack,
-          registerPage,
+          onPageMount,
         }}
       >
         {children}

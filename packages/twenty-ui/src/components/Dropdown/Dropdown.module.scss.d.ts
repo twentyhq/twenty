@@ -1,5 +1,6 @@
 declare const classNames: {
   readonly content: 'content';
+  readonly page: 'page';
   readonly section: 'section';
   readonly separator: 'separator';
   readonly back: 'back';

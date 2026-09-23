@@ -3,6 +3,7 @@ import { type DropdownFocusTarget } from './DropdownFocusTarget';
 
 export type DropdownContextValue = {
   type: DropdownType;
+  rootType: DropdownType;
   open: boolean;
   multiple: boolean;
   isSubmenu: boolean;
@@ -13,7 +14,6 @@ export type DropdownContextValue = {
   setParentActiveItemId?: (id: string) => void;
   pageId?: string;
   canGoBack: boolean;
-  focusTarget?: DropdownFocusTarget;
   initialFocusEdge: 'first' | 'last';
   setInitialFocusEdge: (edge: 'first' | 'last') => void;
   focusOnOpen: boolean;
@@ -22,5 +22,9 @@ export type DropdownContextValue = {
   closeTree: () => void;
   goToPage: (page: { id: string; trigger: DropdownFocusTarget }) => void;
   goBack: () => void;
-  registerPage: (page: { id: string; type?: DropdownType }) => void;
+  onPageMount: (page: {
+    id: string;
+    type?: DropdownType;
+    element: HTMLDivElement;
+  }) => void;
 };
