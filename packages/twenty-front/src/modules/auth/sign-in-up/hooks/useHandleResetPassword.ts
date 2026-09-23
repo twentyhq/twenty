@@ -8,7 +8,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { EmailPasswordResetLinkDocument } from '~/generated-metadata/graphql';
 
 export const useHandleResetPassword = () => {

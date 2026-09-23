@@ -6,7 +6,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useApolloClient } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { GetAuthorizationUrlForSsoDocument } from '~/generated-metadata/graphql';
 
 export const useSso = () => {

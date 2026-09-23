@@ -10,7 +10,7 @@ import { type WorkflowRun, type WorkflowStep } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type UpdateWorkflowRunStepInput,
   type UpdateWorkflowRunStepMutation,
