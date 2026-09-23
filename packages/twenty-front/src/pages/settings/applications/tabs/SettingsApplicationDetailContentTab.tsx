@@ -9,7 +9,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { SearchInput } from 'twenty-ui/primitives/input';
-import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { type ApplicationDisplayData } from '@/applications/types/ApplicationDisplayData';
 import { type Application } from '~/generated-metadata/graphql';
 import {
   type ApplicationContentRow,

@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -25,7 +26,6 @@ import { t } from '@lingui/core/macro';
 import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -126,11 +126,10 @@ export const UpdateViewButtonGroup = () => {
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  <MenuItem
+                  <ListItem
                     onClick={handleCreateViewClick}
-                    LeftIcon={IconPlus}
-                    text={t`Create view`}
-                  />
+                    startIcon={<IconPlus />}
+                  >{t`Create view`}</ListItem>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }

@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
@@ -44,6 +46,10 @@ import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modul
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -62,13 +68,25 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { CustomException } from 'src/utils/custom-exception';
 
-export class LogicFunctionExecutionException extends Error {
+export class LogicFunctionExecutionException extends CustomException<LogicFunctionExecutionExceptionCode> {
   constructor(
     message: string,
     public readonly code: LogicFunctionExecutionExceptionCode,
+    {
+      userFriendlyMessage,
+      statusCode,
+    }: { userFriendlyMessage?: MessageDescriptor; statusCode?: number } = {},
   ) {
-    super(message);
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ??
+        (code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+          ? msg`Logic function not found.`
+          : msg`An error occurred.`),
+      statusCode,
+    });
     this.name = 'LogicFunctionExecutionException';
   }
 }
@@ -263,10 +281,21 @@ export class LogicFunctionExecutorService {
         this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_TTL'),
       );
-    } catch {
+    } catch (error) {
+      if (
+        !(error instanceof ThrottlerException) ||
+        error.code !== ThrottlerExceptionCode.LIMIT_REACHED
+      ) {
+        throw error;
+      }
+
       throw new LogicFunctionExecutionException(
         'Logic function execution rate limit exceeded',
         LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
+        {
+          userFriendlyMessage: error.userFriendlyMessage,
+          statusCode: error.statusCode,
+        },
       );
     }
   }

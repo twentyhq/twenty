@@ -171,7 +171,7 @@ export const WorkflowVariablesDropdownStepItems = ({
                   <SelectOptionIcon Icon={getIcon(specialItem.iconName)} />
                 }
               >
-                <OverflowingTextWithTooltip text={specialItem.label} />
+                {specialItem.label}
               </ListItem>
             ))}
             {shouldDisplaySubStepObject && (
@@ -191,9 +191,7 @@ export const WorkflowVariablesDropdownStepItems = ({
                   />
                 }
               >
-                <OverflowingTextWithTooltip
-                  text={displayedSubStepObjectDisplay?.label ?? ''}
-                />
+                {displayedSubStepObjectDisplay?.label ?? ''}
               </ListItem>
             )}
             {options.length > 0 &&
@@ -232,7 +230,7 @@ export const WorkflowVariablesDropdownStepItems = ({
                     />
                   }
                 >
-                  <OverflowingTextWithTooltip text={subStep.label || key} />
+                  {subStep.label || key}
                 </ListItem>
               );
             })}

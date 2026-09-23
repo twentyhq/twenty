@@ -6,6 +6,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Breaking Changes
+
+- **`MetadataApiClient.uploadFile` in `twenty-client-sdk` takes one object and no longer accepts a content type.** The file now goes straight to Twenty's file storage (the API issues an upload target, the client sends the bytes there, then the API confirms the upload) instead of being streamed through the GraphQL API, and the MIME type is detected from the bytes on completion. Update every call:
+
+  ```diff
+  - const uploaded = await metadataClient.uploadFile(
+  -   fileBuffer,
+  -   'invoice.pdf',
+  -   'application/pdf',
+  -   FIELD_UNIVERSAL_IDENTIFIER,
+  - );
+  + const uploaded = await metadataClient.uploadFile({
+  +   fileBuffer,
+  +   filename: 'invoice.pdf',
+  +   fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+  + });
+  ```
+
+  The returned `{ id, path, size, createdAt, url }` is unchanged. `uploadFile` now requires a Twenty server that exposes the `createFileUpload` and `completeFileUpload` mutations.
+
 ### Added
 
 - **`enqueueJobs` in `twenty-sdk/logic-function`.** Enqueues one run per payload of a single logic function in one call (up to 200 payloads per batch). `retryLimit` and `delayMs` apply to every run in the batch.

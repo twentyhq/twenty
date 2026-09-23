@@ -1,3 +1,4 @@
+import { FrontComponentMediaSessionIndicator } from '@/front-components/media-session/components/FrontComponentMediaSessionIndicator';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
@@ -31,6 +32,10 @@ const StyledHeaderRow = styled.div`
 `;
 
 const StyledCollapsedSearch = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]}
     ${themeCssVariables.spacing[1]};
 `;
@@ -106,6 +111,7 @@ export const NavigationDrawerHeader = () => {
         </StyledWorkspaceDropdownContainer>
         {isExpanded && (
           <StyledRightActions>
+            <FrontComponentMediaSessionIndicator />
             {searchButton}
             <StyledNavigationDrawerCollapseButtonContainer>
               <NavigationDrawerCollapseButton direction="left" />
@@ -114,7 +120,10 @@ export const NavigationDrawerHeader = () => {
         )}
       </StyledHeaderRow>
       {!isExpanded && !isMobile && (
-        <StyledCollapsedSearch>{searchButton}</StyledCollapsedSearch>
+        <StyledCollapsedSearch>
+          <FrontComponentMediaSessionIndicator />
+          {searchButton}
+        </StyledCollapsedSearch>
       )}
     </StyledContainer>
   );

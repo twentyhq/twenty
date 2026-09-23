@@ -177,9 +177,7 @@ export const WorkflowDropdownStepOutputItems = ({
                   />
                 }
               >
-                <OverflowingTextWithTooltip
-                  text={subStepObjectDisplay?.label ?? ''}
-                />
+                {subStepObjectDisplay?.label ?? ''}
               </ListItem>
             )}
             {options.length > 0 && shouldDisplaySubStepObject && (
@@ -217,7 +215,7 @@ export const WorkflowDropdownStepOutputItems = ({
                     />
                   }
                 >
-                  <OverflowingTextWithTooltip text={subStep.label || key} />
+                  {subStep.label || key}
                 </ListItem>
               );
             })}

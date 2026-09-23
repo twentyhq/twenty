@@ -1,3 +1,4 @@
+import { OBJECT_UNIVERSAL_IDENTIFIERS_WITHOUT_INITIAL_VIEW } from 'src/engine/metadata-modules/view/constants/initial-object-view-defaults.constant';
 import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,7 +64,13 @@ export const computeMissingInitialObjectViewOperations = ({
   const createdAt = new Date().toISOString();
 
   for (const flatObjectMetadata of flatObjectMetadatas) {
-    if (flatObjectMetadata.isRemote || flatObjectMetadata.isSystem) {
+    if (
+      flatObjectMetadata.isRemote ||
+      flatObjectMetadata.isSystem ||
+      OBJECT_UNIVERSAL_IDENTIFIERS_WITHOUT_INITIAL_VIEW.has(
+        flatObjectMetadata.universalIdentifier,
+      )
+    ) {
       continue;
     }
 

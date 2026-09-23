@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
@@ -19,7 +20,6 @@ import { useContext } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`
@@ -180,14 +180,15 @@ const CommandMenuItemSelectableRenderer = ({
 
   return (
     <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-      <MenuItem
+      <ListItem
         focused={isSelectedItemId}
-        LeftIcon={Icon}
+        startIcon={<Icon />}
         onClick={onItemClick}
-        text={label}
-        RightComponent={loaderComponent}
+        endIcon={loaderComponent}
         disabled={disabled}
-      />
+      >
+        {label}
+      </ListItem>
     </SelectableListItem>
   );
 };

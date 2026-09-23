@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useMemo, useState } from 'react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -117,9 +116,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                   selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
                   indicator="check"
                   startIcon={<SelectOptionIcon Icon={IconForbid} />}
-                >
-                  <OverflowingTextWithTooltip text={t`Do not import`} />
-                </ListItem>
+                >{t`Do not import`}</ListItem>
               </DropdownMenuItemsContainer>
               {suggestedOptions.length > 0 && (
                 <>
@@ -137,7 +134,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                         description={option.fieldMetadataTypeLabel}
                         startIcon={<SelectOptionIcon Icon={option.Icon} />}
                       >
-                        <OverflowingTextWithTooltip text={option.label} />
+                        {option.label}
                       </ListItem>
                     ))}
                   </DropdownMenuItemsContainer>
@@ -160,7 +157,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                 description={getFieldMetadataTypeLabel(field.type)}
                 startIcon={<SelectOptionIcon Icon={getIcon(field.icon)} />}
               >
-                <OverflowingTextWithTooltip text={field.label} />
+                {field.label}
               </ListItem>
             ))}
           </DropdownMenuItemsContainer>

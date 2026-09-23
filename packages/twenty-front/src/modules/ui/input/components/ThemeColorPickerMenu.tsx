@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -76,9 +75,7 @@ export const ThemeColorPickerMenu = ({
                 indicator="check"
                 startIcon={<ColorSample colorName={colorName} />}
               >
-                <OverflowingTextWithTooltip
-                  text={DEFAULT_COLOR_LABELS[colorName]}
-                />
+                {DEFAULT_COLOR_LABELS[colorName]}
               </ListItem>
             </SelectableListItem>
           ))}

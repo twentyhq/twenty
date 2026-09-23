@@ -5,7 +5,7 @@ import { CrudOperationType } from 'twenty-shared/types';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { DeleteOneIndexMetadataItemDocument } from '~/generated-metadata/graphql';
 

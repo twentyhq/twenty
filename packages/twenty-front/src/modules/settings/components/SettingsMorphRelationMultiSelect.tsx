@@ -1,5 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { Fragment, useMemo, useRef, useState, type MouseEvent } from 'react';
@@ -27,7 +27,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, type IconComponent } from 'twenty-ui/icon';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectSizeVariant = 'small' | 'default';
@@ -310,7 +309,7 @@ export const SettingsMorphRelationMultiSelect = ({
                               />
                             }
                           >
-                            <OverflowingTextWithTooltip text={option.label} />
+                            {option.label}
                           </ListItem>
                         </SelectableListItem>
                       </Fragment>
@@ -323,11 +322,14 @@ export const SettingsMorphRelationMultiSelect = ({
               )}
               {!!callToActionButton && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <MenuItem
+                  <ListItem
                     onClick={callToActionButton.onClick}
-                    LeftIcon={callToActionButton.Icon}
-                    text={callToActionButton.text}
-                  />
+                    startIcon={
+                      <SelectOptionIcon Icon={callToActionButton.Icon} />
+                    }
+                  >
+                    {callToActionButton.text}
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
             </DropdownContent>

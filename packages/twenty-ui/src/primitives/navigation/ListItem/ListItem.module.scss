@@ -49,6 +49,12 @@
 
     cursor: default;
     transition: none;
+
+    // Hidden rather than removed so a disabled row keeps the same trailing
+    // width as its enabled siblings in the same menu.
+    .submenuIcon {
+      visibility: hidden;
+    }
   }
 }
 
