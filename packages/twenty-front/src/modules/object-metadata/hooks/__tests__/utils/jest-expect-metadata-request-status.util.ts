@@ -1,7 +1,7 @@
 import { expect } from '@jest/globals';
 
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { type SuccessfulMetadataRequestResult } from '@/object-metadata/types/SuccessfulMetadataRequestResult.type';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
+import { type SuccessfulMetadataRequestResult } from '@/object-metadata/types/SuccessfulMetadataRequestResult';
 
 type AssertIsSuccessfulMetadataRequestResult = <T>(
   value: MetadataRequestResult<T>,

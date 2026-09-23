@@ -1,6 +1,6 @@
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import {
   type ApplicationWithVariable,
   setupApplicationWithVariable,
@@ -57,10 +57,9 @@ describe('Application variable access to the own application should succeed', ()
       variableKey: 'OTHER_APPLICATION_VARIABLE',
     });
 
-    const [{ data: userBoundTokenData }, unboundTokenPair] = await Promise.all([
-      generateApplicationToken({
+    const [userBoundTokenPair, unboundTokenPair] = await Promise.all([
+      generateAppleAdminApplicationTokenPair({
         applicationId: application.id,
-        expectToFail: false,
       }),
       generateApplicationTokenPair({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -71,9 +70,7 @@ describe('Application variable access to the own application should succeed', ()
     globalTestContext = {
       application,
       otherApplication,
-      userBoundToken:
-        userBoundTokenData.generateApplicationToken.applicationAccessToken
-          .token,
+      userBoundToken: userBoundTokenPair.applicationAccessToken.token,
       unboundToken: unboundTokenPair.applicationAccessToken.token,
     };
   }, 120000);

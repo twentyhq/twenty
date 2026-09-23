@@ -28,12 +28,10 @@ import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/create
 import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
 import {
   codeEditorTest,
-  dataDisplayTest,
   displayHelpersTest,
   galleryRenderTest,
   inputPreactTest,
   inputReactTest,
-  navigationTest,
   themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {
@@ -65,12 +63,12 @@ export default meta;
 export const DataDisplayReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'react',
-  play: dataDisplayTest,
+  play: galleryRenderTest,
 });
 export const DataDisplayPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-data-display-gallery',
   runtime: 'preact',
-  play: dataDisplayTest,
+  play: galleryRenderTest,
 });
 
 export const FeedbackReact: Story = createGalleryStory({
@@ -131,12 +129,12 @@ export const LayoutPreact: Story = createGalleryStory({
 export const NavigationReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-navigation-gallery',
   runtime: 'react',
-  play: navigationTest,
+  play: galleryRenderTest,
 });
 export const NavigationPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-navigation-gallery',
   runtime: 'preact',
-  play: navigationTest,
+  play: galleryRenderTest,
 });
 
 export const SurfacesReact: Story = createGalleryStory({

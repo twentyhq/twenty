@@ -18,6 +18,14 @@ describe('getSafeUrl', () => {
     expect(getSafeUrl('twenty.com')).toBe('https://twenty.com');
   });
 
+  it('rejects scheme-relative urls that leave the current origin', () => {
+    expect(getSafeUrl('//evil.com')).toBeUndefined();
+    expect(getSafeUrl('/\\evil.com')).toBeUndefined();
+    expect(getSafeUrl('/\\\\evil.com')).toBeUndefined();
+    expect(getSafeUrl('/\\/evil.com')).toBeUndefined();
+    expect(getSafeUrl('/\t\\evil.com')).toBeUndefined();
+  });
+
   it('rejects dangerous schemes', () => {
     expect(getSafeUrl('javascript:alert(1)')).toBeUndefined();
     expect(getSafeUrl('JavaScript:alert(1)')).toBeUndefined();

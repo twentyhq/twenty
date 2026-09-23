@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { Label } from 'twenty-ui/primitives/typography';
+import { Text } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitle = styled.div`
@@ -92,7 +92,9 @@ export const NavigationDrawerSectionTitle = ({
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
-        <Label className="section-title-label">{label}</Label>
+        <StyledDisplayLabel className="section-title-label">
+          {label}
+        </StyledDisplayLabel>
         {isOpen !== undefined && (
           <StyledChevron>
             <MotionIconChevronRight
@@ -117,3 +119,9 @@ export const NavigationDrawerSectionTitle = ({
     </StyledTitle>
   );
 };
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;

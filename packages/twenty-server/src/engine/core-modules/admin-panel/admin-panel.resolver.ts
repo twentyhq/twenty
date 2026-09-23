@@ -94,6 +94,7 @@ import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
 import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -118,6 +119,7 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
 @UseGuards(
   WorkspaceAuthGuard,
   UserAuthGuard,
+  RequireUserSessionGuard,
   SettingsPermissionGuard(PermissionFlagType.SECURITY),
 )
 export class AdminPanelResolver {

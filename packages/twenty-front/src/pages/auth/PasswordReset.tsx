@@ -1,8 +1,9 @@
-import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { Title } from '@/auth/components/Title';
+import { AnimatedEaseIn } from '@/auth/components/internal/AnimatedEaseIn/AnimatedEaseIn';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -29,9 +30,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { MainButton } from 'twenty-ui/components';
-import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
+import { MainButton, useToast } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 import {

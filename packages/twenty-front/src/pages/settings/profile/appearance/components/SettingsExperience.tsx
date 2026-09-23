@@ -1,16 +1,15 @@
 import { styled } from '@linaria/react';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
-import { UiScalePicker } from '@/settings/experience/components/UiScalePicker';
-import { OpenRecordInPreferencePicker } from '@/settings/experience/components/OpenRecordInPreferencePicker';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
+import { OpenRecordInPreferencePicker } from '@/settings/experience/components/OpenRecordInPreferencePicker';
+import { UiScalePicker } from '@/settings/experience/components/UiScalePicker';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import { ColorSchemePicker } from 'twenty-ui/primitives/input';
+import { ColorSchemePicker, Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
 

@@ -332,6 +332,9 @@ export abstract class CommonBaseQueryRunnerService<
           apiKeyId: isApiKeyAuthContext(authContext)
             ? authContext.apiKey.id
             : undefined,
+          applicationId: isUserAuthContext(authContext)
+            ? authContext.application?.id
+            : undefined,
         });
 
       if (!userHasPermission) {

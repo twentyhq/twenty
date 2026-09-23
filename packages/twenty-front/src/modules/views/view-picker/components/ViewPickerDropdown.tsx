@@ -1,8 +1,7 @@
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetRecordIndexTotalCount } from '@/views/hooks/internal/useGetRecordIndexTotalCount';
@@ -11,14 +10,15 @@ import { ViewPickerContentCreateMode } from '@/views/view-picker/components/View
 import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
 import { ViewPickerContentEffect } from '@/views/view-picker/components/ViewPickerContentEffect';
 import { ViewPickerListContent } from '@/views/view-picker/components/ViewPickerListContent';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconList, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPickerDropdownId';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { IconChevronDown, IconList, useIcons } from 'twenty-ui/icon';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,

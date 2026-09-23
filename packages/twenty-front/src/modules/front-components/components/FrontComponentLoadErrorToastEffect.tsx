@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 type FrontComponentLoadErrorToastEffectProps = {
   errorMessage?: string;

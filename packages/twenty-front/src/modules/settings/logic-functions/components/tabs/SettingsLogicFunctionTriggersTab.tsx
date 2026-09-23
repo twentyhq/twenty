@@ -7,7 +7,7 @@ import { SettingsLogicFunctionWorkflowActionTriggerSection } from '@/settings/lo
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/primitives/feedback';
+import { Callout } from 'twenty-ui/components';
 import { IconInfoCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -33,8 +33,8 @@ import {
   CommonQueryNames,
   MergeManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -111,12 +111,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     context: CommonExtendedQueryRunnerContext,
     args: CommonExtendedInput<MergeManyQueryArgs>,
   ): Promise<ObjectRecord[]> {
-    const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
-      flatObjectMetadata: context.flatObjectMetadata,
-      flatObjectMetadataMaps: context.flatObjectMetadataMaps,
-      flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+    const restrictedFields =
+      context.repository.objectRecordsPermissions?.[
+        context.flatObjectMetadata.id
+      ]?.restrictedFields;
+
+    const columnsToSelect = getAllSelectableColumnNames({
+      restrictedFields: restrictedFields ?? {},
+      objectMetadata: {
+        objectMetadataMapItem: context.flatObjectMetadata,
+        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+      },
     });
 
     const fetchedRecords = (await context.repository.find({

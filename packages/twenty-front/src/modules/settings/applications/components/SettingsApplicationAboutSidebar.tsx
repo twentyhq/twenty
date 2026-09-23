@@ -6,6 +6,7 @@ import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { isDefined, isSafeUrl } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   IconAlertTriangle,
   IconBrandNpm,
@@ -21,7 +22,6 @@ import {
   IconWorld,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type DeveloperLinks = {

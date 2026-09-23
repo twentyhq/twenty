@@ -3,13 +3,6 @@ import { vi } from 'vitest';
 export const mockApiService = {
   validateAuth: vi.fn().mockResolvedValue({ authValid: true, serverUp: true }),
   getWorkspaceFrontendUrl: vi.fn().mockResolvedValue('http://localhost:3000'),
-  generateApplicationToken: vi.fn().mockResolvedValue({
-    success: true,
-    data: {
-      accessToken: { token: 'mock-access-token', expiresAt: '' },
-      refreshToken: { token: 'mock-refresh-token', expiresAt: '' },
-    },
-  }),
   refreshToken: vi.fn().mockResolvedValue('mock-renewed-access-token'),
   findApplicationRegistrationByUniversalIdentifier: vi
     .fn()
@@ -21,7 +14,6 @@ export const mockApiService = {
         id: 'mock-registration-id',
         oAuthClientId: 'mock-client-id',
       },
-      clientSecret: 'mock-client-secret',
     },
   }),
   createDevelopmentApplication: vi.fn().mockResolvedValue({
@@ -29,7 +21,7 @@ export const mockApiService = {
     data: { id: 'mock-app-id', universalIdentifier: 'mock-uid' },
   }),
   syncApplication: vi.fn().mockResolvedValue({ success: true, data: true }),
-  getSchema: vi
+  getApplicationCoreGraphqlSchema: vi
     .fn()
     .mockResolvedValue({ success: true, data: 'mock-core-schema' }),
 };
@@ -38,7 +30,6 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
     validateAuth = mockApiService.validateAuth;
     getWorkspaceFrontendUrl = mockApiService.getWorkspaceFrontendUrl;
-    generateApplicationToken = mockApiService.generateApplicationToken;
     refreshToken = mockApiService.refreshToken;
     findApplicationRegistrationByUniversalIdentifier =
       mockApiService.findApplicationRegistrationByUniversalIdentifier;
@@ -46,7 +37,8 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
       mockApiService.createApplicationRegistration;
     createDevelopmentApplication = mockApiService.createDevelopmentApplication;
     syncApplication = mockApiService.syncApplication;
-    getSchema = mockApiService.getSchema;
+    getApplicationCoreGraphqlSchema =
+      mockApiService.getApplicationCoreGraphqlSchema;
   },
 }));
 
@@ -57,16 +49,7 @@ vi.mock('@/cli/utilities/file/file-uploader', () => ({
 }));
 
 vi.mock('@/cli/utilities/auth', () => ({
-  ensureAppAccessTokenIsValidOrRefresh: vi
-    .fn()
-    .mockResolvedValue('mock-app-access-token'),
-  exchangeCredentialsForTokens: vi.fn().mockResolvedValue({
-    accessToken: 'mock-app-access-token',
-    refreshToken: 'mock-app-refresh-token',
-  }),
   ensureAppRegistration: vi.fn().mockResolvedValue({
-    clientId: 'mock-client-id',
-    clientSecret: 'mock-client-secret',
     isNewRegistration: true,
   }),
 }));
