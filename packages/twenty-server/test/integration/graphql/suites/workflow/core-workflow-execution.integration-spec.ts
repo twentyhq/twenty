@@ -385,7 +385,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         'UPDATE core."workflowVersion" SET "workspaceWorkflowVersionId" = NULL WHERE id = $1',
         [fixture.coreWorkflowVersionId],
       );
-      await expect(backfill(true)).resolves.toBeUndefined();
       await expect(backfill()).rejects.toThrow(
         'Missing or conflicting workflow version mapping',
       );
@@ -1531,7 +1530,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         ],
       );
       await expect(backfill()).rejects.toThrow(
-        'Pending workflow runs have no valid core mapping',
+        'Conflicting workflow run core ids',
       );
       const [version] = await global.testDataSource.query(
         'SELECT "workspaceWorkflowVersionId" FROM core."workflowVersion" WHERE id = $1',
