@@ -1,3 +1,4 @@
+import { RecordCreationFormFocusEffect } from '@/object-record/record-form/components/RecordCreationFormFocusEffect';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -153,6 +154,11 @@ const SidePanelRecordCreationForm = ({
         }
       />
       <StyledContent ref={formFieldsRef}>
+        <RecordCreationFormFocusEffect
+          requestId={requestId}
+          fieldCount={recordFormFieldMetadataItems.length}
+          formFieldsRef={formFieldsRef}
+        />
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={recordFormFieldMetadataItems}
