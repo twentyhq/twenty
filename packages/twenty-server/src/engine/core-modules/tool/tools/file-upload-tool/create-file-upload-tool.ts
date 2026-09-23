@@ -47,6 +47,11 @@ export class CreateFileUploadTool implements Tool {
         filename,
         size,
         fileFolder: FileFolder.AgentChat,
+        principal: {
+          applicationId: null,
+          userWorkspaceId: context.userWorkspaceId ?? null,
+          apiKeyId: null,
+        },
       });
 
       this.logger.log(

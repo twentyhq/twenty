@@ -43,6 +43,11 @@ export class CompleteFileUploadTool implements Tool {
       const completedFile = await this.fileUploadService.completeFileUpload({
         workspaceId: context.workspaceId,
         fileId,
+        principal: {
+          applicationId: null,
+          userWorkspaceId: context.userWorkspaceId ?? null,
+          apiKeyId: null,
+        },
       });
 
       this.logger.log(
