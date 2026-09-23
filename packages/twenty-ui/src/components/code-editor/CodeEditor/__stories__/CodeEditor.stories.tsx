@@ -48,11 +48,11 @@ export const Default: Story = {
 
 export const Resizable: Story = {
   ...Default,
-  args: { resizable: true },
+  args: { resizable: true, resizeLabel: 'Resize code sample' },
   play: async ({ canvasElement }) => {
     await waitForCodeEditorContent(canvasElement, '"name": "Acme"');
     const handle = within(canvasElement).getByRole('separator', {
-      name: 'Resize',
+      name: 'Resize code sample',
     });
 
     handle.focus();

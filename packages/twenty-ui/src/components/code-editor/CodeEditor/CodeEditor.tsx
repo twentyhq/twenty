@@ -68,6 +68,7 @@ export const CodeEditor = ({
   isLoading = false,
   options,
   resizable = false,
+  resizeLabel = 'Resize editor',
   contentPadding = 'default',
   autoHeight = false,
 }: CodeEditorProps) => {
@@ -265,6 +266,7 @@ export const CodeEditor = ({
       </div>
       {resizable && (
         <ResizeHandle
+          aria-label={resizeLabel}
           aria-controls={editorContainerId}
           value={resizableHeight}
           onValueChange={setResizableHeight}
