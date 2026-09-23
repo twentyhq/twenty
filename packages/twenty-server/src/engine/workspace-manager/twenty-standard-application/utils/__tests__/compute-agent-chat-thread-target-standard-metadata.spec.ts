@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -18,25 +19,27 @@ const findIndex = (
       .universalIdentifier
   ];
 
-const FIELD_NAME_BY_UNIVERSAL_IDENTIFIER = new Map(
-  Object.entries(STANDARD_OBJECTS.agentChatThreadTarget.fields).map(
-    ([fieldName, field]) => [field.universalIdentifier, fieldName],
-  ),
-);
-
 // Postgres only uses a composite btree for a predicate that matches its leading
 // columns, so which columns an index carries and in what order is part of the
 // contract the read and write paths depend on, not an implementation detail.
-const getIndexedFieldNames = (
+const getIndexedFieldUniversalIdentifiers = (
   indexName: keyof typeof STANDARD_OBJECTS.agentChatThreadTarget.indexes,
 ) =>
-  [...findIndex(indexName).universalFlatIndexFieldMetadatas]
-    .sort((left, right) => left.order - right.order)
-    .map((indexField) =>
-      FIELD_NAME_BY_UNIVERSAL_IDENTIFIER.get(
-        indexField.fieldMetadataUniversalIdentifier,
-      ),
-    );
+  findIndex(indexName)
+    ?.flatIndexFieldMetadatas.map((indexField) =>
+      Object.values(
+        allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .find(
+          (flatFieldMetadata) =>
+            flatFieldMetadata.id === indexField.fieldMetadataId,
+        ),
+    )
+    .filter(isDefined)
+    .map((flatFieldMetadata) => flatFieldMetadata.universalIdentifier);
+
+const fields = STANDARD_OBJECTS.agentChatThreadTarget.fields;
 
 describe('agent chat thread target workspace metadata', () => {
   // Attach is ON CONFLICT DO NOTHING against this index, so losing its
@@ -47,22 +50,26 @@ describe('agent chat thread target workspace metadata', () => {
       isUnique: true,
       indexWhereClause: '"deletedAt" IS NULL',
     });
-    expect(getIndexedFieldNames('threadTargetUniqueIndex')).toEqual([
-      'thread',
-      'objectMetadataId',
-      'recordId',
+    expect(
+      getIndexedFieldUniversalIdentifiers('threadTargetUniqueIndex'),
+    ).toEqual([
+      fields.thread.universalIdentifier,
+      fields.objectMetadataId.universalIdentifier,
+      fields.recordId.universalIdentifier,
     ]);
   });
 
   it('indexes the pair the record lookup filters on', () => {
     expect(findIndex('targetRecordIndex')).toMatchObject({ isUnique: false });
-    expect(getIndexedFieldNames('targetRecordIndex')).toEqual([
-      'objectMetadataId',
-      'recordId',
+    expect(getIndexedFieldUniversalIdentifiers('targetRecordIndex')).toEqual([
+      fields.objectMetadataId.universalIdentifier,
+      fields.recordId.universalIdentifier,
     ]);
   });
 
   it('indexes the thread side the relation cascades from', () => {
-    expect(getIndexedFieldNames('threadIdIndex')).toEqual(['thread']);
+    expect(getIndexedFieldUniversalIdentifiers('threadIdIndex')).toEqual([
+      fields.thread.universalIdentifier,
+    ]);
   });
 });
