@@ -301,14 +301,26 @@ export class FrontComponentService {
   async getBuiltComponentPresignedUrlOrStream({
     frontComponentId,
     workspaceId,
+    requestedChecksum,
   }: {
     frontComponentId: string;
     workspaceId: string;
+    requestedChecksum?: string;
   }): Promise<FileResponse> {
     const frontComponent = await this.findByIdOrThrow(
       frontComponentId,
       workspaceId,
     );
+
+    if (
+      isDefined(requestedChecksum) &&
+      requestedChecksum !== frontComponent.builtComponentChecksum
+    ) {
+      throw new FrontComponentException(
+        `Front component "${frontComponentId}" has no built file with checksum "${requestedChecksum}" (current checksum "${frontComponent.builtComponentChecksum}")`,
+        FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+      );
+    }
 
     const application =
       await this.applicationService.findOneApplicationWithRelationsOrThrow({
