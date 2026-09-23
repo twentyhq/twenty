@@ -15,12 +15,10 @@ describe('FileCorePictureService.completeWorkspaceLogoUpload', () => {
     isTemporaryFileUnderLock: boolean;
   }) => {
     const manager = {
-      findOneOrFail: jest
-        .fn()
-        .mockResolvedValue({
-          id: workspaceId,
-          logoFileId: logoFileIdUnderLock,
-        }),
+      findOneOrFail: jest.fn().mockResolvedValue({
+        id: workspaceId,
+        logoFileId: logoFileIdUnderLock,
+      }),
       update: jest.fn(),
     };
     const transactionalFileRepository = {
@@ -38,12 +36,10 @@ describe('FileCorePictureService.completeWorkspaceLogoUpload', () => {
     const service = new FileCorePictureService(
       fileStorageService as never,
       {
-        findOneOrFail: jest
-          .fn()
-          .mockResolvedValue({
-            id: workspaceId,
-            logoFileId: previousLogoFileId,
-          }),
+        findOneOrFail: jest.fn().mockResolvedValue({
+          id: workspaceId,
+          logoFileId: previousLogoFileId,
+        }),
         manager: {
           transaction: jest.fn(
             (run: (entityManager: typeof manager) => unknown) => run(manager),
