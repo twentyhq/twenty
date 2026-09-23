@@ -171,6 +171,24 @@ describe('parseICalEvents', () => {
     });
   });
 
+  it('lowercases ORGANIZER and ATTENDEE handles', () => {
+    const ics = buildVEvent([
+      'UID:abc',
+      'SUMMARY:Sync',
+      'DTSTART:20260601T100000Z',
+      'DTEND:20260601T110000Z',
+      'ORGANIZER;CN=Jane:mailto:Jane.Roe@Example.com',
+      'ATTENDEE:mailto:John.Doe@Example.com',
+    ]);
+
+    const participants = parseICalEvents(ics, HREF)[0].participants;
+
+    expect(participants.map((participant) => participant.handle)).toEqual([
+      'jane.roe@example.com',
+      'john.doe@example.com',
+    ]);
+  });
+
   it('handles bare ATTENDEE (plain mailto, no params) — node-ical returns a string', () => {
     const ics = buildVEvent([
       'UID:abc',
