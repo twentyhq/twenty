@@ -61,10 +61,9 @@ export const WorkspaceMemberPictureUploader = ({
 
     let newAvatarUrl: string | null = null;
     try {
-      const uploadedFile = await uploadWorkspaceMemberProfilePicture(
-        file,
-        controller.signal,
-      );
+      const uploadedFile = await uploadWorkspaceMemberProfilePicture(file, {
+        signal: controller.signal,
+      });
 
       newAvatarUrl = `${REACT_APP_SERVER_BASE_URL}/file/${FileFolderPath.CorePicture}/${uploadedFile.id}`;
       await updateWorkspaceMemberSettings({

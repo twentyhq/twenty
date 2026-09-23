@@ -8,6 +8,10 @@ import {
   type FileWithSignedUrl,
 } from '~/generated-metadata/graphql';
 
+type UploadWorkspaceMemberProfilePictureOptions = {
+  signal?: AbortSignal;
+};
+
 export const useUploadWorkspaceMemberProfilePicture = () => {
   const { createFileUploadAndPutFile } = useDirectFileUpload();
   const [completeWorkspaceMemberProfilePictureUpload] = useMutation(
@@ -16,7 +20,7 @@ export const useUploadWorkspaceMemberProfilePicture = () => {
 
   const uploadWorkspaceMemberProfilePicture = async (
     file: File,
-    signal?: AbortSignal,
+    { signal }: UploadWorkspaceMemberProfilePictureOptions = {},
   ): Promise<FileWithSignedUrl> => {
     const { fileId } = await createFileUploadAndPutFile(file, {
       fileFolder: FileFolder.CorePicture,
