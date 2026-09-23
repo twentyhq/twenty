@@ -1,106 +1,24 @@
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { useStore } from 'jotai';
+
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
-import { type GraphQLView } from '@/views/types/GraphQLView';
-import { convertUpdateViewInputToGql } from '@/views/utils/convertUpdateViewInputToGql';
+import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
-import { useMutation } from '@apollo/client/react';
-import { type Atom, useStore, type WritableAtom } from 'jotai';
-import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { UpdateViewDocument } from '~/generated-metadata/graphql';
-
-type SettingSaveQueue = {
-  latestRequestId: number;
-  pendingRequestCount: number;
-  lastSave: Promise<void>;
-  restoreSavedValue: () => void;
-};
-
-// Keyed by the view instance atom instead of a ref: the submenus unmount on
-// navigation, and a request from an unmounted menu must still see newer choices.
-const saveQueueByAtom = new WeakMap<Atom<unknown>, SettingSaveQueue>();
-
-// The dropdown stays open after a choice, so several changes can be made while a
-// save is in flight. Concurrent mutations can reach the server in any order, so
-// saves run one after the other and a queued save is dropped once a newer choice
-// replaces it: the last choice is always the last one written.
-// These atoms drive what the grouped index renders and fetches, so a rejected
-// latest save puts back the last value the server accepted, and the error is
-// rethrown so failures stay as visible as they were before the rollback.
-const saveSettingInOrder = async <TValue>({
-  store,
-  settingAtom,
-  value,
-  saveValue,
-}: {
-  store: ReturnType<typeof useStore>;
-  settingAtom: WritableAtom<TValue, [TValue], void>;
-  value: TValue;
-  saveValue: () => Promise<void>;
-}) => {
-  const saveQueue = saveQueueByAtom.get(settingAtom) ?? {
-    latestRequestId: 0,
-    pendingRequestCount: 0,
-    lastSave: Promise.resolve(),
-    restoreSavedValue: () => {},
-  };
-
-  saveQueueByAtom.set(settingAtom, saveQueue);
-
-  const isSaveInFlight = saveQueue.pendingRequestCount > 0;
-
-  if (!isSaveInFlight) {
-    const savedValue = store.get(settingAtom);
-
-    saveQueue.restoreSavedValue = () => store.set(settingAtom, savedValue);
-  }
-
-  const requestId = saveQueue.latestRequestId + 1;
-
-  saveQueue.latestRequestId = requestId;
-  saveQueue.pendingRequestCount += 1;
-
-  store.set(settingAtom, value);
-
-  const isLatestRequest = () => saveQueue.latestRequestId === requestId;
-
-  const runSave = async () => {
-    if (!isLatestRequest()) {
-      return;
-    }
-
-    await saveValue();
-
-    saveQueue.restoreSavedValue = () => store.set(settingAtom, value);
-  };
-
-  const save = isSaveInFlight
-    ? saveQueue.lastSave.catch(() => undefined).then(runSave)
-    : runSave();
-
-  saveQueue.lastSave = save;
-
-  try {
-    await save;
-  } catch (error) {
-    if (isLatestRequest()) {
-      saveQueue.restoreSavedValue();
-    }
-
-    throw error;
-  } finally {
-    saveQueue.pendingRequestCount -= 1;
-  }
-};
+import { useCallback, useRef } from 'react';
 
 export const useRecordGroupVisibility = () => {
   const store = useStore();
+
+  // Request tokens, not rendered state: they only decide whether a settling
+  // mutation is still the most recent one, so they must not trigger a render.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const latestHideEmptyRecordGroupsRequestIdRef = useRef(0);
+  // oxlint-disable-next-line twenty/no-state-useref
+  const latestGroupLoadLimitRequestIdRef = useRef(0);
 
   const recordIndexShouldHideEmptyRecordGroups =
     useAtomComponentStateCallbackState(
@@ -111,13 +29,8 @@ export const useRecordGroupVisibility = () => {
     recordIndexGroupLoadLimitComponentState,
   );
 
-  const currentViewIdCallbackState = useAtomComponentStateCallbackState(
-    contextStoreCurrentViewIdComponentState,
-  );
-
   const { saveViewGroup } = useSaveCurrentViewGroups();
-  const { canPersistChanges } = useCanPersistViewChanges();
-  const [updateView] = useMutation(UpdateViewDocument);
+  const { updateCurrentView } = useUpdateCurrentView();
 
   const handleVisibilityChange = useCallback(
     async (updatedRecordGroup: RecordGroupDefinition) => {
@@ -131,55 +44,56 @@ export const useRecordGroupVisibility = () => {
     [saveViewGroup, store],
   );
 
-  // A queued save runs after the user may have left the view, so it targets the
-  // view the choice was made on instead of whichever view is current by then.
-  const updateViewOfCurrentChoice = useCallback(
-    (viewUpdate: Partial<GraphQLView>) => {
-      const viewIdOfChoice = store.get(currentViewIdCallbackState);
-
-      return async () => {
-        if (!canPersistChanges || !isDefined(viewIdOfChoice)) {
-          return;
-        }
-
-        await updateView({
-          variables: {
-            id: viewIdOfChoice,
-            input: convertUpdateViewInputToGql(viewUpdate),
-          },
-        });
-      };
-    },
-    [store, currentViewIdCallbackState, canPersistChanges, updateView],
-  );
-
+  // These atoms drive what the grouped index renders and fetches, so a rejected
+  // mutation has to put the previous value back: the menu would otherwise keep
+  // showing a setting the view never took. The error is rethrown so failures
+  // stay as visible as they were before the rollback.
+  // The dropdown stays open after a choice, so a second change can be made while
+  // the first is still in flight: only the latest request may write the atom,
+  // otherwise a late rollback would undo a choice the user has since replaced.
   const handleHideEmptyRecordGroupChange = useCallback(async () => {
-    const newHideState = !store.get(recordIndexShouldHideEmptyRecordGroups);
+    const previousHideState = store.get(recordIndexShouldHideEmptyRecordGroups);
 
-    await saveSettingInOrder({
-      store,
-      settingAtom: recordIndexShouldHideEmptyRecordGroups,
-      value: newHideState,
-      saveValue: updateViewOfCurrentChoice({
+    const newHideState = !previousHideState;
+
+    const requestId = ++latestHideEmptyRecordGroupsRequestIdRef.current;
+
+    store.set(recordIndexShouldHideEmptyRecordGroups, newHideState);
+
+    try {
+      await updateCurrentView({
         shouldHideEmptyGroups: newHideState,
-      }),
-    });
-  }, [
-    store,
-    recordIndexShouldHideEmptyRecordGroups,
-    updateViewOfCurrentChoice,
-  ]);
+      });
+    } catch (error) {
+      if (latestHideEmptyRecordGroupsRequestIdRef.current === requestId) {
+        store.set(recordIndexShouldHideEmptyRecordGroups, previousHideState);
+      }
+
+      throw error;
+    }
+  }, [store, recordIndexShouldHideEmptyRecordGroups, updateCurrentView]);
 
   const handleGroupLoadLimitChange = useCallback(
     async (limit: number) => {
-      await saveSettingInOrder({
-        store,
-        settingAtom: recordIndexGroupLoadLimit,
-        value: limit,
-        saveValue: updateViewOfCurrentChoice({ groupLoadLimit: limit }),
-      });
+      const previousLimit = store.get(recordIndexGroupLoadLimit);
+
+      const requestId = ++latestGroupLoadLimitRequestIdRef.current;
+
+      store.set(recordIndexGroupLoadLimit, limit);
+
+      try {
+        await updateCurrentView({
+          groupLoadLimit: limit,
+        });
+      } catch (error) {
+        if (latestGroupLoadLimitRequestIdRef.current === requestId) {
+          store.set(recordIndexGroupLoadLimit, previousLimit);
+        }
+
+        throw error;
+      }
     },
-    [store, recordIndexGroupLoadLimit, updateViewOfCurrentChoice],
+    [store, recordIndexGroupLoadLimit, updateCurrentView],
   );
 
   return {
