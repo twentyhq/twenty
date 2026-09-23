@@ -139,7 +139,7 @@ Each execution records `deferred-workspace-migration-action/duration-ms` with `a
 
 A migration and a concurrent index build on the same table deadlock: Postgres cancels one of them, and the loser can be the migration a user is waiting on. `InFlightDeferredWorkspaceMigrationActionsService`, called from `WorkspaceMigrationRunnerService.run` for workspaces with the flag on, refuses the migration with `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` while the workspace has `PENDING` or `IN_PROGRESS` rows for a deferred action that builds workspace schema objects.
 
-Which deferred actions those are is read off their action type: `SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTION_TYPES` holds `create`, and `SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS` is the deferrable actions whose handler key starts with one of those types, today `create_index` but not `delete_logicFunction`. `FAILED` rows do not block, since they need a manual retry and would otherwise freeze the data model.
+`SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS` lists which ones those are, today `create_index` and not `delete_logicFunction`. `FAILED` rows do not block, since they need a manual retry and would otherwise freeze the data model.
 
 The deferred action table is the whole state: an in-flight build is exactly a row in it, so nothing else has to be stored. Every migration is refused while such a row exists, including ones that only touch views or dashboards; the check is on what is already running, not on what the incoming migration does.
 

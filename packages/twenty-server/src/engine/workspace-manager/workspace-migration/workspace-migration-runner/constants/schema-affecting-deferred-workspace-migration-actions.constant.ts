@@ -1,9 +1,5 @@
-import { DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferrable-workspace-migration-actions.constant';
-import { SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTION_TYPES } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/schema-affecting-deferred-workspace-migration-action-types.constant';
+import { type DeferrableWorkspaceMigrationActionHandlerKey } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 
-export const SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS =
-  DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS.filter((actionHandlerKey) =>
-    SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTION_TYPES.some(
-      (actionType) => actionHandlerKey.startsWith(`${actionType}_`),
-    ),
-  );
+export const SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS = [
+  'create_index',
+] as const satisfies readonly DeferrableWorkspaceMigrationActionHandlerKey[];

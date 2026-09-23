@@ -73,8 +73,6 @@ describe('Deferred workspace migration actions', () => {
   });
 
   afterAll(async () => {
-    // Schema migrations are refused while the deferred index builds of the
-    // object are still running, so teardown retries until they have drained.
     await expectEventually(async () => {
       await updateOneObjectMetadata({
         expectToFail: false,
