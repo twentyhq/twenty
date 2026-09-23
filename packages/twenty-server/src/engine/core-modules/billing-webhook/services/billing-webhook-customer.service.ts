@@ -16,6 +16,7 @@ import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billi
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isDefined } from 'twenty-shared/utils';
 import { isString } from '@sniptt/guards';
 @Injectable()
@@ -28,6 +29,7 @@ export class BillingWebhookCustomerService {
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepositoryUnscoped: Repository<BillingCustomerEntity>,
     private readonly stripeCustomerService: StripeCustomerService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async processStripeEvent(
@@ -92,6 +94,10 @@ export class BillingWebhookCustomerService {
       { stripeCustomerId },
       { hasPaymentMethod: true },
     );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'billingCustomerPaymentStatus',
+    ]);
   }
 
   private async processPaymentMethodDetachedEvent(
@@ -120,6 +126,10 @@ export class BillingWebhookCustomerService {
       { stripeCustomerId },
       { hasPaymentMethod },
     );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'billingCustomerPaymentStatus',
+    ]);
   }
 
   private async getWorkspaceIdFromStripeCustomerId(

@@ -40,6 +40,7 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { WorkspaceBillingEntitlementsCacheModule } from 'src/engine/core-modules/billing/workspace-billing-entitlements-cache.module';
+import { WorkspaceBillingCustomerPaymentStatusCacheService } from 'src/engine/core-modules/billing/services/workspace-billing-customer-payment-status-cache.service';
 import { WorkspaceCurrentBillingSubscriptionCacheService } from 'src/engine/core-modules/billing/services/workspace-current-billing-subscription-cache.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -113,6 +114,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ResourceCreditService,
     BillingGaugeService,
     WorkspaceCurrentBillingSubscriptionCacheService,
+    WorkspaceBillingCustomerPaymentStatusCacheService,
     provideWorkspaceScopedRepository(BillingEntitlementEntity),
     provideWorkspaceScopedRepository(BillingCreditGrantEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),

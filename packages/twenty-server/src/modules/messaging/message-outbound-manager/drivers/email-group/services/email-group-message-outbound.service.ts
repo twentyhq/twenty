@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -34,12 +35,24 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly usageLimitSpeedService: UsageLimitSpeedService,
     private readonly throttlerService: ThrottlerService,
+    private readonly billingService: BillingService,
   ) {}
 
   async sendMessage(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<SendMessageResult> {
+    const isPayingCustomer = await this.billingService.isPayingCustomer(
+      connectedAccount.workspaceId,
+    );
+
+    if (!isPayingCustomer) {
+      throw new MessageChannelException(
+        `Cannot send from ${connectedAccount.handle}: sending from an email group is available once your workspace is on a paid plan and has been billed.`,
+        MessageChannelExceptionCode.EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN,
+      );
+    }
+
     const emailingDomain = await this.resolveEmailingDomain(connectedAccount);
 
     if (emailingDomain.status !== EmailingDomainStatus.VERIFIED) {
