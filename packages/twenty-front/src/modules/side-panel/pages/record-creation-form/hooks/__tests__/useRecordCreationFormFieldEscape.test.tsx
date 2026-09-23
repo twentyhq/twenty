@@ -65,7 +65,13 @@ const Form = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const renderForm = (field: ReactNode, outsideField?: ReactNode) => {
+const renderForm = ({
+  field,
+  outsideField,
+}: {
+  field?: ReactNode;
+  outsideField?: ReactNode;
+}) => {
   const store = createStore();
   store.set(focusStackState.atom, [
     {
@@ -102,14 +108,15 @@ const renderForm = (field: ReactNode, outsideField?: ReactNode) => {
 beforeEach(() => jest.clearAllMocks());
 
 it('ignores Escape in a field outside the creation form', async () => {
-  renderForm(
-    null,
-    <FormNumberFieldInput
-      label="Outside"
-      defaultValue={undefined}
-      onChange={jest.fn()}
-    />,
-  );
+  renderForm({
+    outsideField: (
+      <FormNumberFieldInput
+        label="Outside"
+        defaultValue={undefined}
+        onChange={jest.fn()}
+      />
+    ),
+  });
   await userEvent.click(screen.getByPlaceholderText('Enter a number'));
 
   await userEvent.keyboard('{Escape}');
@@ -148,7 +155,7 @@ it.each([
 ])(
   'leaves the creation form when Escape is pressed in the "%s" field',
   async (placeholder, firstField) => {
-    renderForm(firstField);
+    renderForm({ field: firstField });
     const input = screen.getByPlaceholderText(placeholder);
     await userEvent.click(input);
 
@@ -162,13 +169,15 @@ it.each([
 );
 
 it('leaves the creation form when Escape is pressed in a text editor field', async () => {
-  const { container } = renderForm(
-    <FormTextFieldInput
-      label="Company name"
-      defaultValue={undefined}
-      onChange={jest.fn()}
-    />,
-  );
+  const { container } = renderForm({
+    field: (
+      <FormTextFieldInput
+        label="Company name"
+        defaultValue={undefined}
+        onChange={jest.fn()}
+      />
+    ),
+  });
   const editor = container.querySelector<HTMLElement>(
     '[contenteditable="true"]',
   );
@@ -186,13 +195,15 @@ it('leaves the creation form when Escape is pressed in a text editor field', asy
 
 it('leaves the creation form from a date field once its picker is closed', async () => {
   const user = userEvent.setup();
-  renderForm(
-    <FormDateFieldInput
-      label="Close date"
-      defaultValue={undefined}
-      onChange={jest.fn()}
-    />,
-  );
+  renderForm({
+    field: (
+      <FormDateFieldInput
+        label="Close date"
+        defaultValue={undefined}
+        onChange={jest.fn()}
+      />
+    ),
+  });
   await user.click(screen.getAllByRole('textbox')[0]);
 
   await user.keyboard('{Escape}');
@@ -204,17 +215,19 @@ it('leaves the creation form from a date field once its picker is closed', async
 });
 
 it('closes only the open select dropdown when Escape is pressed in it', async () => {
-  renderForm(
-    <FormSelectFieldInput
-      label="Stage"
-      defaultValue="a"
-      onChange={jest.fn()}
-      options={[
-        { label: 'Option A', value: 'a' },
-        { label: 'Option B', value: 'b' },
-      ]}
-    />,
-  );
+  renderForm({
+    field: (
+      <FormSelectFieldInput
+        label="Stage"
+        defaultValue="a"
+        onChange={jest.fn()}
+        options={[
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' },
+        ]}
+      />
+    ),
+  });
   await userEvent.click(screen.getByText('Option A'));
   expect(await screen.findByText('Option B')).toBeInTheDocument();
 
@@ -276,7 +289,7 @@ it.each([
   'leaves the creation form once when Escape is pressed on a focused closed %s trigger',
   async (_triggerType, firstField) => {
     const user = userEvent.setup();
-    renderForm(firstField);
+    renderForm({ field: firstField });
     await user.tab();
     expect(document.activeElement).not.toBe(document.body);
 
@@ -316,7 +329,7 @@ it.each([
   'closes an open %s dropdown first, then leaves the creation form from its trigger',
   async (_triggerType, dropdownText, firstField) => {
     const user = userEvent.setup();
-    renderForm(firstField);
+    renderForm({ field: firstField });
     await user.tab();
     await user.keyboard('{Enter}');
     expect(await screen.findByText(dropdownText)).toBeInTheDocument();
@@ -339,14 +352,16 @@ it.each([
 
 it('closes an open multi-select list first, then leaves the creation form', async () => {
   const user = userEvent.setup();
-  renderForm(
-    <FormMultiSelectFieldInput
-      label="Tags"
-      defaultValue={['a']}
-      onChange={jest.fn()}
-      options={SELECT_OPTIONS}
-    />,
-  );
+  renderForm({
+    field: (
+      <FormMultiSelectFieldInput
+        label="Tags"
+        defaultValue={['a']}
+        onChange={jest.fn()}
+        options={SELECT_OPTIONS}
+      />
+    ),
+  });
   await user.tab();
   await user.keyboard('{Enter}');
   expect(await screen.findByText('Option B')).toBeInTheDocument();
