@@ -26,7 +26,7 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import { WorkspaceSchemaMigrationLockService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-schema-migration-lock.service';
+import { SchemaAffectingDeferredActionsGuardService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/schema-affecting-deferred-actions-guard.service';
 import { isSchemaAffectingWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-schema-affecting-workspace-migration.util';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
@@ -49,7 +49,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
-    private readonly workspaceSchemaMigrationLockService: WorkspaceSchemaMigrationLockService,
+    private readonly schemaAffectingDeferredActionsGuardService: SchemaAffectingDeferredActionsGuardService,
   ) {}
 
   private getLegacyCacheInvalidation(
@@ -198,8 +198,8 @@ export class WorkspaceMigrationRunnerService {
     hasSchemaMetadataChanged: boolean;
   }> => {
     const runStart = performance.now();
-    const schemaMigrationLockedAt =
-      await this.acquireSchemaMigrationLockIfNeeded(args);
+
+    await this.throwIfSchemaAffectingDeferredActionsAreInProgress(args);
 
     try {
       const result = await this.executeRun(args);
@@ -223,23 +223,16 @@ export class WorkspaceMigrationRunnerService {
       });
 
       throw error;
-    } finally {
-      if (isDefined(schemaMigrationLockedAt)) {
-        await this.workspaceSchemaMigrationLockService.release({
-          workspaceId: args.workspaceId,
-          lockedAt: schemaMigrationLockedAt,
-        });
-      }
     }
   };
 
-  private acquireSchemaMigrationLockIfNeeded = async ({
+  private throwIfSchemaAffectingDeferredActionsAreInProgress = async ({
     workspaceMigration: { actions },
     workspaceId,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
-  }): Promise<Date | undefined> => {
+  }): Promise<void> => {
     const featureFlagsMap =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
@@ -249,10 +242,10 @@ export class WorkspaceMigrationRunnerService {
       ] ||
       !isSchemaAffectingWorkspaceMigration(actions)
     ) {
-      return undefined;
+      return;
     }
 
-    return await this.workspaceSchemaMigrationLockService.acquireOrThrow(
+    await this.schemaAffectingDeferredActionsGuardService.throwIfDeferredActionsAreInProgress(
       workspaceId,
     );
   };

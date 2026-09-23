@@ -11,7 +11,6 @@ export const WorkspaceMigrationRunnerExceptionCode = {
   EXECUTION_FAILED: 'EXECUTION_FAILED',
   APPLICATION_NOT_FOUND: 'APPLICATION_NOT_FOUND',
   DDL_LOCKED: 'DDL_LOCKED',
-  SCHEMA_MIGRATION_IN_PROGRESS: 'SCHEMA_MIGRATION_IN_PROGRESS',
   DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS:
     'DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS',
 } as const;
@@ -28,8 +27,6 @@ const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
       return msg`Application not found.`;
     case WorkspaceMigrationRunnerExceptionCode.DDL_LOCKED:
       return msg`Workspace schema changes are temporarily locked.`;
-    case WorkspaceMigrationRunnerExceptionCode.SCHEMA_MIGRATION_IN_PROGRESS:
-      return msg`Another data model change is running on this workspace. Please try again in a moment.`;
     case WorkspaceMigrationRunnerExceptionCode.DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS:
       return msg`A previous data model change is still being applied in the background. Please try again in a moment.`;
     default:
