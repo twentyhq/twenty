@@ -53,15 +53,33 @@ const callMcpTool = async (
   };
 };
 
-const getToolCatalog = async (
+type ToolCatalogResult = {
+  catalog: Record<string, { name: string; description: string }[]>;
+  databaseCrudTools?: {
+    objectGroups: {
+      operations: string[];
+      objects: { plural?: string; singular?: string }[];
+    }[];
+    standaloneTools: { name: string; description: string }[];
+    nameGrammar: string;
+    toolCount: number;
+  };
+};
+
+const getToolCatalogResult = async (
   bearer: string,
-): Promise<Record<string, { name: string; description: string }[]>> => {
+): Promise<ToolCatalogResult> => {
   const result = await callMcpTool(bearer, 'get_tool_catalog', {});
 
   expect(result.isError).toBe(false);
 
-  return JSON.parse(result.content[0].text).catalog;
+  return JSON.parse(result.content[0].text);
 };
+
+const getToolCatalog = async (
+  bearer: string,
+): Promise<Record<string, { name: string; description: string }[]>> =>
+  (await getToolCatalogResult(bearer)).catalog;
 
 const READ_ONLY_TOOL_NAME_PATTERN = /^(find_|list_|get_|search_)/;
 
@@ -248,6 +266,61 @@ describe('MCP tool catalog (integration)', () => {
       );
     });
 
+    it('should dispatch record tool names composed from the collapsed grammar', async () => {
+      const { catalog, databaseCrudTools } =
+        await getToolCatalogResult(adminApiKeyToken);
+
+      expect(catalog[ToolCategory.DATABASE_CRUD]).toBeUndefined();
+      jestExpectToBeDefined(databaseCrudTools);
+
+      const readableGroups = databaseCrudTools.objectGroups.filter((group) =>
+        group.operations.includes('find_many'),
+      );
+
+      expect(readableGroups.length).toBeGreaterThan(0);
+
+      for (const group of readableGroups) {
+        const plural = group.objects[0]?.plural;
+
+        jestExpectToBeDefined(plural);
+
+        const result = await callMcpTool(adminApiKeyToken, 'execute_tool', {
+          toolName: `find_many_${plural}`,
+          arguments: {},
+        });
+
+        expect({ plural, dispatched: !isDispatchFailure(result) }).toEqual({
+          plural,
+          dispatched: true,
+        });
+      }
+    });
+
+    it('should not advertise write operations for an object blocked from automation', async () => {
+      const { databaseCrudTools } =
+        await getToolCatalogResult(adminApiKeyToken);
+
+      jestExpectToBeDefined(databaseCrudTools);
+
+      const blockedGroup = databaseCrudTools.objectGroups.find((group) =>
+        group.objects.some((object) => object.plural === 'workspace_members'),
+      );
+
+      jestExpectToBeDefined(blockedGroup);
+      expect(blockedGroup.operations).not.toEqual(
+        expect.arrayContaining(['create_one', 'update_one', 'upsert_many']),
+      );
+
+      // The advertised absence must match reality, or the grammar is lying in
+      // the other direction.
+      const result = await callMcpTool(adminApiKeyToken, 'execute_tool', {
+        toolName: 'create_one_workspace_member',
+        arguments: {},
+      });
+
+      expect(isDispatchFailure(result)).toBe(true);
+    });
+
     it('should report unknown tools as dispatch failures', async () => {
       const result = await callMcpTool(adminApiKeyToken, 'execute_tool', {
         toolName: 'definitely_not_a_registered_tool',
@@ -285,7 +358,12 @@ describe('MCP tool catalog (integration)', () => {
 
       // The restricted role still sees record read tools, proving the empty
       // ROLE category is gating rather than a broken catalog.
-      expect(catalog[ToolCategory.DATABASE_CRUD]?.length).toBeGreaterThan(0);
+      const { databaseCrudTools } = await getToolCatalogResult(
+        restrictedApiKeyToken,
+      );
+
+      jestExpectToBeDefined(databaseCrudTools);
+      expect(databaseCrudTools.toolCount).toBeGreaterThan(0);
     });
   });
 });

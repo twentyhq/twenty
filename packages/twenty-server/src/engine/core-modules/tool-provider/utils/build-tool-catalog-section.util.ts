@@ -1,11 +1,17 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { ToolCategory } from 'twenty-shared/ai';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
   EXECUTE_TOOL_TOOL_NAME,
   LEARN_TOOLS_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import {
+  collapseDatabaseCrudTools,
+  DATABASE_CRUD_NAME_GRAMMAR,
+  type DatabaseCrudObjectNames,
+} from 'src/engine/core-modules/tool-provider/utils/collapse-database-crud-tools.util';
 
 const getCategoryLabel = (category: ToolCategory): string => {
   switch (category) {
@@ -34,61 +40,44 @@ const getCategoryLabel = (category: ToolCategory): string => {
   }
 };
 
+const renderObjectNames = ({
+  plural,
+  singular,
+}: DatabaseCrudObjectNames): string =>
+  [plural, singular]
+    .filter(isNonEmptyString)
+    .map((name) => `\`${name}\``)
+    .join(' / ');
+
 const buildDatabaseCrudCatalogSection = (
   tools: ToolIndexEntry[],
   preloadedSet: Set<string>,
   categoryLabel: string,
 ): string => {
-  const operationOrder: string[] = [];
-  const seenOps = new Set<string>();
-
-  const objectToolsMap = new Map<string, string[]>();
-  const standaloneTools: ToolIndexEntry[] = [];
-
-  for (const tool of tools) {
-    if (tool.objectName && tool.operation) {
-      const ops = objectToolsMap.get(tool.objectName) ?? [];
-
-      ops.push(tool.operation);
-      objectToolsMap.set(tool.objectName, ops);
-
-      if (!seenOps.has(tool.operation)) {
-        seenOps.add(tool.operation);
-        operationOrder.push(tool.operation);
-      }
-    } else {
-      standaloneTools.push(tool);
-    }
-  }
+  const collapsed = collapseDatabaseCrudTools(tools);
 
   const lines: string[] = [`\n#### ${categoryLabel} (${tools.length} tools)`];
 
-  if (objectToolsMap.size > 0) {
-    const objectNames = [...objectToolsMap.keys()].sort();
-
-    lines.push(`Operations per object:`);
-    lines.push(...operationOrder.map((op) => `- \`${op}_{object}\``));
-
-    lines.push(`\nObjects (${objectNames.length}):`);
-    lines.push(...objectNames.map((name) => `- \`${name}\``));
-
-    const findManyExample = tools.find((t) => t.operation === 'find_many');
-    const findOneExample = tools.find(
-      (t) =>
-        t.operation === 'find_one' &&
-        t.objectName === findManyExample?.objectName,
-    );
-    const examplePart =
-      findManyExample && findOneExample
-        ? ` e.g. \`${findManyExample.name}\` / \`${findOneExample.name}\``
-        : '';
-
+  if (collapsed.objectGroups.length > 0) {
     lines.push(
-      `\nTool name = operation + object name. *_many_* operations use the plural form, *_one_* use the singular form.${examplePart}`,
+      `Operations available per object. An operation that is not listed for an object does not exist for it:`,
     );
+
+    for (const group of collapsed.objectGroups) {
+      lines.push(`\n${group.operations.map((op) => `\`${op}\``).join(' | ')}`);
+      lines.push(
+        ...group.objects.map((object) => `- ${renderObjectNames(object)}`),
+      );
+    }
+
+    const examplePart = isNonEmptyArray(collapsed.exampleToolNames)
+      ? ` e.g. \`${collapsed.exampleToolNames.join('` / `')}\``
+      : '';
+
+    lines.push(`\n${DATABASE_CRUD_NAME_GRAMMAR}${examplePart}`);
   }
 
-  for (const tool of standaloneTools) {
+  for (const tool of collapsed.standaloneTools) {
     const status = preloadedSet.has(tool.name) ? ' ✓' : '';
 
     lines.push(`- \`${tool.name}\`${status}`);
