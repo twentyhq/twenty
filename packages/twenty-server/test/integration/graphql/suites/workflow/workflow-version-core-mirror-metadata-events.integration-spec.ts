@@ -1,8 +1,8 @@
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import request from 'supertest';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
+import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -14,14 +14,9 @@ const graphql = (query: string, variables?: object) =>
     .send({ query, variables });
 
 describe('workflow version core mirror metadata events (e2e)', () => {
-  let eventEmitter: EventEmitter2;
+  let emitMetadataEventsSpy: jest.SpyInstance;
   let workflowId: string;
   let workflowVersionId: string;
-  const recordedBatches: MetadataEventBatch[] = [];
-
-  const recordBatch = (batch: MetadataEventBatch) => {
-    recordedBatches.push(batch);
-  };
 
   const findCoreWorkflowVersion = async (): Promise<{
     id: string;
@@ -37,8 +32,10 @@ describe('workflow version core mirror metadata events (e2e)', () => {
   };
 
   beforeAll(async () => {
-    eventEmitter = global.app.get(EventEmitter2, { strict: false });
-    eventEmitter.on('metadata.workflowVersion.updated', recordBatch);
+    emitMetadataEventsSpy = jest.spyOn(
+      getAppProviderByClassName<MetadataEventEmitter>('MetadataEventEmitter'),
+      'emitMetadataEvents',
+    );
 
     const createResponse = await graphql(`
       mutation {
@@ -73,7 +70,7 @@ describe('workflow version core mirror metadata events (e2e)', () => {
   });
 
   afterAll(async () => {
-    eventEmitter.off('metadata.workflowVersion.updated', recordBatch);
+    emitMetadataEventsSpy.mockRestore();
 
     if (workflowId) {
       await graphql(
@@ -111,9 +108,14 @@ describe('workflow version core mirror metadata events (e2e)', () => {
       new Date(coreWorkflowVersionBeforeWrite.updatedAt).getTime(),
     );
 
-    expect(recordedBatches.flatMap((batch) => batch.events)).toContainEqual(
+    expect(
+      emitMetadataEventsSpy.mock.calls.flatMap(
+        ([{ metadataEvents }]) => metadataEvents,
+      ),
+    ).toContainEqual(
       expect.objectContaining({
         type: 'updated',
+        metadataName: 'workflowVersion',
         recordId: coreWorkflowVersionBeforeWrite.id,
         properties: expect.objectContaining({
           updatedFields: expect.arrayContaining(['triggers']),
