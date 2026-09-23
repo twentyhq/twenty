@@ -13,11 +13,13 @@ import {
   getFormMultiRecordPickerDraftValue,
 } from '@/object-record/record-field/ui/form-types/utils/getFormMultiRecordPickerDraftValue';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -85,6 +87,11 @@ export const FormMultiRecordPicker = ({
 
   const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
+
+  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
+    multipleRecordPickerSearchFilterComponentState,
+    dropdownId,
+  );
   const { openFormMultiRecordPicker } = useOpenFormMultiRecordPicker({
     objectNameSingular,
   });
@@ -121,6 +128,10 @@ export const FormMultiRecordPicker = ({
       selectedRecordIds: staticRecordIds,
       selectedRecords: orderedSelectedRecords,
     });
+  };
+
+  const handleCloseDropdown = () => {
+    setMultipleRecordPickerSearchFilter('');
   };
 
   const handleMorphItemChange = (morphItem: RecordPickerPickableMorphItem) => {
@@ -203,10 +214,12 @@ export const FormMultiRecordPicker = ({
         ) : (
           <StyledDropdownContainer>
             <Dropdown
+              clickableComponentTabIndex={0}
               dropdownId={dropdownId}
               dropdownPlacement="bottom-start"
               clickableComponentWidth="100%"
               onOpen={handleOpenDropdown}
+              onClose={handleCloseDropdown}
               dropdownOffset={{
                 y: parseInt(theme.spacing[1], 10),
               }}

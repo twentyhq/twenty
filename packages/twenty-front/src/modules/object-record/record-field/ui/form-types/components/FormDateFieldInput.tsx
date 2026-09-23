@@ -1,3 +1,4 @@
+import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -27,7 +28,7 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { styled } from '@linaria/react';
-import { useId, useRef, useState } from 'react';
+import { useContext, useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -90,6 +91,7 @@ export const FormDateFieldInput = ({
   variant = 'default',
 }: FormDateFieldInputProps) => {
   const instanceId = useId();
+  const onFieldEscape = useContext(FormFieldEscapeContext);
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)
@@ -227,11 +229,20 @@ export const FormDateFieldInput = ({
     onChange(null);
   };
 
+  const handleEscape = () => {
+    if (displayDatePicker) {
+      handlePickerEscape();
+      return;
+    }
+
+    onFieldEscape?.();
+  };
+
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],
-    callback: handlePickerEscape,
+    callback: handleEscape,
     focusId: instanceId,
-    dependencies: [handlePickerEscape],
+    dependencies: [handleEscape],
   });
 
   const { userTimezone } = useUserTimezone();

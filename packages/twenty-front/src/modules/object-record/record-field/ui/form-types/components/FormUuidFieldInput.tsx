@@ -1,3 +1,4 @@
+import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -7,7 +8,7 @@ import { TextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
-import { useId, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type FormUuidFieldInputProps = {
@@ -28,6 +29,7 @@ export const FormUuidFieldInput = ({
   VariablePicker,
 }: FormUuidFieldInputProps) => {
   const instanceId = useId();
+  const onFieldEscape = useContext(FormFieldEscapeContext);
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -101,6 +103,7 @@ export const FormUuidFieldInput = ({
               value={draftValue.value}
               copyButton={false}
               isNativeTabNavigationEnabled
+              onEscape={onFieldEscape}
               disabled={readonly}
               onChange={handleChange}
             />

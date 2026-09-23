@@ -1,3 +1,4 @@
+import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
@@ -96,6 +97,7 @@ export const FormArrayFieldInput = ({
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const instanceId = useId();
+  const onFieldEscape = useContext(FormFieldEscapeContext);
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -356,6 +358,7 @@ export const FormArrayFieldInput = ({
                   value={newItemDraftValue}
                   copyButton={false}
                   isNativeTabNavigationEnabled
+                  onEscape={onFieldEscape}
                   onChange={handleFirstItemInputChange}
                   onEnter={handleFirstItemInputEnter}
                   shouldTrim={false}
@@ -363,6 +366,7 @@ export const FormArrayFieldInput = ({
               </StyledInputContainer>
             ) : (
               <Dropdown
+                clickableComponentTabIndex={0}
                 dropdownId={dropdownId}
                 dropdownPlacement="bottom-start"
                 dropdownOffset={{

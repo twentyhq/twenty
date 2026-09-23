@@ -1,3 +1,4 @@
+import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
 import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
 import { WorkflowVariableTag } from '@/workflow/workflow-variables/extensions/WorkflowVariableTag';
 import Document from '@tiptap/extension-document';
@@ -9,7 +10,8 @@ import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { Slice } from '@tiptap/pm/model';
 
 import { type Editor, useEditor } from '@tiptap/react';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
+import { Key } from 'ts-key-enum';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 
@@ -40,6 +42,8 @@ export const useTextVariableEditor = ({
   defaultValue,
   onUpdate,
 }: UseTextVariableEditorProps) => {
+  const onFieldEscape = useContext(FormFieldEscapeContext);
+
   const editor = useEditor({
     extensions: [
       Document,
@@ -67,6 +71,13 @@ export const useTextVariableEditor = ({
     },
     editorProps: {
       handleKeyDown: (view, event) => {
+        if (event.key === Key.Escape && isDefined(onFieldEscape)) {
+          event.stopPropagation();
+          onFieldEscape();
+
+          return true;
+        }
+
         if (event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
 

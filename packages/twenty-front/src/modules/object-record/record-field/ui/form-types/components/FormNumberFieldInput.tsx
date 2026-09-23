@@ -1,3 +1,4 @@
+import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -8,7 +9,7 @@ import { Field } from 'twenty-ui/primitives/input';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
-import { useId, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   canBeCastAsNumberOrNull,
@@ -51,6 +52,7 @@ export const FormNumberFieldInput = ({
   error: errorFromProps,
 }: FormNumberFieldInputProps) => {
   const instanceId = useId();
+  const onFieldEscape = useContext(FormFieldEscapeContext);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   );
@@ -117,6 +119,7 @@ export const FormNumberFieldInput = ({
               value={draftValue.value}
               copyButton={false}
               isNativeTabNavigationEnabled
+              onEscape={onFieldEscape}
               onChange={handleChange}
               disabled={readonly}
             />
