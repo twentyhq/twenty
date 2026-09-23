@@ -41,6 +41,10 @@ export class CreatedByCreateOnePreQueryHook implements WorkspacePreQueryHookInst
         authContext,
       });
 
+    if (!isDefined(recordToCreateData)) {
+      throw new Error('Actor field injection returned no record');
+    }
+
     return {
       ...payload,
       data: recordToCreateData,

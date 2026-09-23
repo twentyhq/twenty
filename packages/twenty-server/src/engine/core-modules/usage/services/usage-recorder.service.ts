@@ -118,7 +118,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     );
 
     const failedEntries = entries.filter(
-      (_, index) => results[index].status === 'rejected',
+      (_, index) => results[index]?.status === 'rejected',
     );
 
     if (failedEntries.length === 0) {

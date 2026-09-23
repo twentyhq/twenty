@@ -41,6 +41,10 @@ export class UpdatedByUpdateOnePreQueryHook implements WorkspacePreQueryHookInst
         authContext,
       });
 
+    if (!isDefined(recordToUpdateData)) {
+      throw new Error('Actor field injection returned no record');
+    }
+
     return {
       ...payload,
       data: recordToUpdateData,

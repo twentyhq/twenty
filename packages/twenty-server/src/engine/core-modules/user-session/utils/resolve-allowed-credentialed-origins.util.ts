@@ -41,7 +41,9 @@ const isLoopbackHostname = (hostname: string): boolean => {
   const mappedHex = IPV4_MAPPED_HEX_REGEX.exec(host);
 
   // The high byte of the first hextet is the first octet of the v4 address.
-  return mappedHex !== null && Number.parseInt(mappedHex[1], 16) >> 8 === 127;
+  return (
+    mappedHex !== null && Number.parseInt(mappedHex[1] ?? '', 16) >> 8 === 127
+  );
 };
 
 const isLoopbackOrigin = (origin: string): boolean => {

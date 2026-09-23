@@ -320,6 +320,13 @@ export class OAuthService {
 
     const application = applications[0];
 
+    if (!isDefined(application)) {
+      return this.errorResponse(
+        'invalid_request',
+        'No workspace installation found. Client credentials grant requires exactly one installation.',
+      );
+    }
+
     const applicationAccessToken =
       await this.applicationTokenService.generateApplicationAccessToken({
         workspaceId: application.workspaceId,

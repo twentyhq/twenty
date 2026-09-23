@@ -35,7 +35,7 @@ export class SamlAuthGuard extends AuthGuard('saml') {
 
     try {
       identityProvider = await this.ssoService.findSsoIdentityProviderById(
-        request.params.identityProviderId,
+        request.params.identityProviderId ?? '',
       );
 
       if (!identityProvider) {

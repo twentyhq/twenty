@@ -60,7 +60,7 @@ export class SamlAuthStrategy extends PassportStrategy(
       {
         getSamlOptions: (req, callback) => {
           this.ssoService
-            .findSsoIdentityProviderById(req.params.identityProviderId)
+            .findSsoIdentityProviderById(req.params.identityProviderId ?? '')
             .then((identityProvider) => {
               if (
                 identityProvider &&

@@ -65,6 +65,10 @@ export class SubdomainManagerService {
   async findAvailableSubdomain(desired: string): Promise<string> {
     const [availableSubdomain] = await this.findAvailableSubdomains(desired, 1);
 
+    if (!isDefined(availableSubdomain)) {
+      throw new Error(`No subdomain available for "${desired}"`);
+    }
+
     return availableSubdomain;
   }
 

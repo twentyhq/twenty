@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+
 import type Stripe from 'stripe';
 
 import { transformStripeSubscriptionScheduleEventToDatabaseSubscriptionPhase } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-schedule-event-to-database-subscription-phase.util';
@@ -55,6 +57,8 @@ export const transformStripeSubscriptionEventToDatabaseSubscription = (
 ) => {
   // In Stripe SDK v19+, current_period_start/end moved from Subscription to SubscriptionItem
   const firstItem = subscription.items.data[0];
+
+  assertIsDefinedOrThrow(firstItem);
 
   return {
     workspaceId,

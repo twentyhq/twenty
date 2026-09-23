@@ -40,7 +40,9 @@ export const formatThreads = (
           visibility === MessageChannelVisibility.SHARE_EVERYTHING
             ? thread.lastMessageBody
             : FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-        ...extractParticipantSummary(threadParticipantsByThreadId[thread.id]),
+        ...extractParticipantSummary(
+          threadParticipantsByThreadId[thread.id] ?? [],
+        ),
         visibility,
         read: true,
       };
