@@ -25,9 +25,7 @@ export class AttributeChatMessageSendersCommand extends ProvisionedWorkspaceComm
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    if (
-      await this.storage.isEmptyUnprovisionedWorkspace(args.workspaceId)
-    ) {
+    if (await this.storage.isEmptyUnprovisionedWorkspace(args.workspaceId)) {
       return;
     }
     await this.schema.prepare(args.workspaceId, args.options.dryRun ?? false);

@@ -62,10 +62,17 @@ export class AgentHistoryMigrationValidationService {
     workspaceId: string;
   }): Promise<void> {
     for (const table of AGENT_HISTORY_TABLES) {
-      const coreColumns = await getAgentHistoryMigrationColumns({ runner, table });
-      const columns = table.columns.map((column) => coreColumns.includes(column)
-        ? escapeIdentifier(column)
-        : `NULL::uuid AS ${escapeIdentifier(column)}`).join(', ');
+      const coreColumns = await getAgentHistoryMigrationColumns({
+        runner,
+        table,
+      });
+      const columns = table.columns
+        .map((column) =>
+          coreColumns.includes(column)
+            ? escapeIdentifier(column)
+            : `NULL::uuid AS ${escapeIdentifier(column)}`,
+        )
+        .join(', ');
       const targetColumns = table.columns
         .map(
           (column) =>
@@ -101,7 +108,10 @@ export class AgentHistoryMigrationValidationService {
         'SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2',
         ['core', table.name],
       );
-      const coreColumns = await getAgentHistoryMigrationColumns({ runner, table });
+      const coreColumns = await getAgentHistoryMigrationColumns({
+        runner,
+        table,
+      });
       const expected = new Set<string>([...coreColumns, 'workspaceId']);
       if (
         rows.length !== expected.size ||
@@ -130,13 +140,17 @@ export class AgentHistoryMigrationValidationService {
       ) {
         throw new Error(`Workspace ${table.name} schema is not prepared`);
       }
-      const missingCoreColumns = table.columns.filter((column) => !coreColumns.includes(column));
+      const missingCoreColumns = table.columns.filter(
+        (column) => !coreColumns.includes(column),
+      );
       if (isNonEmptyArray(missingCoreColumns)) {
         const attributedMessages = await runner.query(
           `SELECT 1 FROM ${getAgentHistoryTable({ workspaceId, storage: 'workspace', name: table.name })} WHERE ${missingCoreColumns.map((column) => `${escapeIdentifier(column)} IS NOT NULL`).join(' OR ')} LIMIT 1`,
         );
         if (isNonEmptyArray(attributedMessages)) {
-          throw new Error('Run the 2.43 instance upgrade before moving attributed chat history to core');
+          throw new Error(
+            'Run the 2.43 instance upgrade before moving attributed chat history to core',
+          );
         }
       }
     }

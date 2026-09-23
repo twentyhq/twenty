@@ -272,31 +272,66 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     });
 
     it('can migrate and roll back 2.42 history before the sender columns exist', async () => {
-      await dataSource.query('ALTER TABLE core."agentMessage" DROP COLUMN "senderUserWorkspaceId", DROP COLUMN "senderApplicationId"');
-      await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' });
-      expect(await dataSource.query(`SELECT "senderUserWorkspaceId", "senderApplicationId" FROM "${SCHEMA}"."agentMessage"`)).toEqual([
-        { senderUserWorkspaceId: null, senderApplicationId: null },
-      ]);
+      await dataSource.query(
+        'ALTER TABLE core."agentMessage" DROP COLUMN "senderUserWorkspaceId", DROP COLUMN "senderApplicationId"',
+      );
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      expect(
+        await dataSource.query(
+          `SELECT "senderUserWorkspaceId", "senderApplicationId" FROM "${SCHEMA}"."agentMessage"`,
+        ),
+      ).toEqual([{ senderUserWorkspaceId: null, senderApplicationId: null }]);
       await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'core' });
-      expect(await dataSource.query('SELECT id FROM core."agentMessage"')).toEqual([{ id: MESSAGE_ID }]);
+      expect(
+        await dataSource.query('SELECT id FROM core."agentMessage"'),
+      ).toEqual([{ id: MESSAGE_ID }]);
     });
 
     it('preserves sender and application identity when moving attributed history in either direction', async () => {
-      await dataSource.query('UPDATE core."agentMessage" SET "senderUserWorkspaceId" = $1, "senderApplicationId" = $2', [OWNER_ID, THREAD_ID]);
-      await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' });
+      await dataSource.query(
+        'UPDATE core."agentMessage" SET "senderUserWorkspaceId" = $1, "senderApplicationId" = $2',
+        [OWNER_ID, THREAD_ID],
+      );
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
       await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'core' });
-      expect(await dataSource.query('SELECT "senderUserWorkspaceId", "senderApplicationId" FROM core."agentMessage"')).toEqual([
+      expect(
+        await dataSource.query(
+          'SELECT "senderUserWorkspaceId", "senderApplicationId" FROM core."agentMessage"',
+        ),
+      ).toEqual([
         { senderUserWorkspaceId: OWNER_ID, senderApplicationId: THREAD_ID },
       ]);
     });
 
     it('refuses rollback before clearing data if the legacy schema would discard sender identity', async () => {
-      await migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' });
-      await dataSource.query(`UPDATE "${SCHEMA}"."agentMessage" SET "senderUserWorkspaceId" = $1`, [OWNER_ID]);
-      await dataSource.query('ALTER TABLE core."agentMessage" DROP COLUMN "senderUserWorkspaceId", DROP COLUMN "senderApplicationId"');
-      await expect(migration.migrate({ workspaceId: WORKSPACE_ID, target: 'core' })).rejects.toThrow('Run the 2.43 instance upgrade');
-      expect(await dataSource.query('SELECT id FROM core."agentMessage"')).toEqual([{ id: MESSAGE_ID }]);
-      expect(await dataSource.query(`SELECT "senderUserWorkspaceId" FROM "${SCHEMA}"."agentMessage"`)).toEqual([{ senderUserWorkspaceId: OWNER_ID }]);
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      await dataSource.query(
+        `UPDATE "${SCHEMA}"."agentMessage" SET "senderUserWorkspaceId" = $1`,
+        [OWNER_ID],
+      );
+      await dataSource.query(
+        'ALTER TABLE core."agentMessage" DROP COLUMN "senderUserWorkspaceId", DROP COLUMN "senderApplicationId"',
+      );
+      await expect(
+        migration.migrate({ workspaceId: WORKSPACE_ID, target: 'core' }),
+      ).rejects.toThrow('Run the 2.43 instance upgrade');
+      expect(
+        await dataSource.query('SELECT id FROM core."agentMessage"'),
+      ).toEqual([{ id: MESSAGE_ID }]);
+      expect(
+        await dataSource.query(
+          `SELECT "senderUserWorkspaceId" FROM "${SCHEMA}"."agentMessage"`,
+        ),
+      ).toEqual([{ senderUserWorkspaceId: OWNER_ID }]);
     });
 
     it('copies all five tables, exact credits and archive state before changing the route', async () => {

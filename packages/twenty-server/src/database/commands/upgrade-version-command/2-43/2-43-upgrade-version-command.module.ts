@@ -6,7 +6,11 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
 import { AttributeChatMessageSendersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790171503075-attribute-chat-message-senders.command';
 
 @Module({
-  imports: [AgentHistoryMigrationModule, AgentHistoryModule, WorkspaceIteratorModule],
+  imports: [
+    AgentHistoryMigrationModule,
+    AgentHistoryModule,
+    WorkspaceIteratorModule,
+  ],
   providers: [AttributeChatMessageSendersCommand],
 })
 export class V2_43_UpgradeVersionCommandModule {}
