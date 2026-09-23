@@ -9,7 +9,7 @@ import { BackfillWorkflowExecutionCoreIdsCommand } from 'src/database/commands/u
 import { MakeWorkflowRunProjectionRelationsNullableCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789719131002-make-workflow-run-projection-relations-nullable.command';
 import { PurgeSoftDeletedViewsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789744500000-purge-soft-deleted-views.command';
 import { PurgeSoftDeletedRowLevelPermissionPredicatesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789978629000-purge-soft-deleted-row-level-permission-predicates.command';
-import { ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790091600000-provision-agent-chat-thread-target.command';
+import { ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790166480000-provision-agent-chat-thread-target.command';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { UnpinCreationCommandsOnRecordSelectionCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789634112046-unpin-creation-commands-on-record-selection.command';
 import { BackfillMissingSystemRelationIndexesCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789663454000-backfill-missing-system-relation-indexes.command';
