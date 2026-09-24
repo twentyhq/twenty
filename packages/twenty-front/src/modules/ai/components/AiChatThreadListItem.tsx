@@ -85,8 +85,9 @@ type AiChatThreadListItemProps = {
   surface?: AiChatThreadActionsSurface;
 };
 
-// The surface keys the row's dropdown state, so two rows for the same thread on
-// screen at once — a record page list and the side panel — must not share one.
+// The surface keys the row's dropdown state, so rows for one thread on two
+// surfaces do not share it. Every record page uses RECORD_PAGE, including one
+// open in the side panel, so two record pages on screen at once still do.
 export const AiChatThreadListItem = ({
   thread,
   surface = AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
