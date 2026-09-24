@@ -11,11 +11,12 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
   title: 'Modules/CommandMenu/RecordPageSidePanelCommandMenuDropdown',
@@ -60,7 +61,7 @@ const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
   ],
   args: {
     commandMenuId: 'story-command-menu',
