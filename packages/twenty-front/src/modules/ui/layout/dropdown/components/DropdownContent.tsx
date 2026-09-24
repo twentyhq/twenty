@@ -12,7 +12,7 @@ const StyledClickOutsideListenerExclusion = styled.div`
 
 type DropdownContentProps = Pick<
   ComponentProps<typeof Dropdown.Content>,
-  'children' | 'side' | 'align' | 'sideOffset' | 'width'
+  'children' | 'side' | 'align' | 'sideOffset' | 'width' | 'aria-label'
 >;
 
 export const DropdownContent = ({
@@ -21,6 +21,7 @@ export const DropdownContent = ({
   align,
   sideOffset,
   width,
+  'aria-label': ariaLabel,
 }: DropdownContentProps) => {
   const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
   const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
@@ -32,6 +33,7 @@ export const DropdownContent = ({
       align={align}
       sideOffset={sideOffset}
       width={width}
+      aria-label={ariaLabel}
     >
       {isDefined(excludedClickOutsideId) ? (
         <StyledClickOutsideListenerExclusion
