@@ -3,4 +3,5 @@ import { type TeamsBotConnectorKey } from 'src/features/chat/logic-functions/typ
 export type TeamsBotConnectorKeysCacheEntry = {
   keys: TeamsBotConnectorKey[];
   fetchedAtMs: number;
+  refreshAttemptedAtMs: number;
 };

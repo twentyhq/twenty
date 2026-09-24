@@ -3,8 +3,8 @@ import { decodeProtectedHeader, importJWK, jwtVerify } from 'jose';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_BOT_CONNECTOR_ISSUER } from 'src/features/chat/logic-functions/constants/teams-bot-connector-issuer';
-import { TEAMS_CHANNEL_ID } from 'src/features/chat/logic-functions/constants/teams-channel-id';
 import { TEAMS_JWT_CLOCK_TOLERANCE_SECONDS } from 'src/features/chat/logic-functions/constants/teams-jwt-clock-tolerance-seconds';
+import { isTeamsEndorsedKey } from 'src/features/chat/logic-functions/utils/is-teams-endorsed-key';
 import { normalizeTeamsServiceUrl } from 'src/features/chat/logic-functions/utils/normalize-teams-service-url';
 import {
   type LoadTeamsBotConnectorKeys,
@@ -89,7 +89,7 @@ export const verifyTeamsActivityTokenOrThrow = async ({
 
   // Every published key lists the channels it signs for; a valid signature
   // from a key endorsed for another channel is still not a Teams activity.
-  if (signingKey.endorsements?.includes(TEAMS_CHANNEL_ID) !== true) {
+  if (!isTeamsEndorsedKey(signingKey)) {
     throw new Error(
       'Teams activity token is signed with a key not endorsed for Teams',
     );

@@ -23,6 +23,18 @@ vi.mock(
 const CACHED_KEYS = [{ kid: 'cached', kty: 'RSA' }];
 const FETCHED_KEYS = [{ kid: 'fetched', kty: 'RSA' }];
 
+const cacheEntry = ({
+  fetchedAgoMs,
+  refreshAttemptedAgoMs = fetchedAgoMs,
+}: {
+  fetchedAgoMs: number;
+  refreshAttemptedAgoMs?: number;
+}) => ({
+  keys: CACHED_KEYS,
+  fetchedAtMs: Date.now() - fetchedAgoMs,
+  refreshAttemptedAtMs: Date.now() - refreshAttemptedAgoMs,
+});
+
 describe('getTeamsBotConnectorKeys', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -36,54 +48,86 @@ describe('getTeamsBotConnectorKeys', () => {
   });
 
   it('should reuse a key set fetched within the last day', async () => {
-    kvGetMock.mockResolvedValue({
-      keys: CACHED_KEYS,
-      fetchedAtMs: Date.now() - 23 * 60 * 60 * 1000,
-    });
+    kvGetMock.mockResolvedValue(
+      cacheEntry({ fetchedAgoMs: 23 * 60 * 60 * 1000 }),
+    );
 
     expect(await getTeamsBotConnectorKeys()).toEqual(CACHED_KEYS);
     expect(fetchKeysMock).not.toHaveBeenCalled();
+    expect(kvSetMock).not.toHaveBeenCalled();
   });
 
   it('should fetch and cache when nothing is stored', async () => {
     kvGetMock.mockResolvedValue(null);
 
     expect(await getTeamsBotConnectorKeys()).toEqual(FETCHED_KEYS);
+    expect(kvSetMock).toHaveBeenCalledTimes(1);
     expect(kvSetMock).toHaveBeenCalledWith(TEAMS_BOT_CONNECTOR_KEYS_KV_KEY, {
       keys: FETCHED_KEYS,
       fetchedAtMs: Date.now(),
+      refreshAttemptedAtMs: Date.now(),
     });
   });
 
-  it('should fetch again once the cached key set is a day old', async () => {
-    kvGetMock.mockResolvedValue({
-      keys: CACHED_KEYS,
-      fetchedAtMs: Date.now() - 25 * 60 * 60 * 1000,
-    });
+  it('should stamp the refresh attempt before fetching once the cached key set is a day old', async () => {
+    const staleEntry = cacheEntry({ fetchedAgoMs: 25 * 60 * 60 * 1000 });
+
+    kvGetMock.mockResolvedValue(staleEntry);
 
     expect(await getTeamsBotConnectorKeys()).toEqual(FETCHED_KEYS);
+    expect(kvSetMock).toHaveBeenNthCalledWith(
+      1,
+      TEAMS_BOT_CONNECTOR_KEYS_KV_KEY,
+      { ...staleEntry, refreshAttemptedAtMs: Date.now() },
+    );
+    expect(kvSetMock).toHaveBeenNthCalledWith(
+      2,
+      TEAMS_BOT_CONNECTOR_KEYS_KV_KEY,
+      {
+        keys: FETCHED_KEYS,
+        fetchedAtMs: Date.now(),
+        refreshAttemptedAtMs: Date.now(),
+      },
+    );
   });
 
-  it('should honour a forced refresh when the cache is older than the refresh interval', async () => {
-    kvGetMock.mockResolvedValue({
-      keys: CACHED_KEYS,
-      fetchedAtMs: Date.now() - 10 * 60 * 1000,
-    });
+  it('should honour a forced refresh when the last attempt is older than the refresh interval', async () => {
+    kvGetMock.mockResolvedValue(cacheEntry({ fetchedAgoMs: 10 * 60 * 1000 }));
 
     expect(await getTeamsBotConnectorKeys({ forceRefresh: true })).toEqual(
       FETCHED_KEYS,
     );
   });
 
-  it('should rate limit forced refreshes to the refresh interval', async () => {
-    kvGetMock.mockResolvedValue({
-      keys: CACHED_KEYS,
-      fetchedAtMs: Date.now() - 60 * 1000,
-    });
+  it('should rate limit forced refreshes on the last attempt, not on the last successful fetch', async () => {
+    kvGetMock.mockResolvedValue(
+      cacheEntry({
+        fetchedAgoMs: 10 * 60 * 1000,
+        refreshAttemptedAgoMs: 60 * 1000,
+      }),
+    );
 
     expect(await getTeamsBotConnectorKeys({ forceRefresh: true })).toEqual(
       CACHED_KEYS,
     );
     expect(fetchKeysMock).not.toHaveBeenCalled();
+    expect(kvSetMock).not.toHaveBeenCalled();
+  });
+
+  it('should keep serving the last good key set when the fetch fails', async () => {
+    kvGetMock.mockResolvedValue(
+      cacheEntry({ fetchedAgoMs: 25 * 60 * 60 * 1000 }),
+    );
+    fetchKeysMock.mockRejectedValue(new Error('upstream down'));
+
+    expect(await getTeamsBotConnectorKeys()).toEqual(CACHED_KEYS);
+    expect(kvSetMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should surface a failed fetch when there is no key set to fall back on', async () => {
+    kvGetMock.mockResolvedValue(null);
+    fetchKeysMock.mockRejectedValue(new Error('upstream down'));
+
+    await expect(getTeamsBotConnectorKeys()).rejects.toThrow('upstream down');
   });
 });

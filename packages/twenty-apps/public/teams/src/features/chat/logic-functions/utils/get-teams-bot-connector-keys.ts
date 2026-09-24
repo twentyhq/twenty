@@ -8,15 +8,24 @@ import { type TeamsBotConnectorKey } from 'src/features/chat/logic-functions/typ
 import { type TeamsBotConnectorKeysCacheEntry } from 'src/features/chat/logic-functions/types/teams-bot-connector-keys-cache-entry.type';
 import { fetchTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/utils/fetch-teams-bot-connector-keys';
 
-const isFetchedWithin = (
-  entry: TeamsBotConnectorKeysCacheEntry | null,
-  maxAgeMs: number,
-): entry is TeamsBotConnectorKeysCacheEntry =>
-  isDefined(entry) && entry.fetchedAtMs + maxAgeMs > Date.now();
+const isWithin = (timestampMs: number, maxAgeMs: number): boolean =>
+  timestampMs + maxAgeMs > Date.now();
+
+const canReuse = (
+  entry: TeamsBotConnectorKeysCacheEntry,
+  forceRefresh: boolean,
+): boolean =>
+  forceRefresh
+    ? isWithin(
+        entry.refreshAttemptedAtMs,
+        TEAMS_BOT_CONNECTOR_KEYS_MIN_REFRESH_INTERVAL_MS,
+      )
+    : isWithin(entry.fetchedAtMs, TEAMS_BOT_CONNECTOR_KEYS_MAX_AGE_MS);
 
 // An unknown key id normally means Microsoft rotated the signing keys, but it
-// is also what a forged token carries, so a forced refresh is rate limited
-// rather than letting every rejected request hit the keys endpoint.
+// is also what a forged token carries. The refresh attempt is stamped before
+// the fetch so concurrent invocations back off on the stamp rather than each
+// racing the fetch, and a failed fetch keeps serving the last good key set.
 export const getTeamsBotConnectorKeys = async ({
   forceRefresh = false,
 }: {
@@ -26,20 +35,31 @@ export const getTeamsBotConnectorKeys = async ({
     TEAMS_BOT_CONNECTOR_KEYS_KV_KEY,
   );
 
-  const reuseMaxAgeMs = forceRefresh
-    ? TEAMS_BOT_CONNECTOR_KEYS_MIN_REFRESH_INTERVAL_MS
-    : TEAMS_BOT_CONNECTOR_KEYS_MAX_AGE_MS;
-
-  if (isFetchedWithin(cachedEntry, reuseMaxAgeMs)) {
+  if (isDefined(cachedEntry) && canReuse(cachedEntry, forceRefresh)) {
     return cachedEntry.keys;
   }
 
-  const keys = await fetchTeamsBotConnectorKeys();
+  if (isDefined(cachedEntry)) {
+    await kv.set<TeamsBotConnectorKeysCacheEntry>(
+      TEAMS_BOT_CONNECTOR_KEYS_KV_KEY,
+      { ...cachedEntry, refreshAttemptedAtMs: Date.now() },
+    );
+  }
 
-  await kv.set<TeamsBotConnectorKeysCacheEntry>(
-    TEAMS_BOT_CONNECTOR_KEYS_KV_KEY,
-    { keys, fetchedAtMs: Date.now() },
-  );
+  try {
+    const keys = await fetchTeamsBotConnectorKeys();
 
-  return keys;
+    await kv.set<TeamsBotConnectorKeysCacheEntry>(
+      TEAMS_BOT_CONNECTOR_KEYS_KV_KEY,
+      { keys, fetchedAtMs: Date.now(), refreshAttemptedAtMs: Date.now() },
+    );
+
+    return keys;
+  } catch (error) {
+    if (isDefined(cachedEntry)) {
+      return cachedEntry.keys;
+    }
+
+    throw error;
+  }
 };

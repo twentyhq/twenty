@@ -1,8 +1,13 @@
-import { isArray, isNonEmptyString, isObject } from '@sniptt/guards';
+import {
+  isArray,
+  isNonEmptyArray,
+  isNonEmptyString,
+  isObject,
+} from '@sniptt/guards';
 
 import { TEAMS_BOT_OPENID_KEYS_URL } from 'src/features/chat/logic-functions/constants/teams-bot-openid-keys-url';
-import { TEAMS_CHANNEL_ID } from 'src/features/chat/logic-functions/constants/teams-channel-id';
 import { type TeamsBotConnectorKey } from 'src/features/chat/logic-functions/types/teams-bot-connector-key.type';
+import { isTeamsEndorsedKey } from 'src/features/chat/logic-functions/utils/is-teams-endorsed-key';
 
 type TeamsBotConnectorKeysResponse = {
   keys?: unknown;
@@ -11,12 +16,8 @@ type TeamsBotConnectorKeysResponse = {
 const hasKeyId = (key: unknown): key is TeamsBotConnectorKey =>
   isObject(key) && 'kid' in key && isNonEmptyString(key.kid);
 
-const isEndorsedForTeams = (key: TeamsBotConnectorKey): boolean =>
-  isArray(key.endorsements) && key.endorsements.includes(TEAMS_CHANNEL_ID);
-
 // The published document carries a certificate chain per key and keys for
-// every Bot Framework channel, which is twenty times what verification reads.
-// Only the RSA public parameters and the endorsements are kept in the cache.
+// every Bot Framework channel, twenty times what verification reads.
 const toSigningKey = ({
   kty,
   kid,
@@ -52,8 +53,16 @@ export const fetchTeamsBotConnectorKeys = async (): Promise<
     throw new Error('Bot Connector signing keys response carried no keys');
   }
 
-  return body.keys
+  const teamsKeys = body.keys
     .filter(hasKeyId)
-    .filter(isEndorsedForTeams)
+    .filter(isTeamsEndorsedKey)
     .map(toSigningKey);
+
+  if (!isNonEmptyArray(teamsKeys)) {
+    throw new Error(
+      'Bot Connector signing keys response carried no key endorsed for Teams',
+    );
+  }
+
+  return teamsKeys;
 };

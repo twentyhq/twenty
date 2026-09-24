@@ -58,6 +58,18 @@ describe('fetchTeamsBotConnectorKeys', () => {
     expect(fetchMock).toHaveBeenCalledWith(TEAMS_BOT_OPENID_KEYS_URL);
   });
 
+  it('should reject a response with no key endorsed for Teams rather than cache an empty set', async () => {
+    respondWith({
+      keys: [
+        { ...TEAMS_KEY, kid: 'telephony-key', endorsements: ['telephony'] },
+      ],
+    });
+
+    await expect(fetchTeamsBotConnectorKeys()).rejects.toThrow(
+      'no key endorsed for Teams',
+    );
+  });
+
   it('should reject a response without a keys array', async () => {
     respondWith({ error: 'unexpected' });
 
