@@ -1,6 +1,7 @@
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';
+import { computeWorkspaceSchemaForeignKeyName } from 'src/engine/twenty-orm/workspace-schema-manager/utils/compute-workspace-schema-foreign-key-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 const ALLOWED_FK_ACTIONS = new Set([
@@ -16,17 +17,18 @@ export class WorkspaceSchemaForeignKeyManagerService {
     queryRunner,
     schemaName,
     foreignKey,
+    isNotValid = false,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     foreignKey: WorkspaceSchemaForeignKeyDefinition;
+    isNotValid?: boolean;
   }): Promise<void> {
-    const foreignKeyName = queryRunner.connection.namingStrategy.foreignKeyName(
-      foreignKey.tableName,
-      [foreignKey.columnName],
-      `${schemaName}.${foreignKey.referencedTableName}`,
-      [foreignKey.referencedColumnName],
-    );
+    const foreignKeyName = computeWorkspaceSchemaForeignKeyName({
+      queryRunner,
+      schemaName,
+      foreignKey,
+    });
 
     let sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(foreignKey.tableName)} ADD CONSTRAINT ${escapeIdentifier(foreignKeyName)} FOREIGN KEY (${escapeIdentifier(foreignKey.columnName)}) REFERENCES ${escapeIdentifier(schemaName)}.${escapeIdentifier(foreignKey.referencedTableName)} (${escapeIdentifier(foreignKey.referencedColumnName)})`;
 
@@ -44,7 +46,27 @@ export class WorkspaceSchemaForeignKeyManagerService {
       sql += ` ON UPDATE ${foreignKey.onUpdate}`;
     }
 
+    if (isNotValid) {
+      sql += ' NOT VALID';
+    }
+
     await queryRunner.query(sql);
+  }
+
+  async validateForeignKey({
+    queryRunner,
+    schemaName,
+    tableName,
+    foreignKeyName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    foreignKeyName: string;
+  }): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} VALIDATE CONSTRAINT ${escapeIdentifier(foreignKeyName)}`,
+    );
   }
 
   async dropForeignKey({

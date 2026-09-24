@@ -2,4 +2,5 @@ import { type DeferrableWorkspaceMigrationActionHandlerKey } from 'src/engine/wo
 
 export const SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS = [
   'create_index',
+  'create_fieldMetadata',
 ] as const satisfies readonly DeferrableWorkspaceMigrationActionHandlerKey[];

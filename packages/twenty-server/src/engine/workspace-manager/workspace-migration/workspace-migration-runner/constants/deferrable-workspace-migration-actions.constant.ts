@@ -2,5 +2,6 @@ import { type WorkspaceMigrationActionHandlerKey } from 'src/engine/workspace-ma
 
 export const DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS = [
   'create_index',
+  'create_fieldMetadata',
   'delete_logicFunction',
 ] as const satisfies readonly WorkspaceMigrationActionHandlerKey[];

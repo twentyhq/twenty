@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { getManyToOneForeignKey } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/utils/get-many-to-one-foreign-key.util';
+import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
+import { type DeferredWorkspaceMigrationActionPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -178,6 +186,9 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       for (const flatFieldMetadata of createdFlatFieldMetadatas) {
         await this.executeSingleFieldMetadataWorkspaceSchema({
           flatFieldMetadata,
+          isForeignKeyValidationDeferred:
+            this.getDeferredForeignKeyValidation(context)?.payload
+              .fieldMetadataId === flatFieldMetadata.id,
           flatObjectMetadata,
           flatObjectMetadataMaps,
           objectFlatFieldMetadatas,
@@ -192,8 +203,120 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
   }
 
+  override getDeferredAction(
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>,
+  ) {
+    return this.getDeferredForeignKeyValidation(context);
+  }
+
+  override async executeDeferredAction({
+    workspaceId,
+    payload: { fieldMetadataId, tableName, foreignKeyName },
+    allFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
+    queryRunner,
+  }: DeferredWorkspaceMigrationActionExecutionArgs<
+    DeferredWorkspaceMigrationActionPayload<'create_fieldMetadata'>
+  >): Promise<void> {
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: fieldMetadataId,
+    });
+
+    if (!isDefined(flatFieldMetadata)) {
+      return;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: flatFieldMetadata.objectMetadataId,
+    });
+
+    const { schemaName } = getWorkspaceSchemaContextForMigration({
+      workspaceId,
+      objectMetadata: flatObjectMetadata,
+    });
+
+    await this.workspaceSchemaManagerService.foreignKeyManager.validateForeignKey(
+      {
+        queryRunner,
+        schemaName,
+        tableName,
+        foreignKeyName,
+      },
+    );
+  }
+
+  private getDeferredForeignKeyValidation({
+    flatAction,
+    queryRunner,
+    allFlatEntityMaps: { flatObjectMetadataMaps },
+    workspaceId,
+    featureFlagsMap,
+  }: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>):
+    | {
+        actionHandlerKey: 'create_fieldMetadata';
+        payload: DeferredWorkspaceMigrationActionPayload<'create_fieldMetadata'>;
+      }
+    | undefined {
+    if (
+      !featureFlagsMap?.[
+        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
+      ]
+    ) {
+      return undefined;
+    }
+
+    const flatFieldMetadata = [
+      flatAction.flatEntity,
+      flatAction.relatedFlatFieldMetadata,
+    ]
+      .filter(isDefined)
+      .find(
+        (createdFlatFieldMetadata) =>
+          isMorphOrRelationFlatFieldMetadata(createdFlatFieldMetadata) &&
+          createdFlatFieldMetadata.settings?.relationType ===
+            RelationType.MANY_TO_ONE,
+      );
+
+    if (!isDefined(flatFieldMetadata)) {
+      return undefined;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: flatFieldMetadata.objectMetadataId,
+    });
+
+    const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
+      workspaceId,
+      objectMetadata: flatObjectMetadata,
+    });
+
+    const foreignKey = getManyToOneForeignKey({
+      flatFieldMetadata,
+      flatObjectMetadataMaps,
+      queryRunner,
+      schemaName,
+      tableName,
+    });
+
+    if (!isDefined(foreignKey)) {
+      return undefined;
+    }
+
+    return {
+      actionHandlerKey: 'create_fieldMetadata' as const,
+      payload: {
+        fieldMetadataId: flatFieldMetadata.id,
+        tableName,
+        foreignKeyName: foreignKey.foreignKeyName,
+      },
+    };
+  }
+
   private async executeSingleFieldMetadataWorkspaceSchema({
     flatFieldMetadata,
+    isForeignKeyValidationDeferred,
     flatObjectMetadata,
     flatObjectMetadataMaps,
     objectFlatFieldMetadatas,
@@ -205,6 +328,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     workspaceId,
   }: {
     flatFieldMetadata: FlatFieldMetadata;
+    isForeignKeyValidationDeferred: boolean;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: MetadataFlatEntityMaps<'objectMetadata'>;
     objectFlatFieldMetadatas: FlatFieldMetadata[];
@@ -285,6 +409,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
                 flatFieldMetadata.settings?.onDelete,
               ) ?? 'CASCADE',
           },
+          isNotValid: isForeignKeyValidationDeferred,
         },
       );
     }

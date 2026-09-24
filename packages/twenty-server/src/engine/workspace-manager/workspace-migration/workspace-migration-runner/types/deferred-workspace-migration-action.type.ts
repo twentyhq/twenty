@@ -7,6 +7,11 @@ export type DeferrableWorkspaceMigrationActionHandlerKey =
 
 type DeferredWorkspaceMigrationActionPayloadByHandlerKey = {
   create_index: { indexMetadataId: string };
+  create_fieldMetadata: {
+    fieldMetadataId: string;
+    tableName: string;
+    foreignKeyName: string;
+  };
   delete_logicFunction: { flatLogicFunction: FlatLogicFunction };
 };
 

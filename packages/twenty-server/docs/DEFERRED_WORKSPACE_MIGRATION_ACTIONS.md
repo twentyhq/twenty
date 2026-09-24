@@ -16,6 +16,8 @@ Every new object gets system relations: a `target<Object>Id` join column on `tim
 2. `ADD CONSTRAINT ... FOREIGN KEY` (`create-field-action-handler.service.ts:274`), which scans the whole table to validate a column that is `NULL` on every row;
 3. a blocking `CREATE INDEX` (`create-index-action-handler.service.ts`), which scans and sorts the whole table again.
 
+Both scans are what this doc removes: the index build moves to the worker, and the foreign key is added `NOT VALID` so its validation scan moves there too.
+
 The cost is two full table scans per new object, proportional to table size rather than to the size of the change. The runner uses the core datasource, whose client-side `query_timeout` defaults to 10s (`core.datasource.ts:81`); a timed-out query keeps running on the server while holding its locks.
 
 The runner already has one mechanism for work outside the transaction: `afterCommitSideEffects` (introduced in #21845). Its only user is `DeleteLogicFunctionActionHandlerService`, which deletes a logic function's storage files and runtime resource after commit as in-process closures; a failure is logged and forgotten (`workspace-migration-runner.service.ts:545` on main). The #21845 description already anticipated moving this to "jobs and metadata boolean state tracker in db".
@@ -50,6 +52,7 @@ Non-goals (this doc and PR 1):
 | Action | Deferred work | Payload |
 | --- | --- | --- |
 | `create_index` | `CREATE INDEX CONCURRENTLY` for a non-unique, non-partial index covering only `MANY_TO_ONE` join columns | `{ indexMetadataId }`, a reference: the index metadata still exists after commit |
+| `create_fieldMetadata` | `VALIDATE CONSTRAINT` for the foreign key of a `MANY_TO_ONE` join column, created `NOT VALID` in the transaction | `{ fieldMetadataId, tableName, foreignKeyName }`: the field is the reference, the constraint name is a snapshot since it is derived from the naming strategy |
 | `delete_logicFunction` | delete the source folder and built handler from storage, delete the runtime resource | `{ flatLogicFunction }`, a snapshot: the metadata is gone after commit |
 
 ### Action handler contract
@@ -163,7 +166,8 @@ Delivery, each PR merged on its own behind the flag:
 | 2 | Recovery: cron resetting `IN_PROGRESS` rows past the timeout and enqueueing workspaces with `PENDING` rows; CLI retry of `FAILED` rows; job deduplication per workspace and retry backoff; metrics on duration and on rows by status. |
 | 3 | Refuse schema-affecting migrations while the workspace has in-flight deferred builds: see above. |
 | 4 | Error surfacing: the object, field and index exception handlers map `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` to a `ConflictError` carrying `subCode` and `userFriendlyMessage`; the SDK CLI shows that message with a wait-and-retry hint. |
-| 5 | Admin retry of `FAILED` rows from the admin panel, then foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns created in the same action, plus a deferrable `create_fieldMetadata` action running `VALIDATE CONSTRAINT` with the constraint name in its payload. |
+| 5 | Foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns, plus a deferrable `create_fieldMetadata` action running `VALIDATE CONSTRAINT`. |
+| 5b | Admin retry of `FAILED` rows from the admin panel, on top of the `workspace:retry-failed-deferred-migration-actions` command. |
 | 6 | Enable the flag for the affected self-hosted workspace, then cloud, then default on and remove the flag. |
 
 Migration: one fast instance command in 2.42 creating the table. No backfill.
@@ -175,6 +179,8 @@ Tested in PR 1:
 - manual, 3M `timelineActivity` rows: flag off logic function deletion removes files right after commit; flag on persists actions with the worker stopped and processes them once started (`timelineActivity` index built in 2.4s outside the transaction); an object deleted before the worker ran completes its actions as obsolete; a broken column fails three times then `FAILED` while the other indexes build immediately; restoring it before a retry drops and rebuilds the index.
 
 Tested in PR 2, manually on the same data: two object creations with the worker stopped queue a single job; with the enqueue removed and rows left `IN_PROGRESS` two hours ago, nothing runs until the cron resets them (one to `PENDING`, the one at its last attempt to `FAILED`) and enqueues the workspace; the retry command builds the `FAILED` index; a broken column is retried after 30 then 60 seconds, and the actions behind it run at the next cron once it is `FAILED`.
+
+Tested in PR 5, manually on the same data: creating an object adds the four join column foreign keys `NOT VALID` (`convalidated = false`) and queues a validation per constraint next to the index builds; once the worker runs they all read `convalidated = true`. With 3M `timelineActivity` rows, object creation takes 5.8s with the flag off and 2.1s with it on.
 
 Tested in PR 3, manually on the same data: a second object creation is refused while the first one's index builds are pending, and accepted once they drain; a view is created while builds are pending; a pending logic function cleanup on its own refuses nothing; with the flag off nothing is refused. Integration: the deferred, index and object metadata suites pass.
 
