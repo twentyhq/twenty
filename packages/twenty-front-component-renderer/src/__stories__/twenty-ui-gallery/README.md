@@ -45,7 +45,7 @@ No stories are skipped or marked as expected-to-fail by the runner.
 
 | Component | Current limitation |
 | --- | --- |
-| Field controls | Forwarded events lack the native event used for `composedPath`. React serializes boolean `aria-invalid` as an empty string; Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
+| Field controls | Forwarded events lack the `nativeEvent` Base UI reads for `composedPath`. Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
 | Tabs | React cannot mount without `compareDocumentPosition`; Preact activation fails on the missing native event for `composedPath`. |
 | RadioGroup | Ordering its radios needs `compareDocumentPosition`, which the sandbox DOM does not implement. |
 | SegmentedControl | Ordering its radios needs `compareDocumentPosition`, so React cannot mount it. In the Preact input gallery it mounts and fails on first focus instead. Selecting would also need `PointerEvent` and native radio activation. |
@@ -55,12 +55,15 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
 | Responsive hooks | The sandbox has no `window.matchMedia`, so `useIsMobile` and `useIsTouchDevice` return `false` whatever the host viewport or input. The fixture asserts that fallback and must assert host-derived values once a media-query bridge lands. |
 
-The worker DOM now provides `Element.matches`, `closest`, and `querySelector`
-backed by `css-select`, which matches the sandbox's custom element tags by
-their HTML tag names. `TooltipPreact` therefore covers hover opening and Escape
-dismissal. Pointer leave still needs the `Node.contains` fix and document-level
-`mousemove` delivery for the safe polygon, and the compound tooltip's title and
-description are not covered yet.
+The worker DOM now provides `Element.matches`, `closest`, `querySelector` backed
+by `css-select`, and property accessors for boolean ARIA attributes so React and
+Preact forward `true`/`false` instead of empty strings and remove the attribute
+when the prop is cleared. `getAttribute` and the selector engine read the remote
+properties React and Preact set, and the selector engine matches the sandbox's
+custom element tags by their HTML tag names. `TooltipPreact` therefore covers
+hover opening and Escape dismissal. Pointer leave still needs the `Node.contains`
+fix and document-level `mousemove` delivery for the safe polygon, and the
+compound tooltip's title and description are not covered yet.
 
 Once the remaining gaps are fixed, extend the stories to verify selection,
 disabled items, keyboard navigation, and overlay content, dismissal, and focus

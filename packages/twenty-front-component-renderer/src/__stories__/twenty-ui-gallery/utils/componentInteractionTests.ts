@@ -11,59 +11,49 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
 
 type CreateFieldControlsTestOptions = {
-  expectedAriaInvalid: '' | 'true';
   expectedReportedValues: string | RegExp;
 };
 
-// React serializes true boolean ARIA attributes as empty strings in the sandbox.
-type CreateCheckboxTestOptions = {
-  expectedAriaTrue: '' | 'true';
+export const checkboxTest: TwentyUiGalleryPlayFunction = async ({
+  canvasElement,
+}) => {
+  const canvas = within(canvasElement);
+  await expectFrontComponentMounted(canvas);
+
+  const checkbox = canvas.getByRole('checkbox', { name: 'Select account' });
+  const uncontrolled = canvas.getByRole('checkbox', {
+    name: 'Uncontrolled selection',
+  });
+  expect(checkbox).not.toBeChecked();
+  expect(uncontrolled).toBeChecked();
+  expect(
+    canvas.getByRole('checkbox', { name: 'Partial selection' }),
+  ).toBePartiallyChecked();
+  const disabled = canvas.getByRole('checkbox', {
+    name: 'Disabled selection',
+  });
+  expect(disabled).toHaveAttribute('aria-disabled', 'true');
+  await userEvent.click(disabled);
+  expect(disabled).not.toBeChecked();
+
+  const readOnly = canvas.getByRole('checkbox', {
+    name: 'Read-only selection',
+  });
+  await userEvent.click(readOnly);
+  expect(readOnly).toBeChecked();
+  expect(errorHandler).not.toHaveBeenCalled();
+
+  await userEvent.click(checkbox);
+  await expectSandboxErrors({
+    requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_EVENT_CONSTRUCTOR],
+  });
+  expect(canvas.getByRole('status')).toHaveTextContent(
+    'Selection: unselected; Changes: 0',
+  );
 };
-
-export const createCheckboxTest =
-  ({
-    expectedAriaTrue,
-  }: CreateCheckboxTestOptions): TwentyUiGalleryPlayFunction =>
-  async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expectFrontComponentMounted(canvas);
-
-    const checkbox = canvas.getByRole('checkbox', { name: 'Select account' });
-    const uncontrolled = canvas.getByRole('checkbox', {
-      name: 'Uncontrolled selection',
-    });
-    expect(checkbox).not.toBeChecked();
-    expect(uncontrolled).toHaveAttribute('aria-checked', expectedAriaTrue);
-    expect(
-      canvas.getByRole('checkbox', { name: 'Partial selection' }),
-    ).toBePartiallyChecked();
-    const disabled = canvas.getByRole('checkbox', {
-      name: 'Disabled selection',
-    });
-    expect(disabled).toHaveAttribute('aria-disabled', expectedAriaTrue);
-    await userEvent.click(disabled);
-    expect(disabled).not.toBeChecked();
-
-    const readOnly = canvas.getByRole('checkbox', {
-      name: 'Read-only selection',
-    });
-    await userEvent.click(readOnly);
-    expect(readOnly).toHaveAttribute('aria-checked', expectedAriaTrue);
-    expect(errorHandler).not.toHaveBeenCalled();
-
-    // Checkbox activation forwards a click through an unavailable PointerEvent.
-    await userEvent.click(checkbox);
-    await expectSandboxErrors({
-      requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_EVENT_CONSTRUCTOR],
-    });
-    expect(canvas.getByRole('status')).toHaveTextContent(
-      'Selection: unselected; Changes: 0',
-    );
-  };
 
 export const createFieldControlsTest =
   ({
-    expectedAriaInvalid,
     expectedReportedValues,
   }: CreateFieldControlsTestOptions): TwentyUiGalleryPlayFunction =>
   async ({ canvasElement }) => {
@@ -76,7 +66,7 @@ export const createFieldControlsTest =
     expect(email).toHaveAccessibleDescription('Use your work email');
     expect(
       canvas.getByRole('textbox', { name: 'Required name' }),
-    ).toHaveAttribute('aria-invalid', expectedAriaInvalid);
+    ).toHaveAttribute('aria-invalid', 'true');
     expect(canvas.getByText('Name is required')).toBeVisible();
     expect(canvas.getByRole('textbox', { name: 'Reference' })).toHaveValue(
       'REF-42',
