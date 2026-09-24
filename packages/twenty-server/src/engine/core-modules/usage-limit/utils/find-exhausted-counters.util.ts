@@ -19,7 +19,9 @@ export const findExhaustedCounters = ({
       return false;
     }
 
-    // A caller that names what it is about to spend is admitted only if the
-    // whole of it fits, so a batch cannot straddle the limit and overshoot it.
-    return remaining <= 0 || remaining < (cost?.[counter.meter] ?? 0);
+    if (remaining <= 0) {
+      return true;
+    }
+
+    return counter.kind === 'limit' && remaining < (cost?.[counter.meter] ?? 0);
   });
