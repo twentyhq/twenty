@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   CacheLockException,
   CacheLockExceptionCode,
@@ -33,16 +35,21 @@ export class CacheLockService {
     options?: CacheLockOptions,
   ): Promise<T> {
     const { ms = 100, maxRetries = 50, ttl = 5_500 } = options || {};
+    const ownerToken = uuidv4();
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
-      const acquired = await this.cacheStorageService.acquireLock(key, ttl);
+      const acquired = await this.cacheStorageService.acquireLock(
+        key,
+        ttl,
+        ownerToken,
+      );
 
       if (acquired) {
         try {
           return await fn();
         } finally {
           try {
-            await this.cacheStorageService.releaseLock(key);
+            await this.cacheStorageService.releaseLock(key, ownerToken);
           } catch (releaseError) {
             this.logger.warn(
               `Failed to release lock for key "${key}": ${releaseError}`,

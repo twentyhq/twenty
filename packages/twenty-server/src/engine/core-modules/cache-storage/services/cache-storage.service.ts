@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 
@@ -296,14 +297,18 @@ export class CacheStorageService {
     return count as number;
   }
 
-  async acquireLock(key: string, ttl = 1000): Promise<boolean> {
+  async acquireLock(
+    key: string,
+    ttl = 1000,
+    ownerToken = 'lock',
+  ): Promise<boolean> {
     if (!this.isRedisCache(this.cache)) {
       throw new Error('acquireLock is only supported with Redis cache');
     }
 
     const redisClient = this.cache.store.client;
 
-    const result = await redisClient.set(this.getKey(key), 'lock', {
+    const result = await redisClient.set(this.getKey(key), ownerToken, {
       NX: true,
       PX: ttl,
     });
@@ -311,12 +316,32 @@ export class CacheStorageService {
     return result === 'OK';
   }
 
-  async releaseLock(key: string): Promise<void> {
+  async releaseLock(key: string, ownerToken?: string): Promise<boolean> {
     if (!this.isRedisCache(this.cache)) {
       throw new Error('releaseLock is only supported with Redis cache');
     }
 
-    await this.del(key);
+    if (!isDefined(ownerToken)) {
+      await this.del(key);
+
+      return true;
+    }
+
+    const redisClient = this.cache.store.client;
+
+    const script = `
+if redis.call('get', KEYS[1]) == ARGV[1] then
+  return redis.call('del', KEYS[1])
+else
+  return 0
+end`;
+
+    const result = (await redisClient.eval(script, {
+      keys: [this.getKey(key)],
+      arguments: [ownerToken],
+    })) as number;
+
+    return result === 1;
   }
 
   async incrBy(key: string, increment: number): Promise<number> {
