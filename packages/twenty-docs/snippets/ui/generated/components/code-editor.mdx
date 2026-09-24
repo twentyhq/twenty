@@ -51,6 +51,10 @@
   Adds a handle below the editor to drag its height.
 </ParamField>
 
+<ParamField body="resizeLabel" type="string" default="Resize editor">
+  Accessible name of the resize handle. Pass a localized label when `resizable` is enabled.
+</ParamField>
+
 <ParamField body="setMarkers" type="((value: string) =&gt; IMarkerData[])">
   Returns custom validation markers for the content. Runs when the editor mounts and after every change, replacing the previous custom markers.
 </ParamField>
