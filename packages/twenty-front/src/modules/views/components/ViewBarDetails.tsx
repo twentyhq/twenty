@@ -12,6 +12,8 @@ import { EditableSortChip } from '@/views/editable-chip/components/EditableSortC
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { SoftDeleteFilterChip } from '@/views/components/SoftDeleteFilterChip';
+import { ViewBarMineFilterToggle } from '@/views/components/ViewBarMineFilterToggle';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
@@ -114,6 +116,8 @@ export const ViewBarDetails = ({
 
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
+  const { currentView } = useGetCurrentViewOnly();
+
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
     viewBarId,
@@ -207,6 +211,7 @@ export const ViewBarDetails = ({
     isNonEmptyString(anyFieldFilterValue) || isDropdownOpen;
 
   const shouldExpandViewBar =
+    isDefined(currentView?.mineFilterFieldMetadataId) ||
     shouldShowAnyFieldSearchChip ||
     viewFiltersAreDifferentFromRecordFilters ||
     viewSortsAreDifferentFromRecordSorts ||
@@ -224,6 +229,10 @@ export const ViewBarDetails = ({
   return (
     <StyledBar>
       <StyledFilterContainer>
+        <ViewBarMineFilterToggle
+          viewBarId={viewBarId}
+          objectNameSingular={objectNameSingular}
+        />
         <ScrollWrapper
           componentInstanceId={viewBarId}
           defaultEnableYScroll={false}

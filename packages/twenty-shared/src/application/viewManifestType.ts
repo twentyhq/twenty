@@ -91,6 +91,7 @@ export type ViewManifest = SyncableEntityOptions & {
   calendarLayout?: ViewCalendarLayout;
   calendarFieldMetadataUniversalIdentifier?: string;
   calendarEndFieldMetadataUniversalIdentifier?: string;
+  mineFilterFieldMetadataUniversalIdentifier?: string;
   fields?: ViewFieldManifest[];
   filters?: ViewFilterManifest[];
   filterGroups?: ViewFilterGroupManifest[];

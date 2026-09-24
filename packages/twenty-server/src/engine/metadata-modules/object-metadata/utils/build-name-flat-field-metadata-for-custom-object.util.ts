@@ -55,6 +55,7 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     calendarEndViewUniversalIdentifiers: [],
+    mineFilterViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],
     universalSettings: null,

@@ -38,6 +38,7 @@ const VIEW_FILTER_GROUP_UID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const VIEW_GROUP_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const VIEW_FIELD_GROUP_UID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const VIEW_SORT_UID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+const OWNER_FIELD_UID = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const NOW = '2026-09-03T10:00:00.000Z';
 
 const VIEW_MANIFEST: Required<
@@ -71,6 +72,7 @@ const VIEW_MANIFEST: Required<
   calendarLayout: ViewCalendarLayout.WEEK,
   calendarFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
   calendarEndFieldMetadataUniversalIdentifier: END_DATE_FIELD_UID,
+  mineFilterFieldMetadataUniversalIdentifier: OWNER_FIELD_UID,
 };
 
 const MINIMAL_VIEW_MANIFEST: ViewManifest = {
@@ -126,6 +128,7 @@ const NULLABLE_VIEW_MANIFEST_PROPERTIES: (keyof ViewManifest)[] = [
   'calendarLayout',
   'calendarFieldMetadataUniversalIdentifier',
   'calendarEndFieldMetadataUniversalIdentifier',
+  'mineFilterFieldMetadataUniversalIdentifier',
 ];
 
 const VIEW_CHILD_COLLECTION_PROPERTIES_OTHER_THAN_FIELDS: (keyof ViewManifest)[] =
@@ -171,6 +174,7 @@ describe('fromFlatViewToViewManifest', () => {
       calendarLayout: ViewCalendarLayout.MONTH,
       calendarFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
       calendarEndFieldMetadataUniversalIdentifier: null,
+      mineFilterFieldMetadataUniversalIdentifier: OWNER_FIELD_UID,
       mainGroupByFieldMetadataUniversalIdentifier: null,
       shouldHideEmptyGroups: false,
       groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,

@@ -123,7 +123,25 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.calendarLayout).toBeNull();
     expect(result.calendarFieldMetadataUniversalIdentifier).toBeNull();
     expect(result.calendarEndFieldMetadataUniversalIdentifier).toBeNull();
+    expect(result.mineFilterFieldMetadataUniversalIdentifier).toBeNull();
     expect(result.anyFieldFilterValue).toBeNull();
+  });
+
+  it('should preserve the mine filter field from the manifest', () => {
+    const result = fromViewManifestToUniversalFlatView({
+      viewManifest: {
+        universalIdentifier: 'view-uuid-7',
+        name: 'My Records',
+        objectUniversalIdentifier: 'object-uuid-1',
+        mineFilterFieldMetadataUniversalIdentifier: 'field-uuid-owner',
+      },
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.mineFilterFieldMetadataUniversalIdentifier).toBe(
+      'field-uuid-owner',
+    );
   });
 
   it('should preserve calendar fields from the manifest', () => {

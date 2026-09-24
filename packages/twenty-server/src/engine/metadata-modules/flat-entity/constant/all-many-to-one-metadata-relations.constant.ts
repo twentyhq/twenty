@@ -188,6 +188,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'calendarEndFieldMetadataUniversalIdentifier',
     },
+    mineFilterFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'mineFilterFieldMetadataId',
+      inverseOneToManyProperty: 'mineFilterViews',
+      isNullable: true,
+      universalForeignKey: 'mineFilterFieldMetadataUniversalIdentifier',
+    },
     kanbanAggregateOperationFieldMetadata: {
       metadataName: 'fieldMetadata',
       foreignKey: 'kanbanAggregateOperationFieldMetadataId',

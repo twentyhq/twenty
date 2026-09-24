@@ -27,4 +27,22 @@ describe('convertUpdateViewInputToGql', () => {
       id: undefined,
     });
   });
+
+  it('forwards the mine filter field', () => {
+    expect(
+      convertUpdateViewInputToGql({ mineFilterFieldMetadataId: 'field-id' }),
+    ).toEqual({
+      mineFilterFieldMetadataId: 'field-id',
+      id: undefined,
+    });
+  });
+
+  it('includes a null mine filter field so it can be cleared', () => {
+    expect(
+      convertUpdateViewInputToGql({ mineFilterFieldMetadataId: null }),
+    ).toEqual({
+      mineFilterFieldMetadataId: null,
+      id: undefined,
+    });
+  });
 });

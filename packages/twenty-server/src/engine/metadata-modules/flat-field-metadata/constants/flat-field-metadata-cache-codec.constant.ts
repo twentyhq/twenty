@@ -50,6 +50,8 @@ export const FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY = {
   viewSortIds: '$L',
   viewSortUniversalIdentifiers: '$M',
   workspaceId: '$N',
+  mineFilterViewIds: '$P',
+  mineFilterViewUniversalIdentifiers: '$Q',
 } as const satisfies Record<string, string>;
 
 export const FLAT_FIELD_METADATA_SHORT_CODE_LOOKUP = new Map<string, string>(
@@ -66,6 +68,7 @@ export const FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS = [
   'kanbanAggregateOperationViewIds',
   'calendarViewIds',
   'calendarEndViewIds',
+  'mineFilterViewIds',
   'mainGroupByFieldMetadataViewIds',
   'viewFieldIds',
   'viewFilterIds',
@@ -75,6 +78,7 @@ export const FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS = [
   'kanbanAggregateOperationViewUniversalIdentifiers',
   'calendarViewUniversalIdentifiers',
   'calendarEndViewUniversalIdentifiers',
+  'mineFilterViewUniversalIdentifiers',
   'mainGroupByFieldMetadataViewUniversalIdentifiers',
   'viewSortIds',
   'viewSortUniversalIdentifiers',

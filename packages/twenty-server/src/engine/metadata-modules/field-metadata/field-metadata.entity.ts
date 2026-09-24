@@ -274,6 +274,9 @@ export class FieldMetadataEntity<
   @OneToMany(() => ViewEntity, (view) => view.calendarEndFieldMetadata)
   calendarEndViews: Relation<ViewEntity[]>;
 
+  @OneToMany(() => ViewEntity, (view) => view.mineFilterFieldMetadata)
+  mineFilterViews: Relation<ViewEntity[]>;
+
   @OneToMany(() => ViewEntity, (view) => view.mainGroupByFieldMetadata)
   mainGroupByFieldMetadataViews: Relation<ViewEntity[]>;
 

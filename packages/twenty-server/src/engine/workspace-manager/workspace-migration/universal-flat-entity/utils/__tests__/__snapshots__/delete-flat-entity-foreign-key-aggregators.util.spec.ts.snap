@@ -22,6 +22,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "kanbanAggregateOperationViewUniversalIdentifiers": [],
   "label": "flat field metadata label",
   "mainGroupByFieldMetadataViewUniversalIdentifiers": [],
+  "mineFilterViewUniversalIdentifiers": [],
   "morphId": null,
   "name": "flatFieldMetadataName",
   "objectMetadataUniversalIdentifier": "object-metadata-universal-identifier",

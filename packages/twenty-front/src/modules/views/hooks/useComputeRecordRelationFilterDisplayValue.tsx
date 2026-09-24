@@ -8,6 +8,7 @@ import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForS
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
+import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import {
   arrayOfUuidOrVariableSchema,
   isDefined,
@@ -40,10 +41,13 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     objectMetadataItems,
   });
 
+  // Actor filters on workspaceMemberId store the same value shape as workspace member relation filters
   const relationObjectMetadataNameSingular =
-    getRelationObjectMetadataNameSingular({
-      field: fieldMetadataItem,
-    });
+    fieldMetadataItem.type === FieldMetadataType.ACTOR
+      ? CoreObjectNameSingular.WorkspaceMember
+      : getRelationObjectMetadataNameSingular({
+          field: fieldMetadataItem,
+        });
 
   if (!isDefined(relationObjectMetadataNameSingular)) {
     throw new Error('relationObjectMetadataNameSingular is not defined');
