@@ -8,11 +8,11 @@ const StyledCardBodyContainer = styled.div<{ padding?: string }>`
   padding: ${({ padding }) =>
     padding ??
     `0 ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]} 10px`};
-  span {
+  span:not(button *) {
     align-items: center;
     display: flex;
     flex-direction: row;
-    svg {
+    svg:not(button svg) {
       color: ${themeCssVariables.font.color.tertiary};
       margin-right: ${themeCssVariables.spacing[2]};
     }
