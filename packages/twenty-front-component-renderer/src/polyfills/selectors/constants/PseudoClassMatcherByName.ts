@@ -15,7 +15,6 @@ import { isElementLink } from '@/polyfills/selectors/utils/isElementLink';
 import { isElementPlaceholderShown } from '@/polyfills/selectors/utils/isElementPlaceholderShown';
 import { isElementReadWrite } from '@/polyfills/selectors/utils/isElementReadWrite';
 import { isElementRequired } from '@/polyfills/selectors/utils/isElementRequired';
-import { isElementValid } from '@/polyfills/selectors/utils/isElementValid';
 
 export const PSEUDO_CLASS_MATCHER_BY_NAME = new Map<
   string,
@@ -92,5 +91,4 @@ export const PSEUDO_CLASS_MATCHER_BY_NAME = new Map<
   ['required', isElementRequired],
   ['root', (element) => isDocumentNode(element.parentNode)],
   ['scope', (element, { scopeElement }) => element === scopeElement],
-  ['valid', isElementValid],
 ]);
