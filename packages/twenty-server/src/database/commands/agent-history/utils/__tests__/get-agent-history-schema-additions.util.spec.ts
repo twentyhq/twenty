@@ -41,9 +41,11 @@ describe('getAgentHistorySchemaAdditions', () => {
       ),
     ).toBe(true);
     expect(
-      additions.fields.every(
-        (field) => field.writability === MetadataWritability.SYSTEM,
-      ),
+      additions.fields
+        .filter((field) =>
+          HISTORY_IDENTIFIERS.includes(field.objectMetadataUniversalIdentifier),
+        )
+        .every((field) => field.writability === MetadataWritability.SYSTEM),
     ).toBe(true);
     expect(additions.fields.length).toBeGreaterThan(0);
     expect(additions.indexes.length).toBeGreaterThan(0);
@@ -109,6 +111,30 @@ describe('getAgentHistorySchemaAdditions', () => {
     expect(additions.fields).toEqual([]);
     expect(additions.indexes.map((index) => index.universalIdentifier)).toEqual(
       [indexIdentifier],
+    );
+  });
+
+  it('keeps the attachment side of the chat thread target standard', () => {
+    const standard = createStandardMetadata();
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard,
+    });
+    const targetIdentifier =
+      STANDARD_OBJECTS.attachment.fields.targetAgentChatThread
+        .universalIdentifier;
+
+    expect(
+      additions.fields.find(
+        (field) => field.universalIdentifier === targetIdentifier,
+      )?.writability,
+    ).toBe(
+      standard.flatFieldMetadataMaps.byUniversalIdentifier[targetIdentifier]
+        ?.writability,
     );
   });
 

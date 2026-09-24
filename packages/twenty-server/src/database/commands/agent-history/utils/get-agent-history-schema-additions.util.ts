@@ -108,9 +108,12 @@ export const getAgentHistorySchemaAdditions = ({
           ],
         ),
     );
-  const protectedFields: typeof fields = fields.map((field) => ({
-    ...field,
-    writability: MetadataWritability.SYSTEM,
-  }));
+  // Inverse fields on other objects keep their standard definition so every
+  // provisioning path creates them identically.
+  const protectedFields: typeof fields = fields.map((field) =>
+    objectIdentifiers.has(field.objectMetadataUniversalIdentifier)
+      ? { ...field, writability: MetadataWritability.SYSTEM }
+      : field,
+  );
   return { objects: protectedObjects, fields: protectedFields, indexes };
 };
