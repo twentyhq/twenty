@@ -35,9 +35,6 @@ const ATTACHMENT_RECORD_PAGE =
 
 const FIELDS_VIEW_UNIVERSAL_IDENTIFIER =
   ATTACHMENT.views.attachmentRecordPageFields.universalIdentifier;
-const FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS = Object.values(
-  ATTACHMENT.views.attachmentRecordPageFields.viewFieldGroups,
-).map((viewFieldGroup) => viewFieldGroup.universalIdentifier);
 const FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
   ATTACHMENT.views.attachmentRecordPageFields.viewFields,
 ).map((viewField) => viewField.universalIdentifier);
@@ -117,11 +114,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
             universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
           },
         ]),
-        flatViewFieldGroupMaps: buildMaps(
-          FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS.map(
-            (universalIdentifier) => ({ universalIdentifier }),
-          ),
-        ),
         flatViewFieldMaps: buildMaps(
           FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.map(
             (universalIdentifier) =>
@@ -188,7 +180,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
       universalIdentifier: string;
       deletedAt?: string;
     }[],
-    existingViewFieldGroups = [] as string[],
     existingViewFields = [] as string[],
     existingPageLayouts = [] as {
       universalIdentifier: string;
@@ -216,11 +207,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
         ),
       },
       flatViewMaps: buildMaps(existingViews),
-      flatViewFieldGroupMaps: buildMaps(
-        existingViewFieldGroups.map((universalIdentifier) => ({
-          universalIdentifier,
-        })),
-      ),
       flatViewFieldMaps: buildMaps(
         existingViewFields.map((universalIdentifier) => ({
           universalIdentifier,
@@ -252,12 +238,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
         universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
       }),
     ]);
-    expect(
-      payload.viewFieldGroup.flatEntityToCreate.map(
-        ({ universalIdentifier }: { universalIdentifier: string }) =>
-          universalIdentifier,
-      ),
-    ).toEqual(FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS);
     expect(
       payload.viewField.flatEntityToCreate.map(
         ({ universalIdentifier }: { universalIdentifier: string }) =>
@@ -316,8 +296,8 @@ describe('SyncAttachmentRecordPageCommand', () => {
     {
       description: 'other referenced fields',
       missingFieldIdentifiers: [
-        ATTACHMENT.fields.name.universalIdentifier,
-        ATTACHMENT.fields.file.universalIdentifier,
+        ATTACHMENT.fields.createdBy.universalIdentifier,
+        ATTACHMENT.fields.createdAt.universalIdentifier,
       ],
       omittedViewFields: 2,
     },
@@ -391,7 +371,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
             universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
           },
         ],
-        existingViewFieldGroups: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
         existingViewFields: viewFields.map(
           (viewField) => viewField.universalIdentifier,
         ),
@@ -424,7 +403,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
           universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
         },
       ],
-      existingViewFieldGroups: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
       existingViewFields: FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
         (identifier) => identifier !== createdByViewFieldIdentifier,
       ),
@@ -451,7 +429,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
     expect(payload.fieldMetadata).toBeUndefined();
     for (const metadataName of [
       'view',
-      'viewFieldGroup',
       'pageLayout',
       'pageLayoutTab',
       'pageLayoutWidget',
@@ -468,7 +445,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
           universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
         },
       ],
-      existingViewFieldGroups: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
       existingViewFields: FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
     });
 
@@ -495,7 +471,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
           universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
         },
       ],
-      existingViewFieldGroups: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
       existingViewFields: FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
       existingPageLayouts: [
         { universalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER },
@@ -510,7 +485,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
     const payload = getMigrationPayload();
 
     expect(payload.view.flatEntityToCreate).toEqual([]);
-    expect(payload.viewFieldGroup.flatEntityToCreate).toEqual([]);
     expect(payload.viewField.flatEntityToCreate).toEqual([]);
     expect(payload.pageLayout.flatEntityToCreate).toEqual([]);
     expect(payload.pageLayoutTab.flatEntityToCreate).toEqual([]);
@@ -530,7 +504,6 @@ describe('SyncAttachmentRecordPageCommand', () => {
           universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
         },
       ],
-      existingViewFieldGroups: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
       existingViewFields: FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
       existingPageLayouts: [
         { universalIdentifier: PAGE_LAYOUT_UNIVERSAL_IDENTIFIER },

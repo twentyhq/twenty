@@ -3,7 +3,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { computeStandardAttachmentViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-attachment-view-field-groups.util';
 import { computeStandardBlocklistViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-blocklist-view-field-groups.util';
 import { computeStandardCalendarChannelEventAssociationViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-calendar-channel-event-association-view-field-groups.util';
 import { computeStandardCalendarEventViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-calendar-event-view-field-groups.util';
@@ -29,7 +28,6 @@ type StandardViewFieldGroupBuilder<P extends AllStandardObjectName> = (
 ) => Record<string, FlatViewFieldGroup>;
 
 const STANDARD_FLAT_VIEW_FIELD_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME = {
-  attachment: computeStandardAttachmentViewFieldGroups,
   blocklist: computeStandardBlocklistViewFieldGroups,
   calendarChannelEventAssociation:
     computeStandardCalendarChannelEventAssociationViewFieldGroups,

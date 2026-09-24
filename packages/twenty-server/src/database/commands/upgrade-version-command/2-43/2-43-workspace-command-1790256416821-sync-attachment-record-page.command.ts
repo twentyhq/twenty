@@ -15,7 +15,6 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -29,10 +28,6 @@ const ATTACHMENT_RECORD_PAGE =
 
 const FIELDS_VIEW_UNIVERSAL_IDENTIFIER =
   ATTACHMENT.views.attachmentRecordPageFields.universalIdentifier;
-
-const FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS = Object.values(
-  ATTACHMENT.views.attachmentRecordPageFields.viewFieldGroups,
-).map((viewFieldGroup) => viewFieldGroup.universalIdentifier);
 
 const FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
   ATTACHMENT.views.attachmentRecordPageFields.viewFields,
@@ -82,7 +77,6 @@ export class SyncAttachmentRecordPageCommand extends ProvisionedWorkspaceCommand
       flatFieldMetadataMaps,
       flatViewMaps,
       flatViewFieldMaps,
-      flatViewFieldGroupMaps,
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
@@ -91,7 +85,6 @@ export class SyncAttachmentRecordPageCommand extends ProvisionedWorkspaceCommand
       'flatFieldMetadataMaps',
       'flatViewMaps',
       'flatViewFieldMaps',
-      'flatViewFieldGroupMaps',
       'flatPageLayoutMaps',
       'flatPageLayoutTabMaps',
       'flatPageLayoutWidgetMaps',
@@ -172,14 +165,6 @@ export class SyncAttachmentRecordPageCommand extends ProvisionedWorkspaceCommand
       universalIdentifiers: [FIELDS_VIEW_UNIVERSAL_IDENTIFIER],
     });
 
-    const viewFieldGroupsToCreate =
-      getStandardFlatEntitiesToCreateOrThrow<FlatViewFieldGroup>({
-        standardFlatEntityMaps:
-          standardAllFlatEntityMaps.flatViewFieldGroupMaps,
-        existingFlatEntityMaps: flatViewFieldGroupMaps,
-        universalIdentifiers: FIELDS_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
-      });
-
     const viewFieldsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
@@ -233,7 +218,6 @@ export class SyncAttachmentRecordPageCommand extends ProvisionedWorkspaceCommand
 
     const totalOperationCount =
       viewsToCreate.length +
-      viewFieldGroupsToCreate.length +
       viewFieldsToCreate.length +
       pageLayoutsToCreate.length +
       pageLayoutTabsToCreate.length +
@@ -248,7 +232,7 @@ export class SyncAttachmentRecordPageCommand extends ProvisionedWorkspaceCommand
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${viewsToCreate.length} view(s), ${viewFieldGroupsToCreate.length} field group(s), ${viewFieldsToCreate.length} view field(s), ${pageLayoutsToCreate.length} layout(s), ${pageLayoutTabsToCreate.length} tab(s), ${pageLayoutWidgetsToCreate.length} widget(s)`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: ${viewsToCreate.length} view(s), ${viewFieldsToCreate.length} view field(s), ${pageLayoutsToCreate.length} layout(s), ${pageLayoutTabsToCreate.length} tab(s), ${pageLayoutWidgetsToCreate.length} widget(s)`,
     );
 
     const result =
@@ -262,11 +246,6 @@ export class SyncAttachmentRecordPageCommand extends ProvisionedWorkspaceCommand
           allFlatEntityOperationByMetadataName: {
             view: {
               flatEntityToCreate: viewsToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            viewFieldGroup: {
-              flatEntityToCreate: viewFieldGroupsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
