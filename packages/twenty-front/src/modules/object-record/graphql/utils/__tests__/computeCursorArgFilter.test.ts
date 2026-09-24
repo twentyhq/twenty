@@ -177,4 +177,167 @@ describe('computeCursorArgFilter', () => {
 
     expect(result).toEqual({ or: [{ id: { gt: 'record-1' } }] });
   });
+
+  it('should compare a BOOLEAN field with eq instead of gt when scanning forward', () => {
+    const orderBy: RecordGqlOperationOrderBy = [
+      { incontrato: 'AscNullsFirst' },
+    ];
+
+    const result = computeCursorArgFilter({
+      orderBy,
+      cursorRecordValues: { incontrato: false, id: 'record-1' },
+      isForwardPagination: true,
+    });
+
+    expect(result).toEqual({
+      or: [
+        { incontrato: { eq: true } },
+        {
+          and: [{ incontrato: { eq: false } }, { id: { gt: 'record-1' } }],
+        },
+      ],
+    });
+  });
+
+  it('should compare a BOOLEAN field with eq instead of lt when scanning backward', () => {
+    const orderBy: RecordGqlOperationOrderBy = [
+      { incontrato: 'AscNullsFirst' },
+    ];
+
+    const result = computeCursorArgFilter({
+      orderBy,
+      cursorRecordValues: { incontrato: true, id: 'record-1' },
+      isForwardPagination: false,
+    });
+
+    expect(result).toEqual({
+      or: [
+        { incontrato: { eq: false } },
+        {
+          and: [{ incontrato: { eq: true } }, { id: { lt: 'record-1' } }],
+        },
+      ],
+    });
+  });
+
+  it('should drop the branch of a BOOLEAN field already on the last scanned value', () => {
+    const orderBy: RecordGqlOperationOrderBy = [
+      { incontrato: 'AscNullsFirst' },
+    ];
+
+    const result = computeCursorArgFilter({
+      orderBy,
+      cursorRecordValues: { incontrato: true, id: 'record-1' },
+      isForwardPagination: true,
+    });
+
+    expect(result).toEqual({
+      or: [
+        {
+          and: [{ incontrato: { eq: true } }, { id: { gt: 'record-1' } }],
+        },
+      ],
+    });
+  });
+
+  it('should drop the branch of a BOOLEAN field already on the last scanned value backward', () => {
+    const orderBy: RecordGqlOperationOrderBy = [
+      { incontrato: 'AscNullsFirst' },
+    ];
+
+    const result = computeCursorArgFilter({
+      orderBy,
+      cursorRecordValues: { incontrato: false, id: 'record-1' },
+      isForwardPagination: false,
+    });
+
+    expect(result).toEqual({
+      or: [
+        {
+          and: [{ incontrato: { eq: false } }, { id: { lt: 'record-1' } }],
+        },
+      ],
+    });
+  });
+
+  it('should scan a descending BOOLEAN field towards false', () => {
+    const orderBy: RecordGqlOperationOrderBy = [
+      { incontrato: 'DescNullsLast' },
+    ];
+
+    const result = computeCursorArgFilter({
+      orderBy,
+      cursorRecordValues: { incontrato: true, id: 'record-1' },
+      isForwardPagination: true,
+    });
+
+    expect(result).toEqual({
+      or: [
+        { incontrato: { eq: false } },
+        {
+          and: [{ incontrato: { eq: true } }, { id: { gt: 'record-1' } }],
+        },
+      ],
+    });
+  });
+
+  it('should keep the equality prefixes of a dropped BOOLEAN branch on the following fields', () => {
+    const orderBy: RecordGqlOperationOrderBy = [
+      { incontrato: 'AscNullsLast' },
+      { createdAt: 'DescNullsLast' },
+    ];
+
+    const result = computeCursorArgFilter({
+      orderBy,
+      cursorRecordValues: {
+        incontrato: true,
+        createdAt: '2024-01-01',
+        id: 'record-1',
+      },
+      isForwardPagination: true,
+    });
+
+    expect(result).toEqual({
+      or: [
+        {
+          and: [
+            { incontrato: { eq: true } },
+            { createdAt: { lt: '2024-01-01' } },
+          ],
+        },
+        {
+          and: [
+            { incontrato: { eq: true } },
+            { createdAt: { eq: '2024-01-01' } },
+            { id: { gt: 'record-1' } },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('should never emit an operator a BOOLEAN field rejects, whatever the ordering', () => {
+    const directions = [
+      'AscNullsFirst',
+      'AscNullsLast',
+      'DescNullsFirst',
+      'DescNullsLast',
+    ];
+
+    for (const direction of directions) {
+      for (const cursorValue of [true, false]) {
+        for (const isForwardPagination of [true, false]) {
+          const result = computeCursorArgFilter({
+            orderBy: [{ incontrato: direction }] as RecordGqlOperationOrderBy,
+            cursorRecordValues: { incontrato: cursorValue, id: 'record-1' },
+            isForwardPagination,
+          });
+
+          expect(JSON.stringify(result)).not.toMatch(
+            /"incontrato":\{"(gt|gte|lt|lte)"/,
+          );
+        }
+      }
+    }
+  });
 });

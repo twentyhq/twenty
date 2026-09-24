@@ -1,8 +1,9 @@
+import { isBoolean } from '@sniptt/guards';
 import {
   type RecordGqlOperationFilter,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
 
@@ -43,6 +44,22 @@ const buildCursorWhereCondition = (
     ? { [field.fieldName]: { [field.subFieldName]: { [operator]: value } } }
     : { [field.fieldName]: { [operator]: value } };
 
+// A BOOLEAN field rejects gt/lt (the API allows eq and is only) and holds a
+// single value sorting after the cursor, false being scanned before true
+// ascending. Returns undefined when the cursor already sits on that last value,
+// so no record can sort strictly after it on this field alone.
+const buildBooleanComparison = (
+  field: CursorOrderByField,
+  cursorValue: boolean,
+  operator: string,
+): RecordGqlOperationFilter | undefined => {
+  const valueScannedAfterCursor = operator === 'gt';
+
+  return cursorValue === valueScannedAfterCursor
+    ? undefined
+    : buildCursorWhereCondition(field, 'eq', valueScannedAfterCursor);
+};
+
 const resolveOrderByFields = (
   orderBy: RecordGqlOperationOrderBy,
 ): CursorOrderByField[] => {
@@ -82,8 +99,22 @@ export const computeCursorArgFilter = ({
 }): RecordGqlOperationFilter => {
   const fields = resolveOrderByFields(orderBy);
 
-  const cumulativeConditions: RecordGqlOperationFilter[] = fields.map(
+  const cumulativeConditions = fields.flatMap<RecordGqlOperationFilter>(
     (field, index) => {
+      const ascending = isAscendingOrder(field.direction);
+      const operator = computeOperator(ascending, isForwardPagination);
+      const cursorValue = getCursorValue(cursorRecordValues, field);
+
+      const comparison = isBoolean(cursorValue)
+        ? buildBooleanComparison(field, cursorValue, operator)
+        : buildCursorWhereCondition(field, operator, cursorValue);
+
+      // Only the tie-breaking fields of the following branches can advance the
+      // scan when this field cannot
+      if (!isDefined(comparison)) {
+        return [];
+      }
+
       const equalityPrefixes = fields
         .slice(0, index)
         .map((prevField) =>
@@ -94,17 +125,9 @@ export const computeCursorArgFilter = ({
           ),
         );
 
-      const ascending = isAscendingOrder(field.direction);
-      const operator = computeOperator(ascending, isForwardPagination);
-      const comparison = buildCursorWhereCondition(
-        field,
-        operator,
-        getCursorValue(cursorRecordValues, field),
-      );
-
       const conditions = [...equalityPrefixes, comparison];
 
-      return conditions.length === 1 ? conditions[0] : { and: conditions };
+      return [conditions.length === 1 ? conditions[0] : { and: conditions }];
     },
   );
 
