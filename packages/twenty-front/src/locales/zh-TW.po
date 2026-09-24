@@ -16245,6 +16245,11 @@ msgstr "逾期未付"
 msgid "Paste a link to a hosted image"
 msgstr "貼上託管圖片的連結"
 
+#. js-lingui-id: YrKalV
+#: src/modules/advanced-text-editor/extensions/blocks/HtmlNodeInlineEditor.tsx
+msgid "Paste or write your HTML here"
+msgstr ""
+
 #. js-lingui-id: cpStVq
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Paste the code below"
