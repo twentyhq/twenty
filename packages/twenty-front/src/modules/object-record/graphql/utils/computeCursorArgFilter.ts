@@ -11,16 +11,30 @@ type CursorOrderByField = {
   fieldName: string;
   direction: string;
   subFieldName?: string;
+  canHoldNullValue: boolean;
 };
 
-const isAscendingOrder = (direction: string): boolean =>
-  direction === 'AscNullsFirst' || direction === 'AscNullsLast';
+type EffectiveScanOrder = {
+  isAscending: boolean;
+  areNullsScannedLast: boolean;
+};
 
-const computeOperator = (
-  isAscending: boolean,
+const getEffectiveScanOrder = (
+  direction: string,
   isForwardPagination: boolean,
-): string =>
-  (isAscending ? isForwardPagination : !isForwardPagination) ? 'gt' : 'lt';
+): EffectiveScanOrder => {
+  const isAscendingDirection =
+    direction === 'AscNullsFirst' || direction === 'AscNullsLast';
+  const areNullsPresentedLast =
+    direction === 'AscNullsLast' || direction === 'DescNullsLast';
+
+  return {
+    isAscending: isAscendingDirection === isForwardPagination,
+    areNullsScannedLast: isForwardPagination
+      ? areNullsPresentedLast
+      : !areNullsPresentedLast,
+  };
+};
 
 const getCursorValue = (
   record: Record<string, unknown>,
@@ -44,20 +58,58 @@ const buildCursorWhereCondition = (
     ? { [field.fieldName]: { [field.subFieldName]: { [operator]: value } } }
     : { [field.fieldName]: { [operator]: value } };
 
-// A BOOLEAN field rejects gt/lt (the API allows eq and is only) and holds a
-// single value sorting after the cursor, false being scanned before true
-// ascending. Returns undefined when the cursor already sits on that last value,
-// so no record can sort strictly after it on this field alone.
-const buildBooleanComparison = (
+const buildEqualityCondition = (
   field: CursorOrderByField,
-  cursorValue: boolean,
-  operator: string,
-): RecordGqlOperationFilter | undefined => {
-  const valueScannedAfterCursor = operator === 'gt';
+  cursorValue: unknown,
+): RecordGqlOperationFilter =>
+  isDefined(cursorValue)
+    ? buildCursorWhereCondition(field, 'eq', cursorValue)
+    : buildCursorWhereCondition(field, 'is', 'NULL');
 
-  return cursorValue === valueScannedAfterCursor
-    ? undefined
-    : buildCursorWhereCondition(field, 'eq', valueScannedAfterCursor);
+const buildStrictlyAfterCondition = (
+  field: CursorOrderByField,
+  cursorValue: unknown,
+  isAscending: boolean,
+): RecordGqlOperationFilter | undefined => {
+  if (isBoolean(cursorValue)) {
+    return cursorValue === isAscending
+      ? undefined
+      : buildCursorWhereCondition(field, 'eq', isAscending);
+  }
+
+  return buildCursorWhereCondition(
+    field,
+    isAscending ? 'gt' : 'lt',
+    cursorValue,
+  );
+};
+
+const buildComparisonCondition = (
+  field: CursorOrderByField,
+  cursorValue: unknown,
+  { isAscending, areNullsScannedLast }: EffectiveScanOrder,
+): RecordGqlOperationFilter | undefined => {
+  if (!isDefined(cursorValue)) {
+    return areNullsScannedLast
+      ? undefined
+      : buildCursorWhereCondition(field, 'is', 'NOT_NULL');
+  }
+
+  const strictlyAfter = buildStrictlyAfterCondition(
+    field,
+    cursorValue,
+    isAscending,
+  );
+
+  if (!areNullsScannedLast || !field.canHoldNullValue) {
+    return strictlyAfter;
+  }
+
+  const trailingNullBlock = buildCursorWhereCondition(field, 'is', 'NULL');
+
+  return isDefined(strictlyAfter)
+    ? { or: [strictlyAfter, trailingNullBlock] }
+    : trailingNullBlock;
 };
 
 const resolveOrderByFields = (
@@ -68,13 +120,22 @@ const resolveOrderByFields = (
   for (const entry of orderBy) {
     for (const [fieldName, value] of Object.entries(entry)) {
       if (isOrderByDirection(value)) {
-        fields.push({ fieldName, direction: value });
+        fields.push({
+          fieldName,
+          direction: value,
+          canHoldNullValue: fieldName !== 'id',
+        });
       } else if (isPlainObject(value)) {
         for (const [subFieldName, subValue] of Object.entries(
           value as Record<string, unknown>,
         )) {
           if (isOrderByDirection(subValue)) {
-            fields.push({ fieldName, direction: subValue, subFieldName });
+            fields.push({
+              fieldName,
+              direction: subValue,
+              subFieldName,
+              canHoldNullValue: true,
+            });
           }
         }
       }
@@ -82,7 +143,11 @@ const resolveOrderByFields = (
   }
 
   if (!fields.some((field) => field.fieldName === 'id')) {
-    fields.push({ fieldName: 'id', direction: 'AscNullsFirst' });
+    fields.push({
+      fieldName: 'id',
+      direction: 'AscNullsFirst',
+      canHoldNullValue: false,
+    });
   }
 
   return fields;
@@ -101,16 +166,12 @@ export const computeCursorArgFilter = ({
 
   const cumulativeConditions = fields.flatMap<RecordGqlOperationFilter>(
     (field, index) => {
-      const ascending = isAscendingOrder(field.direction);
-      const operator = computeOperator(ascending, isForwardPagination);
-      const cursorValue = getCursorValue(cursorRecordValues, field);
+      const comparison = buildComparisonCondition(
+        field,
+        getCursorValue(cursorRecordValues, field),
+        getEffectiveScanOrder(field.direction, isForwardPagination),
+      );
 
-      const comparison = isBoolean(cursorValue)
-        ? buildBooleanComparison(field, cursorValue, operator)
-        : buildCursorWhereCondition(field, operator, cursorValue);
-
-      // Only the tie-breaking fields of the following branches can advance the
-      // scan when this field cannot
       if (!isDefined(comparison)) {
         return [];
       }
@@ -118,9 +179,8 @@ export const computeCursorArgFilter = ({
       const equalityPrefixes = fields
         .slice(0, index)
         .map((prevField) =>
-          buildCursorWhereCondition(
+          buildEqualityCondition(
             prevField,
-            'eq',
             getCursorValue(cursorRecordValues, prevField),
           ),
         );
