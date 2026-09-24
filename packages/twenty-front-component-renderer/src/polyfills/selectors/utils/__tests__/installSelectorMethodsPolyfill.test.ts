@@ -643,6 +643,9 @@ describe('installSelectorMethodsPolyfill', () => {
       const multipleSelect = createSelect(['first', 'second']);
       multipleSelect.select.setAttribute('multiple', '');
 
+      const duplicateValueSelect = createSelect(['first', 'second', 'first']);
+      duplicateValueSelect.select.value = 'first';
+
       expect(controlledSelect.select.querySelector('option:checked')).toBe(
         controlledSelect.options[1],
       );
@@ -650,6 +653,11 @@ describe('installSelectorMethodsPolyfill', () => {
         uncontrolledSelect.options[1],
       );
       expect(multipleSelect.select.querySelector('option:checked')).toBeNull();
+      expect(
+        Array.from(
+          duplicateValueSelect.select.querySelectorAll('option:checked'),
+        ),
+      ).toEqual([duplicateValueSelect.options[0]]);
     });
 
     it('should evaluate :required, :optional, :any-link and :link', () => {
