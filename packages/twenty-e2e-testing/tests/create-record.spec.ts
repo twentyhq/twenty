@@ -56,7 +56,7 @@ const query = `query FindOnePerson($objectRecordId: UUID!) {
 
 test('Create and update record', async ({ page }) => {
   await page.goto('/objects/people');
-  await page.getByRole('button', { name: 'Create new Person' }).click();
+  await page.getByRole('button', { name: 'Create Person' }).click();
 
   // Generate a random email for testing
   const randomEmail = `testuser_${Math.random().toString(36).substring(2, 10)}@example.com`;

@@ -203,6 +203,9 @@ import { AddDeferredWorkspaceMigrationActionTableFastInstanceCommand } from 'src
 import { AddHealthCheckToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088275000-add-health-check-to-application';
 import { AddApplicationGrantedCapabilitiesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088525621-add-application-granted-capabilities';
 import { AddViewGroupLoadLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088647379-add-view-group-load-limit';
+import { AddSettingsMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790165860000-add-settings-menu-item';
+import { BackfillSettingsMenuItemSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1790165870000-backfill-settings-menu-item';
+import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790165119047-enforce-workflow-version-core-parent';
 
 export const INSTANCE_COMMANDS = [
@@ -409,5 +412,8 @@ export const INSTANCE_COMMANDS = [
   AddHealthCheckToApplicationFastInstanceCommand,
   AddApplicationGrantedCapabilitiesFastInstanceCommand,
   AddViewGroupLoadLimitFastInstanceCommand,
+  AddSettingsMenuItemFastInstanceCommand,
+  BackfillSettingsMenuItemSlowInstanceCommand,
+  AddChatMessageSenderFastInstanceCommand,
   EnforceWorkflowVersionCoreParentSlowInstanceCommand,
 ];

@@ -3,9 +3,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class ApiService {},
 }));
-vi.mock('@/cli/utilities/auth/build-app-token-pair-fetcher', () => ({
-  buildAppTokenPairFetcher: vi.fn(),
-}));
 vi.mock('@/cli/utilities/client/client-service', () => ({
   ClientService: class ClientService {},
 }));

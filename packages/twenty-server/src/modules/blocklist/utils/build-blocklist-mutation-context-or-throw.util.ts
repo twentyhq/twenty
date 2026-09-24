@@ -25,5 +25,6 @@ export const buildBlocklistMutationContextOrThrow = (
     workspaceId: authContext.workspace.id,
     userWorkspaceId: authContext.userWorkspaceId,
     workspaceMemberId: authContext.workspaceMemberId,
+    applicationId: authContext.application?.id,
   };
 };

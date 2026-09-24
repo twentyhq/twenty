@@ -2,7 +2,7 @@ import { type ErrorLike } from '@apollo/client';
 import { useEffect } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useNavigateApp } from '~/hooks/useNavigateApp';

@@ -1,34 +1,19 @@
-import { Tag, ColorSample } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { IconHome, IconUser } from 'twenty-ui/icon';
 import {
-  ClickToActionLink,
-  ContactLink,
-  GithubVersionLink,
-  LinkType,
+  DEFAULT_COLOR_LABELS,
   MenuItem,
   MenuItemAvatar,
   MenuItemDraggable,
-  MenuItemHotKeys,
-  MenuItemLeftContent,
   MenuItemSuggestion,
   MenuPicker,
   NavigationBar,
-  NavigationBarItem,
-  RawLink,
   RoundedLink,
-  SocialLink,
-  StyledHoverableMenuItemBase,
-  StyledMenuItemIconCheck,
-  StyledMenuItemLabel,
-  StyledMenuItemLeftContent,
-  UndecoratedLink,
-  ListItem,
-  DEFAULT_COLOR_LABELS,
-} from 'twenty-ui/primitives/navigation';
+} from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { IconHome, IconUser } from 'twenty-ui/icon';
+import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';
+import { ClickToActionLink, ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-
 import {
   ComponentGallery,
   type GalleryEntry,
@@ -40,42 +25,8 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     node: <ClickToActionLink href="#">Click me</ClickToActionLink>,
   },
   {
-    name: 'ContactLink',
-    node: <ContactLink href="https://twenty.com">Contact</ContactLink>,
-  },
-  {
-    name: 'GithubVersionLink',
-    node: <GithubVersionLink version="v1.0.0" />,
-  },
-  {
     name: 'MenuItem',
     node: <MenuItem text="Menu item" LeftIcon={IconUser} />,
-  },
-  {
-    name: 'MenuItemLeftContent',
-    node: <MenuItemLeftContent text="Left content" LeftIcon={IconUser} />,
-  },
-  {
-    name: 'StyledHoverableMenuItemBase',
-    node: (
-      <StyledHoverableMenuItemBase>Hoverable base</StyledHoverableMenuItemBase>
-    ),
-  },
-  {
-    name: 'StyledMenuItemIconCheck',
-    node: <StyledMenuItemIconCheck size={16} />,
-  },
-  {
-    name: 'StyledMenuItemLabel',
-    node: <StyledMenuItemLabel>Label</StyledMenuItemLabel>,
-  },
-  {
-    name: 'StyledMenuItemLeftContent',
-    node: (
-      <StyledMenuItemLeftContent>
-        Left content wrapper
-      </StyledMenuItemLeftContent>
-    ),
   },
   {
     name: 'MenuItemAvatar',
@@ -90,10 +41,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
         gripMode="always"
       />
     ),
-  },
-  {
-    name: 'MenuItemHotKeys',
-    node: <MenuItemHotKeys hotKeys={['⌘', 'K']} />,
   },
   {
     name: 'ListItem multiple selection',
@@ -230,36 +177,8 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'NavigationBarItem',
-    node: (
-      <NavigationBarItem
-        Icon={IconHome}
-        isActive={true}
-        ariaLabel="Home"
-        onClick={() => {}}
-      />
-    ),
-  },
-  // KNOWN ISSUE (TDD): RawLink and UndecoratedLink render a react-router Link
-  // and crash because the sandbox provides no router context. Expected fix:
-  // SDK-injected Router whose navigator bridges to the host navigate API.
-  {
-    name: 'RawLink',
-    node: <RawLink href="/path">Raw link</RawLink>,
-  },
-  {
     name: 'RoundedLink',
     node: <RoundedLink href="https://twenty.com" label="Rounded link" />,
-  },
-  {
-    name: 'SocialLink',
-    node: (
-      <SocialLink href="https://twitter.com/twenty" type={LinkType.Twitter} />
-    ),
-  },
-  {
-    name: 'UndecoratedLink',
-    node: <UndecoratedLink to="/path">Undecorated link</UndecoratedLink>,
   },
 ];
 

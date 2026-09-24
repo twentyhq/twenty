@@ -11,7 +11,6 @@ export * from './accessibility';
 export * from './data-display';
 export * from './feedback';
 export * from './input';
-export * from './json-visualizer';
 export * from './layout';
 export * from './navigation';
 export * from './surfaces';

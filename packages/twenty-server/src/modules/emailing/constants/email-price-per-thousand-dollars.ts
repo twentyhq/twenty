@@ -1,0 +1,1 @@
+export const EMAIL_PRICE_PER_THOUSAND_DOLLARS = 0.9;

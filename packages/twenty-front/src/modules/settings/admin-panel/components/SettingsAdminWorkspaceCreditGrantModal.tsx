@@ -1,4 +1,3 @@
-import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CREDIT_GRANT_EXPIRY_OPTIONS } from '@/settings/admin-panel/constants/CreditGrantExpiryOptions';
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
@@ -7,20 +6,20 @@ import { GRANT_WORKSPACE_CREDITS } from '@/settings/admin-panel/graphql/mutation
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Section } from 'twenty-ui/components';
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { Section, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import { BillingCreditGrantType } from '~/generated-admin/graphql';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 type SettingsAdminWorkspaceCreditGrantModalProps = {
   modalInstanceId: string;
