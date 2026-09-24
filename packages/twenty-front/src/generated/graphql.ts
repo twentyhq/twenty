@@ -458,7 +458,6 @@ export type Mutation = {
   updateWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkflowVersionTrigger: WorkflowVersionTrigger;
-  validateCoreWorkflowVersion: Scalars['Boolean']['output'];
   validateWorkflowVersion: Scalars['Boolean']['output'];
 };
 
@@ -655,11 +654,6 @@ export type MutationUpdateWorkflowVersionStepArgs = {
 
 export type MutationUpdateWorkflowVersionTriggerArgs = {
   input: UpdateWorkflowVersionTriggerInput;
-};
-
-
-export type MutationValidateCoreWorkflowVersionArgs = {
-  coreWorkflowVersionId: Scalars['UUID']['input'];
 };
 
 
