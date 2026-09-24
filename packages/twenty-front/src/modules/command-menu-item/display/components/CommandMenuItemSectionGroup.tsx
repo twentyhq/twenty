@@ -7,11 +7,12 @@ import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/Co
 
 const StyledHeading = styled.div`
   align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   display: flex;
   gap: ${themeCssVariables.spacing['1.5']};
-  min-height: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]}
+  margin: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]}
     ${themeCssVariables.spacing[1]};
+  padding-bottom: ${themeCssVariables.spacing['1.5']};
   user-select: none;
 `;
 
@@ -25,29 +26,22 @@ const StyledHeadingIcon = styled.span`
 const StyledHeadingText = styled.span`
   align-items: baseline;
   display: flex;
-  font-size: 11px;
+  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   white-space: nowrap;
 `;
 
-const StyledHeadingPrefix = styled.span`
-  color: ${themeCssVariables.font.color.light};
+const StyledHeadingLabel = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledHeadingValue = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const StyledHeadingRule = styled.div`
-  background: ${themeCssVariables.border.color.medium};
-  flex: 1;
-  height: 1px;
-  margin-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledGroup = styled.div`
@@ -80,14 +74,13 @@ export const CommandMenuItemSectionGroup = ({
         <StyledHeadingText>
           {isDefined(context) ? (
             <>
-              <StyledHeadingPrefix>{heading}:</StyledHeadingPrefix>
+              <StyledHeadingLabel>{heading}:</StyledHeadingLabel>
               <StyledHeadingValue>{context.label}</StyledHeadingValue>
             </>
           ) : (
-            <StyledHeadingValue>{heading}</StyledHeadingValue>
+            <StyledHeadingLabel>{heading}</StyledHeadingLabel>
           )}
         </StyledHeadingText>
-        <StyledHeadingRule />
       </StyledHeading>
       <StyledGroup>{children}</StyledGroup>
     </>
