@@ -1,7 +1,7 @@
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent, type Editor } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledEditor = styled.div<{
   multiline?: boolean;

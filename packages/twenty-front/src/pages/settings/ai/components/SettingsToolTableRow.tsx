@@ -6,7 +6,7 @@ import { StyledNameTableCell } from '@/settings/data-model/object-details/compon
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export type SettingsToolTableRowProps = {
   leftIcon: ReactNode;

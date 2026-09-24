@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -13,7 +12,7 @@ import { Info, Section } from 'twenty-ui/components';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Avatar, Status } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
@@ -39,7 +38,7 @@ export const SettingsApplicationConnectionsSection = ({
   applicationId: string;
 }) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);

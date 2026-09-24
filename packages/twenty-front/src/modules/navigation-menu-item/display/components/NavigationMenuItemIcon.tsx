@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { getIconTileColorShades } from 'twenty-ui/components';
 import { IconLink, IconPerspective, IconWorld, useIcons } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   FeatureFlagKey,
   type NavigationMenuItem,

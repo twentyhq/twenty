@@ -17,9 +17,8 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledPlusIconHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;
@@ -62,7 +61,7 @@ const StyledDropdownContainer = styled.div`
 `;
 
 export const RecordTableHeaderAddColumnButton = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,

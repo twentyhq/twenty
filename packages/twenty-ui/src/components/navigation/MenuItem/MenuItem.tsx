@@ -8,7 +8,7 @@ import {
   StyledMenuItemRightContent,
 } from '@ui/components/navigation/MenuItem/parts/StyledMenuItemBase';
 import { MenuItemHotKeys } from '@ui/primitives/navigation/ListItem/internal/MenuItemHotKeys/MenuItemHotKeys';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 import { clsx } from 'clsx';
 
 import styles from './MenuItem.module.scss';

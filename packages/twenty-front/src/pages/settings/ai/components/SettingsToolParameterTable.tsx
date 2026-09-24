@@ -3,7 +3,7 @@ import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ComponentType, useContext } from 'react';
+import { type ComponentType } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { Table } from '@/ui/layout/table/components/Table';
@@ -24,7 +24,7 @@ import {
   IllustrationIconToggle,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type SchemaProperty = {
   type?: string;
@@ -95,7 +95,7 @@ export const SettingsToolParameterTable = ({
   requiredFields,
   functionLink,
 }: SettingsToolParameterTableProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const entries = Object.entries(schemaProperties);
 
   if (entries.length === 0 && !functionLink) {

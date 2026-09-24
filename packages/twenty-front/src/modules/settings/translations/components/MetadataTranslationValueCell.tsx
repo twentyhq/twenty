@@ -3,7 +3,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 
 const StyledValue = styled.div<{ isInherited: boolean }>`

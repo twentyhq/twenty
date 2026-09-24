@@ -1,6 +1,6 @@
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';

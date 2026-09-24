@@ -1,12 +1,11 @@
-import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import { StyledSkeletonDiv } from './RecordInlineCellContainer';
 
 export const RecordInlineCellSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

@@ -11,7 +11,7 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type IconComponent } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;

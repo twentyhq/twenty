@@ -1,6 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledBillingContentSkeleton = styled.div`
   background: linear-gradient(

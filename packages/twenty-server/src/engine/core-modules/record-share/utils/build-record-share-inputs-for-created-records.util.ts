@@ -112,21 +112,21 @@ export const buildRecordShareInputsForCreatedRecords = ({
   objectMetadataId,
   authContext,
   apiKeyRoleMap,
-  isRecordSharingEnabled,
+  isRecordSharingEnforced,
   shareWith,
 }: {
   recordIds: string[];
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
-  isRecordSharingEnabled: boolean;
+  isRecordSharingEnforced: boolean;
   shareWith?: ShareWithInput[] | null;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
-  // A record created while the flag is off is readable by everyone today and
-  // must stay so once the flag turns on, whoever created it
+  // Records created under legacy open access must remain accessible after
+  // enforcement is activated, whoever created them.
   const everyoneFullRows =
-    !isRecordSharingEnabled && !isNonEmptyArray(shareWithEntries)
+    !isRecordSharingEnforced && !isNonEmptyArray(shareWithEntries)
       ? recordIds.map((recordId) => ({
           recordId,
           objectMetadataId,

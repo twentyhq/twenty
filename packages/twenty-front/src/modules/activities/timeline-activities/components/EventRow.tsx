@@ -21,7 +21,7 @@ import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectReco
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';

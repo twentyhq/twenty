@@ -7,7 +7,7 @@ import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/u
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -78,7 +78,7 @@ export const RecordIndexCommandMenuDropdown = () => {
         y: recordIndexCommandMenuDropdownPosition.y ?? 0,
       }}
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <StyledDropdownMenuContainer
             data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
           >
@@ -113,7 +113,7 @@ export const RecordIndexCommandMenuDropdown = () => {
               </SelectableList>
             </DropdownMenuItemsContainer>
           </StyledDropdownMenuContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

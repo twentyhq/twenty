@@ -9,7 +9,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { IconApi, IconBrandGraphql } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 
 const playgroundSetupFormSchema = z.object({

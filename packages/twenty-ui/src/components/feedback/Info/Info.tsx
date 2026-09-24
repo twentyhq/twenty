@@ -1,5 +1,5 @@
 import { IconInfoCircle } from '@ui/icon/components/TablerIcons';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 import { clsx } from 'clsx';
 import { type InfoAccent } from './types/InfoAccent';
 import { type InfoProps } from './types/InfoProps';

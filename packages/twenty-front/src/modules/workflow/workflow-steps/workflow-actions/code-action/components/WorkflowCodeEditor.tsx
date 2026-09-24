@@ -6,7 +6,7 @@ import { type editor } from 'monaco-editor';
 import { LightIconButton } from 'twenty-ui/components';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { IconMaximize } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 

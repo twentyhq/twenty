@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { EmailRecipientSuggestionMenuItem } from '@/activities/emails/recipients/components/EmailRecipientSuggestionMenuItem';
 import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
@@ -24,7 +24,7 @@ export const EmailRecipientSuggestionsDropdownContent = ({
 
   return (
     <div onMouseDown={(event) => event.preventDefault()}>
-      <DropdownContent widthInPixels={340}>
+      <LegacyDropdownContent widthInPixels={340}>
         <DropdownMenuItemsContainer hasMaxHeight>
           {suggestions.length === 0 ? (
             <ListItem disabled>{t`No results`}</ListItem>
@@ -47,7 +47,7 @@ export const EmailRecipientSuggestionsDropdownContent = ({
             </SelectableList>
           )}
         </DropdownMenuItemsContainer>
-      </DropdownContent>
+      </LegacyDropdownContent>
     </div>
   );
 };

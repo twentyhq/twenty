@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCheckContainer = styled.div<{ color: string }>`
   align-items: center;
@@ -23,7 +22,7 @@ type OnboardingModalCircularIconProps = {
 export const OnboardingModalCircularIcon = ({
   Icon,
 }: OnboardingModalCircularIconProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const color = theme.background.invertedPrimary;
 
   return (
