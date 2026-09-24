@@ -153,6 +153,41 @@ describe('resolveMinLikelihoods', () => {
     },
   );
 
+  it('reads only the settings it is given', () => {
+    vi.stubEnv(
+      MIN_LIKELIHOOD_SETTINGS.person.strongIdentifier.variableName,
+      '3',
+    );
+    vi.stubEnv(MIN_LIKELIHOOD_SETTINGS.person.weakIdentifier.variableName, '9');
+    vi.stubEnv(
+      MIN_LIKELIHOOD_SETTINGS.company.strongIdentifier.variableName,
+      '4',
+    );
+    vi.stubEnv(
+      MIN_LIKELIHOOD_SETTINGS.company.weakIdentifier.variableName,
+      '10',
+    );
+
+    expect(
+      resolveMinLikelihoods({
+        input: {},
+        minLikelihoodSettings: MIN_LIKELIHOOD_SETTINGS.person,
+      }),
+    ).toEqual({
+      strongIdentifierMinLikelihood: 3,
+      weakIdentifierMinLikelihood: 9,
+    });
+    expect(
+      resolveMinLikelihoods({
+        input: {},
+        minLikelihoodSettings: MIN_LIKELIHOOD_SETTINGS.company,
+      }),
+    ).toEqual({
+      strongIdentifierMinLikelihood: 4,
+      weakIdentifierMinLikelihood: 10,
+    });
+  });
+
   it.each([
     {
       input: { minLikelihood: 3 },

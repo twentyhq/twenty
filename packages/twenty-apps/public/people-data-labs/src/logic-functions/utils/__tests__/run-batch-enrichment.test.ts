@@ -6,7 +6,6 @@ import { MIN_LIKELIHOOD_SETTINGS } from 'src/constants/min-likelihood-settings';
 import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
-import { resolveCompanyMinLikelihoods } from 'src/logic-functions/utils/resolve-company-min-likelihoods';
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type MinLikelihoods } from 'src/types/min-likelihoods';
@@ -115,7 +114,7 @@ const buildHarness = (configs: RecordConfig[]) => {
     objectNameSingular: 'Test',
     noIdentifierMessage: 'no identifier',
     costPerMatchDollars: FAKE_COST_PER_MATCH_DOLLARS,
-    resolveMinLikelihoods: resolveCompanyMinLikelihoods,
+    minLikelihoodSettings: MIN_LIKELIHOOD_SETTINGS.company,
     readRecords,
     getNodeId: (node) => node.id,
     extractParams,
