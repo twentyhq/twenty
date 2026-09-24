@@ -1,10 +1,9 @@
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
   Dropdown,
   InlineBanner,
@@ -52,9 +51,6 @@ const StyledHintLink = styled.button`
 `;
 
 export const SettingsApplicationsAvailableTab = () => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showVettedOnly, setShowVettedOnly] = useState(true);
@@ -106,23 +102,20 @@ export const SettingsApplicationsAvailableTab = () => {
           filterDropdown={(filterButton) => (
             <DropdownRoot dropdownId="marketplace-filter-dropdown" type="panel">
               <Dropdown.Trigger render={filterButton} />
-              <Dropdown.Content
+              <DropdownContent
                 side="bottom"
                 align="end"
                 sideOffset={8}
                 alignOffset={0}
-                data-click-outside-id={excludedClickOutsideId}
               >
-                <div data-click-outside-id={parentClickOutsideId}>
-                  <Dropdown.Section>
-                    <SettingsRow
-                      startIcon={<IconSparkles />}
-                      onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
-                      checked={showVettedOnly}
-                    >{t`Vetted only`}</SettingsRow>
-                  </Dropdown.Section>
-                </div>
-              </Dropdown.Content>
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconSparkles />}
+                    onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
+                    checked={showVettedOnly}
+                  >{t`Vetted only`}</SettingsRow>
+                </Dropdown.Section>
+              </DropdownContent>
             </DropdownRoot>
           )}
         />

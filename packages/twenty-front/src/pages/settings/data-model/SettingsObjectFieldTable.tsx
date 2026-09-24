@@ -8,6 +8,7 @@ import {
 import { useMostlyEmptyFieldMetadataIds } from '@/settings/data-model/object-details/hooks/useMostlyEmptyFieldMetadataIds';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -16,15 +17,13 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Dropdown, SearchInput, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
@@ -78,9 +77,6 @@ export const SettingsObjectFieldTable = ({
   mode,
   excludeRelations = false,
 }: SettingsObjectFieldTableProps) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(true);
@@ -182,42 +178,39 @@ export const SettingsObjectFieldTable = ({
               type="panel"
             >
               <Dropdown.Trigger render={filterButton} />
-              <Dropdown.Content
+              <DropdownContent
                 side="bottom"
                 align="end"
                 sideOffset={8}
                 alignOffset={0}
-                data-click-outside-id={excludedClickOutsideId}
               >
-                <div data-click-outside-id={parentClickOutsideId}>
-                  <Dropdown.Section>
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconArchive />}
+                    onCheckedChange={() => setShowInactive(!showInactive)}
+                    checked={showInactive}
+                  >{t`Inactive`}</SettingsRow>
+                  {(mostlyEmptyFieldMetadataIds.size > 0 ||
+                    showOnlyMostlyEmpty) && (
                     <SettingsRow
-                      startIcon={<IconArchive />}
-                      onCheckedChange={() => setShowInactive(!showInactive)}
-                      checked={showInactive}
-                    >{t`Inactive`}</SettingsRow>
-                    {(mostlyEmptyFieldMetadataIds.size > 0 ||
-                      showOnlyMostlyEmpty) && (
-                      <SettingsRow
-                        startIcon={<IconCircleDashed />}
-                        onCheckedChange={() =>
-                          setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
-                        }
-                        checked={showOnlyMostlyEmpty}
-                      >{t`Mostly empty`}</SettingsRow>
-                    )}
-                    {isAdvancedModeEnabled && (
-                      <SettingsRow
-                        startIcon={<IconSettings />}
-                        onCheckedChange={() =>
-                          setShowSystemFields(!showSystemFields)
-                        }
-                        checked={showSystemFields}
-                      >{t`System fields`}</SettingsRow>
-                    )}
-                  </Dropdown.Section>
-                </div>
-              </Dropdown.Content>
+                      startIcon={<IconCircleDashed />}
+                      onCheckedChange={() =>
+                        setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
+                      }
+                      checked={showOnlyMostlyEmpty}
+                    >{t`Mostly empty`}</SettingsRow>
+                  )}
+                  {isAdvancedModeEnabled && (
+                    <SettingsRow
+                      startIcon={<IconSettings />}
+                      onCheckedChange={() =>
+                        setShowSystemFields(!showSystemFields)
+                      }
+                      checked={showSystemFields}
+                    >{t`System fields`}</SettingsRow>
+                  )}
+                </Dropdown.Section>
+              </DropdownContent>
             </DropdownRoot>
           )}
         />

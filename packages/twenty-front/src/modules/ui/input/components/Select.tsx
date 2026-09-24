@@ -1,13 +1,12 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type SelectProps } from '@/ui/input/types/SelectProps';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Dropdown } from 'twenty-ui/components';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
@@ -62,8 +61,6 @@ export const Select = <TValue extends SelectValue>({
   variant = 'default',
   renderAsTag = false,
 }: SelectProps<TValue>) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
   const dropdownContentRef = useRef<HTMLDivElement>(null);
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -180,7 +177,7 @@ export const Select = <TValue extends SelectValue>({
               variant={variant}
             />
           </Dropdown.Trigger>
-          <Dropdown.Content
+          <DropdownContent
             ref={dropdownContentRef}
             initialFocus={
               withSearchInput
@@ -198,121 +195,115 @@ export const Select = <TValue extends SelectValue>({
             align="start"
             sideOffset={dropdownOffset?.y ?? 0}
             alignOffset={dropdownOffset?.x ?? 0}
-            data-click-outside-id={excludedClickOutsideId}
           >
-            <div data-click-outside-id={parentClickOutsideId}>
-              {withSearchInput === true && (
-                <Dropdown.Search
-                  value={searchInputValue}
-                  onValueChange={setSearchInputValue}
-                  placeholder={t`Search`}
-                  aria-label={t`Search`}
-                />
-              )}
-              {withSearchInput === true && isNonEmptyArray(filteredOptions) && (
-                <Dropdown.Separator />
-              )}
-              {isDefined(pinnedOption) && (
-                <Dropdown.Section>
+            {withSearchInput === true && (
+              <Dropdown.Search
+                value={searchInputValue}
+                onValueChange={setSearchInputValue}
+                placeholder={t`Search`}
+                aria-label={t`Search`}
+              />
+            )}
+            {withSearchInput === true && isNonEmptyArray(filteredOptions) && (
+              <Dropdown.Separator />
+            )}
+            {isDefined(pinnedOption) && (
+              <Dropdown.Section>
+                <Dropdown.OptionItem
+                  onSelect={() => {
+                    onChange?.(pinnedOption.value);
+                    onBlur?.();
+                  }}
+                  disabled={pinnedOption.disabled}
+                  selected={controlSelectedOption.value === pinnedOption.value}
+                  indicator={needIconCheck ? 'check' : 'none'}
+                  description={pinnedOption.contextualText}
+                  startIcon={
+                    <>
+                      <SelectOptionIcon
+                        Icon={pinnedOption.Icon}
+                        color={pinnedOption.iconThemeColor}
+                      />
+                      {pinnedOption.LeftComponent}
+                    </>
+                  }
+                >
+                  {pinnedOption.label}
+                </Dropdown.OptionItem>
+              </Dropdown.Section>
+            )}
+            {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
+              <Dropdown.Separator />
+            )}
+            {isNonEmptyArray(filteredOptions) && (
+              <Dropdown.Section
+                style={{
+                  maxHeight: DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT,
+                  overflowY: 'auto',
+                }}
+              >
+                {filteredOptions.map((option) => (
                   <Dropdown.OptionItem
+                    key={`${option.value}-${option.label}`}
                     onSelect={() => {
-                      onChange?.(pinnedOption.value);
+                      onChange?.(option.value);
                       onBlur?.();
                     }}
-                    disabled={pinnedOption.disabled}
-                    selected={
-                      controlSelectedOption.value === pinnedOption.value
+                    disabled={option.disabled}
+                    selected={controlSelectedOption.value === option.value}
+                    indicator={
+                      (renderAsTag && isDefined(option.color)) || needIconCheck
+                        ? 'check'
+                        : 'none'
                     }
-                    indicator={needIconCheck ? 'check' : 'none'}
-                    description={pinnedOption.contextualText}
+                    description={
+                      renderAsTag && isDefined(option.color)
+                        ? undefined
+                        : option.contextualText
+                    }
                     startIcon={
-                      <>
-                        <SelectOptionIcon
-                          Icon={pinnedOption.Icon}
-                          color={pinnedOption.iconThemeColor}
-                        />
-                        {pinnedOption.LeftComponent}
-                      </>
+                      renderAsTag && isDefined(option.color) ? undefined : (
+                        <>
+                          <SelectOptionIcon
+                            Icon={option.Icon}
+                            color={option.iconThemeColor}
+                          />
+                          {option.LeftComponent}
+                        </>
+                      )
                     }
                   >
-                    {pinnedOption.label}
+                    {renderAsTag && isDefined(option.color) ? (
+                      <Tag
+                        color={option.color}
+                        borderStyle="dashed"
+                        variant="soft"
+                      >
+                        {option.label}
+                      </Tag>
+                    ) : (
+                      option.label
+                    )}
                   </Dropdown.OptionItem>
-                </Dropdown.Section>
-              )}
-              {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
-                <Dropdown.Separator />
-              )}
-              {isNonEmptyArray(filteredOptions) && (
-                <Dropdown.Section
-                  style={{
-                    maxHeight: DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT,
-                    overflowY: 'auto',
-                  }}
+                ))}
+              </Dropdown.Section>
+            )}
+            {isDefined(callToActionButton) &&
+              isNonEmptyArray(filteredOptions) && <Dropdown.Separator />}
+            {isDefined(callToActionButton) && (
+              <Dropdown.Section>
+                <Dropdown.ActionItem
+                  onClick={callToActionButton.onClick}
+                  closeOnClick={false}
+                  startIcon={
+                    <SelectOptionIcon Icon={callToActionButton.Icon} />
+                  }
                 >
-                  {filteredOptions.map((option) => (
-                    <Dropdown.OptionItem
-                      key={`${option.value}-${option.label}`}
-                      onSelect={() => {
-                        onChange?.(option.value);
-                        onBlur?.();
-                      }}
-                      disabled={option.disabled}
-                      selected={controlSelectedOption.value === option.value}
-                      indicator={
-                        (renderAsTag && isDefined(option.color)) ||
-                        needIconCheck
-                          ? 'check'
-                          : 'none'
-                      }
-                      description={
-                        renderAsTag && isDefined(option.color)
-                          ? undefined
-                          : option.contextualText
-                      }
-                      startIcon={
-                        renderAsTag && isDefined(option.color) ? undefined : (
-                          <>
-                            <SelectOptionIcon
-                              Icon={option.Icon}
-                              color={option.iconThemeColor}
-                            />
-                            {option.LeftComponent}
-                          </>
-                        )
-                      }
-                    >
-                      {renderAsTag && isDefined(option.color) ? (
-                        <Tag
-                          color={option.color}
-                          borderStyle="dashed"
-                          variant="soft"
-                        >
-                          {option.label}
-                        </Tag>
-                      ) : (
-                        option.label
-                      )}
-                    </Dropdown.OptionItem>
-                  ))}
-                </Dropdown.Section>
-              )}
-              {isDefined(callToActionButton) &&
-                isNonEmptyArray(filteredOptions) && <Dropdown.Separator />}
-              {isDefined(callToActionButton) && (
-                <Dropdown.Section>
-                  <Dropdown.ActionItem
-                    onClick={callToActionButton.onClick}
-                    closeOnClick={false}
-                    startIcon={
-                      <SelectOptionIcon Icon={callToActionButton.Icon} />
-                    }
-                  >
-                    {callToActionButton.text}
-                  </Dropdown.ActionItem>
-                </Dropdown.Section>
-              )}
-            </div>
-          </Dropdown.Content>
+                  {callToActionButton.text}
+                </Dropdown.ActionItem>
+              </Dropdown.Section>
+            )}
+          </DropdownContent>
         </DropdownRoot>
       )}
       {isNonEmptyString(description) && (

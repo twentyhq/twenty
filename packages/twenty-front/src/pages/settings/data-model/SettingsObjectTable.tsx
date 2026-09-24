@@ -15,6 +15,7 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -22,8 +23,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -70,9 +69,6 @@ export const SettingsObjectTable = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   withSearchBar?: boolean;
 }) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
@@ -175,34 +171,31 @@ export const SettingsObjectTable = ({
                 type="panel"
               >
                 <Dropdown.Trigger render={filterButton} />
-                <Dropdown.Content
+                <DropdownContent
                   side="bottom"
                   align="end"
                   sideOffset={8}
                   alignOffset={0}
-                  data-click-outside-id={excludedClickOutsideId}
                 >
-                  <div data-click-outside-id={parentClickOutsideId}>
-                    <Dropdown.Section>
+                  <Dropdown.Section>
+                    <SettingsRow
+                      startIcon={<IconArchive />}
+                      onCheckedChange={() =>
+                        setShowDeactivated(!showDeactivated)
+                      }
+                      checked={showDeactivated}
+                    >{t`Deactivated`}</SettingsRow>
+                    {isAdvancedModeEnabled && (
                       <SettingsRow
-                        startIcon={<IconArchive />}
+                        startIcon={<IconSettings />}
                         onCheckedChange={() =>
-                          setShowDeactivated(!showDeactivated)
+                          setShowSystemObjects(!showSystemObjects)
                         }
-                        checked={showDeactivated}
-                      >{t`Deactivated`}</SettingsRow>
-                      {isAdvancedModeEnabled && (
-                        <SettingsRow
-                          startIcon={<IconSettings />}
-                          onCheckedChange={() =>
-                            setShowSystemObjects(!showSystemObjects)
-                          }
-                          checked={showSystemObjects}
-                        >{t`System objects`}</SettingsRow>
-                      )}
-                    </Dropdown.Section>
-                  </div>
-                </Dropdown.Content>
+                        checked={showSystemObjects}
+                      >{t`System objects`}</SettingsRow>
+                    )}
+                  </Dropdown.Section>
+                </DropdownContent>
               </DropdownRoot>
             )}
           />

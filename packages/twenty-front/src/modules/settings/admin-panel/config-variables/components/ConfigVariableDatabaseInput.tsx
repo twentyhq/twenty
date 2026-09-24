@@ -4,11 +4,9 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
@@ -49,9 +47,6 @@ export const ConfigVariableDatabaseInput = ({
   disabled,
   placeholder,
 }: ConfigVariableDatabaseInputProps) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const selectOptions =
     options && Array.isArray(options)
       ? options.map((option) => ({
@@ -141,27 +136,20 @@ export const ConfigVariableDatabaseInput = ({
                   selectSizeVariant="default"
                 />
               </Dropdown.Trigger>
-              <Dropdown.Content
-                side="bottom"
-                align="start"
-                sideOffset={8}
-                data-click-outside-id={excludedClickOutsideId}
-              >
-                <div data-click-outside-id={parentClickOutsideId}>
-                  <Dropdown.Section>
-                    {selectOptions.map((option) => (
-                      <Dropdown.OptionItem
-                        key={option.value}
-                        className="config-variable-array-menu-item-multi-select"
-                        selected={isValueSelected(option.value)}
-                        onSelect={() => handleMultiSelectChange(option.value)}
-                      >
-                        {option.label}
-                      </Dropdown.OptionItem>
-                    ))}
-                  </Dropdown.Section>
-                </div>
-              </Dropdown.Content>
+              <DropdownContent side="bottom" align="start" sideOffset={8}>
+                <Dropdown.Section>
+                  {selectOptions.map((option) => (
+                    <Dropdown.OptionItem
+                      key={option.value}
+                      className="config-variable-array-menu-item-multi-select"
+                      selected={isValueSelected(option.value)}
+                      onSelect={() => handleMultiSelectChange(option.value)}
+                    >
+                      {option.label}
+                    </Dropdown.OptionItem>
+                  ))}
+                </Dropdown.Section>
+              </DropdownContent>
             </DropdownRoot>
           ) : (
             <TextArea

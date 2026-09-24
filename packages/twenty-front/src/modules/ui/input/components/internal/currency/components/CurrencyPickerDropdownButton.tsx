@@ -1,8 +1,7 @@
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { styled } from '@linaria/react';
 
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { Dropdown } from 'twenty-ui/components';
 
@@ -50,9 +49,6 @@ export const CurrencyPickerDropdownButton = ({
   selectedCurrencyCode: string;
   onChange: (currency: Currency) => void;
 }) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { theme } = useContext(ThemeContext);
   const dropdownId = 'currency-picker-dropdown-id';
 
@@ -72,20 +68,17 @@ export const CurrencyPickerDropdownButton = ({
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
       </Dropdown.Trigger>
-      <Dropdown.Content
+      <DropdownContent
         side="bottom"
         align="start"
         sideOffset={4}
         alignOffset={0}
-        data-click-outside-id={excludedClickOutsideId}
       >
-        <div data-click-outside-id={parentClickOutsideId}>
-          <CurrencyPickerDropdownSelect
-            selectedCurrency={currency}
-            onChange={onChange}
-          />
-        </div>
-      </Dropdown.Content>
+        <CurrencyPickerDropdownSelect
+          selectedCurrency={currency}
+          onChange={onChange}
+        />
+      </DropdownContent>
     </DropdownRoot>
   );
 };

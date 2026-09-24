@@ -1,6 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { Dropdown } from 'twenty-ui/components';
@@ -42,9 +41,6 @@ export const DropdownMenuInnerSelect = ({
   dropdownId,
   widthInPixels,
 }: DropdownMenuInnerSelectProps) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { theme } = useContext(ThemeContext);
 
   return (
@@ -62,28 +58,25 @@ export const DropdownMenuInnerSelect = ({
           <IconChevronDown size={theme.icon.size.sm} />
         </StyledDropdownMenuInnerSelectDropdownButton>
       </Dropdown.Trigger>
-      <Dropdown.Content
+      <DropdownContent
         width={widthInPixels}
         side="bottom"
         align="end"
         alignOffset={8}
-        data-click-outside-id={excludedClickOutsideId}
       >
-        <div data-click-outside-id={parentClickOutsideId}>
-          <Dropdown.Section>
-            {options.map((selectOption) => (
-              <Dropdown.OptionItem
-                key={`dropdown-menu-inner-select-item-${selectOption.value}`}
-                onSelect={() => onChange(selectOption)}
-                disabled={selectOption.disabled}
-                selected={selectOption.value === selectedOption.value}
-              >
-                {selectOption.label}
-              </Dropdown.OptionItem>
-            ))}
-          </Dropdown.Section>
-        </div>
-      </Dropdown.Content>
+        <Dropdown.Section>
+          {options.map((selectOption) => (
+            <Dropdown.OptionItem
+              key={`dropdown-menu-inner-select-item-${selectOption.value}`}
+              onSelect={() => onChange(selectOption)}
+              disabled={selectOption.disabled}
+              selected={selectOption.value === selectedOption.value}
+            >
+              {selectOption.label}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.Section>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

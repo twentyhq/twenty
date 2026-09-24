@@ -1,15 +1,14 @@
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Dropdown,
@@ -35,9 +34,6 @@ const StyledSearchContainer = styled.div`
 `;
 
 export const SettingsAgentSkillsTab = () => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
@@ -141,30 +137,27 @@ export const SettingsAgentSkillsTab = () => {
               type="panel"
             >
               <Dropdown.Trigger render={filterButton} />
-              <Dropdown.Content
+              <DropdownContent
                 side="bottom"
                 align="end"
                 sideOffset={8}
                 alignOffset={0}
-                data-click-outside-id={excludedClickOutsideId}
               >
-                <div data-click-outside-id={parentClickOutsideId}>
-                  <Dropdown.Section>
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconArchive />}
+                    onCheckedChange={setShowDeactivated}
+                    checked={showDeactivated}
+                  >{t`Deactivated`}</SettingsRow>
+                  {isAdvancedModeEnabled && (
                     <SettingsRow
-                      startIcon={<IconArchive />}
-                      onCheckedChange={setShowDeactivated}
-                      checked={showDeactivated}
-                    >{t`Deactivated`}</SettingsRow>
-                    {isAdvancedModeEnabled && (
-                      <SettingsRow
-                        startIcon={<IconSettings />}
-                        onCheckedChange={setShowSystemSkills}
-                        checked={showSystemSkills}
-                      >{t`System skills`}</SettingsRow>
-                    )}
-                  </Dropdown.Section>
-                </div>
-              </Dropdown.Content>
+                      startIcon={<IconSettings />}
+                      onCheckedChange={setShowSystemSkills}
+                      checked={showSystemSkills}
+                    >{t`System skills`}</SettingsRow>
+                  )}
+                </Dropdown.Section>
+              </DropdownContent>
             </DropdownRoot>
           )}
         />

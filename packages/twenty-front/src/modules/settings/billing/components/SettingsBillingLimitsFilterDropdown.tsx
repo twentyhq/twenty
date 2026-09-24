@@ -1,8 +1,6 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCoins, IconList, IconTrash, IconUsers } from 'twenty-ui/icon';
 
@@ -13,6 +11,7 @@ import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/Us
 import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { Dropdown } from 'twenty-ui/components';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
 
@@ -37,9 +36,6 @@ export const SettingsBillingLimitsFilterDropdown = ({
   onSelectResourceType,
   onSelectSpenderType,
 }: SettingsBillingLimitsFilterDropdownProps) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { t } = useLingui();
 
   const getSpenderTypeLabel = (spenderType: string): string => {
@@ -162,17 +158,11 @@ export const SettingsBillingLimitsFilterDropdown = ({
   return (
     <DropdownRoot dropdownId={FILTER_DROPDOWN_ID} type="picker">
       <Dropdown.Trigger render={filterButton} />
-      <Dropdown.Content
-        align="end"
-        sideOffset={8}
-        data-click-outside-id={excludedClickOutsideId}
-      >
-        <div data-click-outside-id={parentClickOutsideId}>
-          <Dropdown.Page id="root">{renderMenuContent()}</Dropdown.Page>
-          <Dropdown.Page id="usage">{renderUsageContent()}</Dropdown.Page>
-          <Dropdown.Page id="spender">{renderSpenderContent()}</Dropdown.Page>
-        </div>
-      </Dropdown.Content>
+      <DropdownContent align="end" sideOffset={8}>
+        <Dropdown.Page id="root">{renderMenuContent()}</Dropdown.Page>
+        <Dropdown.Page id="usage">{renderUsageContent()}</Dropdown.Page>
+        <Dropdown.Page id="spender">{renderSpenderContent()}</Dropdown.Page>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

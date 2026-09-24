@@ -4,13 +4,11 @@ import { EDITABLE_PROFILE_FIELDS_DROPDOWN_ID } from '@/settings/security/constan
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, useToast } from 'twenty-ui/components';
 import {
@@ -37,9 +35,6 @@ type ProfileFieldOption = {
 };
 
 export const SettingsSecurityEditableProfileFields = () => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
@@ -134,28 +129,21 @@ export const SettingsSecurityEditableProfileFields = () => {
             hasRightElement={false}
           />
         </Dropdown.Trigger>
-        <Dropdown.Content
-          side="bottom"
-          align="start"
-          sideOffset={8}
-          data-click-outside-id={excludedClickOutsideId}
-        >
-          <div data-click-outside-id={parentClickOutsideId}>
-            <Dropdown.Section>
-              {profileFieldOptions.map((option) => (
-                <Dropdown.OptionItem
-                  key={option.value}
-                  className="settings-security-editable-profile-fields-menu-item"
-                  selected={selectedFields.includes(option.value)}
-                  onSelect={() => toggleField(option.value)}
-                  startIcon={<SelectOptionIcon Icon={option.Icon} />}
-                >
-                  {option.label}
-                </Dropdown.OptionItem>
-              ))}
-            </Dropdown.Section>
-          </div>
-        </Dropdown.Content>
+        <DropdownContent side="bottom" align="start" sideOffset={8}>
+          <Dropdown.Section>
+            {profileFieldOptions.map((option) => (
+              <Dropdown.OptionItem
+                key={option.value}
+                className="settings-security-editable-profile-fields-menu-item"
+                selected={selectedFields.includes(option.value)}
+                onSelect={() => toggleField(option.value)}
+                startIcon={<SelectOptionIcon Icon={option.Icon} />}
+              >
+                {option.label}
+              </Dropdown.OptionItem>
+            ))}
+          </Dropdown.Section>
+        </DropdownContent>
       </DropdownRoot>
     </StyledDropdownContainer>
   );

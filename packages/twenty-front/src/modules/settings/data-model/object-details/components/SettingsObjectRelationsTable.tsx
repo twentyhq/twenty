@@ -5,6 +5,7 @@ import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField
 import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -14,13 +15,11 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, SettingsRow } from 'twenty-ui/components';
@@ -106,9 +105,6 @@ const getMorphRelationFieldLabel = (field: FieldMetadataItem) => {
 export const SettingsObjectRelationsTable = ({
   objectMetadataItem,
 }: SettingsObjectRelationsTableProps) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(true);
@@ -218,23 +214,20 @@ export const SettingsObjectRelationsTable = ({
               />
             }
           />
-          <Dropdown.Content
+          <DropdownContent
             side="bottom"
             align="end"
             sideOffset={8}
             alignOffset={0}
-            data-click-outside-id={excludedClickOutsideId}
           >
-            <div data-click-outside-id={parentClickOutsideId}>
-              <Dropdown.Section>
-                <SettingsRow
-                  startIcon={<IconArchive />}
-                  onCheckedChange={() => setShowInactive(!showInactive)}
-                  checked={showInactive}
-                >{t`Inactive`}</SettingsRow>
-              </Dropdown.Section>
-            </div>
-          </Dropdown.Content>
+            <Dropdown.Section>
+              <SettingsRow
+                startIcon={<IconArchive />}
+                onCheckedChange={() => setShowInactive(!showInactive)}
+                checked={showInactive}
+              >{t`Inactive`}</SettingsRow>
+            </Dropdown.Section>
+          </DropdownContent>
         </DropdownRoot>
       </StyledSearchAndFilterContainer>
       <Table>

@@ -1,13 +1,11 @@
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, IconButton } from 'twenty-ui/components';
 import { IconFilter } from 'twenty-ui/icon';
 
 import { SidePanelObjectFilterDropdownContent } from '@/side-panel/components/SidePanelObjectFilterDropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 
 const OBJECT_FILTER_DROPDOWN_ID = 'side-panel-object-filter-dropdown';
 
@@ -20,9 +18,6 @@ export const SidePanelObjectFilterDropdown = ({
   selectedObjectNameSingular,
   onSelectObject,
 }: SidePanelObjectFilterDropdownProps) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { t } = useLingui();
   const isFilterActive = isDefined(selectedObjectNameSingular);
 
@@ -40,18 +35,12 @@ export const SidePanelObjectFilterDropdown = ({
           </IconButton>
         }
       />
-      <Dropdown.Content
-        side="bottom"
-        align="end"
-        data-click-outside-id={excludedClickOutsideId}
-      >
-        <div data-click-outside-id={parentClickOutsideId}>
-          <SidePanelObjectFilterDropdownContent
-            selectedObjectNameSingular={selectedObjectNameSingular}
-            onSelectObject={onSelectObject}
-          />
-        </div>
-      </Dropdown.Content>
+      <DropdownContent side="bottom" align="end">
+        <SidePanelObjectFilterDropdownContent
+          selectedObjectNameSingular={selectedObjectNameSingular}
+          onSelectObject={onSelectObject}
+        />
+      </DropdownContent>
     </DropdownRoot>
   );
 };

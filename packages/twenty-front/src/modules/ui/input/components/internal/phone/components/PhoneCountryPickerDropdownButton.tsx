@@ -1,8 +1,7 @@
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { type Country } from '@/ui/input/components/internal/types/Country';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useState } from 'react';
 import { Dropdown } from 'twenty-ui/components';
@@ -76,9 +75,6 @@ export const PhoneCountryPickerDropdownButton = ({
   value: string;
   onChange: (countryCode: string) => void;
 }) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
   const isDropdownOpen = useAtomComponentStateValue(
@@ -111,21 +107,18 @@ export const PhoneCountryPickerDropdownButton = ({
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
       </Dropdown.Trigger>
-      <Dropdown.Content
+      <DropdownContent
         side="bottom"
         align="start"
         sideOffset={4}
         alignOffset={0}
-        data-click-outside-id={excludedClickOutsideId}
       >
-        <div data-click-outside-id={parentClickOutsideId}>
-          <PhoneCountryPickerDropdownSelect
-            countries={countries}
-            selectedCountry={selectedCountry}
-            onChange={onChange}
-          />
-        </div>
-      </Dropdown.Content>
+        <PhoneCountryPickerDropdownSelect
+          countries={countries}
+          selectedCountry={selectedCountry}
+          onChange={onChange}
+        />
+      </DropdownContent>
     </DropdownRoot>
   );
 };

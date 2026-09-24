@@ -4,8 +4,7 @@ import { RecordTableColumnAggregateFooterDropdownContent } from '@/object-record
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { RecordTableColumnAggregateFooterValueCell } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValueCell';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { useCallback, useContext } from 'react';
 import { Dropdown } from 'twenty-ui/components';
@@ -19,9 +18,6 @@ export const RecordTableColumnFooterWithDropdown = ({
   currentRecordGroupId,
   isFirstCell,
 }: RecordTableColumnFooterWithDropdownProps) => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { fieldMetadataId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
   );
@@ -67,23 +63,17 @@ export const RecordTableColumnFooterWithDropdown = ({
           isFirstCell={isFirstCell}
         />
       </Dropdown.Trigger>
-      <Dropdown.Content
-        align="start"
-        alignOffset={-1}
-        data-click-outside-id={excludedClickOutsideId}
-      >
-        <div data-click-outside-id={parentClickOutsideId}>
-          <RecordTableColumnAggregateFooterDropdownContext.Provider
-            value={{
-              dropdownId,
-              fieldMetadataId,
-              fieldMetadataType: fieldMetadata?.type,
-            }}
-          >
-            <RecordTableColumnAggregateFooterDropdownContent />
-          </RecordTableColumnAggregateFooterDropdownContext.Provider>
-        </div>
-      </Dropdown.Content>
+      <DropdownContent align="start" alignOffset={-1}>
+        <RecordTableColumnAggregateFooterDropdownContext.Provider
+          value={{
+            dropdownId,
+            fieldMetadataId,
+            fieldMetadataType: fieldMetadata?.type,
+          }}
+        >
+          <RecordTableColumnAggregateFooterDropdownContent />
+        </RecordTableColumnAggregateFooterDropdownContext.Provider>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

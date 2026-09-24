@@ -1,9 +1,8 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Dropdown,
@@ -24,9 +23,6 @@ const StyledSearchContainer = styled.div`
 `;
 
 export const SettingsAgentToolsTab = () => {
-  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
-
   const { t } = useLingui();
   const {
     allTools,
@@ -96,33 +92,30 @@ export const SettingsAgentToolsTab = () => {
               type="panel"
             >
               <Dropdown.Trigger render={filterButton} />
-              <Dropdown.Content
+              <DropdownContent
                 side="bottom"
                 align="end"
                 sideOffset={8}
                 alignOffset={0}
-                data-click-outside-id={excludedClickOutsideId}
               >
-                <div data-click-outside-id={parentClickOutsideId}>
-                  <Dropdown.Section>
-                    <SettingsRow
-                      startIcon={<IconTool />}
-                      onCheckedChange={setShowCustomTools}
-                      checked={showCustomTools}
-                    >{t`Custom`}</SettingsRow>
-                    <SettingsRow
-                      startIcon={<IconLock />}
-                      onCheckedChange={setShowManagedTools}
-                      checked={showManagedTools}
-                    >{t`Managed`}</SettingsRow>
-                    <SettingsRow
-                      startIcon={<IconPuzzle />}
-                      onCheckedChange={setShowStandardTools}
-                      checked={showStandardTools}
-                    >{t`Standard`}</SettingsRow>
-                  </Dropdown.Section>
-                </div>
-              </Dropdown.Content>
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconTool />}
+                    onCheckedChange={setShowCustomTools}
+                    checked={showCustomTools}
+                  >{t`Custom`}</SettingsRow>
+                  <SettingsRow
+                    startIcon={<IconLock />}
+                    onCheckedChange={setShowManagedTools}
+                    checked={showManagedTools}
+                  >{t`Managed`}</SettingsRow>
+                  <SettingsRow
+                    startIcon={<IconPuzzle />}
+                    onCheckedChange={setShowStandardTools}
+                    checked={showStandardTools}
+                  >{t`Standard`}</SettingsRow>
+                </Dropdown.Section>
+              </DropdownContent>
             </DropdownRoot>
           )}
         />
