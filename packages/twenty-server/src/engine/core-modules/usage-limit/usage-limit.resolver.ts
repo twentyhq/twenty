@@ -87,6 +87,7 @@ export class UsageLimitResolver {
     const usageLimit = await this.usageLimitService.create({
       workspaceId: workspace.id,
       input,
+      isOperator: false,
     });
 
     return fromUsageLimitEntityToDto(usageLimit);
@@ -100,6 +101,7 @@ export class UsageLimitResolver {
     const usageLimit = await this.usageLimitService.update({
       workspaceId: workspace.id,
       input,
+      isOperator: false,
     });
 
     return fromUsageLimitEntityToDto(usageLimit);
@@ -113,6 +115,7 @@ export class UsageLimitResolver {
     return this.usageLimitService.delete({
       workspaceId: workspace.id,
       usageLimitId,
+      isOperator: false,
     });
   }
 }

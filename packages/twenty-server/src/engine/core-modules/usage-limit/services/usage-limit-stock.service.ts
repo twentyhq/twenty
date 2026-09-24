@@ -173,7 +173,7 @@ export class UsageLimitStockService {
 
     if (isStockResourceType(resourceType)) {
       keys.push(
-        ...this.buildStockLimitDefaults(resourceType)
+        ...this.buildStockLimitDefaults({ resourceType, operationType })
           .filter(
             (stockLimitDefault) =>
               stockLimitDefault.spenderType === spenderType,
@@ -298,26 +298,38 @@ export class UsageLimitStockService {
       operationType,
       spenders,
       limits: enforceableLimits,
-      stockLimitDefaults: this.buildStockLimitDefaults(resourceType),
+      stockLimitDefaults: this.buildStockLimitDefaults({
+        resourceType,
+        operationType,
+      }),
     });
   }
 
-  private buildStockLimitDefaults(
-    resourceType: StockResourceType,
-  ): StockLimitDefault[] {
+  private buildStockLimitDefaults({
+    resourceType,
+    operationType,
+  }: {
+    resourceType: StockResourceType;
+    operationType: UsageOperationType;
+  }): StockLimitDefault[] {
     const definition = findUsageLimitDefinition({
       resourceType,
       limitKind: 'stock',
     });
 
-    return (definition?.defaults ?? []).map((stockLimitDefaultDefinition) => ({
-      spenderType: stockLimitDefaultDefinition.spenderType,
-      meter: stockLimitDefaultDefinition.meter,
-      isOverridable: stockLimitDefaultDefinition.isOverridable,
-      limitValue: this.twentyConfigService.get(
-        stockLimitDefaultDefinition.limitValueConfigVariable,
-      ),
-    }));
+    return (definition?.defaults ?? [])
+      .filter(
+        (stockLimitDefaultDefinition) =>
+          stockLimitDefaultDefinition.operationType === operationType,
+      )
+      .map((stockLimitDefaultDefinition) => ({
+        spenderType: stockLimitDefaultDefinition.spenderType,
+        meter: stockLimitDefaultDefinition.meter,
+        isOverridable: stockLimitDefaultDefinition.isOverridable,
+        limitValue: this.twentyConfigService.get(
+          stockLimitDefaultDefinition.limitValueConfigVariable,
+        ),
+      }));
   }
 
   private async readRemainings({
