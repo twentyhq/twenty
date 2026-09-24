@@ -779,7 +779,7 @@ msgstr "/月"
 #. js-lingui-id: AqEd8w
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "/month billed annually"
-msgstr ""
+msgstr "/月，按年计费"
 
 #. js-lingui-id: oz9P7U
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -824,12 +824,12 @@ msgstr "${0} / 1M"
 #. js-lingui-id: aWz9JJ
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "${price} per user per month"
-msgstr ""
+msgstr "每位用户每月 ${price}"
 
 #. js-lingui-id: uycgB4
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "${price} per user per month, billed annually"
-msgstr ""
+msgstr "每位用户每月 ${price}，按年计费"
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1522,7 +1522,7 @@ msgstr "添加项目"
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
 msgid "Add link"
-msgstr ""
+msgstr "添加链接"
 
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
@@ -1594,7 +1594,7 @@ msgstr "添加或移除用户"
 #. js-lingui-id: P0UENN
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Add origin"
-msgstr ""
+msgstr "添加源"
 
 #. js-lingui-id: 7YdkgZ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -1615,7 +1615,7 @@ msgstr ""
 #. js-lingui-id: Cw27zP
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "Add question"
-msgstr ""
+msgstr "添加问题"
 
 #. js-lingui-id: AmiJYR
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdownOneToMany.tsx
@@ -1872,7 +1872,7 @@ msgstr "管理面板 - 健康状况"
 #. js-lingui-id: 82sWFi
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 msgid "Administration"
-msgstr ""
+msgstr "管理"
 
 #. js-lingui-id: Faptqt
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdmins.tsx
@@ -1960,7 +1960,7 @@ msgstr "代理"
 #. js-lingui-id: ZPXEWi
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Agent configuration"
-msgstr ""
+msgstr "智能体配置"
 
 #. js-lingui-id: 6SbwJa
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -1985,12 +1985,12 @@ msgstr ""
 #. js-lingui-id: suj+fL
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Agent run"
-msgstr ""
+msgstr "智能体运行"
 
 #. js-lingui-id: Wfy3rU
 #: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
 msgid "Agent settings"
-msgstr ""
+msgstr "智能体设置"
 
 #. js-lingui-id: Nl33Ds
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2076,7 +2076,7 @@ msgstr "AI 请求准备"
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
-msgstr ""
+msgstr "AI 设置"
 
 #. js-lingui-id: X5Mx4I
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
@@ -2169,17 +2169,17 @@ msgstr "警报"
 #. js-lingui-id: OfYdoY
 #: src/modules/advanced-text-editor/components/ImageBubbleMenu.tsx
 msgid "Align image center"
-msgstr ""
+msgstr "图片居中对齐"
 
 #. js-lingui-id: 8aU/bq
 #: src/modules/advanced-text-editor/components/ImageBubbleMenu.tsx
 msgid "Align image left"
-msgstr ""
+msgstr "图片左对齐"
 
 #. js-lingui-id: e7wCam
 #: src/modules/advanced-text-editor/components/ImageBubbleMenu.tsx
 msgid "Align image right"
-msgstr ""
+msgstr "图片右对齐"
 
 #. js-lingui-id: ukH0aS
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -2426,7 +2426,7 @@ msgstr "允许通过微软的单点登录功能登录。"
 #. js-lingui-id: y/+Qbr
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "Allow media access for {applicationName}?"
-msgstr ""
+msgstr "允许 {applicationName} 访问媒体？"
 
 #. js-lingui-id: pf6MGm
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2451,7 +2451,7 @@ msgstr "允许通过共享邀请链接来邀请新用户。"
 #. js-lingui-id: GuicN+
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Allow trusted websites to display this workspace in an iframe. Users who are already signed in may see their workspace inside those websites, so only add origins you fully trust. Leave the list empty to block external embedding."
-msgstr ""
+msgstr "允许受信任的网站在 iframe 中显示此工作区。已登录的用户可能会在这些网站中看到其工作区，因此请仅添加您完全信任的源。将列表留空可阻止外部嵌入。"
 
 #. js-lingui-id: xfQ2i8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2471,7 +2471,7 @@ msgstr "允许用户使用电子邮件和密码登录。"
 #. js-lingui-id: Idev/J
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Allowed origin"
-msgstr ""
+msgstr "允许的源"
 
 #. js-lingui-id: vj+OHl
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
@@ -2487,7 +2487,7 @@ msgstr "按字母顺序"
 #. js-lingui-id: evXcqr
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
 msgid "Already in sidebar"
-msgstr ""
+msgstr "已在侧边栏中"
 
 #. js-lingui-id: u/DP73
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -2605,12 +2605,12 @@ msgstr "且"
 #. js-lingui-id: U/Q98U
 #: src/modules/ai/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
-msgstr ""
+msgstr "以及另外 {hiddenCount} 项"
 
 #. js-lingui-id: U/L8gq
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "annual"
-msgstr ""
+msgstr "按年"
 
 #. js-lingui-id: YkfDoz
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -2745,7 +2745,7 @@ msgstr "API 值"
 #. js-lingui-id: NfgMq7
 #: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "APIs and webhooks"
-msgstr ""
+msgstr "API 和 Webhooks"
 
 #. js-lingui-id: 0UMxlw
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -2835,7 +2835,7 @@ msgstr "此应用未在应用市场上架。它是通过直接链接共享的。
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 msgid "Application registration"
-msgstr ""
+msgstr "应用注册"
 
 #. js-lingui-id: +tE2x9
 #: src/modules/settings/applications/hooks/useUninstallApplication.ts
@@ -2914,7 +2914,7 @@ msgstr "应用"
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
 msgid "Apps recording"
-msgstr ""
+msgstr "应用正在录制"
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -3042,7 +3042,7 @@ msgstr "升序"
 #. js-lingui-id: 4mdmhg
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Ask & find"
-msgstr ""
+msgstr "提问和查找"
 
 #. js-lingui-id: LfkDyR
 #: src/modules/ai/components/AiChatErrorRenderer.tsx
@@ -3140,7 +3140,7 @@ msgstr "用于签名和验证访问令牌的非对称公钥。撤销该密钥会
 #. js-lingui-id: uJmPzF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Async CSV export"
-msgstr ""
+msgstr "异步 CSV 导出"
 
 #. js-lingui-id: UHs3Ds
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
@@ -3323,7 +3323,7 @@ msgstr "正在授权..."
 #. js-lingui-id: KqBvMG
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
 msgid "Auto update"
-msgstr ""
+msgstr "自动更新"
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -3390,7 +3390,7 @@ msgstr "可用性"
 #. js-lingui-id: tSW2mq
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Available application details"
-msgstr ""
+msgstr "可用应用程序详情"
 
 #. js-lingui-id: oD38t2
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -3584,7 +3584,7 @@ msgstr "计费门户会话错误。请重试或联系 Twenty 团队"
 #. js-lingui-id: H++SIW
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Billing stays {upcomingIntervalAdjective}. To switch to {selectedIntervalAdjective} billing, confirm this change first, then switch the billing interval as a second step."
-msgstr ""
+msgstr "账单将保持按 {upcomingIntervalAdjective} 计费。要切换为按 {selectedIntervalAdjective} 计费，请先确认此更改，然后在第二步切换计费周期。"
 
 #. js-lingui-id: 8kIU+G
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -3628,7 +3628,7 @@ msgstr "正文输入"
 #. js-lingui-id: KmydK6
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
 msgid "Bold"
-msgstr ""
+msgstr "粗体"
 
 #. js-lingui-id: SkYx9p
 #: src/pages/onboarding/BookCall.tsx
@@ -3868,7 +3868,7 @@ msgstr "日历访问需要获得批准"
 #. js-lingui-id: xs1oZl
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 msgid "Calendar accounts"
-msgstr ""
+msgstr "日历账户"
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
@@ -3979,12 +3979,12 @@ msgstr "通话"
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Camera"
-msgstr ""
+msgstr "摄像头"
 
 #. js-lingui-id: w3vNoK
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Campaign Email Send"
-msgstr ""
+msgstr "营销活动邮件发送"
 
 #. js-lingui-id: YKJ+pg
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -4082,7 +4082,7 @@ msgstr "取消计划切换？"
 #. js-lingui-id: BfJPwg
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Cancel recording for {applicationName}"
-msgstr ""
+msgstr "取消 {applicationName} 的录制"
 
 #. js-lingui-id: AnRu/j
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -4140,7 +4140,7 @@ msgstr "无法模拟所选用户"
 #. js-lingui-id: lbmcW3
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 msgid "Cannot nest folders into folders"
-msgstr ""
+msgstr "无法将文件夹嵌套到文件夹中"
 
 #. js-lingui-id: H1Ddy9
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
@@ -4204,7 +4204,7 @@ msgstr "抄送/密送"
 #. js-lingui-id: utP26S
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellButtons.tsx
 msgid "Cell controls"
-msgstr ""
+msgstr "单元格控件"
 
 #. js-lingui-id: tHntRt
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
@@ -4230,7 +4230,7 @@ msgstr "更改节点类型"
 #. js-lingui-id: VYPUgO
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemObjectColorEditor.tsx
 msgid "Change object color"
-msgstr ""
+msgstr "更改对象颜色"
 
 #. js-lingui-id: GptGxg
 #: src/modules/settings/accounts/components/SettingsAccountsPasswordController.tsx
@@ -4414,12 +4414,12 @@ msgstr "选择要同步的文件夹"
 #. js-lingui-id: SJ1Aum
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
-msgstr ""
+msgstr "选择图标和颜色"
 
 #. js-lingui-id: uRMsx4
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Choose icon color"
-msgstr ""
+msgstr "选择图标颜色"
 
 #. js-lingui-id: 5EMoSo
 #: src/modules/settings/billing/components/internal/SettingsBillingPlansWithoutSubscription.tsx
@@ -4579,7 +4579,7 @@ msgstr "点击下方的“添加字段”以向您的表单中添加第一个输
 #. js-lingui-id: q2R9+z
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Click on \"Add Output Field\" below to define the structure of your agent's response. These fields will be used to format and validate the agent's output when the workflow is executed, and can be referenced by subsequent workflow steps."
-msgstr ""
+msgstr "点击下方的 \"添加输出字段\" 以定义智能体响应的结构。这些字段将在执行工作流时用于格式化和验证智能体的输出，并可供后续工作流步骤引用。"
 
 #. js-lingui-id: b8wwse
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -4594,7 +4594,7 @@ msgstr "点击以添加您的第一个小组件"
 #. js-lingui-id: cwMTjO
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Click to edit"
-msgstr ""
+msgstr "点击编辑"
 
 #. js-lingui-id: d0rtA5
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetTooltip.tsx
@@ -4673,12 +4673,12 @@ msgstr "关闭横幅"
 #. js-lingui-id: c2EYjZ
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Close import"
-msgstr ""
+msgstr "关闭导入"
 
 #. js-lingui-id: aYX0za
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuDialog.tsx
 msgid "Close keyboard shortcuts"
-msgstr ""
+msgstr "关闭键盘快捷键"
 
 #. js-lingui-id: vcpc5o
 #: src/modules/blocknote-editor/components/BlockEditor.tsx
@@ -4688,18 +4688,18 @@ msgstr "关闭菜单"
 #. js-lingui-id: sUQBA7
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx
 msgid "Close overview"
-msgstr ""
+msgstr "关闭概览"
 
 #. js-lingui-id: LAbBdF
 #: src/modules/ui/layout/page/components/PageHeader.tsx
 msgid "Close page"
-msgstr ""
+msgstr "关闭页面"
 
 #. js-lingui-id: fJGhA7
 #: src/modules/activities/files/components/AttachmentList.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 msgid "Close preview"
-msgstr ""
+msgstr "关闭预览"
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelCloseButton.tsx
@@ -4709,7 +4709,7 @@ msgstr "关闭侧边栏"
 #. js-lingui-id: H4meUz
 #: src/modules/settings/components/SettingsCustomizeVideoModal.tsx
 msgid "Close video"
-msgstr ""
+msgstr "关闭视频"
 
 #. js-lingui-id: 1Lxtdt
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -4745,7 +4745,7 @@ msgstr "代码解释器"
 #. js-lingui-id: FXSsRm
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code step"
-msgstr ""
+msgstr "代码步骤"
 
 #. js-lingui-id: bKJYIa
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
@@ -4775,7 +4775,7 @@ msgstr "折叠"
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Collapse card"
-msgstr ""
+msgstr "折叠卡片"
 
 #. js-lingui-id: 183A6G
 #: src/modules/activities/timeline-activities/rows/components/EventCardToggleButton.tsx
@@ -5466,7 +5466,7 @@ msgstr "已复制到剪贴板"
 #. js-lingui-id: bYg3PV
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainAiSetup.tsx
 msgid "Copies a Cloudflare setup prompt for your AI coding tool"
-msgstr ""
+msgstr "为您的 AI 编码工具复制 Cloudflare 设置提示"
 
 #. js-lingui-id: he3ygx
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
@@ -5636,7 +5636,7 @@ msgstr "缓存输入的每百万 token 成本（美元）"
 #. js-lingui-id: 9aT57j
 #: src/modules/object-core/workflows/hooks/useUpdateCoreWorkflowVisibility.ts
 msgid "Could not change who can see this workflow"
-msgstr ""
+msgstr "无法更改可查看此工作流的人员"
 
 #. js-lingui-id: T8ACay
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -5667,17 +5667,17 @@ msgstr "无法生成已签署的 DPA。请重试。"
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "Could not grant media access. Please try again."
-msgstr ""
+msgstr "无法授予媒体访问权限。请重试。"
 
 #. js-lingui-id: Tr0DHk
 #: src/modules/object-core/workflows/components/CoreWorkflowEditor.tsx
 msgid "Could not load this workflow version."
-msgstr ""
+msgstr "无法加载此工作流版本。"
 
 #. js-lingui-id: es4mea
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Could not load this workflow."
-msgstr ""
+msgstr "无法加载此工作流。"
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -5729,7 +5729,7 @@ msgstr "无法运行查询"
 #: src/modules/object-core/workflows/hooks/useRenameCoreWorkflow.ts
 #: src/modules/object-core/workflows/hooks/useValidateCoreWorkflowVersion.ts
 msgid "Could not save workflow"
-msgstr ""
+msgstr "无法保存工作流"
 
 #. js-lingui-id: p75IO8
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
@@ -5775,7 +5775,7 @@ msgstr "无法加载已安装的工作区"
 #. js-lingui-id: zaNpE4
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 msgid "Couldn't load pages"
-msgstr ""
+msgstr "无法加载页面"
 
 #. js-lingui-id: kjbTwZ
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
@@ -5865,7 +5865,7 @@ msgstr "创建"
 #: src/modules/object-record/record-form/components/RecordCreationFormProvider.tsx
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
 msgid "Create {0}"
-msgstr ""
+msgstr "创建 {0}"
 
 #. js-lingui-id: MKhSSw
 #: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
@@ -6149,12 +6149,12 @@ msgstr "授予的积分已被撤销。"
 #. js-lingui-id: 9Busdy
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Credit limit reached. Contact your admin to resume workflows, AI, and apps."
-msgstr ""
+msgstr "积分已达上限。请联系您的管理员以恢复工作流、AI 和应用。"
 
 #. js-lingui-id: wZc3KH
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Credit limit reached. Update your credit plan to keep workflows, AI, and apps running."
-msgstr ""
+msgstr "积分已达上限。请更新您的积分套餐以保持工作流、AI 和应用运行。"
 
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6375,7 +6375,7 @@ msgstr "自定义域名（crm.yourco.com）"
 #. js-lingui-id: +ub6QN
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Custom domain not found"
-msgstr ""
+msgstr "未找到自定义域名"
 
 #. js-lingui-id: Lo/oRJ
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -6466,7 +6466,7 @@ msgstr "客户"
 #. js-lingui-id: AdXh0n
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "customer_satisfaction"
-msgstr ""
+msgstr "customer_satisfaction"
 
 #. js-lingui-id: MNGIVW
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -6795,7 +6795,7 @@ msgstr "停用 \"同步对象标签和 API 名称\" 以设置自定义 API 名�
 #. js-lingui-id: mMIGcw
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Deactivate field"
-msgstr ""
+msgstr "停用字段"
 
 #. js-lingui-id: T2YbXF
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -6839,7 +6839,7 @@ msgstr "请选择您要显示的子地址字段"
 #. js-lingui-id: NdfaZV
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Decrease value"
-msgstr ""
+msgstr "减小值"
 
 #. js-lingui-id: ovBPCi
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
@@ -6898,7 +6898,7 @@ msgstr "默认视图"
 #. js-lingui-id: 6b8WDd
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Deferred workspace migration actions"
-msgstr ""
+msgstr "延迟的工作区迁移操作"
 
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -7036,17 +7036,17 @@ msgstr "删除账户和所有相关数据或离开工作区"
 #. js-lingui-id: 452Oso
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Delete account and data"
-msgstr ""
+msgstr "删除账户和数据"
 
 #. js-lingui-id: bwUbrT
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Delete account and synced data"
-msgstr ""
+msgstr "删除账户和同步的数据"
 
 #. js-lingui-id: nmosf7
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Delete account and synced data?"
-msgstr ""
+msgstr "删除账户和同步的数据？"
 
 #. js-lingui-id: YMNj8z
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
@@ -7104,17 +7104,17 @@ msgstr "删除组"
 #. js-lingui-id: +jw/c1
 #: src/modules/advanced-text-editor/components/ImageBubbleMenu.tsx
 msgid "Delete image"
-msgstr ""
+msgstr "删除图片"
 
 #. js-lingui-id: 0NsiHa
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 msgid "Delete index"
-msgstr ""
+msgstr "删除索引"
 
 #. js-lingui-id: HsfWi8
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "Delete level"
-msgstr ""
+msgstr "删除级别"
 
 #. js-lingui-id: dPwNDl
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
@@ -7129,7 +7129,7 @@ msgstr "删除节点"
 #. js-lingui-id: ik4oY8
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "Delete option"
-msgstr ""
+msgstr "删除选项"
 
 #. js-lingui-id: x9/fRy
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -7336,7 +7336,7 @@ msgstr "描述"
 #. js-lingui-id: Fxf4jq
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "Description (optional)"
-msgstr ""
+msgstr "描述（可选）"
 
 #. js-lingui-id: C8lmDv
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -7430,7 +7430,7 @@ msgstr "在你的账户上有活跃会话的设备"
 #. js-lingui-id: JjEtA6
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx
 msgid "Diagram controls"
-msgstr ""
+msgstr "图表控件"
 
 #. js-lingui-id: PFS3WB
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
@@ -7485,7 +7485,7 @@ msgstr "断开连接"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Disconnect account"
-msgstr ""
+msgstr "断开账户连接"
 
 #. js-lingui-id: TauHgw
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -7505,7 +7505,7 @@ msgstr "在 {defaultDomain} 上可被发现"
 #. js-lingui-id: 3gfpE2
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainAiSetup.tsx
 msgid "Dismiss AI setup prompt"
-msgstr ""
+msgstr "关闭 AI 设置提示"
 
 #. js-lingui-id: Ldgs6e
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
@@ -7691,7 +7691,7 @@ msgstr "下载 {filename}"
 #. js-lingui-id: ueLv9s
 #: src/modules/activities/files/components/AttachmentList.tsx
 msgid "Download attachment"
-msgstr ""
+msgstr "下载附件"
 
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -7954,14 +7954,14 @@ msgstr "分别编辑每一侧"
 #. js-lingui-id: 48e2R8
 #: src/modules/settings/profile/components/EmailField.tsx
 msgid "Edit email"
-msgstr ""
+msgstr "编辑电子邮件"
 
 #. js-lingui-id: QjNcml
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellEditButton.tsx
 #: src/modules/object-record/record-table/record-table-cell/components/RecordTableCellEditButton.tsx
 #: src/modules/page-layout/widgets/field/components/FieldWidgetEditAction.tsx
 msgid "Edit field"
-msgstr ""
+msgstr "编辑字段"
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -7988,7 +7988,7 @@ msgstr "编辑 iFrame"
 #. js-lingui-id: wG3C32
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Edit JSON"
-msgstr ""
+msgstr "编辑 JSON"
 
 #. js-lingui-id: 74qJhc
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
@@ -8006,7 +8006,7 @@ msgstr "编辑链接"
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Edit navigation"
-msgstr ""
+msgstr "编辑导航"
 
 #. js-lingui-id: IaSCqp
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -8051,7 +8051,7 @@ msgstr "编辑关系"
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
 msgid "Edit tab icon"
-msgstr ""
+msgstr "编辑标签页图标"
 
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
@@ -8061,7 +8061,7 @@ msgstr "编辑翻译"
 #. js-lingui-id: 8TA4hU
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 msgid "Edit variable"
-msgstr ""
+msgstr "编辑变量"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -8127,7 +8127,7 @@ msgstr "电子邮件"
 #. js-lingui-id: 6SIWKr
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 msgid "Email accounts"
-msgstr ""
+msgstr "电子邮件账户"
 
 #. js-lingui-id: ATGYL1
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -8256,7 +8256,7 @@ msgstr "电子邮件/域名"
 #. js-lingui-id: P4hLVz
 #: src/modules/settings/billing/constants/UsageLimitQuantityUnitLabels.ts
 msgid "emails"
-msgstr ""
+msgstr "电子邮件"
 
 #. js-lingui-id: BXEcos
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -8443,12 +8443,12 @@ msgstr "强制每个用户登录时进行两步验证。"
 #. js-lingui-id: mS+NjQ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Enforce usage quotas on workflow node runs and logic function executions."
-msgstr ""
+msgstr "对工作流节点运行和逻辑函数执行实施使用配额。"
 
 #. js-lingui-id: iy5fSS
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "Engineer"
-msgstr ""
+msgstr "工程师"
 
 #. js-lingui-id: lYGfRP
 #: src/localization/hooks/useLocaleOptions.ts
@@ -8500,7 +8500,7 @@ msgstr "输入 UUID"
 #. js-lingui-id: DXBlEM
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor.tsx
 msgid "Enter a valid URL"
-msgstr ""
+msgstr "输入有效的 URL"
 
 #. js-lingui-id: oiVP/+
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -8520,7 +8520,7 @@ msgstr "输入金额 x 1 000 000 (例如: $3.21 → 3210000)"
 #. js-lingui-id: +30J+l
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Enter an HTTP or HTTPS origin without a path or wildcard, such as https://portal.example.com."
-msgstr ""
+msgstr "输入不含路径或通配符的 HTTP 或 HTTPS 源，例如 https://portal.example.com。"
 
 #. js-lingui-id: wgNkIh
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
@@ -8910,7 +8910,7 @@ msgstr "建立 Webhook 端点，用于通知异步事件。"
 #. js-lingui-id: KBehd2
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "Estimate a probability"
-msgstr ""
+msgstr "估计概率"
 
 #. js-lingui-id: 4ASb34
 #: src/pages/settings/ai/components/SettingsAgentFormContent.tsx
@@ -8930,7 +8930,7 @@ msgstr ""
 #. js-lingui-id: JlfFwS
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 msgid "Evaluation"
-msgstr ""
+msgstr "评估"
 
 #. js-lingui-id: Y3MReI
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -9075,7 +9075,7 @@ msgstr "执行 ID"
 #. js-lingui-id: M7tutU
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Execution quotas"
-msgstr ""
+msgstr "执行配额"
 
 #. js-lingui-id: YzI8cc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
@@ -9115,7 +9115,7 @@ msgstr "展开"
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Expand card"
-msgstr ""
+msgstr "展开卡片"
 
 #. js-lingui-id: 8ibXh3
 #: src/modules/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage.ts
@@ -9142,7 +9142,7 @@ msgstr "展开记录"
 #. js-lingui-id: bH7fqD
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Expand relation"
-msgstr ""
+msgstr "展开关系"
 
 #. js-lingui-id: tugdy6
 #: src/modules/navigation/hooks/useNavigationDrawerTogglePresentation.ts
@@ -9152,7 +9152,7 @@ msgstr "展开侧边栏"
 #. js-lingui-id: 4bQAS8
 #: src/modules/advanced-text-editor/components/FormAdvancedTextFieldInput.tsx
 msgid "Expand to full screen"
-msgstr ""
+msgstr "展开至全屏"
 
 #. js-lingui-id: Y7w75u
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor.tsx
@@ -9438,13 +9438,13 @@ msgstr ""
 #: src/modules/file/hooks/useDirectFileUpload.ts
 #: src/modules/settings/members/hooks/useUploadWorkspaceMemberProfilePicture.ts
 msgid "Failed to finalize file upload"
-msgstr ""
+msgstr "无法完成文件上传"
 
 #. js-lingui-id: BhtV0Y
 #: src/modules/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo.ts
 #: src/modules/workspace/hooks/useUploadWorkspaceLogo.ts
 msgid "Failed to finalize logo upload"
-msgstr ""
+msgstr "无法完成徽标上传"
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AiChatErrorMessage.tsx
@@ -9454,12 +9454,12 @@ msgstr "未能获得响应"
 #. js-lingui-id: l+yd3n
 #: src/modules/file/hooks/useDirectFileUpload.ts
 msgid "Failed to initiate file upload"
-msgstr ""
+msgstr "无法启动文件上传"
 
 #. js-lingui-id: UPBy6F
 #: src/modules/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo.ts
 msgid "Failed to initiate logo upload"
-msgstr ""
+msgstr "无法启动徽标上传"
 
 #. js-lingui-id: qZwtAi
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
@@ -9595,7 +9595,7 @@ msgstr ""
 #. js-lingui-id: bH624/
 #: src/pages/settings/applications/hooks/useApplicationVariablesDraft.ts
 msgid "Failed to save the app settings."
-msgstr ""
+msgstr "无法保存应用设置。"
 
 #. js-lingui-id: LxqS9I
 #: src/modules/activities/emails/hooks/usePersistedCampaignDraft.ts
@@ -9959,18 +9959,18 @@ msgstr "文件已不存在 - {label}"
 #. js-lingui-id: OyBE3I
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 msgid "File preview"
-msgstr ""
+msgstr "文件预览"
 
 #. js-lingui-id: eXW5YS
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "File Storage"
-msgstr ""
+msgstr "文件存储"
 
 #. js-lingui-id: WPiFwT
 #. placeholder {0}: putResponse.status
 #: src/modules/file/utils/putFileToUploadTarget.ts
 msgid "File upload failed ({0})."
-msgstr ""
+msgstr "文件上传失败（{0}）。"
 
 #. js-lingui-id: BZGmTs
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -10152,7 +10152,7 @@ msgstr "名不能为空"
 #. js-lingui-id: KMpuhP
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx
 msgid "Fit view"
-msgstr ""
+msgstr "适应视图"
 
 #. js-lingui-id: tVgANq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -10217,22 +10217,22 @@ msgstr "用于 {objectLabel}"
 #. js-lingui-id: JM8DiQ
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "For example: Alex is a software engineer with three years of React experience."
-msgstr ""
+msgstr "例如：Alex 是一名拥有三年 React 经验的软件工程师。"
 
 #. js-lingui-id: q3IKGG
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "For example: How satisfied is the customer based on their feedback? Grade from dissatisfied to satisfied."
-msgstr ""
+msgstr "例如：根据客户反馈，客户的满意度如何？从不满意到满意进行评分。"
 
 #. js-lingui-id: 0YhBKl
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "For example: What is this person's current profession?"
-msgstr ""
+msgstr "例如：此人当前的职业是什么？"
 
 #. js-lingui-id: BOaqvZ
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "For example: Would this customer recommend the service based on their feedback?"
-msgstr ""
+msgstr "例如：该客户会根据其反馈推荐此服务吗？"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
@@ -10331,7 +10331,7 @@ msgstr "发件人"
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "From {0}, you will be charged {priceLabel}."
-msgstr ""
+msgstr "从 {0} 起，您将被收取 {priceLabel}。"
 
 #. js-lingui-id: qR8gT9
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -10354,7 +10354,7 @@ msgstr "前端组件"
 #. js-lingui-id: NEVf2d
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 msgid "Front component details"
-msgstr ""
+msgstr "前端组件详情"
 
 #. js-lingui-id: IvIKDS
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
@@ -10376,12 +10376,12 @@ msgstr "完整"
 #. js-lingui-id: C4RwTo
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Full access to layout permissions"
-msgstr ""
+msgstr "对布局权限的完全访问权限"
 
 #. js-lingui-id: a8PRjm
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Full access to logic permissions"
-msgstr ""
+msgstr "对逻辑权限的完全访问权限"
 
 #. js-lingui-id: aerYcp
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -10424,12 +10424,12 @@ msgstr "函数"
 #. js-lingui-id: 3KlJeH
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Function details"
-msgstr ""
+msgstr "函数详情"
 
 #. js-lingui-id: Gr1GVh
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 msgid "Function files"
-msgstr ""
+msgstr "函数文件"
 
 #. js-lingui-id: AHOl4W
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionLabelContainer.tsx
@@ -10444,7 +10444,7 @@ msgstr "函数运行"
 #. js-lingui-id: Tn94cL
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "Function step"
-msgstr ""
+msgstr "函数步骤"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -10482,7 +10482,7 @@ msgstr "通用 - 设置"
 #. js-lingui-id: Ye6I4I
 #: src/pages/settings/general/SettingsGeneral.tsx
 msgid "General settings"
-msgstr ""
+msgstr "常规设置"
 
 #. js-lingui-id: ziAjHi
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -10492,7 +10492,7 @@ msgstr "生成"
 #. js-lingui-id: /Sq+WF
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Generate CSV exports in the background with progress and automatic downloads."
-msgstr ""
+msgstr "在后台生成 CSV 导出，支持显示进度并自动下载。"
 
 #. js-lingui-id: H3rta9
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -10582,7 +10582,7 @@ msgstr "返回"
 #. js-lingui-id: LmLruJ
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Go to"
-msgstr ""
+msgstr "转到"
 
 #. js-lingui-id: y0SPQU
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
@@ -10642,7 +10642,7 @@ msgstr "Goose"
 #. js-lingui-id: jHEfYM
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "Grade on a scale"
-msgstr ""
+msgstr "按等级评分"
 
 #. js-lingui-id: nE5VAt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -10955,7 +10955,7 @@ msgstr "隐藏空组"
 #: src/modules/views/components/ViewFieldsSearchDropdownSection.tsx
 #: src/modules/views/components/ViewFieldsVisibleDropdownSection.tsx
 msgid "Hide field"
-msgstr ""
+msgstr "隐藏字段"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
@@ -11246,7 +11246,7 @@ msgstr "IFrame"
 #. js-lingui-id: yhIAo/
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Iframe embedding"
-msgstr ""
+msgstr "Iframe 嵌入"
 
 #. js-lingui-id: hiXeBh
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -11369,7 +11369,7 @@ msgstr "导入CSV"
 #. js-lingui-id: CKnl/+
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalWrapper.tsx
 msgid "Import data"
-msgstr ""
+msgstr "导入数据"
 
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -11463,7 +11463,7 @@ msgstr "增加到 ${priceDisplay}"
 #. js-lingui-id: lUmbtf
 #: src/modules/settings/components/SettingsCounter.tsx
 msgid "Increase value"
-msgstr ""
+msgstr "增大值"
 
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -11508,7 +11508,7 @@ msgstr "信息"
 #. js-lingui-id: nSkB8g
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 msgid "Information"
-msgstr ""
+msgstr "信息"
 
 #. js-lingui-id: iaXnN5
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -12013,7 +12013,7 @@ msgstr "意大利语"
 #. js-lingui-id: pzutoc
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
 msgid "Italic"
-msgstr ""
+msgstr "斜体"
 
 #. js-lingui-id: hgr8eo
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -12469,7 +12469,7 @@ msgstr "布局"
 #. js-lingui-id: MZiD3f
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Layout All Access"
-msgstr ""
+msgstr "布局完全访问权限"
 
 #. js-lingui-id: W4nIBb
 #: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
@@ -12490,7 +12490,7 @@ msgstr "布局模式：{0}"
 #. js-lingui-id: Yu6DEI
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Layout permissions"
-msgstr ""
+msgstr "布局权限"
 
 #. js-lingui-id: yU0QVO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -12605,7 +12605,7 @@ msgstr "级别"
 #. placeholder {0}: index + 1
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "Level {0} name"
-msgstr ""
+msgstr "级别 {0} 名称"
 
 #. js-lingui-id: NaBPMD
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -12826,7 +12826,7 @@ msgstr "负载均衡"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupLoadLimitContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 msgid "Load limit"
-msgstr ""
+msgstr "加载限制"
 
 #. js-lingui-id: yQ2kGp
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore.tsx
@@ -12950,7 +12950,7 @@ msgstr "位置"
 #. js-lingui-id: xXQnNg
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx
 msgid "Lock diagram"
-msgstr ""
+msgstr "锁定图表"
 
 #. js-lingui-id: B6ANJW
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -12995,7 +12995,7 @@ msgstr "逻辑"
 #. js-lingui-id: j6smJJ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Logic All Access"
-msgstr ""
+msgstr "逻辑完全访问权限"
 
 #. js-lingui-id: sTlKkx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -13019,7 +13019,7 @@ msgstr "逻辑函数"
 #. js-lingui-id: k2kPUY
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Logic permissions"
-msgstr ""
+msgstr "逻辑权限"
 
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
@@ -13068,7 +13068,7 @@ msgstr "低"
 #. js-lingui-id: vsx0WY
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "Lowest first"
-msgstr ""
+msgstr "最低优先"
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -13372,7 +13372,7 @@ msgstr ""
 #. js-lingui-id: lXyaAg
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Member details"
-msgstr ""
+msgstr "成员详情"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -13419,7 +13419,7 @@ msgstr "成员和受邀者"
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemRowActions.tsx
 msgid "Menu item actions"
-msgstr ""
+msgstr "菜单项操作"
 
 #. js-lingui-id: UODtG8
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
@@ -13429,7 +13429,7 @@ msgstr "合并"
 #. js-lingui-id: cfSo6A
 #: src/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection.tsx
 msgid "Merge duplicates"
-msgstr ""
+msgstr "合并重复项"
 
 #. js-lingui-id: d2c8f+
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
@@ -13509,7 +13509,7 @@ msgstr "方法"
 #. js-lingui-id: 1iY5xv
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Microphone"
-msgstr ""
+msgstr "麦克风"
 
 #. js-lingui-id: P9IeiA
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
@@ -13519,7 +13519,7 @@ msgstr "麦克风访问权限已被阻止。请在浏览器设置中允许访问
 #. js-lingui-id: /XArxJ
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Microphone and camera"
-msgstr ""
+msgstr "麦克风和摄像头"
 
 #. js-lingui-id: 6cH65H
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -13572,7 +13572,7 @@ msgstr "缺少日历权限。"
 #. js-lingui-id: kgDu74
 #: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
-msgstr ""
+msgstr "缺少配置：{missingLabels}"
 
 #. js-lingui-id: URVUmK
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -14273,7 +14273,7 @@ msgstr "下次扣费时间为 {totalRenewDate}。如果你在计费周期之间�
 #. js-lingui-id: LTn6w8
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "Next iteration"
-msgstr ""
+msgstr "下一次迭代"
 
 #. js-lingui-id: 8+lM81
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
@@ -14283,7 +14283,7 @@ msgstr "下一个周期"
 #. js-lingui-id: jdU2p1
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 msgid "Next question"
-msgstr ""
+msgstr "下一个问题"
 
 #. js-lingui-id: tgnDjk
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
@@ -14768,7 +14768,7 @@ msgstr "未找到消息。"
 #. js-lingui-id: KPWxKD
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
 msgid "No messages to show"
-msgstr ""
+msgstr "没有可显示的消息"
 
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -14956,12 +14956,12 @@ msgstr "未找到服务器管理员。"
 #. js-lingui-id: JXsce6
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No Speech Detected"
-msgstr ""
+msgstr "未检测到语音"
 
 #. js-lingui-id: dOnou/
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No speech was detected in this recording."
-msgstr ""
+msgstr "此录音中未检测到语音。"
 
 #. js-lingui-id: eeoVfm
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
@@ -14997,7 +14997,7 @@ msgstr "此通话录音尚无可用的转录内容。"
 #. js-lingui-id: du4Icj
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "No transcript is available for this recording."
-msgstr ""
+msgstr "此录音暂无可用的转录内容。"
 
 #. js-lingui-id: ZCTuAQ
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
@@ -15455,7 +15455,7 @@ msgstr "对象权限选项"
 #. js-lingui-id: HN7O/H
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Object settings"
-msgstr ""
+msgstr "对象设置"
 
 #. js-lingui-id: gaqIMK
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
@@ -15672,7 +15672,7 @@ msgstr "仅在 {remainingMonths} 和 {0}"
 #. js-lingui-id: C+E8P0
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "Only members who can manage apps can grant access. Ask your workspace administrator."
-msgstr ""
+msgstr "只有可以管理应用的成员才能授予访问权限。请咨询您的工作区管理员。"
 
 #. js-lingui-id: G+ijJ2
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -15699,7 +15699,7 @@ msgstr "仅共享主题"
 #. js-lingui-id: y0Uyng
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 msgid "Only you"
-msgstr ""
+msgstr "仅您"
 
 #. js-lingui-id: P5aFS1
 #: src/modules/onboarding/components/import-contacts/OnboardingImportPrivacyNote.tsx
@@ -15767,7 +15767,7 @@ msgstr "在角色中打开"
 #. js-lingui-id: 8uCFcM
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldInput.tsx
 msgid "Open in side panel"
-msgstr ""
+msgstr "在侧边栏中打开"
 
 #. js-lingui-id: x57cJf
 #: src/modules/advanced-text-editor/components/LinkBubbleMenu.tsx
@@ -15811,12 +15811,12 @@ msgstr "打开 Replit，并使用 Twenty 远程服务器配置。"
 #. js-lingui-id: Yp+Hi/
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 msgid "Open settings"
-msgstr ""
+msgstr "打开设置"
 
 #. js-lingui-id: bY2Xkv
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Open side panel"
-msgstr ""
+msgstr "打开侧边栏"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -15852,7 +15852,7 @@ msgstr "操作"
 #. placeholder {0}: index + 1
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "Option {0} name"
-msgstr ""
+msgstr "选项 {0} 名称"
 
 #. js-lingui-id: lVa1Xn
 #: src/modules/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues.ts
@@ -16450,7 +16450,7 @@ msgstr "选择来源"
 #. js-lingui-id: Oz3GT4
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "Pick one option"
-msgstr ""
+msgstr "选择一个选项"
 
 #. js-lingui-id: JHXjkT
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -16478,7 +16478,7 @@ msgstr "饼图"
 #. js-lingui-id: qVkGWK
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Pin"
-msgstr ""
+msgstr "固定"
 
 #. js-lingui-id: 6U8nJN
 #: src/modules/ai/components/AiModelPicker.tsx
@@ -16711,7 +16711,7 @@ msgstr "正在准备转录文本"
 #. js-lingui-id: FA0aDS
 #: src/modules/command-menu-item/utils/getCommandMenuItemProgressLabel.ts
 msgid "Preparing…"
-msgstr ""
+msgstr "正在准备…"
 
 #. js-lingui-id: NwnQoz
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -16762,7 +16762,7 @@ msgstr "过去7天"
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "Previous iteration"
-msgstr ""
+msgstr "上一次迭代"
 
 #. js-lingui-id: KaMwgJ
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
@@ -16862,7 +16862,7 @@ msgstr "处理中……"
 #. js-lingui-id: N0/YTc
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "profession"
-msgstr ""
+msgstr "profession"
 
 #. js-lingui-id: vERlcd
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -16999,7 +16999,7 @@ msgstr "依赖该索引的查询将退回到顺序扫描。您可以稍后重新
 #. js-lingui-id: bfgr/e
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "Question"
-msgstr ""
+msgstr "问题"
 
 #. js-lingui-id: enzGAL
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
@@ -17339,7 +17339,7 @@ msgstr "录制失败"
 #. js-lingui-id: kDQf8q
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
 msgid "Recording requests"
-msgstr ""
+msgstr "录音请求"
 
 #. js-lingui-id: h9TBi+
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -17390,7 +17390,7 @@ msgstr "重定向 URI"
 #. js-lingui-id: lCF0wC
 #: src/modules/object-core/workflows/components/CoreWorkflowShowToolbar.tsx
 msgid "Refresh"
-msgstr ""
+msgstr "刷新"
 
 #. js-lingui-id: pTGa/J
 #: src/pages/settings/admin-panel/SettingsAdminInferredVersion.tsx
@@ -17542,7 +17542,7 @@ msgstr "移除 {0} 个导航菜单项？"
 #. js-lingui-id: 7RLmNA
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Remove {origin}"
-msgstr ""
+msgstr "移除 {origin}"
 
 #. js-lingui-id: VjbCv0
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -17583,14 +17583,14 @@ msgstr "移除过滤器"
 #. js-lingui-id: bKjweg
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTableRow.tsx
 msgid "Remove from blocklist"
-msgstr ""
+msgstr "从阻止名单中移除"
 
 #. js-lingui-id: T/pF0Z
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Remove from favorites"
-msgstr ""
+msgstr "从收藏中移除"
 
 #. js-lingui-id: 9VZ6f0
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
@@ -20174,7 +20174,7 @@ msgstr "步骤筛选选项"
 #. js-lingui-id: ygCKqB
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Stop"
-msgstr ""
+msgstr "停止"
 
 #. js-lingui-id: 9QwrMz
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
@@ -20377,7 +20377,7 @@ msgstr "订阅错误。请重试或联系 Twenty 团队"
 #. js-lingui-id: +QiH+4
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
 msgid "Subscription has been switched to {planLabel} Plan."
-msgstr ""
+msgstr "订阅已切换为 {planLabel} 方案。"
 
 #. js-lingui-id: mxY+I+
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
@@ -20393,7 +20393,7 @@ msgstr ""
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
 msgid "Subscription will be switched to {planLabel} Plan the {0}."
-msgstr ""
+msgstr "订阅将于 {0} 切换至 {planLabel} 方案。"
 
 #. js-lingui-id: jV9sB2
 #. placeholder {0}: getBeautifiedRenewDate()
@@ -20528,7 +20528,7 @@ msgstr "切换为专业"
 #. js-lingui-id: z+Ngx/
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Switch to Pro?"
-msgstr ""
+msgstr "切换为专业?"
 
 #. js-lingui-id: 13a+Fq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -24022,7 +24022,7 @@ msgstr "工人"
 #. js-lingui-id: xGzQCl
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "workflow"
-msgstr ""
+msgstr "工作流"
 
 #. js-lingui-id: bLt/0J
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
@@ -24069,7 +24069,7 @@ msgstr ""
 #. js-lingui-id: R67jts
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Workflow not found."
-msgstr ""
+msgstr "未找到工作流。"
 
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -24079,7 +24079,7 @@ msgstr ""
 #. js-lingui-id: 2CydYH
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "workflow version"
-msgstr ""
+msgstr "工作流版本"
 
 #. js-lingui-id: KxlvVE
 #: src/modules/object-core/workflows/components/CoreWorkflowEditor.tsx
