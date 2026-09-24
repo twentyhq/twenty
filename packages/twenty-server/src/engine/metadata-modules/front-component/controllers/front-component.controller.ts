@@ -13,7 +13,7 @@ import { pipeline } from 'stream/promises';
 import { Response } from 'express';
 import { ApiPath, FileFolder } from 'twenty-shared/types';
 
-import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/extract-checksum-from-cache-key.util';
+import { extractChecksumFromCacheKey } from 'src/engine/core-modules/file/utils/extract-checksum-from-cache-key.utils';
 import {
   FileStorageException,
   FileStorageExceptionCode,

@@ -15,7 +15,7 @@ import { ApiPath, FileFolder } from 'twenty-shared/types';
 
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FrontComponentSharedDependenciesService } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.service';
-import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/extract-checksum-from-cache-key.util';
+import { extractChecksumFromCacheKey } from 'src/engine/core-modules/file/utils/extract-checksum-from-cache-key.utils';
 import { getSharedDependenciesBundleCacheControl } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/get-shared-dependencies-bundle-cache-control.util';
 import {
   ApplicationException,
