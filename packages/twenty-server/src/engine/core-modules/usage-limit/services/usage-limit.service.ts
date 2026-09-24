@@ -262,7 +262,6 @@ export class UsageLimitService {
 
     assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
 
-    // Deleting an override hands the scope back to the looser config default.
     assertUsageLimitDefaultOverrideIsAllowed({
       scope: buildUsageLimitScope(usageLimit),
       isOperator,
