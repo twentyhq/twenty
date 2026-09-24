@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { AvatarGroup } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuItemSelectionOverflowCount } from '@/command-menu-item/display/components/CommandMenuItemSelectionOverflowCount';
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -62,13 +62,11 @@ export const useCommandMenuItemSelectionSectionContext = ():
         }).name
       : `${numberOfSelectedRecords} ${objectMetadataItem.labelPlural}`;
 
-  const overflowCount = numberOfSelectedRecords - records.length;
-
   return {
     icon:
       records.length > 0 ? (
-        <>
-          {records.map((record) => (
+        <AvatarGroup
+          avatars={records.map((record) => (
             <SidePanelContextRecordChipAvatars
               key={record.id}
               objectMetadataItem={objectMetadataItem}
@@ -76,10 +74,11 @@ export const useCommandMenuItemSelectionSectionContext = ():
               borderColor={themeCssVariables.background.primary}
             />
           ))}
-          {overflowCount > 0 && (
-            <CommandMenuItemSelectionOverflowCount count={overflowCount} />
-          )}
-        </>
+          maxVisible={MAX_RECORD_AVATARS}
+          overflowCount={numberOfSelectedRecords - records.length}
+          overlap="left"
+          overlapOffset={themeCssVariables.spacing[1]}
+        />
       ) : undefined,
     label,
   };

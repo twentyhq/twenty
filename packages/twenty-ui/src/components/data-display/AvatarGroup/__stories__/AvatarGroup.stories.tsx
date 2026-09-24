@@ -43,6 +43,20 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
+export const WithOverflowCount: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <AvatarGroup
+      avatars={getAvatars({ shape: 'circle' })}
+      maxVisible={3}
+      overflowCount={9}
+      overflowShape="circle"
+      overlap="left"
+      overlapOffset="4px"
+    />
+  ),
+};
+
 export const Catalog: Story = {
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
