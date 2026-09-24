@@ -330,6 +330,9 @@ export type { SupportedViewGroupLoadLimit } from './SupportedViewGroupLoadLimit'
 export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
+export type { ValidationRuleAggregate } from './ValidationRuleAggregate';
+export type { ValidationRuleAggregateFunctionName } from './ValidationRuleAggregateFunctionName';
+export type { ValidationRuleAggregateValues } from './ValidationRuleAggregateValues';
 export type { ValidationRuleBindings } from './ValidationRuleBindings';
 export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
 export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';

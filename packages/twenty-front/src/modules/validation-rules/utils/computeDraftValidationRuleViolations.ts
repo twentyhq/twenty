@@ -2,8 +2,10 @@ import { type DraftValidationRuleViolation } from '@/validation-rules/types/Draf
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
+  buildValidationRuleEmptySetAggregateValues,
   compileValidationRuleExpression,
   evaluateValidationRuleExpression,
+  extractValidationRuleAggregates,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -98,7 +100,12 @@ export const computeDraftValidationRuleViolations = ({
       (validationRule) =>
         evaluateValidationRuleExpression({
           expression: validationRule.expression,
-          record: withRelationPresenceFromJoinColumns({ draftRecord, fields }),
+          record: {
+            ...withRelationPresenceFromJoinColumns({ draftRecord, fields }),
+            ...buildValidationRuleEmptySetAggregateValues(
+              extractValidationRuleAggregates(validationRule.expression),
+            ),
+          },
           fields,
           now,
         }).status === 'failed',

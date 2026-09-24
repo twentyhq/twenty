@@ -76,6 +76,7 @@ export { TAG_COLORS } from './TagColors';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
 export { TWENTY_ICONS_BASE_URL } from './TwentyIconsBaseUrl';
 export { UI_SCALE_VALUES } from './UiScaleValues';
+export { VALIDATION_RULE_AGGREGATE_FUNCTIONS } from './ValidationRuleAggregateFunctions';
 export { VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE } from './ValidationRuleEmptinessSubfieldsByCompositeType';
 export { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from './ValidationRuleExpressionMaxLength';
 export { VALIDATION_RULE_NOW_VARIABLE_NAME } from './ValidationRuleNowVariableName';

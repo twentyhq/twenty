@@ -87,10 +87,43 @@ describe('compileValidationRuleExpression', () => {
     });
   });
 
-  it('should reject a to-many relation path', () => {
+  it('should reject a to-many relation used outside an aggregate', () => {
     expect(compile('arrayLength(pointOfContacts) > 0')).toEqual({
       isValid: false,
-      errorMessage: '"pointOfContacts" is not a to-one relation',
+      errorMessage:
+        '"pointOfContacts" holds several records, use it in an aggregate like count(pointOfContacts)',
+    });
+    expect(compile('isDefined(pointOfContacts.name)').isValid).toBe(false);
+  });
+
+  it('should bind a to-many relation counted with count()', () => {
+    expect(compile('stage == "WON" and count(pointOfContacts) == 0')).toEqual({
+      isValid: true,
+      bindings: {
+        stage: 'opportunity-stage',
+        pointOfContacts: 'opportunity-point-of-contacts',
+      },
+    });
+  });
+
+  it('should reject count() on anything but one to-many relation', () => {
+    const expectedError =
+      'count() takes one to-many relation, like count(opportunities)';
+
+    expect(compile('count(stage) > 0')).toEqual({
+      isValid: false,
+      errorMessage: expectedError,
+    });
+    expect(compile('count(company) > 0').isValid).toBe(false);
+    expect(compile('count(pointOfContacts.name) > 0').isValid).toBe(false);
+    expect(compile('count(pointOfContacts, stage) > 0').isValid).toBe(false);
+    expect(compile('count() > 0').isValid).toBe(false);
+  });
+
+  it('should reject a function used without being called', () => {
+    expect(compile('count > 1')).toEqual({
+      isValid: false,
+      errorMessage: '"count" is a function, call it like count(...)',
     });
   });
 

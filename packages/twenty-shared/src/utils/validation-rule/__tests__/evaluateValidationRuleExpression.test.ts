@@ -39,6 +39,12 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
       },
     ],
   },
+  {
+    name: 'pointOfContacts',
+    type: FieldMetadataType.RELATION,
+    universalIdentifier: 'opportunity-point-of-contacts',
+    relationType: RelationType.ONE_TO_MANY,
+  },
 ];
 
 const evaluate = (expression: string, record: Record<string, unknown>) =>
@@ -151,5 +157,17 @@ describe('evaluateValidationRuleExpression', () => {
 
   it('should report an expression that cannot be parsed', () => {
     expect(evaluate('stage ==', { stage: 'WON' }).status).toBe('errored');
+  });
+
+  it('should read count() from the aggregate values of the relation', () => {
+    const TOO_MANY_CONTACTS = 'count(pointOfContacts) > 2';
+
+    expect(
+      evaluate(TOO_MANY_CONTACTS, { pointOfContacts: { count: 3 } }),
+    ).toEqual({ status: 'failed' });
+    expect(
+      evaluate(TOO_MANY_CONTACTS, { pointOfContacts: { count: 1 } }),
+    ).toEqual({ status: 'passed' });
+    expect(evaluate(TOO_MANY_CONTACTS, {}).status).toBe('errored');
   });
 });
