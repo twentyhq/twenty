@@ -1,6 +1,9 @@
+import { cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { overrideMediaQueryMatches } from '@ui/testing/utils/overrideMediaQueryMatches';
+import { MOBILE_MEDIA_QUERY } from '@ui/utilities/responsive/constants/MobileMediaQuery';
+import { useIsMobile } from '@ui/utilities/responsive/hooks/useIsMobile';
 
 const createNativeMatchMedia = () =>
   vi.fn(
@@ -12,6 +15,7 @@ const createNativeMatchMedia = () =>
   );
 
 afterEach(() => {
+  cleanup();
   vi.unstubAllGlobals();
 });
 
@@ -27,6 +31,17 @@ describe('overrideMediaQueryMatches', () => {
       false,
     );
     expect(nativeMatchMedia).toHaveBeenCalledTimes(2);
+  });
+
+  it('forces listed queries when the environment has no matchMedia', () => {
+    vi.stubGlobal('matchMedia', undefined);
+
+    overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true });
+
+    expect(renderHook(useIsMobile).result.current).toBe(true);
+    expect(window.matchMedia('(prefers-color-scheme: dark)').matches).toBe(
+      false,
+    );
   });
 
   it('restores the native matchMedia on cleanup', () => {
