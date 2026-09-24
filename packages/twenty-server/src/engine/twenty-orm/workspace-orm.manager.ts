@@ -78,18 +78,12 @@ export class WorkspaceOrmManager {
     );
   }
 
-  // readOnly routes to the replica when one is configured, and is enforced
-  // with BEGIN READ ONLY on any pool so a write fails even where the replica
-  // falls back to the primary (dev, CI, self-hosted).
   async runInWorkspaceTransaction<T>(
     work: (transactionScope: WorkspaceTransactionScope) => Promise<T>,
-    options?: { readOnly?: boolean },
   ): Promise<T> {
-    const readOnly = options?.readOnly ?? false;
-
     return this.workspaceDataSourceService
-      .getDataSource({ useReplica: readOnly })
-      .transaction(work, { readOnly });
+      .getDataSource({ useReplica: false })
+      .transaction(work);
   }
 
   async executeInWorkspaceContext<T>(
