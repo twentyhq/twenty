@@ -6,6 +6,7 @@ import { type DataSource } from 'typeorm';
 
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { type MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
+import { type ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790268647460-provision-agent-chat-thread-target.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { type WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -21,6 +22,43 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
 
+// The link object 2.43 adds on top of agent history, as later suites see it:
+// its fields and the relations pointing at it, its indexes and its foreign keys.
+const describeAgentChatThreadTarget = async (dataSource: DataSource) => ({
+  fields: await dataSource.query<{ objectName: string; fieldName: string }[]>(
+    `SELECT objectMetadata."nameSingular" AS "objectName", fieldMetadata.name AS "fieldName"
+     FROM core."fieldMetadata" fieldMetadata
+     JOIN core."objectMetadata" objectMetadata ON objectMetadata.id = fieldMetadata."objectMetadataId"
+     JOIN core."objectMetadata" linkObjectMetadata
+       ON linkObjectMetadata.id IN (fieldMetadata."objectMetadataId", fieldMetadata."relationTargetObjectMetadataId")
+     WHERE linkObjectMetadata."workspaceId" = $1 AND linkObjectMetadata."nameSingular" = 'agentChatThreadTarget'
+     ORDER BY 1, 2`,
+    [WORKSPACE_ID],
+  ),
+  indexes: await dataSource.query<{ name: string; fieldCount: number }[]>(
+    `SELECT indexMetadata.name, COUNT(indexFieldMetadata.id)::int AS "fieldCount"
+     FROM core."indexMetadata" indexMetadata
+     JOIN core."objectMetadata" linkObjectMetadata ON linkObjectMetadata.id = indexMetadata."objectMetadataId"
+     LEFT JOIN core."indexFieldMetadata" indexFieldMetadata ON indexFieldMetadata."indexMetadataId" = indexMetadata.id
+     WHERE linkObjectMetadata."workspaceId" = $1 AND linkObjectMetadata."nameSingular" = 'agentChatThreadTarget'
+     GROUP BY indexMetadata.name
+     ORDER BY indexMetadata.name`,
+    [WORKSPACE_ID],
+  ),
+  foreignKeyColumns: await dataSource.query<{ columnName: string }[]>(
+    `SELECT keyColumn.column_name AS "columnName"
+     FROM information_schema.table_constraints tableConstraint
+     JOIN information_schema.key_column_usage keyColumn
+       ON keyColumn.constraint_schema = tableConstraint.constraint_schema
+      AND keyColumn.constraint_name = tableConstraint.constraint_name
+     WHERE tableConstraint.table_schema = $1
+       AND tableConstraint.table_name = 'agentChatThreadTarget'
+       AND tableConstraint.constraint_type = 'FOREIGN KEY'
+     ORDER BY 1`,
+    [SCHEMA],
+  ),
+});
+
 jest.setTimeout(60_000);
 
 describe('versioned agent history upgrade (integration)', () => {
@@ -31,6 +69,10 @@ describe('versioned agent history upgrade (integration)', () => {
   let heartbeat: AgentChatStreamHeartbeatService;
   let upgradeRunner: WorkspaceCommandRunnerService;
   let upgradeCommandName: string;
+  let provisionAgentChatThreadTargetCommand: ProvisionAgentChatThreadTargetCommand;
+  let seededAgentChatThreadTarget: Awaited<
+    ReturnType<typeof describeAgentChatThreadTarget>
+  >;
   const threadId = randomUUID();
   const streamId = randomUUID();
 
@@ -69,6 +111,10 @@ describe('versioned agent history upgrade (integration)', () => {
     upgradeRunner = getAppProviderByClassName<WorkspaceCommandRunnerService>(
       'WorkspaceCommandRunnerService',
     );
+    provisionAgentChatThreadTargetCommand =
+      getAppProviderByClassName<ProvisionAgentChatThreadTargetCommand>(
+        'ProvisionAgentChatThreadTargetCommand',
+      );
     const registry = getAppProviderByClassName<UpgradeCommandRegistryService>(
       'UpgradeCommandRegistryService',
     );
@@ -87,12 +133,24 @@ describe('versioned agent history upgrade (integration)', () => {
       [threadId, WORKSPACE_ID, owner.id, 'History before upgrade', streamId],
     );
 
+    seededAgentChatThreadTarget =
+      await describeAgentChatThreadTarget(dataSource);
+
     // Recreate a pre-upgrade workspace: history exists only in core, and none
-    // of the five standard objects has been installed yet.
+    // of the five standard objects has been installed yet, nor the link object
+    // 2.43 adds on top of them. Leaving that one in place would strand it
+    // without its thread relation, which the deleted thread object takes along.
     await dataSource.query(
       'DELETE FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = ANY($2)',
-      [WORKSPACE_ID, AGENT_HISTORY_TABLES.map(({ name }) => name)],
+      [
+        WORKSPACE_ID,
+        [
+          ...AGENT_HISTORY_TABLES.map(({ name }) => name),
+          'agentChatThreadTarget',
+        ],
+      ],
     );
+    await dataSource.query(`DROP TABLE "${SCHEMA}"."agentChatThreadTarget"`);
     for (const { name } of [...AGENT_HISTORY_TABLES].reverse()) {
       await dataSource.query(`DROP TABLE "${SCHEMA}"."${name}" CASCADE`);
     }
@@ -117,6 +175,17 @@ describe('versioned agent history upgrade (integration)', () => {
       [threadId],
     );
     await runCommand('up');
+    await workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        provisionAgentChatThreadTargetCommand.runOnWorkspace({
+          workspaceId: WORKSPACE_ID,
+          dataSource,
+          index: 0,
+          total: 1,
+          options: {},
+        }),
+      buildSystemAuthContext(WORKSPACE_ID),
+    );
     await dataSource.query(
       `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
       [threadId],
@@ -124,6 +193,9 @@ describe('versioned agent history upgrade (integration)', () => {
     await dataSource.query('DELETE FROM core."agentChatThread" WHERE id = $1', [
       threadId,
     ]);
+    expect(await describeAgentChatThreadTarget(dataSource)).toEqual(
+      seededAgentChatThreadTarget,
+    );
   });
 
   it('skips absent schemas only when no history or migration state exists', async () => {
