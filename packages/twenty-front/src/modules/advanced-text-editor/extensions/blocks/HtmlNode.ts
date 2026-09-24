@@ -3,10 +3,11 @@ import { ReactNodeViewRenderer } from '@tiptap/react';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 import { HtmlNodeView } from '@/advanced-text-editor/extensions/blocks/HtmlNodeView';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 
 type HtmlNodeOptions = {
-  isInlineEditable: boolean;
   defaultHtml: string;
+  VariablePicker?: VariablePickerComponent;
 };
 
 export const HtmlNode = Node.create<HtmlNodeOptions>({
@@ -16,7 +17,7 @@ export const HtmlNode = Node.create<HtmlNodeOptions>({
 
   addOptions() {
     return {
-      isInlineEditable: false,
+      VariablePicker: undefined,
       defaultHtml:
         '<p style="margin: 0;">Edit this HTML in the block settings panel.</p>',
     };

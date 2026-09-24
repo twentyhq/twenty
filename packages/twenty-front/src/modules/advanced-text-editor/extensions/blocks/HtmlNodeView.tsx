@@ -1,10 +1,11 @@
 import { styled } from '@linaria/react';
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
-import { useId } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { sanitizeHtmlPreview } from '@/advanced-text-editor/utils/sanitizeHtmlPreview';
-import { TextArea } from '@/ui/input/components/TextArea';
+import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 
 type HtmlNodeViewProps = Pick<
   NodeViewProps,
@@ -21,35 +22,41 @@ const StyledPreview = styled.div`
   }
 `;
 
+const StyledInlineEditorContainer = styled.div`
+  padding-top: ${themeCssVariables.spacing[6]};
+`;
+
 export const HtmlNodeView = ({
   node,
   editor,
   extension,
   updateAttributes,
 }: HtmlNodeViewProps) => {
-  const textAreaId = useId();
   const html = typeof node.attrs.html === 'string' ? node.attrs.html : '';
+  const VariablePicker: VariablePickerComponent | undefined =
+    extension.options.VariablePicker;
 
-  const isEditingInline =
-    extension.options.isInlineEditable === true && editor.isEditable;
+  if (isDefined(VariablePicker) && editor.isEditable) {
+    return (
+      <NodeViewWrapper>
+        <StyledInlineEditorContainer>
+          <FormRawJsonFieldInput
+            defaultValue={html}
+            placeholder="<p>Hello</p>"
+            onChange={(value) => updateAttributes({ html: value ?? '' })}
+            VariablePicker={VariablePicker}
+          />
+        </StyledInlineEditorContainer>
+      </NodeViewWrapper>
+    );
+  }
 
   return (
     <NodeViewWrapper>
-      {isEditingInline ? (
-        <TextArea
-          textAreaId={textAreaId}
-          value={html}
-          onChange={(value) => updateAttributes({ html: value })}
-          placeholder="<p>Hello</p>"
-          minRows={6}
-          maxRows={16}
-        />
-      ) : (
-        <StyledPreview
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: sanitizeHtmlPreview(html) }}
-        />
-      )}
+      <StyledPreview
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: sanitizeHtmlPreview(html) }}
+      />
     </NodeViewWrapper>
   );
 };
