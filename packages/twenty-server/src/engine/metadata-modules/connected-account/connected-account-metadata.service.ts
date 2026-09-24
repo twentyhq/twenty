@@ -395,7 +395,12 @@ export class ConnectedAccountMetadataService {
       messageChannels,
       calendarChannels,
       workspaceId,
-    });
+    }).catch((error) =>
+      this.logger.warn(
+        `WorkspaceId: ${workspaceId} Failed to stop webhook subscriptions while transferring connected accounts from ${fromUserWorkspaceId}`,
+        error,
+      ),
+    );
 
     await this.repository.manager.transaction(async (entityManager) => {
       await entityManager.update(
