@@ -73,9 +73,15 @@ export class FrontComponentDTO {
   @Field()
   usesSdkClient: boolean;
 
-  @Field(() => ApplicationTokenPairDTO, { nullable: true })
+  @Field(() => ApplicationTokenPairDTO, {
+    nullable: true,
+    deprecationReason: 'Use generateFrontComponentApplicationSession',
+  })
   applicationTokenPair?: ApplicationTokenPairDTO;
 
-  @Field(() => GraphQLJSON, { nullable: true })
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+    deprecationReason: 'Use generateFrontComponentApplicationSession',
+  })
   applicationVariables?: Record<string, string>;
 }

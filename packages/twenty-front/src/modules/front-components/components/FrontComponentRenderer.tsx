@@ -1,9 +1,10 @@
-import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
+import { FrontComponentApplicationSessionEffect } from '@/front-components/components/FrontComponentApplicationSessionEffect';
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { type FrontComponentApplicationSession } from '@/front-components/types/FrontComponentApplicationSession';
 import { FrontComponentMediaSessionRegistrationEffect } from '@/front-components/media-session/components/FrontComponentMediaSessionRegistrationEffect';
 import { FrontComponentMediaPermissionModal } from '@/front-components/media-session/components/FrontComponentMediaPermissionModal';
 import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
@@ -12,7 +13,7 @@ import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
@@ -46,6 +47,7 @@ type FrontComponentRendererContentProps = {
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
   loadingFallback?: ReactNode;
+  unavailableFallback?: ReactNode;
 };
 
 export const FrontComponentRenderer = ({
@@ -83,6 +85,7 @@ export const FrontComponentRenderer = ({
           timelineActivityId={timelineActivityId}
           toolCall={toolCall}
           loadingFallback={loadingFallback}
+          unavailableFallback={unavailableFallback}
         />
       )}
     </>
@@ -96,6 +99,7 @@ const FrontComponentRendererContent = ({
   timelineActivityId,
   toolCall,
   loadingFallback,
+  unavailableFallback,
 }: FrontComponentRendererContentProps) => {
   const colorScheme = useThemeColorScheme();
   const { enqueueToast } = useToast();
@@ -149,7 +153,22 @@ const FrontComponentRendererContent = ({
     [enqueueToast],
   );
 
-  const applicationTokenPair = frontComponent.applicationTokenPair ?? null;
+  const [applicationSession, setApplicationSession] =
+    useState<FrontComponentApplicationSession | null>(null);
+  const [applicationSessionLoadError, setApplicationSessionLoadError] =
+    useState<Error | null>(null);
+
+  // The worker keeps its first token and refreshes through the host, so a
+  // later renewal must not re-create it
+  const handleApplicationSessionLoaded = useCallback(
+    (loadedApplicationSession: FrontComponentApplicationSession) => {
+      setApplicationSession(
+        (currentApplicationSession) =>
+          currentApplicationSession ?? loadedApplicationSession,
+      );
+    },
+    [],
+  );
 
   const { data: sdkClientChecksumsData, loading: sdkClientChecksumsLoading } =
     useQuery(GetApplicationSdkClientChecksumsDocument, {
@@ -182,10 +201,8 @@ const FrontComponentRendererContent = ({
     checksum: frontComponent.builtComponentChecksum,
   });
 
-  const applicationVariables = frontComponent.applicationVariables ?? undefined;
-
   const isSdkClientReady = !usesSdkClient || !sdkClientChecksumsLoading;
-  const isReadyToRender = isDefined(applicationTokenPair) && isSdkClientReady;
+  const isReadyToRender = isDefined(applicationSession) && isSdkClientReady;
 
   return (
     <>
@@ -204,18 +221,26 @@ const FrontComponentRendererContent = ({
         pendingStartMediaTypes={pendingStartMediaTypes}
         onStop={stopMediaSession}
       />
-      <FrontComponentApplicationTokenPairEffect
-        frontComponentId={frontComponentId}
-        applicationTokenPair={applicationTokenPair}
+      <FrontComponentApplicationSessionEffect
+        applicationId={applicationId}
+        onApplicationSessionLoaded={handleApplicationSessionLoaded}
+        onApplicationSessionLoadFailed={setApplicationSessionLoadError}
       />
-      {!isReadyToRender && loadingFallback}
+      <FrontComponentLoadErrorToastEffect
+        errorMessage={applicationSessionLoadError?.message}
+      />
+      {isDefined(applicationSessionLoadError) && unavailableFallback}
+      {!isDefined(applicationSessionLoadError) &&
+        !isReadyToRender &&
+        loadingFallback}
       {isReadyToRender && (
         <FrontComponentRendererProvider frontComponentId={frontComponentId}>
           <SharedFrontComponentRenderer
             colorScheme={colorScheme}
             componentUrl={componentUrl}
             applicationAccessToken={
-              applicationTokenPair.applicationAccessToken.token
+              applicationSession.applicationTokenPair.applicationAccessToken
+                .token
             }
             apiUrl={REACT_APP_SERVER_BASE_URL}
             functionsBaseUrl={functionsBaseUrl}
@@ -226,7 +251,7 @@ const FrontComponentRendererContent = ({
               frontComponentHostCommunicationApi
             }
             mediaSessionHost={mediaSessionHost}
-            applicationVariables={applicationVariables}
+            applicationVariables={applicationSession.applicationVariables}
             storageNamespace={storageNamespace}
             onError={handleError}
             loadingFallback={loadingFallback}

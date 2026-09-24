@@ -30,7 +30,7 @@ jest.mock('@/object-metadata/utils/getFieldMetadataItemById', () => ({
 }));
 
 const mockNavigateApp = jest.fn();
-const mockRequestAccessTokenRefresh = jest.fn();
+const mockRequestApplicationAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
 const mockNavigateSidePanel = jest.fn();
 const mockOpenRecordInSidePanel = jest.fn();
@@ -58,11 +58,15 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
 }));
 
-jest.mock('@/front-components/hooks/useRequestApplicationTokenRefresh', () => ({
-  useRequestApplicationTokenRefresh: () => ({
-    requestAccessTokenRefresh: mockRequestAccessTokenRefresh,
+jest.mock(
+  '@/front-components/hooks/useFrontComponentApplicationSession',
+  () => ({
+    useFrontComponentApplicationSession: () => ({
+      requestApplicationAccessTokenRefresh:
+        mockRequestApplicationAccessTokenRefresh,
+    }),
   }),
-}));
+);
 
 jest.mock(
   '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal',
@@ -893,6 +897,30 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(mockCloseSidePanelMenu).toHaveBeenCalled();
+    });
+  });
+
+  describe('requestAccessTokenRefresh', () => {
+    it('should refresh the access token of the front component application', async () => {
+      mockRequestApplicationAccessTokenRefresh.mockResolvedValue(
+        'renewed-access-token',
+      );
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      let accessToken: string | undefined;
+
+      await act(async () => {
+        accessToken =
+          await result.current.frontComponentHostCommunicationApi.requestAccessTokenRefresh();
+      });
+
+      expect(accessToken).toBe('renewed-access-token');
+      expect(mockRequestApplicationAccessTokenRefresh).toHaveBeenCalledWith(
+        APPLICATION_ID,
+      );
     });
   });
 

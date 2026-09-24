@@ -1,8 +1,18 @@
 import { Inject, UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Info,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
+import { type GraphQLResolveInfo } from 'graphql';
+import graphqlFields from 'graphql-fields';
 import { type ApplicationCapability } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -21,8 +31,13 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
+import { FrontComponentApplicationSessionDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component-application-session.dto';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
+import {
+  FrontComponentException,
+  FrontComponentExceptionCode,
+} from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -106,6 +121,7 @@ export class FrontComponentResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Info() info: GraphQLResolveInfo,
   ): Promise<FrontComponentDTO | null> {
     const dto = await this.frontComponentService.findById(id, workspace.id);
 
@@ -113,24 +129,69 @@ export class FrontComponentResolver {
       return null;
     }
 
-    const [tokenPair, applicationVariables] = await Promise.all([
+    // Deprecated fields: only mint when an older front still selects them
+    const selectedFields = graphqlFields(info);
+
+    const [applicationTokenPair, applicationVariables] = await Promise.all([
+      isDefined(selectedFields.applicationTokenPair)
+        ? this.applicationTokenService.generateApplicationTokenPair({
+            applicationId: dto.applicationId,
+            workspaceId: workspace.id,
+            userWorkspaceId,
+            userId: user.id,
+          })
+        : undefined,
+      isDefined(selectedFields.applicationVariables)
+        ? this.applicationVariableService.getPublicEnvVariables({
+            workspaceId: workspace.id,
+            applicationId: dto.applicationId,
+          })
+        : undefined,
+    ]);
+
+    return {
+      ...dto,
+      applicationTokenPair,
+      applicationVariables,
+    };
+  }
+
+  @Mutation(() => FrontComponentApplicationSessionDTO)
+  @UseGuards(RequireAccessTokenGuard, NoPermissionGuard)
+  async generateFrontComponentApplicationSession(
+    @Args('applicationId', { type: () => UUIDScalarType })
+    applicationId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<FrontComponentApplicationSessionDTO> {
+    const hasFrontComponent =
+      await this.frontComponentService.hasFrontComponentForApplication({
+        applicationId,
+        workspaceId: workspace.id,
+      });
+
+    if (!hasFrontComponent) {
+      throw new FrontComponentException(
+        'No front component found for this application',
+        FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+      );
+    }
+
+    const [applicationTokenPair, applicationVariables] = await Promise.all([
       this.applicationTokenService.generateApplicationTokenPair({
-        applicationId: dto.applicationId,
+        applicationId,
         workspaceId: workspace.id,
         userWorkspaceId,
         userId: user.id,
       }),
       this.applicationVariableService.getPublicEnvVariables({
         workspaceId: workspace.id,
-        applicationId: dto.applicationId,
+        applicationId,
       }),
     ]);
 
-    return {
-      ...dto,
-      applicationTokenPair: tokenPair,
-      applicationVariables,
-    };
+    return { applicationTokenPair, applicationVariables };
   }
 
   @Mutation(() => FrontComponentDTO)

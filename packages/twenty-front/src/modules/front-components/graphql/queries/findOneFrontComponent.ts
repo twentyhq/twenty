@@ -12,17 +12,6 @@ export const FIND_ONE_FRONT_COMPONENT = gql`
       isHeadless
       usesSdkClient
       frontComponentSharedDependenciesChecksum
-      applicationVariables
-      applicationTokenPair {
-        applicationAccessToken {
-          token
-          expiresAt
-        }
-        applicationRefreshToken {
-          token
-          expiresAt
-        }
-      }
     }
   }
 `;
