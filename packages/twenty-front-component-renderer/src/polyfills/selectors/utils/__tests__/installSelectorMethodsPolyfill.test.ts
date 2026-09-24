@@ -617,6 +617,49 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(plainDiv.matches(':defined')).toBe(true);
     });
 
+    it('should match radios of a group without a checked member as indeterminate', () => {
+      const { document } = createSelectorFixture();
+      const createRadio = (name: string | null) => {
+        const radio = document.createElement('input');
+        radio.setAttribute('type', 'radio');
+
+        if (name !== null) {
+          radio.setAttribute('name', name);
+        }
+
+        return radio;
+      };
+      const firstPlan = createRadio('plan');
+      const secondPlan = createRadio('plan');
+      const namelessRadio = createRadio(null);
+      const otherForm = document.createElement('form');
+      const otherFormPlan = createRadio('plan');
+      const indeterminateText = document.createElement('input') as Element & {
+        indeterminate: boolean;
+      };
+      indeterminateText.indeterminate = true;
+      otherForm.append(otherFormPlan);
+      document.body.append(
+        firstPlan,
+        secondPlan,
+        namelessRadio,
+        otherForm,
+        indeterminateText,
+      );
+
+      expect(firstPlan.matches(':indeterminate')).toBe(true);
+      expect(namelessRadio.matches(':indeterminate')).toBe(true);
+      expect(indeterminateText.matches(':indeterminate')).toBe(false);
+
+      otherFormPlan.setAttribute('checked', '');
+      expect(firstPlan.matches(':indeterminate')).toBe(true);
+      expect(otherFormPlan.matches(':indeterminate')).toBe(false);
+
+      secondPlan.setAttribute('checked', '');
+      expect(firstPlan.matches(':indeterminate')).toBe(false);
+      expect(secondPlan.matches(':indeterminate')).toBe(false);
+    });
+
     it('should evaluate :lang and :dir from the nearest ancestor attributes', () => {
       const { document } = createSelectorFixture();
       const article = document.createElement('article');
