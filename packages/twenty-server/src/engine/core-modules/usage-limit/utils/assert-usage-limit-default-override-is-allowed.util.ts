@@ -24,6 +24,6 @@ export const assertUsageLimitDefaultOverrideIsAllowed = ({
 
   throw new UsageLimitException(
     `The ${scope.resourceType} ${scope.limitKind} default is set for this instance and only an operator can replace it`,
-    UsageLimitExceptionCode.LIMIT_INVALID,
+    UsageLimitExceptionCode.LIMIT_FORBIDDEN,
   );
 };

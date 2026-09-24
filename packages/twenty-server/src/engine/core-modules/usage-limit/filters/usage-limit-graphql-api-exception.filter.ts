@@ -19,6 +19,7 @@ export class UsageLimitGraphqlApiExceptionFilter implements ExceptionFilter {
       case UsageLimitExceptionCode.LIMIT_INVALID:
         throw new UserInputError(exception);
       case UsageLimitExceptionCode.LIMIT_NOT_ENTITLED:
+      case UsageLimitExceptionCode.LIMIT_FORBIDDEN:
         throw new ForbiddenError(exception);
       case UsageLimitExceptionCode.RATE_LIMITED:
       case UsageLimitExceptionCode.QUOTA_EXHAUSTED:

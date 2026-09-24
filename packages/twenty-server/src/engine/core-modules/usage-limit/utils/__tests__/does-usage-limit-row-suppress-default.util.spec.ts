@@ -74,10 +74,6 @@ describe('doesUsageLimitRowSuppressDefault', () => {
       { spenderType: 'application' } as Partial<UsageLimitScope>,
     ],
     [
-      'operation type',
-      { operationType: UsageOperationType.ALL } as Partial<UsageLimitScope>,
-    ],
-    [
       'resource type',
       { resourceType: UsageResourceType.RECORD } as Partial<UsageLimitScope>,
     ],
@@ -86,6 +82,15 @@ describe('doesUsageLimitRowSuppressDefault', () => {
     expect(
       doesUsageLimitRowSuppressDefault({
         scope: buildScope(overrides),
+        usageLimitDefault: buildDefault(),
+      }),
+    ).toBe(false);
+  });
+
+  it('does not suppress from an ALL row, which the kind rules keep out of speed and stock', () => {
+    expect(
+      doesUsageLimitRowSuppressDefault({
+        scope: buildScope({ operationType: UsageOperationType.ALL }),
         usageLimitDefault: buildDefault(),
       }),
     ).toBe(false);

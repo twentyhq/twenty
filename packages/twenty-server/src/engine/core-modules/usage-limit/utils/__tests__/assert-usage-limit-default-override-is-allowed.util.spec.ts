@@ -1,4 +1,4 @@
-import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { UsageLimitExceptionCode } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { assertUsageLimitDefaultOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-default-override-is-allowed.util';
 import {
   buildUsageLimitScope,
@@ -29,7 +29,11 @@ describe('assertUsageLimitDefaultOverrideIsAllowed', () => {
         scope: buildScope(),
         isOperator: false,
       }),
-    ).toThrow(UsageLimitException);
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_FORBIDDEN,
+      }),
+    );
   });
 
   it('lets an operator replace the same default', () => {
