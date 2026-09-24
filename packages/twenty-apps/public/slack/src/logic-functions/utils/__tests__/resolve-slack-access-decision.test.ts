@@ -25,6 +25,7 @@ const identity: SlackUserIdentity = {
 };
 
 const client = {} as CoreApiClient;
+const SLACK_CONNECTION_ID = 'connection-1';
 const slackClient = {} as WebClient;
 
 const RESOLUTION_BASE = {
@@ -50,6 +51,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ANYONE',
         client,
         slackClient,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity: undefined,
         runAsWorkspaceMemberId: undefined,
       }),
@@ -64,6 +66,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ONLY_LINKED_MEMBERS',
         client,
         slackClient,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity,
         runAsWorkspaceMemberId: 'member-id',
       }),
@@ -85,6 +88,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ONLY_LINKED_MEMBERS',
         client,
         slackClient,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
@@ -99,6 +103,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ONLY_LINKED_MEMBERS',
         client,
         slackClient,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
@@ -113,6 +118,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ONLY_LINKED_MEMBERS',
         client,
         slackClient,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
@@ -131,6 +137,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ONLY_LINKED_MEMBERS',
         client,
         slackClient,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
@@ -147,6 +154,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ONLY_LINKED_MEMBERS',
         client,
         slackClient,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
@@ -161,6 +169,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ONLY_LINKED_MEMBERS',
         client,
         slackClient,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
@@ -173,6 +182,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ONLY_LINKED_MEMBERS',
         client,
         slackClient: undefined,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity,
         runAsWorkspaceMemberId: undefined,
       }),
@@ -183,6 +193,7 @@ describe('resolveSlackAccessDecision', () => {
         accessMode: 'ONLY_LINKED_MEMBERS',
         client,
         slackClient,
+        slackConnectionId: SLACK_CONNECTION_ID,
         identity: undefined,
         runAsWorkspaceMemberId: undefined,
       }),

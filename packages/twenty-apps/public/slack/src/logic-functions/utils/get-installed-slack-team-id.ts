@@ -1,25 +1,24 @@
+import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { cacheSlackConnectedAccountTeam } from 'src/logic-functions/utils/cache-slack-connected-account-team';
 import { getSlackConnectedAccountTeam } from 'src/logic-functions/utils/get-slack-connected-account-team';
-import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { setSlackConnectedAccountTeam } from 'src/logic-functions/utils/set-slack-connected-account-team';
 
 type SlackAuthTestClient = {
-  auth: { test: () => Promise<{ team_id?: string }> };
+  auth: Pick<WebClient['auth'], 'test'>;
 };
 
-export const getInstalledSlackTeamId = async (
-  slackClient: SlackAuthTestClient,
-): Promise<string | undefined> => {
-  const connectionResult = await getSlackConnection();
-  const connectionId = connectionResult.success
-    ? connectionResult.connectionId
-    : undefined;
-
-  if (isNonEmptyString(connectionId)) {
-    const storedTeamId = await getSlackConnectedAccountTeam(connectionId).catch(
-      () => null,
-    );
+export const getInstalledSlackTeamId = async ({
+  slackClient,
+  slackConnectionId,
+}: {
+  slackClient: SlackAuthTestClient;
+  slackConnectionId: string | undefined;
+}): Promise<string | undefined> => {
+  if (isNonEmptyString(slackConnectionId)) {
+    const storedTeamId = await getSlackConnectedAccountTeam(
+      slackConnectionId,
+    ).catch(() => null);
 
     if (isNonEmptyString(storedTeamId)) {
       return storedTeamId;
@@ -33,12 +32,12 @@ export const getInstalledSlackTeamId = async (
     return undefined;
   }
 
-  // Installs predating this read path have no stored team, so healing the
-  // entry here is what stops every later call falling back to Slack.
-  if (isNonEmptyString(connectionId)) {
-    await cacheSlackConnectedAccountTeam(connectionId, installedTeamId).catch(
-      () => undefined,
-    );
+  // installs predating this read path have no stored team, so heal it here
+  if (isNonEmptyString(slackConnectionId)) {
+    await setSlackConnectedAccountTeam({
+      connectedAccountId: slackConnectionId,
+      slackTeamId: installedTeamId,
+    }).catch(() => undefined);
   }
 
   return installedTeamId;
