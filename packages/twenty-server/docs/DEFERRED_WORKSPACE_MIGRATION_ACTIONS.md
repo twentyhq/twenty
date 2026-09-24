@@ -49,11 +49,11 @@ Non-goals (this doc and PR 1):
 
 A deferred action is named after the work it performs, not after the migration action that produced it. Each name declares its payload type and is executed by its own handler; adding a name without either fails to compile.
 
-| Name                            | Handler                                                    | Deferred work                                                                                                    | Payload                                                                                                                      |
-| ------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `build_index`                   | `BuildIndexDeferredActionHandlerService`                   | `CREATE INDEX CONCURRENTLY` for a non-unique, non-partial index covering only `MANY_TO_ONE` join columns         | `{ indexMetadataId }`, a reference: the index metadata still exists after commit                                             |
-| `validate_foreignKey`           | `ValidateForeignKeyDeferredActionHandlerService`           | `VALIDATE CONSTRAINT` for the foreign key of a `MANY_TO_ONE` join column, created `NOT VALID` in the transaction | `{ fieldMetadataId }`, a reference: the field metadata still exists after commit, and the constraint name is derived from it |
-| `delete_logicFunctionResources` | `DeleteLogicFunctionResourcesDeferredActionHandlerService` | delete the source folder and built handler from storage, delete the runtime resource                             | `{ flatLogicFunction }`, a snapshot: the metadata is gone after commit                                                       |
+| Name | Handler | Deferred work | Payload |
+| --- | --- | --- | --- |
+| `build_index` | `BuildIndexDeferredActionHandlerService` | `CREATE INDEX CONCURRENTLY` for a non-unique, non-partial index covering only `MANY_TO_ONE` join columns | `{ indexMetadataId }`, a reference: the index metadata still exists after commit |
+| `validate_foreignKey` | `ValidateForeignKeyDeferredActionHandlerService` | `VALIDATE CONSTRAINT` for the foreign key of a `MANY_TO_ONE` join column, created `NOT VALID` in the transaction | `{ fieldMetadataId }`, a reference: the field metadata still exists after commit, and the constraint name is derived from it |
+| `delete_logicFunctionResources` | `DeleteLogicFunctionResourcesDeferredActionHandlerService` | delete the source folder and built handler from storage, delete the runtime resource | `{ flatLogicFunction }`, a snapshot: the metadata is gone after commit |
 
 ### Queueing contract
 
@@ -105,16 +105,16 @@ The runner delegates both steps to `DeferredWorkspaceMigrationActionRunnerServic
 
 ### Storage: `core.deferredWorkspaceMigrationAction`
 
-| Column                               | Purpose                                                         |
-| ------------------------------------ | --------------------------------------------------------------- |
-| `workspaceId`                        | owning workspace, `ON DELETE CASCADE`                           |
-| `applicationUniversalIdentifier`     | application of the migration, passed back to the handler        |
-| `name`                               | the deferred action, which resolves to the handler that runs it |
-| `payload`                            | `jsonb`, the handler payload                                    |
-| `position`                           | order of the action within its migration                        |
-| `runByVersion`                       | `APP_VERSION` of the server that ran the migration              |
-| `status`                             | `PENDING`, `IN_PROGRESS` or `FAILED`                            |
-| `attempts`, `lastError`, `startedAt` | retry bookkeeping                                               |
+| Column | Purpose |
+| --- | --- |
+| `workspaceId` | owning workspace, `ON DELETE CASCADE` |
+| `applicationUniversalIdentifier` | application of the migration, passed back to the handler |
+| `name` | the deferred action, which resolves to the handler that runs it |
+| `payload` | `jsonb`, the handler payload |
+| `position` | order of the action within its migration |
+| `runByVersion` | `APP_VERSION` of the server that ran the migration |
+| `status` | `PENDING`, `IN_PROGRESS` or `FAILED` |
+| `attempts`, `lastError`, `startedAt` | retry bookkeeping |
 
 Index on `(workspaceId, status)`. A row is deleted once its action succeeds. The table is not part of the flat entity maps or the migration builder.
 
@@ -164,15 +164,15 @@ Two metadata migrations started at the same moment are not serialized by this, w
 
 Delivery, each PR merged on its own behind the flag:
 
-| PR  | Scope                                                                                                                                                                                                                                                |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Table, the deferred action names, handler contract, runner persistence, deferred action runner and job with retries and timeout; `build_index` and `delete_logicFunctionResources`; `afterCommitSideEffects` removed.                                |
-| 2   | Recovery: cron resetting `IN_PROGRESS` rows past the timeout and enqueueing workspaces with `PENDING` rows; CLI retry of `FAILED` rows; job deduplication per workspace and retry backoff; metrics on duration and on rows by status.                |
-| 3   | Refuse schema-affecting migrations while the workspace has in-flight deferred builds: see above.                                                                                                                                                     |
-| 4   | Error surfacing: the object, field and index exception handlers map `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` to a `ConflictError` carrying `subCode` and `userFriendlyMessage`; the SDK CLI shows that message with a wait-and-retry hint. |
-| 5   | Foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns, plus a deferred `validate_foreignKey` action, and one handler class per deferred action.                                                                                              |
-| 5b  | Admin retry of `FAILED` rows from the admin panel, on top of the `workspace:retry-failed-deferred-migration-actions` command.                                                                                                                        |
-| 6   | Enable the flag for the affected self-hosted workspace, then cloud, then default on and remove the flag.                                                                                                                                             |
+| PR | Scope |
+| --- | --- |
+| 1 | Table, the deferred action names, handler contract, runner persistence, deferred action runner and job with retries and timeout; `build_index` and `delete_logicFunctionResources`; `afterCommitSideEffects` removed. |
+| 2 | Recovery: cron resetting `IN_PROGRESS` rows past the timeout and enqueueing workspaces with `PENDING` rows; CLI retry of `FAILED` rows; job deduplication per workspace and retry backoff; metrics on duration and on rows by status. |
+| 3 | Refuse schema-affecting migrations while the workspace has in-flight deferred builds: see above. |
+| 4 | Error surfacing: the object, field and index exception handlers map `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` to a `ConflictError` carrying `subCode` and `userFriendlyMessage`; the SDK CLI shows that message with a wait-and-retry hint. |
+| 5 | Foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns, plus a deferred `validate_foreignKey` action, and one handler class per deferred action. |
+| 5b | Admin retry of `FAILED` rows from the admin panel, on top of the `workspace:retry-failed-deferred-migration-actions` command. |
+| 6 | Enable the flag for the affected self-hosted workspace, then cloud, then default on and remove the flag. |
 
 Migration: one fast instance command in 2.42 creating the table, one in 2.43 renaming `actionHandlerKey` to `name`. No backfill.
 
