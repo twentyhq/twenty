@@ -8,6 +8,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 describe('StripePaymentMethodDomainService', () => {
   let service: StripePaymentMethodDomainService;
+  let isBillingEnabled: boolean;
 
   const stripe = {
     paymentMethodDomains: {
@@ -18,6 +19,7 @@ describe('StripePaymentMethodDomainService', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    isBillingEnabled = true;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -26,7 +28,9 @@ describe('StripePaymentMethodDomainService', () => {
           provide: TwentyConfigService,
           useValue: {
             get: (key: string) =>
-              key === 'IS_BILLING_ENABLED' ? true : 'stripe-api-key',
+              key === 'IS_BILLING_ENABLED'
+                ? isBillingEnabled
+                : 'stripe-api-key',
           },
         },
         { provide: StripeSDKService, useValue: { getStripe: () => stripe } },
@@ -57,6 +61,15 @@ describe('StripePaymentMethodDomainService', () => {
 
     await service.registerDomain('acme.twenty.com');
 
+    expect(stripe.paymentMethodDomains.create).not.toHaveBeenCalled();
+  });
+
+  it('should skip the registration once billing is turned off', async () => {
+    isBillingEnabled = false;
+
+    await service.registerDomain('acme.twenty.com');
+
+    expect(stripe.paymentMethodDomains.list).not.toHaveBeenCalled();
     expect(stripe.paymentMethodDomains.create).not.toHaveBeenCalled();
   });
 });

@@ -83,15 +83,15 @@ export class BillingService {
       return;
     }
 
-    const domainName = getPaymentMethodDomainName(
-      this.workspaceDomainsService.getWorkspaceUrls(workspace).subdomainUrl,
-    );
-
-    if (!isDefined(domainName)) {
-      return;
-    }
-
     try {
+      const domainName = getPaymentMethodDomainName(
+        this.workspaceDomainsService.getWorkspaceUrls(workspace).subdomainUrl,
+      );
+
+      if (!isDefined(domainName)) {
+        return;
+      }
+
       await this.messageQueueService.add<RegisterPaymentMethodDomainJobData>(
         RegisterPaymentMethodDomainJob.name,
         { domainName },
@@ -99,7 +99,7 @@ export class BillingService {
       );
     } catch (error) {
       this.logger.error(
-        `Could not queue payment method domain registration for ${domainName}: ${error instanceof Error ? error.message : 'unknown error'}`,
+        `Could not queue payment method domain registration for subdomain ${workspace.subdomain}: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
     }
   }
