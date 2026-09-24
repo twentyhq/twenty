@@ -3,7 +3,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -219,7 +219,7 @@ export const SettingsAdminApps = () => {
               dropdownOffset={{ x: 0, y: 8 }}
               clickableComponent={filterButton}
               dropdownComponents={
-                <DropdownContent>
+                <LegacyDropdownContent>
                   <DropdownMenuItemsContainer>
                     <SettingsRow
                       startIcon={<IconPinned />}
@@ -275,7 +275,7 @@ export const SettingsAdminApps = () => {
                       checked={isConfiguredFilter === false}
                     >{t`Not configured`}</SettingsRow>
                   </DropdownMenuItemsContainer>
-                </DropdownContent>
+                </LegacyDropdownContent>
               }
             />
           )}

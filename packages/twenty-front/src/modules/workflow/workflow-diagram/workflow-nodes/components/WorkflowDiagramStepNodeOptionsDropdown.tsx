@@ -1,16 +1,14 @@
-import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
+import { OPTIONS_DROPDOWN_GLOBAL_HOTKEYS_CONFIG } from '@/ui/layout/dropdown/constants/OptionsDropdownGlobalHotkeysConfig';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems';
-import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/components';
+import { Dropdown, IconButton } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -34,57 +32,41 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
   onDelete: () => void;
 }) => {
   const { t } = useLingui();
-  const { closeDropdown } = useCloseDropdown();
-
   const dropdownId = useId();
-  const selectableItemIds = [
-    WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode,
-    ...(isDefined(onDuplicateNode)
-      ? [WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode]
-      : []),
-    WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode,
-  ];
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const closeDropdownThen = (action: () => void) => () => {
-    closeDropdown(dropdownId);
-    action();
-  };
-
-  const handleChangeNode = closeDropdownThen(onChangeNode);
-  const handleDeleteNode = closeDropdownThen(onDelete);
-  const handleDuplicateNode = isDefined(onDuplicateNode)
-    ? closeDropdownThen(onDuplicateNode)
-    : undefined;
 
   return (
     <StyledOptionsButtonContainer className="nodrag nopan">
       <ParentClickOutsideIdContext.Provider
         value={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
       >
-        <OptionsDropdownMenu
+        <DropdownRoot
           dropdownId={dropdownId}
-          selectableItemIdArray={selectableItemIds}
-          clickableComponent={
-            <IconButton elevated size="md" aria-label={t`Node options`}>
-              <IconDotsVertical />
-            </IconButton>
-          }
-          dropdownPlacement="right-start"
-          shouldRegisterOptionsHotkey={false}
+          type="menu"
+          globalHotkeysConfig={OPTIONS_DROPDOWN_GLOBAL_HOTKEYS_CONFIG}
         >
-          <WorkflowStepOptionsMenuItems
-            selectedItemId={selectedItemId}
-            changeNodeText={t`Change node`}
-            onChangeNode={handleChangeNode}
-            onDuplicateNode={handleDuplicateNode}
-            onDeleteNode={handleDeleteNode}
+          <Dropdown.Trigger
+            data-select-disable
+            render={
+              <IconButton elevated size="md" aria-label={t`Node options`}>
+                <IconDotsVertical />
+              </IconButton>
+            }
           />
-        </OptionsDropdownMenu>
+          <DropdownContent
+            side="right"
+            align="start"
+            sideOffset={DROPDOWN_OFFSET_Y}
+          >
+            <Dropdown.Section>
+              <WorkflowStepOptionsMenuItems
+                changeNodeText={t`Change node`}
+                onChangeNode={onChangeNode}
+                onDuplicateNode={onDuplicateNode}
+                onDeleteNode={onDelete}
+              />
+            </Dropdown.Section>
+          </DropdownContent>
+        </DropdownRoot>
       </ParentClickOutsideIdContext.Provider>
     </StyledOptionsButtonContainer>
   );

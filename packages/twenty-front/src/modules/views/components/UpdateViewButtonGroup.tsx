@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -124,14 +124,14 @@ export const UpdateViewButtonGroup = () => {
               </IconButton>
             }
             dropdownComponents={
-              <DropdownContent>
+              <LegacyDropdownContent>
                 <DropdownMenuItemsContainer>
                   <ListItem
                     onClick={handleCreateViewClick}
                     startIcon={<IconPlus />}
                   >{t`Create view`}</ListItem>
                 </DropdownMenuItemsContainer>
-              </DropdownContent>
+              </LegacyDropdownContent>
             }
           />
         </ButtonGroup>

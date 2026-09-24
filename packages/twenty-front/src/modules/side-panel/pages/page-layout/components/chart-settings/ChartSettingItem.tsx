@@ -15,7 +15,7 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
 import { isMinMaxRangeValid } from '@/side-panel/pages/page-layout/utils/isMinMaxRangeValid';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -185,9 +185,9 @@ export const ChartSettingItem = ({
         id={item.id}
         dropdownId={item.id}
         dropdownComponents={
-          <DropdownContent widthInPixels={item.dropdownWidth}>
+          <LegacyDropdownContent widthInPixels={item.dropdownWidth}>
             {item.DropdownContent && <item.DropdownContent />}
-          </DropdownContent>
+          </LegacyDropdownContent>
         }
         dropdownPlacement="bottom-end"
         dropdownOffset={{ y: 4 }}

@@ -24,7 +24,7 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -376,7 +376,7 @@ export const SettingsDataModelFieldSelectForm = ({
                         </LightIconButton>
                       }
                       dropdownComponents={
-                        <DropdownContent
+                        <LegacyDropdownContent
                           widthInPixels={GenericDropdownContentWidth.Narrow}
                         >
                           <DropdownMenuItemsContainer>
@@ -405,7 +405,7 @@ export const SettingsDataModelFieldSelectForm = ({
                               }}
                             >{t`Remove all`}</ListItem>
                           </DropdownMenuItemsContainer>
-                        </DropdownContent>
+                        </LegacyDropdownContent>
                       }
                     />
                   )}

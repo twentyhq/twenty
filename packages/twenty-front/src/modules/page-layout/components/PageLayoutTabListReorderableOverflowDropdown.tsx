@@ -12,7 +12,7 @@ import { type PageLayoutTabDragData } from '@/page-layout/types/PageLayoutTabDra
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -124,7 +124,9 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
         />
       }
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.Medium}
+        >
           <DropdownMenuItemsContainer>
             {hiddenTabs.map((tab, index) => {
               const disabled = tab.disabled ?? loading;
@@ -176,7 +178,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
               compact
             />
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

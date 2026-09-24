@@ -12,7 +12,7 @@ import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -356,7 +356,7 @@ export const FormArrayFieldInput = ({
                 }
                 clickableComponentWidth="100%"
                 dropdownComponents={
-                  <DropdownContent ref={containerRef}>
+                  <LegacyDropdownContent ref={containerRef}>
                     <DropdownMenuItemsContainer hasMaxHeight>
                       {draftValue.type === 'static' &&
                         draftValue.value.map((value, index) => (
@@ -397,7 +397,7 @@ export const FormArrayFieldInput = ({
                         >{t`Add item`}</ListItem>
                       </DropdownMenuItemsContainer>
                     ) : null}
-                  </DropdownContent>
+                  </LegacyDropdownContent>
                 }
               />
             )

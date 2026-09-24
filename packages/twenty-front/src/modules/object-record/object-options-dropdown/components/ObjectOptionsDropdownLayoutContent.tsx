@@ -3,7 +3,7 @@ import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-opti
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -132,7 +132,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -344,6 +344,6 @@ export const ObjectOptionsDropdownLayoutContent = () => {
           </DropdownMenuItemsContainer>
         </SelectableList>
       )}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

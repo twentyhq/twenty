@@ -11,7 +11,7 @@ import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnected
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -326,7 +326,7 @@ export const WorkflowEditActionEmailBase = ({
                 >{t`Advanced options`}</Button>
               }
               dropdownComponents={
-                <DropdownContent
+                <LegacyDropdownContent
                   widthInPixels={GenericDropdownContentWidth.Medium}
                 >
                   <DropdownMenuItemsContainer>
@@ -364,7 +364,7 @@ export const WorkflowEditActionEmailBase = ({
                       >{t`Add In-Reply-To`}</ListItem>
                     )}
                   </DropdownMenuItemsContainer>
-                </DropdownContent>
+                </LegacyDropdownContent>
               }
             />
           )}

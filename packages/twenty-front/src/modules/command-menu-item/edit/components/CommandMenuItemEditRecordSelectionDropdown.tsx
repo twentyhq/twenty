@@ -5,7 +5,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { useResetRecordIndexSelection } from '@/object-record/record-index/hooks/useResetRecordIndexSelection';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -107,7 +107,9 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
       dropdownPlacement="bottom-start"
       dropdownOffset={{ y: 4 }}
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.Medium}
+        >
           <StyledDropdownMenuContainer
             data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
           >
@@ -130,7 +132,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
               >{t`Records selected`}</ListItem>
             </DropdownMenuItemsContainer>
           </StyledDropdownMenuContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

@@ -11,7 +11,7 @@ import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/compon
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
@@ -184,7 +184,7 @@ export const RecordCalendarTopBar = () => {
             />
           }
           dropdownComponents={
-            <DropdownContent widthInPixels={280}>
+            <LegacyDropdownContent widthInPixels={280}>
               <DatePickerWithoutCalendar
                 instanceId={recordCalendarId}
                 date={recordCalendarSelectedDate.toString()}
@@ -193,7 +193,7 @@ export const RecordCalendarTopBar = () => {
                 onEnter={handleDateChange}
                 onEscape={handleDateChange}
               />
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
           dropdownOffset={dropdownContentOffset}
         />

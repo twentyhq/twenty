@@ -17,7 +17,7 @@ import {
 } from 'react';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
@@ -214,7 +214,7 @@ const SuggestionMenuInner = <TItem,>(
           zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
         }}
       >
-        <DropdownContent ref={listContainerRef}>
+        <LegacyDropdownContent ref={listContainerRef}>
           <DropdownMenuItemsContainer hasMaxHeight>
             {items.map((item, index) => {
               const isSelected = index === clampedSelectedIndex;
@@ -233,7 +233,7 @@ const SuggestionMenuInner = <TItem,>(
               );
             })}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       </OverlayContainer>
       {shouldDisplayPreview && (
         <Tooltip.Root key={getItemKey(selectedItem)} open>
