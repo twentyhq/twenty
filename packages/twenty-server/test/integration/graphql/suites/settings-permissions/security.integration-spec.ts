@@ -1,6 +1,10 @@
 import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
+import {
+  completeWorkspaceLogoUploadMutation,
+  uploadWorkspaceLogoWithDirectUpload,
+} from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
 import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
@@ -709,6 +713,66 @@ describe('Security permissions', () => {
             buffer: testImageBuffer,
             filename: 'test-logo.png',
             contentType: 'image/png',
+          },
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        );
+
+        expect(response.status).toBe(200);
+        expect(response.body.data).toBeNull();
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.body.errors[0].extensions.code).toBe(
+          ErrorCode.FORBIDDEN,
+        );
+      });
+    });
+
+    describe('logo direct upload', () => {
+      beforeAll(() => {
+        jest.useRealTimers();
+      });
+
+      afterAll(() => {
+        jest.useFakeTimers();
+      });
+
+      it('should update workspace logo when user has workspace settings permission', async () => {
+        const testImageBuffer = Buffer.from(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+          'base64',
+        );
+
+        const uploadedLogo = await uploadWorkspaceLogoWithDirectUpload({
+          filename: 'test-logo.png',
+          content: testImageBuffer,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        });
+
+        expect(uploadedLogo.id).toBeDefined();
+        expect(uploadedLogo.url).toBeDefined();
+
+        const getWorkspaceQuery = gql`
+          query GetWorkspace {
+            currentWorkspace {
+              logo
+            }
+          }
+        `;
+
+        const workspaceResponse = await makeMetadataAPIRequest({
+          query: getWorkspaceQuery,
+        });
+
+        expect(workspaceResponse.body.data.currentWorkspace.logo).toBeDefined();
+      });
+
+      it('should throw a permission error when user does not have permission (member role)', async () => {
+        const response = await makeMetadataAPIRequest(
+          {
+            query: completeWorkspaceLogoUploadMutation,
+            variables: { fileId: '20202020-0000-4000-8000-000000000000' },
           },
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );

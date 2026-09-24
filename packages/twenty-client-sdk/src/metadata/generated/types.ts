@@ -7325,24 +7325,6 @@ export default {
                     ]
                 }
             ],
-            "applicationSdkClientChecksums": [
-                96,
-                {
-                    "applicationId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "isApplicationStopped": [
-                8,
-                {
-                    "applicationUniversalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
             "enterprisePortalSession": [
                 1,
                 {
@@ -7361,6 +7343,24 @@ export default {
             ],
             "enterpriseSubscriptionStatus": [
                 152
+            ],
+            "applicationSdkClientChecksums": [
+                96,
+                {
+                    "applicationId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "isApplicationStopped": [
+                8,
+                {
+                    "applicationUniversalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
             ],
             "usageLimits": [
                 160
@@ -8677,6 +8677,24 @@ export default {
                     "file": [
                         435,
                         "Upload!"
+                    ]
+                }
+            ],
+            "completeWorkspaceLogoUpload": [
+                161,
+                {
+                    "fileId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "completeWorkspaceMemberProfilePictureUpload": [
+                161,
+                {
+                    "fileId": [
+                        1,
+                        "String!"
                     ]
                 }
             ],
@@ -10671,6 +10689,36 @@ export default {
                     "file": [
                         435,
                         "Upload!"
+                    ]
+                }
+            ],
+            "createNewWorkspaceLogoUpload": [
+                162,
+                {
+                    "workspaceId": [
+                        1,
+                        "String!"
+                    ],
+                    "filename": [
+                        1,
+                        "String!"
+                    ],
+                    "size": [
+                        15,
+                        "Float!"
+                    ]
+                }
+            ],
+            "completeNewWorkspaceLogoUpload": [
+                161,
+                {
+                    "workspaceId": [
+                        1,
+                        "String!"
+                    ],
+                    "fileId": [
+                        1,
+                        "String!"
                     ]
                 }
             ],
