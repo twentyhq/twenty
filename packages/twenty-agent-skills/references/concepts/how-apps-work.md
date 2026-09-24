@@ -82,6 +82,8 @@ For microphone or camera capture, declare `requestedCapabilities: ['microphone']
 
 Calling `navigator.mediaDevices.getUserMedia()` without a saved grant pauses capture and shows an approval dialog, including for older apps without `requestedCapabilities`. Declining leaves capture blocked before browser permissions are requested. Package updates do not automatically add grants; locally synced development apps receive their declared capabilities. Browser and operating system permissions still apply after workspace approval.
 
+The same rule applies to the app's default role: if a new version grants it more permissions than the installed version, automatic upgrades skip that version and a workspace admin must review the added grants and approve the upgrade from the app's settings.
+
 ## App File Structure
 
 A typical Twenty app after scaffolding:
