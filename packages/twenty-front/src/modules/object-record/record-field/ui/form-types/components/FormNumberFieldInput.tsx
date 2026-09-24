@@ -1,15 +1,15 @@
-import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
+import { useHandleFormFieldEscapeKeyDown } from '@/object-record/record-field/ui/form-types/hooks/useHandleFormFieldEscapeKeyDown';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
-import { useContext, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   canBeCastAsNumberOrNull,
@@ -52,7 +52,7 @@ export const FormNumberFieldInput = ({
   error: errorFromProps,
 }: FormNumberFieldInputProps) => {
   const instanceId = useId();
-  const onFieldEscape = useContext(FormFieldEscapeContext);
+  const handleFormFieldEscapeKeyDown = useHandleFormFieldEscapeKeyDown();
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   );
@@ -68,6 +68,14 @@ export const FormNumberFieldInput = ({
         type: 'static',
         value: isDefined(defaultValue) ? String(defaultValue) : '',
       };
+
+  const [inputText, setInputText] = useState(draftValue.value);
+  const [previousDraftText, setPreviousDraftText] = useState(draftValue.value);
+
+  if (previousDraftText !== draftValue.value) {
+    setPreviousDraftText(draftValue.value);
+    setInputText(draftValue.value);
+  }
 
   const persistNumber = (newValue: string) => {
     if (!canBeCastAsNumberOrNull(newValue)) {
@@ -85,6 +93,7 @@ export const FormNumberFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
+    setInputText(newText);
     persistNumber(newText.trim());
   };
 
@@ -109,18 +118,17 @@ export const FormNumberFieldInput = ({
           onBlur={onBlur}
         >
           {draftValue.type === 'static' ? (
-            <TextInput
-              instanceId={instanceId}
+            <StyledTextInput
+              id={instanceId}
+              autoComplete="off"
               placeholder={
                 isDefined(placeholder) && !isEmpty(placeholder)
                   ? placeholder
                   : t`Enter a number`
               }
-              value={draftValue.value}
-              copyButton={false}
-              isKeyboardAccessible
-              onEscape={onFieldEscape}
-              onChange={handleChange}
+              value={inputText}
+              onChange={(event) => handleChange(event.target.value)}
+              onKeyDown={handleFormFieldEscapeKeyDown}
               disabled={readonly}
             />
           ) : (

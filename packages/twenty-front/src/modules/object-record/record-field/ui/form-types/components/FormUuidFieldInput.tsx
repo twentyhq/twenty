@@ -1,14 +1,14 @@
-import { FormFieldEscapeContext } from '@/object-record/record-field/ui/contexts/FormFieldEscapeContext';
+import { useHandleFormFieldEscapeKeyDown } from '@/object-record/record-field/ui/form-types/hooks/useHandleFormFieldEscapeKeyDown';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
-import { useContext, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type FormUuidFieldInputProps = {
@@ -29,7 +29,7 @@ export const FormUuidFieldInput = ({
   VariablePicker,
 }: FormUuidFieldInputProps) => {
   const instanceId = useId();
-  const onFieldEscape = useContext(FormFieldEscapeContext);
+  const handleFormFieldEscapeKeyDown = useHandleFormFieldEscapeKeyDown();
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -97,15 +97,14 @@ export const FormUuidFieldInput = ({
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
-            <TextInput
-              instanceId={instanceId}
+            <StyledTextInput
+              id={instanceId}
+              autoComplete="off"
               placeholder={placeholder ?? t`Enter a UUID`}
               value={draftValue.value}
-              copyButton={false}
-              isKeyboardAccessible
-              onEscape={onFieldEscape}
               disabled={readonly}
-              onChange={handleChange}
+              onChange={(event) => handleChange(event.target.value)}
+              onKeyDown={handleFormFieldEscapeKeyDown}
             />
           ) : (
             <VariableChipStandalone
