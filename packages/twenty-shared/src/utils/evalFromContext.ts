@@ -226,15 +226,15 @@ export const evalFromContext = (
   }
 
   const firstSegment = segments[0];
-  // A number or a keyword read as a value rather than a key, so a path ending in
-  // one never resolved. Mid-path they are ordinary keys: `arr.0` is undefined
-  // but `arr.0.length` is not, and `[0]` works in either position
   const lastSegment = segments[segments.length - 1];
 
   if (firstSegment === undefined || lastSegment === undefined) {
     return toJsonValue(context);
   }
 
+  // A number or a keyword read as a value rather than a key, so a path ending in
+  // one never resolved. Mid-path they are ordinary keys: `arr.0` is undefined
+  // but `arr.0.length` is not, and `[0]` works in either position
   if (
     !lastSegment.isLiteralSegment &&
     (NUMBER_LITERAL_PATTERN.test(lastSegment.value) ||

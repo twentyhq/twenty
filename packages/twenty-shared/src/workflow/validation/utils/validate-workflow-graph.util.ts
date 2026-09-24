@@ -1,4 +1,4 @@
-import { isDefined } from '@/utils';
+import { isDefined, isNonEmptyArray } from '@/utils';
 import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import {
   type IfElseStepInput,
@@ -39,11 +39,11 @@ export const validateWorkflowGraph = ({
     isDefined,
   );
 
-  if (steps.length > 0 && triggerNextStepIds.length === 0) {
+  if (isNonEmptyArray(steps) && triggerNextStepIds.length === 0) {
     issues.push({
       severity: 'error',
       code: 'TRIGGER_HAS_NO_NEXT_STEP',
-      message: `The trigger is not connected to any step. The trigger must have a "nextStepIds" array pointing to the first step (e.g. nextStepIds: ["${steps[0]?.id}"]). If you used edges, also set trigger.nextStepIds.`,
+      message: `The trigger is not connected to any step. The trigger must have a "nextStepIds" array pointing to the first step (e.g. nextStepIds: ["${steps[0].id}"]). If you used edges, also set trigger.nextStepIds.`,
     });
   }
 

@@ -189,11 +189,11 @@ export const normalizePageLayoutTabManifest = ({
       );
     }
 
-    const [singleViewportWidget] = viewportWidgets;
+    const singleViewportWidget =
+      viewportWidgets.length === 1 ? viewportWidgets[0] : undefined;
 
     if (
-      viewportWidgets.length === 1 &&
-      singleViewportWidget !== undefined &&
+      isDefined(singleViewportWidget) &&
       pageLayoutTab.widgets.some(
         (widget) =>
           widget !== singleViewportWidget &&

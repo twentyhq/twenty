@@ -1,10 +1,8 @@
 import { isNumber } from '@sniptt/guards';
 
-// Narrows to a non-empty tuple rather than T[], so that under
-// noUncheckedIndexedAccess a guarded array still yields T at index 0
-export const isNonEmptyArray = <T>(
-  probableArray: T[] | readonly T[] | undefined | null,
-): probableArray is [T, ...T[]] => {
+export const isNonEmptyArray = <TArray extends readonly unknown[]>(
+  probableArray: TArray | undefined | null,
+): probableArray is TArray & { 0: TArray[number] } => {
   if (
     Array.isArray(probableArray) &&
     isNumber(probableArray.length) &&

@@ -56,7 +56,7 @@ const applyDiffToPath = (
   const lastPathElement = path[pathLength - 1];
 
   if (lastPathElement === undefined) {
-    return;
+    throw new Error('Cannot apply diff at an empty path');
   }
 
   const parentContainer = navigateToParent(obj, path);
