@@ -29,7 +29,9 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
 }): Promise<BulkEnrichResult> => {
   const minLikelihoods = resolveMinLikelihoods({
     input,
-    minLikelihoodSettings: adapter.minLikelihoodSettings,
+    minLikelihoodEnvVarName: adapter.minLikelihoodEnvVarName,
+    weakIdentifierMinLikelihoodEnvVarName:
+      adapter.weakIdentifierMinLikelihoodEnvVarName,
   });
   const recordIds = Array.from(new Set(extractRecordIds(input.records)));
   const resultById = new Map<string, EnrichResult>();

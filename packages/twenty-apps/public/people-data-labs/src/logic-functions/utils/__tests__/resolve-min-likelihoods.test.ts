@@ -1,11 +1,24 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { MIN_LIKELIHOOD_SETTINGS } from 'src/constants/min-likelihood-settings';
+import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
+import { PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-person-min-likelihood-env-var-name';
+import { PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-person-weak-identifier-min-likelihood-env-var-name';
 import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
 import { PdlInvalidInputError } from 'src/logic-functions/errors/pdl-invalid-input-error';
 import { resolveMinLikelihoods } from 'src/logic-functions/utils/resolve-min-likelihoods';
 
-const PERSON_SETTINGS = MIN_LIKELIHOOD_SETTINGS.person;
+const PERSON_ENV_VAR_NAMES = {
+  minLikelihoodEnvVarName: PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME,
+  weakIdentifierMinLikelihoodEnvVarName:
+    PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
+};
+
+const COMPANY_ENV_VAR_NAMES = {
+  minLikelihoodEnvVarName: PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME,
+  weakIdentifierMinLikelihoodEnvVarName:
+    PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
+};
 
 const INVALID_CONFIGURED_VALUES = [
   '-1',
@@ -19,16 +32,19 @@ const INVALID_CONFIGURED_VALUES = [
 
 const INVALID_INPUT_VALUES = [-1, 0, 11, 1.5, NaN, Infinity];
 
+const INVALID_SETTING_ERROR = new PdlConfigError(
+  'Each minimum likelihood setting must be an integer between 1 and 10.',
+);
+
 describe('resolveMinLikelihoods', () => {
   beforeEach(() => {
-    for (const minLikelihoodSettings of Object.values(
-      MIN_LIKELIHOOD_SETTINGS,
-    )) {
-      vi.stubEnv(
-        minLikelihoodSettings.strongIdentifier.variableName,
-        undefined,
-      );
-      vi.stubEnv(minLikelihoodSettings.weakIdentifier.variableName, undefined);
+    for (const envVarName of [
+      PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME,
+      PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
+      PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME,
+      PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
+    ]) {
+      vi.stubEnv(envVarName, undefined);
     }
   });
 
@@ -37,26 +53,19 @@ describe('resolveMinLikelihoods', () => {
   });
 
   describe.each([
-    {
-      objectName: 'people',
-      minLikelihoodSettings: MIN_LIKELIHOOD_SETTINGS.person,
-    },
-    {
-      objectName: 'companies',
-      minLikelihoodSettings: MIN_LIKELIHOOD_SETTINGS.company,
-    },
-  ])('settings for $objectName', ({ minLikelihoodSettings }) => {
-    const { strongIdentifier, weakIdentifier } = minLikelihoodSettings;
+    { objectName: 'people', envVarNames: PERSON_ENV_VAR_NAMES },
+    { objectName: 'companies', envVarNames: COMPANY_ENV_VAR_NAMES },
+  ])('settings for $objectName', ({ envVarNames }) => {
+    const { minLikelihoodEnvVarName, weakIdentifierMinLikelihoodEnvVarName } =
+      envVarNames;
 
     it.each([undefined, '', '   '])(
       'uses the default likelihoods when the settings are %j',
       (configuredValue) => {
-        vi.stubEnv(strongIdentifier.variableName, configuredValue);
-        vi.stubEnv(weakIdentifier.variableName, configuredValue);
+        vi.stubEnv(minLikelihoodEnvVarName, configuredValue);
+        vi.stubEnv(weakIdentifierMinLikelihoodEnvVarName, configuredValue);
 
-        expect(
-          resolveMinLikelihoods({ input: {}, minLikelihoodSettings }),
-        ).toEqual({
+        expect(resolveMinLikelihoods({ input: {}, ...envVarNames })).toEqual({
           strongIdentifierMinLikelihood: 2,
           weakIdentifierMinLikelihood: 6,
         });
@@ -71,11 +80,9 @@ describe('resolveMinLikelihoods', () => {
     ])(
       'uses a configured minimum of $configuredValue with the name-based setting as a floor',
       ({ configuredValue, weakIdentifierMinLikelihood }) => {
-        vi.stubEnv(strongIdentifier.variableName, configuredValue);
+        vi.stubEnv(minLikelihoodEnvVarName, configuredValue);
 
-        expect(
-          resolveMinLikelihoods({ input: {}, minLikelihoodSettings }),
-        ).toEqual({
+        expect(resolveMinLikelihoods({ input: {}, ...envVarNames })).toEqual({
           strongIdentifierMinLikelihood: Number(configuredValue),
           weakIdentifierMinLikelihood,
         });
@@ -85,30 +92,22 @@ describe('resolveMinLikelihoods', () => {
     it.each(INVALID_CONFIGURED_VALUES)(
       'rejects a configured minimum of %j',
       (configuredValue) => {
-        vi.stubEnv(strongIdentifier.variableName, configuredValue);
+        vi.stubEnv(minLikelihoodEnvVarName, configuredValue);
 
         expect(() =>
-          resolveMinLikelihoods({ input: {}, minLikelihoodSettings }),
-        ).toThrow(
-          new PdlConfigError(
-            `${strongIdentifier.label} must be an integer between 1 and 10.`,
-          ),
-        );
+          resolveMinLikelihoods({ input: {}, ...envVarNames }),
+        ).toThrow(INVALID_SETTING_ERROR);
       },
     );
 
     it.each(INVALID_CONFIGURED_VALUES)(
       'rejects a configured name-based minimum of %j',
       (configuredValue) => {
-        vi.stubEnv(weakIdentifier.variableName, configuredValue);
+        vi.stubEnv(weakIdentifierMinLikelihoodEnvVarName, configuredValue);
 
         expect(() =>
-          resolveMinLikelihoods({ input: {}, minLikelihoodSettings }),
-        ).toThrow(
-          new PdlConfigError(
-            `${weakIdentifier.label} must be an integer between 1 and 10.`,
-          ),
-        );
+          resolveMinLikelihoods({ input: {}, ...envVarNames }),
+        ).toThrow(INVALID_SETTING_ERROR);
       },
     );
   });
@@ -132,53 +131,32 @@ describe('resolveMinLikelihoods', () => {
   ])(
     'uses $weakIdentifierMinLikelihood for name-based matches with settings $configuredValue and $configuredWeakValue',
     ({ configuredValue, configuredWeakValue, weakIdentifierMinLikelihood }) => {
+      vi.stubEnv(PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME, configuredValue);
       vi.stubEnv(
-        PERSON_SETTINGS.strongIdentifier.variableName,
-        configuredValue,
-      );
-      vi.stubEnv(
-        PERSON_SETTINGS.weakIdentifier.variableName,
+        PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
         configuredWeakValue,
       );
 
       expect(
-        resolveMinLikelihoods({
-          input: {},
-          minLikelihoodSettings: PERSON_SETTINGS,
-        }),
+        resolveMinLikelihoods({ input: {}, ...PERSON_ENV_VAR_NAMES }),
       ).toMatchObject({ weakIdentifierMinLikelihood });
     },
   );
 
   it('reads only the settings it is given', () => {
-    vi.stubEnv(
-      MIN_LIKELIHOOD_SETTINGS.person.strongIdentifier.variableName,
-      '3',
-    );
-    vi.stubEnv(MIN_LIKELIHOOD_SETTINGS.person.weakIdentifier.variableName, '9');
-    vi.stubEnv(
-      MIN_LIKELIHOOD_SETTINGS.company.strongIdentifier.variableName,
-      '4',
-    );
-    vi.stubEnv(
-      MIN_LIKELIHOOD_SETTINGS.company.weakIdentifier.variableName,
-      '10',
-    );
+    vi.stubEnv(PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME, '3');
+    vi.stubEnv(PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME, '9');
+    vi.stubEnv(PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME, '4');
+    vi.stubEnv(PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME, '10');
 
     expect(
-      resolveMinLikelihoods({
-        input: {},
-        minLikelihoodSettings: MIN_LIKELIHOOD_SETTINGS.person,
-      }),
+      resolveMinLikelihoods({ input: {}, ...PERSON_ENV_VAR_NAMES }),
     ).toEqual({
       strongIdentifierMinLikelihood: 3,
       weakIdentifierMinLikelihood: 9,
     });
     expect(
-      resolveMinLikelihoods({
-        input: {},
-        minLikelihoodSettings: MIN_LIKELIHOOD_SETTINGS.company,
-      }),
+      resolveMinLikelihoods({ input: {}, ...COMPANY_ENV_VAR_NAMES }),
     ).toEqual({
       strongIdentifierMinLikelihood: 4,
       weakIdentifierMinLikelihood: 10,
@@ -224,28 +202,28 @@ describe('resolveMinLikelihoods', () => {
   ])(
     'gives explicit workflow inputs $input precedence over the settings',
     ({ input, expected }) => {
-      vi.stubEnv(PERSON_SETTINGS.strongIdentifier.variableName, '8');
-      vi.stubEnv(PERSON_SETTINGS.weakIdentifier.variableName, '7');
+      vi.stubEnv(PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME, '8');
+      vi.stubEnv(PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME, '7');
 
-      expect(
-        resolveMinLikelihoods({
-          input,
-          minLikelihoodSettings: PERSON_SETTINGS,
-        }),
-      ).toEqual(expected);
+      expect(resolveMinLikelihoods({ input, ...PERSON_ENV_VAR_NAMES })).toEqual(
+        expected,
+      );
     },
   );
 
   it.each([1, 6, 10])(
     'uses an explicit minimum of %s without reading invalid settings',
     (minLikelihood) => {
-      vi.stubEnv(PERSON_SETTINGS.strongIdentifier.variableName, 'invalid');
-      vi.stubEnv(PERSON_SETTINGS.weakIdentifier.variableName, 'invalid');
+      vi.stubEnv(PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME, 'invalid');
+      vi.stubEnv(
+        PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
+        'invalid',
+      );
 
       expect(
         resolveMinLikelihoods({
           input: { minLikelihood },
-          minLikelihoodSettings: PERSON_SETTINGS,
+          ...PERSON_ENV_VAR_NAMES,
         }),
       ).toEqual({
         strongIdentifierMinLikelihood: minLikelihood,
@@ -260,7 +238,7 @@ describe('resolveMinLikelihoods', () => {
       expect(() =>
         resolveMinLikelihoods({
           input: { minLikelihood },
-          minLikelihoodSettings: PERSON_SETTINGS,
+          ...PERSON_ENV_VAR_NAMES,
         }),
       ).toThrow(
         new PdlInvalidInputError(
@@ -276,7 +254,7 @@ describe('resolveMinLikelihoods', () => {
       expect(() =>
         resolveMinLikelihoods({
           input: { minLikelihood: 3, weakIdentifierMinLikelihood },
-          minLikelihoodSettings: PERSON_SETTINGS,
+          ...PERSON_ENV_VAR_NAMES,
         }),
       ).toThrow(
         new PdlInvalidInputError(

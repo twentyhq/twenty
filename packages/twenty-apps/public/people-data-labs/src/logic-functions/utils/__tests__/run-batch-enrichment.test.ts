@@ -2,8 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { chargeCredits } from 'twenty-sdk/billing';
 
-import { MIN_LIKELIHOOD_SETTINGS } from 'src/constants/min-likelihood-settings';
 import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
+import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
@@ -114,7 +115,9 @@ const buildHarness = (configs: RecordConfig[]) => {
     objectNameSingular: 'Test',
     noIdentifierMessage: 'no identifier',
     costPerMatchDollars: FAKE_COST_PER_MATCH_DOLLARS,
-    minLikelihoodSettings: MIN_LIKELIHOOD_SETTINGS.company,
+    minLikelihoodEnvVarName: PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME,
+    weakIdentifierMinLikelihoodEnvVarName:
+      PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
     readRecords,
     getNodeId: (node) => node.id,
     extractParams,
@@ -159,10 +162,7 @@ describe('runBatchEnrichment', () => {
   });
 
   it('resolves the likelihoods once and passes them to every chunk', async () => {
-    vi.stubEnv(
-      MIN_LIKELIHOOD_SETTINGS.company.strongIdentifier.variableName,
-      '4',
-    );
+    vi.stubEnv(PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME, '4');
     const ids = buildRecordIds(150);
     const harness = buildHarness(ids.map((id) => ({ id })));
 
@@ -187,7 +187,7 @@ describe('runBatchEnrichment', () => {
 
   it('rejects an invalid setting before reading records or calling PDL', async () => {
     vi.stubEnv(
-      MIN_LIKELIHOOD_SETTINGS.company.weakIdentifier.variableName,
+      PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
       'invalid',
     );
     const ids = buildRecordIds(150);
@@ -201,7 +201,7 @@ describe('runBatchEnrichment', () => {
       }),
     ).rejects.toThrow(
       new PdlConfigError(
-        'Minimum likelihood for name-based company matches must be an integer between 1 and 10.',
+        'Each minimum likelihood setting must be an integer between 1 and 10.',
       ),
     );
 

@@ -1,5 +1,6 @@
 import { COMPANY_MATCH_COST_DOLLARS } from 'src/constants/company-match-cost-dollars';
-import { MIN_LIKELIHOOD_SETTINGS } from 'src/constants/min-likelihood-settings';
+import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
 import { buildCompanyMatchedData } from 'src/logic-functions/utils/build-company-matched-data';
 import { enrichCompanies } from 'src/logic-functions/utils/enrich-companies';
 import { extractCompanyMatchParams } from 'src/logic-functions/utils/extract-company-match-params';
@@ -20,7 +21,9 @@ export const companyEnrichmentAdapter: BatchEnrichmentAdapter<
   noIdentifierMessage:
     'No usable identifier (domain, LinkedIn, or name) to match against PDL.',
   costPerMatchDollars: COMPANY_MATCH_COST_DOLLARS,
-  minLikelihoodSettings: MIN_LIKELIHOOD_SETTINGS.company,
+  minLikelihoodEnvVarName: PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME,
+  weakIdentifierMinLikelihoodEnvVarName:
+    PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
   readRecords: readCompanies,
   getNodeId: (node) => node.id,
   extractParams: extractCompanyMatchParams,

@@ -1,7 +1,15 @@
 import { defineApplication, FieldType } from 'twenty-sdk/define';
 
-import { MIN_LIKELIHOOD_SETTINGS } from 'src/constants/min-likelihood-settings';
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { DEFAULT_MIN_LIKELIHOOD } from 'src/constants/default-min-likelihood';
+import { DEFAULT_WEAK_IDENTIFIER_MIN_LIKELIHOOD } from 'src/constants/default-weak-identifier-min-likelihood';
+import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
+import { PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-person-min-likelihood-env-var-name';
+import { PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-person-weak-identifier-min-likelihood-env-var-name';
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS,
+} from 'src/constants/universal-identifiers';
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -16,41 +24,45 @@ export default defineApplication({
       '$0.336 per person match and $0.12 per company match. Not found and skipped records are free. Billed to your Twenty credits.',
   },
   applicationVariables: {
-    [MIN_LIKELIHOOD_SETTINGS.person.strongIdentifier.variableName]: {
-      universalIdentifier: 'a45f04fd-ce7b-468a-bc79-5945041dc7e8',
-      label: MIN_LIKELIHOOD_SETTINGS.person.strongIdentifier.label,
+    [PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME]: {
+      universalIdentifier:
+        PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS.personMinLikelihood,
+      label: 'Minimum likelihood for people',
       description:
         'Minimum match likelihood (1-10) for people enrichment. An explicit workflow minimum likelihood takes precedence.',
       type: FieldType.NUMBER,
       isSecret: false,
-      value: MIN_LIKELIHOOD_SETTINGS.person.strongIdentifier.defaultValue,
+      value: DEFAULT_MIN_LIKELIHOOD,
     },
-    [MIN_LIKELIHOOD_SETTINGS.company.strongIdentifier.variableName]: {
-      universalIdentifier: '8301c260-5028-42f5-8f10-8b74d5d4d134',
-      label: MIN_LIKELIHOOD_SETTINGS.company.strongIdentifier.label,
+    [PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME]: {
+      universalIdentifier:
+        PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS.companyMinLikelihood,
+      label: 'Minimum likelihood for companies',
       description:
         'Minimum match likelihood (1-10) for company enrichment. An explicit workflow minimum likelihood takes precedence.',
       type: FieldType.NUMBER,
       isSecret: false,
-      value: MIN_LIKELIHOOD_SETTINGS.company.strongIdentifier.defaultValue,
+      value: DEFAULT_MIN_LIKELIHOOD,
     },
-    [MIN_LIKELIHOOD_SETTINGS.person.weakIdentifier.variableName]: {
-      universalIdentifier: '4160c7ad-fc3f-405d-87ed-7950292fbe22',
-      label: MIN_LIKELIHOOD_SETTINGS.person.weakIdentifier.label,
+    [PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME]: {
+      universalIdentifier:
+        PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS.personWeakIdentifierMinLikelihood,
+      label: 'Minimum likelihood for name-based people matches',
       description:
         'Minimum match likelihood (1-10) when matching a person by name and company. Uses the higher of this value and the people minimum. Explicit workflow minimum likelihoods take precedence.',
       type: FieldType.NUMBER,
       isSecret: false,
-      value: MIN_LIKELIHOOD_SETTINGS.person.weakIdentifier.defaultValue,
+      value: DEFAULT_WEAK_IDENTIFIER_MIN_LIKELIHOOD,
     },
-    [MIN_LIKELIHOOD_SETTINGS.company.weakIdentifier.variableName]: {
-      universalIdentifier: '1f608910-8ab1-4546-b27f-44507eb3d6f8',
-      label: MIN_LIKELIHOOD_SETTINGS.company.weakIdentifier.label,
+    [PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME]: {
+      universalIdentifier:
+        PDL_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIERS.companyWeakIdentifierMinLikelihood,
+      label: 'Minimum likelihood for name-based company matches',
       description:
         'Minimum match likelihood (1-10) when matching a company by name only. Uses the higher of this value and the company minimum. Explicit workflow minimum likelihoods take precedence.',
       type: FieldType.NUMBER,
       isSecret: false,
-      value: MIN_LIKELIHOOD_SETTINGS.company.weakIdentifier.defaultValue,
+      value: DEFAULT_WEAK_IDENTIFIER_MIN_LIKELIHOOD,
     },
   },
   serverVariables: {

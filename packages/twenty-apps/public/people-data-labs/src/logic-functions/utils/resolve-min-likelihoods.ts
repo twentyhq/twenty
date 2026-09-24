@@ -1,20 +1,23 @@
+import { DEFAULT_MIN_LIKELIHOOD } from 'src/constants/default-min-likelihood';
+import { DEFAULT_WEAK_IDENTIFIER_MIN_LIKELIHOOD } from 'src/constants/default-weak-identifier-min-likelihood';
 import { PdlInvalidInputError } from 'src/logic-functions/errors/pdl-invalid-input-error';
 import { buildInvalidLikelihoodMessage } from 'src/logic-functions/utils/build-invalid-likelihood-message';
 import { getConfiguredMinLikelihood } from 'src/logic-functions/utils/get-configured-min-likelihood';
 import { isValidLikelihood } from 'src/logic-functions/utils/is-valid-likelihood';
-import { type MinLikelihoodSettings } from 'src/types/min-likelihood-settings';
 import { type MinLikelihoods } from 'src/types/min-likelihoods';
 import { isDefined } from 'src/utils/is-defined';
 
 export const resolveMinLikelihoods = ({
   input,
-  minLikelihoodSettings,
+  minLikelihoodEnvVarName,
+  weakIdentifierMinLikelihoodEnvVarName,
 }: {
   input: {
     minLikelihood?: number | null;
     weakIdentifierMinLikelihood?: number | null;
   };
-  minLikelihoodSettings: MinLikelihoodSettings;
+  minLikelihoodEnvVarName: string;
+  weakIdentifierMinLikelihoodEnvVarName: string;
 }): MinLikelihoods => {
   const inputMinLikelihood = input.minLikelihood;
   const inputWeakIdentifierMinLikelihood = input.weakIdentifierMinLikelihood;
@@ -38,14 +41,20 @@ export const resolveMinLikelihoods = ({
 
   const strongIdentifierMinLikelihood =
     inputMinLikelihood ??
-    getConfiguredMinLikelihood(minLikelihoodSettings.strongIdentifier);
+    getConfiguredMinLikelihood({
+      envVarName: minLikelihoodEnvVarName,
+      defaultValue: DEFAULT_MIN_LIKELIHOOD,
+    });
 
   const weakIdentifierMinLikelihood =
     inputWeakIdentifierMinLikelihood ??
     inputMinLikelihood ??
     Math.max(
       strongIdentifierMinLikelihood,
-      getConfiguredMinLikelihood(minLikelihoodSettings.weakIdentifier),
+      getConfiguredMinLikelihood({
+        envVarName: weakIdentifierMinLikelihoodEnvVarName,
+        defaultValue: DEFAULT_WEAK_IDENTIFIER_MIN_LIKELIHOOD,
+      }),
     );
 
   return { strongIdentifierMinLikelihood, weakIdentifierMinLikelihood };
