@@ -109,7 +109,7 @@ export class DevSeederService {
       initialCursor,
     });
 
-    await this.applicationRegistrationService.createCliRegistrationIfNotExists();
+    await this.applicationRegistrationService.findOrCreateCliRegistration();
 
     const schemaName =
       await this.workspaceSchemaService.createWorkspaceDBSchema(workspaceId);

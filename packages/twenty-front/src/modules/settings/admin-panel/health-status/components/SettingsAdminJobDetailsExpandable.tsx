@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { JsonTree } from 'twenty-ui/primitives/json-visualizer';
+import { JsonTree } from 'twenty-ui/components';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type QueueJob } from '~/generated-admin/graphql';

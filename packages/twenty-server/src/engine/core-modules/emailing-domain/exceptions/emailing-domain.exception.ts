@@ -13,6 +13,8 @@ export enum EmailingDomainExceptionCode {
   MESSAGE_CAMPAIGN_NOT_FOUND = 'MESSAGE_CAMPAIGN_NOT_FOUND',
   MESSAGE_CAMPAIGN_NOT_SENDABLE = 'MESSAGE_CAMPAIGN_NOT_SENDABLE',
   MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS = 'MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS',
+  MESSAGE_CAMPAIGN_SUBSCRIPTION_INACTIVE = 'MESSAGE_CAMPAIGN_SUBSCRIPTION_INACTIVE',
+  MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED = 'MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED',
   MESSAGE_CAMPAIGN_NOT_CANCELABLE = 'MESSAGE_CAMPAIGN_NOT_CANCELABLE',
   MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE = 'MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE',
 }
@@ -22,7 +24,7 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
 ) => {
   switch (code) {
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED:
-      return msg`This domain is already registered.`;
+      return msg`Registered by another workspace.`;
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
       return msg`No verified sending domain matches this from address.`;
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
@@ -35,6 +37,10 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
       return msg`This campaign no longer exists.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS:
       return msg`This campaign needs more email credits than your workspace has left. Top up your credits or send to a smaller list.`;
+    case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SUBSCRIPTION_INACTIVE:
+      return msg`This campaign cannot be sent while the workspace subscription is inactive.`;
+    case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED:
+      return msg`This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
       return msg`This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:

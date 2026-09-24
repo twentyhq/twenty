@@ -35,8 +35,9 @@ export const workflowClassifyQuestionSchema = z.object({
     .string()
     .regex(
       CLASSIFY_ANSWER_NAME_PATTERN,
-      'Answer name is required, and must be 1 to 64 characters using only letters, digits, underscores and dashes',
+      'Answer name must be empty or contain 1 to 64 characters using only letters, digits, underscores and dashes',
     )
+    .or(z.literal(''))
     .describe(
       'Answer key for this question, made of letters, digits, underscores and dashes. Downstream steps read {{stepId.answers.<name>}}.',
     ),
@@ -58,12 +59,6 @@ export const workflowClassifyQuestionSchema = z.object({
 export const workflowClassifyActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      modelId: z
-        .string()
-        .optional()
-        .describe(
-          "Composite model id, or undefined to run on the workspace's default classification model.",
-        ),
       state: z
         .string()
         .describe(

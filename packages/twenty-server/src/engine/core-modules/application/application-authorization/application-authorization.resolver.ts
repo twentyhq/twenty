@@ -15,6 +15,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
 // Scoped to this person within this workspace: an authorization grants an
@@ -31,7 +32,7 @@ export class ApplicationAuthorizationResolver {
   ) {}
 
   @Query(() => [ApplicationAuthorizationDTO])
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
   async currentUserApplicationAuthorizations(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
@@ -55,7 +56,7 @@ export class ApplicationAuthorizationResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
   async revokeApplicationAuthorization(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:

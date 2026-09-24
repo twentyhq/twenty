@@ -1,0 +1,136 @@
+---
+title: Odhalte zastaralé příležitosti
+description: Automaticky upozorňujte manažery, když příležitosti nebyly aktualizovány.
+---
+
+Udržujte svou obchodní pipeline zdravou tím, že budete upozorňovat manažery, když příležitosti zastarávají. Tento pracovní postup kontroluje příležitosti, které nebyly aktualizovány po zadaný počet dní.
+
+## Problém
+
+Příležitosti bez aktualizací vedou k:
+
+* Obchody chladnou
+* Nespolehlivé prognózy
+* Ztracené tržby
+
+## Řešení
+
+Vytvořte plánovaný pracovní postup, který najde zastaralé příležitosti a odešle e-mail jejich manažerům.
+
+## Nastavení krok za krokem
+
+### Krok 1: Vytvořte pracovní postup
+
+1. Přejděte na **Nastavení → Pracovní postupy**
+2. Klikněte na **+ Nový pracovní postup**
+3. Pojmenujte jej "Upozornění na zastaralé příležitosti"
+
+### Krok 2: Nakonfigurujte spouštěč
+
+1. Vyberte **Podle plánu**
+2. Nastavte spouštění denně (např. každý den v 8:00)
+
+### Krok 3: Vyhledejte zastaralé příležitosti
+
+1. Přidejte akci **Vyhledat záznamy**
+2. Nakonfigurujte:
+
+| Pole       | Hodnota                                       |
+| ---------- | --------------------------------------------- |
+| **Objekt** | Příležitosti                                  |
+| **Filtr**  | Datum aktualizace je dříve než (dnes - 7 dní) |
+| **Filtr**  | Fáze není "Closed Won" a není "Closed Lost"   |
+| **Limit**  | 100                                           |
+
+### Krok 4: Zkontrolujte, zda se něco našlo
+
+1. Přidejte akci **Filtr**
+2. Podmínka: `{{searchRecords.length}}` je větší než 0
+3. Pokud nejsou žádné zastaralé příležitosti, pracovní postup se zde zastaví
+
+### Krok 5: Naformátujte upozornění (akce Code)
+
+Přidejte akci **Code** pro formátování e-mailu:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### Krok 6: Odešlete upozornění e-mailem
+
+Přidejte akci **Odeslat e-mail**:
+
+| Pole            | Hodnota                                                              |
+| --------------- | -------------------------------------------------------------------- |
+| **Komu**        | sales-manager@yourcompany.com                                        |
+| **Předmět**     | `🚨 {{code.totalCount}} zastaralých příležitostí vyžaduje pozornost` |
+| **Text zprávy** | `{{code.summary}}`                                                   |
+
+### Krok 7: Otestujte a aktivujte
+
+1. Klikněte na **Test** a spusťte pracovní postup
+2. Zkontrolujte, že e-mail obsahuje správné údaje
+3. Až budete připraveni, aktivujte
+
+## Možnosti přizpůsobení
+
+### Změňte hranici zastarání
+
+Upravte filtr akce Vyhledat záznamy a změňte ze 7 dnů na vámi preferované období:
+
+* 3 dny pro rychlé prodeje
+* 14 dní pro podnikové obchody
+* 30 dní pro dlouhé prodejní cykly
+
+### Upozorněte jednotlivé obchodní zástupce
+
+Místo jednoho e-mailu manažerovi použijte **Iterator** k odeslání personalizovaných e-mailů každému zástupci o jeho vlastních zastaralých obchodech.
+
+### Přidejte eskalaci
+
+Vytvořte více pracovních postupů se zvyšující se závažností:
+
+1. Den 7: E-mail zástupci
+2. Den 14: E-mail zástupci + manažerovi
+3. Den 21: Vytvořte úkol pro manažera k zásahu
+
+### Zahrňte do Slacku
+
+Použijte **HTTP Request** k odeslání na webhook ve Slacku místo e-mailu nebo navíc k e-mailu.
+
+## Související
+
+* [Akce pracovních postupů](/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Odesílání e-mailů z pracovních postupů](/cs/user-guide/workflows/capabilities/send-emails-from-workflows)

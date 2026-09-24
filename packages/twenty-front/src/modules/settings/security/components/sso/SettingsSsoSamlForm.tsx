@@ -5,7 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useContext, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
@@ -13,8 +13,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 /* @license Enterprise */
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;

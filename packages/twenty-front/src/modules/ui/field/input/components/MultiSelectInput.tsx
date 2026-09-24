@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef, useState, createElement } from 'react';
@@ -20,7 +21,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -136,7 +136,7 @@ export const MultiSelectInput = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
           {filteredOptionsInDropDown.length === 0 ? (
-            <MenuItem text={t`No option found`} />
+            <ListItem disabled>{t`No option found`}</ListItem>
           ) : (
             filteredOptionsInDropDown.map((option) => {
               return (

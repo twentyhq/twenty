@@ -1,3 +1,5 @@
+import { FlatWorkflowVersionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service';
+import { FlatWorkflowValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service';
 import { Module } from '@nestjs/common';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -31,11 +33,14 @@ import { FlatApplicationVariableValidatorService } from 'src/engine/workspace-ma
 import { FlatWebhookValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service';
 import { FlatConnectionProviderValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service';
 import { FlatTimelineActivityTypeValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service';
+import { FlatSettingsMenuItemValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service';
 import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service';
 
 @Module({
   imports: [FeatureFlagModule],
   providers: [
+    FlatWorkflowValidatorService,
+    FlatWorkflowVersionValidatorService,
     FlatViewFieldValidatorService,
     FlatViewFilterGroupValidatorService,
     FlatViewGroupValidatorService,
@@ -66,9 +71,12 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatApplicationVariableValidatorService,
     FlatConnectionProviderValidatorService,
     FlatTimelineActivityTypeValidatorService,
+    FlatSettingsMenuItemValidatorService,
     FlatSearchFieldMetadataValidatorService,
   ],
   exports: [
+    FlatWorkflowValidatorService,
+    FlatWorkflowVersionValidatorService,
     FlatViewFieldValidatorService,
     FlatViewFilterGroupValidatorService,
     FlatViewGroupValidatorService,
@@ -98,6 +106,7 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatApplicationVariableValidatorService,
     FlatConnectionProviderValidatorService,
     FlatTimelineActivityTypeValidatorService,
+    FlatSettingsMenuItemValidatorService,
     FlatSearchFieldMetadataValidatorService,
   ],
 })

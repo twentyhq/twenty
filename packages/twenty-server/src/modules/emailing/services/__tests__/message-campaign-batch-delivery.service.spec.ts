@@ -119,7 +119,7 @@ const buildHarness = () => {
     findBlockedRecipientAddresses: jest.fn(async () => new Set<string>()),
   };
   const emailBillingService = {
-    getEmailCreditContext: jest.fn(async () => ({ hasCredits: true })),
+    findEmailSendRefusal: jest.fn(async () => null),
     billSentEmails: jest.fn(async () => undefined),
   };
   const campaignVariableService = {

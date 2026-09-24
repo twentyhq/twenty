@@ -19,6 +19,8 @@ import { SendMessageCampaignTestInput } from 'src/engine/core-modules/emailing-d
 import { SendMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-output.dto';
 import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain/services/email-group-access.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -49,6 +51,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   EmailingDomainGraphqlApiExceptionFilter,
   ThrottlerGraphqlApiExceptionFilter,
   AuthGraphqlApiExceptionFilter,
+  UsageLimitGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -72,10 +75,13 @@ export class EmailingSendResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<SendEmailViaDomainOutputDTO> {
+    const spenders = { userWorkspaceId };
+
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailCreditsOrThrow(
-      currentWorkspace.id,
-    );
+    await this.emailBillingService.validateEmailSendOrThrow({
+      workspaceId: currentWorkspace.id,
+      spenders,
+    });
 
     const { emailingDomainId, ...content } = input;
     const result = await this.emailingDomainSenderService.sendEmail(
@@ -86,7 +92,7 @@ export class EmailingSendResolver {
 
     await this.billAcceptedSend({
       workspaceId: currentWorkspace.id,
-      userWorkspaceId,
+      spenders,
       result,
     });
 
@@ -101,9 +107,10 @@ export class EmailingSendResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendMessageCampaignOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailCreditsOrThrow(
-      currentWorkspace.id,
-    );
+    await this.emailBillingService.validateEmailSendOrThrow({
+      workspaceId: currentWorkspace.id,
+      spenders: { userWorkspaceId },
+    });
 
     if (isDefined(input.scheduledAt)) {
       return this.messageCampaignScheduleService.schedule({
@@ -142,11 +149,14 @@ export class EmailingSendResolver {
   async sendMessageCampaignTest(
     @Args('input') input: SendMessageCampaignTestInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<SendEmailViaDomainOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailCreditsOrThrow(
-      currentWorkspace.id,
-    );
+    await this.emailBillingService.validateEmailSendOrThrow({
+      workspaceId: currentWorkspace.id,
+      spenders: { userWorkspaceId },
+    });
 
     const result = await this.messageCampaignService.sendTest({
       workspaceId: currentWorkspace.id,
@@ -157,7 +167,11 @@ export class EmailingSendResolver {
       fromAddress: input.fromAddress,
     });
 
-    await this.billAcceptedSend({ workspaceId: currentWorkspace.id, result });
+    await this.billAcceptedSend({
+      workspaceId: currentWorkspace.id,
+      spenders: { userWorkspaceId },
+      result,
+    });
 
     return { messageId: result.messageId };
   }
@@ -183,17 +197,17 @@ export class EmailingSendResolver {
   // would invite a retry that sends it a second time.
   private async billAcceptedSend({
     workspaceId,
-    userWorkspaceId,
+    spenders,
     result,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
+    spenders: UsageSpenders;
     result: EmailingDomainSendEmailResult;
   }): Promise<void> {
     await this.emailBillingService
       .billSentEmails({
         workspaceId,
-        userWorkspaceId,
+        spenders,
         sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
       })
       .catch((error) => {

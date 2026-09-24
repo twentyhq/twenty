@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefined } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
@@ -123,7 +122,7 @@ export const SingleRecordPickerMenuItems = ({
             indicator="check"
             startIcon={<SelectOptionIcon Icon={EmptyIcon} />}
           >
-            <OverflowingTextWithTooltip text={emptyLabel} />
+            {emptyLabel}
           </ListItem>
         </SelectableListItem>
       )}

@@ -56,8 +56,8 @@ export const InformationBannerNoMoreCredits = () => {
         variant="secondary"
         message={
           hasPermissionToUpdateCreditPlan
-            ? t`Credits limit reached. Update your credit plan to keep Workflows and AI running.`
-            : t`Credits limit reached. Contact your admin to resume Workflows and AI.`
+            ? t`Credit limit reached. Update your credit plan to keep workflows, AI, and apps running.`
+            : t`Credit limit reached. Contact your admin to resume workflows, AI, and apps.`
         }
         buttonTitle={
           hasPermissionToUpdateCreditPlan ? t`Update plan` : undefined

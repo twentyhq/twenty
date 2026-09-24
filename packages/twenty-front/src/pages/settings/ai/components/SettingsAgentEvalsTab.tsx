@@ -2,12 +2,12 @@ import { RUN_EVALUATION_INPUT } from '@/ai/graphql/mutations/runEvaluationInput'
 import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
-import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client/react';
@@ -15,8 +15,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Section, LightIconButton } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { LightIconButton, Section, useToast } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconMessage,
@@ -25,8 +24,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
@@ -177,17 +175,15 @@ export const SettingsAgentEvalsTab = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItem
-                        LeftIcon={IconPlayerPlay}
-                        text={t`Run`}
+                      <ListItem
+                        startIcon={<IconPlayerPlay />}
                         onClick={() => handleRunInput(item.text, item.id)}
-                      />
-                      <MenuItem
-                        accent="danger"
-                        LeftIcon={IconTrash}
-                        text={t`Delete`}
+                      >{t`Run`}</ListItem>
+                      <ListItem
+                        color="danger"
+                        startIcon={<IconTrash />}
                         onClick={() => openDeleteModal(item.id)}
-                      />
+                      >{t`Delete`}</ListItem>
                     </DropdownMenuItemsContainer>
                   </DropdownContent>
                 }

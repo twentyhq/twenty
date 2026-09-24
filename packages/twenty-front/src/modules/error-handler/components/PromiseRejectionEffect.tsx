@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   CombinedGraphQLErrors,
   CombinedProtocolErrors,
@@ -12,7 +12,7 @@ import {
   UnconventionalError,
 } from '@apollo/client/errors';
 import { isDefined, type CustomError } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 const isApolloError = (error: unknown): boolean =>
   CombinedGraphQLErrors.is(error) ||

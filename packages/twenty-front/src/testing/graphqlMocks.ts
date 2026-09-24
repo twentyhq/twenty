@@ -528,6 +528,7 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           getRoles: mockedRoles,
+          getPermissionFlags: [],
         },
       });
     }),

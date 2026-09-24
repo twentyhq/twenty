@@ -342,6 +342,25 @@ export const successfulCreateInputByFieldMetadataType: {
         );
       },
     },
+    {
+      input: {
+        phonesField: {
+          primaryPhoneNumber: '1234567890',
+          primaryPhoneCountryCode: 'FR',
+          primaryPhoneCallingCode: '+33',
+          additionalPhones: [
+            { number: '', callingCode: '+33', countryCode: 'FR' },
+            { number: '1234567890', callingCode: '+33', countryCode: 'FR' },
+          ],
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.phonesField.additionalPhones.length === 1 &&
+          record.phonesField.additionalPhones[0].number === '1234567890'
+        );
+      },
+    },
   ],
   [FieldMetadataType.FULL_NAME]: [
     {

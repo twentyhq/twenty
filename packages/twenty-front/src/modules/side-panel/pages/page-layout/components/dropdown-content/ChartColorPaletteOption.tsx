@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/side-panel/pages/page-layout/constants/ChartSettingsPaletteColorGroupCount';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
@@ -76,9 +75,7 @@ export const ChartColorPaletteOption = ({
         indicator="check"
         description={colorSamples}
         descriptionPlacement={'end'}
-      >
-        <OverflowingTextWithTooltip text={t`Default palette`} />
-      </ListItem>
+      >{t`Default palette`}</ListItem>
     </SelectableListItem>
   );
 };

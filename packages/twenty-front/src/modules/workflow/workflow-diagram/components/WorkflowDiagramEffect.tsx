@@ -110,7 +110,7 @@ export const WorkflowDiagramEffect = () => {
   );
 
   useEffect(() => {
-    if (!shouldWorkflowRefetchRequest) {
+    if (!shouldWorkflowRefetchRequest || !isDefined(currentVersion?.id)) {
       return;
     }
 
@@ -122,6 +122,7 @@ export const WorkflowDiagramEffect = () => {
       })
       .catch(() => {});
   }, [
+    currentVersion?.id,
     shouldWorkflowRefetchRequest,
     setShouldWorkflowRefetchRequest,
     refetchContent,

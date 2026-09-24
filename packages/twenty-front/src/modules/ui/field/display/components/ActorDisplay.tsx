@@ -1,8 +1,8 @@
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { AvatarOrIcon, Chip } from 'twenty-ui/primitives/data-display';
 import {
   IconApi,
   IconCalendar,
@@ -18,6 +18,7 @@ import {
   IconWebhook,
   type IconComponent,
 } from 'twenty-ui/icon';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {

@@ -23,9 +23,9 @@ import {
 } from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;
@@ -171,7 +171,7 @@ export const WorkflowVariablesDropdownStepItems = ({
                   <SelectOptionIcon Icon={getIcon(specialItem.iconName)} />
                 }
               >
-                <OverflowingTextWithTooltip text={specialItem.label} />
+                {specialItem.label}
               </ListItem>
             ))}
             {shouldDisplaySubStepObject && (
@@ -191,9 +191,7 @@ export const WorkflowVariablesDropdownStepItems = ({
                   />
                 }
               >
-                <OverflowingTextWithTooltip
-                  text={displayedSubStepObjectDisplay?.label ?? ''}
-                />
+                {displayedSubStepObjectDisplay?.label ?? ''}
               </ListItem>
             )}
             {options.length > 0 &&
@@ -232,7 +230,7 @@ export const WorkflowVariablesDropdownStepItems = ({
                     />
                   }
                 >
-                  <OverflowingTextWithTooltip text={subStep.label || key} />
+                  {subStep.label || key}
                 </ListItem>
               );
             })}

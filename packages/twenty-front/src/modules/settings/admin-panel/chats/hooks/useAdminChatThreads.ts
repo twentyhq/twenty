@@ -13,7 +13,7 @@ import { GET_ADMIN_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/g
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   AdminChatThreadScope,
   type GetAdminChatThreadsQuery,
