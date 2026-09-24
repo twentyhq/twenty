@@ -1,6 +1,6 @@
 # Deferred workspace migration actions
 
-Implementation: [twentyhq/twenty#26222](https://github.com/twentyhq/twenty/pull/26222) (PR 1 of 6, merged), [twentyhq/twenty#26371](https://github.com/twentyhq/twenty/pull/26371) (PR 2, recovery), behind a feature flag. In-repo copy: `packages/twenty-server/docs/DEFERRED_WORKSPACE_MIGRATION_ACTIONS.md`.
+Implementation, all behind a feature flag: [#26222](https://github.com/twentyhq/twenty/pull/26222) (PR 1), [#26371](https://github.com/twentyhq/twenty/pull/26371) (PR 2, recovery), [#26446](https://github.com/twentyhq/twenty/pull/26446) (PR 3, guard) and [#26521](https://github.com/twentyhq/twenty/pull/26521) (PR 4, error surfacing) are merged; [#26534](https://github.com/twentyhq/twenty/pull/26534) (PR 5, foreign keys) is open. In-repo copy: `packages/twenty-server/docs/DEFERRED_WORKSPACE_MIGRATION_ACTIONS.md`.
 
 ## Problem
 
@@ -195,6 +195,5 @@ The front needs nothing of its own: `getToastOptionsFromError` already reads `us
 
 ## Open questions
 
-1. **Should deferral be decided by the runner at step level instead of by each handler?** Today `build_index` defers the `executeForWorkspaceSchema` step of `create_index` while `delete_logicFunctionResources` defers work that was never a runner step, each handler builds its own payload, and the handler has to remember to skip its own inline work. A more consistent shape: the runner skips the step for deferrable actions and persists the flat action itself (plus the pre-delete flat entity for deletes), and the worker replays the same step with a rebuilt context. Logic function cleanup would then need a real step, either (a) its currently empty `executeForWorkspaceSchema`, or (b) a new `executeForExternalResources` step that always runs after commit. Recommendation: runner-owned deferral with option (b), done in PR 1 before merge.
-2. **Should logic function cleanup be durable for everyone now, not only behind the flag?** It is low risk and fixes silent orphans in storage. Recommendation: keep it behind the flag until PR 2 (recovery) lands.
-3. **Should the one-hour statement timeout be a config variable?** Recommendation: constant for now, config variable if a self-hosted instance needs more.
+1. **Should logic function cleanup be durable for everyone now, not only behind the flag?** It is low risk and fixes silent orphans in storage. Recommendation: keep it behind the flag until the rollout.
+2. **Should the one-hour statement timeout be a config variable?** Recommendation: constant for now, config variable if a self-hosted instance needs more.
