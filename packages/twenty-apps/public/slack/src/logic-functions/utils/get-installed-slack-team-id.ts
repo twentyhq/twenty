@@ -1,35 +1,29 @@
-import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
-import { kv } from 'twenty-sdk/logic-function';
 
-import { SLACK_INSTALLED_TEAM_ID_KV_KEY } from 'src/logic-functions/constants/slack-installed-team-id-kv-key';
-import { type SlackInstalledTeamIdCacheEntry } from 'src/logic-functions/types/slack-installed-team-id-cache-entry.type';
-import { cacheSlackInstalledTeamId } from 'src/logic-functions/utils/cache-slack-installed-team-id';
-import { hasKvEntryExpired } from 'src/logic-functions/utils/has-kv-entry-expired';
+import { cacheSlackConnectedAccountTeam } from 'src/logic-functions/utils/cache-slack-connected-account-team';
+import { getSlackConnectedAccountTeam } from 'src/logic-functions/utils/get-slack-connected-account-team';
+import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 
-const readCachedInstalledTeamId = async (): Promise<string | undefined> => {
-  const cacheEntry = await kv
-    .get<SlackInstalledTeamIdCacheEntry>(SLACK_INSTALLED_TEAM_ID_KV_KEY)
-    .catch(() => null);
-
-  if (
-    cacheEntry === null ||
-    !isNonEmptyString(cacheEntry.installedTeamId) ||
-    hasKvEntryExpired(cacheEntry)
-  ) {
-    return undefined;
-  }
-
-  return cacheEntry.installedTeamId;
+type SlackAuthTestClient = {
+  auth: { test: () => Promise<{ team_id?: string }> };
 };
 
 export const getInstalledSlackTeamId = async (
-  slackClient: WebClient,
+  slackClient: SlackAuthTestClient,
 ): Promise<string | undefined> => {
-  const cachedInstalledTeamId = await readCachedInstalledTeamId();
+  const connectionResult = await getSlackConnection();
+  const connectionId = connectionResult.success
+    ? connectionResult.connectionId
+    : undefined;
 
-  if (isNonEmptyString(cachedInstalledTeamId)) {
-    return cachedInstalledTeamId;
+  if (isNonEmptyString(connectionId)) {
+    const storedTeamId = await getSlackConnectedAccountTeam(connectionId).catch(
+      () => null,
+    );
+
+    if (isNonEmptyString(storedTeamId)) {
+      return storedTeamId;
+    }
   }
 
   const authResult = await slackClient.auth.test().catch(() => undefined);
@@ -39,7 +33,13 @@ export const getInstalledSlackTeamId = async (
     return undefined;
   }
 
-  await cacheSlackInstalledTeamId(installedTeamId);
+  // Installs predating this read path have no stored team, so healing the
+  // entry here is what stops every later call falling back to Slack.
+  if (isNonEmptyString(connectionId)) {
+    await cacheSlackConnectedAccountTeam(connectionId, installedTeamId).catch(
+      () => undefined,
+    );
+  }
 
   return installedTeamId;
 };

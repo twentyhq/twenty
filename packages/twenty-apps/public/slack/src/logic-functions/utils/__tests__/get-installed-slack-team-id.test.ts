@@ -1,39 +1,54 @@
-import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { SLACK_INSTALLED_TEAM_ID_KV_KEY } from 'src/logic-functions/constants/slack-installed-team-id-kv-key';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 
-const { cacheSlackInstalledTeamIdMock, kvGetMock } = vi.hoisted(() => ({
-  cacheSlackInstalledTeamIdMock: vi.fn(),
-  kvGetMock: vi.fn(),
+const {
+  cacheSlackConnectedAccountTeamMock,
+  getSlackConnectedAccountTeamMock,
+  getSlackConnectionMock,
+} = vi.hoisted(() => ({
+  cacheSlackConnectedAccountTeamMock: vi.fn(),
+  getSlackConnectedAccountTeamMock: vi.fn(),
+  getSlackConnectionMock: vi.fn(),
 }));
 
-vi.mock('twenty-sdk/logic-function', () => ({
-  kv: { get: kvGetMock },
+vi.mock('src/logic-functions/utils/cache-slack-connected-account-team', () => ({
+  cacheSlackConnectedAccountTeam: cacheSlackConnectedAccountTeamMock,
 }));
 
-vi.mock('src/logic-functions/utils/cache-slack-installed-team-id', () => ({
-  cacheSlackInstalledTeamId: cacheSlackInstalledTeamIdMock,
+vi.mock('src/logic-functions/utils/get-slack-connected-account-team', () => ({
+  getSlackConnectedAccountTeam: getSlackConnectedAccountTeamMock,
+}));
+
+vi.mock('src/logic-functions/utils/get-slack-connection', () => ({
+  getSlackConnection: getSlackConnectionMock,
 }));
 
 const TEAM_ID = 'T123';
+const CONNECTION_ID = 'connection-1';
 
-const buildSlackClient = (authTestMock: ReturnType<typeof vi.fn>) =>
-  ({ auth: { test: authTestMock } }) as unknown as WebClient;
+const createAuthTestMock = () => vi.fn<() => Promise<{ team_id?: string }>>();
+
+const buildSlackClient = (
+  authTestMock: ReturnType<typeof createAuthTestMock>,
+) => ({
+  auth: { test: authTestMock },
+});
 
 describe('getInstalledSlackTeamId', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    cacheSlackInstalledTeamIdMock.mockResolvedValue(undefined);
+    cacheSlackConnectedAccountTeamMock.mockResolvedValue(undefined);
+    getSlackConnectionMock.mockResolvedValue({
+      success: true,
+      accessToken: 'token',
+      connectionId: CONNECTION_ID,
+    });
   });
 
-  it('should return the cached team id without calling Slack', async () => {
-    kvGetMock.mockResolvedValue({
-      installedTeamId: TEAM_ID,
-      expiresAt: Date.now() + 1000,
-    });
-    const authTestMock = vi.fn();
+  it('should return the team stored for the connection without calling Slack', async () => {
+    getSlackConnectedAccountTeamMock.mockResolvedValue(TEAM_ID);
+    const authTestMock = createAuthTestMock();
 
     const result = await getInstalledSlackTeamId(
       buildSlackClient(authTestMock),
@@ -43,25 +58,21 @@ describe('getInstalledSlackTeamId', () => {
     expect(authTestMock).not.toHaveBeenCalled();
   });
 
-  it('should ask Slack and cache the answer when nothing is cached', async () => {
-    kvGetMock.mockResolvedValue(null);
-    const authTestMock = vi.fn().mockResolvedValue({ team_id: TEAM_ID });
+  it('should read the team of the connection the client came from', async () => {
+    getSlackConnectedAccountTeamMock.mockResolvedValue(TEAM_ID);
 
-    const result = await getInstalledSlackTeamId(
-      buildSlackClient(authTestMock),
+    await getInstalledSlackTeamId(buildSlackClient(createAuthTestMock()));
+
+    expect(getSlackConnectedAccountTeamMock).toHaveBeenCalledWith(
+      CONNECTION_ID,
     );
-
-    expect(result).toBe(TEAM_ID);
-    expect(authTestMock).toHaveBeenCalledTimes(1);
-    expect(cacheSlackInstalledTeamIdMock).toHaveBeenCalledWith(TEAM_ID);
   });
 
-  it('should ask Slack again once the cached entry has expired', async () => {
-    kvGetMock.mockResolvedValue({
-      installedTeamId: 'TOLD',
-      expiresAt: Date.now() - 1000,
+  it('should ask Slack and heal the stored team when nothing is stored', async () => {
+    getSlackConnectedAccountTeamMock.mockResolvedValue(null);
+    const authTestMock = createAuthTestMock().mockResolvedValue({
+      team_id: TEAM_ID,
     });
-    const authTestMock = vi.fn().mockResolvedValue({ team_id: TEAM_ID });
 
     const result = await getInstalledSlackTeamId(
       buildSlackClient(authTestMock),
@@ -69,41 +80,68 @@ describe('getInstalledSlackTeamId', () => {
 
     expect(result).toBe(TEAM_ID);
     expect(authTestMock).toHaveBeenCalledTimes(1);
+    expect(cacheSlackConnectedAccountTeamMock).toHaveBeenCalledWith(
+      CONNECTION_ID,
+      TEAM_ID,
+    );
   });
 
-  it('should fall back to Slack when the cache read fails', async () => {
-    kvGetMock.mockRejectedValue(new Error('kv unavailable'));
-    const authTestMock = vi.fn().mockResolvedValue({ team_id: TEAM_ID });
+  it('should fall back to Slack when the stored team cannot be read', async () => {
+    getSlackConnectedAccountTeamMock.mockRejectedValue(
+      new Error('kv unavailable'),
+    );
+    const authTestMock = createAuthTestMock().mockResolvedValue({
+      team_id: TEAM_ID,
+    });
 
     const result = await getInstalledSlackTeamId(
       buildSlackClient(authTestMock),
     );
 
     expect(result).toBe(TEAM_ID);
-    expect(kvGetMock).toHaveBeenCalledWith(SLACK_INSTALLED_TEAM_ID_KV_KEY);
   });
 
-  it('should not cache anything when Slack returns no team id', async () => {
-    kvGetMock.mockResolvedValue(null);
-    const authTestMock = vi.fn().mockResolvedValue({});
+  it('should ask Slack without storing anything when no connection resolves', async () => {
+    getSlackConnectionMock.mockResolvedValue({
+      success: false,
+      error: 'Slack is not connected.',
+    });
+    const authTestMock = createAuthTestMock().mockResolvedValue({
+      team_id: TEAM_ID,
+    });
+
+    const result = await getInstalledSlackTeamId(
+      buildSlackClient(authTestMock),
+    );
+
+    expect(result).toBe(TEAM_ID);
+    expect(getSlackConnectedAccountTeamMock).not.toHaveBeenCalled();
+    expect(cacheSlackConnectedAccountTeamMock).not.toHaveBeenCalled();
+  });
+
+  it('should not store anything when Slack returns no team id', async () => {
+    getSlackConnectedAccountTeamMock.mockResolvedValue(null);
+    const authTestMock = createAuthTestMock().mockResolvedValue({});
 
     const result = await getInstalledSlackTeamId(
       buildSlackClient(authTestMock),
     );
 
     expect(result).toBeUndefined();
-    expect(cacheSlackInstalledTeamIdMock).not.toHaveBeenCalled();
+    expect(cacheSlackConnectedAccountTeamMock).not.toHaveBeenCalled();
   });
 
   it('should return undefined without throwing when Slack rejects', async () => {
-    kvGetMock.mockResolvedValue(null);
-    const authTestMock = vi.fn().mockRejectedValue(new Error('invalid_auth'));
+    getSlackConnectedAccountTeamMock.mockResolvedValue(null);
+    const authTestMock = createAuthTestMock().mockRejectedValue(
+      new Error('invalid_auth'),
+    );
 
     const result = await getInstalledSlackTeamId(
       buildSlackClient(authTestMock),
     );
 
     expect(result).toBeUndefined();
-    expect(cacheSlackInstalledTeamIdMock).not.toHaveBeenCalled();
+    expect(cacheSlackConnectedAccountTeamMock).not.toHaveBeenCalled();
   });
 });
