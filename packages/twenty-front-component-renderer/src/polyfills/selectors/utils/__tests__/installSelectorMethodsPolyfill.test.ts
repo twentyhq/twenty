@@ -600,6 +600,12 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(checkbox.matches(':invalid')).toBe(false);
       expect(details.matches(':open')).toBe(true);
       expect(plainDiv.matches(':open')).toBe(false);
+      const dialog = document.createElement('dialog');
+      dialog.setAttribute('open', '');
+      plainDiv.setAttribute('open', '');
+      document.body.append(dialog);
+      expect(dialog.matches(':open')).toBe(true);
+      expect(plainDiv.matches(':open')).toBe(false);
       expect(plainDiv.matches(':defined')).toBe(true);
     });
 
