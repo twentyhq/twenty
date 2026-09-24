@@ -4,13 +4,11 @@ import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { MOBILE_VIEWPORT } from '@ui/theme-constants';
+import { MOBILE_MEDIA_QUERY } from '@ui/utilities/responsive/constants/MobileMediaQuery';
+import { TOUCH_DEVICE_MEDIA_QUERY } from '@ui/utilities/responsive/constants/TouchDeviceMediaQuery';
 import { useIsMobile } from '@ui/utilities/responsive/hooks/useIsMobile';
 import { useIsTouchDevice } from '@ui/utilities/responsive/hooks/useIsTouchDevice';
 import { useMediaQuery } from '../useMediaQuery';
-
-const MOBILE_QUERY = `(max-width: ${MOBILE_VIEWPORT}px)`;
-const TOUCH_QUERY = '(hover: none) and (pointer: coarse)';
 
 const createMediaQueryList = ({
   media,
@@ -52,18 +50,23 @@ afterEach(() => {
 
 describe('responsive media queries', () => {
   it('reads initial matches and updates viewport and input capability independently', () => {
-    const mobile = createMediaQueryList({ media: MOBILE_QUERY, matches: true });
-    const touch = createMediaQueryList({ media: TOUCH_QUERY });
+    const mobile = createMediaQueryList({
+      media: MOBILE_MEDIA_QUERY,
+      matches: true,
+    });
+    const touch = createMediaQueryList({ media: TOUCH_DEVICE_MEDIA_QUERY });
     vi.stubGlobal(
       'matchMedia',
       vi.fn((query: string) =>
-        query === MOBILE_QUERY ? mobile.mediaQueryList : touch.mediaQueryList,
+        query === MOBILE_MEDIA_QUERY
+          ? mobile.mediaQueryList
+          : touch.mediaQueryList,
       ),
     );
     const { result } = renderHook(useResponsiveState);
 
-    expect(window.matchMedia).toHaveBeenCalledWith(MOBILE_QUERY);
-    expect(window.matchMedia).toHaveBeenCalledWith(TOUCH_QUERY);
+    expect(window.matchMedia).toHaveBeenCalledWith(MOBILE_MEDIA_QUERY);
+    expect(window.matchMedia).toHaveBeenCalledWith(TOUCH_DEVICE_MEDIA_QUERY);
     expect(result.current).toEqual({ isMobile: true, isTouchDevice: false });
     act(() => {
       mobile.setMatches(false);
@@ -75,17 +78,22 @@ describe('responsive media queries', () => {
   });
 
   it('replaces the subscription when the query changes and cleans up on unmount', () => {
-    const mobile = createMediaQueryList({ media: MOBILE_QUERY });
-    const touch = createMediaQueryList({ media: TOUCH_QUERY, matches: true });
+    const mobile = createMediaQueryList({ media: MOBILE_MEDIA_QUERY });
+    const touch = createMediaQueryList({
+      media: TOUCH_DEVICE_MEDIA_QUERY,
+      matches: true,
+    });
     vi.stubGlobal('matchMedia', (query: string) =>
-      query === MOBILE_QUERY ? mobile.mediaQueryList : touch.mediaQueryList,
+      query === MOBILE_MEDIA_QUERY
+        ? mobile.mediaQueryList
+        : touch.mediaQueryList,
     );
     const { result, rerender, unmount } = renderHook(
       (query: string) => useMediaQuery(query),
-      { initialProps: MOBILE_QUERY, wrapper: StrictMode },
+      { initialProps: MOBILE_MEDIA_QUERY, wrapper: StrictMode },
     );
     expect(result.current).toBe(false);
-    rerender(TOUCH_QUERY);
+    rerender(TOUCH_DEVICE_MEDIA_QUERY);
     expect(result.current).toBe(true);
     act(() => mobile.setMatches(true));
     expect(result.current).toBe(true);
@@ -99,12 +107,42 @@ describe('responsive media queries', () => {
   });
 
   it('rechecks a query changed between render and subscription', () => {
-    const { mediaQueryList } = createMediaQueryList({ media: MOBILE_QUERY });
+    const { mediaQueryList } = createMediaQueryList({
+      media: MOBILE_MEDIA_QUERY,
+    });
     mediaQueryList.addEventListener.mockImplementation(() => {
       mediaQueryList.matches = true;
     });
     vi.stubGlobal('matchMedia', () => mediaQueryList);
     const { result } = renderHook(useIsMobile);
+    expect(result.current).toBe(true);
+  });
+
+  it('shares one media query list per query across mounted hooks', () => {
+    const mobile = createMediaQueryList({ media: MOBILE_MEDIA_QUERY });
+    const matchMedia = vi.fn(() => mobile.mediaQueryList);
+    vi.stubGlobal('matchMedia', matchMedia);
+    const first = renderHook(useIsMobile);
+    const second = renderHook(useIsMobile);
+
+    expect(matchMedia).toHaveBeenCalledTimes(1);
+    act(() => mobile.setMatches(true));
+    expect([first.result.current, second.result.current]).toEqual([true, true]);
+  });
+
+  it('reads a replaced matchMedia implementation instead of the cached list', () => {
+    const desktop = createMediaQueryList({ media: MOBILE_MEDIA_QUERY });
+    vi.stubGlobal('matchMedia', () => desktop.mediaQueryList);
+    const { unmount } = renderHook(useIsMobile);
+    unmount();
+
+    const mobile = createMediaQueryList({
+      media: MOBILE_MEDIA_QUERY,
+      matches: true,
+    });
+    vi.stubGlobal('matchMedia', () => mobile.mediaQueryList);
+    const { result } = renderHook(useIsMobile);
+
     expect(result.current).toBe(true);
   });
 
@@ -117,7 +155,7 @@ describe('responsive media queries', () => {
 
   it('uses the server snapshot even when native queries match', () => {
     const { mediaQueryList } = createMediaQueryList({
-      media: MOBILE_QUERY,
+      media: MOBILE_MEDIA_QUERY,
       matches: true,
     });
     vi.stubGlobal('matchMedia', () => mediaQueryList);
@@ -139,10 +177,18 @@ describe('responsive media queries', () => {
     vi.unstubAllGlobals();
     expect(snapshots).toEqual([{ isMobile: false, isTouchDevice: false }]);
 
-    const mobile = createMediaQueryList({ media: MOBILE_QUERY, matches: true });
-    const touch = createMediaQueryList({ media: TOUCH_QUERY, matches: true });
+    const mobile = createMediaQueryList({
+      media: MOBILE_MEDIA_QUERY,
+      matches: true,
+    });
+    const touch = createMediaQueryList({
+      media: TOUCH_DEVICE_MEDIA_QUERY,
+      matches: true,
+    });
     vi.stubGlobal('matchMedia', (query: string) =>
-      query === MOBILE_QUERY ? mobile.mediaQueryList : touch.mediaQueryList,
+      query === MOBILE_MEDIA_QUERY
+        ? mobile.mediaQueryList
+        : touch.mediaQueryList,
     );
     const container = document.createElement('div');
     container.innerHTML = html;

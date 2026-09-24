@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider, useAtomValue } from 'jotai';
 import { act } from 'react';
+import { useIsTouchDevice } from 'twenty-ui/utilities';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -21,9 +22,7 @@ jest.mock('twenty-ui/utilities', () => ({
 }));
 
 const mockIsTouchDevice = (isTouchDevice: boolean) => {
-  jest
-    .requireMock('twenty-ui/utilities')
-    .useIsTouchDevice.mockReturnValue(isTouchDevice);
+  jest.mocked(useIsTouchDevice).mockReturnValue(isTouchDevice);
 };
 
 const createWrapper =

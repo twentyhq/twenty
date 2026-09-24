@@ -6,8 +6,9 @@ import {
 } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
 import { HttpResponse, graphql } from 'msw';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { MemoryRouter } from 'react-router-dom';
+import { overrideMediaQueryMatches } from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY } from 'twenty-ui/utilities';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -189,18 +190,10 @@ const createDecorator =
 const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
   title: 'Modules/CommandMenu/SidePanelCommandMenuItemDisplayPage',
   component: SidePanelCommandMenuItemDisplayPage,
-  beforeEach: ({ parameters }) => {
-    const matchMedia = window.matchMedia.bind(window);
-    spyOn(window, 'matchMedia').mockImplementation((query) => {
-      const mediaQueryList = matchMedia(query);
-      if (query === `(max-width: ${MOBILE_VIEWPORT}px)`) {
-        Object.defineProperty(mediaQueryList, 'matches', {
-          value: parameters.isMobile === true,
-        });
-      }
-      return mediaQueryList;
-    });
-  },
+  beforeEach: ({ parameters }) =>
+    overrideMediaQueryMatches({
+      [MOBILE_MEDIA_QUERY]: parameters.isMobile === true,
+    }),
   decorators: [
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
