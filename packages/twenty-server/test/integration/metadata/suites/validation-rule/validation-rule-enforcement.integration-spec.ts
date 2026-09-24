@@ -5,8 +5,8 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
-const CUSTOMER_WITHOUT_AMOUNT_EXPRESSION =
-  'stage == "CUSTOMER" and isEmpty(amount)';
+const CUSTOMER_NEEDS_AMOUNT_EXPRESSION =
+  'stage != "CUSTOMER" or not isEmpty(amount)';
 const RULE_MESSAGE = 'A customer deal needs an amount';
 
 const createValidationRule = (input: Record<string, unknown>) =>
@@ -81,7 +81,7 @@ describe('Validation rules should be enforced on record writes', () => {
     const response = await createValidationRule({
       objectMetadataId: opportunityObjectMetadataId,
       errorFieldMetadataId: amountFieldMetadataId,
-      expression: CUSTOMER_WITHOUT_AMOUNT_EXPRESSION,
+      expression: CUSTOMER_NEEDS_AMOUNT_EXPRESSION,
       message: RULE_MESSAGE,
     });
 
@@ -118,7 +118,7 @@ describe('Validation rules should be enforced on record writes', () => {
   it('should reject a rule expression that references an unknown field', async () => {
     const response = await createValidationRule({
       objectMetadataId: opportunityObjectMetadataId,
-      expression: 'stage == "CUSTOMER" and isEmpty(amont)',
+      expression: 'stage != "CUSTOMER" or not isEmpty(amont)',
       message: RULE_MESSAGE,
     });
 

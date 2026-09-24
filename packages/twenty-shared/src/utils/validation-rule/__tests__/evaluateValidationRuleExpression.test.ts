@@ -55,12 +55,12 @@ const evaluate = (expression: string, record: Record<string, unknown>) =>
     now: NOW,
   });
 
-const WON_WITHOUT_AMOUNT = 'stage == "WON" and isEmpty(amount)';
+const WON_NEEDS_AMOUNT = 'stage != "WON" or not isEmpty(amount)';
 
 describe('evaluateValidationRuleExpression', () => {
   it('should fail a won opportunity with an empty amount', () => {
     expect(
-      evaluate(WON_WITHOUT_AMOUNT, {
+      evaluate(WON_NEEDS_AMOUNT, {
         stage: 'WON',
         amount: { amountMicros: null, currencyCode: 'USD' },
       }),
@@ -69,7 +69,7 @@ describe('evaluateValidationRuleExpression', () => {
 
   it('should pass a won opportunity with an amount', () => {
     expect(
-      evaluate(WON_WITHOUT_AMOUNT, {
+      evaluate(WON_NEEDS_AMOUNT, {
         stage: 'WON',
         amount: { amountMicros: 1000000, currencyCode: 'USD' },
       }),
@@ -78,7 +78,7 @@ describe('evaluateValidationRuleExpression', () => {
 
   it('should pass an open opportunity with an empty amount', () => {
     expect(
-      evaluate(WON_WITHOUT_AMOUNT, {
+      evaluate(WON_NEEDS_AMOUNT, {
         stage: 'OPEN',
         amount: { amountMicros: null, currencyCode: 'USD' },
       }),
@@ -86,32 +86,32 @@ describe('evaluateValidationRuleExpression', () => {
   });
 
   it('should treat a field missing from the record as null', () => {
-    expect(evaluate('not isDefined(stage)', {})).toEqual({ status: 'failed' });
+    expect(evaluate('not isDefined(stage)', {})).toEqual({ status: 'passed' });
   });
 
   it('should evaluate a path through a null relation to null', () => {
     const record = { company: null };
 
     expect(evaluate('isDefined(company)', record)).toEqual({
-      status: 'passed',
+      status: 'failed',
     });
     expect(evaluate('isDefined(company.industry)', record)).toEqual({
-      status: 'passed',
+      status: 'failed',
     });
     expect(evaluate('company.industry == "SaaS"', record)).toEqual({
-      status: 'passed',
+      status: 'failed',
     });
     expect(evaluate('isEmpty(company.address)', record)).toEqual({
-      status: 'failed',
+      status: 'passed',
     });
   });
 
   it('should never order a missing value against a defined one', () => {
     expect(evaluate('company.employees < 10', { company: null })).toEqual({
-      status: 'passed',
+      status: 'failed',
     });
     expect(evaluate('closeDate < now', { closeDate: null })).toEqual({
-      status: 'passed',
+      status: 'failed',
     });
   });
 
@@ -120,7 +120,7 @@ describe('evaluateValidationRuleExpression', () => {
       evaluate('company.industry == "SaaS"', {
         company: { industry: 'SaaS' },
       }),
-    ).toEqual({ status: 'failed' });
+    ).toEqual({ status: 'passed' });
   });
 
   it('should not mutate the record', () => {
@@ -136,15 +136,15 @@ describe('evaluateValidationRuleExpression', () => {
       evaluate('closeDate < now', {
         closeDate: new Date('2026-01-01T00:00:00.000Z'),
       }),
-    ).toEqual({ status: 'failed' });
+    ).toEqual({ status: 'passed' });
     expect(
       evaluate('closeDate < now', { closeDate: '2027-01-01T00:00:00.000Z' }),
-    ).toEqual({ status: 'passed' });
+    ).toEqual({ status: 'failed' });
   });
 
   it('should not treat whitespace as empty', () => {
     expect(evaluate('isEmpty(stage)', { stage: ' ' })).toEqual({
-      status: 'passed',
+      status: 'failed',
     });
   });
 
@@ -160,14 +160,14 @@ describe('evaluateValidationRuleExpression', () => {
   });
 
   it('should read count() from the aggregate values of the relation', () => {
-    const TOO_MANY_CONTACTS = 'count(pointOfContacts) > 2';
+    const AT_MOST_TWO_CONTACTS = 'count(pointOfContacts) <= 2';
 
     expect(
-      evaluate(TOO_MANY_CONTACTS, { pointOfContacts: { count: 3 } }),
+      evaluate(AT_MOST_TWO_CONTACTS, { pointOfContacts: { count: 3 } }),
     ).toEqual({ status: 'failed' });
     expect(
-      evaluate(TOO_MANY_CONTACTS, { pointOfContacts: { count: 1 } }),
+      evaluate(AT_MOST_TWO_CONTACTS, { pointOfContacts: { count: 1 } }),
     ).toEqual({ status: 'passed' });
-    expect(evaluate(TOO_MANY_CONTACTS, {}).status).toBe('errored');
+    expect(evaluate(AT_MOST_TWO_CONTACTS, {}).status).toBe('errored');
   });
 });

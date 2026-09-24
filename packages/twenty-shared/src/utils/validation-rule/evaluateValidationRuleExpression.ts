@@ -33,7 +33,7 @@ export const evaluateValidationRuleExpression = ({
       };
     }
 
-    return result ? { status: 'failed' } : { status: 'passed' };
+    return result ? { status: 'passed' } : { status: 'failed' };
   } catch (error) {
     return {
       status: 'errored',

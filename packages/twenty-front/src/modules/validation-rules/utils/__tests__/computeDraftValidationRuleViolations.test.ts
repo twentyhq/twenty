@@ -39,7 +39,7 @@ const AMOUNT_RULE = {
   id: 'amount-rule',
   objectMetadataId: 'opportunity',
   errorFieldMetadataId: 'amount-field',
-  expression: 'stage == "CUSTOMER" and isEmpty(amount)',
+  expression: 'stage != "CUSTOMER" or not isEmpty(amount)',
   message: 'A customer deal needs an amount',
   isActive: true,
 };
@@ -48,7 +48,7 @@ const COMPANY_RULE = {
   id: 'company-rule',
   objectMetadataId: 'opportunity',
   errorFieldMetadataId: null,
-  expression: 'company.employees < 10',
+  expression: 'company.employees >= 10',
   message: 'Company is too small',
   isActive: true,
 };
@@ -98,13 +98,18 @@ describe('computeDraftValidationRuleViolations', () => {
 
     expect(
       compute(draftWithoutStage, [
-        { ...AMOUNT_RULE, expression: 'stage != "WON" and isEmpty(amount)' },
+        { ...AMOUNT_RULE, expression: 'stage == "WON" or not isEmpty(amount)' },
       ]).map((violation) => violation.ruleId),
     ).toEqual(['amount-rule']);
     expect(
       compute(
         draftWithoutStage,
-        [{ ...AMOUNT_RULE, expression: 'stage != "WON" and isEmpty(amount)' }],
+        [
+          {
+            ...AMOUNT_RULE,
+            expression: 'stage == "WON" or not isEmpty(amount)',
+          },
+        ],
         ['stage'],
       ),
     ).toEqual([]);
@@ -130,12 +135,12 @@ describe('computeDraftValidationRuleViolations', () => {
   it('should treat a set join column as a defined relation', () => {
     expect(
       compute({ companyId: 'company-id' }, [
-        { ...COMPANY_RULE, expression: 'not isDefined(company)' },
+        { ...COMPANY_RULE, expression: 'isDefined(company)' },
       ]),
     ).toEqual([]);
     expect(
       compute({ companyId: null }, [
-        { ...COMPANY_RULE, expression: 'not isDefined(company)' },
+        { ...COMPANY_RULE, expression: 'isDefined(company)' },
       ]).map((violation) => violation.ruleId),
     ).toEqual(['company-rule']);
   });
@@ -151,7 +156,7 @@ describe('computeDraftValidationRuleViolations', () => {
   it('should count no related records on a draft', () => {
     const draftRule = {
       ...AMOUNT_RULE,
-      expression: 'stage == "CUSTOMER" and count(pointOfContacts) == 0',
+      expression: 'stage != "CUSTOMER" or count(pointOfContacts) > 0',
     };
 
     expect(

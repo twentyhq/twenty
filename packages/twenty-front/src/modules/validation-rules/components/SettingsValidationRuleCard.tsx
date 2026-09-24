@@ -6,7 +6,7 @@ import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { IconCheck, IconTrash } from 'twenty-ui/icon';
-import { Button, Switch } from 'twenty-ui/primitives/input';
+import { Button, Field, Switch } from 'twenty-ui/primitives/input';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -150,11 +150,14 @@ export const SettingsValidationRuleCard = ({
     <Card rounded>
       <CardContent>
         <StyledCardContent>
-          <SettingsValidationRuleExpressionEditor
-            value={expression}
-            fields={fields}
-            onChange={setExpression}
-          />
+          <Field.Root>
+            <Field.Label>{t`Must be true to save`}</Field.Label>
+            <SettingsValidationRuleExpressionEditor
+              value={expression}
+              fields={fields}
+              onChange={setExpression}
+            />
+          </Field.Root>
           <StyledRow>
             <SettingsTextInput
               instanceId={`validation-rule-message-${validationRule?.id ?? 'new'}`}

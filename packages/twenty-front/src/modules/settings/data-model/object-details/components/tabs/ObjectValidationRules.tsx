@@ -51,7 +51,7 @@ export const ObjectValidationRules = ({
     <Section.Root>
       <Section.Header
         title={t`Validation rules`}
-        description={t`Block saving a record when an expression is true. Rules run on every write: forms, API, imports and workflows.`}
+        description={t`A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows.`}
       />
       <StyledRuleList>
         {validationRules.map((validationRule) => (

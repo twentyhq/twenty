@@ -17,7 +17,7 @@ const FIELDS = [
 
 const WON_WITHOUT_AMOUNT_RULE = {
   id: 'rule-won-without-amount',
-  expression: 'stage == "WON" and isEmpty(amount)',
+  expression: 'stage != "WON" or not isEmpty(amount)',
   message: 'A won opportunity needs an amount',
   errorFieldMetadataId: 'amount-field-metadata-id',
 };
