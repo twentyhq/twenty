@@ -15,7 +15,7 @@ const SPEED_LIMIT_DEFAULTS: SpeedLimitDefault[] = [
     counterScope: 'perWorkspace',
     maxTokens: 100,
     windowMs: 1000,
-    isOverridable: true,
+    isOverridable: false,
   },
   {
     spenderType: 'apiKey',
@@ -223,6 +223,7 @@ describe('buildSpeedBuckets with limits configured', () => {
     expect(buckets.map((bucket) => bucket.key)).toEqual([
       '{workspace-1}:speed:API:API_REQUEST:apiKey:key-1:60',
       '{workspace-1}:speed:API:API_REQUEST:apiKey:-:60',
+      '{workspace-1}:speed:API:API_REQUEST:apiKey:-:1',
     ]);
   });
 
@@ -239,7 +240,7 @@ describe('buildSpeedBuckets with limits configured', () => {
     ]);
   });
 
-  it('replaces every default once a limit covers the spender type', () => {
+  it('replaces the overridable default but stays under the burst ceiling', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
       limits: [buildLimit({ spenderId: '', periodCount: 60, limitValue: 10 })],
@@ -247,7 +248,10 @@ describe('buildSpeedBuckets with limits configured', () => {
 
     expect(
       buckets.map((bucket) => [bucket.windowMs, bucket.refillPerWindow]),
-    ).toEqual([[60_000, 10]]);
+    ).toEqual([
+      [60_000, 10],
+      [1000, 100],
+    ]);
   });
 
   it('tells the platform default apart from a configured limit', () => {
@@ -292,6 +296,7 @@ describe('buildSpeedBuckets with limits configured', () => {
     expect(buckets.map((bucket) => bucket.key)).toEqual([
       '{workspace-1}:speed:API:ALL:apiKey:-:60',
       '{workspace-1}:speed:API:API_REQUEST:apiKey:-:60',
+      '{workspace-1}:speed:API:API_REQUEST:apiKey:-:1',
     ]);
   });
 
