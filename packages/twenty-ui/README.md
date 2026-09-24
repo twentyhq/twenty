@@ -35,7 +35,7 @@ For Twenty apps, follow [Using Twenty UI components](https://docs.twenty.com/dev
 For a standalone React application, import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
 
 ```tsx
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 import { Button } from 'twenty-ui/primitives/input';
 
 import 'twenty-ui/style.css';
@@ -73,8 +73,7 @@ import { Button } from 'twenty-ui/primitives/input';
 | `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                         |
 | `twenty-ui/primitives/typography`    | Text and headings                                                     |
 | `twenty-ui/testing`                  | Storybook and test decorators and helpers                             |
-| `twenty-ui/theme`                    | Theme types and helpers                                               |
-| `twenty-ui/theme-constants`          | Design tokens, `ThemeProvider`, and `useTheme`                        |
+| `twenty-ui/theme`          | Design tokens, `ThemeProvider`, and `useTheme`                        |
 | `twenty-ui/utilities`                | Hooks and shared utilities                                            |
 
 # Theming

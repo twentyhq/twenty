@@ -8,7 +8,7 @@ import { type ReactNode } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const SETTINGS_CONTENT_MAX_WIDTH = 760;
 const SETTINGS_PATHS_BY_LENGTH = Object.values(SettingsPath).sort(

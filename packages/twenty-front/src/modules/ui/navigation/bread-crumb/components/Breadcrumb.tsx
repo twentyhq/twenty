@@ -3,7 +3,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { Fragment, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export type BreadcrumbProps = {
   className?: string;

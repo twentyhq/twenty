@@ -39,7 +39,10 @@ describe('webhook mandatory visibility', () => {
           { provide: RecordShareService, useValue: {} },
           {
             provide: RecordSharingFeatureService,
-            useValue: { isRecordSharingEnabled: async () => sharingEnabled },
+            useValue: {
+              isLegacyRecordAccessOpen: async () => false,
+              isRecordSharingEnabled: async () => sharingEnabled,
+            },
           },
           {
             provide: WebhookRateLimitService,

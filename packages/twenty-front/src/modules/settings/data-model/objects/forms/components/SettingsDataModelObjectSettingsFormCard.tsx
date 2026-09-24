@@ -9,7 +9,7 @@ import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/co
 import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;

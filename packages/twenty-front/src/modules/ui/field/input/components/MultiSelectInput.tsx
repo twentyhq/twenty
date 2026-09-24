@@ -11,7 +11,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
 import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -119,7 +119,7 @@ export const MultiSelectInput = ({
       focusId={focusId}
       shouldPreselectFirstItem={isNonEmptyString(searchFilter)}
     >
-      <DropdownContent
+      <LegacyDropdownContent
         ref={containerRef}
         selectDisabled
         widthInPixels={dropdownWidth}
@@ -187,7 +187,7 @@ export const MultiSelectInput = ({
               </DropdownMenuItemsContainer>
             </>
           )}
-      </DropdownContent>
+      </LegacyDropdownContent>
     </SelectableList>
   );
 };

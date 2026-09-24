@@ -13,7 +13,7 @@ import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { Fragment, type ReactNode, useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 const StyledVerticalListContainer = styled.div<{

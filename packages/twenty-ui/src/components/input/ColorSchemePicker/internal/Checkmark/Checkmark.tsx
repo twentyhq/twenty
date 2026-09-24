@@ -3,7 +3,7 @@ import React from 'react';
 import { clsx } from 'clsx';
 
 import { IconCheck } from '@ui/icon/components/TablerIcons';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 import styles from './Checkmark.module.scss';
 

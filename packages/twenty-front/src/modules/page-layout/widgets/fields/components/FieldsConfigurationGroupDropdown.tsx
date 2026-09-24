@@ -10,7 +10,7 @@ import { LightIconButton } from 'twenty-ui/components';
 
 import { getFieldsConfigurationGroupEditDropdownId } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationGroupEditDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -59,7 +59,9 @@ export const FieldsConfigurationGroupDropdown = ({
       }
       dropdownPlacement="bottom-start"
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.Narrow}
+        >
           <DropdownMenuItemsContainer>
             <ListItem
               startIcon={<IconPencil />}
@@ -75,7 +77,7 @@ export const FieldsConfigurationGroupDropdown = ({
               onClick={handleAddGroup}
             >{t`Add a Group`}</ListItem>
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

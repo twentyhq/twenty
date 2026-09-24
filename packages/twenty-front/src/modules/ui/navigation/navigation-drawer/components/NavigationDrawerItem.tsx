@@ -23,11 +23,7 @@ import {
   Text,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/primitives/typography';
-import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 const DEFAULT_INDENTATION_LEVEL = 1;
 
 export type NavigationDrawerItemIndentationLevel = 1 | 2;
@@ -263,7 +259,7 @@ export const NavigationDrawerItem = ({
   isSelectedInEditMode = false,
   variant = 'default',
 }: NavigationDrawerItemProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const editingContent = useContext(NavigationDrawerItemEditingContext);
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();

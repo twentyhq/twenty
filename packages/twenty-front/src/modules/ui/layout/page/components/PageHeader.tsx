@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 
 import { FrontComponentMediaSessionIndicator } from '@/front-components/media-session/components/FrontComponentMediaSessionIndicator';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
@@ -15,11 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -105,7 +101,7 @@ export const PageHeader = ({
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
   return (

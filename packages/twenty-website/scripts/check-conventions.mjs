@@ -282,21 +282,14 @@ function walk(directory) {
       }
     }
 
-    // twenty-ui's theme is pure data, baked by Linaria at build time — consume
-    // it directly so the mockups can't drift from the product. Its components
-    // are React runtime (+ react-tooltip): importing them would weigh down the
-    // marketing bundle, so the mockups stay on lean primitives built against
-    // the theme.
     const badTwentyUiSubpath = [
       ...content.matchAll(/from 'twenty-ui(\/[a-z-]+)?'/g),
     ]
       .map((match) => match[1] ?? '')
-      .find(
-        (subpath) => subpath !== '/theme' && subpath !== '/theme-constants',
-      );
+      .find((subpath) => subpath !== '/theme');
     if (badTwentyUiSubpath !== undefined) {
       failures.push(
-        `src/${relativePath}: only twenty-ui/theme is importable (pure data, baked at build); twenty-ui${badTwentyUiSubpath} pulls React runtime into the bundle — build a lean primitive instead.`,
+        `src/${relativePath}: only twenty-ui/theme is importable for static tokens baked at build; twenty-ui${badTwentyUiSubpath} pulls React runtime into the bundle — build a lean primitive instead.`,
       );
     }
 

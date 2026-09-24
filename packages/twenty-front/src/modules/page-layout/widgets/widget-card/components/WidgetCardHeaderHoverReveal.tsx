@@ -5,7 +5,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHoverReveal = styled.div<{ isVisible: boolean }>`
   opacity: ${({ isVisible }) => (isVisible ? '1' : '0')};

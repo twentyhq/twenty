@@ -2,10 +2,10 @@ import { t } from '@lingui/core/macro';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type MobileBreadcrumbProps = {
   className?: string;
@@ -46,7 +46,7 @@ export const MobileBreadcrumb = ({
   className,
   links,
 }: MobileBreadcrumbProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
 
   if (isSettingsPage && links.length <= 2) {
