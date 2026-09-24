@@ -14,9 +14,12 @@ import {
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
 import {
+  cardPickerDroppedClickTest,
+  cardPickerTest,
   checkboxTest,
   createFieldControlsTest,
-  createRadioGroupPreactTest,
+  radioGroupTest,
+  sliderRangeTest,
   sliderTest,
   toastTest,
 } from '@/__stories__/twenty-ui-gallery/utils/componentInteractionTests';
@@ -32,20 +35,16 @@ import {
   codeEditorTest,
   displayHelpersTest,
   galleryRenderTest,
-  inputPreactTest,
-  inputReactTest,
+  inputTest,
   themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {
   alertDialogTest,
   menuTest,
   popoverTest,
-  radioGroupReactTest,
   selectTest,
-  sliderRangeTest,
   switchTest,
-  tabsPreactTest,
-  tabsReactTest,
+  tabsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/sandboxFailureTests';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import {
@@ -101,12 +100,12 @@ export const IconPreact: Story = createGalleryStory({
 export const InputReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-input-gallery',
   runtime: 'react',
-  play: inputReactTest,
+  play: inputTest,
 });
 export const InputPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-input-gallery',
   runtime: 'preact',
-  play: inputPreactTest,
+  play: inputTest,
 });
 
 export const JsonVisualizerReact: Story = createGalleryStory({
@@ -261,12 +260,12 @@ export const SettingsRowPreact: Story = createGalleryStory({
 export const TabsReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tabs',
   runtime: 'react',
-  play: tabsReactTest,
+  play: tabsTest,
 });
 export const TabsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tabs',
   runtime: 'preact',
-  play: tabsPreactTest,
+  play: tabsTest,
 });
 
 export const PopoverReact: Story = createGalleryStory({
@@ -395,23 +394,23 @@ export const SliderRangePreact: Story = createGalleryStory({
 export const RadioGroupReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-radio-group',
   runtime: 'react',
-  play: radioGroupReactTest,
+  play: radioGroupTest,
 });
 export const RadioGroupPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-radio-group',
   runtime: 'preact',
-  play: createRadioGroupPreactTest({ optionName: 'Daily' }),
+  play: radioGroupTest,
 });
 
 export const CardPickerReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-radio-group',
   runtime: 'react',
-  play: radioGroupReactTest,
+  play: cardPickerDroppedClickTest,
 });
 export const CardPickerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-radio-group',
   runtime: 'preact',
-  play: createRadioGroupPreactTest({ optionName: 'Pro plan' }),
+  play: cardPickerTest,
 });
 
 export const StatusControlsReact: Story = createGalleryStory({

@@ -6,13 +6,10 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
 
 type CreateSandboxFailureTestOptions = SandboxErrorExpectation & {
-  trigger:
-    | { type: 'mount' }
-    | {
-        type: 'click';
-        role: 'button' | 'combobox' | 'switch' | 'tab';
-        name: string;
-      };
+  trigger: {
+    role: 'button' | 'combobox' | 'switch' | 'tab';
+    name: string;
+  };
 };
 
 export const createSandboxFailureTest =
@@ -22,13 +19,10 @@ export const createSandboxFailureTest =
     allowedAdditionalErrors,
   }: CreateSandboxFailureTestOptions): TwentyUiGalleryPlayFunction =>
   async ({ canvasElement }) => {
-    // Some failures prevent mounting; only interaction tests can await the card.
-    if (trigger.type === 'click') {
-      const canvas = within(canvasElement);
-      await expectFrontComponentMounted(canvas);
-      await userEvent.click(
-        canvas.getByRole(trigger.role, { name: trigger.name }),
-      );
-    }
+    const canvas = within(canvasElement);
+    await expectFrontComponentMounted(canvas);
+    await userEvent.click(
+      canvas.getByRole(trigger.role, { name: trigger.name }),
+    );
     await expectSandboxErrors({ requiredErrors, allowedAdditionalErrors });
   };

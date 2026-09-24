@@ -1,6 +1,4 @@
 export const SANDBOX_ERROR_PATTERNS = {
-  DOCUMENT_POSITION:
-    /^(?:Uncaught TypeError: )?\w+\.compareDocumentPosition is not a function$/,
   COMPOSED_PATH:
     "Uncaught TypeError: Cannot use 'in' operator to search for 'composedPath' in undefined",
   VIEWPORT_WIDTH:
@@ -14,6 +12,9 @@ export const SANDBOX_ERROR_PATTERNS = {
   HOST_EVENT_LISTENER: 'Uncaught TypeError: listener is not a function',
   ELEMENT_REF_FOCUS:
     /^(?:Uncaught TypeError: )?\w+\.current\?\.focus is not a function$/,
+  ELEMENT_FOCUS: /^(?:Uncaught TypeError: )?\w+\?\.focus is not a function$/,
+  DISABLED_PSEUDO_CLASS:
+    "Uncaught SyntaxError: ':disabled' is not a valid selector.",
   POINTER_EVENT_CONSTRUCTOR:
     /^Uncaught TypeError: .+\.PointerEvent is not a constructor$/,
 };
