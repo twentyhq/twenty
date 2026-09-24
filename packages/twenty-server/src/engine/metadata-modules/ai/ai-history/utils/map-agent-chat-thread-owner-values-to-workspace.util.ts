@@ -3,7 +3,7 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { type AgentChatThreadOwnerMappingContext } from 'src/engine/metadata-modules/ai/ai-history/types/agent-chat-thread-owner-mapping-context.type';
-import { readAgentChatThreadOwnerUserWorkspaceId } from 'src/engine/metadata-modules/ai/ai-history/utils/read-agent-chat-thread-owner-user-workspace-id.util';
+import { readAgentChatThreadOwnerUserWorkspaceIdOrThrow } from 'src/engine/metadata-modules/ai/ai-history/utils/read-agent-chat-thread-owner-user-workspace-id-or-throw.util';
 import { resolveAgentChatThreadOwners } from 'src/engine/metadata-modules/ai/ai-history/utils/resolve-agent-chat-thread-owners.util';
 
 export const mapAgentChatThreadOwnerValuesToWorkspace = async ({
@@ -26,7 +26,7 @@ export const mapAgentChatThreadOwnerValuesToWorkspace = async ({
       manager,
       workspaceId,
       from: 'userWorkspaceId',
-      ids: ownedRecords.map(readAgentChatThreadOwnerUserWorkspaceId),
+      ids: ownedRecords.map(readAgentChatThreadOwnerUserWorkspaceIdOrThrow),
     },
   );
 

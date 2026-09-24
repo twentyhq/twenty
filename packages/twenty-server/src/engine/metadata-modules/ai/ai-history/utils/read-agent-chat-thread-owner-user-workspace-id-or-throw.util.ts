@@ -3,7 +3,7 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 
-export const readAgentChatThreadOwnerUserWorkspaceId = (
+export const readAgentChatThreadOwnerUserWorkspaceIdOrThrow = (
   clause: ObjectLiteral,
 ): string => {
   const userWorkspaceId = clause.userWorkspaceId;

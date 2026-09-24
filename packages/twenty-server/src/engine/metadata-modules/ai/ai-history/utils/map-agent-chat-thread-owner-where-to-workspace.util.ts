@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type AgentChatThreadOwnerMappingContext } from 'src/engine/metadata-modules/ai/ai-history/types/agent-chat-thread-owner-mapping-context.type';
-import { readAgentChatThreadOwnerUserWorkspaceId } from 'src/engine/metadata-modules/ai/ai-history/utils/read-agent-chat-thread-owner-user-workspace-id.util';
+import { readAgentChatThreadOwnerUserWorkspaceIdOrThrow } from 'src/engine/metadata-modules/ai/ai-history/utils/read-agent-chat-thread-owner-user-workspace-id-or-throw.util';
 import { resolveAgentChatThreadOwners } from 'src/engine/metadata-modules/ai/ai-history/utils/resolve-agent-chat-thread-owners.util';
 import { type WorkspaceFindOptions } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 
@@ -31,7 +31,7 @@ export const mapAgentChatThreadOwnerWhereToWorkspace = async ({
       manager,
       workspaceId,
       from: 'userWorkspaceId',
-      ids: ownedClauses.map(readAgentChatThreadOwnerUserWorkspaceId),
+      ids: ownedClauses.map(readAgentChatThreadOwnerUserWorkspaceIdOrThrow),
     },
   );
 
