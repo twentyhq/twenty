@@ -14,6 +14,7 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { GoogleApiRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftApiRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
@@ -50,6 +51,7 @@ export class ConnectedAccountRefreshTokensService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async resolveTokens(
@@ -67,23 +69,51 @@ export class ConnectedAccountRefreshTokensService {
       return this.getExistingEncryptedTokens(connectedAccount, workspaceId);
     }
 
-    const encryptedRefreshToken = connectedAccount.refreshToken;
+    const lockKey = `connected-account-refresh-tokens:${connectedAccount.id}`;
 
-    if (!isDefined(encryptedRefreshToken)) {
-      throw new ConnectedAccountRefreshAccessTokenException(
-        `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
-        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
-      );
-    }
+    return await this.cacheLockService.withLock(
+      async () => {
+        const freshConnectedAccount =
+          await this.connectedAccountRepository.findOneBy({
+            id: connectedAccount.id,
+          });
 
-    this.logger.debug(
-      `Access token expired for connected account ${connectedAccount.id} in workspace ${workspaceId}, refreshing...`,
-    );
+        if (
+          isDefined(freshConnectedAccount) &&
+          (await this.isAccessTokenStillValid(freshConnectedAccount))
+        ) {
+          this.logger.debug(
+            `Reusing refreshed access token for connected account ${freshConnectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}`,
+          );
 
-    return this.performRefreshAndSave(
-      connectedAccount,
-      encryptedRefreshToken,
-      workspaceId,
+          return this.getExistingEncryptedTokens(
+            freshConnectedAccount,
+            workspaceId,
+          );
+        }
+
+        const currentAccount = freshConnectedAccount ?? connectedAccount;
+        const encryptedRefreshToken = currentAccount.refreshToken;
+
+        if (!isDefined(encryptedRefreshToken)) {
+          throw new ConnectedAccountRefreshAccessTokenException(
+            `No refresh token found for connected account ${currentAccount.id} in workspace ${workspaceId}`,
+            ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
+          );
+        }
+
+        this.logger.debug(
+          `Access token expired for connected account ${currentAccount.id} in workspace ${workspaceId}, refreshing...`,
+        );
+
+        return this.performRefreshAndSave(
+          currentAccount,
+          encryptedRefreshToken,
+          workspaceId,
+        );
+      },
+      lockKey,
+      { ttl: 15_000 },
     );
   }
 
