@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
@@ -35,15 +37,25 @@ export class EmailBillingService {
     });
   }
 
+  // A caller that already knows how many it is about to send names the count,
+  // so a batch straddling the limit is refused whole instead of being admitted
+  // on the one email still left and charged for all of them afterwards.
   async findEmailSendRefusal({
     workspaceId,
     spenders,
-  }: EmailUsageScope): Promise<UsageRefusal | null> {
+    emailCount,
+  }: EmailUsageScope & { emailCount?: number }): Promise<UsageRefusal | null> {
     return this.billingUsageService.findUsageRefusal({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,
       spenders,
+      cost: isDefined(emailCount)
+        ? {
+            quantity: emailCount,
+            creditsUsedMicro: computeEmailCreditsUsedMicro(emailCount),
+          }
+        : undefined,
     });
   }
 

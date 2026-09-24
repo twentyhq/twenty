@@ -58,4 +58,44 @@ describe('findExhaustedCounters', () => {
       }),
     ).toEqual([]);
   });
+
+  it('refuses a counter that cannot cover the named cost', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildCounter('first')],
+        remainings: [100],
+        cost: { creditsUsedMicro: 101, quantity: 0 },
+      }),
+    ).toMatchObject([{ key: 'first' }]);
+  });
+
+  it('admits a cost that fits the remaining exactly', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildCounter('first')],
+        remainings: [100],
+        cost: { creditsUsedMicro: 100, quantity: 0 },
+      }),
+    ).toEqual([]);
+  });
+
+  it('charges a counter only for the meter it counts', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildCounter('first')],
+        remainings: [10],
+        cost: { creditsUsedMicro: 0, quantity: 500 },
+      }),
+    ).toEqual([]);
+  });
+
+  it('still refuses an emptied counter whatever the cost', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildCounter('first')],
+        remainings: [0],
+        cost: { creditsUsedMicro: 0, quantity: 0 },
+      }),
+    ).toMatchObject([{ key: 'first' }]);
+  });
 });

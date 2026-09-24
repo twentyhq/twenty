@@ -36,6 +36,8 @@ import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/uti
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
+import { buildQuotaDefaultActiveValueKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-active-value-key.util';
+import { buildQuotaDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-counter-key.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { buildShadowedQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-shadowed-quota-default-counter-keys.util';
@@ -97,7 +99,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
   }
 
   async findExhaustedScope(
-    args: QuotaConsumeArgs,
+    args: QuotaConsumeArgs & { cost?: QuotaCost },
   ): Promise<ExhaustedScope | null> {
     const exhaustedScopes =
       await this.findExhaustedScopesAdmittingOnFailure(args);
@@ -397,15 +399,21 @@ export class UsageLimitQuotaService implements OnModuleInit {
     );
   }
 
-  private async findExhaustedScopesAdmittingOnFailure(
-    args: QuotaConsumeArgs,
-  ): Promise<ExhaustedScope[]> {
+  private async findExhaustedScopesAdmittingOnFailure({
+    cost,
+    ...args
+  }: QuotaConsumeArgs & { cost?: QuotaCost }): Promise<ExhaustedScope[]> {
     try {
       const counters = await this.buildCounters(args);
 
       if (counters.length === 0) {
         return [];
       }
+
+      await this.retireSupersededDefaultCounters({
+        workspaceId: args.workspaceId,
+        counters,
+      });
 
       const remainings = await this.readRemainings({
         workspaceId: args.workspaceId,
@@ -416,6 +424,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
         args,
         counters,
         remainings,
+        cost,
       });
     } catch (error) {
       return this.admitOnFailure({
@@ -437,6 +446,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
       if (counters.length === 0) {
         return [];
       }
+
+      await this.retireSupersededDefaultCounters({
+        workspaceId: args.workspaceId,
+        counters,
+      });
 
       // The consume script only debits keys that exist: warm cold counters
       // first so a consume-only caller (workflow, logic function) is metered
@@ -474,12 +488,21 @@ export class UsageLimitQuotaService implements OnModuleInit {
     args,
     counters,
     remainings,
+    cost,
   }: {
     args: QuotaConsumeArgs;
     counters: QuotaCounter[];
     remainings: (number | null)[];
+    // Only the assert path names one: after a consume the remaining already
+    // carries the debit, and charging it again would refuse the caller that
+    // just paid.
+    cost?: QuotaCost;
   }): Promise<ExhaustedScope[]> {
-    const exhaustedCounters = findExhaustedCounters({ counters, remainings });
+    const exhaustedCounters = findExhaustedCounters({
+      counters,
+      remainings,
+      cost,
+    });
 
     if (exhaustedCounters.length === 0) {
       return [];
@@ -548,6 +571,87 @@ export class UsageLimitQuotaService implements OnModuleInit {
         amount: cost.creditsUsedMicro,
         attributes,
       });
+    }
+  }
+
+  private async retireSupersededDefaultCounters({
+    workspaceId,
+    counters,
+  }: {
+    workspaceId: string;
+    counters: QuotaCounter[];
+  }): Promise<void> {
+    const defaultCounters = counters.filter(
+      (counter): counter is LimitQuotaCounter =>
+        counter.kind === 'limit' && counter.isDefault,
+    );
+
+    if (defaultCounters.length === 0) {
+      return;
+    }
+
+    const activeValueKeys = defaultCounters.map((counter) =>
+      buildQuotaDefaultActiveValueKey({
+        workspaceId,
+        resourceType: counter.resourceType,
+        operationType: counter.operationType,
+        spenderType: counter.spenderType,
+        meter: counter.meter,
+        periodUnit: counter.periodUnit,
+        periodStart: counter.periodStart,
+      }),
+    );
+
+    const activeValues = await this.cacheStorage.mget<number>(activeValueKeys);
+
+    const supersededDefaults = defaultCounters.flatMap((counter, index) => {
+      const activeValue = activeValues[index];
+
+      return isDefined(activeValue) && activeValue !== counter.limitValue
+        ? [{ counter, activeValue }]
+        : [];
+    });
+
+    if (supersededDefaults.length > 0) {
+      await this.delUnderWarmLock({
+        workspaceId,
+        keys: supersededDefaults.flatMap(({ counter, activeValue }) => [
+          counter.key,
+          buildQuotaDefaultCounterKey({
+            workspaceId,
+            resourceType: counter.resourceType,
+            operationType: counter.operationType,
+            spenderType: counter.spenderType,
+            meter: counter.meter,
+            periodUnit: counter.periodUnit,
+            periodStart: counter.periodStart,
+            limitValue: activeValue,
+          }),
+        ]),
+      });
+    }
+
+    const now = Date.now();
+
+    // A pointer that is merely absent says nothing about the counter beside it,
+    // so a first read only records the value. Dropping on absence would re-warm
+    // every workspace at once the first time this ships and lose whatever the
+    // counters hold that ClickHouse has not ingested yet.
+    const activeValueEntries = defaultCounters.flatMap((counter, index) =>
+      activeValues[index] === counter.limitValue ||
+      counter.periodEnd.getTime() <= now
+        ? []
+        : [
+            {
+              key: activeValueKeys[index],
+              value: counter.limitValue,
+              ttl: counter.periodEnd.getTime() - now,
+            },
+          ],
+    );
+
+    if (activeValueEntries.length > 0) {
+      await this.cacheStorage.mset(activeValueEntries);
     }
   }
 
