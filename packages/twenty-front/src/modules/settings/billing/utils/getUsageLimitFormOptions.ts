@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { USAGE_LIMIT_METER_LABELS } from '@/settings/billing/constants/UsageLimitMeterLabels';
-import { USAGE_LIMIT_PERIOD_UNITS } from '@/settings/billing/constants/UsageLimitPeriodUnits';
+import { ANCHORED_USAGE_LIMIT_PERIOD_UNITS } from '@/settings/billing/constants/AnchoredUsageLimitPeriodUnits';
 import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitSpenderTypeLabels';
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
 import { type UsageLimitMeter } from '@/settings/billing/types/UsageLimitMeter';
@@ -55,6 +55,8 @@ export const getUsageLimitFormOptions = ({
 
   const operationTypes = getUsageLimitOperationTypes(definition);
 
+  // Only quota definitions reach this query, and a quota's allowedMeters never
+  // holds 'bytes', so this is a have-we-a-label check rather than an allowlist.
   const meters = definition.allowedMeters
     .filter((meter) => isKeyOfRecord(USAGE_LIMIT_METER_LABELS, meter))
     .filter(
@@ -63,7 +65,7 @@ export const getUsageLimitFormOptions = ({
         meter === 'creditsUsedMicro',
     );
 
-  const periodUnits = USAGE_LIMIT_PERIOD_UNITS.filter(
+  const periodUnits = ANCHORED_USAGE_LIMIT_PERIOD_UNITS.filter(
     (periodUnit) =>
       periodUnit !== 'allowancePeriod' || definitions.hasAllowancePeriod,
   );
