@@ -1,17 +1,17 @@
 import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
 
 export const buildCampaignDeliverySettleQuery = ({
-  workspaceId,
+  campaignDeliveryTableName,
   claimToken,
   settlements,
 }: {
-  workspaceId: string;
+  campaignDeliveryTableName: string;
   claimToken: string;
   settlements: CampaignDeliverySettlement[];
-}): { sql: string; parameters: unknown[] } => ({
+}): { sql: string; parameters: Record<string, unknown> } => ({
   sql: `
 WITH settled AS (
-  UPDATE "core"."campaignDelivery" delivery
+  UPDATE ${campaignDeliveryTableName} delivery
   SET
     "state" = source."state",
     "skipReason" = source."skipReason",
@@ -21,23 +21,25 @@ WITH settled AS (
     "updatedAt" = now(),
     "claimToken" = NULL,
     "claimExpiresAt" = NULL
-  FROM unnest($1::uuid[], $2::text[], $3::text[], $4::text[], $5::text[], $6::timestamptz[])
+  FROM unnest(:deliveryIds::uuid[], :states::text[], :skipReasons::text[], :failureReasons::text[], :providerMessageIds::text[], :sentAtValues::timestamptz[])
     AS source("id", "state", "skipReason", "failureReason", "providerMessageId", "sentAt")
   WHERE delivery."id" = source."id"
-    AND delivery."workspaceId" = $7
-    AND delivery."claimToken" = $8
+    AND delivery."claimToken" = :claimToken
   RETURNING delivery."id"
 )
 SELECT "id" FROM settled
 `,
-  parameters: [
-    settlements.map(({ deliveryId }) => deliveryId),
-    settlements.map(({ state }) => state),
-    settlements.map(({ skipReason }) => skipReason ?? null),
-    settlements.map(({ failureReason }) => failureReason ?? null),
-    settlements.map(({ providerMessageId }) => providerMessageId ?? null),
-    settlements.map(({ sentAt }) => sentAt ?? null),
-    workspaceId,
+  parameters: {
+    deliveryIds: settlements.map(({ deliveryId }) => deliveryId),
+    states: settlements.map(({ state }) => state),
+    skipReasons: settlements.map(({ skipReason }) => skipReason ?? null),
+    failureReasons: settlements.map(
+      ({ failureReason }) => failureReason ?? null,
+    ),
+    providerMessageIds: settlements.map(
+      ({ providerMessageId }) => providerMessageId ?? null,
+    ),
+    sentAtValues: settlements.map(({ sentAt }) => sentAt ?? null),
     claimToken,
-  ],
+  },
 });

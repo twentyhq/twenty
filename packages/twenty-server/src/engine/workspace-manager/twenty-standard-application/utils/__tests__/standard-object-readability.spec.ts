@@ -69,6 +69,9 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
     STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
 
+    STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
+    STANDARD_OBJECTS.messageSuppression.universalIdentifier,
+
     STANDARD_OBJECTS.recordShare.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
