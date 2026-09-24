@@ -642,10 +642,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   private isRecordSharingEnforced(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
-    return (
-      queryRunnerContext.repository.internalContext.isLegacyRecordAccessOpen !==
-      true
-    );
+    return !queryRunnerContext.repository.internalContext.isLegacyRecordAccessOpen;
   }
 
   private resolveNestedRelationsForCreate({
