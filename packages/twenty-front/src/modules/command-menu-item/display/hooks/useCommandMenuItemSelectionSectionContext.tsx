@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import {
   isDefined,
   isNonEmptyArray,
@@ -10,6 +10,7 @@ import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowReq
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemSelectionRecordStack } from '@/command-menu-item/display/components/CommandMenuItemSelectionRecordStack';
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
+import { orderRecordIdsBySelection } from '@/command-menu-item/utils/orderRecordIdsBySelection';
 import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -39,13 +40,33 @@ export const useCommandMenuItemSelectionSectionContext = ():
   );
 
   // Select-all targets records that may not be loaded, so only an explicit
-  // selection has avatars to show. The latest selections go on the stack.
-  const recordIdsWithAvatar =
+  // selection has avatars to show.
+  const selectedRecordIds =
     contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds.slice(
-          -MAX_STACKED_RECORDS,
-        )
+      ? contextStoreTargetedRecordsRule.selectedRecordIds
       : [];
+
+  // The store lists selected records in view order, so the order they were
+  // selected in is tracked here to put the latest selections on the stack.
+  const [recordIdsInSelectionOrder, setRecordIdsInSelectionOrder] =
+    useState(selectedRecordIds);
+  const [previousSelectionKey, setPreviousSelectionKey] = useState(
+    selectedRecordIds.join(','),
+  );
+  const selectionKey = selectedRecordIds.join(',');
+
+  if (selectionKey !== previousSelectionKey) {
+    setPreviousSelectionKey(selectionKey);
+    setRecordIdsInSelectionOrder(
+      orderRecordIdsBySelection({
+        previousRecordIdsInSelectionOrder: recordIdsInSelectionOrder,
+        selectedRecordIds,
+      }),
+    );
+  }
+
+  const recordIdsWithAvatar =
+    recordIdsInSelectionOrder.slice(-MAX_STACKED_RECORDS);
 
   const records = useAtomFamilySelectorValue(recordStoreRecordsSelector, {
     recordIds: recordIdsWithAvatar,
