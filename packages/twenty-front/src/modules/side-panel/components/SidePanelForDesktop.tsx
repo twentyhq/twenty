@@ -21,12 +21,14 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
-import { type AnimationEvent, useCallback, useState } from 'react';
+import {
+  type AnimationEvent,
+  type TransitionEvent,
+  useCallback,
+  useState,
+} from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// Width is not transitioned: the main content is a flex sibling, so animating
-// it lays out the whole page on every frame. The background hides the reserved
-// room until the panel has slid over it.
 const StyledSidePanelWrapper = styled.div<{ isOpen: boolean }>`
   background: ${themeCssVariables.background.primary};
   flex-shrink: 0;
@@ -46,8 +48,6 @@ const StyledSidePanelWrapper = styled.div<{ isOpen: boolean }>`
   }
 `;
 
-// Pinned to the right edge of the row and slid with `transform`, which needs no
-// layout. When closed it is clipped by the main container's `overflow: hidden`.
 const StyledSidePanel = styled.aside<{
   isOpen: boolean;
   isShrinkingFromFullWidth: boolean;
@@ -114,7 +114,7 @@ export const SidePanelForDesktop = () => {
     setShouldRenderContent(true);
   }
 
-  const handleTransitionEnd = () => {
+  const handleCloseAnimationComplete = () => {
     if (isSidePanelOpened) {
       return;
     }
@@ -126,13 +126,24 @@ export const SidePanelForDesktop = () => {
     }
   };
 
+  const handleTransitionEnd = (event: TransitionEvent<HTMLElement>) => {
+    if (
+      event.target !== event.currentTarget ||
+      event.propertyName !== 'transform'
+    ) {
+      return;
+    }
+
+    handleCloseAnimationComplete();
+  };
+
   const handleAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
     if (event.target !== event.currentTarget) {
       return;
     }
 
     setIsShrinkingFromFullWidth(false);
-    handleTransitionEnd();
+    handleCloseAnimationComplete();
   };
 
   const handleModalContainerRef = useCallback(
@@ -178,13 +189,13 @@ export const SidePanelForDesktop = () => {
 
       <StyledSidePanelWrapper
         isOpen={isSidePanelOpened}
-        onTransitionEnd={handleTransitionEnd}
         onAnimationEnd={handleAnimationEnd}
         data-shrink-from-full-width={isShrinkingFromFullWidth}
         data-side-panel=""
         data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}
       >
         <StyledSidePanel
+          onTransitionEnd={handleTransitionEnd}
           isOpen={isSidePanelOpened}
           isShrinkingFromFullWidth={isShrinkingFromFullWidth}
         >
