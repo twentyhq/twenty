@@ -240,7 +240,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       })}
       {shouldDisplayFallbackItems && (
         <CommandMenuItemSectionGroup
-          heading={t`Use ‘${trimmedSidePanelSearch}’ with...`}
+          heading={
+            isSearchActive
+              ? t`Use ‘${trimmedSidePanelSearch}’ with...`
+              : getSectionHeading('FALLBACK')
+          }
           Icon={IconLifebuoy}
         >
           {fallbackCommandMenuItems.map((item) => (
