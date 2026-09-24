@@ -26,7 +26,7 @@ import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFi
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: stretch;
@@ -99,7 +99,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
   ({
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInputProps) => {
-    const { theme } = useContext(ThemeContext);
+    const theme = useTheme();
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
     const currentRecordFilters = useAtomComponentStateValue(

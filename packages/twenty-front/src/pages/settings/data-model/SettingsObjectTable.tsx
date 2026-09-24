@@ -27,16 +27,12 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useContext, useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SearchInput, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
@@ -70,7 +66,7 @@ export const SettingsObjectTable = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   withSearchBar?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const navigate = useNavigateSettings();

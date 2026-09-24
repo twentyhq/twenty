@@ -21,7 +21,7 @@ import {
 } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledDropdownContainer = styled.div`

@@ -1,6 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { JsonTree } from 'twenty-ui/components';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,

@@ -1,7 +1,7 @@
 import { OnboardingHeader } from '@/onboarding/components/OnboardingHeader';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledBackground = styled.div`
   background: ${themeCssVariables.background.secondary};

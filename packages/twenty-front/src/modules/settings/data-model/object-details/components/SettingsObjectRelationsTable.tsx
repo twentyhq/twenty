@@ -26,7 +26,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import {
   OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,

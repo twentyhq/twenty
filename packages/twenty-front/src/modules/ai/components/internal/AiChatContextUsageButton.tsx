@@ -25,7 +25,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconWindow, IconGauge } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';

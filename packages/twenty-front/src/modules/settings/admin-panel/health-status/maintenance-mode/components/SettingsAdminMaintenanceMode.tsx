@@ -21,7 +21,7 @@ import { Section, useToast } from 'twenty-ui/components';
 import { IconLink, IconTool } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormContainer = styled.div`
   display: flex;

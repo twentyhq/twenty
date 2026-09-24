@@ -4,13 +4,12 @@ import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/getEmailParticipantAvatarColorSeed';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { useContext } from 'react';
 
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   MessageChannelVisibility,
   type TimelineThread,
@@ -87,7 +86,7 @@ type LastAvatar = {
 };
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const visibility = thread.visibility;

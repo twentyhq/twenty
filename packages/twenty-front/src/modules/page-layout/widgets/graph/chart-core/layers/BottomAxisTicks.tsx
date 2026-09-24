@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 type BottomAxisTicksProps = {
   bottomTickValues: (string | number)[];
   getBottomTickPosition: (value: string | number, index: number) => number;
@@ -19,7 +18,7 @@ export const BottomAxisTicks = ({
   tickPadding,
   tickFontSize,
 }: BottomAxisTicksProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <>

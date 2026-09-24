@@ -5,7 +5,7 @@ import { recordCalendarSelectedDateComponentState } from '@/object-record/record
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isPlainDateInSameMonth } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{ isDayLayout: boolean }>`

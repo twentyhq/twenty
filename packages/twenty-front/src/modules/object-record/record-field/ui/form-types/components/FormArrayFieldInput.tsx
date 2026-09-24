@@ -29,7 +29,6 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import {
   type FocusEvent,
   type KeyboardEvent,
-  useContext,
   useId,
   useRef,
   useState,
@@ -37,7 +36,7 @@ import {
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { toSpliced } from '~/utils/array/toSpliced';
 
 type FormArrayFieldInputProps = {
@@ -102,7 +101,7 @@ export const FormArrayFieldInput = ({
   maxItemCount,
 }: FormArrayFieldInputProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const instanceId = useId();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();

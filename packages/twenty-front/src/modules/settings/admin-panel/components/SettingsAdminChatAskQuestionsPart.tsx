@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { IconHelpCircle } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsAdminChatAskQuestionsQuestion } from '@/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion';
 import { SettingsAdminChatToolCallPart } from '@/settings/admin-panel/components/SettingsAdminChatToolCallPart';

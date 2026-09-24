@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { Dropdown, IconButton } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOptionsButtonContainer = styled.div`
   align-items: center;

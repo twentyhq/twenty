@@ -15,8 +15,7 @@ import {
   type ButtonSize,
   type ButtonVariant,
 } from 'twenty-ui/primitives/input';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';

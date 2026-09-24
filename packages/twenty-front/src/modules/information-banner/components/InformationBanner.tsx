@@ -15,7 +15,7 @@ import {
   type BannerVariant,
 } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
   min-width: 0;

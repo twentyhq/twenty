@@ -3,7 +3,7 @@ import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { Section } from 'twenty-ui/components';
 import { IconMessage, IconRobot, IconWand } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';

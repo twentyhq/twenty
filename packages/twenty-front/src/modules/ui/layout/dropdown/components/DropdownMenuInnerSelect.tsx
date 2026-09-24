@@ -3,11 +3,10 @@ import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDro
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;
@@ -43,7 +42,7 @@ export const DropdownMenuInnerSelect = ({
   dropdownId,
   widthInPixels,
 }: DropdownMenuInnerSelectProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { closeDropdown } = useCloseDropdown();
 
   return (

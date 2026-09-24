@@ -711,7 +711,7 @@ yarn add twenty-ui@1.0.0-alpha.1
 | `twenty-ui/feedback`        | `Callout`، و`Banner`، و`Info`، وغير ذلك               |
 | `twenty-ui/typography`      | `H1Title`، و`H2Title`، و`H3Title`، و`Label`، وغير ذلك |
 | `twenty-ui/icon`            | مكوّنات `Icon*` (مثلًا `IconCheck`)                   |
-| `twenty-ui/theme-constants` | `ThemeProvider`، و`themeCssVariables`                 |
+| `twenty-ui/theme` | `ThemeProvider`، و`themeCssVariables`                 |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ import { IconBox, IconCheck } from 'twenty-ui/icon';
 لاستخدام نفس رموز التصميم في أنماطك المضمّنة (inline styles)، استدعِ الخطّاف `useTheme()`. يُرجِع هذا الخطّاف رموز سمة Twenty (للمسافات، والألوان، وأنصاف الأقطار، والخطوط) المرتبطة بالنسق النشِط، دون الحاجة إلى إعداد `ThemeProvider` في المكوّن لديك:
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

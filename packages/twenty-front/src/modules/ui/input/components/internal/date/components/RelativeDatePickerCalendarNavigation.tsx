@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;

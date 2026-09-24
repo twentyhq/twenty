@@ -9,7 +9,7 @@ import { useMemo, useState } from 'react';
 import 'react-phone-number-input/style.css';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledIconContainer = styled.div`
   align-items: center;

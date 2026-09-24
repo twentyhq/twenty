@@ -18,7 +18,7 @@ import {
   useToast,
 } from 'twenty-ui/components';
 import { IconArchive, IconSettings } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   ActivateSkillDocument,
   DeleteSkillDocument,

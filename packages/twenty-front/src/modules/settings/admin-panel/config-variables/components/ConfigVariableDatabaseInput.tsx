@@ -11,7 +11,7 @@ import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { ConfigVariableType } from '~/generated-admin/graphql';
 import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 

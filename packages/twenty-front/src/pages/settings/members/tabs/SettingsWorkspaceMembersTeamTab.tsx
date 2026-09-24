@@ -12,7 +12,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import {
   AppPath,
@@ -30,7 +30,7 @@ import {
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -79,7 +79,7 @@ const StyledChevronWrapper = styled.div`
 `;
 
 export const SettingsWorkspaceMembersTeamTab = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const navigateApp = useNavigateApp();
   const navigateSettings = useNavigateSettings();

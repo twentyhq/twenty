@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Section } from 'twenty-ui/components';
 import { Chip, Status, Tag } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 const CARD_STYLE = {
   padding: 24,

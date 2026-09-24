@@ -25,7 +25,7 @@ import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton, useToast } from 'twenty-ui/components';
 import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledForm = styled.form`

@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
 
 const StyledInnerContainer = styled.div`

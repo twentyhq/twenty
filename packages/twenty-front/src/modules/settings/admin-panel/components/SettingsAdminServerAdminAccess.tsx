@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   GetServerAdminsDocument,
   UpdateServerAdminAccessDocument,

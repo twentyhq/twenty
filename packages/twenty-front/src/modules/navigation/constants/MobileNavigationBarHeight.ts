@@ -1,4 +1,4 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // NavigationBar builds its row out of the item height plus its own padding and
 // border, so the height has to be rebuilt from the same tokens here.
