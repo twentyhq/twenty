@@ -560,6 +560,17 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(textInput.matches(':placeholder-shown')).toBe(true);
       textInput.value = 'acme';
       expect(textInput.matches(':placeholder-shown')).toBe(false);
+
+      for (const inputType of ['hidden', 'checkbox']) {
+        const inputWithoutPlaceholder = document.createElement('input');
+        inputWithoutPlaceholder.setAttribute('type', inputType);
+        inputWithoutPlaceholder.setAttribute('placeholder', 'Search');
+        document.body.append(inputWithoutPlaceholder);
+
+        expect(inputWithoutPlaceholder.matches(':placeholder-shown')).toBe(
+          false,
+        );
+      }
     });
 
     it('should evaluate :indeterminate, :valid, :open and :defined', () => {
@@ -669,6 +680,12 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(requiredInput.matches(':required')).toBe(true);
       expect(requiredInput.matches(':optional')).toBe(false);
       expect(optionalSelect.matches(':optional')).toBe(true);
+      const requiredHiddenInput = document.createElement('input');
+      requiredHiddenInput.setAttribute('type', 'hidden');
+      requiredHiddenInput.setAttribute('required', '');
+      document.body.append(requiredHiddenInput);
+      expect(requiredHiddenInput.matches(':required')).toBe(false);
+      expect(requiredHiddenInput.matches(':optional')).toBe(true);
       expect(link.matches(':any-link')).toBe(true);
       expect(link.matches(':link')).toBe(true);
       expect(placeholderLink.matches(':any-link')).toBe(false);
