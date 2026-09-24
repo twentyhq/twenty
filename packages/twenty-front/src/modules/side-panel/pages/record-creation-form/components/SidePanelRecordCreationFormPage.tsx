@@ -27,6 +27,7 @@ import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -90,6 +91,7 @@ const SidePanelRecordCreationForm = ({
   const theme = useTheme();
 
   const { settleRecordCreationDraft } = useRecordCreationFormSettle();
+  const { enqueueToast } = useToast();
 
   const [recordCreationFormDraft, setRecordCreationFormDraft] =
     useAtomComponentState(recordCreationFormDraftComponentState);
@@ -172,6 +174,18 @@ const SidePanelRecordCreationForm = ({
     setValidationRuleViolations(draftViolations);
 
     if (draftViolations.length > 0) {
+      const [firstViolation, ...otherViolations] = draftViolations;
+      const firstViolationMessage = firstViolation.message;
+      const otherViolationCount = otherViolations.length;
+
+      enqueueToast({
+        variant: 'error',
+        children:
+          otherViolationCount > 0
+            ? t`${firstViolationMessage} and ${otherViolationCount} more`
+            : firstViolationMessage,
+      });
+
       return;
     }
 
