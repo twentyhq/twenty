@@ -1,4 +1,7 @@
+import { inputPreactTest } from '@/__stories__/twenty-ui-gallery/utils/inputPreactTest';
+import { inputReactTest } from '@/__stories__/twenty-ui-gallery/utils/inputReactTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
+import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
 import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
@@ -31,8 +34,6 @@ import {
   codeEditorTest,
   displayHelpersTest,
   galleryRenderTest,
-  inputPreactTest,
-  inputReactTest,
   themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {
@@ -119,12 +120,12 @@ export const JsonVisualizerPreact: Story = createGalleryStory({
 export const LayoutReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-layout-gallery',
   runtime: 'react',
-  play: galleryRenderTest,
+  play: resizeHandleTest,
 });
 export const LayoutPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-layout-gallery',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: resizeHandleTest,
 });
 
 export const NavigationReact: Story = createGalleryStory({

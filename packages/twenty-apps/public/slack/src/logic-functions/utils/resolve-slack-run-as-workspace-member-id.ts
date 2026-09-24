@@ -54,10 +54,12 @@ const recordEmailMatchOnAutoLink = async ({
 export const resolveSlackRunAsWorkspaceMemberId = async ({
   client,
   slackClient,
+  slackConnectionId,
   identity,
 }: {
   client: CoreApiClient;
   slackClient: WebClient;
+  slackConnectionId: string | undefined;
   identity: SlackUserIdentity | undefined;
 }): Promise<string | undefined> => {
   if (!isDefined(identity) || !isNonEmptyString(identity.slackTeamId)) {
@@ -71,6 +73,7 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     knownIdentities: [identity],
     client,
     slackClient,
+    slackConnectionId,
   }).catch(() => undefined);
 
   const resolution = resolutionBySlackUserId?.get(slackUserId);

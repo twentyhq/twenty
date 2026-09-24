@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application file upload reservation should fail when applicationUniversalIdentifier does not match any installed application 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_NOT_FOUND",
+    "userFriendlyMessage": "Application not found.",
+  },
+  "message": "Application not found in workspace.",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Application file upload reservation should fail when applicationUniversalIdentifier is empty 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "applicationUniversalIdentifier should not be empty",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Application file upload reservation should fail when fileFolder is not an allowed application file folder 1`] = `"Invalid fileFolder for application file upload. Allowed values: built-logic-function, built-front-component, public-asset, source, dependencies"`;
+
+exports[`Application file upload reservation should fail when filePath contains backslash path traversal 1`] = `"Resource path must not contain backslashes"`;
+
+exports[`Application file upload reservation should fail when filePath contains relative path traversal (../) 1`] = `"Resource path must not contain path traversal (..)"`;
+
+exports[`Application file upload reservation should fail when filePath contains upward traversal (../../) 1`] = `"Resource path must not contain path traversal (..)"`;
+
+exports[`Application file upload reservation should fail when filePath has an invalid extension for BuiltFrontComponent (.js instead of .mjs) 1`] = `"Invalid file extension. Allowed extensions: .mjs"`;
+
+exports[`Application file upload reservation should fail when filePath has an invalid extension for BuiltLogicFunction (.html) 1`] = `"Invalid file extension. Allowed extensions: .mjs"`;
+
+exports[`Application file upload reservation should fail when filePath has an invalid extension for Dependencies (.sh instead of .json/.lock) 1`] = `"Invalid file extension. Allowed extensions: .json, .lock"`;
+
+exports[`Application file upload reservation should fail when filePath has an invalid extension for Source (.js instead of .ts) 1`] = `"Invalid file extension. Allowed extensions: .ts, .tsx, .json"`;
+
+exports[`Application file upload reservation should fail when filePath is a folder path without extension (bare UUID) 1`] = `"Filename must have an extension"`;
+
+exports[`Application file upload reservation should fail when filePath is a nested folder path without extension 1`] = `"Filename must have an extension"`;
+
+exports[`Application file upload reservation should fail when filePath is an absolute path 1`] = `"Resource path must be relative, not absolute"`;
+
+exports[`Application file upload reservation should fail when filePath is empty 1`] = `"Resource path must not be empty"`;

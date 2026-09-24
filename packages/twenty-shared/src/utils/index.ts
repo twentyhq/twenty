@@ -300,6 +300,7 @@ export { isSafeUrl } from './url/isSafeUrl';
 export { isValidDomain } from './url/isValidDomain';
 export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
+export { normalizeAllowedIframeOrigin } from './url/normalizeAllowedIframeOrigin';
 export { normalizeDomain } from './url/normalizeDomain';
 export { normalizeUrl } from './url/normalizeUrl';
 export { normalizeUrlOrigin } from './url/normalizeUrlOrigin';

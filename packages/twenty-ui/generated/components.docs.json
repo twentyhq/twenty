@@ -6845,6 +6845,13 @@
         "description": "Adds a handle below the editor to drag its height."
       },
       {
+        "name": "resizeLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Resize editor",
+        "description": "Accessible name of the resize handle. Pass a localized label when `resizable` is enabled."
+      },
+      {
         "name": "setMarkers",
         "type": "((value: string) => IMarkerData[])",
         "required": false,
