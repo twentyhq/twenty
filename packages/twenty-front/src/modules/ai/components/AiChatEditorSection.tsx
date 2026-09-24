@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { isDefined } from 'twenty-shared/utils';
 

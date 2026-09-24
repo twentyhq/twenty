@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { TableBody } from './TableBody';
 
 type TableSectionProps = {
@@ -41,7 +41,7 @@ export const TableSection = ({
   isInitiallyExpanded = true,
   title,
 }: TableSectionProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
   const handleToggleSection = () =>

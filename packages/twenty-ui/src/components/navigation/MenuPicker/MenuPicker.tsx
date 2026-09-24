@@ -3,7 +3,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';
 
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 import styles from './MenuPicker.module.scss';
 

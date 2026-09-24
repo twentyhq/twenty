@@ -5,7 +5,7 @@ import { timelineActivityTypeUniversalIdentifiersFilterFamilyState } from '@/act
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -78,7 +78,9 @@ export const WidgetActionTimelineFilter = () => {
       dropdownPlacement="bottom-end"
       onClose={() => setSearchInputValue('')}
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+        >
           <DropdownMenuSearchInput
             value={searchInputValue}
             onChange={(event) => setSearchInputValue(event.target.value)}
@@ -136,7 +138,7 @@ export const WidgetActionTimelineFilter = () => {
               </DropdownMenuItemsContainer>
             </>
           )}
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

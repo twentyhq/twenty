@@ -12,7 +12,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui/components';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCenteredButton = styled(Button)`
   box-sizing: border-box;

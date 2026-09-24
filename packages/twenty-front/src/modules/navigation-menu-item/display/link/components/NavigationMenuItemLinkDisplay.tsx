@@ -1,6 +1,5 @@
-import { useContext } from 'react';
 import { IconArrowUpRight } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
@@ -21,7 +20,7 @@ export const NavigationMenuItemLinkDisplay = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const label = getLinkNavigationMenuItemLabel(item);
   const computedLink = getLinkNavigationMenuItemComputedLink(item);

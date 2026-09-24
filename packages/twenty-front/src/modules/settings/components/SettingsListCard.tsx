@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
-import { type ComponentType, useContext } from 'react';
+import { type ComponentType } from 'react';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 
 import { type IconComponent, IconPlus } from 'twenty-ui/icon';
 import { Card, CardFooter } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooterContainer = styled.div`
@@ -73,7 +73,7 @@ export const SettingsListCard = <
   to,
   rounded,
 }: SettingsListCardProps<ListItem>) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   if (isLoading === true) return <SettingsListSkeletonCard />;
 

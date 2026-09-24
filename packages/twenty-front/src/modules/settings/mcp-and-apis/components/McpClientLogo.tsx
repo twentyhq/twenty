@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { useThemeColorScheme } from 'twenty-ui/theme-constants';
+import { useThemeColorScheme } from 'twenty-ui/theme';
 
 const StyledLogoImage = styled.img<{ isInverted: boolean }>`
   display: block;

@@ -6,4 +6,5 @@ export type BulkEnrichInput = {
   records: RecordInput | RecordInput[];
   updateFields?: UpdateFieldsOption;
   minLikelihood?: number;
+  weakIdentifierMinLikelihood?: number;
 };

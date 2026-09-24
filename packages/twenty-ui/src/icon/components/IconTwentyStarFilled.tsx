@@ -1,6 +1,6 @@
 import IconTwentyStarFilledRaw from '@assets/icons/twenty-star-filled.svg?react';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 type IconTwentyStarFilledProps = Pick<IconComponentProps, 'size' | 'stroke'>;
 

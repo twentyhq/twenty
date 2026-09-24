@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsAdminChatCollapsibleSection } from '@/settings/admin-panel/components/SettingsAdminChatCollapsibleSection';
 import { SettingsAdminChatMessagePartRenderer } from '@/settings/admin-panel/components/SettingsAdminChatMessagePartRenderer';

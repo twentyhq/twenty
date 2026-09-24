@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { IconInfoCircle } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsBillingLabelValueItemProps = {
   label: string;

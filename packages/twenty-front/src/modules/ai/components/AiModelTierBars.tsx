@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type AiModelTier } from 'twenty-shared/ai';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
 

@@ -711,7 +711,7 @@ Importă din subpath-ul corespunzător, nu din rădăcina pachetului, astfel în
 | `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` și altele              |
 | `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` și altele |
 | `twenty-ui/icon`            | Componente `Icon*` (de ex. `IconCheck`)            |
-| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`               |
+| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`               |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ Componentele Twenty UI se potrivesc automat cu tema luminoasă și întunecată 
 Pentru a folosi aceiași tokeni de design în propriile tale stiluri inline, apelează hook-ul `useTheme()`. Acesta returnează tokenii de temă ai Twenty (spațiere, culori, raze, fonturi) conectați la tema activă, fără a necesita vreo configurare `ThemeProvider` în componenta ta:
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

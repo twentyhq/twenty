@@ -7,7 +7,7 @@ import { getRecordFormFieldInputSettings } from '@/object-record/record-form/uti
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
 import { type JsonValue } from 'type-fest';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldList = styled.div`
   display: flex;

@@ -6,7 +6,7 @@ import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/stat
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
@@ -73,7 +73,7 @@ export const PageLayoutTabListNewTabDropdownContent = ({
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader>{t`New tab`}</DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <ListItem
@@ -102,6 +102,6 @@ export const PageLayoutTabListNewTabDropdownContent = ({
           </DropdownMenuItemsContainer>
         </>
       )}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };
