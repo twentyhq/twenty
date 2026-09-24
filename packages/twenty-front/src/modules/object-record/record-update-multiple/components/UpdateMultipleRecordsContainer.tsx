@@ -12,7 +12,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useToast } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const UPDATE_MULTIPLE_RECORDS_CONFIRMATION_MODAL_ID =
   'update-multiple-records-confirmation';

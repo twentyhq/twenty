@@ -22,16 +22,16 @@ export class ShareWithService {
 
   async validateShareWithOrThrow({
     authContext,
-    isRecordSharingEnabled,
+    isRecordSharingEnforced,
     shareWith,
   }: {
     authContext: WorkspaceAuthContext;
-    isRecordSharingEnabled: boolean;
+    isRecordSharingEnforced: boolean;
     shareWith?: ShareWithInput[] | null;
   }): Promise<void> {
     validateShareWithArgOrThrow({
       authContext,
-      isRecordSharingEnabled,
+      isRecordSharingEnforced,
       shareWith,
     });
 
@@ -57,7 +57,7 @@ export class ShareWithService {
     objectMetadataId,
     recordIds,
     apiKeyRoleMap,
-    isRecordSharingEnabled,
+    isRecordSharingEnforced,
     shareWith,
     transactionScope,
   }: {
@@ -65,7 +65,7 @@ export class ShareWithService {
     objectMetadataId: string;
     recordIds: string[];
     apiKeyRoleMap: Record<string, string>;
-    isRecordSharingEnabled: boolean;
+    isRecordSharingEnforced: boolean;
     shareWith?: ShareWithInput[] | null;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
@@ -86,7 +86,7 @@ export class ShareWithService {
         objectMetadataId,
         authContext,
         apiKeyRoleMap,
-        isRecordSharingEnabled,
+        isRecordSharingEnforced,
         shareWith,
       }),
       transactionScope,

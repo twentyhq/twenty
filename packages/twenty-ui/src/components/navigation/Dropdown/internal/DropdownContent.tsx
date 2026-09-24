@@ -10,6 +10,7 @@ import styles from '../Dropdown.module.scss';
 import { type DropdownContentProps } from '../types/DropdownContentProps';
 import { DropdownPageFocusEffect } from './DropdownPageFocusEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
+import { isUnhandledModifierShortcut } from './isUnhandledModifierShortcut';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownKeyboardNavigation } from './useDropdownKeyboardNavigation';
 
@@ -82,9 +83,12 @@ export const DropdownContent = ({
           })
         }
         onKeyDown={(event) => {
-          event.stopPropagation();
           onKeyDown?.(event);
           handleNavigation(event);
+
+          if (!isUnhandledModifierShortcut(event)) {
+            event.stopPropagation();
+          }
         }}
         onClick={(event) => {
           event.stopPropagation();

@@ -1,7 +1,7 @@
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -11,7 +11,7 @@ export const RecordBoardColumnDropdownMenu = () => {
   });
 
   return (
-    <DropdownContent selectDisabled>
+    <LegacyDropdownContent selectDisabled>
       <DropdownMenuItemsContainer>
         {recordGroupActions.map((action) => (
           <ListItem
@@ -23,6 +23,6 @@ export const RecordBoardColumnDropdownMenu = () => {
           </ListItem>
         ))}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

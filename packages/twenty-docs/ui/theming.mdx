@@ -10,7 +10,7 @@ Twenty UI components read public CSS custom properties prefixed with `--t-`. Pre
 `themeCssVariables` maps token paths to CSS variable references. Use it for values that CSS resolves:
 
 ```tsx
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const Summary = () => (
   <section
@@ -43,7 +43,7 @@ The equivalent CSS uses variables directly:
 
 ```tsx
 import { IconCheck } from 'twenty-ui/icon';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 export const CompleteIcon = () => {
   const theme = useTheme();
@@ -60,7 +60,7 @@ Pass `applyToRoot={false}` to apply a theme to a subtree. Override public CSS va
 
 ```tsx
 import { type ReactNode } from 'react';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 export const EmbeddedPanel = ({ children }: { children: ReactNode }) => (
   <ThemeProvider

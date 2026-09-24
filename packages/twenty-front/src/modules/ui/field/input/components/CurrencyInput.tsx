@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
@@ -10,7 +10,7 @@ import { CURRENCY_MICROS_DECIMAL_PLACES } from '@/ui/field/input/constants/Curre
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { getSeparatorsForNumberFormat } from '~/utils/format/getSeparatorsForNumberFormat';
 
 export const StyledIMaskInput = styled.div`
@@ -86,7 +86,7 @@ export const CurrencyInput = ({
   onChange,
   onSelect,
 }: CurrencyInputProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const [internalText, setInternalText] = useState(value);
   const { numberFormat } = useNumberFormat();
 

@@ -711,7 +711,7 @@ Importujte z odpovídající podcesty místo z kořene balíčku, aby se do vaš
 | `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` a další              |
 | `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` a další |
 | `twenty-ui/icon`            | Komponenty `Icon*` (např. `IconCheck`)           |
-| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`             |
+| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`             |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ Komponenty Twenty UI se automaticky přizpůsobí světlému a tmavému motivu p
 Chcete-li ve svých vlastních inline stylech používat stejné design tokeny, zavolejte hook `useTheme()`. Vrací tokeny motivu Twenty (odsazení, barvy, poloměry, písma) napojené na aktivní motiv, aniž by bylo potřeba v komponentě nastavovat `ThemeProvider`:
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();
