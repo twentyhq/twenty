@@ -3553,6 +3553,7 @@ export interface Mutation {
     uploadAppTarball: ApplicationRegistration
     claimApplicationRegistrationOwnership: ApplicationRegistration
     transferApplicationRegistrationOwnership: ApplicationRegistration
+    runApplicationHealthCheck?: ApplicationHealthCheckResult
     grantApplicationCapabilities: ApplicationCapabilityGrant
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
@@ -3562,7 +3563,6 @@ export interface Mutation {
     updateApplication: Application
     uninstallApplication: Scalars['Boolean']
     syncMarketplaceCatalog: Scalars['Boolean']
-    runApplicationHealthCheck?: ApplicationHealthCheckResult
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
@@ -7443,6 +7443,7 @@ export interface MutationGenqlSelection{
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
     claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
+    runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     grantApplicationCapabilities?: (ApplicationCapabilityGrantGenqlSelection & { __args: {input: GrantApplicationCapabilitiesInput} })
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
@@ -7452,7 +7453,6 @@ export interface MutationGenqlSelection{
     updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     syncMarketplaceCatalog?: boolean | number
-    runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
