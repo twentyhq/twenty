@@ -42,6 +42,9 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     threadMessages = [userMessageEntity],
   } = {}) => {
     const threadRepository = {
+      findOneOrFail: jest
+        .fn()
+        .mockResolvedValue({ userWorkspaceId: 'user-workspace-id' }),
       findOne: jest.fn().mockResolvedValue(thread),
       update: jest.fn().mockResolvedValue({ affected: 1 }),
     };
@@ -80,6 +83,17 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
         eventPublisherService as never,
         metricsService as never,
       ),
+      {
+        authorizeJob: jest.fn().mockResolvedValue(undefined),
+        authorizeRetry: jest.fn().mockResolvedValue(undefined),
+        authorize: jest.fn().mockResolvedValue({}),
+        resolveMessage: jest.fn().mockResolvedValue({
+          sender: {
+            userWorkspaceId: 'user-workspace-id',
+            applicationId: null,
+          },
+        }),
+      } as never,
     );
 
     return { service, threadRepository, messageQueueService, agentChatService };
@@ -216,5 +230,18 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     );
     expect(result.messageId).toBe('kickoff-message-id');
     expect(result.turnId).toBe('kickoff-turn-id');
+  });
+  it('does not delete another participant’s output if the latest turn changes while claiming a retry', async () => {
+    const { service, agentChatService, messageQueueService } = buildService();
+    agentChatService.findLatestSentUserMessage
+      .mockResolvedValueOnce({ id: 'user-message-id', turnId: 'turn-id' })
+      .mockResolvedValueOnce({ id: 'another-message', turnId: 'another-turn' });
+    await expect(
+      service.retryLastFailedTurn(retryArguments),
+    ).rejects.toMatchObject({ code: AiExceptionCode.NO_FAILED_TURN_TO_RETRY });
+    expect(
+      agentChatService.deleteAssistantMessagesForTurn,
+    ).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 });

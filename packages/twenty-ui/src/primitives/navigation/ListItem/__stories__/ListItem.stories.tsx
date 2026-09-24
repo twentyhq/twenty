@@ -5,12 +5,12 @@ import { expect, userEvent, within } from 'storybook/test';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
-  type CatalogStory,
   ComponentDecorator,
+  type CatalogStory,
 } from '@ui/testing';
 
+import { Button } from '@ui/primitives/input/Button/Button';
 import { IconBell, IconEdit, IconSettings, IconTrash } from '@ui/icon';
-import { LightIconButton } from '@ui/components/LightIconButton/LightIconButton';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { type ListItemColor } from '@ui/primitives/navigation/ListItem/types/ListItemColor';
 import { type ListItemIndicator } from '@ui/primitives/navigation/ListItem/types/ListItemIndicator';
@@ -30,12 +30,20 @@ const START_ICON = <IconBell />;
 
 const ACTIONS = (
   <>
-    <LightIconButton aria-label="Edit" onClick={action('Edit')}>
-      <IconEdit />
-    </LightIconButton>
-    <LightIconButton aria-label="Delete" onClick={action('Delete')}>
-      <IconTrash />
-    </LightIconButton>
+    <Button
+      aria-label="Edit"
+      onClick={action('Edit')}
+      variant="ghost"
+      size="sm"
+      startIcon={<IconEdit />}
+    />
+    <Button
+      aria-label="Delete"
+      onClick={action('Delete')}
+      variant="ghost"
+      size="sm"
+      startIcon={<IconTrash />}
+    />
   </>
 );
 
@@ -75,6 +83,17 @@ export const WithActions: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240 } },
   args: { startIcon: START_ICON, actions: ACTIONS },
+};
+
+export const WithPersistentActions: Story = {
+  ...WithActions,
+  args: { ...WithActions.args, actionsVisibility: 'always' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.getByRole('button', { name: 'Edit' })).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Delete' })).toBeVisible();
+  },
 };
 
 export const WithCheckbox: Story = {

@@ -17,15 +17,6 @@ import {
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 
 describe('isUserFacingWorkflowExecutorError', () => {
-  it('returns true for exhausted billing credits', () => {
-    const error = new BillingException(
-      'Credits exhausted',
-      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-    );
-
-    expect(isUserFacingWorkflowExecutorError(error)).toBe(true);
-  });
-
   it('returns true for an inactive subscription', () => {
     const error = new BillingException(
       'No active subscription',

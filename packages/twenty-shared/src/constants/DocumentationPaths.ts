@@ -129,6 +129,7 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
   UI_ACCESSIBILITY: '/ui/accessibility',
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
+  UI_COMPONENTS_DROPDOWN: '/ui/components/dropdown',
   UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
   UI_COMPONENTS_INPUT_LIGHT_ICON_BUTTON:
@@ -138,13 +139,13 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_SECTION: '/ui/components/section',
   UI_COMPONENTS_SETTINGS_ROW: '/ui/components/settings-row',
   UI_COMPONENTS_TAB_BUTTON: '/ui/components/tab-button',
+  UI_COMPONENTS_TOAST: '/ui/components/toast',
   UI_DARK_MODE: '/ui/dark-mode',
   UI_GETTING_STARTED: '/ui/getting-started',
   UI_PRIMITIVES_DATA_DISPLAY_AVATAR: '/ui/primitives/data-display/avatar',
   UI_PRIMITIVES_DATA_DISPLAY_CHIP: '/ui/primitives/data-display/chip',
   UI_PRIMITIVES_DATA_DISPLAY_STATUS: '/ui/primitives/data-display/status',
   UI_PRIMITIVES_DATA_DISPLAY_TAG: '/ui/primitives/data-display/tag',
-  UI_PRIMITIVES_FEEDBACK_TOAST: '/ui/primitives/feedback/toast',
   UI_PRIMITIVES_INPUT_BUTTON: '/ui/primitives/input/button',
   UI_PRIMITIVES_INPUT_BUTTON_GROUP: '/ui/primitives/input/button-group',
   UI_PRIMITIVES_INPUT_CHECKBOX: '/ui/primitives/input/checkbox',
@@ -164,6 +165,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_SURFACES_DIALOG: '/ui/primitives/surfaces/dialog',
   UI_PRIMITIVES_SURFACES_MENU: '/ui/primitives/surfaces/menu',
   UI_PRIMITIVES_SURFACES_POPOVER: '/ui/primitives/surfaces/popover',
+  UI_PRIMITIVES_SURFACES_TOOLTIP: '/ui/primitives/surfaces/tooltip',
   UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',
   UI_PRIMITIVES_TYPOGRAPHY_TEXT: '/ui/primitives/typography/text',
   UI_SSR: '/ui/ssr',
@@ -180,6 +182,8 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/billing/capabilities/credits',
   USER_GUIDE_BILLING_CAPABILITIES_PRICING_PLANS:
     '/user-guide/billing/capabilities/pricing-plans',
+  USER_GUIDE_BILLING_CAPABILITIES_USAGE_LIMITS:
+    '/user-guide/billing/capabilities/usage-limits',
   USER_GUIDE_BILLING_HOW_TOS_BILLING_FAQ:
     '/user-guide/billing/how-tos/billing-faq',
   USER_GUIDE_BILLING_OVERVIEW: '/user-guide/billing/overview',

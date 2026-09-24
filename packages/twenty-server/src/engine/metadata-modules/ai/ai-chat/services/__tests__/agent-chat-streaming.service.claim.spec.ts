@@ -73,6 +73,17 @@ describe('AgentChatStreamingService claim & reap', () => {
         eventPublisherService as never,
         metricsService as never,
       ),
+      {
+        authorizeJob: jest.fn().mockResolvedValue(undefined),
+        authorizeRetry: jest.fn().mockResolvedValue(undefined),
+        authorize: jest.fn().mockResolvedValue({}),
+        resolveMessage: jest.fn().mockResolvedValue({
+          sender: {
+            userWorkspaceId: 'user-workspace-id',
+            applicationId: null,
+          },
+        }),
+      } as never,
     );
 
     return {

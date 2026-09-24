@@ -7,7 +7,6 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -15,6 +14,7 @@ import {
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type InMemoryCache } from '@apollo/client';
 import type { Store } from 'jotai/vanilla/store';
+import { ToastProvider } from 'twenty-ui/components';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 

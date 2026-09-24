@@ -1,6 +1,6 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { renewApplicationToken } from 'test/integration/metadata/suites/application/utils/renew-application-token.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -85,12 +85,9 @@ describe('Application token renewal should fail', () => {
     const applicationId = application.id;
     const workspaceId = SEED_APPLE_WORKSPACE_ID;
 
-    const { data: sessionBoundTokenData } = await generateApplicationToken({
+    const sessionBoundTokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId,
-      expectToFail: false,
     });
-    const sessionBoundTokenPair =
-      sessionBoundTokenData.generateApplicationToken;
 
     const [
       otherUserTokenPair,

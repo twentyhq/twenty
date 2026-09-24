@@ -9,6 +9,7 @@ export enum MessageChannelExceptionCode {
   INVALID_MESSAGE_CHANNEL_INPUT = 'INVALID_MESSAGE_CHANNEL_INPUT',
   MESSAGE_CHANNEL_OWNERSHIP_VIOLATION = 'MESSAGE_CHANNEL_OWNERSHIP_VIOLATION',
   EMAIL_GROUP_NOT_CONFIGURED = 'EMAIL_GROUP_NOT_CONFIGURED',
+  EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN = 'EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN',
 }
 
 const getMessageChannelExceptionUserFriendlyMessage = (
@@ -23,6 +24,8 @@ const getMessageChannelExceptionUserFriendlyMessage = (
       return msg`You do not have access to this message channel.`;
     case MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED:
       return msg`Email group is not configured on this server.`;
+    case MessageChannelExceptionCode.EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN:
+      return msg`Sending from an email group is available once your workspace is on a paid plan and has been billed.`;
     default:
       assertUnreachable(code);
   }

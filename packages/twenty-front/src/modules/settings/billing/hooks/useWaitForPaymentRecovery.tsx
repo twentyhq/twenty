@@ -9,7 +9,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 import { sleep } from '~/utils/sleep';

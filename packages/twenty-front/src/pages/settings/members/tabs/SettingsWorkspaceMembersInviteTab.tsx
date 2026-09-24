@@ -20,15 +20,13 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { formatDistanceToNow } from 'date-fns';
 import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, Section } from 'twenty-ui/components';
+import { IconButton, Section, useToast } from 'twenty-ui/components';
 import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledButtonContainer = styled.div`
   align-items: center;

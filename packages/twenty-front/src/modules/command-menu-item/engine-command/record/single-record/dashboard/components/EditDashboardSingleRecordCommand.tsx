@@ -1,8 +1,8 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
+import { useResetLocationHash } from '@/ui/navigation/utils/hooks/useResetLocationHash';
 import { isDefined } from 'twenty-shared/utils';
-import { useResetLocationHash } from 'twenty-ui/utilities';
 
 export const EditDashboardSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();

@@ -10,6 +10,7 @@ import { HTTPMethod } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -325,7 +326,10 @@ export class RouteTriggerService {
         userWorkspaceId,
       });
     } catch (error) {
-      if (error instanceof RouteTriggerException) {
+      if (
+        error instanceof RouteTriggerException ||
+        isUsageRefusedError(error)
+      ) {
         throw error;
       }
 

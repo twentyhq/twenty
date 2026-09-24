@@ -28,6 +28,7 @@ import {
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
@@ -283,10 +284,12 @@ export class WorkspaceService {
     payload,
     userWorkspaceId,
     apiKey,
+    application,
   }: {
     payload: Partial<WorkspaceEntity> & { id: string };
     userWorkspaceId?: string;
     apiKey: ApiKeyEntity | undefined;
+    application?: FlatApplication;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -299,6 +302,7 @@ export class WorkspaceService {
       userWorkspaceId,
       workspaceId: workspace.id,
       apiKey,
+      application,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -994,12 +998,14 @@ export class WorkspaceService {
     userWorkspaceId,
     workspaceId,
     apiKey,
+    application,
     workspaceActivationStatus,
   }: {
     payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey: ApiKeyEntity | undefined;
+    application?: FlatApplication;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
@@ -1066,6 +1072,7 @@ export class WorkspaceService {
           workspaceId,
           setting: permission,
           apiKeyId: apiKey?.id,
+          applicationId: application?.id,
         });
 
       if (!hasPermission) {
