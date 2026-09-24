@@ -1,4 +1,5 @@
 import { type CombinedGraphQLErrors } from '@apollo/client/errors';
+import { isString } from '@sniptt/guards';
 import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,7 +20,7 @@ const getConflictMessage = (
     return t`A previous data model change is still being applied in the background. Please try again in a moment.`;
   }
 
-  if (typeof userFriendlyMessage === 'string') {
+  if (isString(userFriendlyMessage)) {
     return userFriendlyMessage;
   }
 
