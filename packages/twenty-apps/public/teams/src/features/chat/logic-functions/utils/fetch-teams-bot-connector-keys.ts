@@ -1,20 +1,25 @@
-import {
-  isArray,
-  isNonEmptyArray,
-  isNonEmptyString,
-  isObject,
-} from '@sniptt/guards';
+import { isArray, isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { type JWK } from 'jose';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_BOT_OPENID_KEYS_URL } from 'src/features/chat/logic-functions/constants/teams-bot-openid-keys-url';
 import { type TeamsBotConnectorKey } from 'src/features/chat/logic-functions/types/teams-bot-connector-key.type';
 import { isTeamsEndorsedKey } from 'src/features/chat/logic-functions/utils/is-teams-endorsed-key';
 
+type PublishedBotConnectorKey = JWK & { endorsements?: string[] };
+
 type TeamsBotConnectorKeysResponse = {
-  keys?: unknown;
+  keys?: PublishedBotConnectorKey[];
 };
 
-const hasKeyId = (key: unknown): key is TeamsBotConnectorKey =>
-  isObject(key) && 'kid' in key && isNonEmptyString(key.kid);
+const isRsaSignatureKey = (
+  key: PublishedBotConnectorKey,
+): key is TeamsBotConnectorKey =>
+  key.kty === 'RSA' &&
+  isNonEmptyString(key.kid) &&
+  isNonEmptyString(key.n) &&
+  isNonEmptyString(key.e) &&
+  (!isDefined(key.use) || key.use === 'sig');
 
 const toSigningKey = ({
   kty,
@@ -52,7 +57,7 @@ export const fetchTeamsBotConnectorKeys = async (): Promise<
   }
 
   const teamsKeys = body.keys
-    .filter(hasKeyId)
+    .filter(isRsaSignatureKey)
     .filter(isTeamsEndorsedKey)
     .map(toSigningKey);
 

@@ -1,9 +1,8 @@
 import { isDefined } from 'twenty-sdk/utils';
 
+import { type LoadTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/types/load-teams-bot-connector-keys.type';
 import { type TeamsBotConnectorKey } from 'src/features/chat/logic-functions/types/teams-bot-connector-key.type';
 import { getTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/utils/get-teams-bot-connector-keys';
-
-export type LoadTeamsBotConnectorKeys = typeof getTeamsBotConnectorKeys;
 
 const findKey = ({
   keys,

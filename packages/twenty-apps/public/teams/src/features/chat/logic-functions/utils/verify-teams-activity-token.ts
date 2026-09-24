@@ -4,12 +4,10 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_BOT_CONNECTOR_ISSUER } from 'src/features/chat/logic-functions/constants/teams-bot-connector-issuer';
 import { TEAMS_JWT_CLOCK_TOLERANCE_SECONDS } from 'src/features/chat/logic-functions/constants/teams-jwt-clock-tolerance-seconds';
+import { type LoadTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/types/load-teams-bot-connector-keys.type';
 import { isTeamsEndorsedKey } from 'src/features/chat/logic-functions/utils/is-teams-endorsed-key';
 import { normalizeTeamsServiceUrl } from 'src/features/chat/logic-functions/utils/normalize-teams-service-url';
-import {
-  type LoadTeamsBotConnectorKeys,
-  resolveTeamsBotConnectorKeyOrThrow,
-} from 'src/features/chat/logic-functions/utils/resolve-teams-bot-connector-key-or-throw';
+import { resolveTeamsBotConnectorKeyOrThrow } from 'src/features/chat/logic-functions/utils/resolve-teams-bot-connector-key-or-throw';
 
 const extractBearerToken = (
   authorizationHeader: string | undefined,
@@ -76,6 +74,12 @@ export const verifyTeamsActivityTokenOrThrow = async ({
     loadKeys,
   });
 
+  if (!isTeamsEndorsedKey(signingKey)) {
+    throw new Error(
+      'Teams activity token is signed with a key not endorsed for Teams',
+    );
+  }
+
   const { payload } = await jwtVerify(
     token,
     await importJWK(signingKey, 'RS256'),
@@ -86,12 +90,6 @@ export const verifyTeamsActivityTokenOrThrow = async ({
       clockTolerance: TEAMS_JWT_CLOCK_TOLERANCE_SECONDS,
     },
   );
-
-  if (!isTeamsEndorsedKey(signingKey)) {
-    throw new Error(
-      'Teams activity token is signed with a key not endorsed for Teams',
-    );
-  }
 
   const serviceUrlClaim = readServiceUrlClaim(payload);
 

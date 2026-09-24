@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -33,14 +34,23 @@ const canReuse = ({
         maxAgeMs: TEAMS_BOT_CONNECTOR_KEYS_MAX_AGE_MS,
       });
 
+const readCachedEntry =
+  async (): Promise<TeamsBotConnectorKeysCacheEntry | null> => {
+    const cachedEntry = await kv.get<TeamsBotConnectorKeysCacheEntry>(
+      TEAMS_BOT_CONNECTOR_KEYS_KV_KEY,
+    );
+
+    return isDefined(cachedEntry) && isNonEmptyArray(cachedEntry.keys)
+      ? cachedEntry
+      : null;
+  };
+
 export const getTeamsBotConnectorKeys = async ({
   forceRefresh = false,
 }: {
   forceRefresh?: boolean;
 } = {}): Promise<TeamsBotConnectorKey[]> => {
-  const cachedEntry = await kv.get<TeamsBotConnectorKeysCacheEntry>(
-    TEAMS_BOT_CONNECTOR_KEYS_KV_KEY,
-  );
+  const cachedEntry = await readCachedEntry();
 
   if (
     isDefined(cachedEntry) &&

@@ -135,6 +135,13 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
     expect(loadKeysMock).toHaveBeenNthCalledWith(2, { forceRefresh: true });
   });
 
+  it('should reject a token naming no signing key without reaching for the key set', async () => {
+    await expect(
+      verifyToken(await signActivityToken({ keyId: null })),
+    ).rejects.toThrow('names no signing key');
+    expect(loadKeysMock).not.toHaveBeenCalled();
+  });
+
   it('should reject a missing Authorization header', async () => {
     await expect(verify(undefined)).rejects.toThrow(
       'Missing or malformed Authorization header',

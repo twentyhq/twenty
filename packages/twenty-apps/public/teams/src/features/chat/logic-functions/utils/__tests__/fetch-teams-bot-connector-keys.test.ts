@@ -57,6 +57,28 @@ describe('fetchTeamsBotConnectorKeys', () => {
     expect(fetchMock).toHaveBeenCalledWith(TEAMS_BOT_OPENID_KEYS_URL);
   });
 
+  it('should drop keys that cannot verify an RS256 signature', async () => {
+    respondWith({
+      keys: [
+        TEAMS_KEY,
+        { ...TEAMS_KEY, kid: 'elliptic-curve-key', kty: 'EC', n: undefined },
+        { ...TEAMS_KEY, kid: 'encryption-key', use: 'enc' },
+        { ...TEAMS_KEY, kid: 'exponent-less-key', e: undefined },
+      ],
+    });
+
+    expect(await fetchTeamsBotConnectorKeys()).toEqual([
+      {
+        kty: 'RSA',
+        use: 'sig',
+        kid: 'teams-key',
+        n: 'modulus',
+        e: 'AQAB',
+        endorsements: ['skype', 'msteams'],
+      },
+    ]);
+  });
+
   it('should reject a response with no key endorsed for Teams rather than cache an empty set', async () => {
     respondWith({
       keys: [
