@@ -97,6 +97,7 @@ export class EventLogsService {
       SELECT *
       FROM ${tableName}
       WHERE ${filterWhereClause} AND "timestamp" = {lastRecordTimestamp:DateTime64(3)}
+      LIMIT {maxLimit:Int32}
     `;
 
     params.limit = limit + 1;
@@ -116,17 +117,23 @@ export class EventLogsService {
 
     if (hasMoreRecordsAtLastTimestamp) {
       params.lastRecordTimestamp = lastRecordTimestamp;
+      params.maxLimit = MAX_LIMIT;
 
       const recordsAtLastTimestamp = await this.clickHouseService.select<
         Record<string, unknown>
       >(recordsAtLastTimestampQuery, params);
+      const pageRecordsAtLastTimestamp = pageRecords.filter(
+        (record) => record.timestamp === lastRecordTimestamp,
+      );
 
-      pageRecords = [
-        ...pageRecords.filter(
-          (record) => record.timestamp !== lastRecordTimestamp,
-        ),
-        ...recordsAtLastTimestamp,
-      ];
+      if (recordsAtLastTimestamp.length >= pageRecordsAtLastTimestamp.length) {
+        pageRecords = [
+          ...pageRecords.filter(
+            (record) => record.timestamp !== lastRecordTimestamp,
+          ),
+          ...recordsAtLastTimestamp,
+        ];
+      }
     }
 
     const normalizedRecords = normalizeEventLogRecords(
