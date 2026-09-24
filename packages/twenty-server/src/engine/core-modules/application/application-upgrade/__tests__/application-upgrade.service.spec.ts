@@ -428,6 +428,22 @@ describe('ApplicationUpgradeService', () => {
       );
     });
 
+    it('drops the approval when the target is not the version the grants were reviewed for', async () => {
+      await service.upgradeApplication({
+        appRegistrationId: APPLICATION_REGISTRATION_ID,
+        targetVersion: '1.5.0',
+        workspaceId: OUTDATED_WORKSPACE_ID,
+        hasUserApprovedRoleGrants: true,
+      });
+
+      expect(applicationInstallService.installApplication).toHaveBeenCalledWith(
+        expect.objectContaining({
+          version: '1.5.0',
+          hasUserApprovedRoleGrants: false,
+        }),
+      );
+    });
+
     it('does not swallow the approval error on a manual upgrade', async () => {
       applicationInstallService.installApplication.mockRejectedValue(
         new ApplicationException(

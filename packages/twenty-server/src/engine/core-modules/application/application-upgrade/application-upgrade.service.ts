@@ -271,12 +271,18 @@ export class ApplicationUpgradeService {
       where: { id: params.appRegistrationId },
     });
 
+    // The grants an admin reviews are computed against the latest available
+    // version, so an approval only covers an upgrade to that version.
+    const hasUserApprovedRoleGrants =
+      (params.hasUserApprovedRoleGrants ?? false) &&
+      params.targetVersion === appRegistration.latestAvailableVersion;
+
     return this.upgradeApplicationToVersion({
       appRegistration,
       targetVersion: params.targetVersion,
       workspaceId: params.workspaceId,
       skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
-      hasUserApprovedRoleGrants: params.hasUserApprovedRoleGrants,
+      hasUserApprovedRoleGrants,
     });
   }
 
