@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { COMPANY_NODE_MOCK } from 'src/logic-functions/__mocks__/company-node.mock';
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
@@ -18,8 +20,8 @@ describe('runSingleEnrichment', () => {
   });
 
   it('uses both workflow overrides for a single name-based match', async () => {
-    vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', '8');
-    vi.stubEnv('PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD', '10');
+    vi.stubEnv(PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME, '8');
+    vi.stubEnv(PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME, '10');
     vi.mocked(enrichCompany).mockResolvedValue([
       { outcome: 'not_found', httpStatus: 404 },
     ]);
