@@ -1,35 +1,35 @@
 import { renderHook } from '@testing-library/react';
-import { atom, createStore, Provider as JotaiProvider } from 'jotai';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useFrontComponentFileUpload } from '@/front-components/hooks/useFrontComponentFileUpload';
-import { type ApplicationTokenPair } from '~/generated-metadata/graphql';
+import { frontComponentApplicationTokenPairFamilyState } from '@/front-components/states/frontComponentApplicationTokenPairFamilyState';
+import { type FrontComponentApplicationTokenPair } from '@/front-components/types/FrontComponentApplicationTokenPair';
 
-jest.mock('@/front-components/hooks/useRequestApplicationTokenRefresh', () => ({
-  useRequestApplicationTokenRefresh: () => ({
-    requestAccessTokenRefresh: jest.fn(),
+jest.mock(
+  '@/front-components/hooks/useFrontComponentApplicationTokenPair',
+  () => ({
+    useFrontComponentApplicationTokenPair: () => ({
+      requestApplicationAccessTokenRefresh: jest.fn(),
+    }),
   }),
-}));
+);
 
 jest.mock('~/utils/sleep', () => ({
   sleep: () => Promise.resolve(),
 }));
 
-const tokenPairAtom = atom<ApplicationTokenPair | null>(null);
-
-jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState',
-  () => ({
-    useAtomComponentStateCallbackState: () => tokenPairAtom,
-  }),
-);
-
-const FRONT_COMPONENT_ID = 'fc-test-id';
+const APPLICATION_ID = 'application-test-id';
 const FIELD_METADATA_ID = 'files-field-id';
 const APPLICATION_ACCESS_TOKEN = 'application-access-token';
 const UPLOAD_URL = 'https://storage.example/upload/file-1';
 
-const buildTokenPair = (accessToken: string): ApplicationTokenPair => ({
+const tokenPairAtom =
+  frontComponentApplicationTokenPairFamilyState.atomFamily(APPLICATION_ID);
+
+const buildTokenPair = (
+  accessToken: string,
+): FrontComponentApplicationTokenPair => ({
   __typename: 'ApplicationTokenPair',
   applicationAccessToken: {
     __typename: 'AuthToken',
@@ -41,6 +41,7 @@ const buildTokenPair = (accessToken: string): ApplicationTokenPair => ({
     token: 'refresh-token',
     expiresAt: '2099-01-01T00:00:00.000Z',
   },
+  obtainedAt: 0,
 });
 
 const createFileUploadPayload = {
@@ -87,7 +88,7 @@ const queueFetchResponses = (...responses: QueuedResponse[]) => {
   global.fetch = jest.fn(() => {
     const { status = 200, payload, isNetworkError } = queue.shift() ?? {};
 
-    if (isNetworkError === true) {
+    if (isNetworkError) {
       return Promise.reject(new TypeError('Failed to fetch'));
     }
 
@@ -112,7 +113,7 @@ const renderUseFrontComponentFileUpload = (
   store: ReturnType<typeof createStore>,
 ) =>
   renderHook(
-    () => useFrontComponentFileUpload({ frontComponentId: FRONT_COMPONENT_ID }),
+    () => useFrontComponentFileUpload({ applicationId: APPLICATION_ID }),
     {
       wrapper: ({ children }: { children: ReactNode }) => (
         <JotaiProvider store={store}>{children}</JotaiProvider>
