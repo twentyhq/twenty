@@ -427,7 +427,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetTask',
       label: i18nLabel(
-        msg({ message: `Task`, context: 'fieldMetadata.label' }),
+        msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
@@ -460,7 +460,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetNote',
       label: i18nLabel(
-        msg({ message: `Note`, context: 'fieldMetadata.label' }),
+        msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
@@ -493,7 +493,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetPerson',
       label: i18nLabel(
-        msg({ message: `Person`, context: 'fieldMetadata.label' }),
+        msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
@@ -526,7 +526,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetCompany',
       label: i18nLabel(
-        msg({ message: `Company`, context: 'fieldMetadata.label' }),
+        msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
@@ -559,7 +559,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetOpportunity',
       label: i18nLabel(
-        msg({ message: `Opportunity`, context: 'fieldMetadata.label' }),
+        msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
@@ -592,7 +592,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetDashboard',
       label: i18nLabel(
-        msg({ message: `Dashboard`, context: 'fieldMetadata.label' }),
+        msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
@@ -625,7 +625,7 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetWorkflow',
       label: i18nLabel(
-        msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
+        msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
