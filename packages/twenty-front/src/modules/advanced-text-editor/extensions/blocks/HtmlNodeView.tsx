@@ -3,9 +3,8 @@ import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { HtmlNodeInlineEditor } from '@/advanced-text-editor/extensions/blocks/HtmlNodeInlineEditor';
 import { sanitizeHtmlPreview } from '@/advanced-text-editor/utils/sanitizeHtmlPreview';
-import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
-import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 
 type HtmlNodeViewProps = Pick<
   NodeViewProps,
@@ -22,10 +21,6 @@ const StyledPreview = styled.div`
   }
 `;
 
-const StyledInlineEditorContainer = styled.div`
-  padding-top: ${themeCssVariables.spacing[6]};
-`;
-
 export const HtmlNodeView = ({
   node,
   editor,
@@ -33,20 +28,19 @@ export const HtmlNodeView = ({
   updateAttributes,
 }: HtmlNodeViewProps) => {
   const html = typeof node.attrs.html === 'string' ? node.attrs.html : '';
-  const VariablePicker: VariablePickerComponent | undefined =
-    extension.options.VariablePicker;
 
-  if (isDefined(VariablePicker) && editor.isEditable) {
+  if (extension.options.isInlineEditable === true && editor.isEditable) {
     return (
       <NodeViewWrapper>
-        <StyledInlineEditorContainer>
-          <FormRawJsonFieldInput
-            defaultValue={html}
-            placeholder="<p>Hello</p>"
-            onChange={(value) => updateAttributes({ html: value ?? '' })}
-            VariablePicker={VariablePicker}
-          />
-        </StyledInlineEditorContainer>
+        <HtmlNodeInlineEditor
+          html={html}
+          onChange={(value) => updateAttributes({ html: value })}
+          onFocus={(htmlEditor) => {
+            if (isDefined(editor.storage.html)) {
+              editor.storage.html.focusedHtmlEditor = htmlEditor;
+            }
+          }}
+        />
       </NodeViewWrapper>
     );
   }
