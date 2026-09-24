@@ -123,6 +123,7 @@ export class SearchService {
                 this.workspaceOrmManager.getRepository<ObjectRecord>(
                   flatObjectMetadata.nameSingular,
                   rolePermissionConfig,
+                  { useReplica: true },
                 );
 
               return {

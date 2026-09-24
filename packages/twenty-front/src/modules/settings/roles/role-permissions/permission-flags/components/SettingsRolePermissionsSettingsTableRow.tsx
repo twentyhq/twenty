@@ -7,8 +7,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 const StyledName = styled.span`
@@ -37,7 +36,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   permission,
   isEditable,
 }: SettingsRolePermissionsSettingsTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,

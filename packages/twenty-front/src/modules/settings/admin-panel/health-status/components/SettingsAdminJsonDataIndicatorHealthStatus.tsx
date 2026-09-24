@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { JsonTree, Section } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

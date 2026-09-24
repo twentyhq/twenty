@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { SettingsAdminChatAskQuestionsPart } from '@/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart';

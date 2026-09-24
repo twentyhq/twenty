@@ -8,7 +8,7 @@ import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-dr
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { Navigate } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`

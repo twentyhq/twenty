@@ -30,13 +30,17 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let recordShareService: jest.Mocked<RecordShareService>;
   let recordSharingFeatureService: jest.Mocked<
-    Pick<RecordSharingFeatureService, 'isRecordSharingEnabled'>
+    Pick<
+      RecordSharingFeatureService,
+      'isRecordSharingEnabled' | 'isLegacyRecordAccessOpen'
+    >
   >;
 
   const setTriggerMap = (
     listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
   ) => {
     workspaceCacheService.getOrRecompute.mockResolvedValue({
+      flatObjectMetadataMaps: { byUniversalIdentifier: {} },
       featureFlagsMap: {},
       flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
       flatRoleMaps: { byUniversalIdentifier: {} },
@@ -99,6 +103,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
     workspaceCacheService = {
       getOrRecompute: jest.fn().mockResolvedValue({
+        flatObjectMetadataMaps: { byUniversalIdentifier: {} },
         featureFlagsMap: {},
         flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         flatRoleMaps: { byUniversalIdentifier: {} },
@@ -111,6 +116,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     } as unknown as jest.Mocked<RecordShareService>;
 
     recordSharingFeatureService = {
+      isLegacyRecordAccessOpen: jest.fn().mockResolvedValue(false),
       isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
     };
 
@@ -441,6 +447,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         Promise.resolve(
           !keys.includes('workflowAutomatedTriggerMaps')
             ? {
+                flatObjectMetadataMaps: { byUniversalIdentifier: {} },
                 featureFlagsMap: {},
                 flatApplicationMaps: {
                   byId: {
@@ -526,6 +533,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           Promise.resolve(
             !keys.includes('workflowAutomatedTriggerMaps')
               ? {
+                  flatObjectMetadataMaps: { byUniversalIdentifier: {} },
                   featureFlagsMap: {},
                   flatApplicationMaps: {
                     byId: {},

@@ -6,7 +6,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { Checkbox } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledPermissionContent = styled.div`
   align-items: center;

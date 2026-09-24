@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { handleClickableElementKeyDown } from 'twenty-ui/primitives/accessibility';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-ui/utilities';
 import { type AvatarOrIconProps } from './types/AvatarOrIconProps';
 

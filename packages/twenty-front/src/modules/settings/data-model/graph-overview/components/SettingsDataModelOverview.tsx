@@ -34,7 +34,7 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const nodeTypes: NodeTypes = {
   object: SettingsDataModelOverviewObject,

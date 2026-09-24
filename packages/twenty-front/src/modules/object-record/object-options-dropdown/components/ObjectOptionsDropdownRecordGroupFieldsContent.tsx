@@ -7,7 +7,7 @@ import { isRecordGroupingOptionalForViewType } from '@/object-record/record-grou
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -100,7 +100,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -166,6 +166,6 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
           >{t`Create select field`}</ListItem>
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

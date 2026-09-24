@@ -6,6 +6,7 @@ import { getHeapStatistics } from 'v8';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { POD_NAME } from 'src/engine/core-modules/metrics/constants/pod-name.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 const MILLISECONDS_PER_SECOND = 1_000;
@@ -56,6 +57,7 @@ export class GcMetricsService implements OnModuleInit, OnModuleDestroy {
     this.observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
         this.pauseHistogram.record(entry.duration / MILLISECONDS_PER_SECOND, {
+          pod: POD_NAME,
           kind: gcKindOf(entry.detail),
         });
       }
@@ -102,6 +104,7 @@ export class GcMetricsService implements OnModuleInit, OnModuleDestroy {
         metricName: gauge.metricName,
         options: { description: gauge.description, unit: 'By' },
         callback: async () => gauge.read(this.getHeapStatisticsSnapshot()),
+        perPod: true,
       });
     }
   }

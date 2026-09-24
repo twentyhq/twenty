@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContainer = styled.span<{ isOpen: boolean }>`
   display: inline-flex;

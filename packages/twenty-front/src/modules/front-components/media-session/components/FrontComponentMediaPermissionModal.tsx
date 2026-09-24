@@ -11,7 +11,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/components';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { GrantApplicationCapabilitiesDocument } from '~/generated-metadata/graphql';
 
 type FrontComponentMediaPermissionModalProps = {

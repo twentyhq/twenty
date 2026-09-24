@@ -19,7 +19,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {

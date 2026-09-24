@@ -6,6 +6,9 @@ import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+
+const MESSAGE_SUPPRESSION_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."messageSuppression"`;
 
 const CREATE_MESSAGE_SUPPRESSION = gql`
   mutation CreateMessageSuppression($input: CreateMessageSuppressionInput!) {
@@ -60,7 +63,7 @@ describe('messageSuppressionResolver (integration)', () => {
   afterEach(async () => {
     for (const id of createdSuppressionIds) {
       await testDataSource
-        .query('DELETE FROM core."messageSuppression" WHERE id = $1', [id])
+        .query(`DELETE FROM ${MESSAGE_SUPPRESSION_TABLE} WHERE id = $1`, [id])
         .catch(() => {});
     }
     createdSuppressionIds.length = 0;
@@ -86,10 +89,10 @@ describe('messageSuppressionResolver (integration)', () => {
     const suppressionId = v4();
 
     await testDataSource.query(
-      `INSERT INTO core."messageSuppression"
-       ("id", "workspaceId", "emailAddress", "reason", "source", "providerEventId", "unsubscribeTopicId")
-       VALUES ($1, $2, $3, 'BOUNCE', 'WEBHOOK', NULL, NULL)`,
-      [suppressionId, SEED_APPLE_WORKSPACE_ID, emailAddress],
+      `INSERT INTO ${MESSAGE_SUPPRESSION_TABLE}
+       ("id", "emailAddress", "reason", "source", "providerEventId", "unsubscribeTopicId")
+       VALUES ($1, $2, 'BOUNCE', 'WEBHOOK', NULL, NULL)`,
+      [suppressionId, emailAddress],
     );
     createdSuppressionIds.push(suppressionId);
 

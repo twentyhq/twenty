@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { JsonTree } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useLingui } from '@lingui/react/macro';
@@ -319,7 +319,7 @@ type RoutingDebugDisplayProps = {
 };
 
 export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);

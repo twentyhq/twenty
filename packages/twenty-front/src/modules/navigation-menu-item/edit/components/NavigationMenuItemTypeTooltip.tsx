@@ -12,7 +12,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type NavigationMenuItemTypeTooltipProps = {
   type: NavigationMenuItemType;
