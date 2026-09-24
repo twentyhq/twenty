@@ -75,27 +75,6 @@ export class FrontComponentService {
     return fromFlatFrontComponentToFrontComponentDto(flatFrontComponent);
   }
 
-  async hasFrontComponentForApplication({
-    applicationId,
-    workspaceId,
-  }: {
-    applicationId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const { flatFrontComponentMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFrontComponentMaps'],
-        },
-      );
-
-    return Object.values(flatFrontComponentMaps.byUniversalIdentifier).some(
-      (flatFrontComponent) =>
-        flatFrontComponent?.applicationId === applicationId,
-    );
-  }
-
   async createOne({
     input,
     workspaceId,

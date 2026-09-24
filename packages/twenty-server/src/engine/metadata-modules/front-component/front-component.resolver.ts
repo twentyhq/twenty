@@ -16,6 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -34,10 +35,6 @@ import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-m
 import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
-import {
-  FrontComponentException,
-  FrontComponentExceptionCode,
-} from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -159,6 +156,7 @@ export class FrontComponentResolver {
 
   @Mutation(() => ApplicationTokenPairDTO)
   @UseGuards(RequireAccessTokenGuard, NoPermissionGuard)
+  @UseFilters(ApplicationExceptionFilter)
   async generateFrontComponentApplicationTokenPair(
     @Args('applicationId', { type: () => UUIDScalarType })
     applicationId: string,
@@ -166,19 +164,6 @@ export class FrontComponentResolver {
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ApplicationTokenPairDTO> {
-    const hasFrontComponent =
-      await this.frontComponentService.hasFrontComponentForApplication({
-        applicationId,
-        workspaceId: workspace.id,
-      });
-
-    if (!hasFrontComponent) {
-      throw new FrontComponentException(
-        'No front component found for this application',
-        FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
-      );
-    }
-
     return this.applicationTokenService.generateApplicationTokenPair({
       applicationId,
       workspaceId: workspace.id,

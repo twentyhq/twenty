@@ -40,22 +40,10 @@ exports[`Front component application token pair generation should fail when the 
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "subCode": "FRONT_COMPONENT_NOT_FOUND",
-    "userFriendlyMessage": "Front component not found.",
+    "subCode": "APPLICATION_NOT_FOUND",
+    "userFriendlyMessage": "Application not found.",
   },
-  "message": "No front component found for this application",
-  "name": "NotFoundError",
-}
-`;
-
-exports[`Front component application token pair generation should fail when the application has no front component 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "subCode": "FRONT_COMPONENT_NOT_FOUND",
-    "userFriendlyMessage": "Front component not found.",
-  },
-  "message": "No front component found for this application",
+  "message": "Application not found",
   "name": "NotFoundError",
 }
 `;

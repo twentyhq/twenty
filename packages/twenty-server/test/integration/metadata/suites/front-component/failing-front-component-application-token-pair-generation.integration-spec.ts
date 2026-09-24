@@ -1,5 +1,4 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
 import { generateFrontComponentApplicationTokenPair } from 'test/integration/metadata/suites/front-component/utils/generate-front-component-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
@@ -16,7 +15,6 @@ const UNKNOWN_APPLICATION_ID = '20202020-0000-4000-8000-000000000000';
 
 type GlobalTestContext = {
   applicationWithFrontComponentId: string;
-  applicationWithoutFrontComponentId: string;
   applicationUserBoundToken: string;
   applicationUnboundToken: string;
 };
@@ -53,13 +51,6 @@ const failingFrontComponentApplicationTokenPairGenerationTestCases: EachTestingC
       },
     },
     {
-      title: 'when the application has no front component',
-      context: {
-        applicationId: (globalContext) =>
-          globalContext.applicationWithoutFrontComponentId,
-      },
-    },
-    {
       title: 'when the application does not exist',
       context: {
         applicationId: () => UNKNOWN_APPLICATION_ID,
@@ -78,22 +69,6 @@ describe('Front component application token pair generation should fail', () => 
 
     jestExpectToBeDefined(frontComponent);
 
-    const applicationIdsWithFrontComponent = new Set(
-      frontComponentsData.frontComponents.map(
-        ({ applicationId }) => applicationId,
-      ),
-    );
-
-    const { data: applicationsData } = await findManyApplications({
-      expectToFail: false,
-    });
-    const applicationWithoutFrontComponent =
-      applicationsData.findManyApplications.find(
-        ({ id }) => !applicationIdsWithFrontComponent.has(id),
-      );
-
-    jestExpectToBeDefined(applicationWithoutFrontComponent);
-
     const [userBoundTokenPair, unboundTokenPair] = await Promise.all([
       generateAppleAdminApplicationTokenPair({
         applicationId: frontComponent.applicationId,
@@ -106,7 +81,6 @@ describe('Front component application token pair generation should fail', () => 
 
     globalTestContext = {
       applicationWithFrontComponentId: frontComponent.applicationId,
-      applicationWithoutFrontComponentId: applicationWithoutFrontComponent.id,
       applicationUserBoundToken:
         userBoundTokenPair.applicationAccessToken.token,
       applicationUnboundToken: unboundTokenPair.applicationAccessToken.token,
