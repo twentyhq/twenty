@@ -6,23 +6,23 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { ILike, In, IsNull, Not, QueryFailedError } from 'typeorm';
+import { ILike, In, IsNull, Not } from 'typeorm';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
+import { MessageSuppressionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-suppression.workspace-entity';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type TopicOptOutState } from 'src/engine/core-modules/emailing-domain/types/topic-opt-out-state.type';
 import { type UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
+
+const SUPPRESSION_INSERT_ATTEMPTS = 2;
 
 type FindSuppressionsArgs = {
   workspaceId: string;
@@ -74,8 +74,7 @@ type SetTopicOptOutsArgs = {
 @Injectable()
 export class MessageSuppressionService {
   constructor(
-    @InjectWorkspaceScopedRepository(MessageSuppressionEntity)
-    private readonly suppressionRepository: WorkspaceScopedRepository<MessageSuppressionEntity>,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly unsubscribeTopicService: UnsubscribeTopicService,
   ) {}
 
@@ -87,26 +86,31 @@ export class MessageSuppressionService {
     limit,
     offset,
   }: FindSuppressionsArgs): Promise<{
-    records: MessageSuppressionEntity[];
+    records: MessageSuppressionWorkspaceEntity[];
     totalCount: number;
   }> {
-    const [records, totalCount] = await this.suppressionRepository.findAndCount(
-      workspaceId,
-      {
-        where: {
-          ...(isDefined(reason) ? { reason } : {}),
-          ...(isNonEmptyString(unsubscribeTopicId)
-            ? { unsubscribeTopicId }
-            : {}),
-          ...(isNonEmptyString(searchTerm)
-            ? { emailAddress: ILike(`%${escapeForIlike(searchTerm)}%`) }
-            : {}),
-        },
-        order: { createdAt: 'DESC' },
-        take: limit,
-        skip: offset,
-      },
-    );
+    const [records, totalCount] =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const suppressionRepository = this.workspaceOrmManager.getRepository(
+          MessageSuppressionWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+          { shouldSkipEventEmission: true },
+        );
+        return suppressionRepository.findAndCount({
+          where: {
+            ...(isDefined(reason) ? { reason } : {}),
+            ...(isNonEmptyString(unsubscribeTopicId)
+              ? { unsubscribeTopicId }
+              : {}),
+            ...(isNonEmptyString(searchTerm)
+              ? { emailAddress: ILike(`%${escapeForIlike(searchTerm)}%`) }
+              : {}),
+          },
+          order: { createdAt: 'DESC' },
+          take: limit,
+          skip: offset,
+        });
+      }, buildSystemAuthContext(workspaceId));
 
     return { records, totalCount };
   }
@@ -115,24 +119,33 @@ export class MessageSuppressionService {
     workspaceId,
     emailAddresses,
     unsubscribeTopicId,
-  }: FindApplicableSuppressionsArgs): Promise<MessageSuppressionEntity[]> {
+  }: FindApplicableSuppressionsArgs): Promise<
+    MessageSuppressionWorkspaceEntity[]
+  > {
     const normalizedAddresses = this.normalizeAddresses(emailAddresses);
 
     if (!isNonEmptyArray(normalizedAddresses)) {
       return [];
     }
 
-    return this.suppressionRepository.find(workspaceId, {
-      where: [
-        {
-          emailAddress: In(normalizedAddresses),
-          unsubscribeTopicId: IsNull(),
-        },
-        ...(isNonEmptyString(unsubscribeTopicId)
-          ? [{ emailAddress: In(normalizedAddresses), unsubscribeTopicId }]
-          : []),
-      ],
-    });
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const suppressionRepository = this.workspaceOrmManager.getRepository(
+        MessageSuppressionWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      );
+      return suppressionRepository.find({
+        where: [
+          {
+            emailAddress: In(normalizedAddresses),
+            unsubscribeTopicId: IsNull(),
+          },
+          ...(isNonEmptyString(unsubscribeTopicId)
+            ? [{ emailAddress: In(normalizedAddresses), unsubscribeTopicId }]
+            : []),
+        ],
+      });
+    }, buildSystemAuthContext(workspaceId));
   }
 
   async suppress({
@@ -160,71 +173,88 @@ export class MessageSuppressionService {
         : IsNull(),
     };
 
-    const escalateExisting = async (): Promise<boolean> => {
-      const existing = await this.suppressionRepository.findOneBy(
-        workspaceId,
-        whereKey,
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const suppressionRepository = this.workspaceOrmManager.getRepository(
+        MessageSuppressionWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
       );
+      const escalateExisting = async (): Promise<boolean> => {
+        const existing = await suppressionRepository.findOneBy(whereKey);
 
-      if (!isDefined(existing)) {
-        return false;
-      }
+        if (!isDefined(existing)) {
+          return false;
+        }
 
-      if (this.shouldEscalate(existing.reason, reason)) {
-        await this.suppressionRepository.update(
-          workspaceId,
-          { id: existing.id },
-          { reason, source, providerEventId },
+        if (this.shouldEscalate(existing.reason, reason)) {
+          await suppressionRepository
+            .createQueryBuilder()
+            .where({ id: existing.id })
+            .update()
+            .set({ reason, source, providerEventId })
+            .execute();
+        }
+
+        return true;
+      };
+
+      for (
+        let insertAttempt = 1;
+        insertAttempt <= SUPPRESSION_INSERT_ATTEMPTS;
+        insertAttempt++
+      ) {
+        if (await escalateExisting()) {
+          return;
+        }
+
+        const { identifiers } = await suppressionRepository.insert(
+          {
+            emailAddress: normalizedEmailAddress,
+            reason,
+            source,
+            providerEventId,
+            unsubscribeTopicId: effectiveTopicId,
+          },
+          { onConflictDoNothing: true },
         );
+
+        if (identifiers.length > 0) {
+          return;
+        }
       }
 
-      return true;
-    };
-
-    if (await escalateExisting()) {
-      return;
-    }
-
-    try {
-      await this.suppressionRepository.insert(workspaceId, {
-        emailAddress: normalizedEmailAddress,
-        reason,
-        source,
-        providerEventId,
-        unsubscribeTopicId: effectiveTopicId,
-      });
-    } catch (error) {
-      const isUniqueViolation =
-        error instanceof QueryFailedError &&
-        (error as QueryFailedErrorWithCode).code ===
-          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
-
-      if (!isUniqueViolation || !(await escalateExisting())) {
-        throw error;
-      }
-    }
+      throw new EmailingDomainException(
+        `Suppression for ${normalizedEmailAddress} kept conflicting with a row that disappeared before it could be read`,
+        EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND,
+      );
+    }, buildSystemAuthContext(workspaceId));
   }
 
   async suppressManually({
     workspaceId,
     emailAddress,
     unsubscribeTopicId,
-  }: SuppressManuallyArgs): Promise<MessageSuppressionEntity> {
+  }: SuppressManuallyArgs): Promise<MessageSuppressionWorkspaceEntity> {
     await this.recordUnsubscribe({
       workspaceId,
       emailAddress,
       unsubscribeTopicId,
     });
 
-    const suppression = await this.suppressionRepository.findOneBy(
-      workspaceId,
-      {
-        emailAddress: this.normalizeEmailAddress(emailAddress),
-        unsubscribeTopicId: isNonEmptyString(unsubscribeTopicId)
-          ? unsubscribeTopicId
-          : IsNull(),
-      },
-    );
+    const suppression =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const suppressionRepository = this.workspaceOrmManager.getRepository(
+          MessageSuppressionWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+          { shouldSkipEventEmission: true },
+        );
+        return suppressionRepository.findOneBy({
+          emailAddress: this.normalizeEmailAddress(emailAddress),
+          unsubscribeTopicId: isNonEmptyString(unsubscribeTopicId)
+            ? unsubscribeTopicId
+            : IsNull(),
+        });
+      }, buildSystemAuthContext(workspaceId));
 
     if (!isDefined(suppression)) {
       throw new EmailingDomainException(
@@ -240,29 +270,35 @@ export class MessageSuppressionService {
     workspaceId,
     suppressionId,
   }: RemoveSuppressionArgs): Promise<void> {
-    const suppression = await this.suppressionRepository.findOneBy(
-      workspaceId,
-      { id: suppressionId },
-    );
-
-    if (!isDefined(suppression)) {
-      throw new EmailingDomainException(
-        `Suppression ${suppressionId} not found`,
-        EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND,
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const suppressionRepository = this.workspaceOrmManager.getRepository(
+        MessageSuppressionWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
       );
-    }
+      const suppression = await suppressionRepository.findOneBy({
+        id: suppressionId,
+      });
 
-    const { affected } = await this.suppressionRepository.delete(workspaceId, {
-      id: suppressionId,
-      reason: Not(In(HARD_SUPPRESSION_REASONS)),
-    });
+      if (!isDefined(suppression)) {
+        throw new EmailingDomainException(
+          `Suppression ${suppressionId} not found`,
+          EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND,
+        );
+      }
 
-    if (affected === 0) {
-      throw new EmailingDomainException(
-        `Suppression ${suppressionId} records a ${suppression.reason} and cannot be removed`,
-        EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE,
-      );
-    }
+      const { affected } = await suppressionRepository.delete({
+        id: suppressionId,
+        reason: Not(In(HARD_SUPPRESSION_REASONS)),
+      });
+
+      if (affected === 0) {
+        throw new EmailingDomainException(
+          `Suppression ${suppressionId} records a ${suppression.reason} and cannot be removed`,
+          EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE,
+        );
+      }
+    }, buildSystemAuthContext(workspaceId));
   }
 
   async getTopicOptOutState({
@@ -282,20 +318,30 @@ export class MessageSuppressionService {
       return [];
     }
 
-    const optOuts = await this.suppressionRepository.find(workspaceId, {
-      where: [
-        {
-          emailAddress: normalizedEmailAddress,
-          reason: MessageSuppressionReason.UNSUBSCRIBE,
-          unsubscribeTopicId: In(visibleTopics.map((topic) => topic.id)),
-        },
-        {
-          emailAddress: normalizedEmailAddress,
-          reason: MessageSuppressionReason.UNSUBSCRIBE,
-          unsubscribeTopicId: IsNull(),
-        },
-      ],
-    });
+    const optOuts = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const suppressionRepository = this.workspaceOrmManager.getRepository(
+          MessageSuppressionWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+          { shouldSkipEventEmission: true },
+        );
+        return suppressionRepository.find({
+          where: [
+            {
+              emailAddress: normalizedEmailAddress,
+              reason: MessageSuppressionReason.UNSUBSCRIBE,
+              unsubscribeTopicId: In(visibleTopics.map((topic) => topic.id)),
+            },
+            {
+              emailAddress: normalizedEmailAddress,
+              reason: MessageSuppressionReason.UNSUBSCRIBE,
+              unsubscribeTopicId: IsNull(),
+            },
+          ],
+        });
+      },
+      buildSystemAuthContext(workspaceId),
+    );
 
     const optedOutTopicIds = new Set(
       optOuts
@@ -413,13 +459,20 @@ export class MessageSuppressionService {
   ): Promise<void> {
     const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
-    await this.suppressionRepository.delete(workspaceId, {
-      emailAddress: normalizedEmailAddress,
-      unsubscribeTopicId: isNonEmptyString(unsubscribeTopicId)
-        ? unsubscribeTopicId
-        : IsNull(),
-      reason: MessageSuppressionReason.UNSUBSCRIBE,
-    });
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const suppressionRepository = this.workspaceOrmManager.getRepository(
+        MessageSuppressionWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      );
+      return suppressionRepository.delete({
+        emailAddress: normalizedEmailAddress,
+        unsubscribeTopicId: isNonEmptyString(unsubscribeTopicId)
+          ? unsubscribeTopicId
+          : IsNull(),
+        reason: MessageSuppressionReason.UNSUBSCRIBE,
+      });
+    }, buildSystemAuthContext(workspaceId));
   }
 
   private normalizeEmailAddress(emailAddress: string): string {

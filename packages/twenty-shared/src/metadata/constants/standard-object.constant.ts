@@ -1473,6 +1473,37 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  campaignDelivery: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.campaignDelivery,
+    fields: STANDARD_OBJECT_FIELDS.campaignDelivery,
+    indexes: {
+      campaignPersonUniqueIndex: {
+        universalIdentifier: '8d719548-d34f-4891-bbc9-e0e09f0e363b',
+      },
+      expiredClaimIndex: {
+        universalIdentifier: 'a4d7e8ed-0008-4f6a-a20c-a2b821487481',
+      },
+      countsIndex: {
+        universalIdentifier: '1ea1ae7a-158f-436a-95a0-e9c998ad94f7',
+      },
+      claimTokenIndex: {
+        universalIdentifier: '91640dcd-3f6b-4378-b284-bb02cc8b81ec',
+      },
+      providerMessageIdUniqueIndex: {
+        universalIdentifier: '4de6f73d-ef3a-4c80-b71a-88739213f1c0',
+      },
+    },
+  },
+  messageSuppression: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageSuppression,
+    fields: STANDARD_OBJECT_FIELDS.messageSuppression,
+    indexes: {
+      emailAddressTopicUniqueIndex: {
+        universalIdentifier: 'a6c1f4dc-d925-49f9-8205-3e7f95545966',
+      },
+    },
+  },
 } as const satisfies Record<
   string,
   {
