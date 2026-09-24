@@ -8082,7 +8082,7 @@ export default {
                 }
             ],
             "chatThreadsForRecord": [
-                370,
+                376,
                 {
                     "objectNameSingular": [
                         1,
@@ -8093,11 +8093,11 @@ export default {
                         "UUID!"
                     ],
                     "limit": [
-                        28,
+                        30,
                         "Int!"
                     ],
                     "offset": [
-                        28,
+                        30,
                         "Int!"
                     ]
                 }
