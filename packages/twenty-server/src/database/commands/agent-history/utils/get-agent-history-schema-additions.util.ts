@@ -27,11 +27,17 @@ export const getAgentHistorySchemaAdditions = ({
       existing.flatObjectMetadataMaps.byUniversalIdentifier[identifier];
     const expected =
       standard.flatObjectMetadataMaps.byUniversalIdentifier[identifier];
+    const hasValidProtection =
+      isDefined(current) &&
+      ((current.readability === MetadataReadability.SYSTEM &&
+        current.writability === MetadataWritability.SYSTEM) ||
+        (identifier === STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
+          current.readability === MetadataReadability.PRIVATE &&
+          current.writability === MetadataWritability.OPEN));
     if (
       isDefined(current) &&
       (current.nameSingular !== expected?.nameSingular ||
-        current.readability !== MetadataReadability.SYSTEM ||
-        current.writability !== MetadataWritability.SYSTEM ||
+        !hasValidProtection ||
         current.isSearchable ||
         current.isAuditLogged)
     ) {
@@ -53,6 +59,13 @@ export const getAgentHistorySchemaAdditions = ({
           ],
         ),
     );
+  // Preparation can run before history is copied and ownership is backfilled.
+  // Keep newly provisioned legacy objects protected until the sharing upgrade.
+  const protectedObjects: typeof objects = objects.map((object) => ({
+    ...object,
+    readability: MetadataReadability.SYSTEM,
+    writability: MetadataWritability.SYSTEM,
+  }));
   // Relations from other standard objects into history objects (e.g. the
   // attachment morph target) must be provisioned with the history objects,
   // otherwise only the history-side half of the relation gets created.
@@ -95,5 +108,9 @@ export const getAgentHistorySchemaAdditions = ({
           ],
         ),
     );
-  return { objects, fields, indexes };
+  const protectedFields: typeof fields = fields.map((field) => ({
+    ...field,
+    writability: MetadataWritability.SYSTEM,
+  }));
+  return { objects: protectedObjects, fields: protectedFields, indexes };
 };

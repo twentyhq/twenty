@@ -87,7 +87,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    writability: MetadataWritability.OPEN,
     isAuditLogged: false,
   },
   totalInputTokens: {

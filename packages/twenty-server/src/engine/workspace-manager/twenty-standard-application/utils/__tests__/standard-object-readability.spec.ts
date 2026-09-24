@@ -137,7 +137,7 @@ describe('Standard object readability', () => {
     ).toContainEqual({
       joinColumnName: 'targetAgentChatThreadId',
       parentNameSingular: 'agentChatThread',
-      parentReadability: MetadataReadability.SYSTEM,
+      parentReadability: MetadataReadability.PRIVATE,
     });
   });
 

@@ -1,4 +1,4 @@
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -3204,6 +3204,7 @@ export type Mutation = {
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
+  setRecordShare: RecordSharingDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
   signOut: Scalars['Boolean']['output'];
@@ -4172,6 +4173,14 @@ export type MutationSetAppKeyValueArgs = {
 
 export type MutationSetEnterpriseKeyArgs = {
   enterpriseKey: Scalars['String']['input'];
+};
+
+
+export type MutationSetRecordShareArgs = {
+  accessLevel?: InputMaybe<RecordShareAccessLevel>;
+  enabled: Scalars['Boolean']['input'];
+  principal: RecordSharePrincipalInput;
+  target: RecordSharingTargetInput;
 };
 
 
@@ -5278,6 +5287,8 @@ export type Query = {
   previewMessageCampaignAudience: CampaignAudiencePreviewDto;
   publicMarketplaceAppDetail: MarketplaceAppDetail;
   publicMarketplaceApps: Array<MarketplaceApp>;
+  recordPermissions: Array<RecordPermissionsResult>;
+  recordSharing: RecordSharingDto;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
@@ -5745,6 +5756,16 @@ export type QueryPublicMarketplaceAppsArgs = {
 };
 
 
+export type QueryRecordPermissionsArgs = {
+  targets: Array<RecordPermissionsTargetInput>;
+};
+
+
+export type QueryRecordSharingArgs = {
+  target: RecordSharingTargetInput;
+};
+
+
 export type QuerySkillArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -5784,6 +5805,68 @@ export type RecordIdentifier = {
   id: Scalars['UUID']['output'];
   imageIdentifier?: Maybe<Scalars['String']['output']>;
   labelIdentifier: Scalars['String']['output'];
+};
+
+export type RecordPermissionsDto = {
+  __typename?: 'RecordPermissionsDTO';
+  canDelete: Scalars['Boolean']['output'];
+  canRead: Scalars['Boolean']['output'];
+  canSoftDelete: Scalars['Boolean']['output'];
+  canUpdate: Scalars['Boolean']['output'];
+};
+
+export type RecordPermissionsResult = {
+  __typename?: 'RecordPermissionsResult';
+  objectMetadataId: Scalars['UUID']['output'];
+  permissions: RecordPermissionsDto;
+  recordId: Scalars['UUID']['output'];
+};
+
+export type RecordPermissionsTargetInput = {
+  objectMetadataId: Scalars['UUID']['input'];
+  recordId: Scalars['UUID']['input'];
+};
+
+export enum RecordShareAccessLevel {
+  FULL = 'FULL',
+  READ = 'READ',
+  READ_WRITE = 'READ_WRITE'
+}
+
+export type RecordSharePrincipalInput = {
+  everyone?: InputMaybe<Scalars['Boolean']['input']>;
+  roleId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type RecordSharingDto = {
+  __typename?: 'RecordSharingDTO';
+  hasInheritedAccess: Scalars['Boolean']['output'];
+  isEnabled: Scalars['Boolean']['output'];
+  permissions: RecordPermissionsDto;
+  roles: Array<RecordSharingRoleDto>;
+  shares: Array<RecordSharingGrantDto>;
+  viewerAccessLevel?: Maybe<RecordShareAccessLevel>;
+};
+
+export type RecordSharingGrantDto = {
+  __typename?: 'RecordSharingGrantDTO';
+  accessLevel: RecordShareAccessLevel;
+  id: Scalars['ID']['output'];
+  principalId: Scalars['UUID']['output'];
+  principalType: Scalars['String']['output'];
+  rowCause: Scalars['String']['output'];
+};
+
+export type RecordSharingRoleDto = {
+  __typename?: 'RecordSharingRoleDTO';
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
+};
+
+export type RecordSharingTargetInput = {
+  objectMetadataId: Scalars['UUID']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 export type RecordTableConfiguration = {
@@ -8807,6 +8890,30 @@ export type MostlyEmptyFieldMetadataIdsQueryVariables = Exact<{
 
 export type MostlyEmptyFieldMetadataIdsQuery = { __typename?: 'Query', mostlyEmptyFieldMetadataIds: Array<string> };
 
+export type SetRecordShareMutationVariables = Exact<{
+  target: RecordSharingTargetInput;
+  principal: RecordSharePrincipalInput;
+  enabled: Scalars['Boolean']['input'];
+  accessLevel?: InputMaybe<RecordShareAccessLevel>;
+}>;
+
+
+export type SetRecordShareMutation = { __typename?: 'Mutation', setRecordShare: { __typename?: 'RecordSharingDTO', viewerAccessLevel?: RecordShareAccessLevel | null, isEnabled: boolean, hasInheritedAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: string, accessLevel: RecordShareAccessLevel, rowCause: string }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string }> } };
+
+export type GetRecordPermissionsQueryVariables = Exact<{
+  targets: Array<RecordPermissionsTargetInput> | RecordPermissionsTargetInput;
+}>;
+
+
+export type GetRecordPermissionsQuery = { __typename?: 'Query', recordPermissions: Array<{ __typename?: 'RecordPermissionsResult', objectMetadataId: string, recordId: string, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean } }> };
+
+export type GetRecordSharingQueryVariables = Exact<{
+  target: RecordSharingTargetInput;
+}>;
+
+
+export type GetRecordSharingQuery = { __typename?: 'Query', recordSharing: { __typename?: 'RecordSharingDTO', viewerAccessLevel?: RecordShareAccessLevel | null, isEnabled: boolean, hasInheritedAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: string, accessLevel: RecordShareAccessLevel, rowCause: string }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string }> } };
+
 export type CompleteBookCallOnboardingStepMutationVariables = Exact<{
   hasBookedCall: Scalars['Boolean']['input'];
   isAutoSkipped: Scalars['Boolean']['input'];
@@ -10478,6 +10585,9 @@ export const DeleteOneIndexMetadataItemDocument = {"kind":"Document","definition
 export const ObjectMetadataItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ObjectMetadataItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objects"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paging"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1000"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ObjectMetadataFields"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ObjectMetadataFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Object"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}},{"kind":"Field","name":{"kind":"Name","value":"labelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"labelPlural"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isRemote"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isUIEditable"}},{"kind":"Field","name":{"kind":"Name","value":"isUICreatable"}},{"kind":"Field","name":{"kind":"Name","value":"writability"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"labelIdentifierFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"imageIdentifierFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"shortcut"}},{"kind":"Field","name":{"kind":"Name","value":"isLabelSyncedWithName"}},{"kind":"Field","name":{"kind":"Name","value":"isSearchable"}},{"kind":"Field","name":{"kind":"Name","value":"openRecordIn"}},{"kind":"Field","name":{"kind":"Name","value":"duplicateCriteria"}},{"kind":"Field","name":{"kind":"Name","value":"searchFieldMetadataList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"tsVectorFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"indexMetadataList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"indexWhereClause"}},{"kind":"Field","name":{"kind":"Name","value":"indexType"}},{"kind":"Field","name":{"kind":"Name","value":"isUnique"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"indexFieldMetadataList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"subFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"order"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"fieldsList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isUIEditable"}},{"kind":"Field","name":{"kind":"Name","value":"writability"}},{"kind":"Field","name":{"kind":"Name","value":"isNullable"}},{"kind":"Field","name":{"kind":"Name","value":"isUnique"}},{"kind":"Field","name":{"kind":"Name","value":"isSearchable"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"defaultValue"}},{"kind":"Field","name":{"kind":"Name","value":"options"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"isLabelSyncedWithName"}},{"kind":"Field","name":{"kind":"Name","value":"morphId"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"relation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sourceObjectMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetObjectMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sourceFieldMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetFieldMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"morphRelations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sourceObjectMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetObjectMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sourceFieldMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetFieldMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ObjectMetadataItemsQuery, ObjectMetadataItemsQueryVariables>;
 export const ObjectRecordCountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ObjectRecordCounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objectRecordCounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objectNamePlural"}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<ObjectRecordCountsQuery, ObjectRecordCountsQueryVariables>;
 export const MostlyEmptyFieldMetadataIdsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MostlyEmptyFieldMetadataIds"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectMetadataId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mostlyEmptyFieldMetadataIds"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objectMetadataId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectMetadataId"}}}]}]}}]} as unknown as DocumentNode<MostlyEmptyFieldMetadataIdsQuery, MostlyEmptyFieldMetadataIdsQueryVariables>;
+export const SetRecordShareDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetRecordShare"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"target"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordSharingTargetInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"principal"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordSharePrincipalInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accessLevel"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordShareAccessLevel"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setRecordShare"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"target"},"value":{"kind":"Variable","name":{"kind":"Name","value":"target"}}},{"kind":"Argument","name":{"kind":"Name","value":"principal"},"value":{"kind":"Variable","name":{"kind":"Name","value":"principal"}}},{"kind":"Argument","name":{"kind":"Name","value":"enabled"},"value":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}}},{"kind":"Argument","name":{"kind":"Name","value":"accessLevel"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accessLevel"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"viewerAccessLevel"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"canRead"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdate"}},{"kind":"Field","name":{"kind":"Name","value":"canDelete"}},{"kind":"Field","name":{"kind":"Name","value":"canSoftDelete"}}]}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"hasInheritedAccess"}},{"kind":"Field","name":{"kind":"Name","value":"shares"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"principalId"}},{"kind":"Field","name":{"kind":"Name","value":"principalType"}},{"kind":"Field","name":{"kind":"Name","value":"accessLevel"}},{"kind":"Field","name":{"kind":"Name","value":"rowCause"}}]}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]} as unknown as DocumentNode<SetRecordShareMutation, SetRecordShareMutationVariables>;
+export const GetRecordPermissionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRecordPermissions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"targets"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordPermissionsTargetInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recordPermissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"targets"},"value":{"kind":"Variable","name":{"kind":"Name","value":"targets"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"recordId"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"canRead"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdate"}},{"kind":"Field","name":{"kind":"Name","value":"canDelete"}},{"kind":"Field","name":{"kind":"Name","value":"canSoftDelete"}}]}}]}}]}}]} as unknown as DocumentNode<GetRecordPermissionsQuery, GetRecordPermissionsQueryVariables>;
+export const GetRecordSharingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRecordSharing"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"target"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RecordSharingTargetInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recordSharing"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"target"},"value":{"kind":"Variable","name":{"kind":"Name","value":"target"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"viewerAccessLevel"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"canRead"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdate"}},{"kind":"Field","name":{"kind":"Name","value":"canDelete"}},{"kind":"Field","name":{"kind":"Name","value":"canSoftDelete"}}]}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"hasInheritedAccess"}},{"kind":"Field","name":{"kind":"Name","value":"shares"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"principalId"}},{"kind":"Field","name":{"kind":"Name","value":"principalType"}},{"kind":"Field","name":{"kind":"Name","value":"accessLevel"}},{"kind":"Field","name":{"kind":"Name","value":"rowCause"}}]}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]}}]}}]} as unknown as DocumentNode<GetRecordSharingQuery, GetRecordSharingQueryVariables>;
 export const CompleteBookCallOnboardingStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CompleteBookCallOnboardingStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hasBookedCall"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isAutoSkipped"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"completeBookCallOnboardingStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"hasBookedCall"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hasBookedCall"}}},{"kind":"Argument","name":{"kind":"Name","value":"isAutoSkipped"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isAutoSkipped"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<CompleteBookCallOnboardingStepMutation, CompleteBookCallOnboardingStepMutationVariables>;
 export const EnrichWorkspaceCompanyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EnrichWorkspaceCompany"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enrichWorkspaceCompany"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"outcome"}},{"kind":"Field","name":{"kind":"Name","value":"enrichment"}},{"kind":"Field","name":{"kind":"Name","value":"personOutcome"}},{"kind":"Field","name":{"kind":"Name","value":"personEnrichment"}},{"kind":"Field","name":{"kind":"Name","value":"isBookCallOnboardingStepPending"}}]}}]}}]} as unknown as DocumentNode<EnrichWorkspaceCompanyMutation, EnrichWorkspaceCompanyMutationVariables>;
 export const GoBackToPreviousOnboardingStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"GoBackToPreviousOnboardingStep"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"goBackToPreviousOnboardingStep"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"onboardingStatus"}},{"kind":"Field","name":{"kind":"Name","value":"previousOnboardingStatus"}}]}}]}}]} as unknown as DocumentNode<GoBackToPreviousOnboardingStepMutation, GoBackToPreviousOnboardingStepMutationVariables>;

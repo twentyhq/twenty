@@ -39,7 +39,7 @@ export const createGetToolCatalogTool = (
   },
 ) => ({
   description:
-    'STEP 1: Start here. Browse available tools by category. Returns tool names and descriptions. You MUST call this before using learn_tools or execute_tool — do not guess tool names.',
+    'Fallback discovery — use only when you do not know which tool exists. You do not need this for record operations: build the name from the grammar ({operation}_{object}, e.g. find_many_people) and pass it straight to learn_tools, which returns the closest matching names when a name is wrong. Pass ONE category to keep the response small.',
   inputSchema: getToolCatalogInputSchema,
   execute: async (
     parameters: GetToolCatalogInput,

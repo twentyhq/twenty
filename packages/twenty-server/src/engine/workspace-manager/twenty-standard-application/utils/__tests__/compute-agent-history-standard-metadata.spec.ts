@@ -88,25 +88,28 @@ describe('agent history workspace metadata', () => {
       ).toMatchObject({ isUnique: false });
     },
   );
-  it.each(OBJECT_NAMES)(
-    'keeps %s inaccessible through generic APIs and search',
-    (name) => {
-      expect(
-        allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS[name].universalIdentifier
-        ],
-      ).toMatchObject({
-        nameSingular: name,
-        isSystem: true,
-        isSearchable: false,
-        isAuditLogged: false,
-        isUICreatable: false,
-        isUIEditable: false,
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
-      });
-    },
-  );
+  it.each(OBJECT_NAMES)('keeps %s protected by metadata policy', (name) => {
+    expect(
+      allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS[name].universalIdentifier
+      ],
+    ).toMatchObject({
+      nameSingular: name,
+      isSystem: true,
+      isSearchable: false,
+      isAuditLogged: false,
+      isUICreatable: false,
+      isUIEditable: false,
+      readability:
+        name === 'agentChatThread'
+          ? MetadataReadability.PRIVATE
+          : MetadataReadability.SYSTEM,
+      writability:
+        name === 'agentChatThread'
+          ? MetadataWritability.OPEN
+          : MetadataWritability.SYSTEM,
+    });
+  });
 
   it('retains exact precision for credits and cache token counts', () => {
     for (const name of [
