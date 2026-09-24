@@ -1,27 +1,31 @@
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ClientConfigProviderEffect = () => {
+  // oxlint-disable-next-line twenty/no-state-useref
+  const isInitializationStarted = useRef(false);
   const [clientConfigApiStatus, setClientConfigApiStatus] = useAtomState(
     clientConfigApiStatusState,
   );
 
-  const { data, loading, error, fetchClientConfig } = useClientConfig();
+  const { data, loading, error, initializeClientConfig } = useClientConfig();
 
   useEffect(() => {
     if (
       !clientConfigApiStatus.isLoadedOnce &&
-      !clientConfigApiStatus.isLoading
+      !clientConfigApiStatus.isLoading &&
+      !isInitializationStarted.current
     ) {
-      fetchClientConfig();
+      isInitializationStarted.current = true;
+      initializeClientConfig();
     }
   }, [
     clientConfigApiStatus.isLoadedOnce,
     clientConfigApiStatus.isLoading,
-    fetchClientConfig,
+    initializeClientConfig,
   ]);
 
   useEffect(() => {
