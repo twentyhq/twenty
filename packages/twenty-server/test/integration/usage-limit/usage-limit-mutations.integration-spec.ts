@@ -248,6 +248,75 @@ describe('Usage limit mutations', () => {
     });
   });
 
+  // A row on a meter no default covers, so the default gate never fires and the
+  // only thing that can refuse the tenant is the row's provenance.
+  describe('rows an operator set', () => {
+    const OPERATOR_ROW_MESSAGE = 'only an operator can change it';
+
+    const seedOperatorRow = async () => {
+      await usageLimitRepository.insert({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        ...buildPayload({
+          resourceType: UsageResourceType.STORAGE,
+          operationType: UsageOperationType.STORAGE_FILE,
+          spenderType: 'workspace',
+          limitKind: 'stock',
+          periodCount: 1,
+          periodUnit: 'lifetime',
+          meter: 'quantity',
+          limitValue: 5_000,
+        }),
+        spenderId: '',
+        burstValue: null,
+        isInstanceOverride: true,
+      });
+
+      const usageLimit = await usageLimitRepository.findOneByOrFail({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        meter: 'quantity',
+      });
+
+      return usageLimit;
+    };
+
+    it('refuses a workspace update of one', async () => {
+      const usageLimit = await seedOperatorRow();
+
+      const response = await updateUsageLimit(usageLimit.id, {
+        resourceType: UsageResourceType.STORAGE,
+        operationType: UsageOperationType.STORAGE_FILE,
+        spenderType: 'workspace',
+        limitKind: 'stock',
+        periodCount: 1,
+        periodUnit: 'lifetime',
+        meter: 'quantity',
+        limitValue: 9_000_000,
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ROW_MESSAGE),
+      );
+      expect(
+        (await usageLimitRepository.findOneByOrFail({ id: usageLimit.id }))
+          .limitValue,
+      ).toBe(5_000);
+    });
+
+    it('refuses a workspace delete of one', async () => {
+      const usageLimit = await seedOperatorRow();
+
+      const response = await makeMetadataAPIRequest({
+        query: DELETE_USAGE_LIMIT,
+        variables: { usageLimitId: usageLimit.id },
+      });
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ROW_MESSAGE),
+      );
+      expect(await usageLimitRepository.countBy({ id: usageLimit.id })).toBe(1);
+    });
+  });
+
   describe('instance defaults', () => {
     const OPERATOR_ONLY_MESSAGE = 'only an operator can replace it';
 

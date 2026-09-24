@@ -135,6 +135,12 @@ describe('Workspace usage limits from the admin panel', () => {
 
     jestExpectToBeDefined(usageLimitId);
 
+    // The plan must not be able to veto what the operator just set.
+    expect(
+      (await usageLimitRepository.findOneByOrFail({ id: usageLimitId }))
+        .isInstanceOverride,
+    ).toBe(true);
+
     const workspaceUsageLimits = await findWorkspaceUsageLimits();
 
     expect(workspaceUsageLimits.limits).toHaveLength(1);
