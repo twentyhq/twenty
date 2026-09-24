@@ -51,6 +51,10 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-modules/object-metadata/utils/get-effective-image-identifier-field-metadata-id.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
+import {
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -488,8 +492,27 @@ export class SearchService {
             tsRank: 0,
           }));
         },
+        { readOnly: true },
       );
     } catch (error) {
+      // A standby cancels long reads that conflict with replication (40001);
+      // like the timeout, drop the best-effort fallback instead of failing search.
+      if (
+        error instanceof TwentyOrmException &&
+        error.code === TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR
+      ) {
+        this.logger.warn(
+          'Search ILIKE fallback hit a transient database error',
+          {
+            workspaceId: entityManager.internalContext.workspaceId,
+            objectNameSingular: flatObjectMetadata.nameSingular,
+            errorMessage: error.message,
+          },
+        );
+
+        return [];
+      }
+
       if (isQueryCanceledError(error)) {
         this.logger.warn(
           `Search ILIKE fallback exceeded ${timeoutMs}ms timeout`,

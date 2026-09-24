@@ -52,6 +52,19 @@ describe('runInRollbackSafeTransaction', () => {
     expect(client.release).toHaveBeenCalledWith(false);
   });
 
+  it('should open a read-only transaction when readOnly is set', async () => {
+    const client = buildClient();
+
+    await runInRollbackSafeTransaction({
+      pool: buildPool(client),
+      work: async () => 'done',
+      readOnly: true,
+    });
+
+    expect(client.query).toHaveBeenNthCalledWith(1, 'BEGIN READ ONLY');
+    expect(client.query).toHaveBeenNthCalledWith(2, 'COMMIT');
+  });
+
   it('should roll back and rethrow the work error', async () => {
     const client = buildClient();
     const workError = new Error('work failed');

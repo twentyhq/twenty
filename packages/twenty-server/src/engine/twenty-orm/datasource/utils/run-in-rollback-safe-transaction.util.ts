@@ -9,9 +9,11 @@ const logger = new Logger('runInRollbackSafeTransaction');
 export const runInRollbackSafeTransaction = async <T>({
   pool,
   work,
+  readOnly = false,
 }: {
   pool: Pool;
   work: (client: PoolClient) => Promise<T>;
+  readOnly?: boolean;
 }): Promise<T> => {
   const client = await pool.connect().catch((error: unknown) => {
     throw computeTwentyOrmException(error);
@@ -19,7 +21,7 @@ export const runInRollbackSafeTransaction = async <T>({
   let shouldDestroyConnection = false;
 
   try {
-    await client.query('BEGIN');
+    await client.query(readOnly ? 'BEGIN READ ONLY' : 'BEGIN');
 
     const result = await work(client);
 

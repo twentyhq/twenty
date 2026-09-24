@@ -73,6 +73,7 @@ export class WorkspaceDataSource {
 
   async transaction<T>(
     work: (transactionScope: WorkspaceTransactionScope) => Promise<T>,
+    options?: { readOnly?: boolean },
   ): Promise<T> {
     const afterCommitCallbacks: Array<() => void | Promise<void>> = [];
     const afterCommit: WorkspaceTransactionScope['afterCommit'] = (callback) =>
@@ -102,27 +103,29 @@ export class WorkspaceDataSource {
         },
       },
     };
-    const result = await this.runInClientTransaction((executor) =>
-      work({
-        workspaceId: this.internalContext.workspaceId,
-        getRepository: <T extends ObjectLiteral = ObjectRecord>(
-          nameSingular: string,
-          rolePermissionConfig?: RolePermissionConfig,
-          repositoryOptions?: { shouldSkipEventEmission?: boolean },
-        ) =>
-          this.buildRepository<T>({
-            nameSingular,
-            rolePermissionConfig,
-            executor,
-            isTransactional: true,
-            shouldSkipEventEmission:
-              repositoryOptions?.shouldSkipEventEmission ?? false,
-            internalContext: transactionalInternalContext,
-          }),
-        executeRawQuery: (sql, parameters = []) =>
-          executor.execute({ text: sql, values: parameters }),
-        afterCommit,
-      }),
+    const result = await this.runInClientTransaction(
+      (executor) =>
+        work({
+          workspaceId: this.internalContext.workspaceId,
+          getRepository: <T extends ObjectLiteral = ObjectRecord>(
+            nameSingular: string,
+            rolePermissionConfig?: RolePermissionConfig,
+            repositoryOptions?: { shouldSkipEventEmission?: boolean },
+          ) =>
+            this.buildRepository<T>({
+              nameSingular,
+              rolePermissionConfig,
+              executor,
+              isTransactional: true,
+              shouldSkipEventEmission:
+                repositoryOptions?.shouldSkipEventEmission ?? false,
+              internalContext: transactionalInternalContext,
+            }),
+          executeRawQuery: (sql, parameters = []) =>
+            executor.execute({ text: sql, values: parameters }),
+          afterCommit,
+        }),
+      options?.readOnly ?? false,
     );
 
     for (const callback of afterCommitCallbacks) {
@@ -141,10 +144,12 @@ export class WorkspaceDataSource {
 
   private async runInClientTransaction<T>(
     work: (executor: QueryExecutor) => Promise<T>,
+    readOnly: boolean,
   ): Promise<T> {
     return runInRollbackSafeTransaction({
       pool: this.pool,
       work: (client) => work(new ClientQueryExecutor({ client })),
+      readOnly,
     });
   }
 
