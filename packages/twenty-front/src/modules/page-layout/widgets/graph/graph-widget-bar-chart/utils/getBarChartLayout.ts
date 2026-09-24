@@ -9,6 +9,7 @@ import {
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/truncateTickLabel';
 import { type ChartAxisTheme } from '@/page-layout/widgets/graph/types/ChartAxisTheme';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
+import { computeLeftAxisTitleWidth } from '@/page-layout/widgets/graph/utils/computeLeftAxisTitleWidth';
 import { computeBottomLegendOffsetFromText } from '@/page-layout/widgets/graph/utils/computeBottomLegendOffsetFromText';
 import { computeChartMargins } from '@/page-layout/widgets/graph/utils/computeChartMargins';
 import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
@@ -81,12 +82,7 @@ const resolveMarginInputs = ({
       ? tickResult.tickValues.map((value) =>
           formatGraphValue(value, formatOptions),
         )
-      : tickConfiguration.categoryTickValues.map((value) =>
-          truncateTickLabel(
-            String(value),
-            tickConfiguration.maxLeftAxisTickLabelLength,
-          ),
-        );
+      : tickConfiguration.categoryTickValues.map((value) => String(value));
 
   return { bottomTickLabels, leftTickLabels };
 };
@@ -133,6 +129,10 @@ export const getBarChartLayout = ({
   rightTickLabels = [],
 }: GetBarChartLayoutParams): BarChartLayoutResult => {
   const { tickFontSize, legendFontSize } = resolveAxisFontSizes(axisTheme);
+  const leftAxisTitleWidth = computeLeftAxisTitleWidth({
+    yAxisLabel,
+    legendFontSize,
+  });
 
   const { margins, tickConfiguration, valueTickResult, bottomLegendOffset } =
     computeChartMargins({
@@ -150,6 +150,7 @@ export const getBarChartLayout = ({
           axisFontSize: tickFontSize,
           layout,
           margins: currentMargins,
+          leftAxisTitleWidth,
         }),
       computeValueTickValues: (currentTickConfiguration) =>
         computeValueTickValues({

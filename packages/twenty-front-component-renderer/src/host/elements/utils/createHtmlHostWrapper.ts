@@ -32,7 +32,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
   if (!CARET_PRESERVING_TAGS.has(htmlTag)) {
     return ({ children, ...props }: WrapperProps) => {
       const { reactBindableProps, hostEnforcedProps, composedElementRef } =
-        useHtmlHostElementProps(props, htmlTag);
+        useHtmlHostElementProps({ props, htmlTag });
 
       return createPlainHostElement({
         htmlTag,
@@ -53,7 +53,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       reactBindableProps,
       hostEnforcedProps,
       composedElementRef,
-    } = useHtmlHostElementProps(props, htmlTag);
+    } = useHtmlHostElementProps({ props, htmlTag });
 
     const caretPreservingElementRef = useCaretPreservingElementRef(
       composedElementRef,

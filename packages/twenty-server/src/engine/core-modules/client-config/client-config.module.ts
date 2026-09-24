@@ -12,5 +12,6 @@ import { ClientConfigService } from './services/client-config.service';
   imports: [DomainServerConfigModule, AdminPanelModule],
   controllers: [ClientConfigController],
   providers: [ClientConfigResolver, ClientConfigService],
+  exports: [ClientConfigService],
 })
 export class ClientConfigModule {}

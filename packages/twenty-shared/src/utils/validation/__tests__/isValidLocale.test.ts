@@ -11,4 +11,9 @@ describe('isValidLocale', () => {
     expect(isValidLocale('invalidLocale')).toBe(false);
     expect(isValidLocale(null)).toBe(false);
   });
+
+  it('should return false for inherited Object prototype keys', () => {
+    expect(isValidLocale('toString')).toBe(false);
+    expect(isValidLocale('constructor')).toBe(false);
+  });
 });

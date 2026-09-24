@@ -185,9 +185,9 @@ export const SettingsBillingPlanComparisonTable = ({
                 </StyledPlanSubtitle>
               </StyledHeaderText>
               <SegmentedControl
-                ariaLabel={t`Billing period`}
+                aria-label={t`Billing period`}
                 itemWidth="content"
-                onChange={onBillingIntervalChange}
+                onValueChange={onBillingIntervalChange}
                 options={billingIntervalOptions}
                 value={billingInterval}
               />
