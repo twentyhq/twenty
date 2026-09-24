@@ -10,7 +10,7 @@ import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { getManyToOneForeignKey } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/utils/get-many-to-one-foreign-key.util';
+import { buildManyToOneForeignKeyDefinition } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/build-many-to-one-foreign-key-definition.util';
 import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
 import { type DeferredWorkspaceMigrationActionPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -211,7 +211,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
   override async executeDeferredAction({
     workspaceId,
-    payload: { fieldMetadataId, foreignKeyName },
+    payload: { fieldMetadataId },
     allFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
     queryRunner,
   }: DeferredWorkspaceMigrationActionExecutionArgs<
@@ -231,6 +231,10 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       flatEntityId: flatFieldMetadata.objectMetadataId,
     });
 
+    if (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+      return;
+    }
+
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
       objectMetadata: flatObjectMetadata,
@@ -240,17 +244,17 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       {
         queryRunner,
         schemaName,
-        tableName,
-        foreignKeyName,
+        foreignKey: buildManyToOneForeignKeyDefinition({
+          flatFieldMetadata,
+          flatObjectMetadataMaps,
+          tableName,
+        }),
       },
     );
   }
 
   private getDeferredForeignKeyValidation({
     flatAction,
-    queryRunner,
-    allFlatEntityMaps: { flatObjectMetadataMaps },
-    workspaceId,
     featureFlagsMap,
   }: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>):
     | {
@@ -282,34 +286,9 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       return undefined;
     }
 
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: flatFieldMetadata.objectMetadataId,
-    });
-
-    const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
-      workspaceId,
-      objectMetadata: flatObjectMetadata,
-    });
-
-    const foreignKey = getManyToOneForeignKey({
-      flatFieldMetadata,
-      flatObjectMetadataMaps,
-      queryRunner,
-      schemaName,
-      tableName,
-    });
-
-    if (!isDefined(foreignKey)) {
-      return undefined;
-    }
-
     return {
       name: 'validateForeignKey' as const,
-      payload: {
-        fieldMetadataId: flatFieldMetadata.id,
-        foreignKeyName: foreignKey.foreignKeyName,
-      },
+      payload: { fieldMetadataId: flatFieldMetadata.id },
     };
   }
 
@@ -377,26 +356,19 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       columnDefinitions,
     });
 
-    const manyToOneForeignKey = getManyToOneForeignKey({
-      flatFieldMetadata,
-      flatObjectMetadataMaps,
-      queryRunner,
-      schemaName,
-      tableName,
-    });
-
-    if (isDefined(manyToOneForeignKey)) {
+    if (
+      isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
+      flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
+    ) {
       await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(
         {
           queryRunner,
           schemaName,
-          foreignKey: {
+          foreignKey: buildManyToOneForeignKeyDefinition({
+            flatFieldMetadata,
+            flatObjectMetadataMaps,
             tableName,
-            columnName: manyToOneForeignKey.columnName,
-            referencedTableName: manyToOneForeignKey.referencedTableName,
-            referencedColumnName: 'id',
-            onDelete: manyToOneForeignKey.onDelete,
-          },
+          }),
           isNotValid: isForeignKeyValidationDeferred,
         },
       );

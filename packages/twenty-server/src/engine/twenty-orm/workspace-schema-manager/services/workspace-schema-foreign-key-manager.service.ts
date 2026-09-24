@@ -1,7 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';
-import { computeWorkspaceSchemaForeignKeyName } from 'src/engine/twenty-orm/workspace-schema-manager/utils/compute-workspace-schema-foreign-key-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 const ALLOWED_FK_ACTIONS = new Set([
@@ -24,7 +23,7 @@ export class WorkspaceSchemaForeignKeyManagerService {
     foreignKey: WorkspaceSchemaForeignKeyDefinition;
     isNotValid?: boolean;
   }): Promise<void> {
-    const foreignKeyName = computeWorkspaceSchemaForeignKeyName({
+    const foreignKeyName = this.computeForeignKeyName({
       queryRunner,
       schemaName,
       foreignKey,
@@ -56,16 +55,37 @@ export class WorkspaceSchemaForeignKeyManagerService {
   async validateForeignKey({
     queryRunner,
     schemaName,
-    tableName,
-    foreignKeyName,
+    foreignKey,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
-    tableName: string;
-    foreignKeyName: string;
+    foreignKey: WorkspaceSchemaForeignKeyDefinition;
   }): Promise<void> {
+    const foreignKeyName = this.computeForeignKeyName({
+      queryRunner,
+      schemaName,
+      foreignKey,
+    });
+
     await queryRunner.query(
-      `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} VALIDATE CONSTRAINT ${escapeIdentifier(foreignKeyName)}`,
+      `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(foreignKey.tableName)} VALIDATE CONSTRAINT ${escapeIdentifier(foreignKeyName)}`,
+    );
+  }
+
+  private computeForeignKeyName({
+    queryRunner,
+    schemaName,
+    foreignKey,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    foreignKey: WorkspaceSchemaForeignKeyDefinition;
+  }): string {
+    return queryRunner.connection.namingStrategy.foreignKeyName(
+      foreignKey.tableName,
+      [foreignKey.columnName],
+      `${schemaName}.${foreignKey.referencedTableName}`,
+      [foreignKey.referencedColumnName],
     );
   }
 
