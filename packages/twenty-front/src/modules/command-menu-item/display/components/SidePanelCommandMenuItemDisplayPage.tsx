@@ -85,7 +85,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       case 'SELECTION':
         return t`Selection`;
       case 'CURRENT_VIEW':
-        return t`Current view`;
+        return t`View`;
       case 'THIS_OBJECT':
         return isDefined(objectSectionContext) ? t`Object` : t`This object`;
       case 'ASK_AND_FIND':

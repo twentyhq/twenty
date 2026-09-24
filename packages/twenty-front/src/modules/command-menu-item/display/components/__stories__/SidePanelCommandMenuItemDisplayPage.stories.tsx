@@ -421,12 +421,12 @@ export const SectionHeadersShowTheirContext: Story = {
     expect(await canvas.findByText('Selection: 2 Companies')).toBeVisible();
 
     const headings = canvas.getAllByText(
-      /^(Selection: 2 Companies|Current view: Prospects|Object: Companies)$/,
+      /^(Selection: 2 Companies|View: Prospects|Object: Companies)$/,
     );
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
       'Selection: 2 Companies',
-      'Current view: Prospects',
+      'View: Prospects',
       'Object: Companies',
     ]);
   },

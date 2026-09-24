@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -15,6 +16,20 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const MAX_RECORD_AVATARS = 3;
+
+const StyledOverflowCount = styled.span`
+  align-items: center;
+  background: ${themeCssVariables.background.tertiary};
+  border: 1px solid ${themeCssVariables.background.primary};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  height: ${themeCssVariables.spacing[4]};
+  margin-left: -${themeCssVariables.spacing[1]};
+  padding: 0 ${themeCssVariables.spacing[1]};
+`;
 
 export const useCommandMenuItemSelectionSectionContext = ():
   | CommandMenuItemSectionContext
@@ -61,18 +76,25 @@ export const useCommandMenuItemSelectionSectionContext = ():
         }).name
       : `${numberOfSelectedRecords} ${objectMetadataItem.labelPlural}`;
 
+  const overflowCount = numberOfSelectedRecords - records.length;
+
   return {
     icon:
-      records.length > 0
-        ? records.map((record) => (
+      records.length > 0 ? (
+        <>
+          {records.map((record) => (
             <SidePanelContextRecordChipAvatars
               key={record.id}
               objectMetadataItem={objectMetadataItem}
               record={record}
               borderColor={themeCssVariables.background.primary}
             />
-          ))
-        : undefined,
+          ))}
+          {overflowCount > 0 && (
+            <StyledOverflowCount>+{overflowCount}</StyledOverflowCount>
+          )}
+        </>
+      ) : undefined,
     label,
   };
 };
