@@ -18,7 +18,7 @@ import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-hi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.43.0', 1790241041129)
+@RegisteredWorkspaceCommand('2.43.0', 1790251806563)
 @Command({
   name: 'upgrade:2-43:enable-common-record-sharing',
   description:
@@ -40,18 +40,12 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     return this.up(args);
   }
 
-  async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.apply(args, true);
+  async down(_args: RunOnWorkspaceArgs): Promise<void> {
+    // Restoring SYSTEM would reactivate legacy open access for private records.
+    // Compatible application rollbacks must retain the activated metadata.
   }
 
-  async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.apply(args, false);
-  }
-
-  private async apply(
-    { workspaceId, options }: RunOnWorkspaceArgs,
-    isEnabled: boolean,
-  ): Promise<void> {
+  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -84,51 +78,46 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     }
     if (options.dryRun) {
       this.logger.log(
-        `Would ${isEnabled ? 'enable' : 'disable'} common conversation permissions for ${workspaceId}`,
+        `Would enable common conversation permissions for ${workspaceId}`,
       );
       return;
     }
-    if (isEnabled) {
-      // This reads the former entitlement only to preserve historical access;
-      // neither the new sharing API nor record authorization depends on it.
-      const historicalFlags: Partial<Record<string, boolean>> = featureFlagsMap;
-      const wasRecordSharingEnabled =
-        historicalFlags['IS_RECORD_SHARING_ENABLED'] === true &&
-        (await this.billingSubscriptionService.getWorkspaceEntitlementValue(
-          workspaceId,
-          BillingEntitlementKey.RECORD_SHARING,
-        ));
-      await preserveLegacyRecordAccess({
-        manager: this.dataSource.manager,
+    // This reads the former entitlement only to preserve historical access;
+    // neither the new sharing API nor record authorization depends on it.
+    const historicalFlags: Partial<Record<string, boolean>> = featureFlagsMap;
+    const wasRecordSharingEnabled =
+      historicalFlags['IS_RECORD_SHARING_ENABLED'] === true &&
+      (await this.billingSubscriptionService.getWorkspaceEntitlementValue(
         workspaceId,
-        objects: Object.values(
-          flatObjectMetadataMaps.byUniversalIdentifier,
-        ).filter(isDefined),
-        wasRecordSharingEnabled,
-        inheritanceMetadata: {
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
-        },
+        BillingEntitlementKey.RECORD_SHARING,
+      ));
+    await preserveLegacyRecordAccess({
+      manager: this.dataSource.manager,
+      workspaceId,
+      objects: Object.values(
+        flatObjectMetadataMaps.byUniversalIdentifier,
+      ).filter(isDefined),
+      wasRecordSharingEnabled,
+      inheritanceMetadata: {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+      },
+    });
+    // Ownership commits before metadata changes. Retries are idempotent and
+    // failure leaves SYSTEM protection intact.
+    await this.storage.run(workspaceId, async ({ manager, table, storage }) => {
+      if (storage !== 'workspace') {
+        throw new Error(
+          'Migrate agent history to workspace storage before enabling common record permissions',
+        );
+      }
+      await backfillChatThreadOwnerGrants({
+        manager,
+        workspaceId,
+        threadTableExpression: table('agentChatThread'),
+        isCoreStorage: false,
       });
-      // Ownership commits before metadata changes. Retries are idempotent and
-      // failure leaves SYSTEM protection intact.
-      await this.storage.run(
-        workspaceId,
-        async ({ manager, table, storage }) => {
-          if (storage !== 'workspace') {
-            throw new Error(
-              'Migrate agent history to workspace storage before enabling common record permissions',
-            );
-          }
-          await backfillChatThreadOwnerGrants({
-            manager,
-            workspaceId,
-            threadTableExpression: table('agentChatThread'),
-            isCoreStorage: false,
-          });
-        },
-      );
-    }
+    });
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
     ]);
@@ -145,12 +134,8 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
             flatEntityToUpdate: [
               {
                 ...thread,
-                readability: isEnabled
-                  ? MetadataReadability.PRIVATE
-                  : MetadataReadability.SYSTEM,
-                writability: isEnabled
-                  ? MetadataWritability.OPEN
-                  : MetadataWritability.SYSTEM,
+                readability: MetadataReadability.PRIVATE,
+                writability: MetadataWritability.OPEN,
               },
             ],
           },
@@ -160,9 +145,7 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
             flatEntityToUpdate: [
               {
                 ...title,
-                writability: isEnabled
-                  ? MetadataWritability.OPEN
-                  : MetadataWritability.SYSTEM,
+                writability: MetadataWritability.OPEN,
               },
             ],
           },

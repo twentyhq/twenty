@@ -6,7 +6,7 @@ import {
   MetadataWritability,
 } from 'twenty-shared/types';
 
-import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790241041129-enable-common-record-sharing.command';
+import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790251806563-enable-common-record-sharing.command';
 import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
 
 jest.mock(
@@ -189,26 +189,12 @@ describe('Common sharing upgrade', () => {
     ).not.toHaveBeenCalled();
   });
 
-  it('restores SYSTEM protection on rollback without deleting ownership grants', async () => {
+  it('retains activated privacy metadata on application rollback', async () => {
     const { command, storage, migrations } = buildCommand();
     await command.down(args);
     expect(storage.run).not.toHaveBeenCalled();
     expect(
       migrations.validateBuildAndRunLegacyWorkspaceMigration,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({
-        allFlatEntityOperationByMetadataName: expect.objectContaining({
-          objectMetadata: expect.objectContaining({
-            flatEntityToUpdate: [
-              {
-                id: 'thread',
-                readability: MetadataReadability.SYSTEM,
-                writability: MetadataWritability.SYSTEM,
-              },
-            ],
-          }),
-        }),
-      }),
-    );
+    ).not.toHaveBeenCalled();
   });
 });
