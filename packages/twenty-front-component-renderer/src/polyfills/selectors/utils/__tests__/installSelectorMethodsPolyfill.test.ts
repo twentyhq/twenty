@@ -92,6 +92,31 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(firstTab.matches('button + button')).toBe(false);
     });
 
+    it('should evaluate the disabled, enabled and checked pseudo-classes from attributes and properties', () => {
+      const { document } = createSelectorFixture();
+      const { firstTab, secondTab } = createTree(document);
+      const checkbox = document.createElement('input') as HTMLInputElement;
+      checkbox.setAttribute('type', 'checkbox');
+      checkbox.checked = true;
+      const uncheckedWithDefault = document.createElement(
+        'input',
+      ) as HTMLInputElement;
+      uncheckedWithDefault.setAttribute('type', 'checkbox');
+      uncheckedWithDefault.setAttribute('checked', '');
+      uncheckedWithDefault.checked = false;
+      const defaultChecked = document.createElement('input');
+      defaultChecked.setAttribute('type', 'radio');
+      defaultChecked.setAttribute('checked', '');
+
+      expect(secondTab.matches(':disabled')).toBe(true);
+      expect(firstTab.matches(':disabled')).toBe(false);
+      expect(firstTab.matches(':enabled')).toBe(true);
+      expect(checkbox.matches(':checked')).toBe(true);
+      expect(uncheckedWithDefault.matches(':checked')).toBe(false);
+      expect(defaultChecked.matches(':checked')).toBe(true);
+      expect(firstTab.matches(':checked')).toBe(false);
+    });
+
     it('should evaluate the focus pseudo-classes from the active element', () => {
       const { document, setActiveElement } = createSelectorFixture();
       const { list, firstTab, secondTab } = createTree(document);
@@ -106,6 +131,73 @@ describe('installSelectorMethodsPolyfill', () => {
       setActiveElement(secondTab);
       expect(firstTab.matches(':focus')).toBe(false);
       expect(secondTab.matches(':focus')).toBe(true);
+    });
+
+    it('should inherit fieldset disability except inside the first legend', () => {
+      const { document } = createSelectorFixture();
+      const outerFieldset = document.createElement('html-fieldset') as Element;
+      const firstLegend = document.createElement('html-legend') as Element;
+      const firstLegendInput = document.createElement('html-input') as Element;
+      const secondLegend = document.createElement('html-legend') as Element;
+      const secondLegendInput = document.createElement('html-input') as Element;
+      const nestedFieldset = document.createElement('html-fieldset') as Element;
+      const nestedLegend = document.createElement('html-legend') as Element;
+      const nestedInput = document.createElement('html-input') as Element;
+
+      outerFieldset.setAttribute('disabled', '');
+      nestedFieldset.setAttribute('disabled', '');
+      firstLegend.append(firstLegendInput);
+      secondLegend.append(secondLegendInput);
+      nestedLegend.append(nestedInput);
+      nestedFieldset.append(nestedLegend);
+      outerFieldset.append(firstLegend, secondLegend, nestedFieldset);
+
+      expect(firstLegendInput.matches(':disabled')).toBe(false);
+      expect(firstLegendInput.matches(':enabled')).toBe(true);
+      expect(secondLegendInput.matches(':disabled')).toBe(true);
+      expect(nestedInput.matches(':disabled')).toBe(true);
+      expect(firstLegend.matches(':enabled')).toBe(false);
+
+      outerFieldset.removeAttribute('disabled');
+      expect(secondLegendInput.matches(':disabled')).toBe(false);
+      expect(nestedInput.matches(':disabled')).toBe(false);
+    });
+
+    it('should respect disabled optgroups and selected option properties', () => {
+      const { document } = createSelectorFixture();
+      const group = document.createElement('html-optgroup') as Element;
+      const option = document.createElement('html-option') as HTMLOptionElement;
+      group.setAttribute('disabled', '');
+      group.append(option);
+      option.selected = true;
+
+      expect(option.matches(':disabled')).toBe(true);
+      expect(option.matches(':checked')).toBe(true);
+      option.selected = false;
+      expect(option.matches(':checked')).toBe(false);
+    });
+
+    it('should inherit disability for nested fieldsets but not options or optgroups', () => {
+      const { document } = createSelectorFixture();
+      const fieldset = document.createElement('html-fieldset') as Element;
+      const nestedFieldset = document.createElement('html-fieldset') as Element;
+      const select = document.createElement('html-select') as Element;
+      const group = document.createElement('html-optgroup') as Element;
+      const option = document.createElement('html-option') as Element;
+
+      fieldset.setAttribute('disabled', '');
+      group.append(option);
+      select.append(group);
+      fieldset.append(nestedFieldset, select);
+
+      expect(nestedFieldset.matches(':disabled')).toBe(true);
+      expect(select.matches(':disabled')).toBe(true);
+      expect(group.matches(':enabled')).toBe(true);
+      expect(option.matches(':enabled')).toBe(true);
+
+      select.setAttribute('disabled', '');
+      expect(group.matches(':disabled')).toBe(false);
+      expect(option.matches(':disabled')).toBe(false);
     });
 
     it('should anchor relative has selectors to the candidate', () => {
@@ -145,8 +237,10 @@ describe('installSelectorMethodsPolyfill', () => {
 
     it('should evaluate not, is, where and has', () => {
       const { document } = createSelectorFixture();
-      const { list, firstTab } = createTree(document);
+      const { list, firstTab, secondTab } = createTree(document);
 
+      expect(firstTab.matches(':not(:disabled)')).toBe(true);
+      expect(secondTab.matches(':not(:disabled)')).toBe(false);
       expect(firstTab.matches(':is(span, button)')).toBe(true);
       expect(firstTab.matches(':where(span, .tab)')).toBe(true);
       expect(list.matches(':has(span)')).toBe(true);
@@ -270,6 +364,7 @@ describe('installSelectorMethodsPolyfill', () => {
 
       expect(Array.from(tabs)).toEqual([firstTab, secondTab]);
       expect(tabs.item(0)).toBe(firstTab);
+      expect(list.querySelector(':disabled')).toBe(secondTab);
       expect(list.querySelector('input')).toBeNull();
     });
 
@@ -419,6 +514,218 @@ describe('installSelectorMethodsPolyfill', () => {
     });
   });
 
+  describe('control state pseudo-classes', () => {
+    it('should restrict :checked to checkable inputs and options', () => {
+      const { document } = createSelectorFixture();
+      const checkedDiv = document.createElement('div');
+      const checkedText = document.createElement('input');
+      const checkedRadio = document.createElement('input');
+      const selectedOption = document.createElement(
+        'option',
+      ) as HTMLOptionElement;
+      checkedDiv.setAttribute('checked', '');
+      checkedText.setAttribute('type', 'text');
+      checkedText.setAttribute('checked', '');
+      checkedRadio.setAttribute('type', 'RADIO');
+      checkedRadio.setAttribute('checked', '');
+      selectedOption.selected = true;
+      document.body.append(
+        checkedDiv,
+        checkedText,
+        checkedRadio,
+        selectedOption,
+      );
+
+      expect(checkedDiv.matches(':checked')).toBe(false);
+      expect(checkedText.matches(':checked')).toBe(false);
+      expect(checkedRadio.matches(':checked')).toBe(true);
+      expect(selectedOption.matches(':checked')).toBe(true);
+      expect(Array.from(document.querySelectorAll(':checked'))).toEqual([
+        checkedRadio,
+        selectedOption,
+      ]);
+    });
+
+    it('should evaluate :read-only, :read-write and :placeholder-shown', () => {
+      const { document } = createSelectorFixture();
+      const { firstTab } = createTree(document);
+      const textInput = document.createElement('input') as HTMLInputElement;
+      const readOnlyInput = document.createElement('input');
+      const disabledTextarea = document.createElement('textarea');
+      const editor = document.createElement('div');
+      const nestedEditorText = document.createElement('span');
+      readOnlyInput.setAttribute('readonly', '');
+      disabledTextarea.setAttribute('disabled', '');
+      editor.setAttribute('contenteditable', 'true');
+      editor.append(nestedEditorText);
+      textInput.setAttribute('placeholder', 'Search');
+      document.body.append(textInput, readOnlyInput, disabledTextarea, editor);
+
+      expect(firstTab.matches(':read-only')).toBe(true);
+      expect(textInput.matches(':read-write')).toBe(true);
+      expect(readOnlyInput.matches(':read-only')).toBe(true);
+      expect(disabledTextarea.matches(':read-only')).toBe(true);
+      expect(nestedEditorText.matches(':read-write')).toBe(true);
+      expect(textInput.matches(':placeholder-shown')).toBe(true);
+      textInput.value = 'acme';
+      expect(textInput.matches(':placeholder-shown')).toBe(false);
+    });
+
+    it('should evaluate :indeterminate, :valid, :open and :defined', () => {
+      const { document } = createSelectorFixture();
+      const checkbox = document.createElement('input') as HTMLInputElement;
+      const progress = document.createElement('progress');
+      const details = document.createElement('details');
+      const plainDiv = document.createElement('div');
+      checkbox.setAttribute('type', 'checkbox');
+      checkbox.indeterminate = true;
+      details.setAttribute('open', '');
+      document.body.append(checkbox, progress, details, plainDiv);
+
+      expect(checkbox.matches(':indeterminate')).toBe(true);
+      expect(progress.matches(':indeterminate')).toBe(true);
+      expect(plainDiv.matches(':indeterminate')).toBe(false);
+      expect(checkbox.matches(':valid')).toBe(true);
+      expect(plainDiv.matches(':valid')).toBe(false);
+      expect(checkbox.matches(':invalid')).toBe(false);
+      expect(details.matches(':open')).toBe(true);
+      expect(plainDiv.matches(':open')).toBe(false);
+      expect(plainDiv.matches(':defined')).toBe(true);
+    });
+
+    it('should evaluate :lang and :dir from the nearest ancestor attributes', () => {
+      const { document } = createSelectorFixture();
+      const article = document.createElement('article');
+      const paragraph = document.createElement('p');
+      const quote = document.createElement('q');
+      article.setAttribute('lang', 'en-US');
+      article.setAttribute('dir', 'rtl');
+      quote.setAttribute('lang', 'fr');
+      article.append(paragraph);
+      paragraph.append(quote);
+      document.body.append(article);
+
+      expect(paragraph.matches(':lang(en)')).toBe(true);
+      expect(paragraph.matches(':lang("en-US")')).toBe(true);
+      expect(paragraph.matches(':lang(fr, en)')).toBe(true);
+      expect(paragraph.matches(':lang(fr)')).toBe(false);
+      expect(quote.matches(':lang(fr)')).toBe(true);
+      expect(document.body.matches(':lang(en)')).toBe(false);
+      expect(paragraph.matches(':dir(rtl)')).toBe(true);
+      expect(paragraph.matches(':dir(ltr)')).toBe(false);
+      expect(document.body.matches(':dir(ltr)')).toBe(true);
+    });
+
+    it('should not match :valid on elements barred from constraint validation', () => {
+      const { document } = createSelectorFixture();
+      const createElementWithAttributes = (
+        tagName: string,
+        attributes: Record<string, string>,
+      ): Element => {
+        const element = document.createElement(tagName);
+
+        for (const [attributeName, attributeValue] of Object.entries(
+          attributes,
+        )) {
+          element.setAttribute(attributeName, attributeValue);
+        }
+
+        document.body.append(element);
+
+        return element;
+      };
+
+      const barredElements = [
+        createElementWithAttributes('output', {}),
+        createElementWithAttributes('input', { disabled: '' }),
+        createElementWithAttributes('input', { type: 'hidden' }),
+        createElementWithAttributes('input', { readonly: '' }),
+        createElementWithAttributes('textarea', { readonly: '' }),
+        createElementWithAttributes('button', { type: 'button' }),
+        createElementWithAttributes('button', { type: 'reset' }),
+      ];
+      const validElements = [
+        createElementWithAttributes('input', {}),
+        createElementWithAttributes('input', {
+          type: 'checkbox',
+          readonly: '',
+        }),
+        createElementWithAttributes('button', {}),
+        createElementWithAttributes('select', {}),
+        createElementWithAttributes('fieldset', {}),
+        createElementWithAttributes('form', {}),
+      ];
+
+      for (const barredElement of barredElements) {
+        expect(barredElement.matches(':valid')).toBe(false);
+      }
+
+      for (const validElement of validElements) {
+        expect(validElement.matches(':valid')).toBe(true);
+      }
+    });
+
+    it('should derive the checked option from the select value or its first enabled option', () => {
+      const { document } = createSelectorFixture();
+      const createSelect = (optionValues: string[]) => {
+        const select = document.createElement('select') as unknown as Element &
+          Record<string, unknown>;
+        const options = optionValues.map((optionValue) => {
+          const option = document.createElement('option');
+
+          option.setAttribute('value', optionValue);
+
+          return option;
+        });
+
+        select.append(...options);
+        document.body.append(select);
+
+        return { select, options };
+      };
+
+      const controlledSelect = createSelect(['first', 'second']);
+      controlledSelect.select.value = 'second';
+
+      const uncontrolledSelect = createSelect(['first', 'second']);
+      uncontrolledSelect.options[0].setAttribute('disabled', '');
+
+      const multipleSelect = createSelect(['first', 'second']);
+      multipleSelect.select.setAttribute('multiple', '');
+
+      expect(controlledSelect.select.querySelector('option:checked')).toBe(
+        controlledSelect.options[1],
+      );
+      expect(uncontrolledSelect.select.querySelector('option:checked')).toBe(
+        uncontrolledSelect.options[1],
+      );
+      expect(multipleSelect.select.querySelector('option:checked')).toBeNull();
+    });
+
+    it('should evaluate :required, :optional, :any-link and :link', () => {
+      const { document } = createSelectorFixture();
+      const requiredInput = document.createElement('input');
+      const optionalSelect = document.createElement('select');
+      const link = document.createElement('a');
+      const placeholderLink = document.createElement('a');
+      requiredInput.setAttribute('required', '');
+      link.setAttribute('href', '/records');
+      document.body.append(
+        requiredInput,
+        optionalSelect,
+        link,
+        placeholderLink,
+      );
+
+      expect(requiredInput.matches(':required')).toBe(true);
+      expect(requiredInput.matches(':optional')).toBe(false);
+      expect(optionalSelect.matches(':optional')).toBe(true);
+      expect(link.matches(':any-link')).toBe(true);
+      expect(link.matches(':link')).toBe(true);
+      expect(placeholderLink.matches(':any-link')).toBe(false);
+    });
+  });
+
   describe(':nth-child of a selector', () => {
     it('should count :nth-child and :nth-last-child among siblings matching the of selector', () => {
       const { document } = createSelectorFixture();
@@ -460,8 +767,10 @@ describe('installSelectorMethodsPolyfill', () => {
       const fragment = document.createDocumentFragment();
       const button = document.createElement('html-button') as Element;
       const span = document.createElement('span');
+      button.setAttribute('disabled', '');
       fragment.append(button, span);
 
+      expect(fragment.querySelector(':disabled')).toBe(button);
       expect(fragment.querySelector('button')).toBe(button);
       expect(
         Array.from(fragment.querySelectorAll('span:first-of-type')),
