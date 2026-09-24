@@ -77,7 +77,6 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       commandMenuContextApi,
     });
 
-  // Pinned commands come first in their section.
   const pinnedFirstCommandMenuItems = useMemo(() => {
     const { pinned, other } = groupCommandMenuItems(commandMenuItems);
 

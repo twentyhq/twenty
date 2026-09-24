@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import {
   isDefined,
+  isNonEmptyArray,
   isNonEmptyString,
   resolveObjectMetadataLabel,
 } from 'twenty-shared/utils';
@@ -77,7 +78,7 @@ export const useCommandMenuItemSelectionSectionContext = ():
   // Record avatars come from the object's identifier chip, which objects
   // without a label identifier field do not have.
   const canShowRecordAvatars =
-    records.length > 0 &&
+    isNonEmptyArray(records) &&
     isDefined(
       identifierChipGeneratorPerObject[objectMetadataItem.nameSingular],
     );
