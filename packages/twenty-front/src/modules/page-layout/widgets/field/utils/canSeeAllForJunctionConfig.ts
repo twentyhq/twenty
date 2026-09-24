@@ -3,7 +3,10 @@ import { type FieldWidgetJunctionConfig } from '@/page-layout/widgets/field/util
 import { isDefined } from 'twenty-shared/utils';
 
 export const canSeeAllForJunctionConfig = (
-  junctionConfig: FieldWidgetJunctionConfig | null,
+  junctionConfig: Pick<
+    FieldWidgetJunctionConfig,
+    'isValid' | 'isMorphRelation'
+  > | null,
 ): boolean => {
   return (
     !isDefined(junctionConfig) ||

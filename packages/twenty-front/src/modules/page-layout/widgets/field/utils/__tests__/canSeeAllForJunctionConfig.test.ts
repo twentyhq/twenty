@@ -1,14 +1,16 @@
 import { canSeeAllForJunctionConfig } from '@/page-layout/widgets/field/utils/canSeeAllForJunctionConfig';
-import { type FieldWidgetJunctionConfig } from '@/page-layout/widgets/field/utils/resolveFieldWidgetJunctionConfig';
+
+type JunctionConfig = NonNullable<
+  Parameters<typeof canSeeAllForJunctionConfig>[0]
+>;
 
 const junctionConfig = (
-  overrides: Partial<FieldWidgetJunctionConfig>,
-): FieldWidgetJunctionConfig =>
-  ({
-    isValid: true,
-    isMorphRelation: false,
-    ...overrides,
-  }) as FieldWidgetJunctionConfig;
+  overrides: Partial<JunctionConfig>,
+): JunctionConfig => ({
+  isValid: true,
+  isMorphRelation: false,
+  ...overrides,
+});
 
 describe('canSeeAllForJunctionConfig', () => {
   it('should allow a direct relation, which has no junction config', () => {
