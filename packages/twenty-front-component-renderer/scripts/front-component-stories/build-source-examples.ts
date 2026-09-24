@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild';
+import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -179,6 +180,43 @@ const collectBundleSizes = (): BundleSizeEntry[] =>
     };
   });
 
+const CHECKSUM_FIXTURE_COMPONENT = 'static.front-component';
+const STALE_CHECKSUM_SEED = 'stale build';
+
+type ChecksumFixtures = {
+  matchingChecksum: string;
+  staleChecksum: string;
+};
+
+// Serves the same built component under a sha256 file name that matches its
+// bytes and under one that does not, so stories can exercise the renderer's
+// checksum verification against real static responses.
+const writeChecksumFixtures = (): ChecksumFixtures => {
+  const builtSource = fs.readFileSync(
+    path.join(exampleSourcesBuiltDir, `${CHECKSUM_FIXTURE_COMPONENT}.mjs`),
+  );
+  const fixtures = {
+    matchingChecksum: createHash('sha256').update(builtSource).digest('hex'),
+    staleChecksum: createHash('sha256')
+      .update(STALE_CHECKSUM_SEED)
+      .digest('hex'),
+  };
+
+  for (const checksum of Object.values(fixtures)) {
+    fs.writeFileSync(
+      path.join(exampleSourcesBuiltDir, `${checksum}.js`),
+      builtSource,
+    );
+  }
+
+  fs.writeFileSync(
+    path.join(exampleSourcesBuiltDir, 'checksum-fixtures.json'),
+    JSON.stringify(fixtures, null, 2),
+  );
+
+  return fixtures;
+};
+
 const buildSourceExamples = async (): Promise<void> => {
   const entryPoints = resolveEntryPoints();
   const tsconfigPath = path.join(dirname, '../../tsconfig.json');
@@ -227,6 +265,12 @@ const buildSourceExamples = async (): Promise<void> => {
 
   fs.writeFileSync(manifestPath, JSON.stringify(sizes, null, 2));
   console.log(`Wrote bundle size manifest to ${manifestPath}`);
+
+  const checksumFixtures = writeChecksumFixtures();
+
+  console.log(
+    `Wrote checksum fixtures ${checksumFixtures.matchingChecksum}.js and ${checksumFixtures.staleChecksum}.js to ${exampleSourcesBuiltDir}`,
+  );
 };
 
 buildSourceExamples().catch((error) => {
