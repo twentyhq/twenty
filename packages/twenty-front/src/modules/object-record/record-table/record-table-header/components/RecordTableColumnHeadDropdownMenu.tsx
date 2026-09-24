@@ -10,7 +10,7 @@ import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/us
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import { styled } from '@linaria/react';
@@ -131,7 +131,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const canHide = isLabelIdentifier !== true;
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <StyledDropdownMenuItemsContainerWrapper>
         <DropdownMenuItemsContainer>
           {isFilterable && (
@@ -167,6 +167,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
           )}
         </DropdownMenuItemsContainer>
       </StyledDropdownMenuItemsContainerWrapper>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

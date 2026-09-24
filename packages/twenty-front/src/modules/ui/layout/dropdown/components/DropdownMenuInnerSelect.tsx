@@ -1,5 +1,5 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
@@ -54,7 +54,7 @@ export const DropdownMenuInnerSelect = ({
         </StyledDropdownMenuInnerSelectDropdownButton>
       }
       dropdownComponents={
-        <DropdownContent widthInPixels={widthInPixels}>
+        <LegacyDropdownContent widthInPixels={widthInPixels}>
           <DropdownMenuItemsContainer>
             {options.map((selectOption) => (
               <ListItem
@@ -73,7 +73,7 @@ export const DropdownMenuInnerSelect = ({
               </ListItem>
             ))}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       globalHotkeysConfig={{
         enableGlobalHotkeysWithModifiers: false,

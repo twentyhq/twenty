@@ -5,7 +5,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -59,7 +59,9 @@ export const ObjectFilterDropdownBooleanSelect = () => {
   };
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+    <LegacyDropdownContent
+      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+    >
       <SelectableList
         selectableListInstanceId={`${objectFilterDropdownComponentInstanceId}-boolean-select`}
         selectableItemIdArray={options.map((option) => option.toString())}
@@ -82,6 +84,6 @@ export const ObjectFilterDropdownBooleanSelect = () => {
           ))}
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

@@ -4,10 +4,8 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client/react';
@@ -15,7 +13,12 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LightIconButton, Section, useToast } from 'twenty-ui/components';
+import {
+  Dropdown,
+  LightIconButton,
+  Section,
+  useToast,
+} from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconMessage,
@@ -24,9 +27,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
 import { getOperationName } from '~/utils/getOperationName';
 
@@ -65,7 +66,6 @@ export const SettingsAgentEvalsTab = ({
   const [newInput, setNewInput] = useState('');
   const [inputToDelete, setInputToDelete] = useState<string | null>(null);
   const { openDialog } = useDialog();
-  const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
   const navigate = useNavigate();
 
@@ -91,8 +91,8 @@ export const SettingsAgentEvalsTab = ({
     awaitRefetchQueries: false,
   });
 
-  const evalInputs: EvalInput[] = evaluationInputs.map((text) => ({
-    id: uuidv4(),
+  const evalInputs: EvalInput[] = evaluationInputs.map((text, index) => ({
+    id: index.toString(),
     text,
   }));
 
@@ -120,11 +120,10 @@ export const SettingsAgentEvalsTab = ({
     openDialog(DELETE_EVAL_INPUT_MODAL_ID);
   };
 
-  const handleRunInput = (text: string, itemId: string) => {
+  const handleRunInput = (text: string) => {
     runEvaluationInput({
       variables: { agentId, input: text },
     });
-    closeDropdown(`eval-input-dropdown-${itemId}`);
   };
 
   return (
@@ -160,34 +159,36 @@ export const SettingsAgentEvalsTab = ({
             getItemLabel={(item) => item.text}
             RowIcon={IconMessage}
             RowRightComponent={({ item }) => (
-              <Dropdown
+              <DropdownRoot
+                type="menu"
                 dropdownId={`eval-input-dropdown-${item.id}`}
-                dropdownPlacement="right-start"
-                clickableComponent={
-                  <LightIconButton
-                    emphasis="subtle"
-                    disabled={disabled}
-                    aria-label={t`More options`}
-                  >
-                    <IconDotsVertical />
-                  </LightIconButton>
-                }
-                dropdownComponents={
-                  <DropdownContent>
-                    <DropdownMenuItemsContainer>
-                      <ListItem
-                        startIcon={<IconPlayerPlay />}
-                        onClick={() => handleRunInput(item.text, item.id)}
-                      >{t`Run`}</ListItem>
-                      <ListItem
-                        color="danger"
-                        startIcon={<IconTrash />}
-                        onClick={() => openDeleteModal(item.id)}
-                      >{t`Delete`}</ListItem>
-                    </DropdownMenuItemsContainer>
-                  </DropdownContent>
-                }
-              />
+              >
+                <Dropdown.Trigger
+                  disabled={disabled}
+                  render={
+                    <LightIconButton
+                      emphasis="subtle"
+                      disabled={disabled}
+                      aria-label={t`More options`}
+                    >
+                      <IconDotsVertical />
+                    </LightIconButton>
+                  }
+                />
+                <DropdownContent side="right">
+                  <Dropdown.Section>
+                    <Dropdown.ActionItem
+                      startIcon={<IconPlayerPlay />}
+                      onClick={() => handleRunInput(item.text)}
+                    >{t`Run`}</Dropdown.ActionItem>
+                    <Dropdown.ActionItem
+                      color="danger"
+                      startIcon={<IconTrash />}
+                      onClick={() => openDeleteModal(item.id)}
+                    >{t`Delete`}</Dropdown.ActionItem>
+                  </Dropdown.Section>
+                </DropdownContent>
+              </DropdownRoot>
             )}
             hasFooter={false}
           />

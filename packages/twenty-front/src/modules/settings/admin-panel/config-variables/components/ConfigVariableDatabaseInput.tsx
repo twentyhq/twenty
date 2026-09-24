@@ -3,7 +3,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -135,7 +135,7 @@ export const ConfigVariableDatabaseInput = ({
                 />
               }
               dropdownComponents={
-                <DropdownContent>
+                <LegacyDropdownContent>
                   <DropdownMenuItemsContainer isMultiSelect>
                     {selectOptions.map((option) => (
                       <ListItem
@@ -152,7 +152,7 @@ export const ConfigVariableDatabaseInput = ({
                       </ListItem>
                     ))}
                   </DropdownMenuItemsContainer>
-                </DropdownContent>
+                </LegacyDropdownContent>
               }
             />
           ) : (

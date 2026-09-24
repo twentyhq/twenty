@@ -20,7 +20,7 @@ import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/
 import { areCompositeTypeSubFieldsFilterable } from '@/object-record/record-filter/utils/areCompositeTypeSubFieldsFilterable';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -128,7 +128,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
     );
 
     return (
-      <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+      <LegacyDropdownContent
+        widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+      >
         <DropdownMenuHeader
           StartComponent={
             <DropdownMenuHeaderLeftComponent
@@ -187,6 +189,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
               ))}
           </SelectableList>
         </DropdownMenuItemsContainer>
-      </DropdownContent>
+      </LegacyDropdownContent>
     );
   };

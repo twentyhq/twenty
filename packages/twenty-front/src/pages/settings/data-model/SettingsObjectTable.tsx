@@ -15,7 +15,7 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -169,7 +169,7 @@ export const SettingsObjectTable = ({
                 dropdownOffset={{ x: 0, y: 8 }}
                 clickableComponent={filterButton}
                 dropdownComponents={
-                  <DropdownContent>
+                  <LegacyDropdownContent>
                     <DropdownMenuItemsContainer>
                       <SettingsRow
                         startIcon={<IconArchive />}
@@ -188,7 +188,7 @@ export const SettingsObjectTable = ({
                         >{t`System objects`}</SettingsRow>
                       )}
                     </DropdownMenuItemsContainer>
-                  </DropdownContent>
+                  </LegacyDropdownContent>
                 }
               />
             )}

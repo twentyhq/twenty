@@ -1,9 +1,8 @@
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -21,7 +20,7 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
-import { SearchInput, Section } from 'twenty-ui/components';
+import { Dropdown, SearchInput, Section } from 'twenty-ui/components';
 import {
   IconArrowUpRight,
   IconChevronRight,
@@ -30,7 +29,6 @@ import {
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
@@ -85,7 +83,6 @@ export const SettingsWorkspaceMembersTeamTab = () => {
   const { t } = useLingui();
   const navigateApp = useNavigateApp();
   const navigateSettings = useNavigateSettings();
-  const { closeDropdown } = useCloseDropdown();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -173,42 +170,37 @@ export const SettingsWorkspaceMembersTeamTab = () => {
           onChange={handleSearchChange}
           placeholder={t`Search a team member...`}
         />
-        <Dropdown
-          dropdownId="workspace-members-open-dropdown"
-          clickableComponent={
-            <Button
-              startIcon={<IconArrowUpRight />}
-              size="md"
-              variant="outline"
-            >{t`Open`}</Button>
-          }
-          dropdownPlacement="bottom-end"
-          dropdownOffset={{ y: 8 }}
-          dropdownComponents={
-            <DropdownContent>
-              <DropdownMenuItemsContainer>
-                <ListItem
-                  startIcon={<IconListDetails />}
-                  onClick={() => {
-                    navigateApp(AppPath.RecordIndexPage, {
-                      objectNamePlural: 'workspaceMembers',
-                    });
-                    closeDropdown('workspace-members-open-dropdown');
-                  }}
-                >{t`See records`}</ListItem>
-                <ListItem
-                  startIcon={<IconHierarchy />}
-                  onClick={() => {
-                    navigateSettings(SettingsPath.ObjectDetail, {
-                      objectNamePlural: 'workspaceMembers',
-                    });
-                    closeDropdown('workspace-members-open-dropdown');
-                  }}
-                >{t`See data model settings`}</ListItem>
-              </DropdownMenuItemsContainer>
-            </DropdownContent>
-          }
-        />
+        <DropdownRoot type="menu" dropdownId="workspace-members-open-dropdown">
+          <Dropdown.Trigger
+            render={
+              <Button
+                startIcon={<IconArrowUpRight />}
+                size="md"
+                variant="outline"
+              >{t`Open`}</Button>
+            }
+          />
+          <DropdownContent align="end" sideOffset={DROPDOWN_OFFSET_Y}>
+            <Dropdown.Section>
+              <Dropdown.ActionItem
+                startIcon={<IconListDetails />}
+                onClick={() => {
+                  navigateApp(AppPath.RecordIndexPage, {
+                    objectNamePlural: 'workspaceMembers',
+                  });
+                }}
+              >{t`See records`}</Dropdown.ActionItem>
+              <Dropdown.ActionItem
+                startIcon={<IconHierarchy />}
+                onClick={() => {
+                  navigateSettings(SettingsPath.ObjectDetail, {
+                    objectNamePlural: 'workspaceMembers',
+                  });
+                }}
+              >{t`See data model settings`}</Dropdown.ActionItem>
+            </Dropdown.Section>
+          </DropdownContent>
+        </DropdownRoot>
       </StyledSearchContainer>
       <StyledTableContainer hasMoreRows={hasNextPage}>
         <Table>

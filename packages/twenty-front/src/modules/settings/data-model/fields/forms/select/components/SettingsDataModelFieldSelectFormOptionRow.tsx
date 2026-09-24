@@ -3,7 +3,7 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
@@ -164,7 +164,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           </StyledColorSampleContainer>
         }
         dropdownComponents={
-          <DropdownContent>
+          <LegacyDropdownContent>
             <DropdownMenuItemsContainer>
               {MAIN_COLOR_NAMES.map((colorName) => (
                 <ListItem
@@ -183,7 +183,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                 </ListItem>
               ))}
             </DropdownMenuItemsContainer>
-          </DropdownContent>
+          </LegacyDropdownContent>
         }
       />
       <StyledOptionInputContainer>
@@ -225,7 +225,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
         dropdownComponents={
           shouldForbidRemoveAsDefault ? null : (
-            <DropdownContent>
+            <LegacyDropdownContent>
               <DropdownMenuItemsContainer>
                 {isDefault ? (
                   <ListItem
@@ -255,7 +255,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                   >{t`Remove option`}</ListItem>
                 )}
               </DropdownMenuItemsContainer>
-            </DropdownContent>
+            </LegacyDropdownContent>
           )
         }
       />

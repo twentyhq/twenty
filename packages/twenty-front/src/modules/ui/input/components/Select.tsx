@@ -12,7 +12,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -237,7 +237,7 @@ export const Select = <Value extends SelectValue>({
             />
           }
           dropdownComponents={
-            <DropdownContent widthInPixels={dropDownMenuWidth}>
+            <LegacyDropdownContent widthInPixels={dropDownMenuWidth}>
               {withSearchInput === true && (
                 <DropdownMenuSearchInput
                   autoFocus
@@ -371,7 +371,7 @@ export const Select = <Value extends SelectValue>({
                   </ListItem>
                 </DropdownMenuItemsContainer>
               )}
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
         />
       )}

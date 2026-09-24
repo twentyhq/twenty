@@ -14,6 +14,7 @@ import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledBranchContainer = styled.div`
+  align-items: start;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};

@@ -9,7 +9,7 @@ import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/adva
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
@@ -45,7 +45,9 @@ export const AdvancedFilterRootRecordFilterGroup = () => {
     <ScrollWrapper
       componentInstanceId={`scroll-wrapper-dropdown-menu-${rootRecordFilterGroup.id}`}
     >
-      <DropdownContent widthInPixels={ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH}>
+      <LegacyDropdownContent
+        widthInPixels={ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH}
+      >
         <AdvancedFilterContext.Provider value={{ objectMetadataItem }}>
           <AdvancedFilterSSEEffect />
           <StyledContainer>
@@ -74,7 +76,7 @@ export const AdvancedFilterRootRecordFilterGroup = () => {
             />
           </StyledContainer>
         </AdvancedFilterContext.Provider>
-      </DropdownContent>
+      </LegacyDropdownContent>
     </ScrollWrapper>
   );
 };
