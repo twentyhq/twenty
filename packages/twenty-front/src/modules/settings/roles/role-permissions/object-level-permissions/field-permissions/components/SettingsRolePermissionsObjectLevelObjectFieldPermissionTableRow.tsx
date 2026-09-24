@@ -10,10 +10,10 @@ import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-le
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 import {
   type FieldPermission,
@@ -47,7 +47,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     roleId,
     isLabelIdentifier,
   }: SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps) => {
-    const { theme } = useContext(ThemeContext);
+    const theme = useTheme();
     const { getIcon } = useIcons();
     const Icon = getIcon(fieldMetadataItem.icon);
 

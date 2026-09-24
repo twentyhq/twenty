@@ -6,7 +6,7 @@ import { getCountryFlagMenuItemAvatar } from '@/object-record/object-filter-drop
 import { turnCountryIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCountryIntoSelectableItem';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -102,7 +102,9 @@ export const ObjectFilterDropdownCountrySelect = () => {
   const { t } = useLingui();
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+    <LegacyDropdownContent
+      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+    >
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -152,6 +154,6 @@ export const ObjectFilterDropdownCountrySelect = () => {
         })}
         {showNoResult && <ListItem disabled>{t`No results`}</ListItem>}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

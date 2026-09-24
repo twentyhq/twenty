@@ -107,7 +107,7 @@ export default defineConfig(({ command }) => {
           fs.mkdirSync(distDir, { recursive: true });
           for (const file of Object.values(THEME_CSS_FILE_NAME_BY_SCHEME)) {
             fs.copyFileSync(
-              path.resolve(__dirname, `src/theme-constants/${file}`),
+              path.resolve(__dirname, `src/theme/${file}`),
               path.resolve(distDir, file),
             );
           }

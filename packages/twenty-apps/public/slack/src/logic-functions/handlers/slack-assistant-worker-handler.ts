@@ -97,6 +97,7 @@ export const slackAssistantWorkerHandler = async (
         requestMessage,
         threadMessages,
         slackClient,
+        slackConnectionId,
         assistantBotUserId,
         isDirectMessage,
       },
@@ -114,6 +115,7 @@ export const slackAssistantWorkerHandler = async (
     const runAsWorkspaceMemberId = await resolveSlackRunAsForRequest({
       client,
       slackClient,
+      slackConnectionId,
       assistantBotUserId,
       identity: requesterIdentity,
       requestId: record.id,
@@ -168,6 +170,7 @@ export const slackAssistantWorkerHandler = async (
       accessMode: channelAccessPolicy.accessMode,
       client,
       slackClient,
+      slackConnectionId,
       identity: requesterIdentity,
       runAsWorkspaceMemberId,
     });
@@ -226,6 +229,7 @@ export const slackAssistantWorkerHandler = async (
       conversationMessages,
       client,
       slackClient,
+      slackConnectionId,
       assistantBotUserId,
     });
 

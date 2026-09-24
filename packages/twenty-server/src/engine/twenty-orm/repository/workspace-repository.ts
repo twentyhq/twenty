@@ -1728,7 +1728,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private shouldValidateInheritedParents(): boolean {
     return (
       !this.options.shouldBypassPermissionChecks &&
-      this.isRecordSharingEnabled()
+      this.isRecordSharingEnforced()
     );
   }
 
@@ -1809,8 +1809,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
   }
 
-  private isRecordSharingEnabled(): boolean {
-    return this.options.internalContext.isRecordSharingEnabled;
+  private isRecordSharingEnforced(): boolean {
+    return !this.options.internalContext.isLegacyRecordAccessOpen;
   }
 
   private async resolveWritableRecordIds({
@@ -2038,7 +2038,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (
       records.length === 0 ||
       flatObjectMetadata.readability !== MetadataReadability.INHERITED ||
-      !this.isRecordSharingEnabled()
+      !this.isRecordSharingEnforced()
     ) {
       return undefined;
     }
@@ -2410,7 +2410,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment {
     return {
-      isRecordSharingEnabled: this.isRecordSharingEnabled(),
+      isRecordSharingEnabled: this.isRecordSharingEnforced(),
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,

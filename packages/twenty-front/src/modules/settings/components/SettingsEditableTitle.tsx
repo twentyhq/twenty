@@ -3,7 +3,7 @@ import {
   type TitleInputProps,
 } from '@/ui/input/components/TitleInput';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTitleInputContainer = styled.div`
   max-width: 420px;

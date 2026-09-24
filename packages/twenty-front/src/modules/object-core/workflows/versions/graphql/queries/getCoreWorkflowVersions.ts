@@ -10,7 +10,6 @@ export const GET_CORE_WORKFLOW_VERSIONS = gql`
       status
       coreWorkflowId
       createdAt
-      updatedAt
     }
   }
 `;

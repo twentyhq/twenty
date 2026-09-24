@@ -101,7 +101,16 @@ export class WorkspaceOrmManager {
       ? await this.loadLiteWorkspaceContext(resolvedAuthContext)
       : await this.loadWorkspaceContext(resolvedAuthContext);
 
-    return withWorkspaceContext(context, fn);
+    return withWorkspaceContext(
+      {
+        ...context,
+        isLegacyRecordAccessOpen:
+          await this.recordSharingFeatureService.isLegacyRecordAccessOpen(
+            resolvedAuthContext.workspace.id,
+          ),
+      },
+      fn,
+    );
   }
 
   private async loadWorkspaceContext(
@@ -149,10 +158,6 @@ export class WorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap,
       billingEntitlements,
-      isRecordSharingEnabled:
-        await this.recordSharingFeatureService.isRecordSharingEnabled(
-          workspaceId,
-        ),
       permissionsPerRoleId,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -202,7 +207,6 @@ export class WorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
-      isRecordSharingEnabled: false,
       permissionsPerRoleId: {},
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},

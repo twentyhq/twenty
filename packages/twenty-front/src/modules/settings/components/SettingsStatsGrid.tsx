@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { Fragment, useContext } from 'react';
+import { Fragment } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type SettingsStatRow = {
   Icon: IconComponent;
@@ -60,7 +60,7 @@ const StyledValue = styled.div`
 type StatRowProps = SettingsStatRow;
 
 const StatRow = ({ Icon, label, value }: StatRowProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   return (
     <StyledRow>
       <Icon size={theme.icon.size.md} color={theme.font.color.tertiary} />

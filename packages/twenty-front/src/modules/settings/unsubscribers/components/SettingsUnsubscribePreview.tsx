@@ -6,7 +6,7 @@ import { Section } from 'twenty-ui/components';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 
 const StyledViewport = styled.div`

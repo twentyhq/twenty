@@ -5,7 +5,7 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -85,7 +85,9 @@ export const ObjectFilterDropdownSourceSelect = ({
   };
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+    <LegacyDropdownContent
+      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+    >
       <MultipleSelectDropdown
         selectableListId="object-filter-source-select-id"
         focusId={dropdownId}
@@ -99,6 +101,6 @@ export const ObjectFilterDropdownSourceSelect = ({
         searchFilter={objectFilterDropdownSearchInput}
         loadingItems={false}
       />
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };
