@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type NthFormula } from '@/polyfills/selectors/types/NthFormula';
@@ -30,7 +31,9 @@ export const parseNthFormula = (formulaText: string): NthFormula | null => {
   }
 
   const [, stepSign, stepDigits, offsetSign, offsetDigits] = stepFormulaMatch;
-  const step = (stepSign === '-' ? -1 : 1) * Number(stepDigits || '1');
+  const step =
+    (stepSign === '-' ? -1 : 1) *
+    Number(isNonEmptyString(stepDigits) ? stepDigits : '1');
   const offset = isDefined(offsetDigits)
     ? (offsetSign === '-' ? -1 : 1) * Number(offsetDigits)
     : 0;
