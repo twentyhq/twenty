@@ -66,8 +66,6 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
           name?: string;
         } = { host, port };
 
-        // Nodemailer greets with the machine hostname, and a relay that wants a
-        // fully qualified name rejects a short one before any mail is sent.
         if (name) {
           options.name = name;
         }

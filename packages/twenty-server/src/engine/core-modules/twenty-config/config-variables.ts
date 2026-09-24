@@ -515,7 +515,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description:
-      'Hostname announced in the SMTP EHLO greeting, when the machine hostname is not fully qualified',
+      'Hostname sent in the SMTP EHLO greeting. Defaults to the machine hostname; set a fully qualified name if the relay rejects it',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
