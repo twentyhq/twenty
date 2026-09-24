@@ -19,6 +19,7 @@ export type RowAccessPolicy =
   | { kind: 'gated'; condition: SqlCondition };
 
 export type RowAccessPolicySubject = {
+  isSystemContext: boolean;
   objectsPermissions: ObjectsPermissions | undefined;
   principalIds: string[] | undefined;
   isOwningApplication: (objectMetadata: FlatObjectMetadata) => boolean;
@@ -28,7 +29,7 @@ export type RowAccessPolicySubject = {
 };
 
 export type RowAccessPolicyEnvironment = {
-  isRecordSharingEnabled: boolean;
+  isLegacyRecordAccessOpen?: boolean;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   recordShareTableExpression: string;

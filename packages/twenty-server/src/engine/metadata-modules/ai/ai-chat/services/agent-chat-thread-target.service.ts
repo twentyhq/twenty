@@ -3,10 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
-import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import {
   AiException,
@@ -40,8 +38,7 @@ type ThreadRecordArgs = RecordReference & {
 @Injectable()
 export class AgentChatThreadTargetService {
   constructor(
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly agentChatSharingService: AgentChatSharingService,
     private readonly agentHistoryStorageService: AgentHistoryStorageService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -50,7 +47,7 @@ export class AgentChatThreadTargetService {
   async attachThreadToRecord(args: ThreadRecordArgs): Promise<void> {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow(args);
 
-    await this.assertThreadIsReadableOrThrow(args);
+    await this.assertThreadIsEditableOrThrow(args);
     await this.assertRecordIsReadableOrThrow(args);
 
     const link = { threadId: args.threadId, [joinColumnName]: args.recordId };
@@ -69,7 +66,7 @@ export class AgentChatThreadTargetService {
   async detachThreadFromRecord(args: ThreadRecordArgs): Promise<void> {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow(args);
 
-    await this.assertThreadIsReadableOrThrow(args);
+    await this.assertThreadIsEditableOrThrow(args);
     await this.assertRecordIsReadableOrThrow(args);
 
     await this.withTargetRepository(args.workspaceId, (repository) =>
@@ -98,7 +95,10 @@ export class AgentChatThreadTargetService {
     return joinColumnName;
   }
 
-  private async assertThreadIsReadableOrThrow({
+  // Filing a conversation under a record changes the conversation, so it takes
+  // the access renaming it does. A conversation the caller cannot edit reads as
+  // not found, so no one can probe for conversations they do not share.
+  private async assertThreadIsEditableOrThrow({
     workspaceId,
     userWorkspaceId,
     threadId,
@@ -107,18 +107,12 @@ export class AgentChatThreadTargetService {
     userWorkspaceId: string;
     threadId: string;
   }): Promise<void> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId, userWorkspaceId },
+    await this.agentChatSharingService.getThreadWithAccess({
+      workspaceId,
+      userWorkspaceId,
+      threadId,
+      operationType: 'update',
     });
-
-    // Not-found rather than forbidden, so a member cannot probe for the
-    // existence of someone else's conversation.
-    if (!isDefined(thread)) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
   }
 
   // Targets are written in system context because the object is SYSTEM-writable,
