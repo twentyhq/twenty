@@ -4650,6 +4650,8 @@ msgstr "Filen hittades inte i SDK-klientarkivet."
 
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+#: src/engine/core-modules/file/file-core-picture/services/file-core-picture.service.ts
+#: src/engine/core-modules/file/file-core-picture/services/file-core-picture.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
@@ -11808,6 +11810,7 @@ msgid "This file path is too long to upload."
 msgstr "Den här filsökvägen är för lång för att laddas upp."
 
 #. js-lingui-id: 6ekAtL
+#: src/engine/core-modules/file/file-core-picture/services/file-core-picture.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "Denna filuppladdning har redan slutförts."
@@ -14461,6 +14464,7 @@ msgid "You do not have access to this message folder."
 msgstr "Du har inte åtkomst till denna meddelandemapp."
 
 #. js-lingui-id: EFQeXU
+#: src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard.ts
 #: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Du har inte behörighet att komma åt den här funktionen. Vänligen kontakta din arbetsytsadministratör för åtkomst."

@@ -4650,6 +4650,8 @@ msgstr "SDK 클라이언트 아카이브에서 파일을 찾을 수 없습니다
 
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+#: src/engine/core-modules/file/file-core-picture/services/file-core-picture.service.ts
+#: src/engine/core-modules/file/file-core-picture/services/file-core-picture.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
@@ -11802,6 +11804,7 @@ msgid "This file path is too long to upload."
 msgstr "이 파일 경로는 업로드하기에 너무 깁니다."
 
 #. js-lingui-id: 6ekAtL
+#: src/engine/core-modules/file/file-core-picture/services/file-core-picture.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "이 파일 업로드는 이미 완료되었습니다."
@@ -14455,6 +14458,7 @@ msgid "You do not have access to this message folder."
 msgstr "이 메시지 폴더에 접근할 수 없습니다."
 
 #. js-lingui-id: EFQeXU
+#: src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard.ts
 #: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "이 기능에 접근할 권한이 없습니다. 작업 공간 관리자에게 문의하십시오."
