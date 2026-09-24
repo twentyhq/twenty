@@ -158,6 +158,7 @@ Two metadata migrations started at the same moment are not serialized by this, w
 - **An index-specific `deferredSchemaOperation` table** (first iteration of the PR). It did not cover the logic function cleanup and required a separate orchestration next to the runner. Lost to one generic table keyed by action.
 - **A size threshold (defer only above N rows via `pg_class.reltuples`).** Lost because it reads Postgres catalogs instead of metadata. Every eligible index is deferred instead, including indexes on tables created by the same migration, which the worker builds in milliseconds since those tables are empty.
 - **Skip the index and keep only a partial `WHERE col IS NOT NULL` index inline.** A partial index still reads the whole table to build. Lost because it does not remove the scan.
+- **Map deferred actions back to the migration action handler that queued them.** It forced a name to handler-key translation and a catch-all `executeDeferredAction` on every action handler. Lost to one handler class per deferred action.
 
 ## Rollout and testing
 
@@ -169,11 +170,11 @@ Delivery, each PR merged on its own behind the flag:
 | 2 | Recovery: cron resetting `IN_PROGRESS` rows past the timeout and enqueueing workspaces with `PENDING` rows; CLI retry of `FAILED` rows; job deduplication per workspace and retry backoff; metrics on duration and on rows by status. |
 | 3 | Refuse schema-affecting migrations while the workspace has in-flight deferred builds: see above. |
 | 4 | Error surfacing: the object, field and index exception handlers map `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` to a `ConflictError` carrying `subCode` and `userFriendlyMessage`; the SDK CLI shows that message with a wait-and-retry hint. |
-| 5 | Foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns, plus a deferred `validate_foreignKey` action. |
+| 5 | Foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns, plus a deferred `validate_foreignKey` action, and one handler class per deferred action. |
 | 5b | Admin retry of `FAILED` rows from the admin panel, on top of the `workspace:retry-failed-deferred-migration-actions` command. |
 | 6 | Enable the flag for the affected self-hosted workspace, then cloud, then default on and remove the flag. |
 
-Migration: one fast instance command in 2.42 creating the table. No backfill.
+Migration: one fast instance command in 2.42 creating the table, one in 2.43 renaming `actionHandlerKey` to `name`. No backfill.
 
 Tested in PR 1:
 
@@ -183,7 +184,7 @@ Tested in PR 1:
 
 Tested in PR 2, manually on the same data: two object creations with the worker stopped queue a single job; with the enqueue removed and rows left `IN_PROGRESS` two hours ago, nothing runs until the cron resets them (one to `PENDING`, the one at its last attempt to `FAILED`) and enqueues the workspace; the retry command builds the `FAILED` index; a broken column is retried after 30 then 60 seconds, and the actions behind it run at the next cron once it is `FAILED`.
 
-Tested in PR 5, manually on the same data: creating an object adds the four join column foreign keys `NOT VALID` (`convalidated = false`) and queues a validation per constraint next to the index builds; once the worker runs they all read `convalidated = true`. With 3M `timelineActivity` rows, object creation takes 5.8s with the flag off and 2.1s with it on.
+Tested in PR 5, manually on the same data: creating an object adds the four join column foreign keys `NOT VALID` (`convalidated = false`) and queues a validation per constraint next to the index builds; once the worker runs they all read `convalidated = true`. With 3M `timelineActivity` rows, object creation takes 5.8s with the flag off and 2.1s with it on. The dedicated handlers are verified against the real module graph: the registry resolves all three by name after bootstrap.
 
 Tested in PR 3, manually on the same data: a second object creation is refused while the first one's index builds are pending, and accepted once they drain; a view is created while builds are pending; a pending logic function cleanup on its own refuses nothing; with the flag off nothing is refused. Integration: the deferred, index and object metadata suites pass.
 
