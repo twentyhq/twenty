@@ -89,6 +89,24 @@ describe('agent history workspace metadata', () => {
       ).toMatchObject({ isUnique: false });
     },
   );
+  // Conversations are shareable records and their record links inherit from
+  // them; the rest of the history is written and read by the platform only.
+  const SHARED_ACCESS_POLICY_BY_OBJECT_NAME: Partial<
+    Record<
+      (typeof OBJECT_NAMES)[number],
+      { readability: MetadataReadability; writability: MetadataWritability }
+    >
+  > = {
+    agentChatThread: {
+      readability: MetadataReadability.PRIVATE,
+      writability: MetadataWritability.OPEN,
+    },
+    agentChatThreadTarget: {
+      readability: MetadataReadability.INHERITED,
+      writability: MetadataWritability.OPEN,
+    },
+  };
+
   it.each(OBJECT_NAMES)('keeps %s protected by metadata policy', (name) => {
     expect(
       allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
@@ -101,14 +119,10 @@ describe('agent history workspace metadata', () => {
       isAuditLogged: false,
       isUICreatable: false,
       isUIEditable: false,
-      readability:
-        name === 'agentChatThread'
-          ? MetadataReadability.PRIVATE
-          : MetadataReadability.SYSTEM,
-      writability:
-        name === 'agentChatThread'
-          ? MetadataWritability.OPEN
-          : MetadataWritability.SYSTEM,
+      ...(SHARED_ACCESS_POLICY_BY_OBJECT_NAME[name] ?? {
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+      }),
     });
   });
 

@@ -22,6 +22,7 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   taskTarget: STANDARD_OBJECT_FIELDS.taskTarget.targetPerson,
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
+  agentChatThreadTarget: STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread,
 } as const;
 
 describe('Standard object readability', () => {
@@ -63,7 +64,6 @@ describe('Standard object readability', () => {
 
   const nonOpenObjectUniversalIdentifiers: string[] = [
     STANDARD_OBJECTS.agentChatThread.universalIdentifier,
-    STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
     STANDARD_OBJECTS.agentMessage.universalIdentifier,
     STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
@@ -92,16 +92,21 @@ describe('Standard object readability', () => {
     });
   });
 
-  // The exclusion above only proves it is not OPEN. Reads and writes go through
-  // the chat layer's own auth, so a later relaxation to INHERITED would hand the
-  // generic API a conversation link it must never expose.
-  it('declares agentChatThreadTarget SYSTEM for readability and writability', () => {
+  // A link inheriting from its record, as noteTarget does, would tell everyone
+  // who can read the record which private conversations are filed under it.
+  it('resolves its thread as the only parent of an agentChatThreadTarget', () => {
     expect(
-      findStandardFlatObjectMetadata('agentChatThreadTarget'),
-    ).toMatchObject({
-      readability: MetadataReadability.SYSTEM,
-      writability: MetadataWritability.SYSTEM,
-    });
+      resolveParents('agentChatThreadTarget').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { joinColumnName: 'threadId', parentNameSingular: 'agentChatThread' },
+    ]);
   });
 
   it.each(inheritedObjectNames)(
