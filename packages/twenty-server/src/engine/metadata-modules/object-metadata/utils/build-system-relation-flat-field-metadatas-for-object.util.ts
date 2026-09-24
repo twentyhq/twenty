@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { getSystemRelationFieldUniversalIdentifier } from 'twenty-shared/application';
 import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
@@ -10,6 +9,7 @@ import { capitalize } from 'twenty-shared/utils';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
+import { computeSystemMorphTargetFieldLabel } from 'src/engine/metadata-modules/object-metadata/utils/compute-system-morph-target-field-label.util';
 import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
@@ -27,16 +27,6 @@ const MORPH_ID_BY_STANDARD_OBJECT_NAME_SINGULAR = {
   noteTarget: STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
   taskTarget: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
 } satisfies Record<DefaultRelationStandardObjectNameSingular, string | null>;
-
-// Morph siblings render as one column labelled by whichever sibling survives
-// dedup, so a sibling added for a new object must share the group label.
-const MORPH_TARGET_FIELD_LABEL_BY_STANDARD_OBJECT_NAME_SINGULAR: Partial<
-  Record<DefaultRelationStandardObjectNameSingular, string>
-> = {
-  attachment: i18nLabel(
-    msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
-  ),
-};
 
 export type SystemRelationFlatFieldMetadataBundle = {
   forwardFlatFieldMetadata: UniversalFlatFieldMetadata;
@@ -118,10 +108,10 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
             targetObjectMetadataId:
               targetFlatObjectMetadata.universalIdentifier,
             type: RelationType.ONE_TO_MANY,
-            targetFieldLabel:
-              MORPH_TARGET_FIELD_LABEL_BY_STANDARD_OBJECT_NAME_SINGULAR[
-                standardObjectNameSingular
-              ] ?? capitalize(sourceFlatObjectMetadata.nameSingular),
+            targetFieldLabel: computeSystemMorphTargetFieldLabel({
+              morphId,
+              targetObjectNameSingular: sourceFlatObjectMetadata.nameSingular,
+            }),
             targetFieldIcon: reverseFieldIcon,
           },
         },
