@@ -10,11 +10,15 @@
 
 ## Enrichment defaults
 
-Configure `PDL_PERSON_MIN_LIKELIHOOD` and `PDL_COMPANY_MIN_LIKELIHOOD` in the app's server variables to set the default minimum likelihood for people and companies. Each accepts an integer from 1 to 10.
+Set the minimum match likelihood in the app's settings. Each setting accepts an integer from 1 to 10:
+
+- **Minimum likelihood for people** (`PDL_PERSON_MIN_LIKELIHOOD`): defaults to 2.
+- **Minimum likelihood for companies** (`PDL_COMPANY_MIN_LIKELIHOOD`): defaults to 2.
+- **Minimum likelihood for name-based matches** (`PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD`): defaults to 6. Applies when matching a person by name and company, or a company by name only. Uses the higher of this value and the people or company minimum.
 
 Command menu items use these defaults. Single-record and bulk workflow nodes use them when their minimum likelihood input is empty; an explicit workflow value takes precedence.
 
-When a variable is unset, enrichment uses the existing thresholds: 2 for strong identifiers (PDL ID, LinkedIn, email, or company domain) and 6 for name-based matches.
+When a setting is empty, enrichment uses its default from the application variable config.
 
 ## 💳 Billing
 

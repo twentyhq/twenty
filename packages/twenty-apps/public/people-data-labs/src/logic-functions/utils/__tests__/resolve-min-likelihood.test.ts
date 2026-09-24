@@ -1,113 +1,164 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
 import { PdlInvalidInputError } from 'src/logic-functions/errors/pdl-invalid-input-error';
 import { resolveMinLikelihood } from 'src/logic-functions/utils/resolve-min-likelihood';
 
 describe('resolveMinLikelihood', () => {
-  it.each([undefined, null])(
-    'keeps identifier-dependent defaults when the input is %s',
-    (inputMinLikelihood) => {
-      expect(
-        resolveMinLikelihood({ inputMinLikelihood, hasStrongIdentifier: true }),
-      ).toBe(2);
-      expect(
-        resolveMinLikelihood({ inputMinLikelihood, hasStrongIdentifier: false }),
-      ).toBe(6);
-    },
-  );
+  beforeEach(() => {
+    vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', undefined);
+  });
 
-  it.each(['', '   '])(
-    'keeps identifier-dependent defaults when the configured default is %j',
-    (defaultMinLikelihood) => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  describe.each([
+    { variableName: 'PDL_PERSON_MIN_LIKELIHOOD', label: 'people' },
+    { variableName: 'PDL_COMPANY_MIN_LIKELIHOOD', label: 'companies' },
+  ] as const)('$label', ({ variableName, label }) => {
+    it.each([undefined, '', '   '])(
+      'uses application variable defaults when the setting is %j',
+      (value) => {
+        vi.stubEnv(variableName, value);
+        vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', value);
+
+        expect(
+          resolveMinLikelihood({
+            inputMinLikelihood: undefined,
+            minLikelihoodVariableName: variableName,
+            hasStrongIdentifier: true,
+          }),
+        ).toBe(2);
+        expect(
+          resolveMinLikelihood({
+            inputMinLikelihood: null,
+            minLikelihoodVariableName: variableName,
+            hasStrongIdentifier: false,
+          }),
+        ).toBe(6);
+      },
+    );
+
+    it.each([
+      { value: '1', strongMinimum: 1, weakMinimum: 6 },
+      { value: '7', strongMinimum: 7, weakMinimum: 7 },
+      { value: '10', strongMinimum: 10, weakMinimum: 10 },
+      { value: ' 7 ', strongMinimum: 7, weakMinimum: 7 },
+    ])(
+      'uses the configured minimum of $value with a floor for name-based matches',
+      ({ value, strongMinimum, weakMinimum }) => {
+        vi.stubEnv(variableName, value);
+
+        expect(
+          resolveMinLikelihood({
+            inputMinLikelihood: undefined,
+            minLikelihoodVariableName: variableName,
+            hasStrongIdentifier: true,
+          }),
+        ).toBe(strongMinimum);
+        expect(
+          resolveMinLikelihood({
+            inputMinLikelihood: undefined,
+            minLikelihoodVariableName: variableName,
+            hasStrongIdentifier: false,
+          }),
+        ).toBe(weakMinimum);
+      },
+    );
+
+    it.each(['-1', '0', '11', '1.5', 'NaN', 'Infinity', '7invalid'])(
+      'rejects an invalid configured minimum of %j',
+      (value) => {
+        vi.stubEnv(variableName, value);
+
+        expect(() =>
+          resolveMinLikelihood({
+            inputMinLikelihood: undefined,
+            minLikelihoodVariableName: variableName,
+            hasStrongIdentifier: true,
+          }),
+        ).toThrow(
+          new PdlConfigError(
+            `Minimum likelihood for ${label} must be an integer between 1 and 10.`,
+          ),
+        );
+      },
+    );
+  });
+
+  it.each([
+    { minimum: '2', weakMinimum: '3', expected: 3 },
+    { minimum: '2', weakMinimum: '9', expected: 9 },
+    { minimum: '8', weakMinimum: '3', expected: 8 },
+  ])(
+    'uses $expected for name-based matches with minimums $minimum and $weakMinimum',
+    ({ minimum, weakMinimum, expected }) => {
+      vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', minimum);
+      vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', weakMinimum);
+
       expect(
         resolveMinLikelihood({
           inputMinLikelihood: undefined,
-          defaultMinLikelihood,
-          hasStrongIdentifier: true,
-        }),
-      ).toBe(2);
-      expect(
-        resolveMinLikelihood({
-          inputMinLikelihood: undefined,
-          defaultMinLikelihood,
+          minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
           hasStrongIdentifier: false,
         }),
-      ).toBe(6);
+      ).toBe(expected);
     },
   );
 
-  it.each(['1', '7', '10', ' 7 '])(
-    'uses the configured default of %j regardless of identifier strength',
-    (defaultMinLikelihood) => {
-      expect(
-        resolveMinLikelihood({
-          inputMinLikelihood: undefined,
-          defaultMinLikelihood,
-          hasStrongIdentifier: true,
-        }),
-      ).toBe(Number(defaultMinLikelihood));
-      expect(
-        resolveMinLikelihood({
-          inputMinLikelihood: null,
-          defaultMinLikelihood,
-          hasStrongIdentifier: false,
-        }),
-      ).toBe(Number(defaultMinLikelihood));
-    },
-  );
+  it('validates the name-based setting only for weak identifiers', () => {
+    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', 'invalid');
 
-  it.each(['8', 'invalid'])(
-    'uses an explicit likelihood over the configured default of %j',
-    (defaultMinLikelihood) => {
-      expect(
-        resolveMinLikelihood({
-          inputMinLikelihood: 4,
-          defaultMinLikelihood,
-          hasStrongIdentifier: true,
-        }),
-      ).toBe(4);
-    },
-  );
-
-  it.each(['-1', '0', '11', '1.5', 'NaN', 'Infinity', '7invalid'])(
-    'rejects an invalid configured default of %j',
-    (defaultMinLikelihood) => {
-      expect(() =>
-        resolveMinLikelihood({
-          inputMinLikelihood: undefined,
-          defaultMinLikelihood,
-          hasStrongIdentifier: true,
-        }),
-      ).toThrow(
-        new PdlConfigError(
-          'Default minimum likelihood must be an integer between 1 and 10.',
-        ),
-      );
-    },
-  );
+    expect(
+      resolveMinLikelihood({
+        inputMinLikelihood: undefined,
+        minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
+        hasStrongIdentifier: true,
+      }),
+    ).toBe(2);
+    expect(() =>
+      resolveMinLikelihood({
+        inputMinLikelihood: undefined,
+        minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
+        hasStrongIdentifier: false,
+      }),
+    ).toThrow(
+      new PdlConfigError(
+        'Minimum likelihood for name-based matches must be an integer between 1 and 10.',
+      ),
+    );
+  });
 
   it.each([1, 6, 10])(
-    'uses an explicit likelihood of %s regardless of identifier strength',
+    'uses an explicit likelihood of %s over invalid settings for both identifier strengths',
     (inputMinLikelihood) => {
-      expect(
-        resolveMinLikelihood({
-          inputMinLikelihood,
-          defaultMinLikelihood: '7',
-          hasStrongIdentifier: true,
-        }),
-      ).toBe(inputMinLikelihood);
-      expect(
-        resolveMinLikelihood({ inputMinLikelihood, hasStrongIdentifier: false }),
-      ).toBe(inputMinLikelihood);
+      vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', 'invalid');
+      vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', 'invalid');
+
+      for (const hasStrongIdentifier of [true, false]) {
+        expect(
+          resolveMinLikelihood({
+            inputMinLikelihood,
+            minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
+            hasStrongIdentifier,
+          }),
+        ).toBe(inputMinLikelihood);
+      }
     },
   );
 
   it.each([-1, 0, 11, 1.5, NaN, Infinity])(
-    'rejects an invalid likelihood of %s',
+    'rejects an invalid input likelihood of %s',
     (inputMinLikelihood) => {
       expect(() =>
-        resolveMinLikelihood({ inputMinLikelihood, hasStrongIdentifier: true }),
+        resolveMinLikelihood({
+          inputMinLikelihood,
+          minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
+          hasStrongIdentifier: true,
+        }),
       ).toThrow(
         new PdlInvalidInputError(
           'Minimum likelihood must be an integer between 1 and 10.',

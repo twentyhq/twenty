@@ -7,6 +7,7 @@ describe('extractPersonMatchParams', () => {
   beforeEach(() => {
     vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', undefined);
     vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', undefined);
   });
 
   afterEach(() => {
@@ -80,6 +81,22 @@ describe('extractPersonMatchParams', () => {
         input: { records: [] },
       }),
     ).toBeUndefined();
+  });
+
+  it('uses the name-based setting when matching by name and company', () => {
+    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', '9');
+
+    expect(
+      extractPersonMatchParams({
+        node: {
+          ...PERSON_NODE_MOCK,
+          linkedinLink: null,
+          name: { firstName: 'Jane', lastName: 'Doe' },
+          company: { id: 'co-1', name: 'Acme' },
+        },
+        input: { records: [] },
+      }),
+    ).toMatchObject({ minLikelihood: 9 });
   });
 
   it('honors an explicit minLikelihood from the input', () => {

@@ -9,6 +9,7 @@ describe('extractCompanyMatchParams', () => {
   beforeEach(() => {
     vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', undefined);
     vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', undefined);
   });
 
   afterEach(() => {
@@ -98,6 +99,17 @@ describe('extractCompanyMatchParams', () => {
       extractCompanyMatchParams({
         node: { ...COMPANY_NODE_MOCK, name: 'Acme' },
         input: { records: [], minLikelihood: 9 },
+      }),
+    ).toMatchObject({ minLikelihood: 9 });
+  });
+
+  it('uses the name-based setting when matching by name only', () => {
+    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', '9');
+
+    expect(
+      extractCompanyMatchParams({
+        node: { ...COMPANY_NODE_MOCK, domainName: null, name: 'Acme' },
+        input: INPUT,
       }),
     ).toMatchObject({ minLikelihood: 9 });
   });

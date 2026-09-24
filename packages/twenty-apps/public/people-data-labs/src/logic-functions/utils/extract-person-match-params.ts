@@ -20,7 +20,7 @@ export const extractPersonMatchParams = ({
       pdlId: existingPdlId,
       minLikelihood: resolveMinLikelihood({
         inputMinLikelihood: input.minLikelihood,
-        defaultMinLikelihood: process.env.PDL_PERSON_MIN_LIKELIHOOD,
+        minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
         hasStrongIdentifier: true,
       }),
     };
@@ -54,7 +54,7 @@ export const extractPersonMatchParams = ({
     ...personMatchParams,
     minLikelihood: resolveMinLikelihood({
       inputMinLikelihood: input.minLikelihood,
-      defaultMinLikelihood: process.env.PDL_PERSON_MIN_LIKELIHOOD,
+      minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
       hasStrongIdentifier,
     }),
   };
