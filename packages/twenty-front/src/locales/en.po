@@ -16263,6 +16263,11 @@ msgstr "Past due"
 msgid "Paste a link to a hosted image"
 msgstr "Paste a link to a hosted image"
 
+#. js-lingui-id: YrKalV
+#: src/modules/advanced-text-editor/extensions/blocks/HtmlNodeInlineEditor.tsx
+msgid "Paste or write your HTML here"
+msgstr "Paste or write your HTML here"
+
 #. js-lingui-id: cpStVq
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Paste the code below"

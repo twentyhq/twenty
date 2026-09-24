@@ -632,8 +632,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   ): boolean {
     switch (queryRunnerContext.flatObjectMetadata.readability) {
       case MetadataReadability.PRIVATE:
-      case MetadataReadability.INHERITED:
         return true;
+      // Legacy inherited records must keep following their parent after
+      // activation instead of receiving an EVERYONE compatibility grant.
+      case MetadataReadability.INHERITED:
+        return this.isRecordSharingEnforced(queryRunnerContext);
       default:
         return false;
     }

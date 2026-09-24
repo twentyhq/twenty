@@ -29,6 +29,7 @@ import {
   type EnterpriseLicenseInfo,
   type EnterpriseValidityPayload,
 } from 'src/engine/core-modules/enterprise/types/organization-key-payload.type';
+import { isValidityTokenReloadDue } from 'src/engine/core-modules/enterprise/utils/is-validity-token-reload-due.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import {
   ConfigVariableException,
@@ -45,6 +46,9 @@ export class EnterprisePlanService implements OnModuleInit {
   private cachedValidityPayload: EnterpriseValidityPayload | null = null;
   private cachedKeyPayload: EnterpriseKeyPayload | null = null;
   private lastRefreshRejectionCode: string | null = null;
+  private lastValidityTokenLoadStartedAt: number | null = null;
+  private didLastValidityTokenLoadFail = false;
+  private validityTokenRevocationCount = 0;
 
   static readonly ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE =
     'ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER';
@@ -84,6 +88,10 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   private async loadValidityToken(): Promise<void> {
+    this.lastValidityTokenLoadStartedAt = Date.now();
+
+    const revocationCountAtLoadStart = this.validityTokenRevocationCount;
+
     try {
       const dbToken = await this.appTokenRepository.findOne({
         where: {
@@ -94,6 +102,12 @@ export class EnterprisePlanService implements OnModuleInit {
         },
         order: { createdAt: 'DESC' },
       });
+
+      this.didLastValidityTokenLoadFail = false;
+
+      if (revocationCountAtLoadStart !== this.validityTokenRevocationCount) {
+        return;
+      }
 
       const tokenValue =
         dbToken?.value ??
@@ -113,10 +127,11 @@ export class EnterprisePlanService implements OnModuleInit {
         this.cachedValidityPayload = null;
       }
     } catch (error) {
+      this.didLastValidityTokenLoadFail = true;
+
       this.logger.warn(
-        `Failed to load validity token: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to load validity token: ${error instanceof Error ? error.message : 'Unknown error'}. Keeping the token in hand.`,
       );
-      this.cachedValidityPayload = null;
     }
   }
 
@@ -156,14 +171,50 @@ export class EnterprisePlanService implements OnModuleInit {
     return isDefined(this.cachedKeyPayload);
   }
 
-  hasValidEnterpriseValidityToken(): boolean {
-    if (isDefined(this.cachedValidityPayload)) {
-      const now = Math.floor(Date.now() / 1000);
+  private reloadValidityTokenIfStale(): void {
+    const isReloadDue = isValidityTokenReloadDue({
+      lastLoadStartedAt: this.lastValidityTokenLoadStartedAt,
+      didLastLoadFail: this.didLastValidityTokenLoadFail,
+      now: Date.now(),
+    });
 
-      return this.cachedValidityPayload.exp > now;
+    if (!isReloadDue) {
+      return;
     }
 
-    return false;
+    void this.loadValidityToken();
+  }
+
+  private isCachedValidityPayloadValid(): boolean {
+    if (!isDefined(this.cachedValidityPayload)) {
+      return false;
+    }
+
+    return this.cachedValidityPayload.exp > Math.floor(Date.now() / 1000);
+  }
+
+  hasValidEnterpriseValidityToken(): boolean {
+    this.reloadValidityTokenIfStale();
+
+    return this.isCachedValidityPayloadValid();
+  }
+
+  async isValidWithFreshToken(): Promise<boolean> {
+    if (this.isCachedValidityPayloadValid()) {
+      return true;
+    }
+
+    if (
+      isValidityTokenReloadDue({
+        lastLoadStartedAt: this.lastValidityTokenLoadStartedAt,
+        didLastLoadFail: this.didLastValidityTokenLoadFail,
+        now: Date.now(),
+      })
+    ) {
+      await this.loadValidityToken();
+    }
+
+    return this.isCachedValidityPayloadValid();
   }
 
   isValid(): boolean {
@@ -179,10 +230,8 @@ export class EnterprisePlanService implements OnModuleInit {
     await this.loadValidityToken();
 
     if (isDefined(this.cachedValidityPayload)) {
-      const now = Math.floor(Date.now() / 1000);
-
       return {
-        isValid: this.cachedValidityPayload.exp > now,
+        isValid: this.isCachedValidityPayloadValid(),
         licensee: this.cachedKeyPayload?.licensee ?? null,
         expiresAt: new Date(this.cachedValidityPayload.exp * 1000),
         subscriptionId: this.cachedValidityPayload.sub,
@@ -221,6 +270,7 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   private async revokeStoredValidityToken(): Promise<void> {
+    this.validityTokenRevocationCount += 1;
     this.cachedValidityPayload = null;
 
     try {
