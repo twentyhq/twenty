@@ -4,4 +4,4 @@ import {
 } from '@/translations/constants/AppLocales';
 
 export const isValidLocale = (value: string | null): value is AppLocale =>
-  value !== null && value in APP_LOCALES;
+  value !== null && Object.keys(APP_LOCALES).includes(value);

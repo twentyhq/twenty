@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application file upload should fail at completion on mime/magic-byte mismatch when a PublicAsset .pdf path receives a plain text body (magic-byte mismatch) 1`] = `"File content does not match its extension. The file has extension 'pdf' (expected mime type: application/pdf), but the file content could not be detected as this type. The file may be corrupted, have the wrong extension, or be a security risk."`;
+
+exports[`Application file upload should fail at completion on mime/magic-byte mismatch when a PublicAsset .png path receives a plain text body (magic-byte mismatch) 1`] = `"File content does not match its extension. The file has extension 'png' (expected mime type: image/png), but the file content could not be detected as this type. The file may be corrupted, have the wrong extension, or be a security risk."`;
+
+exports[`Application file upload should fail at completion on mime/magic-byte mismatch when a PublicAsset .zip path receives a plain text body (magic-byte mismatch) 1`] = `"File content does not match its extension. The file has extension 'zip' (expected mime type: application/zip), but the file content could not be detected as this type. The file may be corrupted, have the wrong extension, or be a security risk."`;

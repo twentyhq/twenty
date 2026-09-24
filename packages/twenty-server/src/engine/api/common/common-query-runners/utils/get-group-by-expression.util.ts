@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  DEPRECATED_IANA_TIME_ZONE_ALIASES,
   GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE,
   IANA_TIME_ZONES,
 } from 'twenty-shared/constants';
@@ -70,12 +71,17 @@ export const getGroupByExpression = ({
     );
   }
 
+  const normalizedTimeZone = isNonEmptyString(groupByField.timeZone)
+    ? (DEPRECATED_IANA_TIME_ZONE_ALIASES[groupByField.timeZone] ??
+      groupByField.timeZone)
+    : groupByField.timeZone;
+
   const timeZoneAsDateTruncParameter = shouldUseTimeZone
-    ? `, '${groupByField.timeZone}'`
+    ? `, '${normalizedTimeZone}'`
     : '';
 
   const timeZoneAsToCharParameter = shouldUseTimeZone
-    ? ` AT TIME ZONE '${groupByField.timeZone}'`
+    ? ` AT TIME ZONE '${normalizedTimeZone}'`
     : '';
 
   switch (dateGranularity) {
