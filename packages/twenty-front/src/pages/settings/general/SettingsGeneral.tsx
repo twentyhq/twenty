@@ -1,4 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
+import { Navigate, useLocation } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -13,9 +16,13 @@ import { SettingsSecuritySettings } from '@/settings/security/components/Setting
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Section } from 'twenty-ui/components';
 import { IconHistory, IconKey, IconSettings2 } from 'twenty-ui/icon';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';
 
@@ -25,6 +32,7 @@ const GENERAL_TAB_LOGS = 'logs';
 
 export const SettingsGeneral = () => {
   const { t } = useLingui();
+  const { hash } = useLocation();
 
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
@@ -34,6 +42,10 @@ export const SettingsGeneral = () => {
     PermissionFlagType.SECURITY,
   );
 
+  const isLogsSettingsSectionEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED,
+  );
+
   const tabs = [
     {
       id: GENERAL_TAB_GENERAL,
@@ -41,10 +53,10 @@ export const SettingsGeneral = () => {
       Icon: IconSettings2,
     },
     ...(hasSecurityPermission
-      ? [
-          { id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey },
-          { id: GENERAL_TAB_LOGS, title: t`Logs`, Icon: IconHistory },
-        ]
+      ? [{ id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey }]
+      : []),
+    ...(hasSecurityPermission && !isLogsSettingsSectionEnabled
+      ? [{ id: GENERAL_TAB_LOGS, title: t`Logs`, Icon: IconHistory }]
       : []),
   ];
 
@@ -52,6 +64,10 @@ export const SettingsGeneral = () => {
     SETTINGS_GENERAL_TABS_INSTANCE_ID,
     tabs.map((tab) => tab.id),
   );
+
+  if (isLogsSettingsSectionEnabled && hash === `#${GENERAL_TAB_LOGS}`) {
+    return <Navigate replace to={getSettingsPath(SettingsPath.Logs)} />;
+  }
 
   const renderActiveTabContent = () => {
     if (activeTabId === GENERAL_TAB_SECURITY) {

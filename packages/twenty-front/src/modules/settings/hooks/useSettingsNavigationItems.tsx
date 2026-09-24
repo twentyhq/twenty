@@ -12,6 +12,7 @@ import {
   type NavigationDrawerItemModifier,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -25,6 +26,7 @@ import {
   IconDoorEnter,
   IconHelpCircle,
   IconHierarchy,
+  IconHistory,
   IconMail,
   IconMessage,
   IconMessageCircle,
@@ -35,7 +37,10 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -70,6 +75,10 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
+
+  const isLogsSettingsSectionEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED,
+  );
 
   const permissionMap = usePermissionFlagMap();
   return [
@@ -174,6 +183,14 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.WorkspaceCommunications,
           Icon: IconMessageCircle,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+        },
+        {
+          label: t`Logs`,
+          path: SettingsPath.Logs,
+          Icon: IconHistory,
+          isHidden:
+            !isLogsSettingsSectionEnabled ||
+            !permissionMap[PermissionFlagType.SECURITY],
         },
       ],
     },
