@@ -1,19 +1,19 @@
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type GeoMapAddressComponent } from 'src/engine/core-modules/geo-map/types/geo-map-address-component.type';
+import { type AddressAutocompleteGooglePlacesAddressComponent } from 'src/engine/core-modules/geo-map/drivers/google-places/types/address-autocomplete-google-places-address-component.type';
 import { type GeoMapAddressFields } from 'src/engine/core-modules/geo-map/types/geo-map-address-fields.type';
 import { type GeoMapLocationFields } from 'src/engine/core-modules/geo-map/types/geo-map-location-fields.type';
 
 const hasType = (
-  addressComponent: GeoMapAddressComponent,
+  addressComponent: AddressAutocompleteGooglePlacesAddressComponent,
   type: string,
 ): boolean => addressComponent.types.includes(type);
 
-export const sanitizePlaceDetailsResults = ({
+export const sanitizeAddressAutocompleteGooglePlacesAddressDetails = ({
   addressComponents,
   location,
 }: {
-  addressComponents: GeoMapAddressComponent[];
+  addressComponents: AddressAutocompleteGooglePlacesAddressComponent[];
   location?: GeoMapLocationFields;
 }): GeoMapAddressFields => {
   if (!isNonEmptyArray(addressComponents)) return {};

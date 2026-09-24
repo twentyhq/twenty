@@ -1,39 +1,40 @@
-import { type GeoMapAddressComponent } from 'src/engine/core-modules/geo-map/types/geo-map-address-component.type';
-import { sanitizePlaceDetailsResults } from 'src/engine/core-modules/geo-map/utils/sanitize-place-details-results.util';
+import { type AddressAutocompleteGooglePlacesAddressComponent } from 'src/engine/core-modules/geo-map/drivers/google-places/types/address-autocomplete-google-places-address-component.type';
+import { sanitizeAddressAutocompleteGooglePlacesAddressDetails } from 'src/engine/core-modules/geo-map/drivers/google-places/utils/sanitize-address-autocomplete-google-places-address-details.util';
 
 // Real Google Places API response for "48 Pirrama Road, Pyrmont NSW 2009, Australia"
-const GOOGLE_OFFICE_SYDNEY: GeoMapAddressComponent[] = [
-  { long_name: '48', short_name: '48', types: ['street_number'] },
-  {
-    long_name: 'Pirrama Road',
-    short_name: 'Pirrama Rd',
-    types: ['route'],
-  },
-  {
-    long_name: 'Pyrmont',
-    short_name: 'Pyrmont',
-    types: ['locality', 'political'],
-  },
-  {
-    long_name: 'City of Sydney',
-    short_name: 'City of Sydney',
-    types: ['administrative_area_level_2', 'political'],
-  },
-  {
-    long_name: 'New South Wales',
-    short_name: 'NSW',
-    types: ['administrative_area_level_1', 'political'],
-  },
-  {
-    long_name: 'Australia',
-    short_name: 'AU',
-    types: ['country', 'political'],
-  },
-  { long_name: '2009', short_name: '2009', types: ['postal_code'] },
-];
+const GOOGLE_OFFICE_SYDNEY: AddressAutocompleteGooglePlacesAddressComponent[] =
+  [
+    { long_name: '48', short_name: '48', types: ['street_number'] },
+    {
+      long_name: 'Pirrama Road',
+      short_name: 'Pirrama Rd',
+      types: ['route'],
+    },
+    {
+      long_name: 'Pyrmont',
+      short_name: 'Pyrmont',
+      types: ['locality', 'political'],
+    },
+    {
+      long_name: 'City of Sydney',
+      short_name: 'City of Sydney',
+      types: ['administrative_area_level_2', 'political'],
+    },
+    {
+      long_name: 'New South Wales',
+      short_name: 'NSW',
+      types: ['administrative_area_level_1', 'political'],
+    },
+    {
+      long_name: 'Australia',
+      short_name: 'AU',
+      types: ['country', 'political'],
+    },
+    { long_name: '2009', short_name: '2009', types: ['postal_code'] },
+  ];
 
 // Real Google Places API response for "111 8th Avenue, New York, NY 10011, USA"
-const NYC_ADDRESS: GeoMapAddressComponent[] = [
+const NYC_ADDRESS: AddressAutocompleteGooglePlacesAddressComponent[] = [
   { long_name: '111', short_name: '111', types: ['street_number'] },
   {
     long_name: '8th Avenue',
@@ -69,7 +70,7 @@ const NYC_ADDRESS: GeoMapAddressComponent[] = [
 ];
 
 // UK address using postal_town (London addresses often lack locality)
-const UK_ADDRESS: GeoMapAddressComponent[] = [
+const UK_ADDRESS: AddressAutocompleteGooglePlacesAddressComponent[] = [
   { long_name: '221B', short_name: '221B', types: ['street_number'] },
   {
     long_name: 'Baker Street',
@@ -100,7 +101,7 @@ const UK_ADDRESS: GeoMapAddressComponent[] = [
 ];
 
 // Landmark without street_number or route
-const LANDMARK: GeoMapAddressComponent[] = [
+const LANDMARK: AddressAutocompleteGooglePlacesAddressComponent[] = [
   {
     long_name: 'Paris',
     short_name: 'Paris',
@@ -124,13 +125,17 @@ const LANDMARK: GeoMapAddressComponent[] = [
   { long_name: '75007', short_name: '75007', types: ['postal_code'] },
 ];
 
-describe('sanitizePlaceDetailsResults', () => {
+describe('sanitizeAddressAutocompleteGooglePlacesAddressDetails', () => {
   it('should return empty object for empty array', () => {
-    expect(sanitizePlaceDetailsResults({ addressComponents: [] })).toEqual({});
+    expect(
+      sanitizeAddressAutocompleteGooglePlacesAddressDetails({
+        addressComponents: [],
+      }),
+    ).toEqual({});
   });
 
   it('should parse a full US address (Google Sydney office)', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: GOOGLE_OFFICE_SYDNEY,
       location: { lat: -33.866489, lng: 151.1958561 },
     });
@@ -146,7 +151,7 @@ describe('sanitizePlaceDetailsResults', () => {
   });
 
   it('should parse US address with postal_code_suffix', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: NYC_ADDRESS,
     });
 
@@ -161,7 +166,7 @@ describe('sanitizePlaceDetailsResults', () => {
   });
 
   it('should use postal_town as city fallback (UK address)', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: UK_ADDRESS,
     });
 
@@ -176,7 +181,7 @@ describe('sanitizePlaceDetailsResults', () => {
   });
 
   it('should not set street when no street_number or route', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: LANDMARK,
     });
 
@@ -186,7 +191,7 @@ describe('sanitizePlaceDetailsResults', () => {
   });
 
   it('should set street with only route (no street_number)', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: [
         {
           long_name: 'Broadway',
@@ -200,7 +205,7 @@ describe('sanitizePlaceDetailsResults', () => {
   });
 
   it('should use administrative_area_level_2 as state fallback', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: [
         {
           long_name: 'Some County',
@@ -214,7 +219,7 @@ describe('sanitizePlaceDetailsResults', () => {
   });
 
   it('should prefer administrative_area_level_1 over level_2 for state', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: [
         {
           long_name: 'Some County',
@@ -233,7 +238,7 @@ describe('sanitizePlaceDetailsResults', () => {
   });
 
   it('should prefer locality over postal_town for city', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: [
         {
           long_name: 'Westminster',
@@ -252,7 +257,7 @@ describe('sanitizePlaceDetailsResults', () => {
   });
 
   it('should use administrative_area_level_3 as city fallback', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: [
         {
           long_name: 'Small Town',
@@ -266,7 +271,7 @@ describe('sanitizePlaceDetailsResults', () => {
   });
 
   it('should use short_name for country', () => {
-    const result = sanitizePlaceDetailsResults({
+    const result = sanitizeAddressAutocompleteGooglePlacesAddressDetails({
       addressComponents: [
         {
           long_name: 'United States',
