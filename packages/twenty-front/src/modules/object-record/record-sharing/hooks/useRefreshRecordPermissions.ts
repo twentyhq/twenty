@@ -43,7 +43,15 @@ export const useRefreshRecordPermissions = () => {
           workspaceMemberId: member.id,
         });
       for (const target of uniqueTargets) {
-        store.set(targetAtom(target), { requestId, userWorkspace });
+        const previous = store.get(targetAtom(target));
+        store.set(targetAtom(target), {
+          requestId,
+          userWorkspace,
+          permissions:
+            previous?.userWorkspace === userWorkspace
+              ? previous?.permissions
+              : undefined,
+        });
       }
       for (
         let offset = 0;

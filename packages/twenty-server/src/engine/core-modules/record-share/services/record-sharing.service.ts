@@ -68,14 +68,14 @@ export class RecordSharingService {
       const readableIds = await repository.findRecordIdsAllowedForOperation({
         recordIds: args.recordIds,
         operationType: 'select',
-        withDeleted: args.withDeleted,
+        withDeleted: args.withDeleted ?? true,
       });
       const allowed = async (operationType: OperationType) =>
         new Set(
           await repository.findRecordIdsAllowedForOperation({
             recordIds: readableIds,
             operationType,
-            withDeleted: args.withDeleted,
+            withDeleted: args.withDeleted ?? true,
           }),
         );
       const [writableIds, deletableIds, softDeletableIds] = await Promise.all([
@@ -104,6 +104,18 @@ export class RecordSharingService {
     if (!permissions.canRead) {
       throw new NotFoundError('Record not found');
     }
+    return this.buildSharingResponse({ args, objectMetadata, permissions });
+  }
+
+  private async buildSharingResponse({
+    args,
+    objectMetadata,
+    permissions,
+  }: {
+    args: RecordSharingArgs;
+    objectMetadata: FlatObjectMetadata;
+    permissions: RecordPermissionsDTO;
+  }): Promise<RecordSharingDTO> {
     const isEnabled =
       this.isShareable(objectMetadata) &&
       (await this.featureService.isRecordSharingEnabled(
@@ -185,6 +197,7 @@ export class RecordSharingService {
               await repository.findRecordIdsAllowedForOperation({
                 recordIds: [args.recordId],
                 operationType: 'update',
+                withDeleted: args.withDeleted ?? true,
               });
             if (writableIds.length !== 1) {
               throw new NotFoundError('Record not found');
@@ -241,7 +254,7 @@ export class RecordSharingService {
         shares: [],
       };
     }
-    return this.getSharing(args);
+    return this.buildSharingResponse({ args, objectMetadata, permissions });
   }
 
   private async getRecordShares({

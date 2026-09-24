@@ -192,13 +192,35 @@ describe('Conversation common record access', () => {
   it('returns common capabilities, including destructive permission differences', async () => {
     const { service, sharing, permissions, authContext } = buildService();
     await expect(service.getPermissions(args)).resolves.toEqual(permissions);
-    expect(sharing.getPermissions).toHaveBeenCalledWith({
+    expect(sharing.getPermissionsForRecords).toHaveBeenCalledWith({
       authContext,
       objectMetadataId: 'object',
-      recordId: THREAD_ID,
+      recordIds: [THREAD_ID],
       withDeleted: false,
     });
   });
+
+  it.each([MetadataReadability.SYSTEM, MetadataReadability.PRIVATE])(
+    'bounds the readable thread list before ranking for %s metadata',
+    async (readability) => {
+      const { service, repository, threadRepository, objectMetadata, sharing } =
+        buildService();
+      objectMetadata.readability = readability;
+      await service.getReadableThreadIds(args);
+      const selectedRepository =
+        readability === MetadataReadability.SYSTEM
+          ? threadRepository
+          : repository;
+      expect(selectedRepository.find).toHaveBeenCalledWith(
+        ...(readability === MetadataReadability.SYSTEM ? [WORKSPACE_ID] : []),
+        expect.objectContaining({
+          take: 1000,
+          order: { updatedAt: 'DESC', id: 'DESC' },
+        }),
+      );
+      expect(sharing.getPermissionsForRecords).not.toHaveBeenCalled();
+    },
+  );
 
   it('batches capabilities and lists only records admitted by the ordinary repository', async () => {
     const { service, sharing } = buildService();

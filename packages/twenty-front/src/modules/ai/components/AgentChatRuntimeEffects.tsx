@@ -1,4 +1,3 @@
-import { AgentChatThreadsRefreshEffect } from '@/ai/components/AgentChatThreadsRefreshEffect';
 import { AgentChatMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
 import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
 import { AgentChatSessionStartTimeEffect } from '@/ai/components/AgentChatSessionStartTimeEffect';
@@ -16,7 +15,6 @@ export const AgentChatRuntimeEffects = () => {
 
   return (
     <>
-      <AgentChatThreadsRefreshEffect />
       <AgentChatMessagesFetchEffect />
       <AgentChatStreamSubscriptionEffect />
       <AgentChatPrepromptEffect />

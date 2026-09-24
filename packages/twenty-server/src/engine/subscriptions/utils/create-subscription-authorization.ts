@@ -2,10 +2,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 // Share in-flight checks and short-lived successes per subscription. A failed
 // check remains terminal so a buffered event cannot outlive a revoked grant.
-export const createSubscriptionAuthorization = (
-  check: () => Promise<unknown>,
-  maxAgeMs: number,
-) => {
+export const createSubscriptionAuthorization = ({
+  check,
+  maxAgeMs,
+}: {
+  check: () => Promise<unknown>;
+  maxAgeMs: number;
+}) => {
   let validUntil = 0;
   let inFlight: Promise<void> | undefined;
 

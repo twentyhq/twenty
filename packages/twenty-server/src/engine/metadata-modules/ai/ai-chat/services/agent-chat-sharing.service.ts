@@ -1,4 +1,4 @@
-import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
+import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-thread.util';
 import { In } from 'typeorm';
 import { mapAgentHistoryFieldNameToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-field-name-to-workspace.util';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
@@ -29,6 +29,8 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+const MAX_CHAT_THREADS = 1000;
 
 type ThreadAccessArgs = {
   workspaceId: string;
@@ -96,27 +98,11 @@ export class AgentChatSharingService {
   }
 
   async getPermissions(args: ThreadAccessArgs): Promise<RecordPermissionsDTO> {
-    const authContext = await this.getAuthContext(args);
-    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    if (objectMetadata.readability === MetadataReadability.SYSTEM) {
-      const thread = await this.getThreadWithAccess({
-        ...args,
-        operationType: 'select',
-      });
-      const isOwner = thread.userWorkspaceId === args.userWorkspaceId;
-      return {
-        canRead: isOwner,
-        canUpdate: isOwner,
-        canDelete: isOwner,
-        canSoftDelete: isOwner,
-      };
-    }
-    return this.recordSharingService.getPermissions({
-      authContext,
-      objectMetadataId: objectMetadata.id,
-      recordId: args.threadId,
-      withDeleted: false,
+    const permissions = await this.getPermissionsForThreads({
+      ...args,
+      threadIds: [args.threadId],
     });
+    return permissions.get(args.threadId)!;
   }
 
   async getPermissionsForThreads(
@@ -166,13 +152,20 @@ export class AgentChatSharingService {
         await this.threadRepository.find(args.workspaceId, {
           where: { userWorkspaceId: args.userWorkspaceId },
           select: ['id'],
+          order: { updatedAt: 'DESC', id: 'DESC' },
+          take: MAX_CHAT_THREADS,
         })
       ).map(({ id }) => id);
     }
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const records = await this.workspaceOrmManager
         .getRepositoryWithContextPermissions('agentChatThread')
-        .find({ select: { id: true }, withDeleted: false });
+        .find({
+          select: { id: true },
+          withDeleted: false,
+          order: { updatedAt: 'DESC', id: 'DESC' },
+          take: MAX_CHAT_THREADS,
+        });
       return records.map(({ id }) => id);
     }, authContext);
   }
@@ -333,29 +326,15 @@ export class AgentChatSharingService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.threadRepository.query(args.workspaceId, async (context) => {
-          const { manager, table, storage } = context;
-          await manager.query(
-            'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-            [
-              buildRecordShareLockKey({
-                workspaceId: args.workspaceId,
-                objectMetadataId: objectMetadata.id,
-                recordId: args.threadId,
-              }),
-            ],
-          );
-          const records = await manager.query<AgentChatThreadEntity[]>(
-            `SELECT * FROM ${table('agentChatThread')} WHERE id = $1 ${storage === 'core' ? 'AND "workspaceId" = $2' : ''} FOR UPDATE`,
-            storage === 'core'
-              ? [args.threadId, args.workspaceId]
-              : [args.threadId],
-          );
-          if (records.length !== 1) {
-            return this.throwNotFound();
-          }
+          const thread = await lockAgentChatThread({
+            context,
+            workspaceId: args.workspaceId,
+            objectMetadataId: objectMetadata.id,
+            threadId: args.threadId,
+          });
           if (
             objectMetadata.readability === MetadataReadability.SYSTEM &&
-            records[0].userWorkspaceId !== args.userWorkspaceId
+            thread.userWorkspaceId !== args.userWorkspaceId
           ) {
             return this.throwNotFound();
           }
@@ -372,14 +351,6 @@ export class AgentChatSharingService {
               return this.throwNotFound();
             }
           }
-          const thread =
-            storage === 'core'
-              ? records[0]
-              : (normalizeAgentHistoryRecord({
-                  record: records[0],
-                  workspaceId: args.workspaceId,
-                  objectName: 'agentChatThread',
-                }) as AgentChatThreadEntity);
           return mutate(context, thread);
         }),
       authContext,

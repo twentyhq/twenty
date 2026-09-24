@@ -52,8 +52,8 @@ export class AgentChatSubscriptionResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    const authorize = createSubscriptionAuthorization(
-      () =>
+    const authorize = createSubscriptionAuthorization({
+      check: () =>
         this.sharingService
           .getReadableThread({
             workspaceId: workspace.id,
@@ -61,8 +61,8 @@ export class AgentChatSubscriptionResolver {
             userWorkspaceId,
           })
           .catch(aiGraphqlApiExceptionHandler),
-      AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
-    );
+      maxAgeMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
+    });
     await authorize();
 
     const iterator = await this.subscriptionService.subscribeToAgentChat({
@@ -79,8 +79,8 @@ export class AgentChatSubscriptionResolver {
 
     let lastReapCheckAt = 0;
 
-    return withAsyncIteratorAuthorization(
-      wrapAsyncIteratorWithLifecycle(() => iterator, {
+    return withAsyncIteratorAuthorization({
+      iterator: wrapAsyncIteratorWithLifecycle(() => iterator, {
         initialValue: keepalivePayload,
         heartbeatErrorBehavior: 'close',
         onHeartbeat: async () => {
@@ -104,7 +104,7 @@ export class AgentChatSubscriptionResolver {
         heartbeatIntervalMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
       }),
       authorize,
-    );
+    });
   }
 
   private async reapWatchedStreamIfDead(

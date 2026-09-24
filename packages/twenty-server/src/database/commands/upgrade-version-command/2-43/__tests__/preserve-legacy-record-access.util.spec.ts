@@ -85,3 +85,19 @@ it.each([true, false])(
     expect(query.mock.calls[1][0]).toContain('INSERT INTO core."keyValuePair"');
   },
 );
+
+it('backfills existing private objects even when chat metadata is absent', async () => {
+  const query = jest
+    .fn()
+    .mockResolvedValueOnce([])
+    .mockResolvedValueOnce([{ id: 'last' }])
+    .mockResolvedValueOnce([{ lastId: 'last', count: 1 }])
+    .mockResolvedValueOnce([]);
+  await preserveLegacyRecordAccess({
+    ...args,
+    objects: [objects[1]],
+    manager: { query } as never,
+  });
+  expect(query.mock.calls[2][0]).toContain("'EVERYONE', 'FULL', 'APPLICATION'");
+  expect(query.mock.calls[3][0]).toContain('INSERT INTO core."keyValuePair"');
+});

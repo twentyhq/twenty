@@ -15,6 +15,12 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const refreshAgentChatThreads = jest.fn();
+const mockRefreshPermissions = jest.fn();
+jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
+  useRefreshAgentChatThreadPermissions: () => ({
+    refreshAgentChatThreadPermissions: mockRefreshPermissions,
+  }),
+}));
 const subscribe = jest.fn();
 const disconnect = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
@@ -55,6 +61,38 @@ describe('Shared conversation access revocation', () => {
     jotaiStore.set(messagesAtom, messages);
     jotaiStore.set(fetchedAtom, messages);
     jotaiStore.set(queuedAtom, messages);
+  });
+
+  it('refreshes only the subscribed thread on heartbeats, at most once every 30 seconds', () => {
+    jest.useFakeTimers();
+    const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
+      wrapper: Wrapper,
+    });
+    const sink = subscribe.mock.calls[0][1];
+    const heartbeat = () =>
+      sink.next({
+        data: {
+          onAgentChatEvent: {
+            threadId: 'thread',
+            event: { type: 'keepalive' },
+          },
+        },
+      });
+    act(() => {
+      heartbeat();
+      heartbeat();
+    });
+    expect(mockRefreshPermissions).toHaveBeenCalledTimes(1);
+    expect(mockRefreshPermissions).toHaveBeenLastCalledWith(['thread']);
+    act(() => jest.advanceTimersByTime(30_000));
+    expect(mockRefreshPermissions).toHaveBeenCalledTimes(1);
+    act(heartbeat);
+    expect(mockRefreshPermissions).toHaveBeenCalledTimes(2);
+    expect(refreshAgentChatThreads).not.toHaveBeenCalled();
+    unmount();
+    act(heartbeat);
+    expect(mockRefreshPermissions).toHaveBeenCalledTimes(2);
+    jest.useRealTimers();
   });
 
   it.each(['next', 'error'])(

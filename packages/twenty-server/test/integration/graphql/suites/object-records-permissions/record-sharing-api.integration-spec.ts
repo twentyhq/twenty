@@ -1,3 +1,5 @@
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util';
@@ -251,49 +253,41 @@ describe('Generic sharing API on an ordinary private object', () => {
     await setFlag(originalFlag);
   });
 
-  it('retains shared workspace access for flag-off creates and prevents manual revocation of that managed default', async () => {
+  it('keeps flag-off creates private after activation', async () => {
     await setFlag(false);
     const recordId = randomUUID();
     const created = await makeGraphqlAPIRequest(
       createOneOperationFactory({
         objectMetadataSingularName: OBJECT_NAME,
         gqlFields: 'id',
-        data: { id: recordId, name: 'Legacy shared default' },
+        data: { id: recordId, name: 'Private with sharing UI disabled' },
       }),
     );
     expect(created.body.errors).toBeUndefined();
     const recordTarget = { objectMetadataId, recordId };
     try {
-      const readSettings = () =>
+      const readSettings = (token: string) =>
         makeMetadataAPIRequest(
           { query: READ_SHARING, variables: { target: recordTarget } },
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          token,
         );
-      expect((await readSettings()).body.data.recordSharing).toMatchObject({
+      expect(
+        (await readSettings(APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.errors,
+      ).toBeDefined();
+      expect(
+        (await readSettings(APPLE_JANE_ADMIN_ACCESS_TOKEN)).body.data
+          .recordSharing,
+      ).toMatchObject({
+        isEnabled: false,
         permissions: { canRead: true, canUpdate: true },
-        shares: expect.arrayContaining([
+        shares: [
           expect.objectContaining({
-            principalId: EVERYONE_PRINCIPAL_ID,
-            rowCause: 'APPLICATION',
+            principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+            rowCause: 'OWNER',
             accessLevel: 'FULL',
           }),
-        ]),
+        ],
       });
-      const revoke = await makeMetadataAPIRequest(
-        {
-          query: SET_SHARE,
-          variables: {
-            target: recordTarget,
-            principal: { everyone: true },
-            enabled: false,
-          },
-        },
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
-      expect(revoke.body.errors).toBeUndefined();
-      expect(
-        (await readSettings()).body.data.recordSharing.permissions.canRead,
-      ).toBe(true);
     } finally {
       await makeGraphqlAPIRequest(
         destroyManyOperationFactory({
@@ -355,6 +349,52 @@ describe('Generic sharing API on an ordinary private object', () => {
       ).toEqual({ ...denied, canRead: true });
     } finally {
       await setRoleUpdate(true);
+    }
+  });
+
+  it('keeps deleted-record sharing available without bypassing grants or role restrictions', async () => {
+    const operation = {
+      objectMetadataSingularName: OBJECT_NAME,
+      recordId: RECORD_ID,
+      gqlFields: 'id',
+    };
+    const deleted = await makeGraphqlAPIRequest(
+      deleteOneOperationFactory(operation),
+    );
+    expect(deleted.body.errors).toBeUndefined();
+    try {
+      expect((await settings()).body.errors).toBeDefined();
+      await grant(RecordShareAccessLevel.FULL);
+      expect((await settings()).body.data.recordSharing).toMatchObject({
+        viewerAccessLevel: 'FULL',
+        permissions: { canRead: true, canUpdate: true },
+      });
+      const permissions = await makeMetadataAPIRequest(
+        {
+          query: parse(
+            `query Permissions($targets: [RecordPermissionsTargetInput!]!) { recordPermissions(targets: $targets) { permissions { canRead canUpdate } } }`,
+          ),
+          variables: { targets: [target()] },
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(permissions.body.data.recordPermissions[0].permissions).toEqual({
+        canRead: true,
+        canUpdate: true,
+      });
+      expect(
+        (await change({ everyone: true }, true)).body.errors,
+      ).toBeUndefined();
+      await setRoleUpdate(false);
+      expect(
+        (await change({ everyone: true }, false)).body.errors,
+      ).toBeDefined();
+    } finally {
+      await setRoleUpdate(true);
+      const restored = await makeGraphqlAPIRequest(
+        restoreOneOperationFactory(operation),
+      );
+      expect(restored.body.errors).toBeUndefined();
     }
   });
 

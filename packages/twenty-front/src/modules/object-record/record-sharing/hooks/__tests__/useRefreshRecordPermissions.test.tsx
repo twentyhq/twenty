@@ -131,7 +131,7 @@ describe('Viewer-scoped record permissions', () => {
     },
   );
 
-  it('clears stale write access while refreshing and stays unavailable after failure', async () => {
+  it('retains same-principal permissions during refresh and fails closed after failure', async () => {
     const { result, read } = setup();
     mockQuery
       .mockResolvedValueOnce(response())
@@ -141,7 +141,7 @@ describe('Viewer-scoped record permissions', () => {
     });
     expect(read()?.canUpdate).toBe(true);
     const request = result.current.refreshRecordPermissions([target]);
-    expect(read()).toBeUndefined();
+    expect(read()).toEqual(permissions);
     await act(async () => {
       await request;
     });

@@ -118,6 +118,31 @@ describe('useRefreshAgentChatThreads', () => {
     ).toEqual([newerThread, serverOnlyThread]);
   });
 
+  it('stops retrying when streaming continually updates the store', async () => {
+    const store = createStore();
+    const newerThread = buildThread('thread-1', 'Streaming title');
+    queryMock.mockImplementation(async () => {
+      store.set(metadataStoreState.atomFamily('agentChatThreads'), {
+        current: [newerThread],
+        draft: [],
+        status: 'up-to-date',
+      });
+      return {
+        data: { chatThreads: [buildThread('thread-1', 'Stale title')] },
+      };
+    });
+    const { result } = renderHook(() => useRefreshAgentChatThreads(), {
+      wrapper: getWrapper(store),
+    });
+    await act(async () => {
+      expect(await result.current.refreshAgentChatThreads()).toBeUndefined();
+    });
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(
+      store.get(metadataStoreState.atomFamily('agentChatThreads')).current,
+    ).toEqual([newerThread]);
+  });
+
   it('applies server updates and removals when the store has not changed', async () => {
     const store = createStore();
     const staleThread = buildThread('thread-1', 'Stale title');

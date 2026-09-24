@@ -27,10 +27,6 @@ jest.mock('@/ai/components/AgentChatSessionStartTimeEffect', () => ({
   AgentChatSessionStartTimeEffect: () => <div data-testid="session-start" />,
 }));
 
-jest.mock('@/ai/components/AgentChatThreadsRefreshEffect', () => ({
-  AgentChatThreadsRefreshEffect: () => null,
-}));
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );

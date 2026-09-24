@@ -23,7 +23,7 @@ export const useRefreshAgentChatThreads = () => {
     const workspaceId = store.get(currentWorkspaceState.atom)?.id;
     const userWorkspace = store.get(currentUserWorkspaceState.atom);
     const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
-    while (true) {
+    for (let attempt = 0; attempt < 2; attempt++) {
       const storeEntryBeforeRequest = store.get(
         metadataStoreState.atomFamily('agentChatThreads'),
       );
@@ -45,8 +45,8 @@ export const useRefreshAgentChatThreads = () => {
         return undefined;
       }
 
-      // Retry with a fresh server snapshot when a local or subscription update
-      // arrives during the request.
+      // Retry once rather than overwrite newer subscription updates. Continuous
+      // streaming must not keep a refresh alive indefinitely.
       if (
         store.get(metadataStoreState.atomFamily('agentChatThreads')) !==
         storeEntryBeforeRequest

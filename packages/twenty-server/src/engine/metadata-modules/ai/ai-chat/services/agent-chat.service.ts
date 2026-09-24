@@ -179,20 +179,12 @@ export class AgentChatService {
       where: { id: In(rankedThreadIds) },
     });
 
-    const permissionsByThreadId =
-      await this.sharingService.getPermissionsForThreads({
-        workspaceId,
-        userWorkspaceId,
-        threadIds: rankedThreadIds,
-      });
-
     const threadById = new Map(threads.map((thread) => [thread.id, thread]));
 
     return rankedThreads.flatMap((rankedThread) => {
       const thread = threadById.get(rankedThread.id);
 
-      return isDefined(thread) &&
-        permissionsByThreadId.get(thread.id)?.canRead === true
+      return isDefined(thread)
         ? [
             {
               ...thread,

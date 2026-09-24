@@ -15,7 +15,10 @@ describe('Subscription authorization cache', () => {
           finish = resolve;
         }),
     );
-    const authorize = createSubscriptionAuthorization(check, 2000);
+    const authorize = createSubscriptionAuthorization({
+      check,
+      maxAgeMs: 2000,
+    });
     const first = authorize();
     const second = authorize();
     await Promise.resolve();
@@ -33,7 +36,10 @@ describe('Subscription authorization cache', () => {
 
   it('blocks cached event delivery behind a forced heartbeat check and keeps failures terminal', async () => {
     const check = jest.fn().mockResolvedValue(undefined);
-    const authorize = createSubscriptionAuthorization(check, 2000);
+    const authorize = createSubscriptionAuthorization({
+      check,
+      maxAgeMs: 2000,
+    });
     await authorize();
     let reject = (_error: Error) => {};
     check.mockImplementationOnce(

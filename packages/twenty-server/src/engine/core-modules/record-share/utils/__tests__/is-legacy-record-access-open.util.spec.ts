@@ -39,3 +39,15 @@ it.each([
     ).toBe('deny');
   },
 );
+
+it.each([false, true])(
+  'keeps unprovisioned workspaces on historical enforcement (%s)',
+  (wasRecordSharingEnabled) => {
+    expect(
+      isLegacyRecordAccessOpen({
+        flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+        wasRecordSharingEnabled,
+      }),
+    ).toBe(!wasRecordSharingEnabled);
+  },
+);

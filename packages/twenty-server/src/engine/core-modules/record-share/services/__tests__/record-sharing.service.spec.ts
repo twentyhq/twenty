@@ -114,6 +114,27 @@ describe('Generic record sharing', () => {
     });
   });
 
+  it('evaluates response permissions once after changing a grant', async () => {
+    const { service, repository } = buildService();
+    await service.setShare(change);
+    expect(repository.findRecordIdsAllowedForOperation).toHaveBeenCalledTimes(
+      5,
+    );
+  });
+
+  it('includes authorized deleted records in generic sharing and permission queries', async () => {
+    const { service, repository } = buildService();
+    await service.getSharing(args);
+    expect(repository.findRecordIdsAllowedForOperation).toHaveBeenCalledWith(
+      expect.objectContaining({ operationType: 'select', withDeleted: true }),
+    );
+    repository.findRecordIdsAllowedForOperation.mockClear();
+    await service.setShare(change);
+    expect(repository.findRecordIdsAllowedForOperation).toHaveBeenCalledWith(
+      expect.objectContaining({ operationType: 'update', withDeleted: true }),
+    );
+  });
+
   it('does not expose the audience to read-only recipients', async () => {
     const { service, allowed, shares } = buildService();
     allowed.delete('update');

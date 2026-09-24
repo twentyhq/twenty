@@ -20,7 +20,10 @@ describe('Subscription authorization', () => {
       .fn()
       .mockResolvedValueOnce(undefined)
       .mockRejectedValue(new Error('revoked'));
-    const iterator = withAsyncIteratorAuthorization(source, authorize);
+    const iterator = withAsyncIteratorAuthorization({
+      iterator: source,
+      authorize,
+    });
     await expect(iterator.next()).resolves.toEqual({
       done: false,
       value: 'private content',
@@ -38,7 +41,10 @@ describe('Subscription authorization', () => {
       }),
     );
     const authorize = jest.fn().mockResolvedValue(undefined);
-    const iterator = withAsyncIteratorAuthorization(source, authorize);
+    const iterator = withAsyncIteratorAuthorization({
+      iterator: source,
+      authorize,
+    });
     const pending = iterator.next();
     expect(authorize).not.toHaveBeenCalled();
     authorize.mockRejectedValue(new Error('revoked while waiting'));
@@ -48,8 +54,11 @@ describe('Subscription authorization', () => {
 
   it('fails closed on an authorization backend error', async () => {
     const source = createSource();
-    const iterator = withAsyncIteratorAuthorization(source, async () => {
-      throw new Error('database unavailable');
+    const iterator = withAsyncIteratorAuthorization({
+      iterator: source,
+      authorize: async () => {
+        throw new Error('database unavailable');
+      },
     });
     await expect(iterator.next()).rejects.toThrow('database unavailable');
     expect(source.return).toHaveBeenCalledTimes(1);
@@ -65,10 +74,10 @@ describe('Subscription authorization', () => {
             throw new Error('cleanup failed');
           })
         : jest.fn().mockRejectedValue(new Error('cleanup failed'));
-      const iterator = withAsyncIteratorAuthorization(
-        source,
-        jest.fn().mockRejectedValue(denial),
-      );
+      const iterator = withAsyncIteratorAuthorization({
+        iterator: source,
+        authorize: jest.fn().mockRejectedValue(denial),
+      });
       await expect(iterator.next()).rejects.toBe(denial);
       await expect(iterator.throw?.(denial)).rejects.toBe(denial);
     },
@@ -76,7 +85,10 @@ describe('Subscription authorization', () => {
 
   it('releases the underlying subscription when the client disconnects', async () => {
     const source = createSource();
-    const iterator = withAsyncIteratorAuthorization(source, jest.fn());
+    const iterator = withAsyncIteratorAuthorization({
+      iterator: source,
+      authorize: jest.fn(),
+    });
     await iterator.return?.();
     expect(source.return).toHaveBeenCalledTimes(1);
   });

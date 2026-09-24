@@ -1,4 +1,5 @@
 import { type EntityManager } from 'typeorm';
+import { isLegacyRecordAccessOpen } from 'src/engine/core-modules/record-share/utils/is-legacy-record-access-open.util';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
@@ -35,15 +36,18 @@ export const preserveLegacyRecordAccess = async ({
     'SELECT id FROM core."keyValuePair" WHERE "key" = $1 AND "workspaceId" = $2',
     [LEGACY_ACCESS_MIGRATION_KEY, workspaceId],
   );
-  if (completed.length > 0) return;
-  const thread = objects.find(
-    (object) =>
-      object.universalIdentifier ===
-      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
-  );
+  if (completed.length > 0) {
+    return;
+  }
   if (
-    !wasRecordSharingEnabled &&
-    thread?.readability === MetadataReadability.SYSTEM
+    isLegacyRecordAccessOpen({
+      flatObjectMetadataMaps: {
+        byUniversalIdentifier: Object.fromEntries(
+          objects.map((object) => [object.universalIdentifier, object]),
+        ),
+      },
+      wasRecordSharingEnabled,
+    })
   ) {
     const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
     const snapshot = new Date();
@@ -54,13 +58,16 @@ export const preserveLegacyRecordAccess = async ({
         ![MetadataReadability.PRIVATE, MetadataReadability.INHERITED].includes(
           object.readability,
         )
-      )
+      ) {
         continue;
+      }
       const table = `${schema}.${escapeIdentifier(computeObjectTargetTable(object))}`;
       const [lastRecord] = await manager.query<{ id: string }[]>(
         `SELECT id FROM ${table} ORDER BY id DESC LIMIT 1`,
       );
-      if (!isDefined(lastRecord)) continue;
+      if (!isDefined(lastRecord)) {
+        continue;
+      }
       const openParents =
         object.readability === MetadataReadability.INHERITED &&
         isDefined(inheritanceMetadata)
@@ -101,9 +108,13 @@ export const preserveLegacyRecordAccess = async ({
           ) SELECT max(id::text) AS "lastId", count(*)::int AS count FROM batch`,
           [object.id, EVERYONE_PRINCIPAL_ID, cursor, lastRecord.id, snapshot],
         );
-        if (!isDefined(batch?.lastId)) break;
+        if (!isDefined(batch?.lastId)) {
+          break;
+        }
         cursor = batch.lastId;
-        if (batch.count < BACKFILL_BATCH_SIZE) break;
+        if (batch.count < BACKFILL_BATCH_SIZE) {
+          break;
+        }
       }
     }
   }

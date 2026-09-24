@@ -1,9 +1,12 @@
 // Authorize after waiting for the next event: a grant may be revoked while
 // next() is blocked, including when the underlying transport buffered data.
-export const withAsyncIteratorAuthorization = <TValue>(
-  iterator: AsyncIterableIterator<TValue>,
-  authorize: () => Promise<unknown>,
-): AsyncIterableIterator<TValue> => ({
+export const withAsyncIteratorAuthorization = <TValue>({
+  iterator,
+  authorize,
+}: {
+  iterator: AsyncIterableIterator<TValue>;
+  authorize: () => Promise<unknown>;
+}): AsyncIterableIterator<TValue> => ({
   async next() {
     try {
       const result = await iterator.next();

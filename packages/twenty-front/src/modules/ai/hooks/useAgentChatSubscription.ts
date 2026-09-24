@@ -1,3 +1,5 @@
+import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
 import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
@@ -40,6 +42,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 
 const THROTTLE_MS = 100;
+const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
 
 // readUIMessageStream requires initialization chunks (start, start-step,
 // text-start) before content chunks. When reconnecting to a thread mid-stream,
@@ -109,6 +112,9 @@ type AgentChatEventPayload = {
 
 export const useAgentChatSubscription = (threadId: string | null) => {
   const store = useStore();
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const { refreshAgentChatThreadPermissions } =
+    useRefreshAgentChatThreadPermissions();
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const sseClient = useAtomStateValue(sseClientState);
   const agentChatStreamResubscribeNonce = useAtomStateValue(
@@ -181,6 +187,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     let writer: WritableStreamDefaultWriter<UIMessageChunk> | null = null;
     let disposed = false;
     let accessDenied = false;
+    let lastPermissionsRefreshAt: number | undefined;
 
     store.set(firstLiveSeqAtom, null);
     store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
@@ -386,6 +393,16 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'keepalive': {
+          // The initial/reconnect heartbeat also loads access for shared links.
+          // Reuse this lifecycle to reflect edit downgrades without polling the list.
+          if (
+            !isDefined(lastPermissionsRefreshAt) ||
+            Date.now() - lastPermissionsRefreshAt >=
+              PERMISSIONS_REFRESH_INTERVAL_MS
+          ) {
+            lastPermissionsRefreshAt = Date.now();
+            void refreshAgentChatThreadPermissions([threadId]);
+          }
           break;
         }
 
@@ -526,5 +543,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     usageFamilyCallback,
     threadTitleFamilyCallback,
     refreshAgentChatThreads,
+    refreshAgentChatThreadPermissions,
+    currentUserWorkspace,
   ]);
 };

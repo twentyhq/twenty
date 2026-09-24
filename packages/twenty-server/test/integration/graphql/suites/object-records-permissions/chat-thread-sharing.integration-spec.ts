@@ -115,6 +115,16 @@ describe('Conversation sharing through the authenticated API', () => {
         title: 'Private sharing regression',
       });
       const read = () => readThread(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN);
+      const listedThreadIds = async () => {
+        const response = await makeMetadataAPIRequest(
+          { query: parse('query ReadableThreads { chatThreads { id } }') },
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        );
+        expect(response.body.errors).toBeUndefined();
+        return response.body.data.chatThreads.map(
+          ({ id }: { id: string }) => id,
+        );
+      };
       const changeShare = (enabled: boolean) =>
         makeMetadataAPIRequest({
           query: SET_SHARE,
@@ -134,7 +144,9 @@ describe('Conversation sharing through the authenticated API', () => {
           expectToFail: false,
         });
         expect((await read()).body.errors[0].extensions.code).toBe('NOT_FOUND');
+        expect(await listedThreadIds()).not.toContain(threadId);
         expect((await changeShare(true)).body.errors).toBeUndefined();
+        expect(await listedThreadIds()).toContain(threadId);
         const readable = await read();
         expect(readable.body.errors).toBeUndefined();
         expect(readable.body.data.chatThread.id).toBe(threadId);
@@ -208,6 +220,7 @@ describe('Conversation sharing through the authenticated API', () => {
         const anonymous = await readThread(threadId, null);
         expect(anonymous.body.errors).toBeDefined();
         expect((await changeShare(false)).body.errors).toBeUndefined();
+        expect(await listedThreadIds()).not.toContain(threadId);
         expect((await read()).body.errors[0].extensions.code).toBe('NOT_FOUND');
       } finally {
         await chatService.hardDeleteThread({ ...owner, threadId });
