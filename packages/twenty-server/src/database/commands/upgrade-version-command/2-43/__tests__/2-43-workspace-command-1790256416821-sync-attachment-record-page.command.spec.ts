@@ -181,6 +181,12 @@ describe('SyncAttachmentRecordPageCommand', () => {
       deletedAt?: string;
     }[],
     existingViewFields = [] as string[],
+    existingViewFieldsInView = [] as {
+      universalIdentifier: string;
+      viewId: string;
+      fieldMetadataUniversalIdentifier: string;
+      deletedAt?: string;
+    }[],
     existingPageLayouts = [] as {
       universalIdentifier: string;
       deletedAt?: string;
@@ -207,11 +213,12 @@ describe('SyncAttachmentRecordPageCommand', () => {
         ),
       },
       flatViewMaps: buildMaps(existingViews),
-      flatViewFieldMaps: buildMaps(
-        existingViewFields.map((universalIdentifier) => ({
+      flatViewFieldMaps: buildMaps([
+        ...existingViewFields.map((universalIdentifier) => ({
           universalIdentifier,
         })),
-      ),
+        ...existingViewFieldsInView,
+      ]),
       flatPageLayoutMaps: buildMaps(existingPageLayouts),
       flatPageLayoutTabMaps: buildMaps(existingPageLayoutTabs),
       flatPageLayoutWidgetMaps: buildMaps(
@@ -260,6 +267,70 @@ describe('SyncAttachmentRecordPageCommand', () => {
           universalIdentifier,
       ),
     ).toEqual(WIDGET_UNIVERSAL_IDENTIFIERS);
+  });
+
+  it.each([
+    {
+      description: 'file',
+      missingFieldIdentifier: ATTACHMENT.fields.file.universalIdentifier,
+      skippedWidgetIdentifier: PREVIEW_WIDGET_UNIVERSAL_IDENTIFIER,
+    },
+    {
+      description: 'targetPerson',
+      missingFieldIdentifier:
+        ATTACHMENT.fields.targetPerson.universalIdentifier,
+      skippedWidgetIdentifier: ATTACHED_TO_WIDGET_UNIVERSAL_IDENTIFIER,
+    },
+  ])(
+    'leaves out the widget of a missing $description field instead of failing',
+    async ({ missingFieldIdentifier, skippedWidgetIdentifier }) => {
+      mockWorkspaceCache({ missingFieldIdentifiers: [missingFieldIdentifier] });
+
+      await runOnWorkspace();
+
+      expect(
+        getMigrationPayload().pageLayoutWidget.flatEntityToCreate.map(
+          ({ universalIdentifier }: { universalIdentifier: string }) =>
+            universalIdentifier,
+        ),
+      ).toEqual(
+        WIDGET_UNIVERSAL_IDENTIFIERS.filter(
+          (identifier) => identifier !== skippedWidgetIdentifier,
+        ),
+      );
+      expect(loggerWarnMock).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it('does not add a field the existing fields view already shows under another identifier', async () => {
+    mockWorkspaceCache({
+      existingViews: [
+        {
+          id: EXISTING_FIELDS_VIEW_ID,
+          universalIdentifier: FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
+        },
+      ],
+      existingViewFieldsInView: [
+        {
+          universalIdentifier: 'user-created-view-field',
+          viewId: EXISTING_FIELDS_VIEW_ID,
+          fieldMetadataUniversalIdentifier:
+            ATTACHMENT.fields.createdBy.universalIdentifier,
+        },
+      ],
+    });
+
+    await runOnWorkspace();
+
+    expect(
+      getMigrationPayload().viewField.flatEntityToCreate.map(
+        ({ universalIdentifier }: { universalIdentifier: string }) =>
+          universalIdentifier,
+      ),
+    ).toEqual([
+      ATTACHMENT.views.attachmentRecordPageFields.viewFields.createdAt
+        .universalIdentifier,
+    ]);
   });
 
   it('never deletes or updates anything', async () => {

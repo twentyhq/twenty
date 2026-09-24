@@ -17,6 +17,7 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -165,12 +166,35 @@ export class SyncAttachmentRecordPageCommand extends ProvisionedWorkspaceCommand
       universalIdentifiers: [FIELDS_VIEW_UNIVERSAL_IDENTIFIER],
     });
 
+    // The view field index is unique per field and view, so a field the
+    // workspace view already shows under another identifier must be left out
+    // or the insert fails and, with it, the whole upgrade.
+    const fieldUniversalIdentifiersAlreadyInView = new Set(
+      Object.values(flatViewFieldMaps.byUniversalIdentifier)
+        .filter(
+          (viewField) =>
+            isDefined(viewField) &&
+            isDefined(existingFieldsView) &&
+            viewField.viewId === existingFieldsView.id &&
+            !isDefined(viewField.deletedAt),
+        )
+        .map((viewField) => viewField?.fieldMetadataUniversalIdentifier),
+    );
+
     const viewFieldsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
         existingFlatEntityMaps: flatViewFieldMaps,
         universalIdentifiers: FIELDS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
       }).filter((viewField) => {
+        if (
+          fieldUniversalIdentifiersAlreadyInView.has(
+            viewField.fieldMetadataUniversalIdentifier,
+          )
+        ) {
+          return false;
+        }
+
         if (
           isDefined(
             flatFieldMetadataMaps.byUniversalIdentifier[
@@ -208,13 +232,37 @@ export class SyncAttachmentRecordPageCommand extends ProvisionedWorkspaceCommand
           standardAllFlatEntityMaps.flatPageLayoutWidgetMaps,
         existingFlatEntityMaps: flatPageLayoutWidgetMaps,
         universalIdentifiers: PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
-      }).map((flatPageLayoutWidget) =>
-        bindFieldsWidgetToExistingView({
-          flatPageLayoutWidget,
-          fieldsWidgetUniversalIdentifier: FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
-          existingFieldsView,
-        }),
-      );
+      })
+        .filter((flatPageLayoutWidget) => {
+          const { universalConfiguration } = flatPageLayoutWidget;
+
+          // The runner resolves a field widget's field or throws, so a
+          // workspace missing that field gets the page without the widget.
+          if (
+            universalConfiguration.configurationType !==
+              WidgetConfigurationType.FIELD ||
+            isDefined(
+              flatFieldMetadataMaps.byUniversalIdentifier[
+                universalConfiguration.fieldMetadataId
+              ],
+            )
+          ) {
+            return true;
+          }
+
+          this.logger.warn(
+            `Skipping attachment record page widget ${flatPageLayoutWidget.universalIdentifier} for workspace ${workspaceId}: field metadata ${universalConfiguration.fieldMetadataId} does not exist`,
+          );
+
+          return false;
+        })
+        .map((flatPageLayoutWidget) =>
+          bindFieldsWidgetToExistingView({
+            flatPageLayoutWidget,
+            fieldsWidgetUniversalIdentifier: FIELDS_WIDGET_UNIVERSAL_IDENTIFIER,
+            existingFieldsView,
+          }),
+        );
 
     const totalOperationCount =
       viewsToCreate.length +
