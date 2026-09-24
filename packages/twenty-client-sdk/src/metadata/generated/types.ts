@@ -847,6 +847,9 @@ export default {
             "roles": [
                 50
             ],
+            "userId": [
+                3
+            ],
             "userWorkspaceId": [
                 3
             ],

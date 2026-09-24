@@ -252,6 +252,7 @@ export interface WorkspaceMember {
     dateFormat?: WorkspaceMemberDateFormatEnum
     timeFormat?: WorkspaceMemberTimeFormatEnum
     roles?: Role[]
+    userId: Scalars['UUID']
     userWorkspaceId?: Scalars['UUID']
     numberFormat?: WorkspaceMemberNumberFormatEnum
     __typename: 'WorkspaceMember'
@@ -3981,6 +3982,7 @@ export interface WorkspaceMemberGenqlSelection{
     dateFormat?: boolean | number
     timeFormat?: boolean | number
     roles?: RoleGenqlSelection
+    userId?: boolean | number
     userWorkspaceId?: boolean | number
     numberFormat?: boolean | number
     __typename?: boolean | number
