@@ -13,7 +13,7 @@ export const resolveAgentChatThreadOwners = async ({
   from,
   ids,
 }: {
-  manager: EntityManager;
+  manager: Pick<EntityManager, 'query'>;
   workspaceId: string;
   from: AgentChatThreadOwnerKey;
   ids: string[];

@@ -69,10 +69,7 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
           .universalIdentifier
       ];
 
-    if (
-      !isDefined(ownerField) ||
-      (!isDefined(legacyField) && !ownerField.isNullable)
-    ) {
+    if (!isDefined(ownerField)) {
       return;
     }
 
@@ -133,8 +130,9 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
       }
 
       // Runs only once the legacy column is gone, so a failed drop never
-      // loses a thread. Their owner left the workspace and no one can reach
-      // them; the removed userWorkspace cascade used to delete them.
+      // loses a thread, and on every run so an interrupted one is finished.
+      // Their owner left the workspace and no one can reach them; the removed
+      // userWorkspace cascade used to delete them.
       const orphans: { id: string }[] = await this.dataSource.query(
         `DELETE FROM ${threadTable} WHERE "workspaceMemberId" IS NULL RETURNING id`,
       );
@@ -143,16 +141,6 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
         this.logger.log(
           `Deleted ${orphans.length} chat thread(s) whose owner left workspace ${workspaceId}`,
         );
-      }
-
-      if (ownerField.isNullable) {
-        await this.runMigrationOrThrow(workspaceId, {
-          fieldMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: [],
-            flatEntityToUpdate: [{ ...ownerField, isNullable: false }],
-          },
-        });
       }
 
       await lockRunner.commitTransaction();

@@ -41,9 +41,11 @@ describe('getAgentHistorySchemaAdditions', () => {
       ),
     ).toBe(true);
     expect(
-      additions.fields.every(
-        (field) => field.writability === MetadataWritability.SYSTEM,
-      ),
+      additions.fields
+        .filter((field) =>
+          HISTORY_IDENTIFIERS.includes(field.objectMetadataUniversalIdentifier),
+        )
+        .every((field) => field.writability === MetadataWritability.SYSTEM),
     ).toBe(true);
     expect(additions.fields.length).toBeGreaterThan(0);
     expect(additions.indexes.length).toBeGreaterThan(0);
@@ -83,6 +85,35 @@ describe('getAgentHistorySchemaAdditions', () => {
       STANDARD_OBJECTS.workspaceMember.fields.agentChatThreads
         .universalIdentifier,
     );
+  });
+
+  it('protects history fields only and keeps inverse fields standard', () => {
+    const standard = createStandardMetadata();
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard,
+    });
+    const inverseIdentifier =
+      STANDARD_OBJECTS.workspaceMember.fields.agentChatThreads
+        .universalIdentifier;
+
+    expect(
+      additions.fields.find(
+        (field) => field.universalIdentifier === inverseIdentifier,
+      )?.writability,
+    ).toBe(
+      standard.flatFieldMetadataMaps.byUniversalIdentifier[inverseIdentifier]
+        ?.writability,
+    );
+    for (const field of additions.fields.filter((field) =>
+      HISTORY_IDENTIFIERS.includes(field.objectMetadataUniversalIdentifier),
+    )) {
+      expect(field.writability).toBe(MetadataWritability.SYSTEM);
+    }
   });
 
   it('adds nothing when all history metadata already exists', () => {

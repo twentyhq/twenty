@@ -84,20 +84,6 @@ export const getAgentHistorySchemaAdditions = ({
             field.universalIdentifier
           ],
         ),
-    )
-    .map((field) =>
-      // Existing threads get their owner from the 2.43 backfill, which then
-      // makes the column required; it cannot be added as NOT NULL before.
-      field.universalIdentifier ===
-        STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
-          .universalIdentifier &&
-      isDefined(
-        existing.flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.universalIdentifier
-        ],
-      )
-        ? { ...field, isNullable: true }
-        : field,
     );
   const indexes = Object.values(standard.flatIndexMaps.byUniversalIdentifier)
     .filter(isDefined)
@@ -110,9 +96,12 @@ export const getAgentHistorySchemaAdditions = ({
           ],
         ),
     );
-  const protectedFields: typeof fields = fields.map((field) => ({
-    ...field,
-    writability: MetadataWritability.SYSTEM,
-  }));
+  // Inverse fields on other objects keep their standard definition so every
+  // provisioning path creates them identically.
+  const protectedFields: typeof fields = fields.map((field) =>
+    objectIdentifiers.has(field.objectMetadataUniversalIdentifier)
+      ? { ...field, writability: MetadataWritability.SYSTEM }
+      : field,
+  );
   return { objects: protectedObjects, fields: protectedFields, indexes };
 };
