@@ -12,7 +12,7 @@ const createStandardMetadata = () =>
     twentyStandardApplicationId: '20202020-2222-4222-8222-222222222222',
   }).allFlatEntityMaps;
 
-const HISTORY_IDENTIFIERS = [
+const HISTORY_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   STANDARD_OBJECTS.agentTurn.universalIdentifier,
   STANDARD_OBJECTS.agentMessage.universalIdentifier,
