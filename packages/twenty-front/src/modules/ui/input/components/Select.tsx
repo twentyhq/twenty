@@ -57,7 +57,6 @@ export const Select = <TValue extends SelectValue>({
   hasRightElement,
   showContextualTextInControl = true,
   showIconInControl = true,
-
   variant = 'default',
   renderAsTag = false,
 }: SelectProps<TValue>) => {
