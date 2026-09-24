@@ -295,7 +295,7 @@ msgstr "Членство людини у списку"
 #. js-lingui-id: T6Bc2D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 msgid "A previous data model change is still being applied in the background. Please try again in a moment."
-msgstr ""
+msgstr "Попередня зміна моделі даних досі застосовується у фоновому режимі. Спробуйте ще раз за мить."
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -522,7 +522,7 @@ msgstr "Рівень доступу"
 #. js-lingui-id: epu0XK
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Access permissions have changed. Please create a new export."
-msgstr ""
+msgstr "Права доступу змінилися. Створіть новий експорт."
 
 #. js-lingui-id: Bk+qoW
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -586,13 +586,13 @@ msgstr "Активний"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Active Stream ID"
-msgstr ""
+msgstr "ID активного потоку"
 
 #. js-lingui-id: XY2Wtf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Active Stream ID"
-msgstr ""
+msgstr "ID активного потоку"
 
 #. js-lingui-id: 4LperZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -626,7 +626,7 @@ msgstr "Додайте принаймні одне поле для оновле�
 #. js-lingui-id: bnZ/Qx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "Add at least one output field to the JSON response format"
-msgstr ""
+msgstr "Додайте принаймні одне поле виводу до формату відповіді JSON"
 
 #. js-lingui-id: mwzvkz
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -661,19 +661,19 @@ msgstr "Роль адміністратора не знайдено."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent chat thread"
-msgstr ""
+msgstr "Гілка чату агента"
 
 #. js-lingui-id: 05II48
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent chat thread"
-msgstr ""
+msgstr "Гілка чату агента"
 
 #. js-lingui-id: d9XlI/
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent chat threads"
-msgstr ""
+msgstr "Гілки чату агента"
 
 #. js-lingui-id: kmAKx+
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -685,50 +685,50 @@ msgstr "Збій виконання агента."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent ID"
-msgstr ""
+msgstr "ID агента"
 
 #. js-lingui-id: s5/Bnr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Agent ID"
-msgstr ""
+msgstr "ID агента"
 
 #. js-lingui-id: iCdJYt
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent message"
-msgstr ""
+msgstr "Повідомлення агента"
 
 #. js-lingui-id: kqoj9j
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent message"
-msgstr ""
+msgstr "Повідомлення агента"
 
 #. js-lingui-id: EQKoWJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent message part"
-msgstr ""
+msgstr "Частина повідомлення агента"
 
 #. js-lingui-id: EFIY30
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent message part"
-msgstr ""
+msgstr "Частина повідомлення агента"
 
 #. js-lingui-id: CMkxK7
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent message parts"
-msgstr ""
+msgstr "Частини повідомлення агента"
 
 #. js-lingui-id: JV9atg
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent messages"
-msgstr ""
+msgstr "Повідомлення агента"
 
 #. js-lingui-id: mDXkHu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service.ts
@@ -746,43 +746,43 @@ msgstr "Агента не знайдено."
 #. js-lingui-id: n7bUoP
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
-msgstr ""
+msgstr "Збій виконання кроку агента."
 
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent turn"
-msgstr ""
+msgstr "Хід агента"
 
 #. js-lingui-id: LmIK+X
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent turn"
-msgstr ""
+msgstr "Хід агента"
 
 #. js-lingui-id: mCEPno
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Agent turn evaluation"
-msgstr ""
+msgstr "Оцінювання ходу агента"
 
 #. js-lingui-id: 8TxJ/S
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Agent turn evaluation"
-msgstr ""
+msgstr "Оцінювання ходу агента"
 
 #. js-lingui-id: 8JwBHf
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent turn evaluations"
-msgstr ""
+msgstr "Оцінювання ходів агента"
 
 #. js-lingui-id: Tdydg8
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Agent turns"
-msgstr ""
+msgstr "Ходи агента"
 
 #. js-lingui-id: EisfDV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util.ts
@@ -824,7 +824,7 @@ msgstr "ШІ"
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "AI history record not found."
-msgstr ""
+msgstr "Запис історії ШІ не знайдено."
 
 #. js-lingui-id: AtTsau
 #: src/engine/metadata-modules/view/constants/index-view-name.constant.ts
@@ -840,7 +840,7 @@ msgstr "Усі одержувачі для цього домену електр�
 #. js-lingui-id: rvV1hH
 #: src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
 msgid "Already registered in this workspace."
-msgstr ""
+msgstr "Уже зареєстровано в цьому робочому просторі."
 
 #. js-lingui-id: hbJg5A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -901,12 +901,12 @@ msgstr "Сталася помилка."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export field is no longer available."
-msgstr ""
+msgstr "Поле експорту більше недоступне."
 
 #. js-lingui-id: jiELc8
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "An export is already running in this workspace. Please wait for it to finish."
-msgstr ""
+msgstr "У цьому робочому просторі вже виконується експорт. Зачекайте, доки він завершиться."
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -1003,19 +1003,19 @@ msgstr "Інший застосунок у цьому робочому прос�
 #. placeholder {0}: flatSettingsMenuItem.position
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses position {0}"
-msgstr ""
+msgstr "Інший пункт меню налаштувань уже використовує позицію {0}"
 
 #. js-lingui-id: euy9O0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses position {nextPosition}"
-msgstr ""
+msgstr "Інший пункт меню налаштувань уже використовує позицію {nextPosition}"
 
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this position."
-msgstr ""
+msgstr "Інший пункт меню налаштувань цього застосунку вже використовує цю позицію."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -1188,13 +1188,13 @@ msgstr "Заархівовано"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Archived At"
-msgstr ""
+msgstr "Заархівовано о"
 
 #. js-lingui-id: Lr3M0U
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Archived At"
-msgstr ""
+msgstr "Заархівовано о"
 
 #. js-lingui-id: ITCVsf
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1380,7 +1380,7 @@ msgstr "Для доступу до цієї функції потрібна ав
 #. js-lingui-id: ukc8Lp
 #: src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts
 msgid "Authentication is required to perform this action"
-msgstr ""
+msgstr "Для виконання цієї дії потрібна автентифікація"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
@@ -2367,13 +2367,13 @@ msgstr "Коми та крапка"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Comment"
-msgstr ""
+msgstr "Коментар"
 
 #. js-lingui-id: 3lgJNW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Comment"
-msgstr ""
+msgstr "Коментар"
 
 #. js-lingui-id: snetsR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -2710,13 +2710,13 @@ msgstr "Вміст містить URL-адресу з небезпечним п�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Context Window Tokens"
-msgstr ""
+msgstr "Токени вікна контексту"
 
 #. js-lingui-id: PN+oDC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Context Window Tokens"
-msgstr ""
+msgstr "Токени вікна контексту"
 
 #. js-lingui-id: cmBz2p
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -2727,13 +2727,13 @@ msgstr "На полі зв'язку виявлені суперечливі до
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Conversation Size"
-msgstr ""
+msgstr "Розмір розмови"
 
 #. js-lingui-id: Gi4NBy
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
-msgstr ""
+msgstr "Розмір розмови"
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -2856,7 +2856,7 @@ msgstr "Створити подію календаря"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Create Campaign"
-msgstr ""
+msgstr "Створити кампанію"
 
 #. js-lingui-id: AIGOKT
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -2883,7 +2883,7 @@ msgstr "Створити перегляд"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Created At"
-msgstr ""
+msgstr "Створено о"
 
 #. js-lingui-id: ZA1xqP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -2893,7 +2893,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Created At"
-msgstr ""
+msgstr "Створено о"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3320,7 +3320,7 @@ msgstr "Типовий макет папки асоціації повідомл
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Message Layout"
-msgstr ""
+msgstr "Стандартний макет повідомлення"
 
 #. js-lingui-id: jmaSDc
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
@@ -3482,7 +3482,7 @@ msgstr "Видалено о"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Deleted At"
-msgstr ""
+msgstr "Видалено о"
 
 #. js-lingui-id: Lu8j/6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -3492,7 +3492,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Deleted At"
-msgstr ""
+msgstr "Видалено о"
 
 #. js-lingui-id: bMSh++
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3617,7 +3617,7 @@ msgstr "Чернетка"
 #. js-lingui-id: qOjRRW
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
-msgstr ""
+msgstr "Не вдалося створити чернетку, повторіть спробу"
 
 #. js-lingui-id: 43Mh2+
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -3940,13 +3940,13 @@ msgstr "Помилка"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Error Details"
-msgstr ""
+msgstr "Відомості про помилку"
 
 #. js-lingui-id: vDV0oc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Error Details"
-msgstr ""
+msgstr "Відомості про помилку"
 
 #. js-lingui-id: MO6hxC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -3964,13 +3964,13 @@ msgstr "Повідомлення про помилку"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Evaluations"
-msgstr ""
+msgstr "Оцінювання"
 
 #. js-lingui-id: e8MefK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Evaluations"
-msgstr ""
+msgstr "Оцінювання"
 
 #. js-lingui-id: ++Dmjj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4123,7 +4123,7 @@ msgstr "Експортувати {objectLabel}"
 #. js-lingui-id: YBwCnL
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Export not found."
-msgstr ""
+msgstr "Експорт не знайдено."
 
 #. js-lingui-id: xvfw7w
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4623,25 +4623,25 @@ msgstr "Категорія файлу"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "File Filename"
-msgstr ""
+msgstr "Ім'я файлу"
 
 #. js-lingui-id: K7OlYw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "File Filename"
-msgstr ""
+msgstr "Ім'я файлу"
 
 #. js-lingui-id: vgJ2Zz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "File ID"
-msgstr ""
+msgstr "ID файлу"
 
 #. js-lingui-id: 84M/VT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "File ID"
-msgstr ""
+msgstr "ID файлу"
 
 #. js-lingui-id: OR7oBd
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
@@ -4791,12 +4791,12 @@ msgstr "Адреса відправника"
 #. placeholder {0}: flatSettingsMenuItem.frontComponentUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Front component \"{0}\" not found"
-msgstr ""
+msgstr "Фронтенд-компонент \"{0}\" не знайдено"
 
 #. js-lingui-id: 10M75d
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Front component \"{updatedFrontComponentUniversalIdentifier}\" not found"
-msgstr ""
+msgstr "Фронтенд-компонент \"{updatedFrontComponentUniversalIdentifier}\" не знайдено"
 
 #. js-lingui-id: Wed+Kp
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -5433,7 +5433,7 @@ msgstr "Недійсна капча. Будь ласка, спробуйте щ�
 #. js-lingui-id: 5CSWB5
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Invalid classification request."
-msgstr ""
+msgstr "Некоректний запит на класифікацію."
 
 #. js-lingui-id: lyfeGa
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -5755,7 +5755,7 @@ msgstr "Некоректні вхідні дані об'єкта."
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Invalid or expired export download link."
-msgstr ""
+msgstr "Недійсне або прострочене посилання для завантаження експорту."
 
 #. js-lingui-id: t4AABW
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -5898,7 +5898,7 @@ msgstr "Надано недійсний тип налаштування у тр�
 #. js-lingui-id: TwpiII
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 msgid "Invalid settings menu item input."
-msgstr ""
+msgstr "Некоректні вхідні дані для пункту меню налаштувань."
 
 #. js-lingui-id: TulNnA
 #: src/engine/metadata-modules/skill/skill.exception.ts
@@ -6219,13 +6219,13 @@ msgstr "Чи цілий день"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Is Hidden"
-msgstr ""
+msgstr "Приховано"
 
 #. js-lingui-id: q42yQK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Is Hidden"
-msgstr ""
+msgstr "Приховано"
 
 #. js-lingui-id: fenRdq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6471,13 +6471,13 @@ msgstr "Ідентифікатор останньої опублікованої
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Last Stream Error"
-msgstr ""
+msgstr "Остання помилка потоку"
 
 #. js-lingui-id: 9/jQvG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last Stream Error"
-msgstr ""
+msgstr "Остання помилка потоку"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -7492,7 +7492,7 @@ msgstr "Ні"
 #. js-lingui-id: EFohyC
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "No classification model is configured."
-msgstr ""
+msgstr "Модель класифікації не налаштовано."
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -8047,12 +8047,12 @@ msgstr "На вкладці дозволено лише один віджет н
 #. js-lingui-id: xdu/vz
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only one workflow version identifier may be provided"
-msgstr ""
+msgstr "Можна вказати лише один ідентифікатор версії робочого процесу"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Only the person who created this workflow can change who sees it"
-msgstr ""
+msgstr "Лише особа, яка створила цей робочий процес, може змінити, хто його бачить"
 
 #. js-lingui-id: lWLaJ5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8258,13 +8258,13 @@ msgstr "Опції необхідні для полів з енумераціє�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Order Index"
-msgstr ""
+msgstr "Індекс порядку"
 
 #. js-lingui-id: /dzBSj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Order Index"
-msgstr ""
+msgstr "Індекс порядку"
 
 #. js-lingui-id: r4t1DT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -8450,13 +8450,13 @@ msgstr "Учасники"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Parts"
-msgstr ""
+msgstr "Частини"
 
 #. js-lingui-id: eDJpwf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Parts"
-msgstr ""
+msgstr "Частини"
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -8487,13 +8487,13 @@ msgstr "Payload має містити шлях"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Pending Question Message ID"
-msgstr ""
+msgstr "ID повідомлення з питанням в очікуванні"
 
 #. js-lingui-id: 9j/qct
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Pending Question Message ID"
-msgstr ""
+msgstr "ID повідомлення з питанням в очікуванні"
 
 #. js-lingui-id: iJh5U7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8899,13 +8899,13 @@ msgstr "Тип суб'єкта"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Processed At"
-msgstr ""
+msgstr "Оброблено о"
 
 #. js-lingui-id: 8fgev4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Processed At"
-msgstr ""
+msgstr "Оброблено о"
 
 #. js-lingui-id: cTz6/1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -8954,25 +8954,25 @@ msgstr "Надан номер телефону недійсний {number}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Executed"
-msgstr ""
+msgstr "Виконано провайдером"
 
 #. js-lingui-id: +Y6AEU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Executed"
-msgstr ""
+msgstr "Виконано провайдером"
 
 #. js-lingui-id: ApKRV5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Metadata"
-msgstr ""
+msgstr "Метадані провайдера"
 
 #. js-lingui-id: 3/Bns9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Metadata"
-msgstr ""
+msgstr "Метадані провайдера"
 
 #. js-lingui-id: OL88cI
 #: src/engine/core-modules/public-domain/public-domain.service.ts
@@ -9036,13 +9036,13 @@ msgstr "Читання та запис"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reasoning Content"
-msgstr ""
+msgstr "Вміст міркування"
 
 #. js-lingui-id: wmpjJK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reasoning Content"
-msgstr ""
+msgstr "Вміст міркування"
 
 #. js-lingui-id: KX0Su8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9165,7 +9165,7 @@ msgstr "Токен оновлення не знайдено."
 #. js-lingui-id: wTTHfI
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Registered by another workspace."
-msgstr ""
+msgstr "Зареєстровано іншим робочим простором."
 
 #. js-lingui-id: 2dNwZB
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -9360,7 +9360,7 @@ msgstr "Формат відповіді з типом \"json\" має місти
 #. js-lingui-id: dnvRft
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "Response format with type \"json\" must include output fields"
-msgstr ""
+msgstr "Формат відповіді з типом \"json\" має містити поля виводу"
 
 #. js-lingui-id: JCqfz6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
@@ -9726,13 +9726,13 @@ msgstr "Область доступу"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Score"
-msgstr ""
+msgstr "Оцінка"
 
 #. js-lingui-id: F2sVun
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Score"
-msgstr ""
+msgstr "Оцінка"
 
 #. js-lingui-id: SiXwZL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -9967,25 +9967,25 @@ msgstr "Адреса відправника для кампанії"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Sender application ID"
-msgstr ""
+msgstr "ID застосунку-відправника"
 
 #. js-lingui-id: QiMOFe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sender application ID"
-msgstr ""
+msgstr "ID застосунку-відправника"
 
 #. js-lingui-id: kfnrYJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Sender workspace membership ID"
-msgstr ""
+msgstr "ID членства відправника в робочому просторі"
 
 #. js-lingui-id: YDV32g
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sender workspace membership ID"
-msgstr ""
+msgstr "ID членства відправника в робочому просторі"
 
 #. js-lingui-id: ZYK68w
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9996,12 +9996,12 @@ msgstr "Надсилання"
 #. js-lingui-id: dfJbDe
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Sending campaigns is available once your workspace is on a paid plan and has been billed."
-msgstr ""
+msgstr "Надсилання кампаній доступне, щойно ваш робочий простір перейде на платний план і буде виставлено рахунок."
 
 #. js-lingui-id: Ott/+t
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Sending from an email group is available once your workspace is on a paid plan and has been billed."
-msgstr ""
+msgstr "Надсилання з групи електронної пошти доступне, щойно ваш робочий простір перейде на платний план і буде виставлено рахунок."
 
 #. js-lingui-id: CTcVpP
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -10089,42 +10089,42 @@ msgstr "Налаштування"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item not found"
-msgstr ""
+msgstr "Пункт меню налаштувань не знайдено"
 
 #. js-lingui-id: RjOapv
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item not found."
-msgstr ""
+msgstr "Пункт меню налаштувань не знайдено."
 
 #. js-lingui-id: DoDX+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item position must be a number"
-msgstr ""
+msgstr "Позиція пункту меню налаштувань має бути числом"
 
 #. js-lingui-id: zyqiex
 #. placeholder {0}: flatSettingsMenuItem.scope
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item scope \"{0}\" is invalid"
-msgstr ""
+msgstr "Область дії пункту меню налаштувань \"{0}\" недійсна"
 
 #. js-lingui-id: 2BWkt4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item scope \"{nextScope}\" is invalid"
-msgstr ""
+msgstr "Область дії пункту меню налаштувань \"{nextScope}\" недійсна"
 
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title \"{0}\" is reserved"
-msgstr ""
+msgstr "Назва пункту меню налаштувань \"{0}\" зарезервована"
 
 #. js-lingui-id: llnmro
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title \"{updatedTitle}\" is reserved"
-msgstr ""
+msgstr "Назва пункту меню налаштувань \"{updatedTitle}\" зарезервована"
 
 #. js-lingui-id: TxuvW3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
@@ -10132,7 +10132,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
-msgstr ""
+msgstr "Потрібно вказати назву пункту меню налаштувань"
 
 #. js-lingui-id: yS/zBf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -10159,7 +10159,7 @@ msgstr "shareWith вказує того самого суб’єкта біль�
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "Sign in to export records."
-msgstr ""
+msgstr "Увійдіть, щоб експортувати записи."
 
 #. js-lingui-id: e1k+No
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -10263,49 +10263,49 @@ msgstr "Шлях до вихідного компонента є недійсн�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Filename"
-msgstr ""
+msgstr "Ім'я файлу вихідного документа"
 
 #. js-lingui-id: N0mz5F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Filename"
-msgstr ""
+msgstr "Ім'я файлу вихідного документа"
 
 #. js-lingui-id: K5eDSi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Media Type"
-msgstr ""
+msgstr "Тип медіа вихідного документа"
 
 #. js-lingui-id: t0U3qf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Media Type"
-msgstr ""
+msgstr "Тип медіа вихідного документа"
 
 #. js-lingui-id: d6uYtO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Source ID"
-msgstr ""
+msgstr "ID джерела вихідного документа"
 
 #. js-lingui-id: ZxgXEV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Source ID"
-msgstr ""
+msgstr "ID джерела вихідного документа"
 
 #. js-lingui-id: 5cu4d7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source Document Title"
-msgstr ""
+msgstr "Назва вихідного документа"
 
 #. js-lingui-id: cVO6/z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Title"
-msgstr ""
+msgstr "Назва вихідного документа"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -10328,37 +10328,37 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source URL Source ID"
-msgstr ""
+msgstr "ID джерела вихідної URL-адреси"
 
 #. js-lingui-id: j9l+zA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source URL Source ID"
-msgstr ""
+msgstr "ID джерела вихідної URL-адреси"
 
 #. js-lingui-id: XqRRm3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source URL Title"
-msgstr ""
+msgstr "Назва вихідної URL-адреси"
 
 #. js-lingui-id: AlMHVf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source URL Title"
-msgstr ""
+msgstr "Назва вихідної URL-адреси"
 
 #. js-lingui-id: k0DblP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source URL URL"
-msgstr ""
+msgstr "URL-адреса вихідної URL-адреси"
 
 #. js-lingui-id: eS+U4K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source URL URL"
-msgstr ""
+msgstr "URL-адреса вихідної URL-адреси"
 
 #. js-lingui-id: Qc2uwm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -10665,12 +10665,12 @@ msgstr "Вкладку для дублювання віджета не знай�
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Tarball upload not found."
-msgstr ""
+msgstr "Завантаження tarball не знайдено."
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Target object metadata not found"
-msgstr ""
+msgstr "Метадані цільового об'єкта не знайдено"
 
 #. js-lingui-id: 5y3Wbw
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -10680,7 +10680,7 @@ msgstr "Метадані об'єкта призначення не знайде�
 #. js-lingui-id: Pu+2aC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Target object not found"
-msgstr ""
+msgstr "Цільовий об'єкт не знайдено"
 
 #. js-lingui-id: iVwZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -10721,7 +10721,7 @@ msgstr "Потрібно вказати цільову URL-адресу"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Target view not found"
-msgstr ""
+msgstr "Цільове подання не знайдено"
 
 #. js-lingui-id: g6X4T4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -10923,13 +10923,13 @@ msgstr "Текст"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Text Content"
-msgstr ""
+msgstr "Текстовий вміст"
 
 #. js-lingui-id: yv2Pj4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Text Content"
-msgstr ""
+msgstr "Текстовий вміст"
 
 #. js-lingui-id: gaHTjP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11115,29 +11115,29 @@ msgstr "Виконавець робочого процесу"
 #: src/engine/core-modules/record-export/jobs/generate-record-export.job.ts
 #: src/engine/core-modules/record-export/record-export.exception.ts
 msgid "The export failed. Please try again or export fewer records."
-msgstr ""
+msgstr "Експорт не вдався. Спробуйте ще раз або експортуйте менше записів."
 
 #. js-lingui-id: 6jK2nv
 #: src/engine/core-modules/record-export/jobs/generate-record-export.job.ts
 msgid "The export file is too large. Please export fewer records."
-msgstr ""
+msgstr "Файл експорту завеликий. Експортуйте менше записів."
 
 #. js-lingui-id: RKP94c
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "The export requester is no longer a workspace member."
-msgstr ""
+msgstr "Запитувач експорту більше не є членом робочого простору."
 
 #. js-lingui-id: ym+qL/
 #: src/engine/core-modules/record-export/jobs/generate-record-export.job.ts
 msgid "The export took too long. Please try exporting fewer records."
-msgstr ""
+msgstr "Експорт тривав надто довго. Спробуйте експортувати менше записів."
 
 #. js-lingui-id: qc958u
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "The export was interrupted. Please try again."
-msgstr ""
+msgstr "Експорт було перервано. Спробуйте ще раз."
 
 #. js-lingui-id: o6DGfJ
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -11184,7 +11184,7 @@ msgstr "Завантаження файлу не завершено. Повто�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "The front component this settings menu item renders was not found."
-msgstr ""
+msgstr "Не знайдено фронтенд-компонент, який відображає цей пункт меню налаштувань."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11376,7 +11376,7 @@ msgstr "Значення APP_VERSION на сервері не є коректн�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "The settings menu item position must be a number."
-msgstr ""
+msgstr "Позиція пункту меню налаштувань має бути числом."
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -11563,7 +11563,7 @@ msgstr "Цю адресу не можна вилучити зі списку б�
 #. js-lingui-id: GAvcvY
 #: src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util.ts
 msgid "This agent has no output fields. Add at least one output field to its response format."
-msgstr ""
+msgstr "Цей агент не має полів виводу. Додайте принаймні одне поле виводу до формату його відповіді."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -11624,7 +11624,7 @@ msgstr "Ця програма видаляється. Будь ласка, за�
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
-msgstr ""
+msgstr "Цю кампанію не можна надіслати, поки підписка робочого простору неактивна."
 
 #. js-lingui-id: SRnMG0
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -11634,7 +11634,7 @@ msgstr "Цю кампанію неможливо надіслати. Можли�
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
-msgstr ""
+msgstr "Цю кампанію зупинено через ліміт використання електронної пошти, встановлений для цього робочого простору. Збільште ліміт або надішліть до меншого списку."
 
 #. js-lingui-id: F0NM9B
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -11655,12 +11655,12 @@ msgstr "Вміст електронного листа цієї кампанії
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 msgid "This change would corrupt the workflow, it was not saved"
-msgstr ""
+msgstr "Ця зміна пошкодить робочий процес, тому його не було збережено"
 
 #. js-lingui-id: ACvsQ/
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This claim was started in another browser or has already been used. Start the claim again from this browser."
-msgstr ""
+msgstr "Це підтвердження було розпочато в іншому браузері або вже використано. Розпочніть підтвердження знову в цьому браузері."
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -11730,12 +11730,12 @@ msgstr "Об'єкт оцінювання не знайдено."
 #. js-lingui-id: jBNDRQ
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "This export belongs to another session. Please create a new export."
-msgstr ""
+msgstr "Цей експорт належить іншому сеансу. Створіть новий експорт."
 
 #. js-lingui-id: UYBB6k
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "This export download has already started or expired."
-msgstr ""
+msgstr "Завантаження цього експорту вже розпочалося або термін його дії минув."
 
 #. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
@@ -11796,7 +11796,7 @@ msgstr "Цей файл уже було завантажено."
 #. js-lingui-id: rjEWeV
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file must be completed with its dedicated mutation."
-msgstr ""
+msgstr "Цей файл потрібно завершити за допомогою призначеної для нього мутації."
 
 #. js-lingui-id: VGePIR
 #: src/engine/core-modules/file/file-upload/services/file-upload-target.service.ts
@@ -11847,7 +11847,7 @@ msgstr "Цей метод не дозволений."
 #. js-lingui-id: qr2BW+
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This model cannot answer one of the questions asked."
-msgstr ""
+msgstr "Ця модель не може відповісти на одне з поставлених запитань."
 
 #. js-lingui-id: +AQIHh
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -12009,14 +12009,14 @@ msgstr "Цей серверний ключ уже зареєстровано і�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item scope is not supported."
-msgstr ""
+msgstr "Ця область дії пункту меню налаштувань не підтримується."
 
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item title is reserved."
-msgstr ""
+msgstr "Ця назва пункту меню налаштувань зарезервована."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -12056,7 +12056,7 @@ msgstr "Термін дії цього завантаження минув до 
 #. js-lingui-id: LKTt57
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This upload is already being completed. Please wait for it to finish."
-msgstr ""
+msgstr "Це завантаження вже завершується. Зачекайте, доки воно завершиться."
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -12081,37 +12081,37 @@ msgstr "Ця версія застосунку вже встановлена у 
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "This workflow already exists"
-msgstr ""
+msgstr "Цей робочий процес уже існує"
 
 #. js-lingui-id: fUlJ/P
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
-msgstr ""
+msgstr "Цей робочий процес уже існує."
 
 #. js-lingui-id: cqZK9Z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 msgid "This workflow version already exists"
-msgstr ""
+msgstr "Ця версія робочого процесу вже існує"
 
 #. js-lingui-id: GJdteg
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow version already exists."
-msgstr ""
+msgstr "Ця версія робочого процесу вже існує."
 
 #. js-lingui-id: xnwLD7
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version cannot be saved. {reasons}"
-msgstr ""
+msgstr "Цю версію робочого процесу не можна зберегти. {reasons}"
 
 #. js-lingui-id: 6sZZJ8
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow version is not attached to a workflow."
-msgstr ""
+msgstr "Ця версія робочого процесу не пов'язана з робочим процесом."
 
 #. js-lingui-id: bZ0qih
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated. {reasons}"
-msgstr ""
+msgstr "Ця версія робочого процесу не готова до активації. {reasons}"
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -12127,13 +12127,13 @@ msgstr "У цього робочого простору немає активн�
 #. js-lingui-id: CHG0Iz
 #: src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util.ts
 msgid "This workspace has reached its record limit."
-msgstr ""
+msgstr "Цей робочий простір досяг ліміту записів."
 
 #. js-lingui-id: ffJ+LQ
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 #: src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util.ts
 msgid "This workspace has reached its storage limit."
-msgstr ""
+msgstr "Цей робочий простір досяг ліміту сховища."
 
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
@@ -12143,7 +12143,7 @@ msgstr "Цей робочий простір призупинено."
 #. js-lingui-id: ZSp7x/
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "This workspace is suspended. Choose a plan to reactivate it."
-msgstr ""
+msgstr "Цей робочий простір призупинено. Виберіть план, щоб повторно його активувати."
 
 #. js-lingui-id: L7DDtt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -12444,121 +12444,121 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Call ID"
-msgstr ""
+msgstr "ID виклику інструменту"
 
 #. js-lingui-id: cZVMnI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Call ID"
-msgstr ""
+msgstr "ID виклику інструменту"
 
 #. js-lingui-id: pns0OM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Input"
-msgstr ""
+msgstr "Вхідні дані інструменту"
 
 #. js-lingui-id: Ko+3AZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Input"
-msgstr ""
+msgstr "Вхідні дані інструменту"
 
 #. js-lingui-id: LdSoAE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Name"
-msgstr ""
+msgstr "Назва інструменту"
 
 #. js-lingui-id: 9SWflq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Name"
-msgstr ""
+msgstr "Назва інструменту"
 
 #. js-lingui-id: K02ZIV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tool Output"
-msgstr ""
+msgstr "Вивід інструменту"
 
 #. js-lingui-id: tTJAE4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Tool Output"
-msgstr ""
+msgstr "Вивід інструменту"
 
 #. js-lingui-id: on9AUZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Cache Creation Tokens"
-msgstr ""
+msgstr "Загальна кількість токенів створення кешу"
 
 #. js-lingui-id: iMvfZu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Cache Creation Tokens"
-msgstr ""
+msgstr "Загальна кількість токенів створення кешу"
 
 #. js-lingui-id: wnDiV2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Cache Read Tokens"
-msgstr ""
+msgstr "Загальна кількість токенів читання кешу"
 
 #. js-lingui-id: Z+48gD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Cache Read Tokens"
-msgstr ""
+msgstr "Загальна кількість токенів читання кешу"
 
 #. js-lingui-id: oSHmRh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Input Credits"
-msgstr ""
+msgstr "Загальна кількість вхідних кредитів"
 
 #. js-lingui-id: 0WCK4i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Input Credits"
-msgstr ""
+msgstr "Загальна кількість вхідних кредитів"
 
 #. js-lingui-id: j6jCen
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Input Tokens"
-msgstr ""
+msgstr "Загальна кількість вхідних токенів"
 
 #. js-lingui-id: vcK9+n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Input Tokens"
-msgstr ""
+msgstr "Загальна кількість вхідних токенів"
 
 #. js-lingui-id: Z3IqtP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Output Credits"
-msgstr ""
+msgstr "Загальна кількість вихідних кредитів"
 
 #. js-lingui-id: jjlMIT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Output Credits"
-msgstr ""
+msgstr "Загальна кількість вихідних кредитів"
 
 #. js-lingui-id: qc0WyQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Total Output Tokens"
-msgstr ""
+msgstr "Загальна кількість вихідних токенів"
 
 #. js-lingui-id: ej4Lb8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Total Output Tokens"
-msgstr ""
+msgstr "Загальна кількість вихідних токенів"
 
 #. js-lingui-id: 4nPpGt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -12607,26 +12607,26 @@ msgstr "Вівторок"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Turn"
-msgstr ""
+msgstr "Хід"
 
 #. js-lingui-id: VM2Yjp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-evaluation-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Turn"
-msgstr ""
+msgstr "Хід"
 
 #. js-lingui-id: gpsyQ3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Turns"
-msgstr ""
+msgstr "Ходи"
 
 #. js-lingui-id: HOvM2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Turns"
-msgstr ""
+msgstr "Ходи"
 
 #. js-lingui-id: T+yZIr
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -12668,7 +12668,7 @@ msgstr "Оновлене поле не є поліморфним або звич
 #. js-lingui-id: y1AZAF
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
-msgstr ""
+msgstr "Не вдалося отримати доступ до історії ШІ. Будь ласка, спробуйте ще раз."
 
 #. js-lingui-id: SpmRxi
 #: src/engine/core-modules/application/application.exception.ts
@@ -12760,7 +12760,7 @@ msgstr "Непідтримуваний тип метаданих поля."
 #. js-lingui-id: Q6yno9
 #: src/engine/metadata-modules/flat-view/utils/validate-view-group-load-limit-or-throw.util.ts
 msgid "Unsupported groupLoadLimit {groupLoadLimit}, expected one of {allowedGroupLoadLimits}"
-msgstr ""
+msgstr "Непідтримуване значення groupLoadLimit {groupLoadLimit}, очікується одне зі значень {allowedGroupLoadLimits}"
 
 #. js-lingui-id: s+1Ldg
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
@@ -12835,7 +12835,7 @@ msgstr "оновлено пов’язане завдання"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Updated At"
-msgstr ""
+msgstr "Оновлено"
 
 #. js-lingui-id: LuWQ3A
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -12845,7 +12845,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Updated At"
-msgstr ""
+msgstr "Оновлено"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -13003,13 +13003,13 @@ msgstr "Користувача не було створено з викорис�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "User Workspace ID"
-msgstr ""
+msgstr "ID робочого простору користувача"
 
 #. js-lingui-id: UBndQ2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "User Workspace ID"
-msgstr ""
+msgstr "ID робочого простору користувача"
 
 #. js-lingui-id: lUEEso
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13748,7 +13748,7 @@ msgstr "Робочий процес"
 #. js-lingui-id: YlNDUu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "Workflow already exists"
-msgstr ""
+msgstr "Робочий процес уже існує"
 
 #. js-lingui-id: BwauV3
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -13772,7 +13772,7 @@ msgstr "Автоматизовані тригери робочого проце�
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
-msgstr ""
+msgstr "Не вдалося дублювати робочий процес, повторіть спробу"
 
 #. js-lingui-id: KSK8fH
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -13782,7 +13782,7 @@ msgstr "Ребро робочого процесу не знайдено."
 #. js-lingui-id: QWttrw
 #: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
 msgid "Workflow is not correctly linked to its mirror"
-msgstr ""
+msgstr "Робочий процес неправильно пов’язано з його дзеркальною копією"
 
 #. js-lingui-id: Dpef1i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -13926,7 +13926,7 @@ msgstr "Версія робочого процесу"
 #. js-lingui-id: DGFeSW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 msgid "Workflow version already exists"
-msgstr ""
+msgstr "Версія робочого процесу вже існує"
 
 #. js-lingui-id: PFXHn0
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
@@ -13934,7 +13934,7 @@ msgstr ""
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Workflow version changed, please reload and retry"
-msgstr ""
+msgstr "Версію робочого процесу змінено, перезавантажте сторінку та повторіть спробу"
 
 #. js-lingui-id: n4/IOE
 #: src/modules/workflow/common/utils/assert-workflow-version-has-steps.ts
@@ -13950,29 +13950,29 @@ msgstr "Версія робочого процесу не містить три�
 #. js-lingui-id: NeW3NT
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version is missing from the request"
-msgstr ""
+msgstr "У запиті відсутня версія робочого процесу"
 
 #. js-lingui-id: my+JB0
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 msgid "Workflow version is not a draft"
-msgstr ""
+msgstr "Версія робочого процесу не є чернеткою"
 
 #. js-lingui-id: Lg0DD+
 #: src/engine/core-modules/workflow/services/core-workflow-id-resolution.service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util.ts
 msgid "Workflow version is not correctly linked to its mirror"
-msgstr ""
+msgstr "Версію робочого процесу неправильно пов’язано з її дзеркальною копією"
 
 #. js-lingui-id: Xh9+qo
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version is not correctly linked to its workflow"
-msgstr ""
+msgstr "Версію робочого процесу неправильно пов’язано з її робочим процесом"
 
 #. js-lingui-id: S+fmLx
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
 msgid "Workflow version is not correctly linked, please retry later"
-msgstr ""
+msgstr "Версію робочого процесу неправильно пов’язано, повторіть спробу пізніше"
 
 #. js-lingui-id: bqFL4g
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
@@ -14012,12 +14012,12 @@ msgstr "Версія робочого процесу не повинна бут�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
 msgid "Workflow version not found"
-msgstr ""
+msgstr "Версію робочого процесу не знайдено"
 
 #. js-lingui-id: KxlvVE
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Workflow version not found."
-msgstr ""
+msgstr "Версію робочого процесу не знайдено."
 
 #. js-lingui-id: XoKTtx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -14028,7 +14028,7 @@ msgstr "Позиція версії робочого процесу"
 #. js-lingui-id: 7dQ4Kg
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version to copy not found"
-msgstr ""
+msgstr "Версію робочого процесу для копіювання не знайдено"
 
 #. js-lingui-id: lrTHGl
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14368,7 +14368,7 @@ msgstr "Ви не маєте права виконувати цю дію."
 #. js-lingui-id: f0N+mi
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "You can allow up to {MAX_ALLOWED_IFRAME_ORIGINS} origins."
-msgstr ""
+msgstr "Ви можете дозволити до {MAX_ALLOWED_IFRAME_ORIGINS} джерел."
 
 #. js-lingui-id: TRUO3G
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
@@ -14486,7 +14486,7 @@ msgstr "Ви не маєте дозволу видаляти пункти нав
 #. js-lingui-id: TUrV+a
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 msgid "You do not have permission to export records."
-msgstr ""
+msgstr "У вас немає дозволу експортувати записи."
 
 #. js-lingui-id: +wZ6RO
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts

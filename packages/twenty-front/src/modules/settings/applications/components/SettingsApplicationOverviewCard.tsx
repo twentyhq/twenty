@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const COVER_WIDTH_PX = 272;
 const CARD_MIN_HEIGHT_PX = 150;

@@ -13,7 +13,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconHome, IconUser } from 'twenty-ui/icon';
 import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';
 import { ClickToActionLink, ListItem } from 'twenty-ui/primitives/navigation';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 import {
   ComponentGallery,
   type GalleryEntry,

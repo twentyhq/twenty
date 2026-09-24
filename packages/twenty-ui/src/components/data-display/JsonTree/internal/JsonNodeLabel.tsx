@@ -1,6 +1,6 @@
 import { type JsonNodeHighlighting } from '@ui/components/data-display/JsonTree/types/JsonNodeHighlighting';
 import { type IconComponent } from '@ui/icon';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 import { clsx } from 'clsx';
 
 import styles from './JsonNodeLabel.module.scss';

@@ -4,7 +4,7 @@ import { INITIAL_CALL_RECORDING_TRANSCRIPT_PLAYBACK_POSITION } from '@/page-layo
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { type CallRecordingParsedTranscriptWord } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledWord = styled.span<{ isSpoken: boolean }>`
   color: ${({ isSpoken }) =>

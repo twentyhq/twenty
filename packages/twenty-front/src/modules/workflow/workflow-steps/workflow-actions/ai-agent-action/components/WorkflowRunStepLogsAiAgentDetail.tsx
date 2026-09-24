@@ -11,7 +11,7 @@ import {
   IconTool,
   IconWorld,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
 import {

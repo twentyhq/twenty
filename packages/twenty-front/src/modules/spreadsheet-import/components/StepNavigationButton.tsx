@@ -1,7 +1,7 @@
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { MainButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/primitives/feedback';

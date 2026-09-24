@@ -3,7 +3,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -11,7 +11,7 @@ import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { ConfigVariableType } from '~/generated-admin/graphql';
 import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 
@@ -135,7 +135,7 @@ export const ConfigVariableDatabaseInput = ({
                 />
               }
               dropdownComponents={
-                <DropdownContent>
+                <LegacyDropdownContent>
                   <DropdownMenuItemsContainer isMultiSelect>
                     {selectOptions.map((option) => (
                       <ListItem
@@ -152,7 +152,7 @@ export const ConfigVariableDatabaseInput = ({
                       </ListItem>
                     ))}
                   </DropdownMenuItemsContainer>
-                </DropdownContent>
+                </LegacyDropdownContent>
               }
             />
           ) : (

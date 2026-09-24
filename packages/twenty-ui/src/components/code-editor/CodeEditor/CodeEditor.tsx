@@ -3,11 +3,7 @@ import { Loader } from '@ui/primitives/feedback/Loader/Loader';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor/constants/BaseCodeEditorThemeId';
 import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/utils/getBaseCodeEditorTheme';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
-import {
-  useTheme,
-  useThemeColorScheme,
-  type ThemeType,
-} from '@ui/theme-constants';
+import { useTheme, useThemeColorScheme, type ThemeType } from '@ui/theme';
 import { type editor } from 'monaco-editor';
 import { type KeyboardEvent, useEffect, useId, useState } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';

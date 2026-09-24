@@ -21,7 +21,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledForm = styled.div`
   display: flex;

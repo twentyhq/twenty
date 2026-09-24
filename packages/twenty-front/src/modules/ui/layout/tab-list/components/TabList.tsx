@@ -16,7 +16,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { TabListRow } from '@/ui/layout/tab-list/components/TabListRow';
 import { TabListItem } from '@/ui/layout/tab-list/components/TabListItem';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListSelectionSyncEffect } from '@/ui/layout/tab-list/components/TabListSelectionSyncEffect';
 
