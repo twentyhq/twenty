@@ -244,23 +244,36 @@ describe('createGetToolCatalogTool', () => {
     expect(result.message).toContain('No tools matched "the of all"');
   });
 
-  it('rejects a query longer than 200 characters', async () => {
+  it('rejects a query longer than 200 characters without category guidance', async () => {
     const { buildToolIndex, catalogTool } = buildCatalogTool();
 
     const result = await catalogTool.execute({ query: 'a'.repeat(201) });
 
     expect(buildToolIndex).not.toHaveBeenCalled();
     expect(result).toMatchObject({ success: false });
+
+    const error = 'error' in result ? result.error : '';
+
+    expect(error).toMatch(/^query: /);
+    expect(error).not.toMatch(/categor/i);
   });
 
-  it.each([0, -1, 1.5, 26])('rejects limit %p', async (limit) => {
-    const { buildToolIndex, catalogTool } = buildCatalogTool();
+  it.each([0, -1, 1.5, 26])(
+    'rejects limit %p without category guidance',
+    async (limit) => {
+      const { buildToolIndex, catalogTool } = buildCatalogTool();
 
-    const result = await catalogTool.execute({ query: 'task', limit });
+      const result = await catalogTool.execute({ query: 'task', limit });
 
-    expect(buildToolIndex).not.toHaveBeenCalled();
-    expect(result).toMatchObject({ success: false });
-  });
+      expect(buildToolIndex).not.toHaveBeenCalled();
+      expect(result).toMatchObject({ success: false });
+
+      const error = 'error' in result ? result.error : '';
+
+      expect(error).toMatch(/^limit: /);
+      expect(error).not.toMatch(/categor/i);
+    },
+  );
 
   it('deduplicates categories before building the index', async () => {
     const { buildToolIndex, catalogTool } = buildCatalogTool();

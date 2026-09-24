@@ -89,6 +89,10 @@ export const createGetToolCatalogTool = (
     const parseResult = getToolCatalogInputSchema.safeParse(parameters ?? {});
 
     if (!parseResult.success) {
+      const hasCategoryIssue = parseResult.error.issues.some(
+        (issue) => issue.path[0] === 'categories',
+      );
+
       return {
         success: false,
         message: 'Invalid input for get_tool_catalog',
@@ -96,7 +100,9 @@ export const createGetToolCatalogTool = (
           .map(
             (issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`,
           )
-          .join('; ')}. Valid categories: ${availableCategories}.`,
+          .join(
+            '; ',
+          )}.${hasCategoryIssue ? ` Valid categories: ${availableCategories}.` : ''}`,
       };
     }
 
