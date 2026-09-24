@@ -7,12 +7,15 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { computeWorkspaceSchemaForeignKeyName } from 'src/engine/twenty-orm/workspace-schema-manager/utils/compute-workspace-schema-foreign-key-name.util';
+import { type WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 
 export type ManyToOneForeignKey = {
   columnName: string;
   referencedTableName: string;
   foreignKeyName: string;
+  onDelete: WorkspaceSchemaForeignKeyDefinition['onDelete'];
 };
 
 export const getManyToOneForeignKey = ({
@@ -49,6 +52,9 @@ export const getManyToOneForeignKey = ({
   return {
     columnName,
     referencedTableName,
+    onDelete:
+      convertOnDeleteActionToOnDelete(flatFieldMetadata.settings?.onDelete) ??
+      'CASCADE',
     foreignKeyName: computeWorkspaceSchemaForeignKeyName({
       queryRunner,
       schemaName,
