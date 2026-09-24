@@ -124,4 +124,14 @@ describe('CommandMenuItem update should fail', () => {
       });
     },
   );
+
+  it('when the caller lacks the LAYOUTS permission', async () => {
+    const { errors } = await updateCommandMenuItem({
+      expectToFail: true,
+      input: { id: testCommandMenuItemId, label: 'Updated By Member' },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+  });
 });
