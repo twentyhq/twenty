@@ -27,6 +27,7 @@ import {
   IconArrowUpRight,
   IconBox,
   IconCheckbox,
+  IconLifebuoy,
   IconPlus,
   IconSearch,
   IconTable,
@@ -42,7 +43,7 @@ const SECTION_ICONS: Record<CommandMenuItemSection, IconComponent> = {
   CREATE_RECORD: IconPlus,
   WORKSPACE: IconApps,
   GO_TO: IconArrowUpRight,
-  FALLBACK: IconSearch,
+  FALLBACK: IconLifebuoy,
 };
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
@@ -220,7 +221,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         );
       })}
       {shouldDisplayFallbackItems && (
-        <CommandMenuItemSectionGroup heading={t`Fallback`} Icon={IconSearch}>
+        <CommandMenuItemSectionGroup heading={t`Fallback`} Icon={IconLifebuoy}>
           {fallbackCommandMenuItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
           ))}

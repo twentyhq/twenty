@@ -29,7 +29,7 @@ export const useCommandMenuItemCurrentViewSectionContext = ():
   const ViewTypeIcon = viewTypeIconMapping(view.type);
 
   return {
-    icon: <ViewTypeIcon size={theme.icon.size.sm} />,
+    icon: <ViewTypeIcon size={theme.icon.size.md} />,
     label: view.name,
   };
 };

@@ -87,7 +87,7 @@ export const CommandMenuItemSectionGroup = ({
         ) : (
           isDefined(Icon) && (
             <StyledHeadingIcon>
-              <Icon size={theme.icon.size.sm} />
+              <Icon size={theme.icon.size.md} />
             </StyledHeadingIcon>
           )
         )}

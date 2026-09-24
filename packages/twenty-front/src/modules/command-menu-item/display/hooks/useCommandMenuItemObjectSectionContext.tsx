@@ -20,7 +20,7 @@ export const useCommandMenuItemObjectSectionContext = ():
     icon: (
       <ObjectMetadataIcon
         objectMetadataItem={objectMetadataItem}
-        size={theme.icon.size.sm}
+        size={theme.icon.size.md}
       />
     ),
     label: capitalize(objectMetadataItem.labelPlural),
