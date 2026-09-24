@@ -20,6 +20,7 @@ export class TriggerInstallApplicationJob {
       appRegistrationId: data.applicationRegistrationId,
       workspaceId: data.workspaceId,
       hasUserApprovedCapabilities: true,
+      hasUserApprovedRoleGrants: true,
     });
   }
 }

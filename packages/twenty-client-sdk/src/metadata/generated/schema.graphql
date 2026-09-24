@@ -2694,6 +2694,24 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+type ApplicationUpgradeRoleGrant {
+  type: ApplicationUpgradeRoleGrantType!
+  action: String
+  objectUniversalIdentifier: String
+  fieldUniversalIdentifier: String
+  permissionFlagUniversalIdentifier: String
+}
+
+enum ApplicationUpgradeRoleGrantType {
+  ALL_OBJECT_RECORDS
+  ALL_SETTINGS
+  ALL_TOOLS
+  PERMISSION_FLAG
+  OBJECT_RECORDS
+  FIELD_VALUE
+  ROW_LEVEL_RESTRICTION
+}
+
 type BillingEntitlement {
   key: BillingEntitlementKey!
   value: Boolean!
@@ -3801,6 +3819,7 @@ type Query {
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
   getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
+  applicationUpgradeRoleGrants(applicationId: UUID!): [ApplicationUpgradeRoleGrant!]!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
@@ -4115,7 +4134,7 @@ type Mutation {
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
-  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
+  upgradeApplication(appRegistrationId: String!, targetVersion: String!, hasUserApprovedRoleGrants: Boolean): Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
   deleteApplicationRegistration(id: String!): Boolean!

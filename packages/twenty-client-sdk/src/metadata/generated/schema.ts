@@ -2288,6 +2288,17 @@ export interface SearchField {
     __typename: 'SearchField'
 }
 
+export interface ApplicationUpgradeRoleGrant {
+    type: ApplicationUpgradeRoleGrantType
+    action?: Scalars['String']
+    objectUniversalIdentifier?: Scalars['String']
+    fieldUniversalIdentifier?: Scalars['String']
+    permissionFlagUniversalIdentifier?: Scalars['String']
+    __typename: 'ApplicationUpgradeRoleGrant'
+}
+
+export type ApplicationUpgradeRoleGrantType = 'ALL_OBJECT_RECORDS' | 'ALL_SETTINGS' | 'ALL_TOOLS' | 'PERMISSION_FLAG' | 'OBJECT_RECORDS' | 'FIELD_VALUE' | 'ROW_LEVEL_RESTRICTION'
+
 export interface BillingEntitlement {
     key: BillingEntitlementKey
     value: Scalars['Boolean']
@@ -3336,6 +3347,7 @@ export interface Query {
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
     getPublicWorkspaceDataById: PublicWorkspaceDataSummary
+    applicationUpgradeRoleGrants: ApplicationUpgradeRoleGrant[]
     findApplicationRegistrationByClientId?: PublicApplicationRegistration
     findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
     findManyApplicationRegistrations: ApplicationRegistration[]
@@ -6061,6 +6073,16 @@ export interface SearchFieldGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationUpgradeRoleGrantGenqlSelection{
+    type?: boolean | number
+    action?: boolean | number
+    objectUniversalIdentifier?: boolean | number
+    fieldUniversalIdentifier?: boolean | number
+    permissionFlagUniversalIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingEntitlementGenqlSelection{
     key?: boolean | number
     value?: boolean | number
@@ -7172,6 +7194,7 @@ export interface QueryGenqlSelection{
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
     getPublicWorkspaceDataById?: (PublicWorkspaceDataSummaryGenqlSelection & { __args: {id: Scalars['UUID']} })
+    applicationUpgradeRoleGrants?: (ApplicationUpgradeRoleGrantGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findManyApplicationRegistrations?: ApplicationRegistrationGenqlSelection
@@ -7407,7 +7430,7 @@ export interface MutationGenqlSelection{
     deleteCurrentWorkspace?: WorkspaceGenqlSelection
     checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
     enrichWorkspaceCompany?: WorkspaceCompanyEnrichmentResultGenqlSelection
-    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
+    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String'], hasUserApprovedRoleGrants?: (Scalars['Boolean'] | null)} }
     createApplicationRegistration?: (CreateApplicationRegistrationGenqlSelection & { __args: {input: CreateApplicationRegistrationInput} })
     updateApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {input: UpdateApplicationRegistrationInput} })
     deleteApplicationRegistration?: { __args: {id: Scalars['String']} }
@@ -9557,6 +9580,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const ApplicationUpgradeRoleGrant_possibleTypes: string[] = ['ApplicationUpgradeRoleGrant']
+    export const isApplicationUpgradeRoleGrant = (obj?: { __typename?: any } | null): obj is ApplicationUpgradeRoleGrant => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationUpgradeRoleGrant"')
+      return ApplicationUpgradeRoleGrant_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const BillingEntitlement_possibleTypes: string[] = ['BillingEntitlement']
     export const isBillingEntitlement = (obj?: { __typename?: any } | null): obj is BillingEntitlement => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEntitlement"')
@@ -11119,6 +11150,16 @@ export const enumRelationType = {
 export const enumIndexType = {
    BTREE: 'BTREE' as const,
    GIN: 'GIN' as const
+}
+
+export const enumApplicationUpgradeRoleGrantType = {
+   ALL_OBJECT_RECORDS: 'ALL_OBJECT_RECORDS' as const,
+   ALL_SETTINGS: 'ALL_SETTINGS' as const,
+   ALL_TOOLS: 'ALL_TOOLS' as const,
+   PERMISSION_FLAG: 'PERMISSION_FLAG' as const,
+   OBJECT_RECORDS: 'OBJECT_RECORDS' as const,
+   FIELD_VALUE: 'FIELD_VALUE' as const,
+   ROW_LEVEL_RESTRICTION: 'ROW_LEVEL_RESTRICTION' as const
 }
 
 export const enumBillingEntitlementKey = {
