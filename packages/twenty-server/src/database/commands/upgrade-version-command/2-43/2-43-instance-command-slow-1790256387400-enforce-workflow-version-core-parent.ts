@@ -4,7 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredInstanceCommand('2.43.0', 1790232001109, { type: 'slow' })
+@RegisteredInstanceCommand('2.43.0', 1790256387400, { type: 'slow' })
 export class EnforceWorkflowVersionCoreParentSlowInstanceCommand implements SlowInstanceCommand {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
