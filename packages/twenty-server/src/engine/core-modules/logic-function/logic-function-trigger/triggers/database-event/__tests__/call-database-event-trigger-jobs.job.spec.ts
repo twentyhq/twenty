@@ -182,7 +182,9 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     };
 
     messageQueueService = { bulkAdd: jest.fn().mockResolvedValue(undefined) };
-    recordShareService = { findByRecordIds: jest.fn().mockResolvedValue([]) };
+    recordShareService = {
+      findByRecordIds: jest.fn().mockResolvedValue([]),
+    };
     recordSharingFeatureService = {
       isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
     };
@@ -198,14 +200,20 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         {
           provide: WorkspaceCacheService,
           useValue: {
-            getOrRecompute: jest.fn().mockImplementation(async () => cacheData),
+            getOrRecompute: jest.fn().mockImplementation(async () => ({
+              flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+              ...cacheData,
+            })),
           },
         },
         {
           provide: ApplicationJobEnqueueThrottlerService,
           useValue: { throttleOrThrow: jest.fn().mockResolvedValue(undefined) },
         },
-        { provide: RecordShareService, useValue: recordShareService },
+        {
+          provide: RecordShareService,
+          useValue: recordShareService,
+        },
         {
           provide: RecordSharingFeatureService,
           useValue: recordSharingFeatureService,

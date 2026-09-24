@@ -1,9 +1,13 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { Test } from '@nestjs/testing';
-import { MetadataReadability } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  RecordShareRowCause,
+  RecordShareAccessLevel,
+} from 'twenty-shared/types';
 
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -16,21 +20,13 @@ describe('mandatory event visibility', () => {
     [true, true],
   ])(
     'denies SYSTEM records with sharing=%s and owning application=%s',
-    async (sharingEnabled, owningApplication) => {
+    async (_sharingEnabled, owningApplication) => {
       const module = await Test.createTestingModule({
         providers: [
           RecordAccessPolicyService,
           { provide: WorkspaceOrmManager, useValue: {} },
           { provide: WorkspaceCacheService, useValue: {} },
           { provide: RecordShareService, useValue: {} },
-          {
-            provide: RecordSharingFeatureService,
-            useValue: {
-              isRecordSharingEnabled: jest
-                .fn()
-                .mockResolvedValue(sharingEnabled),
-            },
-          },
         ],
       }).compile();
       const service = module.get(RecordAccessPolicyService);
@@ -60,4 +56,103 @@ describe('mandatory event visibility', () => {
       await module.close();
     },
   );
+  it.each([
+    RecordShareRowCause.OWNER,
+    RecordShareRowCause.APPLICATION,
+    RecordShareRowCause.MANUAL,
+  ])(
+    'keeps SQL-equivalent event access for %s grants when the sharing UI is disabled',
+    async (rowCause) => {
+      const service = new RecordAccessPolicyService(
+        {} as never,
+        {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+            featureFlagsMap: {},
+            billingEntitlements: {},
+          }),
+        } as never,
+        {
+          findByRecordIds: jest.fn().mockResolvedValue([
+            {
+              recordId: 'private-record',
+              principalId: 'member',
+              rowCause,
+              accessLevel: RecordShareAccessLevel.FULL,
+            },
+          ]),
+        } as never,
+      );
+      const gate = service.buildEventRecordAccessGate({
+        name: 'company.created',
+        workspaceId: COMPANY_FLAT_OBJECT_MOCK.workspaceId,
+        objectMetadata: {
+          ...COMPANY_FLAT_OBJECT_MOCK,
+          readability: MetadataReadability.PRIVATE,
+        },
+        events: [
+          {
+            recordId: 'private-record',
+            properties: { after: { id: 'private-record' } },
+          },
+        ],
+      });
+      const ids = await gate.resolveAdmittedRecordIds({
+        objectsPermissions: undefined,
+        principalIds: ['member'],
+        isOwningApplication: () => false,
+        resolveRowLevelPermissionRecordFilter: () => null,
+      });
+      expect(ids).toEqual(new Set(['private-record']));
+    },
+  );
 });
+
+it.each([
+  [MetadataReadability.SYSTEM, false, false, true],
+  [MetadataReadability.SYSTEM, true, false, true],
+  [MetadataReadability.SYSTEM, true, true, false],
+  [MetadataReadability.PRIVATE, false, false, false],
+  [MetadataReadability.PRIVATE, true, false, false],
+  [MetadataReadability.PRIVATE, true, true, false],
+])(
+  'preserves legacy event access until activation: %s/flag=%s/entitlement=%s',
+  async (readability, flag, entitlement, isReadable) => {
+    const service = new RecordAccessPolicyService(
+      {} as never,
+      {
+        getOrRecompute: jest.fn().mockResolvedValue({
+          flatObjectMetadataMaps: {
+            byUniversalIdentifier: {
+              [STANDARD_OBJECTS.agentChatThread.universalIdentifier]: {
+                readability,
+              },
+            },
+          },
+          featureFlagsMap: { IS_RECORD_SHARING_ENABLED: flag },
+          billingEntitlements: { RECORD_SHARING: entitlement },
+        }),
+      } as never,
+      { findByRecordIds: jest.fn().mockResolvedValue([]) } as never,
+    );
+    const gate = service.buildEventRecordAccessGate({
+      name: 'company.created',
+      workspaceId: COMPANY_FLAT_OBJECT_MOCK.workspaceId,
+      objectMetadata: {
+        ...COMPANY_FLAT_OBJECT_MOCK,
+        readability: MetadataReadability.PRIVATE,
+      },
+      events: [
+        { recordId: 'unshared', properties: { after: { id: 'unshared' } } },
+      ],
+    });
+    expect(
+      await gate.resolveAdmittedRecordIds({
+        objectsPermissions: undefined,
+        principalIds: ['member'],
+        isOwningApplication: () => false,
+        resolveRowLevelPermissionRecordFilter: () => null,
+      }),
+    ).toEqual(new Set(isReadable ? ['unshared'] : []));
+  },
+);
