@@ -10,6 +10,7 @@ import {
   buildObjectEventEnvelope,
   computeEventContextFields,
 } from 'src/engine/core-modules/event-logs/emit/build-event-envelope';
+import { type TrackEventName } from 'src/engine/core-modules/event-logs/emit/events.type';
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-created';
 import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-delete';
 import { OBJECT_RECORD_DESTROYED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-destroyed';
@@ -119,7 +120,7 @@ export class CreateEventLogFromInternalEvent {
           userId: eventData.userId,
         }),
         event,
-        this.objectProperties(batch, eventData),
+        this.objectProperties(batch, eventData, event),
       ),
     );
   }
@@ -127,9 +128,10 @@ export class CreateEventLogFromInternalEvent {
   private objectProperties(
     batch: WorkspaceEventBatch<ObjectRecordEvent>,
     eventData: ObjectRecordEvent,
+    event: TrackEventName,
   ) {
     return {
-      ...eventData.properties,
+      ...(event === OBJECT_RECORD_DESTROYED_EVENT ? {} : eventData.properties),
       recordId: eventData.recordId,
       objectMetadataId: batch.objectMetadata.id,
     };

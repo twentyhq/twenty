@@ -52,7 +52,7 @@ describe('CreateEventLogFromInternalEvent', () => {
     expect(ingestedEnvelopes[0].row.event).toBe('Object Record Restored');
   });
 
-  it('logs permanent deletes with the record snapshot before deletion', async () => {
+  it('logs permanent deletes without storing the record data', async () => {
     const before = { id: 'record-1', name: 'Maple Consulting Inc.' };
 
     await handler.handle({
@@ -68,8 +68,9 @@ describe('CreateEventLogFromInternalEvent', () => {
     expect(ingestedEnvelopes[0].row).toMatchObject({
       event: 'Object Record Destroyed',
       recordId: 'record-1',
-      properties: { before },
+      objectMetadataId: 'object-metadata-1',
     });
+    expect(ingestedEnvelopes[0].row.properties).toEqual({});
   });
 
   it('requeues once on a transient ClickHouse network error instead of failing', async () => {
