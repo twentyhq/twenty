@@ -1,5 +1,9 @@
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyString,
+  resolveObjectMetadataLabel,
+} from 'twenty-shared/utils';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -50,14 +54,21 @@ export const useCommandMenuItemSelectionSectionContext = ():
 
   const [firstRecord] = records;
 
-  const label =
+  const singleRecordName =
     numberOfSelectedRecords === 1 && isDefined(firstRecord)
       ? getObjectRecordIdentifier({
           objectMetadataItem,
           record: firstRecord,
           allowRequestsToTwentyIcons,
         }).name
-      : `${numberOfSelectedRecords} ${objectMetadataItem.labelPlural}`;
+      : undefined;
+
+  const label = isNonEmptyString(singleRecordName)
+    ? singleRecordName
+    : `${numberOfSelectedRecords} ${resolveObjectMetadataLabel({
+        objectMetadataItem,
+        numberOfSelectedRecords,
+      })}`;
 
   return {
     icon:

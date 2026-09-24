@@ -3,6 +3,7 @@ import { t } from '@lingui/core/macro';
 import React, { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
@@ -41,9 +42,7 @@ const StyledHeadingText = styled.span`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  min-width: 0;
 `;
 
 // Keyboard navigation scrolls the selected command into view, so the first
@@ -92,7 +91,11 @@ export const CommandMenuItemSectionGroup = ({
           )
         )}
         <StyledHeadingText>
-          {isDefined(contextLabel) ? t`${heading}: ${contextLabel}` : heading}
+          <OverflowingTextWithTooltip
+            text={
+              isDefined(contextLabel) ? t`${heading}: ${contextLabel}` : heading
+            }
+          />
         </StyledHeadingText>
       </StyledHeading>
       <StyledGroup>{children}</StyledGroup>

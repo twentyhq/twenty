@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
@@ -55,6 +56,11 @@ export const WithOverflowCount: Story = {
       overlapOffset="4px"
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('+9')).toBeVisible();
+  },
 };
 
 export const Catalog: Story = {
