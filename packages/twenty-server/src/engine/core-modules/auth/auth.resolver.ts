@@ -12,7 +12,11 @@ import {
   FileFolder,
   TwoFactorAuthenticationStrategy,
 } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
@@ -47,6 +51,10 @@ import { VerifyEmailAndGetLoginTokenDTO } from 'src/engine/core-modules/auth/dto
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -125,6 +133,10 @@ import { AuthService } from './services/auth.service';
 
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX = 3;
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const PASSWORD_SIGN_IN_MAX_FAILURES_PER_EMAIL = 10;
+const PASSWORD_SIGN_IN_MAX_FAILURES_PER_IP = 50;
+const OTP_MAX_FAILURES_PER_USER = 5;
+const SIGN_IN_FAILURES_WINDOW_MS = 15 * 60 * 1000;
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -224,6 +236,7 @@ export class AuthResolver {
     @Args()
     getLoginTokenFromCredentialsInput: UserCredentialsInput,
     @Args('origin') origin: string,
+    @Context() context: { req: Request },
   ): Promise<LoginTokenDTO> {
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -238,9 +251,16 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.authService.validateLoginWithPassword(
-      getLoginTokenFromCredentialsInput,
-      workspace,
+    const user = await this.throttleFailedSignInAttemptsOrThrow(
+      this.getPasswordSignInFailureLimits(
+        getLoginTokenFromCredentialsInput.email,
+        context.req,
+      ),
+      () =>
+        this.authService.validateLoginWithPassword(
+          getLoginTokenFromCredentialsInput,
+          workspace,
+        ),
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
@@ -261,8 +281,10 @@ export class AuthResolver {
     userCredentials: UserCredentialsInput,
     @Context() context: { req: Request },
   ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
-    const user =
-      await this.authService.validateLoginWithPassword(userCredentials);
+    const user = await this.throttleFailedSignInAttemptsOrThrow(
+      this.getPasswordSignInFailureLimits(userCredentials.email, context.req),
+      () => this.authService.validateLoginWithPassword(userCredentials),
+    );
 
     const availableWorkspaces =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
@@ -431,11 +453,22 @@ export class AuthResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
-    await this.twoFactorAuthenticationService.validateStrategy(
-      user.id,
-      twoFactorAuthenticationVerificationInput.otp,
-      workspace.id,
-      TwoFactorAuthenticationStrategy.TOTP,
+    // Keyed on the user rather than the login token, since a new login token
+    // can be requested after every correct password
+    await this.throttleFailedSignInAttemptsOrThrow(
+      [
+        {
+          key: `sign-in-otp:user:${user.id}`,
+          maxFailures: OTP_MAX_FAILURES_PER_USER,
+        },
+      ],
+      () =>
+        this.twoFactorAuthenticationService.validateStrategy(
+          user.id,
+          twoFactorAuthenticationVerificationInput.otp,
+          workspace.id,
+          TwoFactorAuthenticationStrategy.TOTP,
+        ),
     );
 
     const authTokens = await this.authService.verify(
@@ -1169,5 +1202,64 @@ export class AuthResolver {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
+  }
+
+  private getPasswordSignInFailureLimits(email: string, request: Request) {
+    const emailLimit = {
+      key: `sign-in-password:email:${email.toLowerCase()}`,
+      maxFailures: PASSWORD_SIGN_IN_MAX_FAILURES_PER_EMAIL,
+    };
+
+    if (!isNonEmptyString(request.ip)) {
+      return [emailLimit];
+    }
+
+    return [
+      emailLimit,
+      {
+        key: `sign-in-password:ip:${request.ip}`,
+        maxFailures: PASSWORD_SIGN_IN_MAX_FAILURES_PER_IP,
+      },
+    ];
+  }
+
+  // Only failed attempts consume tokens, so repeated successful sign-ins are
+  // never throttled
+  private async throttleFailedSignInAttemptsOrThrow<TResult>(
+    limits: { key: string; maxFailures: number }[],
+    attempt: () => Promise<TResult>,
+  ): Promise<TResult> {
+    for (const { key, maxFailures } of limits) {
+      const remainingAttempts =
+        await this.throttlerService.getAvailableTokensCount(
+          key,
+          maxFailures,
+          SIGN_IN_FAILURES_WINDOW_MS,
+        );
+
+      if (remainingAttempts < 1) {
+        throw new ThrottlerException(
+          `Limit reached (${maxFailures} failed attempts per ${SIGN_IN_FAILURES_WINDOW_MS} ms)`,
+          ThrottlerExceptionCode.LIMIT_REACHED,
+        );
+      }
+    }
+
+    try {
+      return await attempt();
+    } catch (error) {
+      await Promise.all(
+        limits.map(({ key, maxFailures }) =>
+          this.throttlerService.consumeTokens(
+            key,
+            1,
+            maxFailures,
+            SIGN_IN_FAILURES_WINDOW_MS,
+          ),
+        ),
+      );
+
+      throw error;
+    }
   }
 }
