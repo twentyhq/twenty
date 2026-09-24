@@ -2,14 +2,16 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
-import { CommandMenuItemSectionContextChip } from '@/command-menu-item/display/components/CommandMenuItemSectionContextChip';
+import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { viewTypeIconMapping } from '@/views/types/ViewType';
 
-export const CommandMenuItemViewContextChip = () => {
+export const useCommandMenuItemCurrentViewSectionContext = ():
+  | CommandMenuItemSectionContext
+  | undefined => {
   const { theme } = useContext(ThemeContext);
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
@@ -21,15 +23,13 @@ export const CommandMenuItemViewContextChip = () => {
   });
 
   if (!isDefined(view)) {
-    return null;
+    return undefined;
   }
 
   const ViewTypeIcon = viewTypeIconMapping(view.type);
 
-  return (
-    <CommandMenuItemSectionContextChip
-      startElement={<ViewTypeIcon size={theme.icon.size.sm} />}
-      label={view.name}
-    />
-  );
+  return {
+    icon: <ViewTypeIcon size={theme.icon.size.sm} />,
+    label: view.name,
+  };
 };

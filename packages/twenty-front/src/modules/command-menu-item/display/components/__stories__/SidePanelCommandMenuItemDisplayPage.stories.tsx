@@ -392,11 +392,13 @@ export const NavigationSitsLastAtRest: Story = {
 
     expect(await canvas.findByText('Companies')).toBeVisible();
 
-    const headings = canvas.getAllByText(/^(Pinned|Object|Workspace|Go to)$/);
+    const headings = canvas.getAllByText(
+      /^(Selection|Object:|Workspace|Go to)$/,
+    );
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
-      'Pinned',
-      'Object',
+      'Selection',
+      'Object:',
       'Workspace',
       'Go to',
     ]);
@@ -422,12 +424,14 @@ export const SectionHeadersShowTheirContext: Story = {
     expect(await canvas.findByText('Prospects')).toBeVisible();
     expect(await canvas.findByText('Companies')).toBeVisible();
 
-    const headings = canvas.getAllByText(/^(Selection|Current view|Object)$/);
+    const headings = canvas.getAllByText(
+      /^(Selection:|Current view:|Object:)$/,
+    );
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
-      'Selection',
-      'Current view',
-      'Object',
+      'Selection:',
+      'Current view:',
+      'Object:',
     ]);
   },
 };

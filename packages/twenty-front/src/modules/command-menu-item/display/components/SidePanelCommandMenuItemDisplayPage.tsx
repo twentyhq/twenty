@@ -1,16 +1,15 @@
 import { COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER } from '@/command-menu-item/constants/CommandMenuItemSectionsInDisplayOrder';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuItemObjectContextChip } from '@/command-menu-item/display/components/CommandMenuItemObjectContextChip';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
-import { CommandMenuItemSelectionContextChip } from '@/command-menu-item/display/components/CommandMenuItemSelectionContextChip';
-import { CommandMenuItemViewContextChip } from '@/command-menu-item/display/components/CommandMenuItemViewContextChip';
 import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useCommandMenuAppActions';
+import { useCommandMenuItemCurrentViewSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemCurrentViewSectionContext';
+import { useCommandMenuItemObjectSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemObjectSectionContext';
+import { useCommandMenuItemSelectionSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemSelectionSectionContext';
 import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -36,7 +35,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const { coreObjectsCommandIds } = useCoreObjectsCommands();
 
-  const { objectMetadataItem } = useContextStoreObjectMetadataItem();
+  const selectionSectionContext = useCommandMenuItemSelectionSectionContext();
+  const currentViewSectionContext =
+    useCommandMenuItemCurrentViewSectionContext();
+  const objectSectionContext = useCommandMenuItemObjectSectionContext();
 
   const { filterCommandMenuItemsWithSidePanelSearch } =
     useFilterCommandMenuItemsWithSidePanelSearch({
@@ -44,38 +46,39 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       commandMenuContextApi,
     });
 
-  const { pinned: pinnedCommandMenuItems, other: nonPinnedCommandMenuItems } =
-    useMemo(() => groupCommandMenuItems(commandMenuItems), [commandMenuItems]);
+  // Pinned commands stay in their own section, listed before the others.
+  const pinnedFirstCommandMenuItems = useMemo(() => {
+    const { pinned, other } = groupCommandMenuItems(commandMenuItems);
 
-  const unpinnedCommandMenuItems = useMemo(
+    return [...pinned, ...other];
+  }, [commandMenuItems]);
+
+  const nonFallbackCommandMenuItems = useMemo(
     () =>
-      nonPinnedCommandMenuItems.filter(
+      pinnedFirstCommandMenuItems.filter(
         (item) =>
           item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK,
       ),
-    [nonPinnedCommandMenuItems],
+    [pinnedFirstCommandMenuItems],
   );
 
   const fallbackCommandMenuItems = useMemo(
     () =>
-      nonPinnedCommandMenuItems.filter(
+      pinnedFirstCommandMenuItems.filter(
         (item) =>
           item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK,
       ),
-    [nonPinnedCommandMenuItems],
+    [pinnedFirstCommandMenuItems],
   );
 
   const isSearchActive = isNonEmptyString(sidePanelSearch.trim());
 
-  const matchingPinnedItems = filterCommandMenuItemsWithSidePanelSearch(
-    pinnedCommandMenuItems,
-  );
-  const matchingOtherItems = filterCommandMenuItemsWithSidePanelSearch(
-    unpinnedCommandMenuItems,
+  const matchingItems = filterCommandMenuItemsWithSidePanelSearch(
+    nonFallbackCommandMenuItems,
   );
 
   const commandMenuItemsBySection =
-    groupCommandMenuItemsBySection(matchingOtherItems);
+    groupCommandMenuItemsBySection(matchingItems);
 
   const getSectionHeading = (section: CommandMenuItemSection) => {
     switch (section) {
@@ -84,7 +87,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       case 'CURRENT_VIEW':
         return t`Current view`;
       case 'THIS_OBJECT':
-        return isDefined(objectMetadataItem) ? t`Object` : t`This object`;
+        return isDefined(objectSectionContext) ? t`Object` : t`This object`;
       case 'ASK_AND_FIND':
         return t`Ask & find`;
       case 'CREATE_RECORD':
@@ -101,11 +104,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const getSectionContext = (section: CommandMenuItemSection) => {
     switch (section) {
       case 'SELECTION':
-        return <CommandMenuItemSelectionContextChip />;
+        return selectionSectionContext;
       case 'CURRENT_VIEW':
-        return <CommandMenuItemViewContextChip />;
+        return currentViewSectionContext;
       case 'THIS_OBJECT':
-        return <CommandMenuItemObjectContextChip />;
+        return objectSectionContext;
       default:
         return undefined;
     }
@@ -124,8 +127,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   };
 
   const hasNoMatchingItems =
-    !matchingPinnedItems.length &&
-    !matchingOtherItems.length &&
+    !matchingItems.length &&
     appActions.length === 0 &&
     coreObjectsCommandIds.length === 0;
 
@@ -136,7 +138,6 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     isSearchActive && hasNoMatchingItems && !shouldDisplayFallbackItems;
 
   const selectableItemIds = [
-    ...matchingPinnedItems.map((item) => item.id),
     ...COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.flatMap((section) => [
       ...commandMenuItemsBySection[section].map((item) => item.id),
       ...getSectionExtraItemIds(section),
@@ -151,13 +152,6 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       selectableItemIds={selectableItemIds}
       noResults={shouldDisplayNoResults}
     >
-      {matchingPinnedItems.length > 0 && (
-        <CommandMenuItemSectionGroup heading={t`Pinned`}>
-          {matchingPinnedItems.map((item) => (
-            <CommandMenuItemRenderer item={item} key={item.id} />
-          ))}
-        </CommandMenuItemSectionGroup>
-      )}
       {COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.map((section) => {
         const sectionCommandMenuItems = commandMenuItemsBySection[section];
 

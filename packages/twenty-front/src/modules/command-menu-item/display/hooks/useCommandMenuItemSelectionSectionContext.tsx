@@ -1,10 +1,9 @@
-import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuItemSectionContextChip } from '@/command-menu-item/display/components/CommandMenuItemSectionContextChip';
+import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
@@ -16,12 +15,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 const MAX_RECORD_AVATARS = 3;
 
-const StyledAvatars = styled.span`
-  align-items: center;
-  display: flex;
-`;
-
-export const CommandMenuItemSelectionContextChip = () => {
+export const useCommandMenuItemSelectionSectionContext = ():
+  | CommandMenuItemSectionContext
+  | undefined => {
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const { objectMetadataItem } = useContextStoreObjectMetadataItem();
 
@@ -50,7 +46,7 @@ export const CommandMenuItemSelectionContextChip = () => {
   const { numberOfSelectedRecords } = commandMenuContextApi;
 
   if (!isDefined(objectMetadataItem) || numberOfSelectedRecords === 0) {
-    return null;
+    return undefined;
   }
 
   const [firstRecord] = records;
@@ -64,22 +60,17 @@ export const CommandMenuItemSelectionContextChip = () => {
         }).name
       : `${numberOfSelectedRecords} ${objectMetadataItem.labelPlural}`;
 
-  return (
-    <CommandMenuItemSectionContextChip
-      startElement={
-        records.length > 0 ? (
-          <StyledAvatars>
-            {records.map((record) => (
-              <SidePanelContextRecordChipAvatars
-                key={record.id}
-                objectMetadataItem={objectMetadataItem}
-                record={record}
-              />
-            ))}
-          </StyledAvatars>
-        ) : null
-      }
-      label={label}
-    />
-  );
+  return {
+    icon:
+      records.length > 0
+        ? records.map((record) => (
+            <SidePanelContextRecordChipAvatars
+              key={record.id}
+              objectMetadataItem={objectMetadataItem}
+              record={record}
+            />
+          ))
+        : undefined,
+    label,
+  };
 };
