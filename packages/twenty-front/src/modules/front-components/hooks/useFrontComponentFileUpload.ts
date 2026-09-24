@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { putFileToUploadTarget } from '@/file/utils/putFileToUploadTarget';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { frontComponentApplicationTokenPairFamilyState } from '@/front-components/states/frontComponentApplicationTokenPairFamilyState';
-import { isUnauthenticatedMetadataGraphqlResponse } from '@/front-components/utils/isUnauthenticatedMetadataGraphqlResponse';
 import { postMetadataGraphqlOperationWithApplicationAccessToken } from '@/front-components/utils/postMetadataGraphqlOperationWithApplicationAccessToken';
+import { sendMetadataGraphqlOperationWithOneRetryOnUnauthenticated } from '@/front-components/utils/sendMetadataGraphqlOperationWithOneRetryOnUnauthenticated';
 import { unwrapMetadataGraphqlResponseOrThrow } from '@/front-components/utils/unwrapMetadataGraphqlResponseOrThrow';
 import {
   CompleteFileUploadDocument,
@@ -47,25 +47,20 @@ export const useFrontComponentFileUpload = ({
     }
 
     const response =
-      await postMetadataGraphqlOperationWithApplicationAccessToken({
-        document,
-        variables,
+      await sendMetadataGraphqlOperationWithOneRetryOnUnauthenticated({
         applicationAccessToken:
           applicationTokenPair.applicationAccessToken.token,
+        requestAccessTokenRefresh: () =>
+          requestApplicationAccessTokenRefresh(applicationId),
+        sendOperation: (applicationAccessToken) =>
+          postMetadataGraphqlOperationWithApplicationAccessToken({
+            document,
+            variables,
+            applicationAccessToken,
+          }),
       });
 
-    if (!isUnauthenticatedMetadataGraphqlResponse(response)) {
-      return unwrapMetadataGraphqlResponseOrThrow(response);
-    }
-
-    return unwrapMetadataGraphqlResponseOrThrow(
-      await postMetadataGraphqlOperationWithApplicationAccessToken({
-        document,
-        variables,
-        applicationAccessToken:
-          await requestApplicationAccessTokenRefresh(applicationId),
-      }),
-    );
+    return unwrapMetadataGraphqlResponseOrThrow(response);
   };
 
   const uploadFileToFilesField = async (
