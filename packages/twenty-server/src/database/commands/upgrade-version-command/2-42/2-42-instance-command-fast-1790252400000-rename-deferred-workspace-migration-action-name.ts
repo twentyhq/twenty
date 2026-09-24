@@ -7,7 +7,6 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class RenameDeferredWorkspaceMigrationActionNameFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."deferredWorkspaceMigrationAction" RENAME COLUMN "actionHandlerKey" TO "name"');
-    await queryRunner.query('DELETE FROM "core"."deferredWorkspaceMigrationAction"');
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
