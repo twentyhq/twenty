@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
 import {
@@ -55,8 +56,7 @@ export const useGlobalHotkeysCallback = (
         currentGlobalHotkeysConfig.enableGlobalEscapeHotkeysConflictingWithKeyboard ===
           true &&
         keyboardEvent.key === Key.Escape &&
-        !keyboardEvent.isComposing &&
-        keyboardEvent.keyCode !== 229;
+        !isKeyboardEventComposing(keyboardEvent);
 
       if (
         !containsModifier &&

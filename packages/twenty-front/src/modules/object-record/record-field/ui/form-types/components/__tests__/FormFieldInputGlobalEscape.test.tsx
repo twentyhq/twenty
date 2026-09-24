@@ -39,16 +39,14 @@ const SidePanel = ({
   };
 
   return (
-    <I18nProvider i18n={i18n}>
-      <Provider store={createStore()}>
-        <SidePanelTopBarEscapeHotkeyEffect
-          inputRef={searchInputRef}
-          onEscape={handleEscape}
-        />
-        <LetterHotkeyEffect onHotkey={onLetterHotkey} />
-        {isOpen ? children : null}
-      </Provider>
-    </I18nProvider>
+    <>
+      <SidePanelTopBarEscapeHotkeyEffect
+        inputRef={searchInputRef}
+        onEscape={handleEscape}
+      />
+      <LetterHotkeyEffect onHotkey={onLetterHotkey} />
+      {isOpen ? children : null}
+    </>
   );
 };
 
@@ -57,9 +55,13 @@ const renderInSidePanel = (field: ReactNode) => {
   const onLetterHotkey = jest.fn();
 
   render(
-    <SidePanel onEscape={onEscape} onLetterHotkey={onLetterHotkey}>
-      {field}
-    </SidePanel>,
+    <I18nProvider i18n={i18n}>
+      <Provider store={createStore()}>
+        <SidePanel onEscape={onEscape} onLetterHotkey={onLetterHotkey}>
+          {field}
+        </SidePanel>
+      </Provider>
+    </I18nProvider>,
   );
 
   return { onEscape, onLetterHotkey };
