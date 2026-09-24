@@ -2,11 +2,7 @@ import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import {
-  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
-import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
+import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataSideEffectExceptionCode } from 'src/engine/metadata-modules/metadata-side-effect/exceptions/metadata-side-effect-exception-code';
@@ -18,11 +14,8 @@ import {
   type MetadataSideEffectFailure,
   type MetadataSideEffectResult,
 } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from 'src/engine/metadata-modules/object-metadata/constants/optional-default-relations-object-standard-ids.constant';
-import {
-  buildSystemRelationFlatFieldMetadatasForObject,
-  type StandardTargetFlatObjectMetadataByNameSingular,
-} from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
+import { buildSystemRelationFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
+import { resolveSystemRelationTargetFlatObjectMetadatas } from 'src/engine/metadata-modules/object-metadata/utils/resolve-system-relation-target-flat-object-metadatas.util';
 
 @Injectable()
 export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -38,46 +31,21 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
     flatEntity: sourceFlatObjectMetadata,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    const standardTargetFlatObjectMetadataByNameSingular: StandardTargetFlatObjectMetadataByNameSingular =
-      {};
+    const {
+      standardTargetFlatObjectMetadataByNameSingular,
+      missingDefaultRelationObjectNameSingulars,
+    } = resolveSystemRelationTargetFlatObjectMetadatas({
+      flatObjectMetadataMaps: relatedFlatEntityMaps.flatObjectMetadataMaps,
+    });
 
-    const missingStandardObjectErrors: MetadataSideEffectFailure['errors'] = [];
-
-    for (const standardObjectNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
-      const standardTargetFlatObjectMetadata =
-        relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS[standardObjectNameSingular].universalIdentifier
-        ];
-
-      if (!isDefined(standardTargetFlatObjectMetadata)) {
-        missingStandardObjectErrors.push({
+    const missingStandardObjectErrors: MetadataSideEffectFailure['errors'] =
+      missingDefaultRelationObjectNameSingulars.map(
+        (standardObjectNameSingular) => ({
           code: MetadataSideEffectExceptionCode.SIDE_EFFECT_PARENT_METADATA_NOT_FOUND,
           message: t`Could not resolve standard relation object "${standardObjectNameSingular}" to provision default relations`,
           userFriendlyMessage: msg`A standard object required to provision default relations could not be found`,
-        });
-        continue;
-      }
-
-      standardTargetFlatObjectMetadataByNameSingular[
-        standardObjectNameSingular
-      ] = standardTargetFlatObjectMetadata;
-    }
-
-    // An optional relation object is provisioned by its own upgrade command,
-    // which also backfills the objects created before it ran, so its absence
-    // must not block object creation.
-    for (const standardObjectNameSingular of OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
-      const standardTargetFlatObjectMetadata =
-        relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS[standardObjectNameSingular].universalIdentifier
-        ];
-
-      if (isDefined(standardTargetFlatObjectMetadata)) {
-        standardTargetFlatObjectMetadataByNameSingular[
-          standardObjectNameSingular
-        ] = standardTargetFlatObjectMetadata;
-      }
-    }
+        }),
+      );
 
     if (isNonEmptyArray(missingStandardObjectErrors)) {
       return {
