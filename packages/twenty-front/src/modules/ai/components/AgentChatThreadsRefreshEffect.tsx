@@ -1,3 +1,6 @@
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
 
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
@@ -5,6 +8,8 @@ import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThread
 const REFRESH_INTERVAL_MS = 30_000;
 
 export const AgentChatThreadsRefreshEffect = () => {
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
 
   useEffect(() => {
@@ -20,7 +25,7 @@ export const AgentChatThreadsRefreshEffect = () => {
       clearInterval(interval);
       window.removeEventListener('focus', refresh);
     };
-  }, [refreshAgentChatThreads]);
+  }, [refreshAgentChatThreads, currentUserWorkspace, currentWorkspaceMember]);
 
   return null;
 };

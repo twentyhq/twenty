@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -618,6 +619,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
       objectMetadataId: flatObjectMetadata.id,
+      isRecordSharingEnabled:
+        this.isRecordSharingEnabled(queryRunnerContext) ||
+        flatObjectMetadata.universalIdentifier ===
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
       shareWith,

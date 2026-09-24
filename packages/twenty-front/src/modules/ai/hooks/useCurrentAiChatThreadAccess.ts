@@ -2,13 +2,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
+import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCurrentAiChatThreadAccess = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const currentAiChatThreadData = useAtomStateValue(
-    currentAiChatThreadDataSelector,
+  const permissions = useAtomFamilySelectorValue(
+    agentChatThreadPermissionsFamilySelector,
+    currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   );
   if (
     !isDefined(currentAiChatThread) ||
@@ -16,8 +18,11 @@ export const useCurrentAiChatThreadAccess = () => {
   ) {
     return 'writer';
   }
-  if (!isDefined(currentAiChatThreadData?.permissions?.canUpdate)) {
+  if (!isDefined(permissions?.canUpdate)) {
     return 'loading';
   }
-  return currentAiChatThreadData.permissions.canUpdate ? 'writer' : 'viewer';
+  if (!permissions.canRead) {
+    return 'unavailable';
+  }
+  return permissions.canUpdate ? 'writer' : 'viewer';
 };

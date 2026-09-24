@@ -3471,7 +3471,6 @@ type AgentChatThread {
   updatedAt: DateTime!
   deletedAt: DateTime
   lastMessageAt: DateTime
-  permissions: RecordPermissionsDTO!
 }
 
 type AiSystemPromptSection {
@@ -3516,6 +3515,12 @@ enum WorkspaceSetupChatOutcome {
   STARTED
   ALREADY_STARTED
   UNAVAILABLE
+}
+
+type RecordPermissionsResult {
+  objectMetadataId: UUID!
+  recordId: UUID!
+  permissions: RecordPermissionsDTO!
 }
 
 type AgentTurnEvaluation {
@@ -3899,6 +3904,7 @@ type Query {
   agentTurns(agentId: UUID!): [AgentTurn!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
+  recordPermissions(targets: [RecordPermissionsTargetInput!]!): [RecordPermissionsResult!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
@@ -3997,6 +4003,11 @@ input MetadataTranslationsInput {
   objectMetadataId: UUID
   fieldMetadataId: UUID
   locale: String
+}
+
+input RecordPermissionsTargetInput {
+  objectMetadataId: UUID!
+  recordId: UUID!
 }
 
 input EventLogQueryInput {

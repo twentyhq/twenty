@@ -1,4 +1,3 @@
-import { RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -80,24 +79,6 @@ export class AgentChatResolver {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
   ) {}
-
-  @ResolveField(() => RecordPermissionsDTO)
-  permissions(
-    @Parent() thread: AgentChatThreadEntity & {
-      permissions?: RecordPermissionsDTO;
-    },
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return (
-      thread.permissions ??
-      this.sharingService.getPermissions({
-        threadId: thread.id,
-        userWorkspaceId,
-        workspaceId,
-      })
-    );
-  }
 
   @Query(() => [AgentChatThreadDTO])
   @AllowSuspendedWorkspace()
@@ -217,7 +198,7 @@ export class AgentChatResolver {
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
-    await this.agentChatService.getThreadById({
+    const thread = await this.agentChatService.getThreadById({
       threadId,
       userWorkspaceId,
       workspaceId: workspace.id,
@@ -228,17 +209,6 @@ export class AgentChatResolver {
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
     });
-
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId },
-    });
-
-    if (!isDefined(thread)) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
 
     if (isDefined(thread.deletedAt)) {
       await this.agentChatService.unarchiveThread({
@@ -584,17 +554,6 @@ export class AgentChatResolver {
       throw new AiException(
         'Queued message not found',
         AiExceptionCode.MESSAGE_NOT_FOUND,
-      );
-    }
-
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: message.threadId },
-    });
-
-    if (!isDefined(thread)) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
 

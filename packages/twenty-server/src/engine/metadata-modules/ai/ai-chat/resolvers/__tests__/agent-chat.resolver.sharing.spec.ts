@@ -70,7 +70,9 @@ const buildResolver = () => {
     sharing as never,
   );
   const streaming = {
-    streamAgentChat: jest.fn(),
+    streamAgentChat: jest
+      .fn()
+      .mockResolvedValue({ queued: false, messageId: 'message' }),
     answerPendingQuestionAndResumeStream: jest.fn(),
     reapDeadStream: jest.fn().mockResolvedValue(null),
   };
@@ -134,12 +136,8 @@ describe('Shared conversation API boundaries', () => {
   it('returns readable threads and catchup to viewers without granting ownership', async () => {
     const { resolver } = buildResolver();
     const thread = await resolver.chatThread(THREAD_ID, VIEWER_ID, workspace);
-    await expect(
-      resolver.permissions(thread, VIEWER_ID, workspace),
-    ).resolves.toMatchObject({ canRead: true, canUpdate: false });
-    await expect(
-      resolver.permissions(thread, 'owner', workspace),
-    ).resolves.toMatchObject({ canUpdate: true });
+    expect(thread).toMatchObject({ id: THREAD_ID });
+    expect(thread).not.toHaveProperty('permissions');
     await expect(
       resolver.chatStreamCatchupChunks(THREAD_ID, VIEWER_ID, workspace),
     ).resolves.toMatchObject({ chunks: [] });
@@ -194,6 +192,14 @@ describe('Shared conversation API boundaries', () => {
       await expect(operations[operation]()).rejects.toMatchObject({
         code: 'THREAD_NOT_FOUND',
       });
+      if (operation === 'deleteQueued') {
+        expect(context.sharing.getThreadWithAccess).toHaveBeenCalledWith(
+          expect.objectContaining({
+            userWorkspaceId: VIEWER_ID,
+            operationType: 'update',
+          }),
+        );
+      }
       expect(context.threadRepository.update).not.toHaveBeenCalled();
       expect(context.threadRepository.delete).not.toHaveBeenCalled();
       expect(context.messages.delete).not.toHaveBeenCalled();
@@ -206,20 +212,48 @@ describe('Shared conversation API boundaries', () => {
     },
   );
 
-  it('allows a writable participant to execute with their own identity', async () => {
-    const { chatService, sharing } = buildResolver();
+  it('passes the editing participant identity to execution', async () => {
+    const { resolver, sharing, streaming } = buildResolver();
     sharing.getThreadWithAccess.mockResolvedValue({
       id: THREAD_ID,
       userWorkspaceId: 'owner',
       workspaceId: WORKSPACE_ID,
     });
-    await expect(
-      chatService.getThreadById({
+    await resolver.sendChatMessage(
+      THREAD_ID,
+      'My request',
+      'message',
+      null,
+      undefined,
+      null,
+      VIEWER_ID,
+      workspace,
+    );
+    expect(streaming.streamAgentChat).toHaveBeenCalledWith(
+      expect.objectContaining({
         threadId: THREAD_ID,
         userWorkspaceId: VIEWER_ID,
-        workspaceId: WORKSPACE_ID,
+        text: 'My request',
       }),
-    ).resolves.toMatchObject({ id: THREAD_ID });
+    );
+  });
+
+  it('allows an editor to remove a queued message after update authorization', async () => {
+    const { resolver, sharing, messages } = buildResolver();
+    sharing.getThreadWithAccess.mockResolvedValue({
+      id: THREAD_ID,
+      userWorkspaceId: 'owner',
+      workspaceId: WORKSPACE_ID,
+    });
+    messages.delete.mockResolvedValue({ affected: 1 });
+    await resolver.deleteQueuedChatMessage('queued', VIEWER_ID, workspace);
+    expect(sharing.getThreadWithAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userWorkspaceId: VIEWER_ID,
+        operationType: 'update',
+      }),
+    );
+    expect(messages.delete).toHaveBeenCalled();
   });
 
   it('does not let ownership bypass a revoked update permission', async () => {

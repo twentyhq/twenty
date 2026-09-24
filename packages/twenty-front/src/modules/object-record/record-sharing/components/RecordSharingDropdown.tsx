@@ -6,7 +6,8 @@ import { Button } from 'twenty-ui/primitives/input';
 import { RecordSharingRefreshEffect } from '@/object-record/record-sharing/components/RecordSharingRefreshEffect';
 import { RecordSharingDropdownContent } from '@/object-record/record-sharing/components/RecordSharingDropdownContent';
 import { useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { Dropdown } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -35,28 +36,31 @@ export const RecordSharingDropdown = ({
     <>
       <RecordSharingRefreshEffect refetch={sharingState.refetch} />
       {sharingState.sharing?.isEnabled === true && (
-        <Dropdown
+        <DropdownRoot
           dropdownId={dropdownId}
-          onOpen={() => {
-            void sharingState.refetch().catch(() => {});
+          type="panel"
+          onOpenChange={(open) => {
+            if (open) void sharingState.refetch().catch(() => {});
           }}
-          dropdownPlacement="bottom-end"
-          clickableComponent={
-            <Button
-              size="sm"
-              variant="outline"
-              startIcon={<IconShare />}
-            >{t`Share`}</Button>
-          }
-          dropdownComponents={
+        >
+          <Dropdown.Trigger
+            render={
+              <Button
+                size="sm"
+                variant="outline"
+                startIcon={<IconShare />}
+              >{t`Share`}</Button>
+            }
+          />
+          <Dropdown.Content align="end" aria-label={title}>
             <RecordSharingDropdownContent
               title={title}
               description={description}
               recordUrl={recordUrl}
               sharingState={sharingState}
             />
-          }
-        />
+          </Dropdown.Content>
+        </DropdownRoot>
       )}
     </>
   );

@@ -1,4 +1,3 @@
-import { RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import { Field, Float, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType('AgentChatThread')
@@ -43,9 +42,6 @@ export class AgentChatThreadDTO {
 
   @Field(() => Date, { nullable: true })
   lastMessageAt: Date | null;
-
-  @Field(() => RecordPermissionsDTO)
-  permissions: RecordPermissionsDTO;
 
   @HideField()
   userWorkspaceId: string;

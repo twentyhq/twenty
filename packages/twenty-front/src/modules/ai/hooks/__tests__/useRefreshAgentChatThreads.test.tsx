@@ -22,13 +22,6 @@ const buildThread = (id: string, title: string): AgentChatThread => ({
   createdAt: '2026-09-07T00:00:00.000Z',
   updatedAt: '2026-09-07T00:00:00.000Z',
   lastMessageAt: '2026-09-07T00:00:00.000Z',
-
-  permissions: {
-    canRead: true,
-    canUpdate: true,
-    canDelete: true,
-    canSoftDelete: true,
-  },
   totalInputTokens: 0,
   totalOutputTokens: 0,
   totalCacheReadTokens: 0,

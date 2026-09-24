@@ -22,7 +22,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 registerEnumType(RecordShareAccessLevel, { name: 'RecordShareAccessLevel' });
 
 @MetadataResolver()
-// RecordSharingService evaluates operation permissions against the target record.
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
 export class RecordSharingResolver {
   constructor(private readonly sharingService: RecordSharingService) {}
@@ -45,7 +44,7 @@ export class RecordSharingResolver {
       nullable: true,
       defaultValue: RecordShareAccessLevel.READ,
     })
-    accessLevel: RecordShareAccessLevel = RecordShareAccessLevel.READ,
+    accessLevel: RecordShareAccessLevel | null,
   ) {
     try {
       return await this.sharingService.setShare({

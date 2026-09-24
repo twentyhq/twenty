@@ -1,3 +1,4 @@
+import { useRefreshRecordPermissions } from '@/object-record/record-sharing/hooks/useRefreshRecordPermissions';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
@@ -17,6 +18,7 @@ export const useRecordSharing = (
   recordTarget: RecordSharingTargetInput,
   isOpen: boolean,
 ) => {
+  const { refreshRecordPermissions } = useRefreshRecordPermissions();
   const { data, loading, error, refetch } = useQuery(GetRecordSharingDocument, {
     variables: { target: recordTarget },
     fetchPolicy: 'network-only',
@@ -54,6 +56,7 @@ export const useRecordSharing = (
       await setShareMutation({
         variables: { target: recordTarget, principal, enabled, accessLevel },
       });
+      await refreshRecordPermissions([recordTarget]);
     } catch (mutationError) {
       enqueueToast(getToastOptionsFromError({ error: mutationError }));
     }

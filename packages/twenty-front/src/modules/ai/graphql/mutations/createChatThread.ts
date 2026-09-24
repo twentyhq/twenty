@@ -5,12 +5,6 @@ export const CREATE_CHAT_THREAD = gql`
     createChatThread {
       id
 
-      permissions {
-        canRead
-        canUpdate
-        canDelete
-        canSoftDelete
-      }
       title
       createdAt
       updatedAt

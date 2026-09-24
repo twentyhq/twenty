@@ -1,3 +1,5 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util';
@@ -16,7 +18,7 @@ import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-hi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.43.0', 1790171809805)
+@RegisteredWorkspaceCommand('2.43.0', 1790241041129)
 @Command({
   name: 'upgrade:2-43:enable-common-record-sharing',
   description:
@@ -29,6 +31,7 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     private readonly storage: AgentHistoryStorageService,
     private readonly migrations: WorkspaceMigrationValidateBuildAndRunService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    @InjectDataSource() private readonly dataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -49,12 +52,17 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     { workspaceId, options }: RunOnWorkspaceArgs,
     isEnabled: boolean,
   ): Promise<void> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, featureFlagsMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'featureFlagsMap',
-      ]);
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatFieldMetadataMapsOrm,
+      featureFlagsMap,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatFieldMetadataMapsOrm',
+      'featureFlagsMap',
+    ]);
     const thread =
       flatObjectMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.agentChatThread.universalIdentifier
@@ -90,6 +98,18 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
           workspaceId,
           BillingEntitlementKey.RECORD_SHARING,
         ));
+      await preserveLegacyRecordAccess({
+        manager: this.dataSource.manager,
+        workspaceId,
+        objects: Object.values(
+          flatObjectMetadataMaps.byUniversalIdentifier,
+        ).filter(isDefined),
+        wasRecordSharingEnabled,
+        inheritanceMetadata: {
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+        },
+      });
       // Ownership commits before metadata changes. Retries are idempotent and
       // failure leaves SYSTEM protection intact.
       await this.storage.run(
@@ -100,14 +120,6 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
               'Migrate agent history to workspace storage before enabling common record permissions',
             );
           }
-          await preserveLegacyRecordAccess({
-            manager,
-            workspaceId,
-            objects: Object.values(
-              flatObjectMetadataMaps.byUniversalIdentifier,
-            ).filter(isDefined),
-            wasRecordSharingEnabled,
-          });
           await backfillChatThreadOwnerGrants({
             manager,
             workspaceId,

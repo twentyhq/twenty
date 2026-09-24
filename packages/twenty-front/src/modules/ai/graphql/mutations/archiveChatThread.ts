@@ -5,12 +5,6 @@ export const ARCHIVE_CHAT_THREAD = gql`
     archiveChatThread(id: $id) {
       id
 
-      permissions {
-        canRead
-        canUpdate
-        canDelete
-        canSoftDelete
-      }
       deletedAt
       updatedAt
     }

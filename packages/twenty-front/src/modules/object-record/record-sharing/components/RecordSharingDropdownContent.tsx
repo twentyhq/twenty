@@ -75,7 +75,7 @@ export const RecordSharingDropdownContent = ({
   const canChangeSharing =
     sharing?.viewerAccessLevel === RecordShareAccessLevel.FULL &&
     sharing.permissions.canUpdate;
-  const canAdd = canChangeSharing && sharing?.isEnabled && !saving;
+  const canAdd = canChangeSharing && !saving;
   const availableMembers = currentWorkspaceMembers.filter(
     (member) =>
       !shares.some((share) => share.principalId === member.id) &&
@@ -108,9 +108,7 @@ export const RecordSharingDropdownContent = ({
         isDefined(sharing) && (
           <>
             <StyledDescription>{description}</StyledDescription>
-            {!sharing.isEnabled && canChangeSharing && (
-              <StyledDescription>{t`Sharing is unavailable for this workspace. Existing access is unchanged; you can still remove people and roles.`}</StyledDescription>
-            )}
+            <StyledDescription>{t`Granted access is subject to role and field permissions. Removing a direct share does not remove access provided by roles or related records.`}</StyledDescription>
             {sharing.hasInheritedAccess && (
               <StyledDescription>{t`Access can also come from related records. Removing direct access does not remove inherited access.`}</StyledDescription>
             )}
@@ -181,7 +179,7 @@ export const RecordSharingDropdownContent = ({
                   )}
                 </DropdownMenuItemsContainer>
                 <DropdownMenuSeparator />
-                <DropdownMenuHeader>{t`People and roles with access`}</DropdownMenuHeader>
+                <DropdownMenuHeader>{t`Direct access`}</DropdownMenuHeader>
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {shares
                     .filter(
@@ -250,7 +248,7 @@ export const RecordSharingDropdownContent = ({
                           iconButtons={
                             share.rowCause === RecordShareRowCause.MANUAL ? (
                               <LightIconButton
-                                aria-label={t`Remove ${label}`}
+                                aria-label={t`Remove direct access for ${label}`}
                                 disabled={saving}
                                 onClick={() => {
                                   void setShare({
@@ -274,68 +272,66 @@ export const RecordSharingDropdownContent = ({
                       );
                     })}
                 </DropdownMenuItemsContainer>
-                {sharing.isEnabled && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <MenuItem
-                      text={t`Invite as`}
-                      RightComponent={
-                        <RecordSharingAccessSelect
-                          label={t`Invitation access`}
-                          value={invitationAccessLevel}
-                          disabled={!canAdd}
-                          onChange={setInvitationAccessLevel}
-                        />
-                      }
-                    />
-                    <DropdownMenuSearchInput
-                      value={search}
-                      onChange={(event) => setSearch(event.target.value)}
-                      placeholder={t`Add people or roles`}
-                    />
-                    <DropdownMenuItemsContainer hasMaxHeight>
-                      {availableMembers.length === 0 &&
-                        availableRoles.length === 0 && (
-                          <StyledDescription>{t`No matching people or roles`}</StyledDescription>
-                        )}
-                      {availableMembers.map((member) => (
-                        <RecordSharingAction
-                          key={member.id}
-                          text={
-                            `${member.name.firstName} ${member.name.lastName}`.trim() ||
-                            member.userEmail
-                          }
-                          contextualText={member.userEmail}
-                          LeftIcon={IconUsers}
-                          disabled={!canAdd}
-                          onClick={() => {
-                            void setShare({
-                              principal: { workspaceMemberId: member.id },
-                              enabled: true,
-                              accessLevel: invitationAccessLevel,
-                            });
-                          }}
-                        />
-                      ))}
-                      {availableRoles.map((role) => (
-                        <RecordSharingAction
-                          key={role.id}
-                          text={role.label}
-                          contextualText={t`Role`}
-                          LeftIcon={IconLock}
-                          disabled={!canAdd}
-                          onClick={() => {
-                            void setShare({
-                              principal: { roleId: role.id },
-                              enabled: true,
-                              accessLevel: invitationAccessLevel,
-                            });
-                          }}
-                        />
-                      ))}
-                    </DropdownMenuItemsContainer>
-                  </>
-                )}
+                <>
+                  <DropdownMenuSeparator />
+                  <MenuItem
+                    text={t`Invite as`}
+                    RightComponent={
+                      <RecordSharingAccessSelect
+                        label={t`Invitation access`}
+                        value={invitationAccessLevel}
+                        disabled={!canAdd}
+                        onChange={setInvitationAccessLevel}
+                      />
+                    }
+                  />
+                  <DropdownMenuSearchInput
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    placeholder={t`Add people or roles`}
+                  />
+                  <DropdownMenuItemsContainer hasMaxHeight>
+                    {availableMembers.length === 0 &&
+                      availableRoles.length === 0 && (
+                        <StyledDescription>{t`No matching people or roles`}</StyledDescription>
+                      )}
+                    {availableMembers.map((member) => (
+                      <RecordSharingAction
+                        key={member.id}
+                        text={
+                          `${member.name.firstName} ${member.name.lastName}`.trim() ||
+                          member.userEmail
+                        }
+                        contextualText={member.userEmail}
+                        LeftIcon={IconUsers}
+                        disabled={!canAdd}
+                        onClick={() => {
+                          void setShare({
+                            principal: { workspaceMemberId: member.id },
+                            enabled: true,
+                            accessLevel: invitationAccessLevel,
+                          });
+                        }}
+                      />
+                    ))}
+                    {availableRoles.map((role) => (
+                      <RecordSharingAction
+                        key={role.id}
+                        text={role.label}
+                        contextualText={t`Role`}
+                        LeftIcon={IconLock}
+                        disabled={!canAdd}
+                        onClick={() => {
+                          void setShare({
+                            principal: { roleId: role.id },
+                            enabled: true,
+                            accessLevel: invitationAccessLevel,
+                          });
+                        }}
+                      />
+                    ))}
+                  </DropdownMenuItemsContainer>
+                </>
               </>
             ) : (
               <StyledDescription>{t`Changing sharing requires full access and permission to edit this record.`}</StyledDescription>

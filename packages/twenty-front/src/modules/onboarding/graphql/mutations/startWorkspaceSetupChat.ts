@@ -11,12 +11,6 @@ export const START_WORKSPACE_SETUP_CHAT = gql`
     ) {
       outcome
       thread {
-        permissions {
-          canRead
-          canUpdate
-          canDelete
-          canSoftDelete
-        }
         id
         title
         totalCacheReadTokens

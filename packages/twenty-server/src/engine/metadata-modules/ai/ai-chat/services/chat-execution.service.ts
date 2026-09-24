@@ -376,15 +376,14 @@ export class ChatExecutionService {
       );
     }
 
-    processedMessages = injectMessageTimestamps(
-      processedMessages,
-      userContext.timezone,
-    );
-
     processedMessages = injectChatMessageSenders({
       messages: processedMessages,
       currentUserWorkspaceId: userWorkspaceId,
     });
+    processedMessages = injectMessageTimestamps(
+      processedMessages,
+      userContext.timezone,
+    );
 
     const systemPrompt = buildFullSystemPrompt({
       toolCatalog,

@@ -1,3 +1,4 @@
+import { In } from 'typeorm';
 import { mapAgentHistoryFieldNameToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-field-name-to-workspace.util';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -123,16 +124,27 @@ export class AgentChatSharingService {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
     if (objectMetadata.readability === MetadataReadability.SYSTEM) {
+      const ownedThreads = await this.threadRepository.find(args.workspaceId, {
+        where: {
+          id: In(args.threadIds),
+          userWorkspaceId: args.userWorkspaceId,
+        },
+        select: ['id'],
+      });
+      const ownedThreadIds = new Set(ownedThreads.map(({ id }) => id));
       return new Map(
-        await Promise.all(
-          args.threadIds.map(
-            async (threadId) =>
-              [
-                threadId,
-                await this.getPermissions({ ...args, threadId }),
-              ] as const,
-          ),
-        ),
+        args.threadIds.map((threadId) => {
+          const isOwner = ownedThreadIds.has(threadId);
+          return [
+            threadId,
+            {
+              canRead: isOwner,
+              canUpdate: isOwner,
+              canDelete: isOwner,
+              canSoftDelete: isOwner,
+            },
+          ] as const;
+        }),
       );
     }
     return this.recordSharingService.getPermissionsForRecords({

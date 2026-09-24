@@ -56,6 +56,7 @@ export class ShareWithService {
     recordIds,
     apiKeyRoleMap,
     shareWith,
+    isRecordSharingEnabled,
     transactionScope,
   }: {
     authContext: WorkspaceAuthContext;
@@ -64,6 +65,7 @@ export class ShareWithService {
     apiKeyRoleMap: Record<string, string>;
     shareWith?: ShareWithInput[] | null;
     transactionScope?: WorkspaceTransactionScope;
+    isRecordSharingEnabled: boolean;
   }): Promise<void> {
     const workspaceId = authContext.workspace.id;
 
@@ -83,6 +85,7 @@ export class ShareWithService {
         authContext,
         apiKeyRoleMap,
         shareWith,
+        isRecordSharingEnabled,
       }),
       transactionScope,
     });

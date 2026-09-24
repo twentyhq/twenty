@@ -1,3 +1,4 @@
+import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -55,13 +56,6 @@ jest.mock('@/ai/components/AiChatSharingDropdown', () => ({
 const THREAD: AgentChatThread = {
   __typename: 'AgentChatThread',
   id: 'thread-1',
-
-  permissions: {
-    canRead: true,
-    canUpdate: true,
-    canDelete: true,
-    canSoftDelete: true,
-  },
   title: 'Best leads',
   createdAt: '2026-09-01T00:00:00.000Z',
   updatedAt: '2026-09-01T00:00:00.000Z',
@@ -101,6 +95,12 @@ describe('AiChatPageHeader', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     setThreads([THREAD]);
+    setAgentChatThreadPermissions(jotaiStore, THREAD.id, {
+      canRead: true,
+      canUpdate: true,
+      canDelete: true,
+      canSoftDelete: true,
+    });
     jotaiStore.set(currentAiChatThreadState.atom, THREAD.id);
     renameChatThread.mockResolvedValue(true);
   });
@@ -118,18 +118,12 @@ describe('AiChatPageHeader', () => {
   );
 
   it('hides rename and mutation actions from shared viewers', () => {
-    setThreads([
-      {
-        ...THREAD,
-
-        permissions: {
-          canRead: true,
-          canUpdate: false,
-          canDelete: false,
-          canSoftDelete: false,
-        },
-      },
-    ]);
+    setAgentChatThreadPermissions(jotaiStore, THREAD.id, {
+      canRead: true,
+      canUpdate: false,
+      canDelete: false,
+      canSoftDelete: false,
+    });
     render(<AiChatPageHeader />, { wrapper: Wrapper });
     expect(screen.getByText('Best leads')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Share' })).toBeVisible();

@@ -251,6 +251,113 @@ describe('Generic sharing API on an ordinary private object', () => {
     await setFlag(originalFlag);
   });
 
+  it('retains shared workspace access for flag-off creates and prevents manual revocation of that managed default', async () => {
+    await setFlag(false);
+    const recordId = randomUUID();
+    const created = await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: OBJECT_NAME,
+        gqlFields: 'id',
+        data: { id: recordId, name: 'Legacy shared default' },
+      }),
+    );
+    expect(created.body.errors).toBeUndefined();
+    const recordTarget = { objectMetadataId, recordId };
+    try {
+      const readSettings = () =>
+        makeMetadataAPIRequest(
+          { query: READ_SHARING, variables: { target: recordTarget } },
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        );
+      expect((await readSettings()).body.data.recordSharing).toMatchObject({
+        permissions: { canRead: true, canUpdate: true },
+        shares: expect.arrayContaining([
+          expect.objectContaining({
+            principalId: EVERYONE_PRINCIPAL_ID,
+            rowCause: 'APPLICATION',
+            accessLevel: 'FULL',
+          }),
+        ]),
+      });
+      const revoke = await makeMetadataAPIRequest(
+        {
+          query: SET_SHARE,
+          variables: {
+            target: recordTarget,
+            principal: { everyone: true },
+            enabled: false,
+          },
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(revoke.body.errors).toBeUndefined();
+      expect(
+        (await readSettings()).body.data.recordSharing.permissions.canRead,
+      ).toBe(true);
+    } finally {
+      await makeGraphqlAPIRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: OBJECT_NAME,
+          objectMetadataPluralName: OBJECT_PLURAL,
+          gqlFields: 'id',
+          filter: { id: { eq: recordId } },
+        }),
+      );
+      await setFlag(true);
+    }
+  });
+
+  it('batches effective permissions without exposing absent or inaccessible records', async () => {
+    const missingTarget = { objectMetadataId, recordId: randomUUID() };
+    const foreignTarget = {
+      objectMetadataId: randomUUID(),
+      recordId: RECORD_ID,
+    };
+    const query = () =>
+      makeMetadataAPIRequest(
+        {
+          query: parse(
+            `query Permissions($targets: [RecordPermissionsTargetInput!]!) { recordPermissions(targets: $targets) { objectMetadataId recordId permissions { canRead canUpdate canDelete canSoftDelete } } }`,
+          ),
+          variables: { targets: [target(), missingTarget, foreignTarget] },
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+    const denied = {
+      canRead: false,
+      canUpdate: false,
+      canDelete: false,
+      canSoftDelete: false,
+    };
+    const initial = await query();
+    expect(initial.body.errors).toBeUndefined();
+    expect(initial.body.data.recordPermissions).toEqual(
+      [target(), missingTarget, foreignTarget].map((record) => ({
+        ...record,
+        permissions: denied,
+      })),
+    );
+    await grant(RecordShareAccessLevel.READ_WRITE);
+    const granted = await query();
+    expect(granted.body.errors).toBeUndefined();
+    expect(granted.body.data.recordPermissions).toEqual([
+      {
+        ...target(),
+        permissions: { ...denied, canRead: true, canUpdate: true },
+      },
+      { ...missingTarget, permissions: denied },
+      { ...foreignTarget, permissions: denied },
+    ]);
+    await setRoleUpdate(false);
+    try {
+      expect(
+        (await query()).body.data.recordPermissions[0].permissions,
+      ).toEqual({ ...denied, canRead: true });
+    } finally {
+      await setRoleUpdate(true);
+    }
+  });
+
   it('matches ordinary read permissions and hides sharing audience from viewers', async () => {
     expect((await read()).body.data[OBJECT_PLURAL].edges).toEqual([]);
     expect((await settings()).body.errors).toBeDefined();
@@ -619,7 +726,9 @@ describe('Generic sharing API on an ordinary private object', () => {
         `SELECT "accessLevel", "rowCause" FROM ${schema}."recordShare" WHERE "objectMetadataId" = $1 AND "recordId" = $2 AND "principalId" = $3`,
         [objectMetadataId, RECORD_ID, EVERYONE_PRINCIPAL_ID],
       );
-      expect(grants).toEqual([{ accessLevel: 'FULL', rowCause: 'MANUAL' }]);
+      expect(grants).toEqual([
+        { accessLevel: 'FULL', rowCause: 'APPLICATION' },
+      ]);
       const newId = randomUUID();
       await runner.query(
         `INSERT INTO ${schema}.${escapeIdentifier(computeObjectTargetTable(object))} (id, "createdByName", "createdBySource", "updatedByName", "updatedBySource") SELECT $1, "createdByName", "createdBySource", "updatedByName", "updatedBySource" FROM ${schema}.${escapeIdentifier(computeObjectTargetTable(object))} record WHERE id = $2`,

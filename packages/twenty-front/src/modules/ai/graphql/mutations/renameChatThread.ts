@@ -5,12 +5,6 @@ export const RENAME_CHAT_THREAD = gql`
     renameChatThread(id: $id, title: $title) {
       id
 
-      permissions {
-        canRead
-        canUpdate
-        canDelete
-        canSoftDelete
-      }
       title
       updatedAt
     }

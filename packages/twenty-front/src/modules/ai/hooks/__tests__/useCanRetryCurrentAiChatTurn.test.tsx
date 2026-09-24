@@ -1,3 +1,4 @@
+import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -6,7 +7,6 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
 import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 import {
@@ -43,21 +43,11 @@ describe('Shared chat execution controls', () => {
   ])(
     'uses normal update permission (%s) and the saved sender (%s) for retries',
     (canUpdate, senderUserWorkspaceId, expected) => {
-      const threads = [
-        {
-          id: 'thread',
-          permissions: {
-            canRead: true,
-            canUpdate,
-            canDelete: false,
-            canSoftDelete: false,
-          },
-        },
-      ];
-      jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
-        current: threads,
-        draft: threads,
-        status: 'up-to-date',
+      setAgentChatThreadPermissions(jotaiStore, 'thread', {
+        canRead: true,
+        canUpdate,
+        canDelete: false,
+        canSoftDelete: false,
       });
       jotaiStore.set(
         agentChatMessagesComponentFamilyState.atomFamily({

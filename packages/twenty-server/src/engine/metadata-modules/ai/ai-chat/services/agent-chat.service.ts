@@ -94,11 +94,6 @@ export class AgentChatService {
             after: serializeAgentChatThreadForBroadcast({
               thread: savedThread,
               lastMessageAt: null,
-              permissions: await this.sharingService.getPermissions({
-                workspaceId,
-                userWorkspaceId,
-                threadId: savedThread.id,
-              }),
             }),
           },
         },
@@ -201,7 +196,6 @@ export class AgentChatService {
         ? [
             {
               ...thread,
-              permissions: permissionsByThreadId.get(thread.id),
               lastMessageAt: rankedThread.last_message_at ?? null,
             },
           ]
@@ -1037,12 +1031,6 @@ export class AgentChatService {
       operationType: 'delete',
     });
 
-    const permissions = await this.sharingService.getPermissions({
-      workspaceId,
-      userWorkspaceId,
-      threadId,
-    });
-
     const deleted = await this.sharingService.deleteThreadWithShares({
       workspaceId,
       threadId,
@@ -1068,7 +1056,6 @@ export class AgentChatService {
             before: serializeAgentChatThreadForBroadcast({
               thread,
               lastMessageAt: null,
-              permissions,
             }),
           },
         },
@@ -1175,7 +1162,6 @@ export class AgentChatService {
             after: serializeAgentChatThreadForBroadcast({
               thread,
               lastMessageAt,
-              permissions,
             }),
           },
         },

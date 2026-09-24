@@ -1,3 +1,4 @@
+import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -6,7 +7,6 @@ import { type ReactNode } from 'react';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -35,26 +35,18 @@ describe('Shared conversation composer', () => {
   it.each([false, undefined])(
     'keeps the composer read-only without update permission (%s)',
     (canUpdate) => {
-      const threads =
+      setAgentChatThreadPermissions(
+        jotaiStore,
+        'shared-thread',
         canUpdate === undefined
-          ? []
-          : [
-              {
-                id: 'shared-thread',
-
-                permissions: {
-                  canRead: true,
-                  canUpdate,
-                  canDelete: false,
-                  canSoftDelete: false,
-                },
-              },
-            ];
-      jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
-        current: threads,
-        draft: threads,
-        status: 'up-to-date',
-      });
+          ? undefined
+          : {
+              canRead: true,
+              canUpdate,
+              canDelete: false,
+              canSoftDelete: false,
+            },
+      );
       render(<AiChatEditorSection />, { wrapper: Wrapper });
       expect(screen.getByRole('status')).toHaveTextContent(
         canUpdate === undefined
@@ -65,4 +57,18 @@ describe('Shared conversation composer', () => {
       expect(useAiChatEditor).not.toHaveBeenCalled();
     },
   );
+  it('shows unavailable rather than loading after access is revoked in either chat surface', () => {
+    setAgentChatThreadPermissions(jotaiStore, 'shared-thread', {
+      canRead: false,
+      canUpdate: false,
+      canDelete: false,
+      canSoftDelete: false,
+    });
+    render(<AiChatEditorSection />, { wrapper: Wrapper });
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'This conversation is no longer available.',
+    );
+    expect(screen.queryByText('Loading conversation…')).toBeNull();
+    expect(useAiChatEditor).not.toHaveBeenCalled();
+  });
 });

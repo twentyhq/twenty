@@ -1,7 +1,8 @@
+import { isLegacyRecordAccessOpen } from 'src/engine/core-modules/record-share/utils/is-legacy-record-access-open.util';
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { type ObjectRecord } from 'twenty-shared/types';
+import { MetadataReadability, type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { In } from 'typeorm';
@@ -159,7 +160,21 @@ export class RecordAccessPolicyService {
     fetchRecordShares: FetchRecordShares,
   ): Promise<Set<string>> {
     const { objectMetadata, snapshots, subject } = evaluation;
+    const legacyContext =
+      objectMetadata.readability === MetadataReadability.SYSTEM ||
+      objectMetadata.readability === MetadataReadability.OPEN
+        ? undefined
+        : await this.workspaceCacheService.getOrRecompute(
+            evaluation.workspaceId,
+            [
+              'flatObjectMetadataMaps',
+              'featureFlagsMap',
+              'billingEntitlements',
+            ],
+          );
     const gateKind = resolveRecordShareGateKind({
+      isLegacyRecordAccessOpen:
+        isDefined(legacyContext) && isLegacyRecordAccessOpen(legacyContext),
       readability: objectMetadata.readability,
       isOwningApplication: subject.isOwningApplication(objectMetadata),
     });

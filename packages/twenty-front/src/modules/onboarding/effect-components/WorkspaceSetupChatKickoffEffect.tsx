@@ -1,3 +1,4 @@
+import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
@@ -28,6 +29,8 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     StartWorkspaceSetupChatDocument,
   );
   const store = useStore();
+  const { refreshAgentChatThreadPermissions } =
+    useRefreshAgentChatThreadPermissions();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const isCompanyEnrichmentFetchInFlight = useAtomStateValue(
     isCompanyEnrichmentFetchInFlightState,
@@ -88,7 +91,6 @@ export const WorkspaceSetupChatKickoffEffect = () => {
 
         const workspaceSetupThread: FlatAgentChatThread = {
           id: thread.id,
-          permissions: thread.permissions,
 
           title: thread.title ?? null,
           createdAt: thread.createdAt,
@@ -104,6 +106,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
 
         addToDraft({ key: 'agentChatThreads', items: [workspaceSetupThread] });
         applyChanges();
+        void refreshAgentChatThreadPermissions([thread.id]);
 
         store.set(
           currentAiChatThreadTitleComponentFamilyState.atomFamily({
@@ -136,6 +139,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     void startWorkspaceSetupChat();
   }, [
     startWorkspaceSetupChatMutation,
+    refreshAgentChatThreadPermissions,
     store,
     addToDraft,
     applyChanges,

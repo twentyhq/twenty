@@ -1,3 +1,5 @@
+import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { AiChatSharingDropdown } from '@/ai/components/AiChatSharingDropdown';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -64,6 +66,10 @@ export const AiChatPageThreadHeader = ({
   thread,
 }: AiChatPageThreadHeaderProps) => {
   const { t } = useLingui();
+  const permissions = useAtomFamilySelectorValue(
+    agentChatThreadPermissionsFamilySelector,
+    thread.id,
+  );
   const { switchToNewChat } = useSwitchToNewAiChat();
   const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
     currentAiChatThreadTitleComponentFamilyState,
@@ -117,15 +123,13 @@ export const AiChatPageThreadHeader = ({
           />
         ) : (
           <StyledTitleDisplay
-            role={thread.permissions.canUpdate ? 'button' : undefined}
-            tabIndex={thread.permissions.canUpdate ? 0 : undefined}
-            aria-label={
-              thread.permissions.canUpdate ? t`Rename chat` : undefined
-            }
-            onClick={thread.permissions.canUpdate ? startRename : undefined}
+            role={permissions?.canUpdate ? 'button' : undefined}
+            tabIndex={permissions?.canUpdate ? 0 : undefined}
+            aria-label={permissions?.canUpdate ? t`Rename chat` : undefined}
+            onClick={permissions?.canUpdate ? startRename : undefined}
             onKeyDown={(event) => {
               if (
-                thread.permissions.canUpdate &&
+                permissions?.canUpdate &&
                 (event.key === Key.Enter || event.key === ' ')
               ) {
                 event.preventDefault();

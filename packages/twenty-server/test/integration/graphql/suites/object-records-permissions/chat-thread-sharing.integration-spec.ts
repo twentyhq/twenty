@@ -2,7 +2,7 @@ import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-ch
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790171809805-enable-common-record-sharing.command';
+import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790241041129-enable-common-record-sharing.command';
 import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { randomUUID } from 'node:crypto';
@@ -32,9 +32,31 @@ jest.mock(
   () => ({ WorkspaceMigrationValidateBuildAndRunService: class {} }),
 );
 
-const READ_THREAD = parse(`query ReadSharedThread($id: UUID!) {
-  chatThread(id: $id) { id title permissions { canRead canUpdate canDelete canSoftDelete } }
+const READ_THREAD =
+  parse(`query ReadSharedThread($id: UUID!, $objectMetadataId: UUID!) {
+  chatThread(id: $id) { id title }
+  recordPermissions(targets: [{ objectMetadataId: $objectMetadataId, recordId: $id }]) { permissions { canRead canUpdate canDelete canSoftDelete } }
 }`);
+const readThread = async (
+  id: string,
+  token: string | null = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+) => {
+  const cache = getAppProviderByClassName<WorkspaceCacheService>(
+    'WorkspaceCacheService',
+  );
+  const { flatObjectMetadataMaps } = await cache.getOrRecompute(
+    SEED_APPLE_WORKSPACE_ID,
+    ['flatObjectMetadataMaps'],
+  );
+  const objectMetadataId =
+    flatObjectMetadataMaps.byUniversalIdentifier[
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier
+    ]!.id;
+  return makeMetadataAPIRequest(
+    { query: READ_THREAD, variables: { id, objectMetadataId } },
+    token,
+  );
+};
 const SET_SHARE =
   parse(`mutation SetThreadShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) {
   setRecordShare(target: $target, principal: $principal, enabled: $enabled, accessLevel: $accessLevel) { isEnabled }
@@ -91,11 +113,7 @@ describe('Conversation sharing through the authenticated API', () => {
         id: threadId,
         title: 'Private sharing regression',
       });
-      const read = () =>
-        makeMetadataAPIRequest(
-          { query: READ_THREAD, variables: { id: threadId } },
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        );
+      const read = () => readThread(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN);
       const changeShare = (enabled: boolean) =>
         makeMetadataAPIRequest({
           query: SET_SHARE,
@@ -118,9 +136,8 @@ describe('Conversation sharing through the authenticated API', () => {
         expect((await changeShare(true)).body.errors).toBeUndefined();
         const readable = await read();
         expect(readable.body.errors).toBeUndefined();
-        expect(readable.body.data.chatThread).toMatchObject({
-          id: threadId,
-
+        expect(readable.body.data.chatThread.id).toBe(threadId);
+        expect(readable.body.data.recordPermissions[0]).toMatchObject({
           permissions: {
             canRead: true,
             canUpdate: false,
@@ -187,10 +204,7 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(grantAsViewer.body.errors[0].extensions.code).toBe('NOT_FOUND');
-        const anonymous = await makeMetadataAPIRequest(
-          { query: READ_THREAD, variables: { id: threadId } },
-          null,
-        );
+        const anonymous = await readThread(threadId, null);
         expect(anonymous.body.errors).toBeDefined();
         expect((await changeShare(false)).body.errors).toBeUndefined();
         expect((await read()).body.errors[0].extensions.code).toBe('NOT_FOUND');
@@ -266,12 +280,12 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
         ).toBeUndefined();
-        const readable = await makeMetadataAPIRequest(
-          { query: READ_THREAD, variables: { id: threadId } },
+        const readable = await readThread(
+          threadId,
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(readable.body.errors).toBeUndefined();
-        expect(readable.body.data.chatThread).toMatchObject({
+        expect(readable.body.data.recordPermissions[0]).toMatchObject({
           permissions: {
             canRead: true,
             canUpdate: true,
@@ -378,13 +392,13 @@ describe('Conversation sharing through the authenticated API', () => {
           (await grant(RecordShareAccessLevel.READ)).body.errors,
         ).toBeUndefined();
         await expect(actors.authorizeJob(job)).rejects.toBeDefined();
-        const downgraded = await makeMetadataAPIRequest(
-          { query: READ_THREAD, variables: { id: threadId } },
+        const downgraded = await readThread(
+          threadId,
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
-        expect(downgraded.body.data.chatThread.permissions.canUpdate).toBe(
-          false,
-        );
+        expect(
+          downgraded.body.data.recordPermissions[0].permissions.canUpdate,
+        ).toBe(false);
       } finally {
         await chat.hardDeleteThread({ ...owner, threadId });
         await updateFeatureFlag({
@@ -414,6 +428,7 @@ describe('Conversation sharing through the authenticated API', () => {
       getAppProviderByClassName<BillingSubscriptionService>(
         'BillingSubscriptionService',
       ),
+      global.testDataSource,
     );
     const workspaceId = SEED_APPLE_WORKSPACE_ID;
     const owner = {
@@ -432,14 +447,7 @@ describe('Conversation sharing through the authenticated API', () => {
     });
     try {
       await command.down(options);
-      expect(
-        (
-          await makeMetadataAPIRequest({
-            query: READ_THREAD,
-            variables: { id: owner.threadId },
-          })
-        ).body.errors,
-      ).toBeUndefined();
+      expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
       await command.up(options);
       await command.up(options);
       await updateFeatureFlag({
@@ -447,12 +455,9 @@ describe('Conversation sharing through the authenticated API', () => {
         value: false,
         expectToFail: false,
       });
-      const readable = await makeMetadataAPIRequest({
-        query: READ_THREAD,
-        variables: { id: owner.threadId },
-      });
+      const readable = await readThread(owner.threadId);
       expect(readable.body.errors).toBeUndefined();
-      expect(readable.body.data.chatThread.permissions).toEqual({
+      expect(readable.body.data.recordPermissions[0].permissions).toEqual({
         canRead: true,
         canUpdate: true,
         canDelete: true,
@@ -477,14 +482,7 @@ describe('Conversation sharing through the authenticated API', () => {
         ),
       ).toBe(true);
       await chatService.unarchiveThread(owner);
-      expect(
-        (
-          await makeMetadataAPIRequest({
-            query: READ_THREAD,
-            variables: { id: owner.threadId },
-          })
-        ).body.errors,
-      ).toBeUndefined();
+      expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
     } finally {
       await command.up(options);
       await chatService.hardDeleteThread(owner);
@@ -544,15 +542,12 @@ describe('Conversation sharing through the authenticated API', () => {
         title: 'Collaborative rename',
         userWorkspaceId: owner.userWorkspaceId,
       });
-      const writerView = await makeMetadataAPIRequest(
-        {
-          query: READ_THREAD,
-          variables: { id: owner.threadId },
-        },
+      const writerView = await readThread(
+        owner.threadId,
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
       expect(writerView.body.errors).toBeUndefined();
-      expect(writerView.body.data.chatThread).toMatchObject({
+      expect(writerView.body.data.recordPermissions[0]).toMatchObject({
         permissions: { canUpdate: true },
       });
       await expect(chat.getThreadById(writer)).resolves.toMatchObject({

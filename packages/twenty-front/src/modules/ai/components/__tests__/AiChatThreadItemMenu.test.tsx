@@ -1,3 +1,4 @@
+import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -9,7 +10,6 @@ import { IconDotsVertical } from 'twenty-ui/icon';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 const archiveChatThread = jest.fn();
@@ -50,20 +50,11 @@ it.each([
     const onRowClick = jest.fn();
     archiveChatThread.mockReturnValue(new Promise(() => {}));
     const store = createStore();
-    store.set(metadataStoreState.atomFamily('agentChatThreads'), {
-      current: [
-        {
-          id: 'thread-archive',
-          permissions: {
-            canRead: true,
-            canUpdate: false,
-            canDelete: false,
-            canSoftDelete: true,
-          },
-        },
-      ],
-      draft: [],
-      status: 'up-to-date',
+    setAgentChatThreadPermissions(store, 'thread-archive', {
+      canRead: true,
+      canUpdate: false,
+      canDelete: false,
+      canSoftDelete: true,
     });
 
     render(

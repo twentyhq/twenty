@@ -214,6 +214,12 @@ export class AgentChatStreamingService {
         workspaceId: workspace.id,
       });
 
+      await this.eventPublisherService.publish({
+        workspaceId: workspace.id,
+        threadId,
+        event: { type: 'message-persisted', messageId: savedUserMessage.id },
+      });
+
       await this.agentChatService.notifyThreadActivityUpdated({
         threadId,
         userWorkspaceId,

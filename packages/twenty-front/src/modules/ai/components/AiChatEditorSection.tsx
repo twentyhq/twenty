@@ -225,7 +225,9 @@ export const AiChatEditorSection = () => {
         <div role="status">
           {access === 'loading'
             ? t`Loading conversation…`
-            : t`View only — You can read this conversation.`}
+            : access === 'unavailable'
+              ? t`This conversation is no longer available.`
+              : t`View only — You can read this conversation.`}
         </div>
         <AiChatStandaloneError />
       </StyledInputArea>

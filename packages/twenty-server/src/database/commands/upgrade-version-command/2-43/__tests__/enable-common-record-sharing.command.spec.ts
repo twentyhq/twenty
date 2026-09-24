@@ -6,7 +6,7 @@ import {
   MetadataWritability,
 } from 'twenty-shared/types';
 
-import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790171809805-enable-common-record-sharing.command';
+import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790241041129-enable-common-record-sharing.command';
 import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
 
 jest.mock(
@@ -67,6 +67,7 @@ const buildCommand = () => {
     storage as never,
     migrations as never,
     billing as never,
+    { manager: context.manager } as never,
   );
   return { command, storage, migrations, context, maps, billing };
 };
@@ -159,6 +160,7 @@ describe('Common sharing upgrade', () => {
     await expect(command.up(args)).rejects.toThrow(
       'Migrate agent history to workspace storage',
     );
+    expect(preserveLegacyRecordAccess).toHaveBeenCalled();
     expect(backfillChatThreadOwnerGrants).not.toHaveBeenCalled();
     expect(
       migrations.validateBuildAndRunLegacyWorkspaceMigration,

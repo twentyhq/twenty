@@ -345,3 +345,30 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
     });
   });
 });
+
+it.each([
+  userAuthContext,
+  apiKeyAuthContext,
+  applicationAuthContext,
+  systemAuthContext,
+])(
+  'preserves flag-off shared access for $type creates without invitations',
+  (authContext) => {
+    const rows = buildRecordShareInputsForCreatedRecords({
+      recordIds: ['record'],
+      objectMetadataId: OBJECT_METADATA_ID,
+      authContext,
+      apiKeyRoleMap,
+      isRecordSharingEnabled: false,
+    });
+    expect(rows).toContainEqual({
+      recordId: 'record',
+      objectMetadataId: OBJECT_METADATA_ID,
+      principalId: EVERYONE_PRINCIPAL_ID,
+      principalType: RecordSharePrincipalType.EVERYONE,
+      accessLevel: RecordShareAccessLevel.FULL,
+      rowCause: RecordShareRowCause.APPLICATION,
+      sourceId: OBJECT_METADATA_ID,
+    });
+  },
+);

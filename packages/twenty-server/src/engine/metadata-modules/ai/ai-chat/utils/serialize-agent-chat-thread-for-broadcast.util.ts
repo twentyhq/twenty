@@ -1,18 +1,14 @@
-import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 export const serializeAgentChatThreadForBroadcast = ({
   thread,
   lastMessageAt,
-  permissions,
 }: {
   thread: AgentChatThreadEntity;
   lastMessageAt: Date | null;
-  permissions: RecordPermissionsDTO;
 }) => ({
   id: thread.id,
-  permissions,
 
   title: thread.title,
   totalInputTokens: thread.totalInputTokens,

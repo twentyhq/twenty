@@ -141,35 +141,6 @@ describe('Record sharing', () => {
     });
   });
 
-  it('allows revocation while sharing is disabled', async () => {
-    const user = userEvent.setup();
-    renderSharing({
-      sharing: {
-        ...sharing,
-        isEnabled: false,
-        shares: [
-          {
-            id: 'grant',
-            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-            principalId: 'alice-member',
-            accessLevel: 'READ',
-            rowCause: 'MANUAL',
-          },
-        ],
-      },
-    });
-    expect(screen.queryByPlaceholderText('Add people or roles')).toBeNull();
-    await user.click(screen.getByText('Everyone in the workspace'));
-    expect(setShare).not.toHaveBeenCalled();
-    await user.click(
-      screen.getByRole('button', { name: 'Remove Alice Smith' }),
-    );
-    expect(setShare).toHaveBeenCalledWith({
-      principal: { workspaceMemberId: 'alice-member' },
-      enabled: false,
-    });
-  });
-
   it.each([
     [RecordShareAccessLevel.READ, false],
     [RecordShareAccessLevel.READ_WRITE, true],

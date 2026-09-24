@@ -95,6 +95,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
+    AgentChatSharingService,
     AgentChatService,
     AgentChatStreamingService,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),

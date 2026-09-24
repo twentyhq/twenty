@@ -65,7 +65,13 @@ describe('mandatory event visibility', () => {
     async (rowCause) => {
       const service = new RecordAccessPolicyService(
         {} as never,
-        {} as never,
+        {
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+            featureFlagsMap: {},
+            billingEntitlements: {},
+          }),
+        } as never,
         {
           findByRecordIds: jest.fn().mockResolvedValue([
             {

@@ -29,6 +29,7 @@ export type RowAccessPolicySubject = {
 };
 
 export type RowAccessPolicyEnvironment = {
+  isLegacyRecordAccessOpen?: boolean;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   recordShareTableExpression: string;
