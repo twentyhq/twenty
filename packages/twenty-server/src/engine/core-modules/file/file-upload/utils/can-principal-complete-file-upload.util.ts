@@ -18,5 +18,8 @@ export const canPrincipalCompleteFileUpload = ({
     return file.status === FILE_STATUS.PENDING;
   }
 
-  return isSameFileUploadPrincipal(uploadPrincipal, principal);
+  return isSameFileUploadPrincipal({
+    initiator: uploadPrincipal,
+    caller: principal,
+  });
 };
