@@ -1,9 +1,9 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
 import { findFrontComponent } from 'test/integration/metadata/suites/front-component/utils/find-front-component.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
@@ -74,30 +74,25 @@ describe('Front component read with token pair should fail', () => {
 
     jestExpectToBeDefined(otherApplication);
 
-    const [
-      { data: otherTokenData },
-      { data: owningTokenData },
-      owningUnboundTokenPair,
-    ] = await Promise.all([
-      generateApplicationToken({
-        applicationId: otherApplication.id,
-        expectToFail: false,
-      }),
-      generateApplicationToken({
-        applicationId: owningApplicationId,
-        expectToFail: false,
-      }),
-      generateApplicationTokenPair({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        applicationId: owningApplicationId,
-      }),
-    ]);
+    const [otherTokenPair, owningTokenPair, owningUnboundTokenPair] =
+      await Promise.all([
+        generateAppleAdminApplicationTokenPair({
+          applicationId: otherApplication.id,
+        }),
+        generateAppleAdminApplicationTokenPair({
+          applicationId: owningApplicationId,
+        }),
+        generateApplicationTokenPair({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: owningApplicationId,
+        }),
+      ]);
 
     globalTestContext = {
       otherApplicationUserBoundToken:
-        otherTokenData.generateApplicationToken.applicationAccessToken.token,
+        otherTokenPair.applicationAccessToken.token,
       owningApplicationUserBoundToken:
-        owningTokenData.generateApplicationToken.applicationAccessToken.token,
+        owningTokenPair.applicationAccessToken.token,
       owningApplicationUnboundToken:
         owningUnboundTokenPair.applicationAccessToken.token,
     };

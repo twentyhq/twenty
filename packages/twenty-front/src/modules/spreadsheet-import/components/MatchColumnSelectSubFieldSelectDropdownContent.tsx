@@ -1,9 +1,8 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
 import { getSubFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportGetSubFieldOptions';
 import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -12,8 +11,9 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useState } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const MatchColumnSelectSubFieldSelectDropdownContent = ({
   fieldMetadataItem,

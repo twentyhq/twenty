@@ -8,8 +8,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { useUpdateStepFilterFromVariable } from '@/workflow/workflow-steps/filters/hooks/useUpdateStepFilterFromVariable';
+import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
@@ -22,8 +22,8 @@ import { getWorkflowVariableRecordObjectDisplay } from '@/workflow/workflow-vari
 import { useLingui } from '@lingui/react/macro';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowDropdownStepOutputItemsProps = {

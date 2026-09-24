@@ -6,31 +6,21 @@ export const ensureAppRegistration = async (
   apiService: ApiService,
   configService: ConfigService,
   app: { name: string; universalIdentifier: string },
-): Promise<{
-  clientId: string;
-  clientSecret?: string;
-  isNewRegistration: boolean;
-}> => {
+): Promise<{ isNewRegistration: boolean }> => {
   const createResult = await apiService.createApplicationRegistration({
     name: app.name,
     universalIdentifier: app.universalIdentifier,
   });
 
   if (createResult.success) {
-    const { applicationRegistration, clientSecret } = createResult.data;
+    const { applicationRegistration } = createResult.data;
 
     await configService.setConfig({
       appRegistrationId: applicationRegistration.id,
       appRegistrationClientId: applicationRegistration.oAuthClientId,
-      appAccessToken: undefined,
-      appRefreshToken: undefined,
     });
 
-    return {
-      clientId: applicationRegistration.oAuthClientId,
-      clientSecret,
-      isNewRegistration: true,
-    };
+    return { isNewRegistration: true };
   }
 
   const isAlreadyClaimed = hasGraphQLErrorSubCode(
@@ -64,16 +54,7 @@ export const ensureAppRegistration = async (
   await configService.setConfig({
     appRegistrationId: registration.id,
     appRegistrationClientId: registration.oAuthClientId,
-    appAccessToken: undefined,
-    appRefreshToken: undefined,
   });
 
-  // The registration may be a catalog-synced npm app owned by another (or no)
-  // workspace, so rotating its shared client secret is neither allowed nor
-  // desirable. Dev mode mints workspace-scoped app tokens via the
-  // generateApplicationToken mutation instead.
-  return {
-    clientId: registration.oAuthClientId,
-    isNewRegistration: false,
-  };
+  return { isNewRegistration: false };
 };

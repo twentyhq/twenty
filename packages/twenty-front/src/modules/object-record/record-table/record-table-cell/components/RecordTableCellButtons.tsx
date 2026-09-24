@@ -1,11 +1,11 @@
+import { AnimatedContainer } from '@/ui/layout/animation/components/internal/AnimatedContainer/AnimatedContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
-import { LightIconButton } from 'twenty-ui/components';
-import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedContainer } from 'twenty-ui/primitives/layout';
 
 const StyledButtonContainer = styled.div`
   /* Buttons stay concentric with the frame: its radius minus the 1px border.

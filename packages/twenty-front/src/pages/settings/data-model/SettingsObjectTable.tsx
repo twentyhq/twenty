@@ -8,8 +8,6 @@ import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
 import {
   SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH,
@@ -21,7 +19,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -30,9 +30,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { SettingsRow } from 'twenty-ui/components';
+import { SearchInput, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/primitives/input';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,

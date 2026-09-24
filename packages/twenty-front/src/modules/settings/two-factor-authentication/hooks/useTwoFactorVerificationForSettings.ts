@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useTwoFactorVerificationForSettings = () => {

@@ -70,6 +70,16 @@ export const APPLICATION_FRAGMENT = gql`
       createdAt
       updatedAt
     }
+    settingsMenuItems {
+      id
+      universalIdentifier
+      applicationId
+      frontComponentId
+      title
+      icon
+      position
+      scope
+    }
     objects {
       ...ObjectMetadataFields
     }

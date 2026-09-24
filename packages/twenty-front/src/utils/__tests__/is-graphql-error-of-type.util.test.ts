@@ -13,15 +13,17 @@ describe('isGraphqlErrorOfType', () => {
   it('matches a subCode from an Apollo GraphQL error', () => {
     const error = createCombinedGraphQLError([
       {
-        message: 'Credits exhausted',
+        message: 'No active subscription',
         extensions: {
           code: 'FORBIDDEN',
-          subCode: 'BILLING_CREDITS_EXHAUSTED',
+          subCode: 'BILLING_SUBSCRIPTION_INACTIVE',
         },
       },
     ]);
 
-    expect(isGraphqlErrorOfType(error, 'BILLING_CREDITS_EXHAUSTED')).toBe(true);
+    expect(isGraphqlErrorOfType(error, 'BILLING_SUBSCRIPTION_INACTIVE')).toBe(
+      true,
+    );
   });
 
   it('matches the GraphQL code when no subCode is present', () => {

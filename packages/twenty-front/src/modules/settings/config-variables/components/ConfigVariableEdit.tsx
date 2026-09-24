@@ -4,9 +4,8 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Dispatch, type SetStateAction, useState } from 'react';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

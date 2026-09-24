@@ -23,6 +23,7 @@ export enum MessageQueue {
   deleteCascadeQueue = 'delete-cascade-queue',
   logicFunctionQueue = 'logic-function-queue',
   applicationLifecycleHookQueue = 'application-lifecycle-hook-queue',
+  applicationUpgradeQueue = 'application-upgrade-queue',
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
   aiStreamQueue = 'ai-stream-queue',

@@ -35,6 +35,7 @@
     "scripts/generateDocsData.ts",
     "docs/**/*.ts",
     "scripts/checkDocsExamples.ts",
-    "scripts/checkOptionalDependencies.ts"
+    "scripts/checkOptionalDependencies.ts",
+    "scripts/checkModuleOwnership.ts"
   ]
 }

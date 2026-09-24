@@ -5,7 +5,7 @@ import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCo
 import { useValidateCoreWorkflowVersion } from '@/object-core/workflows/hooks/useValidateCoreWorkflowVersion';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -18,6 +18,7 @@ import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRou
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useCoreWorkflowShowPageResource } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageResource';
+import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -50,17 +51,30 @@ const CoreWorkflowShowContent = ({
 }) => {
   const client = useApolloCoreClient();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { record, coreWorkflow, loading, error } =
+  const { record, coreWorkflow, loading, error, refetch } =
     useCoreWorkflowShowPageResource({
       coreWorkflowId,
     });
   const versions = useCoreWorkflowVersions(coreWorkflowId);
+  const { refetchCoreWorkflowVersions } = versions;
+
+  const refetchCoreWorkflowAndVersions = useCallback(() => {
+    void refetch();
+    void refetchCoreWorkflowVersions();
+  }, [refetch, refetchCoreWorkflowVersions]);
+
+  useListenToCoreWorkflowEvents({
+    coreWorkflowId,
+    refetch: refetchCoreWorkflowAndVersions,
+  });
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [editedName, setEditedName] = useState<string>();
   const requestedVersionId = searchParams.get('version');
-  const currentVersion = getWorkflowCurrentVersion(
-    versions.coreWorkflowVersions,
-  );
+  const currentVersion = getWorkflowCurrentVersion({
+    versions: versions.coreWorkflowVersions,
+    lastPublishedVersionId: coreWorkflow?.lastPublishedCoreWorkflowVersionId,
+  });
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;

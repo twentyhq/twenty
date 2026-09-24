@@ -6,6 +6,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
 import { CancelMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign.input';
 import { CancelMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign-output.dto';
@@ -17,8 +18,14 @@ import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-do
 import { SendMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input';
 import { SendMessageCampaignTestInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-test.input';
 import { SendMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-output.dto';
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain/services/email-group-access.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -49,6 +56,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   EmailingDomainGraphqlApiExceptionFilter,
   ThrottlerGraphqlApiExceptionFilter,
   AuthGraphqlApiExceptionFilter,
+  UsageLimitGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -63,6 +71,7 @@ export class EmailingSendResolver {
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
     private readonly emailBillingService: EmailBillingService,
+    private readonly billingService: BillingService,
   ) {}
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
@@ -72,10 +81,13 @@ export class EmailingSendResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<SendEmailViaDomainOutputDTO> {
+    const spenders = { userWorkspaceId };
+
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailCreditsOrThrow(
-      currentWorkspace.id,
-    );
+    await this.emailBillingService.validateEmailSendOrThrow({
+      workspaceId: currentWorkspace.id,
+      spenders,
+    });
 
     const { emailingDomainId, ...content } = input;
     const result = await this.emailingDomainSenderService.sendEmail(
@@ -86,7 +98,7 @@ export class EmailingSendResolver {
 
     await this.billAcceptedSend({
       workspaceId: currentWorkspace.id,
-      userWorkspaceId,
+      spenders,
       result,
     });
 
@@ -101,9 +113,22 @@ export class EmailingSendResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendMessageCampaignOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailCreditsOrThrow(
+
+    const isPayingCustomer = await this.billingService.isPayingCustomer(
       currentWorkspace.id,
     );
+
+    if (!isPayingCustomer) {
+      throw new EmailingDomainException(
+        `Campaign ${input.campaignId} cannot be sent: workspace ${currentWorkspace.id} is not on a paid plan`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN,
+      );
+    }
+
+    await this.emailBillingService.validateEmailSendOrThrow({
+      workspaceId: currentWorkspace.id,
+      spenders: { userWorkspaceId },
+    });
 
     if (isDefined(input.scheduledAt)) {
       return this.messageCampaignScheduleService.schedule({
@@ -142,11 +167,14 @@ export class EmailingSendResolver {
   async sendMessageCampaignTest(
     @Args('input') input: SendMessageCampaignTestInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<SendEmailViaDomainOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailCreditsOrThrow(
-      currentWorkspace.id,
-    );
+    await this.emailBillingService.validateEmailSendOrThrow({
+      workspaceId: currentWorkspace.id,
+      spenders: { userWorkspaceId },
+    });
 
     const result = await this.messageCampaignService.sendTest({
       workspaceId: currentWorkspace.id,
@@ -157,7 +185,11 @@ export class EmailingSendResolver {
       fromAddress: input.fromAddress,
     });
 
-    await this.billAcceptedSend({ workspaceId: currentWorkspace.id, result });
+    await this.billAcceptedSend({
+      workspaceId: currentWorkspace.id,
+      spenders: { userWorkspaceId },
+      result,
+    });
 
     return { messageId: result.messageId };
   }
@@ -183,17 +215,17 @@ export class EmailingSendResolver {
   // would invite a retry that sends it a second time.
   private async billAcceptedSend({
     workspaceId,
-    userWorkspaceId,
+    spenders,
     result,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
+    spenders: UsageSpenders;
     result: EmailingDomainSendEmailResult;
   }): Promise<void> {
     await this.emailBillingService
       .billSentEmails({
         workspaceId,
-        userWorkspaceId,
+        spenders,
         sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
       })
       .catch((error) => {

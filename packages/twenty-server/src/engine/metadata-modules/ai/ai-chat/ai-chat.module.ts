@@ -1,3 +1,4 @@
+import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
@@ -71,6 +72,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     WorkflowToolsModule,
   ],
   providers: [
+    AgentChatActorService,
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatCancelSubscriberService,
