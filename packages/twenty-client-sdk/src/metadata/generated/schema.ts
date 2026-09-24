@@ -3006,6 +3006,7 @@ export interface AgentMessage {
     threadId: Scalars['UUID']
     turnId?: Scalars['UUID']
     agentId?: Scalars['UUID']
+    senderUserWorkspaceId?: Scalars['UUID']
     role: Scalars['String']
     status: Scalars['String']
     parts: AgentMessagePart[]
@@ -6831,6 +6832,7 @@ export interface AgentMessageGenqlSelection{
     threadId?: boolean | number
     turnId?: boolean | number
     agentId?: boolean | number
+    senderUserWorkspaceId?: boolean | number
     role?: boolean | number
     status?: boolean | number
     parts?: AgentMessagePartGenqlSelection

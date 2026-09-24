@@ -11,6 +11,7 @@ import {
 } from 'twenty-shared/workflow';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -68,6 +69,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
@@ -411,7 +413,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string,
     billingSpenders: WorkflowBillingSpenders,
   ) {
-    await this.billingUsageService.consumeUsageQuota({
+    await this.usageLimitQuotaService.consumeQuota({
       workspaceId,
       resourceType: UsageResourceType.WORKFLOW,
       operationType: UsageOperationType.WORKFLOW_EXECUTION,

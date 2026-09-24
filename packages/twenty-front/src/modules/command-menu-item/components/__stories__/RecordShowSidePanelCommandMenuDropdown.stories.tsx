@@ -14,9 +14,10 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
@@ -69,7 +70,7 @@ const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
   ],
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, {

@@ -355,8 +355,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     async (mirrorless) => {
       const fixture = await createFixture({ mirrorless });
       const consume = jest.spyOn(
-        global.workflowTestServices.billing,
-        'consumeUsageQuota',
+        global.workflowTestServices.quota,
+        'consumeQuota',
       );
 
       await waitForRun(await runFixture(fixture), 'COMPLETED');
