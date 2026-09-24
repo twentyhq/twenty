@@ -427,6 +427,11 @@ msgstr "{browser} {operatingSystem}issa"
 msgid "{count, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
 msgstr "{count, plural, one {Esim. {example} # desimaalilla} other {Esim. {example} # desimaalilla}}"
 
+#. js-lingui-id: HzFjBR
+#: src/modules/settings/admin-panel/utils/formatUsageLimitValue.ts
+msgid "{credits} credits"
+msgstr ""
+
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid "{currentCreditAmountDisplay} credits "
@@ -649,6 +654,11 @@ msgstr "{roleTargetName} liitetään \"{newRoleName}\" -rooliin."
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 msgid "{scopeCount} scopes"
 msgstr "{scopeCount} käyttöoikeutta"
+
+#. js-lingui-id: dQRNg5
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
+msgstr ""
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -2877,6 +2887,7 @@ msgid "Applications below are not vetted. Use at your own risk."
 msgstr "Alla olevia sovelluksia ei ole tarkastettu. Käytä omalla vastuullasi."
 
 #. js-lingui-id: p98xmP
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Applies to"
 msgstr "Koskee"
@@ -3764,6 +3775,11 @@ msgstr ""
 msgid "Bundled with {applicationName}"
 msgstr "Toimitetaan yhdessä {applicationName}-sovelluksen kanssa"
 
+#. js-lingui-id: /blpUq
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Burst"
+msgstr ""
+
 #. js-lingui-id: yjeERL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "button"
@@ -3790,6 +3806,11 @@ msgstr "Twenty:tä käyttäessäsi hyväksyt"
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Bypass SSO"
 msgstr "Ohita SSO"
+
+#. js-lingui-id: 9z+1OD
+#: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
+msgid "Bytes"
+msgstr ""
 
 #. js-lingui-id: ZPnTAU
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -4016,6 +4037,7 @@ msgstr "Et voi skannata? Kopioi"
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
@@ -6843,6 +6865,7 @@ msgstr "Pienennä arvoa"
 
 #. js-lingui-id: ovBPCi
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -7913,6 +7936,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
@@ -9510,6 +9534,11 @@ msgstr "Palvelinylläpitäjien lataaminen epäonnistui."
 #: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to load the application."
 msgstr "Sovelluksen lataaminen epäonnistui."
+
+#. js-lingui-id: JU81x+
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
+msgid "Failed to load usage limits."
+msgstr ""
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -12642,6 +12671,11 @@ msgstr "LibreChat"
 msgid "Licensee"
 msgstr "Lisenssinhaltija"
 
+#. js-lingui-id: yOGTbg
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
+msgid "Lifetime"
+msgstr ""
+
 #. js-lingui-id: 1njn7W
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -12654,6 +12688,8 @@ msgid "Lime"
 msgstr "Limenvihreä"
 
 #. js-lingui-id: yRkqG9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -12691,6 +12727,16 @@ msgstr "Rajoita kuinka monta arvoa tähän kenttään voidaan lisätä"
 msgid "Limit must be greater than 0."
 msgstr ""
 
+#. js-lingui-id: nvECeF
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Limit reset to the default."
+msgstr ""
+
+#. js-lingui-id: x2/DSY
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Limit saved for this workspace."
+msgstr ""
+
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Limit the rate of outgoing webhook deliveries."
@@ -12702,6 +12748,7 @@ msgid "Limit updated."
 msgstr "Rajoitus päivitetty."
 
 #. js-lingui-id: 6BDqha
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -16078,6 +16125,11 @@ msgstr "Tulostuskustannus"
 msgid "Output tokens"
 msgstr "Tulostokenit"
 
+#. js-lingui-id: iCOVQO
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
+msgid "Override"
+msgstr ""
+
 #. js-lingui-id: in6CUw
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
@@ -16346,6 +16398,11 @@ msgstr "Henkilöt, joille olen lähettänyt sähköposteja ja joilta olen saanut
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to."
 msgstr "Henkilöt, joille olen lähettänyt sähköposteja."
+
+#. js-lingui-id: VloFYI
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
+msgid "Per"
+msgstr ""
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -17875,6 +17932,7 @@ msgstr "Lähetä kutsu uudelleen"
 
 #. js-lingui-id: OfhWJH
 #: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -18328,6 +18386,11 @@ msgstr "Venäjä"
 msgid "Sales"
 msgstr "Myynti"
 
+#. js-lingui-id: L8TxaD
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Same as the limit"
+msgstr ""
+
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -18351,6 +18414,7 @@ msgid "Saturday"
 msgstr "Lauantai"
 
 #. js-lingui-id: tfDRzk
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
@@ -18445,6 +18509,7 @@ msgid "Schema this app contributes to your workspace"
 msgstr "Skeema, jonka tämä sovellus lisää työtilaasi"
 
 #. js-lingui-id: aBgwis
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Scope"
@@ -18813,6 +18878,7 @@ msgid "Secondary Links"
 msgstr "Toissijaiset linkit"
 
 #. js-lingui-id: V+rJKF
+#: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "Seconds"
 msgstr "Sekunnit"
@@ -19414,6 +19480,11 @@ msgstr "Aseta vain tälle agentille"
 msgid "Set global workspace preferences"
 msgstr "Aseta globaalit työtilan asetukset"
 
+#. js-lingui-id: 1VGWc8
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Set limit for this workspace"
+msgstr ""
+
 #. js-lingui-id: 2gHjVM
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 #: src/pages/auth/PasswordReset.tsx
@@ -19971,6 +20042,7 @@ msgstr "Lajittelut"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -21456,6 +21528,11 @@ msgstr "Tämä Organisaatio-avain on jo sidottu toiseen palvelininstanssiin. Sen
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
 msgstr "Tämä Organisaatio-avain on tällä hetkellä sidottu toiseen palvelininstanssiin. Sen siirtäminen tänne vapauttaa sen edelliseltä palvelimelta ja lopettaa paikkojen laskemisen siellä. Haluatko varmasti jatkaa?"
+
+#. js-lingui-id: 0BVkmQ
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "This override no longer exists. Reload to see the current limit."
+msgstr ""
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -23925,6 +24002,11 @@ msgstr "Miten voin auttaa sinua?"
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
 msgstr "Mitä voit tehdä?"
+
+#. js-lingui-id: 9Y4G6f
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
+msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
+msgstr ""
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
