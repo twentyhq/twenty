@@ -11,6 +11,7 @@ import { v4 } from 'uuid';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildManyToOneForeignKeyDefinition } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/build-many-to-one-foreign-key-definition.util';
+import { getDeferredForeignKeyValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-foreign-key-validation.util';
 import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
 import { type DeferredWorkspaceMigrationActionPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -140,7 +141,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const { flatEntity, relatedFlatFieldMetadata } = flatAction;
 
     const deferredForeignKeyValidation =
-      this.getDeferredForeignKeyValidation(context);
+      getDeferredForeignKeyValidation(context);
 
     const fieldsByObjectMetadataId = new Map<string, FlatFieldMetadata[]>();
 
@@ -206,7 +207,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   override getDeferredAction(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>,
   ) {
-    return this.getDeferredForeignKeyValidation(context);
+    return getDeferredForeignKeyValidation(context);
   }
 
   override async executeDeferredAction({
@@ -251,45 +252,6 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         }),
       },
     );
-  }
-
-  private getDeferredForeignKeyValidation({
-    flatAction,
-    featureFlagsMap,
-  }: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>):
-    | {
-        name: 'validateForeignKey';
-        payload: DeferredWorkspaceMigrationActionPayload<'validateForeignKey'>;
-      }
-    | undefined {
-    if (
-      !featureFlagsMap?.[
-        FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-      ]
-    ) {
-      return undefined;
-    }
-
-    const flatFieldMetadata = [
-      flatAction.flatEntity,
-      flatAction.relatedFlatFieldMetadata,
-    ]
-      .filter(isDefined)
-      .find(
-        (createdFlatFieldMetadata) =>
-          isMorphOrRelationFlatFieldMetadata(createdFlatFieldMetadata) &&
-          createdFlatFieldMetadata.settings?.relationType ===
-            RelationType.MANY_TO_ONE,
-      );
-
-    if (!isDefined(flatFieldMetadata)) {
-      return undefined;
-    }
-
-    return {
-      name: 'validateForeignKey' as const,
-      payload: { fieldMetadataId: flatFieldMetadata.id },
-    };
   }
 
   private async executeSingleFieldMetadataWorkspaceSchema({
