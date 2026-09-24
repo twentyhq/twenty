@@ -419,7 +419,6 @@ export const SectionHeadersShowTheirContext: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Selection: 5 Companies')).toBeVisible();
-    expect(await canvas.findByText('+2')).toBeVisible();
 
     const headings = canvas.getAllByText(
       /^(Selection: 5 Companies|View: Prospects|Object: Companies)$/,

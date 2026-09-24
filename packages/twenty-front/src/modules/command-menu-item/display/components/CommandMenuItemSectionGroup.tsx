@@ -21,17 +21,20 @@ const StyledHeading = styled.div`
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   display: flex;
-  gap: ${themeCssVariables.spacing['1.5']};
+  gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[8]};
   padding-left: ${themeCssVariables.spacing[1]};
   user-select: none;
 `;
 
+// Same width as a command's icon tile, so headings line up with command labels.
 const StyledHeadingIcon = styled.span`
   align-items: center;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
   flex-shrink: 0;
+  justify-content: center;
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledHeadingText = styled.span`
