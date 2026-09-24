@@ -12,6 +12,7 @@ import {
   type AgentChatThreadOwnerFields,
   getAgentChatThreadOwnerFields,
 } from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-fields.util';
+import { isUndefinedColumnError } from 'src/engine/metadata-modules/ai/ai-history/utils/is-undefined-column-error.util';
 import { hydrateAgentChatThreadOwners } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-chat-thread-owners.util';
 import { mapAgentChatThreadOwnerSelectToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-chat-thread-owner-select-to-workspace.util';
 import { mapAgentChatThreadOwnerValuesToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-chat-thread-owner-values-to-workspace.util';
@@ -59,7 +60,28 @@ export class AgentHistoryRepository<
     >,
   ) {}
 
-  private run<TResult>(
+  private async run<TResult>(
+    workspaceId: string,
+    core: (repository: WorkspaceScopedRepository<TRecord>) => Promise<TResult>,
+    workspace: (
+      repository: WorkspaceRepository<TRecord>,
+      context: AgentHistoryStorageContext,
+    ) => Promise<TResult>,
+  ): Promise<TResult> {
+    try {
+      return await this.runInWorkspaceContext(workspaceId, core, workspace);
+    } catch (error) {
+      // Metadata loaded before waiting on the 2.43 owner upgrade lock can still
+      // describe the dropped userWorkspaceId column. The failed statement wrote
+      // nothing, so retry once with freshly loaded metadata.
+      if (this.name === 'agentChatThread' && isUndefinedColumnError(error)) {
+        return this.runInWorkspaceContext(workspaceId, core, workspace);
+      }
+      throw error;
+    }
+  }
+
+  private runInWorkspaceContext<TResult>(
     workspaceId: string,
     core: (repository: WorkspaceScopedRepository<TRecord>) => Promise<TResult>,
     workspace: (

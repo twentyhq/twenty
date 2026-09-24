@@ -1028,13 +1028,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).toEqual([]);
     });
 
-    it('keeps membership ownership authoritative until the legacy column is dropped', async () => {
-      await migration.migrate({
-        workspaceId: WORKSPACE_ID,
-        target: 'workspace',
-      });
+    // Recreates a workspace moved by 2.42 before threads were member-owned.
+    const restoreLegacyThreadOwner = async () => {
       await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentChatThread" ADD COLUMN "userWorkspaceId" uuid, ALTER COLUMN "workspaceMemberId" DROP NOT NULL`,
+        `ALTER TABLE "${SCHEMA}"."agentChatThread" ADD COLUMN "userWorkspaceId" uuid`,
       );
       await dataSource.query(
         `UPDATE "${SCHEMA}"."agentChatThread" SET "userWorkspaceId" = $1, "workspaceMemberId" = NULL`,
@@ -1063,6 +1060,15 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         legacyField.id
       ] = legacyField.universalIdentifier;
       threadObject.fieldIds = [...threadObject.fieldIds, legacyField.id];
+      return legacyMetadata;
+    };
+
+    it('keeps membership ownership authoritative until the legacy column is dropped', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      const legacyMetadata = await restoreLegacyThreadOwner();
       const legacyThreads = new AgentHistoryRepository(
         'agentChatThread',
         AgentChatThreadEntity,
@@ -1090,6 +1096,69 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           })
         ).map((thread) => thread.id),
       ).toEqual(expect.arrayContaining([THREAD_ID, created.id]));
+    });
+
+    it('retries with fresh metadata when the legacy owner column is dropped during a wait', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
+      const legacyMetadata = await restoreLegacyThreadOwner();
+      let currentMetadata = legacyMetadata;
+      let activeOrm = createOrm(currentMetadata);
+      const upgradingThreads = new AgentHistoryRepository(
+        'agentChatThread',
+        AgentChatThreadEntity,
+        storage,
+        {
+          executeInWorkspaceContext: (work) => {
+            activeOrm = createOrm(currentMetadata);
+            return activeOrm.executeInWorkspaceContext(async () => work());
+          },
+          getRepository: (...args) => activeOrm.getRepository(...args),
+        },
+      );
+      const upgradeLock = dataSource.createQueryRunner();
+      await upgradeLock.connect();
+      await upgradeLock.startTransaction();
+      try {
+        await upgradeLock.query(
+          'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+          [`${AGENT_HISTORY_STORAGE_KEY}:${WORKSPACE_ID}`],
+        );
+        const read = upgradingThreads.findOneOrFail(WORKSPACE_ID, {
+          where: { id: THREAD_ID, userWorkspaceId: OWNER_ID },
+        });
+        let waiting = false;
+        for (let attempt = 0; attempt < 100 && !waiting; attempt++) {
+          const [{ count }] = await dataSource.query(
+            `SELECT count(*)::int AS count FROM pg_locks WHERE locktype = 'advisory' AND NOT granted`,
+          );
+          waiting = count > 0;
+          if (!waiting) {
+            await new Promise((resolve) => setTimeout(resolve, 20));
+          }
+        }
+        expect(waiting).toBe(true);
+        await dataSource.query(
+          `UPDATE "${SCHEMA}"."agentChatThread" SET "workspaceMemberId" = $1`,
+          [MEMBER_ID],
+        );
+        await dataSource.query(
+          `ALTER TABLE "${SCHEMA}"."agentChatThread" DROP COLUMN "userWorkspaceId"`,
+        );
+        currentMetadata = metadata;
+        await upgradeLock.commitTransaction();
+        await expect(read).resolves.toMatchObject({
+          id: THREAD_ID,
+          userWorkspaceId: OWNER_ID,
+        });
+      } finally {
+        if (upgradeLock.isTransactionActive) {
+          await upgradeLock.rollbackTransaction();
+        }
+        await upgradeLock.release();
+      }
     });
 
     it('rejects cross-workspace membership before changing the route', async () => {
