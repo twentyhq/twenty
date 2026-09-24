@@ -115,6 +115,7 @@ describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
     expect(chatBundle.reverseFlatFieldMetadata).toMatchObject({
       name: 'targetPet',
       type: FieldMetadataType.MORPH_RELATION,
+      icon: 'IconMessage',
       morphId:
         STANDARD_OBJECTS.agentChatThreadTarget.morphIds.targetMorphId.morphId,
       objectMetadataUniversalIdentifier:
