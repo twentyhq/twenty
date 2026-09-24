@@ -1,5 +1,3 @@
-// Maps everyday verbs onto the operation tokens used in tool names, so
-// "list companies" reaches find_many_companies.
 export const TOOL_SEARCH_VERB_SYNONYMS: Record<string, string> = {
   list: 'find',
   search: 'find',

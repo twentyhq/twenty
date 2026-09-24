@@ -85,7 +85,6 @@ export const createGetToolCatalogTool = (
   execute: async (
     parameters: GetToolCatalogInput,
   ): Promise<GetToolCatalogResult> => {
-    // MCP hands raw client arguments to execute without schema validation.
     const parseResult = getToolCatalogInputSchema.safeParse(parameters ?? {});
 
     if (!parseResult.success) {

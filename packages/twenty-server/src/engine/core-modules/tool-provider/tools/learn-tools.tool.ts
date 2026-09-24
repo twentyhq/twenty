@@ -46,8 +46,6 @@ export type LearnToolsResult = {
 export type LearnToolsOptions = {
   isToolAllowed?: (toolName: string) => boolean;
   spillLargeOutput?: boolean;
-  // Appended to the message when a name is not found. Only callers that
-  // expose a discovery tool can point to it, so there is no default.
   discoveryHint?: string;
 };
 
@@ -85,8 +83,6 @@ export const createLearnToolsTool = (
     const unknownNames = allowedNames.filter((name) => !foundNames.has(name));
     const notFound = [...unknownNames, ...unavailableNames];
 
-    // Excluded tools exist but are blocked here, so suggesting look-alikes
-    // for them would be misleading.
     const suggestions: Record<string, string[]> =
       unknownNames.length > 0
         ? await toolRegistry.suggestSimilarToolNames(unknownNames, context)

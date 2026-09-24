@@ -78,8 +78,6 @@ export const createExecuteToolTool = (
       },
     );
 
-    // The registry stays surface-neutral and reports an unknown name only
-    // through this message, which the MCP catalog contract test also pins.
     const isUnknownTool =
       result.success === false &&
       result.message === `Tool "${toolName}" not found`;

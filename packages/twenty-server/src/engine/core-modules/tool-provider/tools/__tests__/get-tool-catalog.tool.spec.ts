@@ -339,8 +339,6 @@ describe('createGetToolCatalogTool', () => {
         { ...OPTIONS, excludeTools },
       );
 
-    // The grouping get_tool_catalog used before query search existed, kept
-    // here as the oracle for the unchanged no-query path.
     const buildPreChangeCatalog = (
       entries: ToolIndexEntry[],
       excludeTools: Set<string>,

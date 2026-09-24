@@ -19,8 +19,6 @@ type SearchableToolEntry = {
   descriptionTokens: Set<string>;
 };
 
-// Folds regular English plurals so "companies" and "company" compare equal.
-// Irregular plurals (people/person) are covered by object aliases instead.
 const singularizeToken = (token: string): string => {
   if (token.length <= 3) {
     return token;
@@ -52,8 +50,6 @@ const splitIntoTokens = (text: string): string[] =>
 const splitIntoSingularTokens = (text: string): string[] =>
   splitIntoTokens(text).map(singularizeToken);
 
-// Each query token matches either itself or the operation token its verb
-// stands for.
 const buildQueryTokenVariants = (query: string): Set<string>[] =>
   [...new Set(splitIntoTokens(query))].map((token) => {
     const synonym = TOOL_SEARCH_VERB_SYNONYMS[token];
@@ -73,9 +69,6 @@ const getObjectNameForm = (entry: ToolIndexEntry): string | undefined => {
   return entry.name.slice(entry.operation.length + 1);
 };
 
-// CRUD names embed the singular or plural object name depending on the
-// operation. Collecting every form used for an object lets find_one_person
-// answer "people" without looking up object metadata.
 const buildObjectAliasTokensByObjectName = (
   entries: ToolIndexEntry[],
 ): Map<string, Set<string>> => {
@@ -104,9 +97,6 @@ const buildObjectAliasTokensByObjectName = (
   return aliasTokensByObjectName;
 };
 
-// Exact name tokens outrank a match that only holds after plural folding or
-// through the object's other grammatical number, so "create task" prefers
-// create_one_task and "create tasks" prefers create_many_tasks.
 const scoreQueryTokenVariants = (
   variants: Set<string>,
   searchableEntry: SearchableToolEntry,
@@ -156,8 +146,6 @@ const isTokenCoveredByQuery = (
   );
 };
 
-// Without this, "create task" ties create_one_task with
-// create_many_task_targets, since both names contain "create" and "task".
 const isObjectNameCoveredByQuery = (
   objectNameTokens: string[],
   queryTokenVariants: Set<string>[],
