@@ -1,5 +1,3 @@
-import { createViewFieldGroupQueryFactory } from 'test/integration/metadata/suites/view-field-group/utils/create-view-field-group-query-factory.util';
-import { createManyViewFieldGroupsQueryFactory } from 'test/integration/metadata/suites/view-field-group/utils/create-many-view-field-groups-query-factory.util';
 import crypto from 'crypto';
 
 import bcrypt from 'bcrypt';
@@ -13,6 +11,8 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { createManyViewFieldGroupsQueryFactory } from 'test/integration/metadata/suites/view-field-group/utils/create-many-view-field-groups-query-factory.util';
+import { createViewFieldGroupQueryFactory } from 'test/integration/metadata/suites/view-field-group/utils/create-view-field-group-query-factory.util';
 import { createViewGroupQueryFactory } from 'test/integration/metadata/suites/view-group/utils/create-view-group-query-factory.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { createViewQueryFactory } from 'test/integration/metadata/suites/view/utils/create-view-query-factory.util';
