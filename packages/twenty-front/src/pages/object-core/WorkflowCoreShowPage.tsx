@@ -71,9 +71,10 @@ const CoreWorkflowShowContent = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [editedName, setEditedName] = useState<string>();
   const requestedVersionId = searchParams.get('version');
-  const currentVersion = getWorkflowCurrentVersion(
-    versions.coreWorkflowVersions,
-  );
+  const currentVersion = getWorkflowCurrentVersion({
+    versions: versions.coreWorkflowVersions,
+    lastPublishedVersionId: coreWorkflow?.lastPublishedCoreWorkflowVersionId,
+  });
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;

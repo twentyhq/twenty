@@ -408,7 +408,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             errorAtom,
             createAiChatCodedError(
               'Chat stopped: no more available credits.',
-              AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
+              AiChatErrorCode.CREDITS_EXHAUSTED,
             ),
           );
 

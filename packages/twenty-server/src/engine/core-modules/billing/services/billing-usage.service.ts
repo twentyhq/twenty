@@ -28,7 +28,6 @@ import { buildUsageRefusalException } from 'src/engine/core-modules/billing/util
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
-import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
@@ -94,30 +93,6 @@ export class BillingUsageService {
     return isDefined(exhaustedScope)
       ? { kind: 'quotaExhausted', exhaustedScope }
       : null;
-  }
-
-  async consumeUsageQuota({
-    workspaceId,
-    resourceType,
-    operationType,
-    spenders,
-    cost,
-  }: UsageQuotaScope & { cost: QuotaCost }): Promise<{
-    hasNoMoreAvailableCredits: boolean;
-  }> {
-    const { exhausted } = await this.usageLimitQuotaService.consumeQuota({
-      workspaceId,
-      resourceType,
-      operationType,
-      spenders,
-      cost,
-    });
-
-    const isAllowanceExhausted = exhausted.some(
-      (scope) => scope.exhaustedKind === 'allowance',
-    );
-
-    return { hasNoMoreAvailableCredits: isAllowanceExhausted };
   }
 
   async getSubscriptionInactiveReason(
