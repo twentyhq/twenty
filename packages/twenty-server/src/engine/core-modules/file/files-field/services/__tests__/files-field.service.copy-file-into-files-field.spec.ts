@@ -1,5 +1,3 @@
-import { type Repository } from 'typeorm';
-
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -15,7 +13,9 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
   const fieldMetadataId = '20202020-0000-4000-8000-000000000004';
 
   let fileStorageService: jest.Mocked<FileStorageService>;
-  let applicationRepository: jest.Mocked<Repository<ApplicationEntity>>;
+  let applicationRepository: jest.Mocked<
+    WorkspaceScopedRepository<ApplicationEntity>
+  >;
   let fieldMetadataRepository: jest.Mocked<
     WorkspaceScopedRepository<FieldMetadataEntity>
   >;
@@ -49,10 +49,12 @@ describe('FilesFieldService.copyFileIntoFilesField', () => {
     } as unknown as jest.Mocked<FileStorageService>;
 
     applicationRepository = {
-      findOneOrFail: jest.fn().mockImplementation(async ({ where }) => ({
-        universalIdentifier: `${where.id}-universal-identifier`,
-      })),
-    } as unknown as jest.Mocked<Repository<ApplicationEntity>>;
+      findOneOrFail: jest
+        .fn()
+        .mockImplementation(async (_workspaceId, { where }) => ({
+          universalIdentifier: `${where.id}-universal-identifier`,
+        })),
+    } as unknown as jest.Mocked<WorkspaceScopedRepository<ApplicationEntity>>;
 
     fieldMetadataRepository = {
       findOneOrFail: jest.fn().mockResolvedValue({

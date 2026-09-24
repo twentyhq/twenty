@@ -35,6 +35,9 @@ export class InstallApplicationCommand extends CommandRunner {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    // CLI command over an operator-supplied set of workspaces; the query filters
+    // on In(workspaceIds) rather than one request workspace.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,

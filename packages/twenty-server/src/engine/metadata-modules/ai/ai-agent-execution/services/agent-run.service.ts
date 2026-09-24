@@ -95,6 +95,7 @@ export class AgentRunService {
 
     const application = await this.applicationService.findById(
       agent.applicationId,
+      workspace.id,
     );
 
     if (!application) {
