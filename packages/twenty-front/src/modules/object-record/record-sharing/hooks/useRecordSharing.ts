@@ -14,10 +14,13 @@ import {
 
 const SHARING_REFRESH_INTERVAL_MS = 30_000;
 
-export const useRecordSharing = (
-  recordTarget: RecordSharingTargetInput,
-  isOpen: boolean,
-) => {
+export const useRecordSharing = ({
+  recordTarget,
+  isOpen,
+}: {
+  recordTarget: RecordSharingTargetInput;
+  isOpen: boolean;
+}) => {
   const { refreshRecordPermissions } = useRefreshRecordPermissions();
   const { data, loading, error, refetch } = useQuery(GetRecordSharingDocument, {
     variables: { target: recordTarget },

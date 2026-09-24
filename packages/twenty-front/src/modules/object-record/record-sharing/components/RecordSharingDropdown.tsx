@@ -28,7 +28,10 @@ export const RecordSharingDropdown = ({
     isDropdownOpenComponentState,
     dropdownId,
   );
-  const sharingState = useRecordSharing(target, isDropdownOpen);
+  const sharingState = useRecordSharing({
+    recordTarget: target,
+    isOpen: isDropdownOpen,
+  });
 
   return (
     <>
@@ -38,7 +41,9 @@ export const RecordSharingDropdown = ({
           dropdownId={dropdownId}
           type="menu"
           onOpenChange={(open) => {
-            if (open) void sharingState.refetch().catch(() => {});
+            if (open) {
+              void sharingState.refetch().catch(() => {});
+            }
           }}
         >
           <Dropdown.Trigger

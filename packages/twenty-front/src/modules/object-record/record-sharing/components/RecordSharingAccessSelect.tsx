@@ -1,7 +1,8 @@
+import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharing/constants/RecordShareAccessLevelOptions';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
 import { Dropdown } from 'twenty-ui/components';
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
+import { type RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 type RecordSharingAccessSelectProps = {
   label: string;
@@ -25,11 +26,10 @@ export const RecordSharingAccessSelect = ({
   closeOnSelect,
 }: RecordSharingAccessSelectProps) => {
   const { t } = useLingui();
-  const options = [
-    { value: RecordShareAccessLevel.READ, label: t`Viewer` },
-    { value: RecordShareAccessLevel.READ_WRITE, label: t`Editor` },
-    { value: RecordShareAccessLevel.FULL, label: t`Full access` },
-  ];
+  const options = RECORD_SHARE_ACCESS_LEVEL_OPTIONS.map((option) => ({
+    ...option,
+    label: t(option.label),
+  }));
 
   return (
     <Dropdown.Submenu>

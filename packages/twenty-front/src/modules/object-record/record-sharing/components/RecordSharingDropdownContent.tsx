@@ -13,7 +13,9 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { RecordSharingAccessSelect } from '@/object-record/record-sharing/components/RecordSharingAccessSelect';
+import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharing/constants/RecordShareAccessLevelOptions';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
+import { getRecordShareLabel } from '@/object-record/record-sharing/utils/getRecordShareLabel';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
@@ -82,11 +84,10 @@ export const RecordSharingDropdownContent = ({
       !shares.some((share) => share.principalId === role.id) &&
       matchesSearch(role.label),
   );
-  const accessOptions = [
-    { value: RecordShareAccessLevel.READ, label: t`Viewer` },
-    { value: RecordShareAccessLevel.READ_WRITE, label: t`Editor` },
-    { value: RecordShareAccessLevel.FULL, label: t`Full access` },
-  ];
+  const accessOptions = RECORD_SHARE_ACCESS_LEVEL_OPTIONS.map((option) => ({
+    ...option,
+    label: t(option.label),
+  }));
 
   return (
     <>
@@ -268,16 +269,12 @@ export const RecordSharingDropdownContent = ({
                         const role = sharing.roles.find(
                           (item) => item.id === share.principalId,
                         );
-                        const label =
-                          share.principalId === currentWorkspaceMember?.id
-                            ? t`You`
-                            : share.principalType ===
-                                RecordSharePrincipalType.ROLE
-                              ? (role?.label ?? t`Deleted role`)
-                              : isDefined(member)
-                                ? `${member.name.firstName} ${member.name.lastName}`.trim() ||
-                                  member.userEmail
-                                : t`Deleted member`;
+                        const label = getRecordShareLabel({
+                          share,
+                          member,
+                          role,
+                          currentWorkspaceMember,
+                        });
                         const startIcon =
                           share.principalType ===
                           RecordSharePrincipalType.ROLE ? (

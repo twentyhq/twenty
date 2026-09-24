@@ -2,6 +2,7 @@ import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArchive,
   IconArchiveOff,
@@ -73,7 +74,7 @@ export const AiChatThreadItemMenu = ({
   };
 
   if (
-    !permissions ||
+    !isDefined(permissions) ||
     (!permissions.canUpdate &&
       !permissions.canDelete &&
       !permissions.canSoftDelete)

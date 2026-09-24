@@ -82,10 +82,10 @@ describe('useRecordSharing', () => {
     const { request, wrapper } = createHarness();
     const { result } = renderHook(
       () =>
-        useRecordSharing(
-          { objectMetadataId: 'note', recordId: 'record' },
-          false,
-        ),
+        useRecordSharing({
+          recordTarget: { objectMetadataId: 'note', recordId: 'record' },
+          isOpen: false,
+        }),
       {
         wrapper,
       },
@@ -108,10 +108,10 @@ describe('useRecordSharing', () => {
     const { request, wrapper } = createHarness();
     const { result } = renderHook(
       () =>
-        useRecordSharing(
-          { objectMetadataId: 'note', recordId: 'record' },
-          false,
-        ),
+        useRecordSharing({
+          recordTarget: { objectMetadataId: 'note', recordId: 'record' },
+          isOpen: false,
+        }),
       {
         wrapper,
       },
@@ -134,10 +134,10 @@ describe('useRecordSharing', () => {
     const { request, wrapper } = createHarness();
     const { result, rerender } = renderHook(
       ({ isOpen }) =>
-        useRecordSharing(
-          { objectMetadataId: 'note', recordId: 'record' },
-          isOpen,
-        ),
+        useRecordSharing({
+          recordTarget: { objectMetadataId: 'note', recordId: 'record' },
+          isOpen: isOpen,
+        }),
       { wrapper, initialProps: { isOpen: false } },
     );
     await waitFor(() => expect(result.current.sharing?.isEnabled).toBe(true));
@@ -160,10 +160,10 @@ describe('useRecordSharing', () => {
   it('refreshes on focus and removes the listener on unmount', async () => {
     const { request, wrapper } = createHarness();
     const TestSharingRefresh = () => {
-      const { refetch } = useRecordSharing(
-        { objectMetadataId: 'note', recordId: 'record' },
-        false,
-      );
+      const { refetch } = useRecordSharing({
+        recordTarget: { objectMetadataId: 'note', recordId: 'record' },
+        isOpen: false,
+      });
       return <RecordSharingRefreshEffect refetch={refetch} />;
     };
     const { unmount } = render(<TestSharingRefresh />, { wrapper });
@@ -181,10 +181,10 @@ describe('useRecordSharing', () => {
     const { request, wrapper } = createHarness();
     const { result } = renderHook(
       () =>
-        useRecordSharing(
-          { objectMetadataId: 'note', recordId: 'record' },
-          false,
-        ),
+        useRecordSharing({
+          recordTarget: { objectMetadataId: 'note', recordId: 'record' },
+          isOpen: false,
+        }),
       {
         wrapper,
       },
