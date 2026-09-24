@@ -4,7 +4,6 @@ import {
   type AdminPanelUsageLimitDefaultDTO,
   type AdminPanelWorkspaceUsageLimitsDTO,
 } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-usage-limits.dto';
-import { fromUsageLimitEntityToAdminPanelDto } from 'src/engine/core-modules/admin-panel/utils/from-usage-limit-entity-to-admin-panel-dto.util';
 import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/numeric-config-variable-key.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
@@ -12,6 +11,7 @@ import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage
 import { buildUsageLimitDefaultScopes } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-default-scopes.util';
 import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
+import { fromUsageLimitEntityToDto } from 'src/engine/core-modules/usage-limit/utils/from-usage-limit-entity-to-dto.util';
 
 @Injectable()
 export class AdminPanelUsageLimitService {
@@ -27,7 +27,7 @@ export class AdminPanelUsageLimitService {
 
     return {
       defaults: this.buildDefaults(usageLimits),
-      limits: usageLimits.map(fromUsageLimitEntityToAdminPanelDto),
+      limits: usageLimits.map(fromUsageLimitEntityToDto),
     };
   }
 
