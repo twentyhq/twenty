@@ -8,6 +8,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useLingui } from '@lingui/react/macro';
 import { type DataMessagePart } from 'twenty-shared/ai';
+import { formatBytes } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -119,14 +120,6 @@ const TimingRow = ({ label, value }: TimingRowProps) => {
       <StyledTimingValue>{value}</StyledTimingValue>
     </StyledTimingRow>
   );
-};
-
-const formatBytes = (bytes: number) => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
 };
 
 const formatNumber = (num: number) => num.toLocaleString();
