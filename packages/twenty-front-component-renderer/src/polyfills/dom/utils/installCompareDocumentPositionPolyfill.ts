@@ -77,7 +77,7 @@ export const installCompareDocumentPositionPolyfill = ({
     node: object,
     otherNode: unknown,
   ): number => {
-    if (!isObject(otherNode)) {
+    if (!isObject(otherNode) || !nodePrototype.isPrototypeOf(otherNode)) {
       throw new TypeError(NON_NODE_ARGUMENT_ERROR_MESSAGE);
     }
 
