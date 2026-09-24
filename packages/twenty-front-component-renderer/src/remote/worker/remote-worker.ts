@@ -10,15 +10,21 @@ import { isDefined } from 'twenty-shared/utils';
 import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/states/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
+import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
+import { installActiveElementDetachmentHook } from '@/polyfills/dom/utils/installActiveElementDetachmentHook';
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
 import { installCompareDocumentPositionPolyfill } from '@/polyfills/dom/utils/installCompareDocumentPositionPolyfill';
+import { installDocumentActiveElementPolyfill } from '@/polyfills/dom/utils/installDocumentActiveElementPolyfill';
+import { findElementByRemoteId } from '@/polyfills/dom/utils/findElementByRemoteId';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
+import { installFocusAndBlurMethodsPolyfill } from '@/polyfills/dom/utils/installFocusAndBlurMethodsPolyfill';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installGetRootNodePolyfill } from '@/polyfills/dom/utils/installGetRootNodePolyfill';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
 import { installNodeContainsPolyfill } from '@/polyfills/dom/utils/installNodeContainsPolyfill';
+import { resolvePolyfillHooks } from '@/polyfills/dom/utils/resolvePolyfillHooks';
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
@@ -26,6 +32,7 @@ import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/instal
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
 import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
+import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
 import { installWindowAliasesPolyfill } from '@/polyfills/window-aliases/utils/installWindowAliasesPolyfill';
@@ -71,7 +78,21 @@ installSelectorMethodsPolyfill({
     DocumentFragment.prototype,
     document,
   ],
-  resolveActiveElement: () => null,
+  resolveActiveElement: () => workerActiveElementStore.getActiveElement(),
+});
+installFocusAndBlurMethodsPolyfill({
+  elementPrototype: Element.prototype,
+  activeElementStore: workerActiveElementStore,
+});
+installDocumentActiveElementPolyfill({
+  documentTarget: document,
+  activeElementStore: workerActiveElementStore,
+});
+installActiveElementDetachmentHook({
+  hooks: resolvePolyfillHooks(
+    resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
+  ),
+  activeElementStore: workerActiveElementStore,
 });
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));
@@ -161,6 +182,13 @@ const workerExports: WorkerExports = {
   },
   pushGeometryUpdates: async (batch) => {
     workerGeometryStore.applyGeometryBatch(batch);
+  },
+  pushFocusedRemoteElementId: async (remoteElementId) => {
+    workerActiveElementStore.setActiveElement(
+      isDefined(remoteElementId)
+        ? findElementByRemoteId({ rootNode: document.body, remoteElementId })
+        : null,
+    );
   },
   pushMediaSessionEvents: async (batch) => {
     workerMediaBridge.dispatchEvents(batch);

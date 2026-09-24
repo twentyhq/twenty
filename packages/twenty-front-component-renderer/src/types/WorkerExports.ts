@@ -16,5 +16,6 @@ export type WorkerExports = {
     result: CommandConfirmationModalResult,
   ) => Promise<void>;
   pushGeometryUpdates: (batch: GeometryUpdateBatch) => Promise<void>;
+  pushFocusedRemoteElementId: (remoteElementId: string | null) => Promise<void>;
   pushMediaSessionEvents: (batch: MediaSessionEventBatch) => Promise<void>;
 };

@@ -26,6 +26,5 @@ export const settingsRowTest: TwentyUiGalleryPlayFunction = async ({
 
   await expectSandboxErrors({
     requiredErrors: [SANDBOX_ERROR_PATTERNS.NATIVE_EVENT_DEFAULT_PREVENTED],
-    allowedAdditionalErrors: [SANDBOX_ERROR_PATTERNS.ELEMENT_REF_FOCUS],
   });
 };

@@ -3,6 +3,7 @@ import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/F
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 import { FrontComponentConfirmationModalResultEffect } from '@/host/effect-components/FrontComponentConfirmationModalResultEffect';
 import { FrontComponentErrorEffect } from '@/host/effect-components/FrontComponentErrorEffect';
+import { FrontComponentFocusTrackerEffect } from '@/host/effect-components/FrontComponentFocusTrackerEffect';
 import { FrontComponentGeometryTrackerEffect } from '@/host/effect-components/FrontComponentGeometryTrackerEffect';
 import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
@@ -110,6 +111,10 @@ export const FrontComponentRenderer = ({
               thread={thread}
             />
             <FrontComponentGeometryTrackerEffect
+              thread={thread}
+              geometryTracker={geometryTracker}
+            />
+            <FrontComponentFocusTrackerEffect
               thread={thread}
               geometryTracker={geometryTracker}
             />
