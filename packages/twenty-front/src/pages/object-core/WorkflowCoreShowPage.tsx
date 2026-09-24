@@ -1,14 +1,13 @@
 import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkflowEditor';
 import { CoreWorkflowIdentifierBar } from '@/object-core/workflows/components/CoreWorkflowIdentifierBar';
-import { CoreWorkflowShowPageBreadcrumb } from '@/object-core/workflows/components/CoreWorkflowShowPageBreadcrumb';
 import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 
@@ -127,9 +126,13 @@ const CoreWorkflowShowContent = ({
       <PageCardLayout
         header={
           <PageCardHeader
-            breadcrumb={
-              <CoreWorkflowShowPageBreadcrumb name={record.name ?? ''} />
-            }
+            links={[
+              {
+                children: t`Workflows`,
+                href: getAppPath(AppPath.WorkflowCoreIndexPage),
+              },
+              { children: record.name ?? '' },
+            ]}
             actionButton={
               <>
                 {!isReadOnlyVersion && <RecordShowCommandMenu />}
