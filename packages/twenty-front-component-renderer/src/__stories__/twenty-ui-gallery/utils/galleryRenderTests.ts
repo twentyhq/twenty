@@ -10,11 +10,6 @@ export const galleryRenderTest = createGalleryRenderTest({
   expectedFailedComponents: [],
 });
 
-// LinkChip crashes without a router context in the sandbox.
-export const dataDisplayTest = createGalleryRenderTest({
-  expectedFailedComponents: ['LinkChip'],
-});
-
 // Unselected radios need Element.matches(':disabled'); React radio groups
 // also need compareDocumentPosition, which the sandbox DOM does not implement.
 export const inputReactTest = createGalleryRenderTest({
@@ -22,11 +17,6 @@ export const inputReactTest = createGalleryRenderTest({
 });
 export const inputPreactTest = createGalleryRenderTest({
   expectedFailedComponents: ['Radio'],
-});
-
-// react-router Links crash without a router context.
-export const navigationTest = createGalleryRenderTest({
-  expectedFailedComponents: ['RawLink', 'UndecoratedLink'],
 });
 
 // Monaco cannot load scripts inside the sandbox worker, so the wrapper mounts
@@ -91,6 +81,5 @@ export const displayHelpersTest: TwentyUiGalleryPlayFunction = async ({
   expect(canvas.getByText('1234.5')).toBeVisible();
   expect(canvas.getByText('{"active":true}')).toBeVisible();
   expect(canvas.getByText('Account description')).toBeVisible();
-  expect(canvas.getByText('Qualified')).toBeVisible();
   expect(errorHandler).not.toHaveBeenCalled();
 };

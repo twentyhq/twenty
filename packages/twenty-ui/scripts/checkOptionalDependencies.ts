@@ -1,4 +1,4 @@
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isString } from '@sniptt/guards';
 import { build, type Plugin } from 'esbuild';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,7 +17,10 @@ const PACKAGE_PATH = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '..',
 );
-const ROOT_ENTRY_POINT = packageJson.exports['.'];
+const ALLOWED_OPTIONAL_PEERS_BY_ENTRY_POINT: Record<string, string[]> = {
+  './testing': ['react-router-dom'],
+  './components/code-editor': ['@monaco-editor/react', 'monaco-editor'],
+};
 const OPTIONAL_PEER_DEPENDENCY_NAMES = Object.entries(
   packageJson.peerDependenciesMeta,
 )
@@ -26,28 +29,46 @@ const OPTIONAL_PEER_DEPENDENCY_NAMES = Object.entries(
 const BARE_IMPORT_PATH_PATTERN = /^[^./]/;
 const DECLARATION_FILE_SUFFIXES = ['.d.ts', '/index.d.ts'];
 
-const isOptionalPeerDependencyImportPath = (importPath: string) =>
-  OPTIONAL_PEER_DEPENDENCY_NAMES.some(
+const matchesDependencyImportPath = ({
+  importPath,
+  dependencyNames,
+}: {
+  importPath: string;
+  dependencyNames: string[];
+}) =>
+  dependencyNames.some(
     (dependencyName) =>
       importPath === dependencyName ||
       importPath.startsWith(`${dependencyName}/`),
   );
 
-const rejectOptionalPeerDependenciesPlugin: Plugin = {
+const createOptionalPeerDependenciesPlugin = (
+  allowedOptionalPeers: string[],
+): Plugin => ({
   name: 'reject-optional-peer-dependencies',
   setup: (build) => {
     build.onResolve({ filter: BARE_IMPORT_PATH_PATTERN }, ({ path }) =>
-      isOptionalPeerDependencyImportPath(path)
+      matchesDependencyImportPath({
+        importPath: path,
+        dependencyNames: OPTIONAL_PEER_DEPENDENCY_NAMES,
+      }) &&
+      !matchesDependencyImportPath({
+        importPath: path,
+        dependencyNames: allowedOptionalPeers,
+      })
         ? { errors: [{ text: `Unexpected optional peer dependency: ${path}` }] }
         : undefined,
     );
   },
-};
+});
 
-const resolveDeclarationFilePath = (
-  importerFilePath: string,
-  importPath: string,
-) => {
+const resolveDeclarationFilePath = ({
+  importerFilePath,
+  importPath,
+}: {
+  importerFilePath: string;
+  importPath: string;
+}) => {
   const declarationFilePath = DECLARATION_FILE_SUFFIXES.map((suffix) =>
     path.resolve(path.dirname(importerFilePath), `${importPath}${suffix}`),
   ).find((candidateFilePath) => fs.existsSync(candidateFilePath));
@@ -61,10 +82,13 @@ const resolveDeclarationFilePath = (
   return declarationFilePath;
 };
 
-const collectBareDeclarationImports = (
-  declarationFilePath: string,
-  visitedDeclarationFilePaths: Set<string>,
-): DeclarationImport[] => {
+const collectBareDeclarationImports = ({
+  declarationFilePath,
+  visitedDeclarationFilePaths,
+}: {
+  declarationFilePath: string;
+  visitedDeclarationFilePaths: Set<string>;
+}): DeclarationImport[] => {
   if (visitedDeclarationFilePaths.has(declarationFilePath)) {
     return [];
   }
@@ -79,42 +103,62 @@ const collectBareDeclarationImports = (
     ({ fileName: importPath }) =>
       BARE_IMPORT_PATH_PATTERN.test(importPath)
         ? [{ declarationFilePath, importPath }]
-        : collectBareDeclarationImports(
-            resolveDeclarationFilePath(declarationFilePath, importPath),
+        : collectBareDeclarationImports({
+            declarationFilePath: resolveDeclarationFilePath({
+              importerFilePath: declarationFilePath,
+              importPath,
+            }),
             visitedDeclarationFilePaths,
-          ),
+          }),
   );
 };
 
-for (const entryPath of [ROOT_ENTRY_POINT.import, ROOT_ENTRY_POINT.require]) {
-  await build({
-    entryPoints: [path.resolve(PACKAGE_PATH, entryPath)],
-    bundle: true,
-    packages: 'external',
-    write: false,
-    logLevel: 'error',
-    plugins: [rejectOptionalPeerDependenciesPlugin],
-  });
-}
-
-const optionalPeerDependencyDeclarationImports = collectBareDeclarationImports(
-  path.resolve(PACKAGE_PATH, ROOT_ENTRY_POINT.types),
-  new Set(),
-).filter(({ importPath }) => isOptionalPeerDependencyImportPath(importPath));
-
-if (isNonEmptyArray(optionalPeerDependencyDeclarationImports)) {
-  for (const {
-    declarationFilePath,
-    importPath,
-  } of optionalPeerDependencyDeclarationImports) {
-    process.stderr.write(
-      `Unexpected optional peer dependency: ${importPath} in ${path.relative(PACKAGE_PATH, declarationFilePath)}\n`,
-    );
+for (const [entryName, entryPoint] of Object.entries(packageJson.exports)) {
+  if (isString(entryPoint)) {
+    continue;
   }
 
-  process.exit(1);
+  const allowedOptionalPeers =
+    ALLOWED_OPTIONAL_PEERS_BY_ENTRY_POINT[entryName] ?? [];
+
+  for (const entryPath of [entryPoint.import, entryPoint.require]) {
+    await build({
+      entryPoints: [path.resolve(PACKAGE_PATH, entryPath)],
+      bundle: true,
+      packages: 'external',
+      write: false,
+      logLevel: 'error',
+      plugins: [createOptionalPeerDependenciesPlugin(allowedOptionalPeers)],
+    });
+  }
+
+  const unexpectedDeclarationImports = collectBareDeclarationImports({
+    declarationFilePath: path.resolve(PACKAGE_PATH, entryPoint.types),
+    visitedDeclarationFilePaths: new Set(),
+  }).filter(
+    ({ importPath }) =>
+      matchesDependencyImportPath({
+        importPath,
+        dependencyNames: OPTIONAL_PEER_DEPENDENCY_NAMES,
+      }) &&
+      !matchesDependencyImportPath({
+        importPath,
+        dependencyNames: allowedOptionalPeers,
+      }),
+  );
+
+  if (isNonEmptyArray(unexpectedDeclarationImports)) {
+    throw new Error(
+      unexpectedDeclarationImports
+        .map(
+          ({ declarationFilePath, importPath }) =>
+            `Unexpected optional peer dependency: ${importPath} in ${entryName}: ${path.relative(PACKAGE_PATH, declarationFilePath)}`,
+        )
+        .join('\n'),
+    );
+  }
 }
 
 process.stdout.write(
-  'The root entry point builds without optional peer dependencies.\n',
+  'All entry points build with only their declared optional peer dependencies.\n',
 );

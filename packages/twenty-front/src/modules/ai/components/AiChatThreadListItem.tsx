@@ -107,15 +107,14 @@ export const AiChatThreadListItem = ({
   const isArchived = Boolean(thread.deletedAt);
   const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
-    thread.id,
+  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
+    threadId: thread.id,
     surface,
-  );
+  });
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
-
   return (
     <StyledThreadItem
       onClick={() => {

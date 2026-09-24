@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   StyledPageLayoutDropdownContentContainer,
@@ -66,7 +65,7 @@ export const FieldWidgetNestedFieldDropdownContent = ({
         indicator="check"
         startIcon={<SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />}
       >
-        <OverflowingTextWithTooltip text={fieldMetadataItem.label} />
+        {fieldMetadataItem.label}
       </ListItem>
     </SelectableListItem>
   );

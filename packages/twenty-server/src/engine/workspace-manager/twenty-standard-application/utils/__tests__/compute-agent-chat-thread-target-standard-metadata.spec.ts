@@ -34,9 +34,10 @@ const getIndexedFieldUniversalIdentifiers = (
 const fields = STANDARD_OBJECTS.agentChatThreadTarget.fields;
 
 describe('agent chat thread target workspace metadata', () => {
-  // Attach is ON CONFLICT DO NOTHING against this index, so losing its
-  // uniqueness, its partial predicate or one of its columns would silently turn
-  // a repeated attach into duplicate links rather than a no-op.
+  // Attach is ON CONFLICT DO NOTHING against this index, so its exact shape
+  // decides what a second attach does: without uniqueness it duplicates the
+  // link, and with fewer columns or no predicate it can silently swallow a
+  // legitimate attach.
   it('keeps one live link per thread and record', () => {
     expect(findIndex('threadTargetUniqueIndex')).toMatchObject({
       isUnique: true,

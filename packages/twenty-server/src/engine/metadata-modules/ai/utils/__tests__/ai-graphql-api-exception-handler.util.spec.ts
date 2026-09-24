@@ -39,8 +39,8 @@ describe('aiGraphqlApiExceptionHandler', () => {
 
   it('leaves billing exceptions to the billing filter', () => {
     const exception = new BillingException(
-      'Credits exhausted',
-      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+      'No active subscription',
+      BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
     );
 
     expect(() => aiGraphqlApiExceptionHandler(exception)).toThrow(exception);

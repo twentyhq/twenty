@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 
 import { CRUD_TOOL_OPERATION_VERBS } from '@/ai/constants/crud-tool-operation-verbs.constant';
-import { type ToolDisplayContext } from '@/ai/types/tool-display-context.type';
+import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 import { getObjectLabelForCrudOperation } from '@/ai/utils/tool-display/get-object-label-for-crud-operation.util';
 import { parseCrudToolName } from '@/ai/utils/tool-display/parse-crud-tool-name.util';
 import { pickStatusLabel } from '@/ai/utils/tool-display/pick-status-label.util';

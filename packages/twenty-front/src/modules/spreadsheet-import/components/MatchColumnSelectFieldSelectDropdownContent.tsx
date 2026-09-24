@@ -1,12 +1,9 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { useMemo, useState } from 'react';
-
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -19,6 +16,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo, useState } from 'react';
 import { IconForbid, IconX, useIcons } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -117,9 +115,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                   selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
                   indicator="check"
                   startIcon={<SelectOptionIcon Icon={IconForbid} />}
-                >
-                  <OverflowingTextWithTooltip text={t`Do not import`} />
-                </ListItem>
+                >{t`Do not import`}</ListItem>
               </DropdownMenuItemsContainer>
               {suggestedOptions.length > 0 && (
                 <>
@@ -137,7 +133,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                         description={option.fieldMetadataTypeLabel}
                         startIcon={<SelectOptionIcon Icon={option.Icon} />}
                       >
-                        <OverflowingTextWithTooltip text={option.label} />
+                        {option.label}
                       </ListItem>
                     ))}
                   </DropdownMenuItemsContainer>
@@ -160,7 +156,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                 description={getFieldMetadataTypeLabel(field.type)}
                 startIcon={<SelectOptionIcon Icon={getIcon(field.icon)} />}
               >
-                <OverflowingTextWithTooltip text={field.label} />
+                {field.label}
               </ListItem>
             ))}
           </DropdownMenuItemsContainer>

@@ -173,6 +173,7 @@ export default defineApplication({
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  requestedCapabilities: ['microphone'],
   author: 'Your Company',
   category: 'Productivity',
   logoUrl: 'public/logo.png',
@@ -186,6 +187,8 @@ export default defineApplication({
   issueReportUrl: 'https://github.com/org/app/issues',
 });
 ```
+
+Set `requestedCapabilities` only when the app uses microphone or camera capture. Supported values are `'microphone'` and `'camera'`; request only the devices the app needs and explain their use in the README. The installation screen shows these requests for workspace-wide approval by a member who can manage apps. Omitting a capability does not silently grant access: first use pauses capture for approval, including for older apps without declarations. Browser and operating system permissions remain separate, and package updates do not automatically add grants.
 
 Only set `aboutDescription` when the marketplace About tab should differ from the npm README. Otherwise keep one source of truth in `README.md`. The About tab renders markdown text only: images and raw HTML (badges, `<div>` blocks) are not rendered, so keep the marketplace-facing content in plain markdown.
 

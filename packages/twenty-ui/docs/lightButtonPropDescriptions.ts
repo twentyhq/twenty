@@ -1,4 +1,4 @@
-import { type LightButtonProps } from '../src/components/LightButton/types/LightButtonProps';
+import { type LightButtonProps } from '../src/components/input/LightButton/types/LightButtonProps';
 
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
 

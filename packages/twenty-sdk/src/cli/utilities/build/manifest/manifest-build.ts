@@ -24,6 +24,7 @@ import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-con
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
+import { type SettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
@@ -48,10 +49,12 @@ import {
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
   type UninstallLogicFunctionApplicationManifest,
+  type HealthCheckLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
+  type SettingsMenuItemManifest,
   type TimelineActivityTypeManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
@@ -123,11 +126,14 @@ export const buildManifest = async (
   const pageLayoutWidgets: StandalonePageLayoutWidgetManifest[] = [];
   const commandMenuItems: CommandMenuItemManifest[] = [];
   const timelineActivityTypes: TimelineActivityTypeManifest[] = [];
+  const settingsMenuItems: SettingsMenuItemManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
     [];
   const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
+    [];
+  const healthCheckLogicFunctions: HealthCheckLogicFunctionApplicationManifest[] =
     [];
   const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
@@ -151,6 +157,7 @@ export const buildManifest = async (
   const pageLayoutWidgetsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
   const timelineActivityTypesFilePaths: string[] = [];
+  const settingsMenuItemsFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -359,6 +366,12 @@ export const buildManifest = async (
           });
         }
 
+        if (targetFunctionName === TargetFunction.DefineHealthCheck) {
+          healthCheckLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+          });
+        }
+
         break;
       }
       case ManifestEntityKey.FrontComponents: {
@@ -525,6 +538,18 @@ export const buildManifest = async (
         timelineActivityTypesFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.SettingsMenuItems: {
+        const extract = await extractManifestFromFile<SettingsMenuItemConfig>({
+          appPath,
+          filePath,
+        });
+
+        settingsMenuItems.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        settingsMenuItemsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -609,6 +634,10 @@ export const buildManifest = async (
     errors.push('Only one uninstall logic function is allowed per application');
   }
 
+  if (healthCheckLogicFunctions.length > 1) {
+    errors.push('Only one health check is allowed per application');
+  }
+
   if (settingsFrontComponentUniversalIdentifiers.length > 1) {
     errors.push('Only one settings front component is allowed per application');
   }
@@ -670,6 +699,9 @@ export const buildManifest = async (
             ...(uninstallLogicFunctions.length >= 1
               ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
               : {}),
+            ...(healthCheckLogicFunctions.length >= 1
+              ? { healthCheckLogicFunction: healthCheckLogicFunctions[0] }
+              : {}),
             ...(settingsFrontComponentUniversalIdentifiers.length >= 1
               ? {
                   settingsFrontComponent: {
@@ -714,6 +746,7 @@ export const buildManifest = async (
         pageLayoutWidgets: pageLayoutWidgets.sort(byId),
         commandMenuItems: commandMenuItems.sort(byId),
         timelineActivityTypes: timelineActivityTypes.sort(byId),
+        settingsMenuItems: settingsMenuItems.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -737,6 +770,7 @@ export const buildManifest = async (
     pageLayoutWidgets: pageLayoutWidgetsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
     timelineActivityTypes: timelineActivityTypesFilePaths,
+    settingsMenuItems: settingsMenuItemsFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };

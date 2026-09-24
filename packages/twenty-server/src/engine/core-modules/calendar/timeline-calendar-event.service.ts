@@ -127,6 +127,7 @@ export class TimelineCalendarEventService {
       const callRecordingRepository =
         this.workspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
           'callRecording',
+          { shouldBypassPermissionChecks: true },
         );
 
       const callRecordings = await callRecordingRepository.find({

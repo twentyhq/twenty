@@ -313,3 +313,20 @@ export const deleteConnectedAccount = async (
 
   await waitForAllJobsToFinish();
 };
+
+export const disconnectConnectedAccount = async (
+  connectedAccountId: string,
+): Promise<void> => {
+  const response = await makeMetadataAPIRequest({
+    query: gql`
+      mutation DisconnectConnectedAccountForTest($id: UUID!) {
+        disconnectConnectedAccount(id: $id) {
+          id
+        }
+      }
+    `,
+    variables: { id: connectedAccountId },
+  });
+
+  getDataOrThrow(response);
+};

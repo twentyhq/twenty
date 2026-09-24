@@ -303,6 +303,9 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   connectionProvider: {},
   searchFieldMetadata: {},
   timelineActivityType: {},
+  settingsMenuItem: {},
+  workflow: {},
+  workflowVersion: {},
 } as const satisfies OneToManyMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

@@ -278,6 +278,7 @@ const computePackageJsonFilesAndExportsConfig = (
     files: [
       'dist',
       'LICENSE',
+      'CHANGELOG.md',
       '!dist/individual',
       '!dist/individual/**',
       '!dist/**/*.map',

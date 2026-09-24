@@ -1,0 +1,181 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should fail on invalid settings menu items when syncing an item pointing at an unknown front component 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "settingsMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "SETTINGS_MENU_ITEM_FRONT_COMPONENT_NOT_FOUND",
+              "message": "Front component "d1b2c3d4-0006-4000-a000-000000000006" not found",
+              "userFriendlyMessage": "The front component this settings menu item renders was not found.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "title": "Orphan",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "settingsMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 settingsMenuItem",
+    "summary": {
+      "settingsMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "The front component this settings menu item renders was not found.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid settings menu items when syncing an item with an empty title 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "settingsMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_SETTINGS_MENU_ITEM_INPUT",
+              "message": "Settings menu item title is required",
+              "userFriendlyMessage": "Settings menu item title is required",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "title": "",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "settingsMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 settingsMenuItem",
+    "summary": {
+      "settingsMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Settings menu item title is required",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid settings menu items when syncing an item with the reserved General title 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "settingsMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "RESERVED_SETTINGS_MENU_ITEM_TITLE",
+              "message": "Settings menu item title "General" is reserved",
+              "userFriendlyMessage": "This settings menu item title is reserved.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "title": "General",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "settingsMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 settingsMenuItem",
+    "summary": {
+      "settingsMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This settings menu item title is reserved.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid settings menu items when two items collide on the position the manifest omits 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "settingsMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "SETTINGS_MENU_ITEM_POSITION_ALREADY_TAKEN",
+              "message": "Another settings menu item already uses position 0",
+              "userFriendlyMessage": "Another settings menu item of this application already uses this position.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "title": "Second",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "settingsMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 settingsMenuItem",
+    "summary": {
+      "settingsMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Another settings menu item of this application already uses this position.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid settings menu items when two items of the same scope share a position 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "settingsMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "SETTINGS_MENU_ITEM_POSITION_ALREADY_TAKEN",
+              "message": "Another settings menu item already uses position 1",
+              "userFriendlyMessage": "Another settings menu item of this application already uses this position.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "title": "Second",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "settingsMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 settingsMenuItem",
+    "summary": {
+      "settingsMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Another settings menu item of this application already uses this position.",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

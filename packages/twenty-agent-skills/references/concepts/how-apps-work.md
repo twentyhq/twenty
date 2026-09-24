@@ -17,7 +17,7 @@ A Twenty app depends on two SDK packages:
 | `twenty-sdk` | Define app entities and access front component runtime APIs | Entity definitions (`twenty-sdk/define`), front component hooks and host APIs (`twenty-sdk/front-component`) |
 | `twenty-client-sdk` | Access workspace data from front components | Core object queries (`twenty-client-sdk/core`), metadata queries (`twenty-client-sdk/metadata`) |
 
-`twenty-sdk/define` provides the registration functions: `defineApplication`, `defineObject`, `defineField`, `defineView`, `definePageLayout`, `defineFrontComponent`, `defineNavigationMenuItem`, `defineLogicFunction`, `defineRole`, and others. Every app entity is declared through one of these functions.
+`twenty-sdk/define` provides the registration functions: `defineApplication`, `defineObject`, `defineField`, `defineView`, `definePageLayout`, `defineFrontComponent`, `defineSettingsMenuItem`, `defineNavigationMenuItem`, `defineLogicFunction`, `defineRole`, and others. Every app entity is declared through one of these functions.
 
 `twenty-sdk/front-component` provides runtime APIs available inside front components: `navigate`, `enqueueSnackbar`, `openSidePanelPage`, `useSelectedRecordIds`, `getApplicationVariable`, and others.
 
@@ -78,6 +78,10 @@ This means:
 - They import UI primitives from `twenty-ui` (installed from npm), not from external component libraries.
 - They fetch workspace data through `twenty-client-sdk/core`, not through direct API calls.
 
+For microphone or camera capture, declare `requestedCapabilities: ['microphone']`, `['camera']`, or `['microphone', 'camera']` in `defineApplication()`. These capabilities appear during installation and are separate from role permissions. Approval requires a workspace member who can manage apps and applies to the whole workspace.
+
+Calling `navigator.mediaDevices.getUserMedia()` without a saved grant pauses capture and shows an approval dialog, including for older apps without `requestedCapabilities`. Declining leaves capture blocked before browser permissions are requested. Package updates do not automatically add grants; locally synced development apps receive their declared capabilities. Browser and operating system permissions still apply after workspace approval.
+
 ## App File Structure
 
 A typical Twenty app after scaffolding:
@@ -93,6 +97,7 @@ my-app/
     views/                              # defineView
     roles/                              # defineRole
     front-components/                   # defineFrontComponent (.tsx)
+    settings-menu-items/                      # defineSettingsMenuItem
     page-layouts/                       # definePageLayout
     navigation-menu-items/              # defineNavigationMenuItem
     logic-functions/                    # defineLogicFunction

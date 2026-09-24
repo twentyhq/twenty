@@ -14,8 +14,8 @@ describe('buildOptimisticNavigationMenuItem', () => {
     expect(optimisticItem.pageLayoutId).toBe(
       '0a0be2ee-2f5f-4a5a-b1e5-1b5c8e3a4f21',
     );
-    expect(filterAndSortNavigationMenuItems([optimisticItem], [], [])).toEqual([
-      optimisticItem,
-    ]);
+    expect(
+      filterAndSortNavigationMenuItems([optimisticItem], [], [], false),
+    ).toEqual([optimisticItem]);
   });
 });

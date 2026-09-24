@@ -1,14 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/components';
-import { CommandBlock, Tag } from 'twenty-ui/primitives/data-display';
-import { IconCopy } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { CommandBlock, Section } from 'twenty-ui/components';
+import { IconCopy } from 'twenty-ui/icon';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
+import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 
 export const SettingsApplicationRegistrationDistributionTab = ({
   registration,

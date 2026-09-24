@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Key } from 'ts-key-enum';
 
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -14,7 +14,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
 
 export const MultipleSelectDropdown = ({
   selectableListId,
@@ -119,12 +118,12 @@ export const MultipleSelectDropdown = ({
                   />
                 }
               >
-                <OverflowingTextWithTooltip text={item.name} />
+                {item.name}
               </ListItem>
             </SelectableListItem>
           );
         })}
-        {showNoResult && <MenuItem text={t`No results`} />}
+        {showNoResult && <ListItem disabled>{t`No results`}</ListItem>}
         {loadingItems && <DropdownMenuSkeletonItem />}
       </DropdownMenuItemsContainer>
     </SelectableList>

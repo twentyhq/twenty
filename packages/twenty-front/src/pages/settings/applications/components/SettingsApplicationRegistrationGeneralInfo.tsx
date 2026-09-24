@@ -1,3 +1,15 @@
+import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
+import {
+  SettingsTableCard,
+  type TableItem,
+} from '@/settings/components/SettingsTableCard';
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import {
   IconBox,
@@ -6,12 +18,8 @@ import {
   IconVersions,
   IconWorld,
 } from 'twenty-ui/icon';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
-import {
-  SettingsTableCard,
-  type TableItem,
-} from '@/settings/components/SettingsTableCard';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ApplicationRegistration,
   ApplicationRegistrationSourceType,
@@ -19,13 +27,6 @@ import {
   FindOneApplicationSummaryDocument,
   GetPublicWorkspaceDataByIdDocument,
 } from '~/generated-metadata/graphql';
-import { isNonEmptyString } from '@sniptt/guards';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useQuery } from '@apollo/client/react';
-import { AvatarOrIcon, Chip, Tag } from 'twenty-ui/primitives/data-display';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

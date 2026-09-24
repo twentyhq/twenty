@@ -34,6 +34,8 @@ const HISTORY_TABLES_BY_NAME = {
       'threadId',
       'turnId',
       'agentId',
+      'senderUserWorkspaceId',
+      'senderApplicationId',
       'role',
       'status',
       'isHidden',

@@ -5,13 +5,23 @@ export const isEmailBlocklisted = (
   email: string | null | undefined,
   blocklist: string[],
 ): boolean => {
-  if (!email || channelHandle.includes(email)) {
+  if (!email) {
     return false;
   }
 
-  const domain = getDomainFromEmail(email);
+  const normalizedEmail = email.toLowerCase();
 
-  return blocklist.some((item) => {
+  if (
+    channelHandle.some((handle) => handle.toLowerCase() === normalizedEmail)
+  ) {
+    return false;
+  }
+
+  const domain = getDomainFromEmail(normalizedEmail);
+
+  return blocklist.some((rawItem) => {
+    const item = rawItem.toLowerCase();
+
     if (item.startsWith('@')) {
       const bareDomain = item.slice(1);
 
@@ -20,6 +30,6 @@ export const isEmailBlocklisted = (
       );
     }
 
-    return email === item;
+    return normalizedEmail === item;
   });
 };

@@ -1,6 +1,7 @@
 import { Inject, UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
+import { type ApplicationCapability } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -60,6 +61,35 @@ export class FrontComponentResolver {
     );
   }
 
+  @ResolveField(() => String, { nullable: true })
+  async applicationName(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | undefined> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    return flatApplicationMaps.byId[frontComponent.applicationId]?.name;
+  }
+
+  @ResolveField(() => [String], { nullable: true })
+  async applicationGrantedCapabilities(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApplicationCapability[]> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    return (
+      flatApplicationMaps.byId[frontComponent.applicationId]
+        ?.grantedCapabilities ?? []
+    );
+  }
+
   @Query(() => [FrontComponentDTO])
   @UseGuards(NoPermissionGuard)
   @AllowSuspendedWorkspace()
@@ -83,19 +113,18 @@ export class FrontComponentResolver {
       return null;
     }
 
-    const tokenPair =
-      await this.applicationTokenService.generateApplicationTokenPair({
+    const [tokenPair, applicationVariables] = await Promise.all([
+      this.applicationTokenService.generateApplicationTokenPair({
         applicationId: dto.applicationId,
         workspaceId: workspace.id,
         userWorkspaceId,
         userId: user.id,
-      });
-
-    const applicationVariables =
-      await this.applicationVariableService.getPublicEnvVariables({
+      }),
+      this.applicationVariableService.getPublicEnvVariables({
         workspaceId: workspace.id,
         applicationId: dto.applicationId,
-      });
+      }),
+    ]);
 
     return {
       ...dto,
