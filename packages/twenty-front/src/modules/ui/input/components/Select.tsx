@@ -235,50 +235,51 @@ export const Select = <TValue extends SelectValue>({
             )}
             {isNonEmptyArray(filteredOptions) && (
               <Dropdown.Section scrollable>
-                {filteredOptions.map((option) => (
-                  <Dropdown.OptionItem
-                    key={`${option.value}-${option.label}`}
-                    onSelect={() => {
-                      onChange?.(option.value);
-                      onBlur?.();
-                    }}
-                    disabled={option.disabled}
-                    selected={controlSelectedOption.value === option.value}
-                    indicator={
-                      (renderAsTag && isDefined(option.color)) || needIconCheck
-                        ? 'check'
-                        : 'none'
-                    }
-                    description={
-                      renderAsTag && isDefined(option.color)
-                        ? undefined
-                        : option.contextualText
-                    }
-                    startIcon={
-                      renderAsTag && isDefined(option.color) ? undefined : (
-                        <>
-                          <SelectOptionIcon
-                            Icon={option.Icon}
-                            color={option.iconThemeColor}
-                          />
-                          {option.LeftComponent}
-                        </>
-                      )
-                    }
-                  >
-                    {renderAsTag && isDefined(option.color) ? (
-                      <Tag
-                        color={option.color}
-                        borderStyle="dashed"
-                        variant="soft"
-                      >
-                        {option.label}
-                      </Tag>
-                    ) : (
-                      option.label
-                    )}
-                  </Dropdown.OptionItem>
-                ))}
+                {filteredOptions.map((option) => {
+                  const tagColor = renderAsTag ? option.color : undefined;
+                  const isColoredTag = isDefined(tagColor);
+
+                  return (
+                    <Dropdown.OptionItem
+                      key={`${option.value}-${option.label}`}
+                      onSelect={() => {
+                        onChange?.(option.value);
+                        onBlur?.();
+                      }}
+                      disabled={option.disabled}
+                      selected={controlSelectedOption.value === option.value}
+                      indicator={
+                        isColoredTag || needIconCheck ? 'check' : 'none'
+                      }
+                      description={
+                        isColoredTag ? undefined : option.contextualText
+                      }
+                      startIcon={
+                        isColoredTag ? undefined : (
+                          <>
+                            <SelectOptionIcon
+                              Icon={option.Icon}
+                              color={option.iconThemeColor}
+                            />
+                            {option.LeftComponent}
+                          </>
+                        )
+                      }
+                    >
+                      {isColoredTag ? (
+                        <Tag
+                          color={tagColor}
+                          borderStyle="dashed"
+                          variant="soft"
+                        >
+                          {option.label}
+                        </Tag>
+                      ) : (
+                        option.label
+                      )}
+                    </Dropdown.OptionItem>
+                  );
+                })}
               </Dropdown.Section>
             )}
             {isDefined(callToActionButton) &&
