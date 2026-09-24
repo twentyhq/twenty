@@ -1,16 +1,15 @@
 import chunk from 'lodash.chunk';
 import { Command } from 'nest-commander';
-import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Like } from 'typeorm';
+import { In } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
-  findLogicFunctionFilesWithoutFileRow,
-  type LogicFunctionFileWithoutFileRow,
-} from 'src/database/commands/upgrade-version-command/2-43/utils/find-logic-function-files-without-file-row.util';
+  buildLogicFunctionFiles,
+  type LogicFunctionFile,
+} from 'src/database/commands/upgrade-version-command/2-43/utils/build-logic-function-files.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
@@ -20,10 +19,11 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+const FILE_ROW_LOOKUP_BATCH_SIZE = 500;
 const STORAGE_LOOKUP_BATCH_SIZE = 20;
 const FILE_ROW_INSERT_BATCH_SIZE = 500;
 
-type StoredLogicFunctionFile = LogicFunctionFileWithoutFileRow & {
+type StoredLogicFunctionFile = LogicFunctionFile & {
   size: number;
 };
 
@@ -54,32 +54,21 @@ export class BackfillLogicFunctionFileRowsCommand extends ProvisionedWorkspaceCo
         'flatApplicationMaps',
       ]);
 
-    const flatLogicFunctions = Object.values(
-      flatLogicFunctionMaps.byUniversalIdentifier,
-    );
-
-    if (flatLogicFunctions.length === 0) {
-      return;
-    }
-
-    const existingFileRows = await this.fileRepository.find(workspaceId, {
-      select: { applicationId: true, path: true },
-      where: [
-        { path: Like(`${FileFolder.Source}/%`) },
-        { path: Like(`${FileFolder.BuiltLogicFunction}/%`) },
-      ],
-      withDeleted: true,
-    });
-
-    const filesWithoutFileRow = findLogicFunctionFilesWithoutFileRow({
-      flatLogicFunctions,
+    const logicFunctionFiles = buildLogicFunctionFiles({
+      flatLogicFunctions: Object.values(
+        flatLogicFunctionMaps.byUniversalIdentifier,
+      ),
       flatApplicationMaps,
-      existingFileRows,
     });
 
-    if (filesWithoutFileRow.length === 0) {
+    if (logicFunctionFiles.length === 0) {
       return;
     }
+
+    const filesWithoutFileRow = await this.findFilesWithoutFileRow({
+      workspaceId,
+      files: logicFunctionFiles,
+    });
 
     const storedFiles = await this.findStoredFiles({
       workspaceId,
@@ -95,36 +84,65 @@ export class BackfillLogicFunctionFileRowsCommand extends ProvisionedWorkspaceCo
       );
     }
 
-    if (storedFiles.length === 0) {
-      return;
+    if (storedFiles.length > 0) {
+      this.logger.log(
+        `${options.dryRun ? '[DRY RUN] ' : ''}Backfilling ${storedFiles.length} logic function file row(s) for workspace ${workspaceId}`,
+      );
     }
 
     if (options.dryRun) {
-      this.logger.log(
-        `Would backfill ${storedFiles.length} logic function file row(s) for workspace ${workspaceId}`,
-      );
-
       return;
     }
 
-    await this.insertFileRows({ workspaceId, storedFiles });
+    try {
+      await this.insertFileRows({ workspaceId, storedFiles });
+    } finally {
+      // Rows inserted here bypass the storage stock counters, and a rerun
+      // cannot see what a partial run inserted, so always drop them.
+      const applicationIds = new Set(
+        logicFunctionFiles.map(({ applicationId }) => applicationId),
+      );
 
-    // The storage stock counters only track writes made through
-    // FileStorageService, so drop them to re-warm from the backfilled rows.
-    const applicationIds = new Set(
-      storedFiles.map(({ applicationId }) => applicationId),
-    );
+      for (const applicationId of applicationIds) {
+        await this.fileStorageService.invalidateStorageStock({
+          workspaceId,
+          applicationId,
+        });
+      }
+    }
+  }
 
-    for (const applicationId of applicationIds) {
-      await this.fileStorageService.invalidateStorageStock({
-        workspaceId,
-        applicationId,
+  private async findFilesWithoutFileRow({
+    workspaceId,
+    files,
+  }: {
+    workspaceId: string;
+    files: LogicFunctionFile[];
+  }): Promise<LogicFunctionFile[]> {
+    const filesWithoutFileRow: LogicFunctionFile[] = [];
+
+    for (const batch of chunk(files, FILE_ROW_LOOKUP_BATCH_SIZE)) {
+      const existingFileRows = await this.fileRepository.find(workspaceId, {
+        select: { applicationId: true, path: true },
+        where: { path: In(batch.map(({ path }) => path)) },
+        withDeleted: true,
       });
+
+      const existingFileRowKeys = new Set(
+        existingFileRows.map(
+          ({ applicationId, path }) => `${applicationId}:${path}`,
+        ),
+      );
+
+      filesWithoutFileRow.push(
+        ...batch.filter(
+          ({ applicationId, path }) =>
+            !existingFileRowKeys.has(`${applicationId}:${path}`),
+        ),
+      );
     }
 
-    this.logger.log(
-      `Backfilled ${storedFiles.length} logic function file row(s) for workspace ${workspaceId}`,
-    );
+    return filesWithoutFileRow;
   }
 
   private async findStoredFiles({
@@ -132,7 +150,7 @@ export class BackfillLogicFunctionFileRowsCommand extends ProvisionedWorkspaceCo
     files,
   }: {
     workspaceId: string;
-    files: LogicFunctionFileWithoutFileRow[];
+    files: LogicFunctionFile[];
   }): Promise<StoredLogicFunctionFile[]> {
     const storedFiles: StoredLogicFunctionFile[] = [];
 
@@ -170,8 +188,6 @@ export class BackfillLogicFunctionFileRowsCommand extends ProvisionedWorkspaceCo
     for (const batch of chunk(storedFiles, FILE_ROW_INSERT_BATCH_SIZE)) {
       const fileRows = await Promise.all(
         batch.map(async ({ applicationId, path, resourcePath, size }) => {
-          // Logic function files are text, which file-type never sniffs, so
-          // the extension alone decides the mime type writeFile would store.
           const { mimeType } = await extractFileInfoOrThrow({
             file: Buffer.alloc(0),
             filename: resourcePath,

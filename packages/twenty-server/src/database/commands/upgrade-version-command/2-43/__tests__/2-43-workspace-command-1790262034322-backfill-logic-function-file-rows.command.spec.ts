@@ -1,4 +1,5 @@
 import { FileFolder } from 'twenty-shared/types';
+import { In } from 'typeorm';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillLogicFunctionFileRowsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790262034322-backfill-logic-function-file-rows.command';
@@ -24,6 +25,7 @@ describe('BackfillLogicFunctionFileRowsCommand', () => {
   let getFileMetadataMock: jest.Mock;
   let invalidateStorageStockMock: jest.Mock;
   let insertValuesMock: jest.Mock;
+  let insertExecuteMock: jest.Mock;
   let loggerWarnMock: jest.SpyInstance;
 
   beforeEach(() => {
@@ -39,6 +41,7 @@ describe('BackfillLogicFunctionFileRowsCommand', () => {
     };
 
     insertValuesMock = insertQueryBuilder.values;
+    insertExecuteMock = insertQueryBuilder.execute;
 
     command = new BackfillLogicFunctionFileRowsCommand(
       {} as WorkspaceIteratorService,
@@ -128,6 +131,18 @@ describe('BackfillLogicFunctionFileRowsCommand', () => {
     });
   });
 
+  it('only looks up the file rows of logic function files', async () => {
+    await runOnWorkspace();
+
+    expect(findFileRowsMock).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({
+        where: { path: In([SOURCE_FILE_PATH, BUILT_FILE_PATH]) },
+        withDeleted: true,
+      }),
+    );
+  });
+
   it('only backfills the files that have no file row', async () => {
     findFileRowsMock.mockResolvedValue([
       { applicationId: APPLICATION.id, path: SOURCE_FILE_PATH },
@@ -161,7 +176,18 @@ describe('BackfillLogicFunctionFileRowsCommand', () => {
     expect(invalidateStorageStockMock).not.toHaveBeenCalled();
   });
 
-  it('does nothing when every logic function file has a file row', async () => {
+  it('drops the storage stock counters when an insert fails', async () => {
+    insertExecuteMock.mockRejectedValue(new Error('insert failed'));
+
+    await expect(runOnWorkspace()).rejects.toThrow('insert failed');
+
+    expect(invalidateStorageStockMock).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      applicationId: APPLICATION.id,
+    });
+  });
+
+  it('drops the storage stock counters when a previous run already inserted every row', async () => {
     findFileRowsMock.mockResolvedValue([
       { applicationId: APPLICATION.id, path: SOURCE_FILE_PATH },
       { applicationId: APPLICATION.id, path: BUILT_FILE_PATH },
@@ -171,6 +197,9 @@ describe('BackfillLogicFunctionFileRowsCommand', () => {
 
     expect(getFileMetadataMock).not.toHaveBeenCalled();
     expect(insertValuesMock).not.toHaveBeenCalled();
-    expect(invalidateStorageStockMock).not.toHaveBeenCalled();
+    expect(invalidateStorageStockMock).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      applicationId: APPLICATION.id,
+    });
   });
 });

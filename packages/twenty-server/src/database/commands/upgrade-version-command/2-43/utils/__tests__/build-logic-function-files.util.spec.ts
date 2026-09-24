@@ -1,6 +1,6 @@
 import { FileFolder } from 'twenty-shared/types';
 
-import { findLogicFunctionFilesWithoutFileRow } from 'src/database/commands/upgrade-version-command/2-43/utils/find-logic-function-files-without-file-row.util';
+import { buildLogicFunctionFiles } from 'src/database/commands/upgrade-version-command/2-43/utils/build-logic-function-files.util';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -43,12 +43,11 @@ const buildFlatLogicFunction = (
     ...overrides,
   }) as FlatLogicFunction;
 
-describe('findLogicFunctionFilesWithoutFileRow', () => {
-  it('returns the source and built files that have no file row', () => {
-    const result = findLogicFunctionFilesWithoutFileRow({
+describe('buildLogicFunctionFiles', () => {
+  it('returns the source and built files of each logic function', () => {
+    const result = buildLogicFunctionFiles({
       flatLogicFunctions: [buildFlatLogicFunction('logic-function'), undefined],
       flatApplicationMaps: FLAT_APPLICATION_MAPS,
-      existingFileRows: [],
     });
 
     expect(result).toEqual([
@@ -69,29 +68,8 @@ describe('findLogicFunctionFilesWithoutFileRow', () => {
     ]);
   });
 
-  it('skips files whose row exists for the same application', () => {
-    const result = findLogicFunctionFilesWithoutFileRow({
-      flatLogicFunctions: [buildFlatLogicFunction('logic-function')],
-      flatApplicationMaps: FLAT_APPLICATION_MAPS,
-      existingFileRows: [
-        {
-          applicationId: APPLICATION_ID,
-          path: 'source/logic-function/src/index.ts',
-        },
-        {
-          applicationId: 'other-application-id',
-          path: 'built-logic-function/logic-function/src/index.mjs',
-        },
-      ],
-    });
-
-    expect(result.map(({ path }) => path)).toEqual([
-      'built-logic-function/logic-function/src/index.mjs',
-    ]);
-  });
-
   it('skips logic functions whose application is missing or deleted', () => {
-    const result = findLogicFunctionFilesWithoutFileRow({
+    const result = buildLogicFunctionFiles({
       flatLogicFunctions: [
         buildFlatLogicFunction('unknown-application-logic-function', {
           applicationId: 'unknown-application-id',
@@ -107,7 +85,6 @@ describe('findLogicFunctionFilesWithoutFileRow', () => {
           deletedAt: new Date('2026-09-01T00:00:00.000Z'),
         },
       ]),
-      existingFileRows: [],
     });
 
     expect(result).toEqual([]);
@@ -119,13 +96,12 @@ describe('findLogicFunctionFilesWithoutFileRow', () => {
       builtHandlerPath: 'shared/src/index.mjs',
     };
 
-    const result = findLogicFunctionFilesWithoutFileRow({
+    const result = buildLogicFunctionFiles({
       flatLogicFunctions: [
         buildFlatLogicFunction('first-logic-function', sharedHandlerPaths),
         buildFlatLogicFunction('second-logic-function', sharedHandlerPaths),
       ],
       flatApplicationMaps: FLAT_APPLICATION_MAPS,
-      existingFileRows: [],
     });
 
     expect(result.map(({ path }) => path)).toEqual([

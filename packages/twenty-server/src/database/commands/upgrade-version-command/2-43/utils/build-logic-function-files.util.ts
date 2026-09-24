@@ -5,10 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
-import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
-export type LogicFunctionFileWithoutFileRow = {
+export type LogicFunctionFile = {
   applicationId: string;
   applicationUniversalIdentifier: string;
   fileFolder: FileFolder;
@@ -16,25 +15,14 @@ export type LogicFunctionFileWithoutFileRow = {
   path: string;
 };
 
-const buildFileRowKey = ({
-  applicationId,
-  path,
-}: Pick<FileEntity, 'applicationId' | 'path'>) => `${applicationId}:${path}`;
-
-export const findLogicFunctionFilesWithoutFileRow = ({
+export const buildLogicFunctionFiles = ({
   flatLogicFunctions,
   flatApplicationMaps,
-  existingFileRows,
 }: {
   flatLogicFunctions: (FlatLogicFunction | undefined)[];
   flatApplicationMaps: FlatApplicationCacheMaps;
-  existingFileRows: Pick<FileEntity, 'applicationId' | 'path'>[];
-}): LogicFunctionFileWithoutFileRow[] => {
-  const existingFileRowKeys = new Set(existingFileRows.map(buildFileRowKey));
-  const filesWithoutFileRowByKey = new Map<
-    string,
-    LogicFunctionFileWithoutFileRow
-  >();
+}): LogicFunctionFile[] => {
+  const logicFunctionFileByKey = new Map<string, LogicFunctionFile>();
 
   for (const flatLogicFunction of flatLogicFunctions) {
     if (!isDefined(flatLogicFunction)) {
@@ -50,7 +38,7 @@ export const findLogicFunctionFilesWithoutFileRow = ({
       continue;
     }
 
-    const logicFunctionFiles = [
+    const handlerFiles = [
       {
         fileFolder: FileFolder.Source,
         resourcePath: flatLogicFunction.sourceHandlerPath,
@@ -61,22 +49,18 @@ export const findLogicFunctionFilesWithoutFileRow = ({
       },
     ];
 
-    for (const { fileFolder, resourcePath } of logicFunctionFiles) {
-      const file = {
+    for (const { fileFolder, resourcePath } of handlerFiles) {
+      const path = join(fileFolder, resourcePath);
+
+      logicFunctionFileByKey.set(`${flatApplication.id}:${path}`, {
         applicationId: flatApplication.id,
         applicationUniversalIdentifier: flatApplication.universalIdentifier,
         fileFolder,
         resourcePath,
-        path: join(fileFolder, resourcePath),
-      };
-
-      const fileRowKey = buildFileRowKey(file);
-
-      if (!existingFileRowKeys.has(fileRowKey)) {
-        filesWithoutFileRowByKey.set(fileRowKey, file);
-      }
+        path,
+      });
     }
   }
 
-  return [...filesWithoutFileRowByKey.values()];
+  return [...logicFunctionFileByKey.values()];
 };
