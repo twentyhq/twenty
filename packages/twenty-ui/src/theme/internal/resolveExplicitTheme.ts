@@ -9,6 +9,19 @@ type StaticTheme = typeof THEME_LIGHT;
 const isStaticTheme = (theme: ThemeType | StaticTheme): theme is StaticTheme =>
   isFunction(theme.spacing);
 
+const resolveSpacingEntries = <TSpacingKey extends string>(
+  spacingEntries: Record<TSpacingKey, string>,
+  spacing: StaticTheme['spacing'],
+): Record<TSpacingKey, string> => {
+  const resolvedSpacingEntries = { ...spacingEntries };
+
+  for (const spacingKey in resolvedSpacingEntries) {
+    resolvedSpacingEntries[spacingKey] = spacing(Number(spacingKey));
+  }
+
+  return resolvedSpacingEntries;
+};
+
 export const resolveExplicitTheme = (
   theme: ThemeType | StaticTheme,
 ): ThemeType => {
@@ -16,12 +29,8 @@ export const resolveExplicitTheme = (
     return theme;
   }
 
-  const spacing = Object.fromEntries(
-    Object.keys(themeCssVariables.spacing).map((spacingKey) => [
-      spacingKey,
-      theme.spacing(Number(spacingKey)),
-    ]),
-  ) as ThemeType['spacing'];
-
-  return { ...theme, spacing };
+  return {
+    ...theme,
+    spacing: resolveSpacingEntries(themeCssVariables.spacing, theme.spacing),
+  };
 };
