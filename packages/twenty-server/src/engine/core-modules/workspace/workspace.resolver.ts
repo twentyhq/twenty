@@ -73,7 +73,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
@@ -230,14 +229,7 @@ export class WorkspaceResolver {
       return null;
     }
 
-    const defaultRoleEntity = await this.roleService.getRoleById(
-      workspace.defaultRoleId,
-      workspace.id,
-    );
-
-    return isDefined(defaultRoleEntity)
-      ? fromRoleEntityToRoleDto(defaultRoleEntity)
-      : null;
+    return this.roleService.getRoleById(workspace.defaultRoleId, workspace.id);
   }
 
   @ResolveField(() => ApplicationDTO, { nullable: true })
