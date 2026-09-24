@@ -93,8 +93,13 @@ export const isOptionElementSelected = (
   const select = resolveOwnerSelectElement(option);
   const selectValue = select?.value;
 
-  if (isString(selectValue)) {
-    return resolveOptionValue(option) === selectValue;
+  if (isDefined(select) && isString(selectValue)) {
+    return (
+      collectOptionsOfSelect(select).find(
+        (candidateOption) =>
+          resolveOptionValue(candidateOption) === selectValue,
+      ) === option
+    );
   }
 
   if (isArray(selectValue)) {
