@@ -16268,6 +16268,11 @@ msgstr "연체"
 msgid "Paste a link to a hosted image"
 msgstr "호스팅된 이미지의 링크를 붙여넣으세요"
 
+#. js-lingui-id: YrKalV
+#: src/modules/advanced-text-editor/extensions/blocks/HtmlNodeInlineEditor.tsx
+msgid "Paste or write your HTML here"
+msgstr ""
+
 #. js-lingui-id: cpStVq
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Paste the code below"

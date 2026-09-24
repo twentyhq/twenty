@@ -16268,6 +16268,11 @@ msgstr "متأخر عن السداد"
 msgid "Paste a link to a hosted image"
 msgstr "الصق رابطًا لصورة مستضافة"
 
+#. js-lingui-id: YrKalV
+#: src/modules/advanced-text-editor/extensions/blocks/HtmlNodeInlineEditor.tsx
+msgid "Paste or write your HTML here"
+msgstr ""
+
 #. js-lingui-id: cpStVq
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Paste the code below"
