@@ -23,7 +23,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Callout } from 'twenty-ui/components';
 import { Switch } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const COMPOSER_LABEL_MIN_WIDTH = '80px';
 

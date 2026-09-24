@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledIndicator = styled.span`
   align-items: center;

@@ -1,16 +1,7 @@
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { AppChip } from '@/applications/components/AppChip';
+import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
-import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledAppIconContainer = styled.span`
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-`;
 
 type AppMenuItemProps = {
   applicationId?: string | null;
@@ -35,11 +26,7 @@ export const AppMenuItem = ({
 
   return (
     <ListItem
-      startIcon={
-        <StyledAppIconContainer>
-          <AppChip applicationId={applicationId} size="md" chipOnly />
-        </StyledAppIconContainer>
-      }
+      startIcon={<AppMenuItemIcon applicationId={applicationId} />}
       description={applicationChipData.name}
       onClick={onClick}
       focused={focused}

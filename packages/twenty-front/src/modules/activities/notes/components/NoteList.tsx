@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 
 import { type Note } from '@/activities/types/Note';
 import { FieldDescriptionTooltipProvider } from '@/object-record/record-field/ui/components/FieldDescriptionTooltipProvider';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NoteTile } from './NoteTile';
 

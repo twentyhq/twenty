@@ -32,7 +32,7 @@ import {
 } from 'twenty-ui/icon';
 import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
   PermissionFlagType,
   SubscriptionStatus,

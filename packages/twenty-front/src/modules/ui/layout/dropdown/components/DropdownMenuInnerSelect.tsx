@@ -1,13 +1,12 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;
@@ -43,7 +42,7 @@ export const DropdownMenuInnerSelect = ({
   dropdownId,
   widthInPixels,
 }: DropdownMenuInnerSelectProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { closeDropdown } = useCloseDropdown();
 
   return (
@@ -55,7 +54,7 @@ export const DropdownMenuInnerSelect = ({
         </StyledDropdownMenuInnerSelectDropdownButton>
       }
       dropdownComponents={
-        <DropdownContent widthInPixels={widthInPixels}>
+        <LegacyDropdownContent widthInPixels={widthInPixels}>
           <DropdownMenuItemsContainer>
             {options.map((selectOption) => (
               <ListItem
@@ -74,7 +73,7 @@ export const DropdownMenuInnerSelect = ({
               </ListItem>
             ))}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       globalHotkeysConfig={{
         enableGlobalHotkeysWithModifiers: false,

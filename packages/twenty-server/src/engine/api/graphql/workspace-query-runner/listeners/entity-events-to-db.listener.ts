@@ -123,7 +123,7 @@ export class EntityEventsToDbListener {
       );
     }
 
-    if (isAuditLogBatchEvent && action !== DatabaseEventAction.DESTROYED) {
+    if (isAuditLogBatchEvent) {
       promises.push(this.enqueueEventLogIfEntitled(batchEvent));
     }
 

@@ -1,5 +1,6 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const isLegacyRecordAccessOpen = ({
   flatObjectMetadataMaps,
@@ -17,9 +18,9 @@ export const isLegacyRecordAccessOpen = ({
     flatObjectMetadataMaps.byUniversalIdentifier[
       STANDARD_OBJECTS.agentChatThread.universalIdentifier
     ];
-  // SYSTEM stays in place until compatibility grants have committed.
+  // Missing or SYSTEM metadata has not passed the compatibility backfill yet.
   return (
-    thread?.readability === MetadataReadability.SYSTEM &&
+    (!isDefined(thread) || thread.readability === MetadataReadability.SYSTEM) &&
     !wasRecordSharingEnabled
   );
 };

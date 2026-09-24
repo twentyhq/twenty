@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconMailCog, IconStatusChange, IconTrash } from 'twenty-ui/icon';
 
 import { type SettingsUnsubscribersFilterContentId } from '@/settings/unsubscribers/components/filter-dropdown/types/SettingsUnsubscribersFilterContentId';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
@@ -25,7 +25,7 @@ export const SettingsUnsubscribersFilterMenuContent = ({
   const { t } = useLingui();
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuItemsContainer>
         <ListItem
           startIcon={<IconStatusChange />}
@@ -52,6 +52,6 @@ export const SettingsUnsubscribersFilterMenuContent = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

@@ -1,5 +1,5 @@
 import IconMicrosoftCalendarRaw from '@assets/icons/microsoft-calendar.svg?react';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 interface IconMicrosoftCalendarProps {
   size?: number | string;

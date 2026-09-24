@@ -1,5 +1,5 @@
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { themeCssVariables, useTheme } from '@ui/theme-constants';
+import { themeCssVariables, useTheme } from '@ui/theme';
 
 import styles from './NavigationBarItem.module.scss';
 
