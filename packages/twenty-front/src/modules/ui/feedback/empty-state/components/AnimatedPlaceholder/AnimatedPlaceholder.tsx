@@ -7,8 +7,8 @@ import { BACKGROUND } from '@/ui/feedback/empty-state/components/AnimatedPlaceho
 import { DARK_BACKGROUND } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/constants/MovingImage';
+import { isDefined } from 'twenty-shared/utils';
 import { useThemeColorScheme } from 'twenty-ui/theme-constants';
-import { isDefined } from '@ui/utilities/utils/isDefined';
 
 const styles = {
   container: css`
@@ -83,7 +83,6 @@ export const AnimatedPlaceholder = ({
     };
 
     const handleMove = (event: MouseEvent | TouchEvent) => {
-      // touch events carry no coordinates once the last finger lifts
       const point = 'touches' in event ? event.touches[0] : event;
       if (!isDefined(point)) {
         return;

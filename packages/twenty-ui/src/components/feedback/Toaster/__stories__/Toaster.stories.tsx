@@ -378,11 +378,9 @@ export const StackReflow: Story = {
     );
     const statuses = body.getAllByRole('status');
     expect(statuses).toHaveLength(3);
-    const [first, middle, last] = statuses as [
-      HTMLElement,
-      HTMLElement,
-      HTMLElement,
-    ];
+    const first = statuses[0]!;
+    const middle = statuses[1]!;
+    const last = statuses[2]!;
     const firstTop = first.getBoundingClientRect().top;
     const gap = middle.getBoundingClientRect().top - firstTop;
     const isTopAnchored = getComputedStyle(region).top === '0px';
@@ -432,11 +430,9 @@ export const ReopenDuringExit: Story = {
     );
     const statuses = body.getAllByRole('status');
     expect(statuses).toHaveLength(3);
-    const [toast, secondToast, thirdToast] = statuses as [
-      HTMLElement,
-      HTMLElement,
-      HTMLElement,
-    ];
+    const toast = statuses[0]!;
+    const secondToast = statuses[1]!;
+    const thirdToast = statuses[2]!;
     const id = toast.id;
     await userEvent.click(within(toast).getByRole('button', { name: 'Close' }));
     if (isMotionEnabled()) {
