@@ -218,9 +218,6 @@
                 "uiSurfaces": {
                   "label": "Surfaces"
                 },
-                "uiFeedback": {
-                  "label": "Feedback"
-                },
                 "uiTypography": {
                   "label": "Typography"
                 }

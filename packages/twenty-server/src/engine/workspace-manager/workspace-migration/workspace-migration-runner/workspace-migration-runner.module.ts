@@ -15,8 +15,13 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { FlatCacheInvalidateCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/flat-cache-invalidate.command';
+import { RetryFailedDeferredWorkspaceMigrationActionsCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/retry-failed-deferred-workspace-migration-actions.command';
+import { DeferredWorkspaceMigrationActionRecoveryCronCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/crons/commands/deferred-workspace-migration-action-recovery.cron.command';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { DeferredWorkspaceMigrationActionRecoveryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-recovery.service';
+import { DeferredWorkspaceMigrationActionGaugeService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-gauge.service';
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
+import { InFlightDeferredWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-migration-actions.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @Module({
@@ -40,12 +45,19 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     WorkspaceMigrationRunnerService,
     WorkspaceMigrationRunnerActionHandlerRegistryService,
     DeferredWorkspaceMigrationActionRunnerService,
+    DeferredWorkspaceMigrationActionRecoveryService,
+    InFlightDeferredWorkspaceMigrationActionsService,
     provideWorkspaceScopedRepository(DeferredWorkspaceMigrationActionEntity),
+    DeferredWorkspaceMigrationActionGaugeService,
     FlatCacheInvalidateCommand,
+    RetryFailedDeferredWorkspaceMigrationActionsCommand,
+    DeferredWorkspaceMigrationActionRecoveryCronCommand,
   ],
   exports: [
     WorkspaceMigrationRunnerService,
     DeferredWorkspaceMigrationActionRunnerService,
+    DeferredWorkspaceMigrationActionRecoveryService,
+    DeferredWorkspaceMigrationActionRecoveryCronCommand,
   ],
 })
 export class WorkspaceMigrationRunnerModule {}

@@ -1,6 +1,5 @@
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { useLoadMockedMetadata } from '~/testing/hooks/useLoadMockedMetadata';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
@@ -13,7 +12,8 @@ import { type Decorator } from '@storybook/react-vite';
 import { useAtomValue, useStore } from 'jotai';
 import { useEffect, useState, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ToastProvider } from 'twenty-ui/primitives/feedback';
+import { ToastProvider } from 'twenty-ui/components';
+import { useLoadMockedMetadata } from '~/testing/hooks/useLoadMockedMetadata';
 import {
   mockedWorkflow,
   mockedWorkflowNodeId,

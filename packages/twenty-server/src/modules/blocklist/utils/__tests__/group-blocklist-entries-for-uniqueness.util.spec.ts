@@ -8,6 +8,7 @@ const context: BlocklistMutationContext = {
   workspaceId: 'workspace-id',
   workspaceMemberId: 'caller-member-id',
   userWorkspaceId: 'user-workspace-id',
+  applicationId: undefined,
 };
 
 type ExistingRecord = Pick<

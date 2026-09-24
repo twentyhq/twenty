@@ -1,4 +1,4 @@
-import { Section } from '@ui/components/Section/Section';
+import { Section } from '@ui/components/layout/Section/Section';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';

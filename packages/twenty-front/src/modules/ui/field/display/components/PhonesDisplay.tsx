@@ -1,13 +1,11 @@
-import React, { useMemo } from 'react';
-
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
+import React, { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { RoundedLink } from 'twenty-ui/primitives/navigation';
+import { RoundedLink } from 'twenty-ui/components';
 
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;

@@ -1,11 +1,11 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SETTINGS_ADMIN_CHATS_TABLE_GRID } from '@/settings/admin-panel/chats/constants/SettingsAdminChatsTableGrid';

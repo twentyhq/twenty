@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  AnimatedIconCrossfade,
   IconButton,
-  LightIconButton,
   LightButton,
+  LightIconButton,
   MainButton,
+  MenuItem,
+  MenuItemDraggable,
 } from 'twenty-ui/components';
-import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/primitives/navigation';
 import { IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
-import { AnimatedIconCrossfade } from 'twenty-ui/primitives/layout';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import 'twenty-ui/style.css';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 const ButtonControls = () => {
   const [activations, setActivations] = useState(0);

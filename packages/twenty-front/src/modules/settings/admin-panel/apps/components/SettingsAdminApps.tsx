@@ -21,7 +21,12 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { SettingsRow, Section } from 'twenty-ui/components';
+import {
+  SearchInput,
+  Section,
+  SettingsRow,
+  useToast,
+} from 'twenty-ui/components';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -29,8 +34,7 @@ import {
   IconRefresh,
 } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebounce } from 'use-debounce';
 import {

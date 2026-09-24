@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconFrame, IconSquare } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
+import { IconFrame, IconSquare } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';

@@ -23,6 +23,15 @@ describe('getUsageLimitSpenderGroups', () => {
     expect(groups.map((group) => group.id)).toEqual(['workspace', 'apiKey']);
   });
 
+  it('offers the logic function group when the resource accepts it', () => {
+    const groups = getUsageLimitSpenderGroups(['workspace', 'logicFunction']);
+
+    expect(groups.map((group) => group.id)).toEqual([
+      'workspace',
+      'logicFunction',
+    ]);
+  });
+
   it('returns nothing when no spender is allowed', () => {
     expect(getUsageLimitSpenderGroups([])).toEqual([]);
   });

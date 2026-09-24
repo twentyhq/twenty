@@ -1,12 +1,12 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { SearchInput, Section } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';

@@ -4,7 +4,7 @@ import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { ResendEmailVerificationTokenDocument } from '~/generated-metadata/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {

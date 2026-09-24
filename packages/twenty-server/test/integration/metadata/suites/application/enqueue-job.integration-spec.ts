@@ -11,13 +11,14 @@ import { findManyApplications } from 'test/integration/graphql/utils/find-many-a
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
+import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -172,13 +173,12 @@ describe('enqueueJob (e2e)', () => {
 
     expect(otherWorkspaceApplication).toBeDefined();
 
-    const { data: tokenData } = await generateApplicationToken({
+    const tokenPair = await generateApplicationTokenPair({
+      workspaceId: newWorkspaceData.signUpInNewWorkspace.workspace.id,
       applicationId: otherWorkspaceApplication!.id,
-      expectToFail: false,
-      token: workspaceAccessToken,
     });
 
-    return tokenData.generateApplicationToken.applicationAccessToken.token;
+    return tokenPair.applicationAccessToken.token;
   };
 
   beforeAll(async () => {
@@ -198,22 +198,17 @@ describe('enqueueJob (e2e)', () => {
     expect(customApplication).toBeDefined();
     expect(standardApplication).toBeDefined();
 
-    const [{ data: customTokenData }, { data: standardTokenData }] =
-      await Promise.all([
-        generateApplicationToken({
-          applicationId: customApplication!.id,
-          expectToFail: false,
-        }),
-        generateApplicationToken({
-          applicationId: standardApplication!.id,
-          expectToFail: false,
-        }),
-      ]);
+    const [customTokenPair, standardTokenPair] = await Promise.all([
+      generateAppleAdminApplicationTokenPair({
+        applicationId: customApplication!.id,
+      }),
+      generateAppleAdminApplicationTokenPair({
+        applicationId: standardApplication!.id,
+      }),
+    ]);
 
-    customApplicationToken =
-      customTokenData.generateApplicationToken.applicationAccessToken.token;
-    standardApplicationToken =
-      standardTokenData.generateApplicationToken.applicationAccessToken.token;
+    customApplicationToken = customTokenPair.applicationAccessToken.token;
+    standardApplicationToken = standardTokenPair.applicationAccessToken.token;
 
     const { data: createData } = await createOneLogicFunction({
       input: { name: `enqueue-job-target-${uuidv4()}` },

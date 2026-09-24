@@ -14,7 +14,7 @@ export const extractOrganizerFromEvent = (
 
   const rawValue = isString(organizer) ? organizer : organizer.val;
   const commonName = isString(organizer) ? undefined : organizer.params?.CN;
-  const handle = rawValue.replace(/^mailto:/i, '');
+  const handle = rawValue.replace(/^mailto:/i, '').toLowerCase();
 
   return {
     displayName: commonName || handle || 'Unknown',
