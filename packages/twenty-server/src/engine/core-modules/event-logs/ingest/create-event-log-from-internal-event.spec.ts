@@ -49,6 +49,7 @@ describe('CreateEventLogFromInternalEvent', () => {
 
     const ingestedEnvelopes = ingest.mock.calls[0]?.[0];
 
+    expect(ingest).toHaveBeenCalledTimes(1);
     expect(ingestedEnvelopes[0].row.event).toBe('Object Record Restored');
   });
 
@@ -65,6 +66,7 @@ describe('CreateEventLogFromInternalEvent', () => {
 
     const ingestedEnvelopes = ingest.mock.calls[0]?.[0];
 
+    expect(ingest).toHaveBeenCalledTimes(1);
     expect(ingestedEnvelopes[0].row).toMatchObject({
       event: 'Object Record Destroyed',
       recordId: 'record-1',

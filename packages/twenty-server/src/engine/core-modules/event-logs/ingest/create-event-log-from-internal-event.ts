@@ -120,16 +120,20 @@ export class CreateEventLogFromInternalEvent {
           userId: eventData.userId,
         }),
         event,
-        this.objectProperties(batch, eventData, event),
+        this.objectProperties({ batch, eventData, event }),
       ),
     );
   }
 
-  private objectProperties(
-    batch: WorkspaceEventBatch<ObjectRecordEvent>,
-    eventData: ObjectRecordEvent,
-    event: TrackEventName,
-  ) {
+  private objectProperties({
+    batch,
+    eventData,
+    event,
+  }: {
+    batch: WorkspaceEventBatch<ObjectRecordEvent>;
+    eventData: ObjectRecordEvent;
+    event: TrackEventName;
+  }) {
     return {
       ...(event === OBJECT_RECORD_DESTROYED_EVENT ? {} : eventData.properties),
       recordId: eventData.recordId,
