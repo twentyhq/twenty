@@ -31,6 +31,19 @@ it('keeps the decimal separator while a number is being typed', async () => {
   expect(input).toHaveValue('1.5');
 });
 
+it('keeps the decimal separator when it replaces part of an existing number', async () => {
+  const user = userEvent.setup();
+  render(<NumberFieldWithParentState initialValue={15} />);
+  const input = screen.getByDisplayValue('15');
+
+  await user.type(input, '.', {
+    initialSelectionStart: 1,
+    initialSelectionEnd: 2,
+  });
+
+  expect(input).toHaveValue('1.');
+});
+
 it('shows the value set by the parent after the user typed', async () => {
   const user = userEvent.setup();
   render(<NumberFieldWithParentState initialValue={5} />);
