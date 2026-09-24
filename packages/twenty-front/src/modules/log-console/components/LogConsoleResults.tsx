@@ -2,14 +2,12 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { SettingsLogsEmptyState } from '@/log-console/components/SettingsLogsEmptyState';
+import { SettingsLogsErrorState } from '@/log-console/components/SettingsLogsErrorState';
+import { SettingsLogsTable } from '@/log-console/components/SettingsLogsTable';
+import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
-import { SettingsLogsEmptyState } from '@/settings/log-explorer/components/SettingsLogsEmptyState';
-import { SettingsLogsErrorState } from '@/settings/log-explorer/components/SettingsLogsErrorState';
-import { SettingsLogsLockedPlaceholder } from '@/settings/log-explorer/components/SettingsLogsLockedPlaceholder';
-import { SettingsLogsTable } from '@/settings/log-explorer/components/SettingsLogsTable';
-import { type SettingsLogsSource } from '@/settings/log-explorer/types/SettingsLogsSource';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const RECORDS_PER_PAGE = 100;
 
@@ -33,11 +31,11 @@ const StyledTableContainer = styled.div`
   min-height: 0;
 `;
 
-type SettingsLogsResultsProps = {
-  source: SettingsLogsSource;
+type LogConsoleResultsProps = {
+  source: LogConsoleSource;
 };
 
-export const SettingsLogsResults = ({ source }: SettingsLogsResultsProps) => {
+export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const { formatNumber } = useNumberFormat();
 
   const { records, totalCount, loading, error, loadMore, refetch } =
@@ -45,10 +43,6 @@ export const SettingsLogsResults = ({ source }: SettingsLogsResultsProps) => {
       table: source.table,
       first: RECORDS_PER_PAGE,
     });
-
-  if (isGraphqlErrorOfType(error, 'NO_ENTITLEMENT')) {
-    return <SettingsLogsLockedPlaceholder />;
-  }
 
   if (isDefined(error)) {
     return <SettingsLogsErrorState onRetry={() => void refetch()} />;

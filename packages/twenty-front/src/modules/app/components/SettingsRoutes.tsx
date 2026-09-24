@@ -19,10 +19,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import('~/pages/settings/developers/playground/SettingsGraphQLPlayground').then(
@@ -176,12 +173,6 @@ const SettingsLogicFunctionDetail = lazy(() =>
 const SettingsGeneral = lazy(() =>
   import('~/pages/settings/general/SettingsGeneral').then((module) => ({
     default: module.SettingsGeneral,
-  })),
-);
-
-const SettingsLogsPage = lazy(() =>
-  import('~/pages/settings/log-explorer/SettingsLogsPage').then((module) => ({
-    default: module.SettingsLogsPage,
   })),
 );
 
@@ -1134,17 +1125,6 @@ const createSettingsRouteElements = ({
         path={SettingsPath.NewApprovedAccessDomain}
         element={<SettingsSecurityApprovedAccessDomain />}
       />
-    </Route>
-
-    <Route
-      element={
-        <SettingsProtectedRouteWrapper
-          settingsPermission={PermissionFlagType.SECURITY}
-          requiredFeatureFlag={FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED}
-        />
-      }
-    >
-      <Route path={SettingsPath.Logs} element={<SettingsLogsPage />} />
     </Route>
 
     {isAdminPageEnabled && (

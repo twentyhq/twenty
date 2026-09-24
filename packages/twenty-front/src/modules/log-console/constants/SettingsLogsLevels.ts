@@ -2,7 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { type TagColor } from 'twenty-ui/primitives/data-display';
 
-import { type SettingsLogsSeverity } from '@/settings/log-explorer/types/SettingsLogsSeverity';
+import { type SettingsLogsSeverity } from '@/log-console/types/SettingsLogsSeverity';
 
 export const SETTINGS_LOGS_LEVELS: Partial<
   Record<

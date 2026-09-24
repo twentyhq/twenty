@@ -53,6 +53,10 @@ jest.mock('@/command-menu/components/CommandMenuForMobile', () => ({
   CommandMenuForMobile: () => null,
 }));
 
+jest.mock('@/log-console/components/LogConsole', () => ({
+  LogConsole: () => null,
+}));
+
 jest.mock('@/side-panel/routing/components/SidePanelPathUrlSyncEffect', () => ({
   SidePanelPathUrlSyncEffect: () => null,
 }));

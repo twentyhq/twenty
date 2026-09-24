@@ -5,8 +5,8 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-import { type SettingsLogsSeverity } from '@/settings/log-explorer/types/SettingsLogsSeverity';
-import { type SettingsLogsSource } from '@/settings/log-explorer/types/SettingsLogsSource';
+import { type SettingsLogsSeverity } from '@/log-console/types/SettingsLogsSeverity';
+import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -51,7 +51,7 @@ const StyledLoadingMore = styled.div`
 `;
 
 type SettingsLogsTableProps = {
-  source: SettingsLogsSource;
+  source: LogConsoleSource;
   entries: EventLogRecord[];
   loading: boolean;
   onLoadMore: () => void;

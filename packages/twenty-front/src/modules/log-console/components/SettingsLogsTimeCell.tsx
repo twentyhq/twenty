@@ -5,7 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { useSettingsLogsTimeZone } from '@/settings/log-explorer/hooks/useSettingsLogsTimeZone';
+import { useSettingsLogsTimeZone } from '@/log-console/hooks/useSettingsLogsTimeZone';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';

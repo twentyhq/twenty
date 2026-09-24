@@ -1,19 +1,19 @@
 import { msg, plural } from '@lingui/core/macro';
 import {
   IconAddressBook,
-  IconCoins,
   IconEye,
+  IconGauge,
   IconTerminal,
 } from 'twenty-ui/icon';
 
-import { SETTINGS_LOGS_APPLICATION_LOG_COLUMNS } from '@/settings/log-explorer/constants/SettingsLogsApplicationLogColumns';
-import { SETTINGS_LOGS_EVENT_COLUMNS } from '@/settings/log-explorer/constants/SettingsLogsEventColumns';
-import { SETTINGS_LOGS_LEVELS } from '@/settings/log-explorer/constants/SettingsLogsLevels';
-import { SETTINGS_LOGS_USAGE_EVENT_COLUMNS } from '@/settings/log-explorer/constants/SettingsLogsUsageEventColumns';
-import { type SettingsLogsSource } from '@/settings/log-explorer/types/SettingsLogsSource';
+import { SETTINGS_LOGS_APPLICATION_LOG_COLUMNS } from '@/log-console/constants/SettingsLogsApplicationLogColumns';
+import { SETTINGS_LOGS_EVENT_COLUMNS } from '@/log-console/constants/SettingsLogsEventColumns';
+import { SETTINGS_LOGS_LEVELS } from '@/log-console/constants/SettingsLogsLevels';
+import { SETTINGS_LOGS_USAGE_EVENT_COLUMNS } from '@/log-console/constants/SettingsLogsUsageEventColumns';
+import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { EventLogTable } from '~/generated-metadata/graphql';
 
-export const SETTINGS_LOGS_SOURCES: SettingsLogsSource[] = [
+export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'record-changes',
     label: msg`Record changes`,
@@ -58,7 +58,7 @@ export const SETTINGS_LOGS_SOURCES: SettingsLogsSource[] = [
   {
     id: 'usage',
     label: msg`Usage`,
-    Icon: IconCoins,
+    Icon: IconGauge,
     table: EventLogTable.USAGE_EVENT,
     requiresAuditLogs: true,
     columns: SETTINGS_LOGS_USAGE_EVENT_COLUMNS,

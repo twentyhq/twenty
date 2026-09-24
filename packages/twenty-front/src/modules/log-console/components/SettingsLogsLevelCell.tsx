@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
-import { SETTINGS_LOGS_LEVELS } from '@/settings/log-explorer/constants/SettingsLogsLevels';
+import { SETTINGS_LOGS_LEVELS } from '@/log-console/constants/SettingsLogsLevels';
 
 type SettingsLogsLevelCellProps = {
   level: string;

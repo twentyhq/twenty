@@ -1,11 +1,11 @@
 import { msg } from '@lingui/core/macro';
 
-import { SettingsLogsFunctionCell } from '@/settings/log-explorer/components/SettingsLogsFunctionCell';
-import { SettingsLogsLevelCell } from '@/settings/log-explorer/components/SettingsLogsLevelCell';
-import { SettingsLogsMessageCell } from '@/settings/log-explorer/components/SettingsLogsMessageCell';
-import { SettingsLogsShortIdCell } from '@/settings/log-explorer/components/SettingsLogsShortIdCell';
-import { SETTINGS_LOGS_TIME_COLUMN } from '@/settings/log-explorer/constants/SettingsLogsTimeColumn';
-import { type SettingsLogsColumn } from '@/settings/log-explorer/types/SettingsLogsColumn';
+import { SettingsLogsFunctionCell } from '@/log-console/components/SettingsLogsFunctionCell';
+import { SettingsLogsLevelCell } from '@/log-console/components/SettingsLogsLevelCell';
+import { SettingsLogsMessageCell } from '@/log-console/components/SettingsLogsMessageCell';
+import { SettingsLogsShortIdCell } from '@/log-console/components/SettingsLogsShortIdCell';
+import { SETTINGS_LOGS_TIME_COLUMN } from '@/log-console/constants/SettingsLogsTimeColumn';
+import { type SettingsLogsColumn } from '@/log-console/types/SettingsLogsColumn';
 
 export const SETTINGS_LOGS_APPLICATION_LOG_COLUMNS: SettingsLogsColumn[] = [
   SETTINGS_LOGS_TIME_COLUMN,
