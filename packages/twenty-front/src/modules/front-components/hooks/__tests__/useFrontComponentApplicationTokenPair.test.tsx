@@ -3,12 +3,12 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { useFrontComponentApplicationSession } from '@/front-components/hooks/useFrontComponentApplicationSession';
-import { frontComponentApplicationSessionFamilyState } from '@/front-components/states/frontComponentApplicationSessionFamilyState';
-import { type FrontComponentApplicationSession } from '@/front-components/types/FrontComponentApplicationSession';
+import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
+import { frontComponentApplicationTokenPairFamilyState } from '@/front-components/states/frontComponentApplicationTokenPairFamilyState';
+import { type FrontComponentApplicationTokenPair } from '@/front-components/types/FrontComponentApplicationTokenPair';
 import {
   type ApplicationTokenPair,
-  GenerateFrontComponentApplicationSessionDocument,
+  GenerateFrontComponentApplicationTokenPairDocument,
   RenewApplicationTokenDocument,
 } from '~/generated-metadata/graphql';
 
@@ -23,7 +23,6 @@ jest.mock('@apollo/client/react', () => ({
 
 const APPLICATION_ID = 'application-test-id';
 const OTHER_APPLICATION_ID = 'other-application-test-id';
-const APPLICATION_VARIABLES = { PUBLIC_API_URL: 'https://example.com' };
 
 const getDateInOneHour = () =>
   new Date(Date.now() + 60 * 60 * 1000).toISOString();
@@ -52,31 +51,27 @@ const buildTokenPair = ({
   },
 });
 
-const buildApplicationSession = ({
+const buildStoredTokenPair = ({
   accessTokenExpiresAt,
-  tokenPairObtainedAt = getTimestampOneMinuteAgo(),
+  obtainedAt = getTimestampOneMinuteAgo(),
 }: {
   accessTokenExpiresAt?: string;
-  tokenPairObtainedAt?: number;
-} = {}): FrontComponentApplicationSession => ({
-  applicationTokenPair: buildTokenPair({
+  obtainedAt?: number;
+} = {}): FrontComponentApplicationTokenPair => ({
+  ...buildTokenPair({
     accessToken: 'stored-access',
     refreshToken: 'stored-refresh',
     accessTokenExpiresAt,
   }),
-  applicationVariables: APPLICATION_VARIABLES,
-  tokenPairObtainedAt,
+  obtainedAt,
 });
 
-const mockGeneratedSession = (accessToken = 'generated-access') => ({
+const mockGeneratedTokenPair = (accessToken = 'generated-access') => ({
   data: {
-    generateFrontComponentApplicationSession: {
-      applicationTokenPair: buildTokenPair({
-        accessToken,
-        refreshToken: 'generated-refresh',
-      }),
-      applicationVariables: APPLICATION_VARIABLES,
-    },
+    generateFrontComponentApplicationTokenPair: buildTokenPair({
+      accessToken,
+      refreshToken: 'generated-refresh',
+    }),
   },
 });
 
@@ -92,130 +87,126 @@ const mockRenewedTokenPair = () => ({
 const getMutationCalls = (mutation: unknown) =>
   mockMutate.mock.calls.filter(([options]) => options.mutation === mutation);
 
-const renderUseFrontComponentApplicationSession = (
+const renderUseFrontComponentApplicationTokenPair = (
   store: ReturnType<typeof createStore>,
 ) =>
-  renderHook(() => useFrontComponentApplicationSession(), {
+  renderHook(() => useFrontComponentApplicationTokenPair(), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <JotaiProvider store={store}>{children}</JotaiProvider>
     ),
   });
 
-const getStoredApplicationSession = (
-  store: ReturnType<typeof createStore>,
-  applicationId = APPLICATION_ID,
-) =>
+const getStoredTokenPair = (store: ReturnType<typeof createStore>) =>
   store.get(
-    frontComponentApplicationSessionFamilyState.atomFamily(applicationId),
+    frontComponentApplicationTokenPairFamilyState.atomFamily(APPLICATION_ID),
   );
 
-const storeApplicationSession = (
+const setStoredTokenPair = (
   store: ReturnType<typeof createStore>,
-  applicationSession: FrontComponentApplicationSession,
+  applicationTokenPair: FrontComponentApplicationTokenPair,
 ) =>
   store.set(
-    frontComponentApplicationSessionFamilyState.atomFamily(APPLICATION_ID),
-    applicationSession,
+    frontComponentApplicationTokenPairFamilyState.atomFamily(APPLICATION_ID),
+    applicationTokenPair,
   );
 
-describe('useFrontComponentApplicationSession', () => {
+describe('useFrontComponentApplicationTokenPair', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('loadFrontComponentApplicationSession', () => {
-    it('should generate a single session for concurrent loads of the same application', async () => {
+  describe('loadFrontComponentApplicationTokenPair', () => {
+    it('should generate a single token pair for concurrent loads of the same application', async () => {
       const store = createStore();
-      mockMutate.mockResolvedValue(mockGeneratedSession());
+      mockMutate.mockResolvedValue(mockGeneratedTokenPair());
 
-      const { result } = renderUseFrontComponentApplicationSession(store);
+      const { result } = renderUseFrontComponentApplicationTokenPair(store);
 
-      let applicationSessions: FrontComponentApplicationSession[] = [];
+      let applicationTokenPairs: FrontComponentApplicationTokenPair[] = [];
 
       await act(async () => {
-        applicationSessions = await Promise.all([
-          result.current.loadFrontComponentApplicationSession(APPLICATION_ID),
-          result.current.loadFrontComponentApplicationSession(APPLICATION_ID),
-          result.current.loadFrontComponentApplicationSession(APPLICATION_ID),
+        applicationTokenPairs = await Promise.all([
+          result.current.loadFrontComponentApplicationTokenPair(APPLICATION_ID),
+          result.current.loadFrontComponentApplicationTokenPair(APPLICATION_ID),
+          result.current.loadFrontComponentApplicationTokenPair(APPLICATION_ID),
         ]);
       });
 
       expect(mockMutate).toHaveBeenCalledTimes(1);
       expect(mockMutate).toHaveBeenCalledWith(
         expect.objectContaining({
-          mutation: GenerateFrontComponentApplicationSessionDocument,
+          mutation: GenerateFrontComponentApplicationTokenPairDocument,
           variables: { applicationId: APPLICATION_ID },
         }),
       );
       expect(
-        applicationSessions.map(
-          (applicationSession) =>
-            applicationSession.applicationTokenPair.applicationAccessToken
-              .token,
+        applicationTokenPairs.map(
+          (applicationTokenPair) =>
+            applicationTokenPair.applicationAccessToken.token,
         ),
       ).toEqual(['generated-access', 'generated-access', 'generated-access']);
-      expect(getStoredApplicationSession(store)).toMatchObject({
-        applicationVariables: APPLICATION_VARIABLES,
-      });
+      expect(getStoredTokenPair(store)?.applicationAccessToken.token).toBe(
+        'generated-access',
+      );
     });
 
-    it('should generate one session per application', async () => {
+    it('should generate one token pair per application', async () => {
       const store = createStore();
-      mockMutate.mockResolvedValue(mockGeneratedSession());
+      mockMutate.mockResolvedValue(mockGeneratedTokenPair());
 
-      const { result } = renderUseFrontComponentApplicationSession(store);
+      const { result } = renderUseFrontComponentApplicationTokenPair(store);
 
       await act(async () => {
         await Promise.all([
-          result.current.loadFrontComponentApplicationSession(APPLICATION_ID),
-          result.current.loadFrontComponentApplicationSession(
+          result.current.loadFrontComponentApplicationTokenPair(APPLICATION_ID),
+          result.current.loadFrontComponentApplicationTokenPair(
             OTHER_APPLICATION_ID,
           ),
         ]);
       });
 
       expect(
-        getMutationCalls(GenerateFrontComponentApplicationSessionDocument).map(
-          ([options]) => options.variables.applicationId,
-        ),
+        getMutationCalls(
+          GenerateFrontComponentApplicationTokenPairDocument,
+        ).map(([options]) => options.variables.applicationId),
       ).toEqual([APPLICATION_ID, OTHER_APPLICATION_ID]);
     });
 
-    it('should reuse the stored session when its access token is still valid', async () => {
+    it('should reuse the stored token pair when its access token is still valid', async () => {
       const store = createStore();
-      const storedApplicationSession = buildApplicationSession();
-      storeApplicationSession(store, storedApplicationSession);
+      const storedTokenPair = buildStoredTokenPair();
+      setStoredTokenPair(store, storedTokenPair);
 
-      const { result } = renderUseFrontComponentApplicationSession(store);
+      const { result } = renderUseFrontComponentApplicationTokenPair(store);
 
-      let applicationSession: FrontComponentApplicationSession | undefined;
+      let applicationTokenPair: FrontComponentApplicationTokenPair | undefined;
 
       await act(async () => {
-        applicationSession =
-          await result.current.loadFrontComponentApplicationSession(
+        applicationTokenPair =
+          await result.current.loadFrontComponentApplicationTokenPair(
             APPLICATION_ID,
           );
       });
 
-      expect(applicationSession).toBe(storedApplicationSession);
+      expect(applicationTokenPair).toBe(storedTokenPair);
       expect(mockMutate).not.toHaveBeenCalled();
     });
 
-    it('should renew the stored session when its access token is about to expire', async () => {
+    it('should renew the stored token pair when its access token is about to expire', async () => {
       const store = createStore();
-      storeApplicationSession(
+      setStoredTokenPair(
         store,
-        buildApplicationSession({ accessTokenExpiresAt: getDateInOneMinute() }),
+        buildStoredTokenPair({ accessTokenExpiresAt: getDateInOneMinute() }),
       );
       mockMutate.mockResolvedValue(mockRenewedTokenPair());
 
-      const { result } = renderUseFrontComponentApplicationSession(store);
+      const { result } = renderUseFrontComponentApplicationTokenPair(store);
 
-      let applicationSession: FrontComponentApplicationSession | undefined;
+      let applicationTokenPair: FrontComponentApplicationTokenPair | undefined;
 
       await act(async () => {
-        applicationSession =
-          await result.current.loadFrontComponentApplicationSession(
+        applicationTokenPair =
+          await result.current.loadFrontComponentApplicationTokenPair(
             APPLICATION_ID,
           );
       });
@@ -227,11 +218,8 @@ describe('useFrontComponentApplicationSession', () => {
           variables: { applicationRefreshToken: 'stored-refresh' },
         }),
       );
-      expect(
-        applicationSession?.applicationTokenPair.applicationAccessToken.token,
-      ).toBe('renewed-access');
-      expect(applicationSession?.applicationVariables).toEqual(
-        APPLICATION_VARIABLES,
+      expect(applicationTokenPair?.applicationAccessToken.token).toBe(
+        'renewed-access',
       );
     });
   });
@@ -239,10 +227,10 @@ describe('useFrontComponentApplicationSession', () => {
   describe('requestApplicationAccessTokenRefresh', () => {
     it('should renew once for concurrent refresh requests of the same application', async () => {
       const store = createStore();
-      storeApplicationSession(store, buildApplicationSession());
+      setStoredTokenPair(store, buildStoredTokenPair());
       mockMutate.mockResolvedValue(mockRenewedTokenPair());
 
-      const { result } = renderUseFrontComponentApplicationSession(store);
+      const { result } = renderUseFrontComponentApplicationTokenPair(store);
 
       let accessTokens: string[] = [];
 
@@ -256,20 +244,19 @@ describe('useFrontComponentApplicationSession', () => {
 
       expect(mockMutate).toHaveBeenCalledTimes(1);
       expect(new Set(accessTokens)).toEqual(new Set(['renewed-access']));
-      expect(
-        getStoredApplicationSession(store)?.applicationTokenPair
-          .applicationAccessToken.token,
-      ).toBe('renewed-access');
+      expect(getStoredTokenPair(store)?.applicationAccessToken.token).toBe(
+        'renewed-access',
+      );
     });
 
     it('should return the stored access token when it was just renewed', async () => {
       const store = createStore();
-      storeApplicationSession(
+      setStoredTokenPair(
         store,
-        buildApplicationSession({ tokenPairObtainedAt: Date.now() }),
+        buildStoredTokenPair({ obtainedAt: Date.now() }),
       );
 
-      const { result } = renderUseFrontComponentApplicationSession(store);
+      const { result } = renderUseFrontComponentApplicationTokenPair(store);
 
       let accessToken: string | undefined;
 
@@ -284,9 +271,9 @@ describe('useFrontComponentApplicationSession', () => {
       expect(mockMutate).not.toHaveBeenCalled();
     });
 
-    it('should generate a new session when the refresh token is rejected', async () => {
+    it('should generate a new token pair when the refresh token is rejected', async () => {
       const store = createStore();
-      storeApplicationSession(store, buildApplicationSession());
+      setStoredTokenPair(store, buildStoredTokenPair());
       mockMutate.mockImplementation(async ({ mutation }) => {
         if (mutation === RenewApplicationTokenDocument) {
           throw new CombinedGraphQLErrors({
@@ -301,10 +288,10 @@ describe('useFrontComponentApplicationSession', () => {
           });
         }
 
-        return mockGeneratedSession('regenerated-access');
+        return mockGeneratedTokenPair('regenerated-access');
       });
 
-      const { result } = renderUseFrontComponentApplicationSession(store);
+      const { result } = renderUseFrontComponentApplicationTokenPair(store);
 
       let accessTokens: string[] = [];
 
@@ -321,25 +308,25 @@ describe('useFrontComponentApplicationSession', () => {
       ]);
       expect(getMutationCalls(RenewApplicationTokenDocument)).toHaveLength(1);
       expect(
-        getMutationCalls(GenerateFrontComponentApplicationSessionDocument),
+        getMutationCalls(GenerateFrontComponentApplicationTokenPairDocument),
       ).toHaveLength(1);
     });
 
     it('should re-throw other errors and retry on the next request', async () => {
       const store = createStore();
-      storeApplicationSession(store, buildApplicationSession());
+      setStoredTokenPair(store, buildStoredTokenPair());
       mockMutate
         .mockRejectedValueOnce(new Error('Network failure'))
         .mockResolvedValueOnce(mockRenewedTokenPair());
 
-      const { result } = renderUseFrontComponentApplicationSession(store);
+      const { result } = renderUseFrontComponentApplicationTokenPair(store);
 
       await expect(
         result.current.requestApplicationAccessTokenRefresh(APPLICATION_ID),
       ).rejects.toThrow('Network failure');
 
       expect(
-        getMutationCalls(GenerateFrontComponentApplicationSessionDocument),
+        getMutationCalls(GenerateFrontComponentApplicationTokenPairDocument),
       ).toHaveLength(0);
 
       let accessToken: string | undefined;

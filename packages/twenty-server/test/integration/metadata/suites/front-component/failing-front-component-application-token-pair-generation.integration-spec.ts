@@ -1,7 +1,7 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
-import { generateFrontComponentApplicationSession } from 'test/integration/metadata/suites/front-component/utils/generate-front-component-application-session.util';
+import { generateFrontComponentApplicationTokenPair } from 'test/integration/metadata/suites/front-component/utils/generate-front-component-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -26,7 +26,7 @@ type TestContext = {
   token?: (globalContext: GlobalTestContext) => string;
 };
 
-const failingFrontComponentApplicationSessionTestCases: EachTestingContext<TestContext>[] =
+const failingFrontComponentApplicationTokenPairGenerationTestCases: EachTestingContext<TestContext>[] =
   [
     {
       title: 'when called with a user-bound application token',
@@ -67,7 +67,7 @@ const failingFrontComponentApplicationSessionTestCases: EachTestingContext<TestC
     },
   ];
 
-describe('Front component application session generation should fail', () => {
+describe('Front component application token pair generation should fail', () => {
   let globalTestContext: GlobalTestContext;
 
   beforeAll(async () => {
@@ -114,9 +114,11 @@ describe('Front component application session generation should fail', () => {
   });
 
   it.each(
-    eachTestingContextFilter(failingFrontComponentApplicationSessionTestCases),
+    eachTestingContextFilter(
+      failingFrontComponentApplicationTokenPairGenerationTestCases,
+    ),
   )('$title', async ({ context }) => {
-    const { errors } = await generateFrontComponentApplicationSession({
+    const { errors } = await generateFrontComponentApplicationTokenPair({
       input: { applicationId: context.applicationId(globalTestContext) },
       token: context.token?.(globalTestContext),
       expectToFail: true,

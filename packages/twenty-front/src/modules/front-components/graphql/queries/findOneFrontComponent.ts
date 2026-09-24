@@ -12,6 +12,7 @@ export const FIND_ONE_FRONT_COMPONENT = gql`
       isHeadless
       usesSdkClient
       frontComponentSharedDependenciesChecksum
+      applicationVariables
     }
   }
 `;

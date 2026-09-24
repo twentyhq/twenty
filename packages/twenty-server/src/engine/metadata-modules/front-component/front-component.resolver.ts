@@ -16,6 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -31,7 +32,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
-import { FrontComponentApplicationSessionDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component-application-session.dto';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import {
@@ -129,10 +129,11 @@ export class FrontComponentResolver {
       return null;
     }
 
-    // Deprecated fields: only mint when an older front still selects them
     const selectedFields = graphqlFields(info);
 
     const [applicationTokenPair, applicationVariables] = await Promise.all([
+      // Deprecated: only fronts predating
+      // generateFrontComponentApplicationTokenPair still select it
       isDefined(selectedFields.applicationTokenPair)
         ? this.applicationTokenService.generateApplicationTokenPair({
             applicationId: dto.applicationId,
@@ -156,15 +157,15 @@ export class FrontComponentResolver {
     };
   }
 
-  @Mutation(() => FrontComponentApplicationSessionDTO)
+  @Mutation(() => ApplicationTokenPairDTO)
   @UseGuards(RequireAccessTokenGuard, NoPermissionGuard)
-  async generateFrontComponentApplicationSession(
+  async generateFrontComponentApplicationTokenPair(
     @Args('applicationId', { type: () => UUIDScalarType })
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<FrontComponentApplicationSessionDTO> {
+  ): Promise<ApplicationTokenPairDTO> {
     const hasFrontComponent =
       await this.frontComponentService.hasFrontComponentForApplication({
         applicationId,
@@ -178,20 +179,12 @@ export class FrontComponentResolver {
       );
     }
 
-    const [applicationTokenPair, applicationVariables] = await Promise.all([
-      this.applicationTokenService.generateApplicationTokenPair({
-        applicationId,
-        workspaceId: workspace.id,
-        userWorkspaceId,
-        userId: user.id,
-      }),
-      this.applicationVariableService.getPublicEnvVariables({
-        workspaceId: workspace.id,
-        applicationId,
-      }),
-    ]);
-
-    return { applicationTokenPair, applicationVariables };
+    return this.applicationTokenService.generateApplicationTokenPair({
+      applicationId,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      userId: user.id,
+    });
   }
 
   @Mutation(() => FrontComponentDTO)

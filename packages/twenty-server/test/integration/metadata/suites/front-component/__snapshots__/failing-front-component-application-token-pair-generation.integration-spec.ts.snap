@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Front component application session generation should fail when called with a user-bound application token 1`] = `
+exports[`Front component application token pair generation should fail when called with a user-bound application token 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -12,7 +12,7 @@ exports[`Front component application session generation should fail when called 
 }
 `;
 
-exports[`Front component application session generation should fail when called with an API key token 1`] = `
+exports[`Front component application token pair generation should fail when called with an API key token 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -24,7 +24,7 @@ exports[`Front component application session generation should fail when called 
 }
 `;
 
-exports[`Front component application session generation should fail when called with an application token without user binding 1`] = `
+exports[`Front component application token pair generation should fail when called with an application token without user binding 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -36,7 +36,7 @@ exports[`Front component application session generation should fail when called 
 }
 `;
 
-exports[`Front component application session generation should fail when the application does not exist 1`] = `
+exports[`Front component application token pair generation should fail when the application does not exist 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
@@ -48,7 +48,7 @@ exports[`Front component application session generation should fail when the app
 }
 `;
 
-exports[`Front component application session generation should fail when the application has no front component 1`] = `
+exports[`Front component application token pair generation should fail when the application has no front component 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",

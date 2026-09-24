@@ -1,6 +1,6 @@
 import { decodeJwtCompleteOrThrow } from 'test/integration/graphql/utils/decode-jwt-complete-or-throw.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
-import { generateFrontComponentApplicationSession } from 'test/integration/metadata/suites/front-component/utils/generate-front-component-application-session.util';
+import { generateFrontComponentApplicationTokenPair } from 'test/integration/metadata/suites/front-component/utils/generate-front-component-application-token-pair.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
@@ -8,7 +8,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-describe('Front component application session should be issued to a session', () => {
+describe('Front component application token pair generation should be bound to the session', () => {
   let applicationId: string;
 
   beforeAll(async () => {
@@ -20,16 +20,14 @@ describe('Front component application session should be issued to a session', ()
     applicationId = frontComponent.applicationId;
   });
 
-  it('should issue a token pair bound to the session and the public variables of the application', async () => {
-    const { data } = await generateFrontComponentApplicationSession({
+  it('should issue a token pair bound to the session for the application', async () => {
+    const { data } = await generateFrontComponentApplicationTokenPair({
       input: { applicationId },
       expectToFail: false,
     });
 
-    const { applicationTokenPair, applicationVariables } =
-      data.generateFrontComponentApplicationSession;
-
-    expect(applicationVariables).toEqual(expect.any(Object));
+    const applicationTokenPair =
+      data.generateFrontComponentApplicationTokenPair;
 
     const expectedBinding = {
       applicationId,

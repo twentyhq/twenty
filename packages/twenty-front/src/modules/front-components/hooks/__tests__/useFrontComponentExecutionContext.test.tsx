@@ -59,9 +59,9 @@ jest.mock('~/hooks/useNavigateApp', () => ({
 }));
 
 jest.mock(
-  '@/front-components/hooks/useFrontComponentApplicationSession',
+  '@/front-components/hooks/useFrontComponentApplicationTokenPair',
   () => ({
-    useFrontComponentApplicationSession: () => ({
+    useFrontComponentApplicationTokenPair: () => ({
       requestApplicationAccessTokenRefresh:
         mockRequestApplicationAccessTokenRefresh,
     }),

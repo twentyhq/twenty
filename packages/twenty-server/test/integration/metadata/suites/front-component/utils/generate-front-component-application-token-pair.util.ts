@@ -1,29 +1,28 @@
 import {
-  type GenerateFrontComponentApplicationSessionFactoryInput,
-  generateFrontComponentApplicationSessionQueryFactory,
-} from 'test/integration/metadata/suites/front-component/utils/generate-front-component-application-session-query-factory.util';
+  type GenerateFrontComponentApplicationTokenPairFactoryInput,
+  generateFrontComponentApplicationTokenPairQueryFactory,
+} from 'test/integration/metadata/suites/front-component/utils/generate-front-component-application-token-pair-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type FrontComponentApplicationSessionDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component-application-session.dto';
+import { type ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 
-export const generateFrontComponentApplicationSession = async ({
+export const generateFrontComponentApplicationTokenPair = async ({
   input,
   gqlFields,
   expectToFail = false,
   token,
-}: PerformMetadataQueryParams<GenerateFrontComponentApplicationSessionFactoryInput>): CommonResponseBody<{
-  generateFrontComponentApplicationSession: FrontComponentApplicationSessionDTO;
+}: PerformMetadataQueryParams<GenerateFrontComponentApplicationTokenPairFactoryInput>): CommonResponseBody<{
+  generateFrontComponentApplicationTokenPair: ApplicationTokenPairDTO;
 }> => {
-  const graphqlOperation = generateFrontComponentApplicationSessionQueryFactory(
-    {
+  const graphqlOperation =
+    generateFrontComponentApplicationTokenPairQueryFactory({
       input,
       gqlFields,
-    },
-  );
+    });
 
   const response = await makeMetadataAPIRequest(graphqlOperation, token);
 
@@ -31,7 +30,7 @@ export const generateFrontComponentApplicationSession = async ({
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage:
-        'Generating front component application session should have failed but did not',
+        'Generating front component application token pair should have failed but did not',
     });
   }
 
@@ -39,7 +38,7 @@ export const generateFrontComponentApplicationSession = async ({
     warnIfErrorButNotExpectedToFail({
       response,
       errorMessage:
-        'Generating front component application session has failed but should not',
+        'Generating front component application token pair has failed but should not',
     });
   }
 

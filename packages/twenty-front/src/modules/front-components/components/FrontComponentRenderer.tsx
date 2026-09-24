@@ -1,10 +1,10 @@
-import { FrontComponentApplicationSessionEffect } from '@/front-components/components/FrontComponentApplicationSessionEffect';
+import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
-import { type FrontComponentApplicationSession } from '@/front-components/types/FrontComponentApplicationSession';
+import { type FrontComponentApplicationTokenPair } from '@/front-components/types/FrontComponentApplicationTokenPair';
 import { FrontComponentMediaSessionRegistrationEffect } from '@/front-components/media-session/components/FrontComponentMediaSessionRegistrationEffect';
 import { FrontComponentMediaPermissionModal } from '@/front-components/media-session/components/FrontComponentMediaPermissionModal';
 import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
@@ -153,18 +153,21 @@ const FrontComponentRendererContent = ({
     [enqueueToast],
   );
 
-  const [applicationSession, setApplicationSession] =
-    useState<FrontComponentApplicationSession | null>(null);
-  const [applicationSessionLoadError, setApplicationSessionLoadError] =
+  // The worker is created once with these values and refreshes its token
+  // through the host, so a renewal or refetch must not re-create it
+  const [initialApplicationVariables] = useState(
+    () => frontComponent.applicationVariables ?? undefined,
+  );
+  const [initialApplicationTokenPair, setInitialApplicationTokenPair] =
+    useState<FrontComponentApplicationTokenPair | null>(null);
+  const [applicationTokenPairLoadError, setApplicationTokenPairLoadError] =
     useState<Error | null>(null);
 
-  // The worker keeps its first token and refreshes through the host, so a
-  // later renewal must not re-create it
-  const handleApplicationSessionLoaded = useCallback(
-    (loadedApplicationSession: FrontComponentApplicationSession) => {
-      setApplicationSession(
-        (currentApplicationSession) =>
-          currentApplicationSession ?? loadedApplicationSession,
+  const handleApplicationTokenPairLoaded = useCallback(
+    (loadedApplicationTokenPair: FrontComponentApplicationTokenPair) => {
+      setInitialApplicationTokenPair(
+        (currentApplicationTokenPair) =>
+          currentApplicationTokenPair ?? loadedApplicationTokenPair,
       );
     },
     [],
@@ -202,7 +205,8 @@ const FrontComponentRendererContent = ({
   });
 
   const isSdkClientReady = !usesSdkClient || !sdkClientChecksumsLoading;
-  const isReadyToRender = isDefined(applicationSession) && isSdkClientReady;
+  const isReadyToRender =
+    isDefined(initialApplicationTokenPair) && isSdkClientReady;
 
   return (
     <>
@@ -221,16 +225,16 @@ const FrontComponentRendererContent = ({
         pendingStartMediaTypes={pendingStartMediaTypes}
         onStop={stopMediaSession}
       />
-      <FrontComponentApplicationSessionEffect
+      <FrontComponentApplicationTokenPairEffect
         applicationId={applicationId}
-        onApplicationSessionLoaded={handleApplicationSessionLoaded}
-        onApplicationSessionLoadFailed={setApplicationSessionLoadError}
+        onApplicationTokenPairLoaded={handleApplicationTokenPairLoaded}
+        onApplicationTokenPairLoadFailed={setApplicationTokenPairLoadError}
       />
       <FrontComponentLoadErrorToastEffect
-        errorMessage={applicationSessionLoadError?.message}
+        errorMessage={applicationTokenPairLoadError?.message}
       />
-      {isDefined(applicationSessionLoadError) && unavailableFallback}
-      {!isDefined(applicationSessionLoadError) &&
+      {isDefined(applicationTokenPairLoadError) && unavailableFallback}
+      {!isDefined(applicationTokenPairLoadError) &&
         !isReadyToRender &&
         loadingFallback}
       {isReadyToRender && (
@@ -239,8 +243,7 @@ const FrontComponentRendererContent = ({
             colorScheme={colorScheme}
             componentUrl={componentUrl}
             applicationAccessToken={
-              applicationSession.applicationTokenPair.applicationAccessToken
-                .token
+              initialApplicationTokenPair.applicationAccessToken.token
             }
             apiUrl={REACT_APP_SERVER_BASE_URL}
             functionsBaseUrl={functionsBaseUrl}
@@ -251,7 +254,7 @@ const FrontComponentRendererContent = ({
               frontComponentHostCommunicationApi
             }
             mediaSessionHost={mediaSessionHost}
-            applicationVariables={applicationSession.applicationVariables}
+            applicationVariables={initialApplicationVariables}
             storageNamespace={storageNamespace}
             onError={handleError}
             loadingFallback={loadingFallback}
