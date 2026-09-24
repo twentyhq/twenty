@@ -52,8 +52,11 @@ export const useGlobalHotkeysCallback = (
       }
 
       const isAllowedGlobalEscapeHotkey =
+        currentGlobalHotkeysConfig.enableGlobalEscapeHotkeysConflictingWithKeyboard ===
+          true &&
         keyboardEvent.key === Key.Escape &&
-        currentGlobalHotkeysConfig.enableGlobalEscapeHotkeys === true;
+        !keyboardEvent.isComposing &&
+        keyboardEvent.keyCode !== 229;
 
       if (
         !containsModifier &&

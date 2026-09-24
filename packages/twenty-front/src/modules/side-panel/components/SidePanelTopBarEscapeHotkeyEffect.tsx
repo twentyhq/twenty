@@ -21,6 +21,10 @@ export const SidePanelTopBarEscapeHotkeyEffect = ({
     event.stopPropagation();
     event.stopImmediatePropagation();
 
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     onEscape();
   };
 

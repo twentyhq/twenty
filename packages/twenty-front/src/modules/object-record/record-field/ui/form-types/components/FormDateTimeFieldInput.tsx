@@ -270,7 +270,7 @@ export const FormDateTimeFieldInput = ({
           <FormFieldInputInnerContainer
             ref={refs.setReference}
             formFieldInputInstanceId={instanceId}
-            enableGlobalEscapeHotkeys={false}
+            enableGlobalEscapeHotkeysConflictingWithKeyboard={false}
             hasRightElement={isDefined(VariablePicker) && !readonly}
             variant={variant}
           >
