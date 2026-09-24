@@ -19,10 +19,13 @@ type EffectiveScanOrder = {
   areNullsScannedLast: boolean;
 };
 
-const getEffectiveScanOrder = (
-  direction: string,
-  isForwardPagination: boolean,
-): EffectiveScanOrder => {
+const getEffectiveScanOrder = ({
+  direction,
+  isForwardPagination,
+}: {
+  direction: string;
+  isForwardPagination: boolean;
+}): EffectiveScanOrder => {
   const isAscendingDirection =
     direction === 'AscNullsFirst' || direction === 'AscNullsLast';
   const areNullsPresentedLast =
@@ -36,10 +39,13 @@ const getEffectiveScanOrder = (
   };
 };
 
-const getCursorValue = (
-  record: Record<string, unknown>,
-  field: CursorOrderByField,
-): unknown => {
+const getCursorValue = ({
+  record,
+  field,
+}: {
+  record: Record<string, unknown>;
+  field: CursorOrderByField;
+}): unknown => {
   if (field.subFieldName) {
     return (record[field.fieldName] as Record<string, unknown> | undefined)?.[
       field.subFieldName
@@ -49,63 +55,90 @@ const getCursorValue = (
   return record[field.fieldName];
 };
 
-const buildCursorWhereCondition = (
-  field: CursorOrderByField,
-  operator: string,
-  value: unknown,
-): RecordGqlOperationFilter =>
+const buildCursorWhereCondition = ({
+  field,
+  operator,
+  value,
+}: {
+  field: CursorOrderByField;
+  operator: string;
+  value: unknown;
+}): RecordGqlOperationFilter =>
   field.subFieldName
     ? { [field.fieldName]: { [field.subFieldName]: { [operator]: value } } }
     : { [field.fieldName]: { [operator]: value } };
 
-const buildEqualityCondition = (
-  field: CursorOrderByField,
-  cursorValue: unknown,
-): RecordGqlOperationFilter =>
+const buildEqualityCondition = ({
+  field,
+  cursorValue,
+}: {
+  field: CursorOrderByField;
+  cursorValue: unknown;
+}): RecordGqlOperationFilter =>
   isDefined(cursorValue)
-    ? buildCursorWhereCondition(field, 'eq', cursorValue)
-    : buildCursorWhereCondition(field, 'is', 'NULL');
+    ? buildCursorWhereCondition({ field, operator: 'eq', value: cursorValue })
+    : buildCursorWhereCondition({ field, operator: 'is', value: 'NULL' });
 
-const buildStrictlyAfterCondition = (
-  field: CursorOrderByField,
-  cursorValue: unknown,
-  isAscending: boolean,
-): RecordGqlOperationFilter | undefined => {
+const buildStrictlyAfterCondition = ({
+  field,
+  cursorValue,
+  isAscending,
+}: {
+  field: CursorOrderByField;
+  cursorValue: unknown;
+  isAscending: boolean;
+}): RecordGqlOperationFilter | undefined => {
   if (isBoolean(cursorValue)) {
     return cursorValue === isAscending
       ? undefined
-      : buildCursorWhereCondition(field, 'eq', isAscending);
+      : buildCursorWhereCondition({
+          field,
+          operator: 'eq',
+          value: isAscending,
+        });
   }
 
-  return buildCursorWhereCondition(
+  return buildCursorWhereCondition({
     field,
-    isAscending ? 'gt' : 'lt',
-    cursorValue,
-  );
+    operator: isAscending ? 'gt' : 'lt',
+    value: cursorValue,
+  });
 };
 
-const buildComparisonCondition = (
-  field: CursorOrderByField,
-  cursorValue: unknown,
-  { isAscending, areNullsScannedLast }: EffectiveScanOrder,
-): RecordGqlOperationFilter | undefined => {
+const buildComparisonCondition = ({
+  field,
+  cursorValue,
+  scanOrder: { isAscending, areNullsScannedLast },
+}: {
+  field: CursorOrderByField;
+  cursorValue: unknown;
+  scanOrder: EffectiveScanOrder;
+}): RecordGqlOperationFilter | undefined => {
   if (!isDefined(cursorValue)) {
     return areNullsScannedLast
       ? undefined
-      : buildCursorWhereCondition(field, 'is', 'NOT_NULL');
+      : buildCursorWhereCondition({
+          field,
+          operator: 'is',
+          value: 'NOT_NULL',
+        });
   }
 
-  const strictlyAfter = buildStrictlyAfterCondition(
+  const strictlyAfter = buildStrictlyAfterCondition({
     field,
     cursorValue,
     isAscending,
-  );
+  });
 
   if (!areNullsScannedLast || !field.canHoldNullValue) {
     return strictlyAfter;
   }
 
-  const trailingNullBlock = buildCursorWhereCondition(field, 'is', 'NULL');
+  const trailingNullBlock = buildCursorWhereCondition({
+    field,
+    operator: 'is',
+    value: 'NULL',
+  });
 
   return isDefined(strictlyAfter)
     ? { or: [strictlyAfter, trailingNullBlock] }
@@ -166,24 +199,28 @@ export const computeCursorArgFilter = ({
 
   const cumulativeConditions = fields.flatMap<RecordGqlOperationFilter>(
     (field, index) => {
-      const comparison = buildComparisonCondition(
+      const comparison = buildComparisonCondition({
         field,
-        getCursorValue(cursorRecordValues, field),
-        getEffectiveScanOrder(field.direction, isForwardPagination),
-      );
+        cursorValue: getCursorValue({ record: cursorRecordValues, field }),
+        scanOrder: getEffectiveScanOrder({
+          direction: field.direction,
+          isForwardPagination,
+        }),
+      });
 
       if (!isDefined(comparison)) {
         return [];
       }
 
-      const equalityPrefixes = fields
-        .slice(0, index)
-        .map((prevField) =>
-          buildEqualityCondition(
-            prevField,
-            getCursorValue(cursorRecordValues, prevField),
-          ),
-        );
+      const equalityPrefixes = fields.slice(0, index).map((prevField) =>
+        buildEqualityCondition({
+          field: prevField,
+          cursorValue: getCursorValue({
+            record: cursorRecordValues,
+            field: prevField,
+          }),
+        }),
+      );
 
       const conditions = [...equalityPrefixes, comparison];
 

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useState } from 'react';
 import {
@@ -20,7 +21,11 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import {
+  AppPath,
+  type QueryCursorDirection,
+  SidePanelPages,
+} from 'twenty-shared/types';
 import { combineFilters, getAppPath, isDefined } from 'twenty-shared/utils';
 
 export const useRecordShowPagePagination = (
@@ -68,15 +73,20 @@ export const useRecordShowPagePagination = (
 
   const reversedOrderBy = reverseOrderBy(orderBy);
 
-  const { loading: loadingCurrentRecord, records: currentRecords } =
-    useFindManyRecords({
-      filter: { id: { eq: objectRecordId } },
-      orderBy,
-      limit: 1,
-      objectNameSingular,
-      recordGqlFields: { ...orderByGqlFields, deletedAt: true },
-      withSoftDeleted: true,
-    });
+  const {
+    loading: loadingCurrentRecord,
+    records: currentRecords,
+    pageInfo: currentRecordPageInfo,
+  } = useFindManyRecords({
+    filter: { id: { eq: objectRecordId } },
+    orderBy,
+    limit: 1,
+    objectNameSingular,
+    recordGqlFields: { ...orderByGqlFields, deletedAt: true },
+    withSoftDeleted: true,
+  });
+
+  const currentRecordCursor = currentRecordPageInfo?.endCursor;
 
   const currentRecord = currentRecords[0];
   const isCurrentRecordDeleted = isDefined(currentRecord?.deletedAt);
@@ -115,8 +125,11 @@ export const useRecordShowPagePagination = (
       })
     : undefined;
 
-  const hasKeysetFilters = isDefined(beforeFilter) && isDefined(afterFilter);
-  const skipNeighborQueries = loadingCurrentRecord || !hasKeysetFilters;
+  const hasNeighborQueryArgs =
+    isDefined(beforeFilter) &&
+    isDefined(afterFilter) &&
+    isNonEmptyString(currentRecordCursor);
+  const skipNeighborQueries = loadingCurrentRecord || !hasNeighborQueryArgs;
 
   const baseNeighborOptions = {
     skip: skipNeighborQueries,
@@ -130,6 +143,11 @@ export const useRecordShowPagePagination = (
     [filter, deletedOnlyFilter].filter(isDefined),
   );
 
+  const buildNeighborCursorFilter = (cursorDirection: QueryCursorDirection) =>
+    isNonEmptyString(currentRecordCursor)
+      ? { cursor: currentRecordCursor, cursorDirection }
+      : undefined;
+
   const {
     loading: loadingRecordBefore,
     records: recordsBefore,
@@ -138,7 +156,8 @@ export const useRecordShowPagePagination = (
     ...baseNeighborOptions,
     fetchPolicy: 'network-only',
     filter: combineFilters([mergedFilter, beforeFilter].filter(isDefined)),
-    orderBy: reversedOrderBy,
+    orderBy,
+    cursorFilter: buildNeighborCursorFilter('before'),
   });
 
   const {
@@ -150,10 +169,14 @@ export const useRecordShowPagePagination = (
     fetchPolicy: 'network-only',
     filter: combineFilters([mergedFilter, afterFilter].filter(isDefined)),
     orderBy,
+    cursorFilter: buildNeighborCursorFilter('after'),
   });
 
-  const isAtFirstRecord = !loadingRecordBefore && totalCountBefore === 0;
-  const isAtLastRecord = !loadingRecordAfter && totalCountAfter === 0;
+  const recordBefore = recordsBefore[0];
+  const recordAfter = recordsAfter[0];
+
+  const isAtFirstRecord = !loadingRecordBefore && !isDefined(recordBefore);
+  const isAtLastRecord = !loadingRecordAfter && !isDefined(recordAfter);
 
   const { loading: loadingFirstRecord, records: firstRecords } =
     useFindManyRecords({
@@ -175,12 +198,9 @@ export const useRecordShowPagePagination = (
     loadingRecordAfter ||
     loadingRecordBefore ||
     loadingCurrentRecord ||
-    !hasKeysetFilters ||
+    !hasNeighborQueryArgs ||
     (isAtLastRecord && loadingFirstRecord) ||
     (isAtFirstRecord && loadingLastRecord);
-
-  const recordBefore = recordsBefore[0];
-  const recordAfter = recordsAfter[0];
 
   // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToRecord = (targetRecordId: string) => {
