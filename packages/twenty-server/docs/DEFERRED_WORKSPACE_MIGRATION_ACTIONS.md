@@ -180,7 +180,7 @@ Tested in PR 3, manually on the same data: a second object creation is refused w
 
 ### Surfacing the refusal
 
-A refused migration reaches the client as a `ConflictError`: `extensions.code` is `CONFLICT`, `extensions.subCode` is `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` and `extensions.userFriendlyMessage` explains the wait. The object, field and index GraphQL exception handlers produce it, since those resolvers catch the runner exception before the workspace migration interceptor sees it.
+A refused migration reaches the client as a `ConflictError`: `extensions.code` is `CONFLICT`, `extensions.subCode` is `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` and `extensions.userFriendlyMessage` explains the wait. `workspaceMigrationRunnerExceptionFormatter` produces it, and the object, field and index GraphQL exception handlers now delegate to that same formatter for runner exceptions, since those resolvers catch them before the workspace migration interceptor sees them.
 
 The front needs nothing of its own: `getToastOptionsFromError` already reads `userFriendlyMessage` off the extensions, so the settings toast shows that sentence. The SDK CLI shows it in place of the server message, which names a workspace by uuid, and adds a hint telling the user to wait for the background change to finish and sync again.
 
