@@ -14,16 +14,11 @@ type AgentChatThreadTargetSchemaMaps = Pick<
 const OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier;
 
-const THREAD_OBJECT_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.agentChatThread.universalIdentifier;
-
 // The relation's other leg lives on agentChatThread, so selecting additions by
 // owning object alone would provision half a relation and fail validation.
 const EXTERNAL_FIELD_UNIVERSAL_IDENTIFIERS = new Set([
   STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier,
 ]);
-
-const EMPTY_ADDITIONS = { objects: [], fields: [], indexes: [] };
 
 export const getAgentChatThreadTargetSchemaAdditions = ({
   existing,
@@ -32,19 +27,6 @@ export const getAgentChatThreadTargetSchemaAdditions = ({
   existing: AgentChatThreadTargetSchemaMaps;
   standard: AgentChatThreadTargetSchemaMaps;
 }) => {
-  // agentChatThread is provisioned by the agent history migration, which skips
-  // a workspace that has no workspace schema. Both legs of the relation resolve
-  // against it, so there is nothing to attach to until that command has run.
-  if (
-    !isDefined(
-      existing.flatObjectMetadataMaps.byUniversalIdentifier[
-        THREAD_OBJECT_UNIVERSAL_IDENTIFIER
-      ],
-    )
-  ) {
-    return EMPTY_ADDITIONS;
-  }
-
   const objects = Object.values(
     standard.flatObjectMetadataMaps.byUniversalIdentifier,
   )

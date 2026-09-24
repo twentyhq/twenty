@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { getAgentChatThreadTargetSchemaAdditions } from 'src/database/commands/upgrade-version-command/2-42/utils/get-agent-chat-thread-target-schema-additions.util';
+import { getAgentChatThreadTargetSchemaAdditions } from 'src/database/commands/upgrade-version-command/2-43/utils/get-agent-chat-thread-target-schema-additions.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -18,9 +18,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // workspace without the table. This provisions it the same way agent history
 // provisioned its five objects: an additive from/to migration over the standard
 // definitions, which custom-object side effects must not expand.
-@RegisteredWorkspaceCommand('2.42.0', 1790166480000)
+@RegisteredWorkspaceCommand('2.43.0', 1790181780000)
 @Command({
-  name: 'upgrade:2-42:provision-agent-chat-thread-target',
+  name: 'upgrade:2-43:provision-agent-chat-thread-target',
   description:
     'Create the agentChatThreadTarget object, its fields and its indexes for existing workspaces',
 })
@@ -65,23 +65,29 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
     });
 
+    const hasThreadObject = isDefined(
+      existing.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      ],
+    );
+
+    if (!hasThreadObject) {
+      // The agent history migration earlier in this segment skips workspaces
+      // with no schema; provisioning one syncs the whole standard application,
+      // which creates agentChatThreadTarget and both relation legs.
+      this.logger.log(
+        `Workspace ${workspaceId} has no agentChatThread, skipping; workspace provisioning creates agentChatThreadTarget`,
+      );
+
+      return;
+    }
+
     const { objects, fields, indexes } =
       getAgentChatThreadTargetSchemaAdditions({ existing, standard });
 
     if (objects.length + fields.length + indexes.length === 0) {
-      // Empty additions mean either outcome, and they are not the same: a
-      // workspace with no agentChatThread has not been provisioned at all and
-      // will need this again once the agent history migration reaches it.
-      const hasThreadObject = isDefined(
-        existing.flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.universalIdentifier
-        ],
-      );
-
       this.logger.log(
-        hasThreadObject
-          ? `Workspace ${workspaceId} already carries agentChatThreadTarget, skipping`
-          : `Workspace ${workspaceId} has no agentChatThread yet, skipping until its agent history is migrated`,
+        `Workspace ${workspaceId} already carries agentChatThreadTarget, skipping`,
       );
 
       return;

@@ -4,13 +4,12 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getAgentChatThreadTargetSchemaAdditions } from 'src/database/commands/upgrade-version-command/2-42/utils/get-agent-chat-thread-target-schema-additions.util';
+import { getAgentChatThreadTargetSchemaAdditions } from 'src/database/commands/upgrade-version-command/2-43/utils/get-agent-chat-thread-target-schema-additions.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const TARGET_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier;
-const THREAD_IDENTIFIER = STANDARD_OBJECTS.agentChatThread.universalIdentifier;
 const RECORD_TARGETS_IDENTIFIER =
   STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier;
 
@@ -22,9 +21,7 @@ const createStandardMetadata = () =>
   }).allFlatEntityMaps;
 
 // A workspace that already carries agent history but not the target object.
-const createExistingWithoutTarget = ({
-  withoutObjectUniversalIdentifier,
-}: { withoutObjectUniversalIdentifier?: string } = {}) => {
+const createExistingWithoutTarget = () => {
   const standard = createStandardMetadata();
 
   const keepByUniversalIdentifier = <TFlatEntity>(
@@ -43,9 +40,7 @@ const createExistingWithoutTarget = ({
       ...standard.flatObjectMetadataMaps,
       byUniversalIdentifier: keepByUniversalIdentifier(
         standard.flatObjectMetadataMaps.byUniversalIdentifier,
-        (identifier) =>
-          identifier !== TARGET_IDENTIFIER &&
-          identifier !== withoutObjectUniversalIdentifier,
+        (identifier) => identifier !== TARGET_IDENTIFIER,
       ),
     },
     flatFieldMetadataMaps: {
@@ -99,21 +94,6 @@ describe('getAgentChatThreadTargetSchemaAdditions', () => {
     expect(additions.indexes.length).toBeGreaterThan(0);
   });
 
-  it('adds nothing when the workspace has no agent chat thread yet', () => {
-    const existing = createExistingWithoutTarget({
-      withoutObjectUniversalIdentifier: THREAD_IDENTIFIER,
-    });
-
-    // Both legs resolve against agentChatThread; the agent history migration
-    // skips a workspace with no workspace schema, so it may not be there yet.
-    expect(
-      getAgentChatThreadTargetSchemaAdditions({
-        existing,
-        standard: createStandardMetadata(),
-      }),
-    ).toEqual({ objects: [], fields: [], indexes: [] });
-  });
-
   it('adds nothing when the target object already exists', () => {
     const standard = createStandardMetadata();
 
@@ -122,7 +102,13 @@ describe('getAgentChatThreadTargetSchemaAdditions', () => {
     ).toEqual({ objects: [], fields: [], indexes: [] });
   });
 
-  it('adds nothing to a workspace with no standard metadata at all', () => {
+  // Whether the workspace is ready for this is the command's question, not this
+  // util's: it only ever proposes the target's own schema plus the leg on
+  // agentChatThread, so a workspace missing everything gets the same set as one
+  // missing only the target.
+  it('proposes only the target schema even when the workspace has nothing', () => {
+    const standard = createStandardMetadata();
+
     expect(
       getAgentChatThreadTargetSchemaAdditions({
         existing: {
@@ -130,8 +116,13 @@ describe('getAgentChatThreadTargetSchemaAdditions', () => {
           flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
           flatIndexMaps: createEmptyFlatEntityMaps(),
         },
-        standard: createStandardMetadata(),
+        standard,
       }),
-    ).toEqual({ objects: [], fields: [], indexes: [] });
+    ).toEqual(
+      getAgentChatThreadTargetSchemaAdditions({
+        existing: createExistingWithoutTarget(),
+        standard,
+      }),
+    );
   });
 });
