@@ -17,7 +17,7 @@ import { Status } from 'twenty-ui/primitives/data-display';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { LightIconButton, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   EvaluateAgentTurnDocument,
   GetAgentTurnsDocument,

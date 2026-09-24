@@ -11,7 +11,7 @@ import {
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
 import { getUsageLimitSpenderGroups } from '@/settings/billing/utils/getUsageLimitSpenderGroups';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -224,21 +224,21 @@ export const SettingsBillingLimitSpenderSelect = ({
   );
 
   const renderSubSpenderContent = (kind: UsageLimitSpenderType) => (
-    <DropdownContent>
+    <LegacyDropdownContent>
       {renderBackHeader(t(USAGE_LIMIT_SPENDER_TYPE_LABELS[kind]), () =>
         setBrowsedSpenderType(null),
       )}
       <DropdownMenuItemsContainer>
         {renderOptionList(kind)}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 
   const workspaceGroup = groups.find((group) => group.id === 'workspace');
   const otherGroups = groups.filter((group) => group.id !== 'workspace');
 
   const renderRootContent = () => (
-    <DropdownContent>
+    <LegacyDropdownContent>
       {isDefined(workspaceGroup) && (
         <DropdownMenuItemsContainer>
           <ListItem
@@ -298,7 +298,7 @@ export const SettingsBillingLimitSpenderSelect = ({
           )}
         </DropdownMenuItemsContainer>
       )}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 
   const renderContent = () => {

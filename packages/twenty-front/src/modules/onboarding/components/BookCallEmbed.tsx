@@ -6,7 +6,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAttendeeName } from '@/onboarding/utils/getAttendeeName';
-import { useThemeColorScheme } from 'twenty-ui/theme-constants';
+import { useThemeColorScheme } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type BookCallEmbedProps = {

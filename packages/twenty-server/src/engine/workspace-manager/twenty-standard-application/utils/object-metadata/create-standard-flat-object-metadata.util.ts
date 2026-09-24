@@ -222,6 +222,92 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
+  campaignDelivery: (
+    args: Omit<
+      CreateStandardObjectArgs<'campaignDelivery'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'campaignDelivery',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
+        nameSingular: 'campaignDelivery',
+        namePlural: 'campaignDeliveries',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Campaign delivery',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Campaign deliveries',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Campaign delivery',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconSend',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
+  messageSuppression: (
+    args: Omit<
+      CreateStandardObjectArgs<'messageSuppression'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'messageSuppression',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.messageSuppression.universalIdentifier,
+        nameSingular: 'messageSuppression',
+        namePlural: 'messageSuppressions',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Message suppression',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Message suppressions',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Message suppression',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconBan',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
 
   attachment: ({
     now,

@@ -1,7 +1,7 @@
 import { useJsonTreeContextOrThrow } from '@ui/components/data-display/JsonTree/internal/hooks/useJsonTreeContextOrThrow';
 import { IconChevronDown } from '@ui/icon';
 import { VisibilityHidden } from '@ui/primitives/accessibility/components/VisibilityHidden';
-import { themeCssVariables, useTheme } from '@ui/theme-constants';
+import { themeCssVariables, useTheme } from '@ui/theme';
 import { clsx } from 'clsx';
 
 import styles from './JsonArrow.module.scss';

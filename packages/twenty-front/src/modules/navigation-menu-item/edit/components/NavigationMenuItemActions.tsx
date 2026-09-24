@@ -17,7 +17,7 @@ import {
 } from 'twenty-ui/icon';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -128,7 +128,7 @@ export const NavigationMenuItemActions = ({
   ];
   const options = page === 'folders' ? folders : actions;
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
+    <LegacyDropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
       {page === 'folders' && (
         <DropdownMenuHeader
           StartComponent={
@@ -153,6 +153,6 @@ export const NavigationMenuItemActions = ({
           ))}
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

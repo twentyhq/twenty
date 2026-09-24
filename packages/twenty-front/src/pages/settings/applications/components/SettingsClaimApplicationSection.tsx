@@ -20,7 +20,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout, Section, useToast } from 'twenty-ui/components';
 import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   FindClaimableApplicationRegistrationDocument,
   GithubClaimAuthorizationUrlDocument,

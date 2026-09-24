@@ -8,11 +8,10 @@ import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/role
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledNameLabel = styled.div`
   overflow: hidden;
@@ -33,7 +32,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
   isEditable = true,
   fromAgentId,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const objectLabelPlural = objectMetadataItem.labelPlural;
   const navigationPath = getSettingsPath(SettingsPath.RoleObjectLevel, {
     roleId: roleId,

@@ -33,7 +33,7 @@ Import the component stylesheet and a theme stylesheet once at your application 
 
 ```tsx
 import { Field, Input } from 'twenty-ui/primitives/input';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
@@ -82,7 +82,7 @@ Each primitive family has a matching public entry point, such as
 | `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                   |
 | `twenty-ui/primitives/typography`    | Text and headings                                               |
 | `twenty-ui/icon`                     | Icons                                                           |
-| `twenty-ui/theme-constants`          | Theme provider, hooks, and CSS variable references              |
+| `twenty-ui/theme`          | Theme provider, hooks, and CSS variable references              |
 
 Import individual icons, such as `IconCheck`, from `twenty-ui/icon`. The dynamic icon provider includes the full icon catalog, so reserve it for interfaces that need to look up icons at runtime.
 

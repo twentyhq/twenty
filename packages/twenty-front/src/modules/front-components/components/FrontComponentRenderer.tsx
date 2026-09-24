@@ -12,12 +12,12 @@ import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useCallback, useContext, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useThemeColorScheme } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   FindOneFrontComponentDocument,
@@ -97,7 +97,7 @@ const FrontComponentRendererContent = ({
   toolCall,
   loadingFallback,
 }: FrontComponentRendererContentProps) => {
-  const { colorScheme } = useContext(ThemeContext);
+  const colorScheme = useThemeColorScheme();
   const { enqueueToast } = useToast();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
