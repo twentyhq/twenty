@@ -58,7 +58,7 @@ const getPreviousLabel = ({
   return capitalize(fieldMetadata.relationTargetObjectMetadata.nameSingular);
 };
 
-@RegisteredWorkspaceCommand('2.43.0', 1790256416822)
+@RegisteredWorkspaceCommand('2.43.0', 1790266078808)
 @Command({
   name: 'upgrade:2-43:relabel-attachment-target-fields',
   description:

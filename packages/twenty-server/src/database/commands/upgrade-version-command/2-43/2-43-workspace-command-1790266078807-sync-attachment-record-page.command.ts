@@ -51,7 +51,7 @@ const PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
   ATTACHMENT_RECORD_PAGE.tabs.home.widgets.attachedTo.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.43.0', 1790256416821)
+@RegisteredWorkspaceCommand('2.43.0', 1790266078807)
 @Command({
   name: 'upgrade:2-43:sync-attachment-record-page',
   description:

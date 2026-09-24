@@ -1,9 +1,12 @@
-import { type FindOptionsWhere, type Repository } from 'typeorm';
+import { type FindOptionsWhere } from 'typeorm';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
 import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { paginateMetadataQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-query-builder.util';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export const paginateByIdCursor = async <
   T extends { id: string; workspaceId: string },
@@ -13,7 +16,7 @@ export const paginateByIdCursor = async <
   where,
   request,
 }: {
-  repository: Repository<T>;
+  repository: WorkspaceScopedRepository<T>;
   workspaceId: string;
   where?: FindOptionsWhere<T>;
   request: AuthenticatedRequest;
@@ -22,10 +25,15 @@ export const paginateByIdCursor = async <
   pageInfo: RestCursorPageInfo;
   totalCount: number;
 }> => {
-  const baseWhere = { ...where, workspaceId } as FindOptionsWhere<T>;
-  const queryBuilder = repository
-    .createQueryBuilder('metadata')
-    .where(baseWhere);
+  const queryBuilder = repository.createScopedQueryBuilder(
+    workspaceId,
+    'metadata',
+  );
+
+  if (isDefined(where)) {
+    queryBuilder.andWhere(where);
+  }
+
   const countQueryBuilder = queryBuilder.clone();
   const [page, totalCount] = await Promise.all([
     paginateMetadataQueryBuilder({

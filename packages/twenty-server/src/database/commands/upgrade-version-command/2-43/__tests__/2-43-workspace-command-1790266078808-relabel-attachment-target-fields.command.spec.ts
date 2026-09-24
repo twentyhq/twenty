@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { RelabelAttachmentTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790256416822-relabel-attachment-target-fields.command';
+import { RelabelAttachmentTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790266078808-relabel-attachment-target-fields.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
