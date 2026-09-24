@@ -141,5 +141,57 @@ export const computeStandardAttachmentViewFields = (
         size: 150,
       },
     }),
+    attachmentRecordPageFieldsName: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'attachment',
+      context: {
+        viewName: 'attachmentRecordPageFields',
+        viewFieldName: 'name',
+        fieldName: 'name',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    attachmentRecordPageFieldsFile: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'attachment',
+      context: {
+        viewName: 'attachmentRecordPageFields',
+        viewFieldName: 'file',
+        fieldName: 'file',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    attachmentRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'attachment',
+      context: {
+        viewName: 'attachmentRecordPageFields',
+        viewFieldName: 'createdBy',
+        fieldName: 'createdBy',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
+    attachmentRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'attachment',
+      context: {
+        viewName: 'attachmentRecordPageFields',
+        viewFieldName: 'createdAt',
+        fieldName: 'createdAt',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
   };
 };

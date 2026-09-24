@@ -24,6 +24,19 @@ export const useResolveFieldMetadataIdFromNameOrId = (
       (field) => field.id === fieldMetadataIdOrName,
     );
 
-    return fieldById?.id;
+    if (fieldById !== undefined) {
+      return fieldById.id;
+    }
+
+    // Only one field per morph group is served, so a widget pointing at
+    // another sibling resolves to the field that represents its group.
+    const morphGroupField = objectMetadataItem.fields.find((field) =>
+      field.morphRelations?.some(
+        (morphRelation) =>
+          morphRelation.sourceFieldMetadata.id === fieldMetadataIdOrName,
+      ),
+    );
+
+    return morphGroupField?.id;
   }, [objectMetadataItem.fields, fieldMetadataIdOrName]);
 };

@@ -68,6 +68,16 @@ export const STANDARD_OBJECTS = {
           'targetWorkflow',
         ],
       }),
+      attachmentRecordPageFields: buildStandardObjectRecordPageFieldsView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
+        fields: STANDARD_OBJECT_FIELDS.attachment,
+        viewFieldNames: ['name', 'file', 'createdBy', 'createdAt'],
+        viewFieldGroupNames: {
+          general: 'General',
+          system: 'System',
+        },
+      }),
     },
   },
   blocklist: {
