@@ -44,7 +44,6 @@ const APP_B_NAME_FIELD: ObjectManifest['fields'][number] = {
   label: 'Name',
 };
 
-// Forward side, on App A's own object, pointing at App B's object.
 const APP_A_TARGET_RELATION_FIELD: ObjectManifest['fields'][number] = {
   universalIdentifier: APP_A_TARGET_RELATION_FIELD_ID,
   type: FieldMetadataType.RELATION,
@@ -60,8 +59,6 @@ const APP_A_TARGET_RELATION_FIELD: ObjectManifest['fields'][number] = {
   },
 };
 
-// Inverse side, owned by App A but placed on App B's object. It is a
-// top-level manifest field because App A does not declare App B's object.
 const APP_A_SOURCES_RELATION_FIELD: FieldManifest = {
   universalIdentifier: APP_A_SOURCES_RELATION_FIELD_ID,
   type: FieldMetadataType.RELATION,
@@ -81,7 +78,6 @@ const buildAppBManifest = (): Manifest =>
     appId: APP_B_ID,
     roleId: APP_B_ROLE_ID,
     overrides: {
-      // Role labels are unique workspace-wide, so each app ships its own
       roles: [
         {
           universalIdentifier: APP_B_ROLE_ID,
@@ -232,8 +228,6 @@ describe('Sync application should succeed when App A declares a RELATION between
   }, 60000);
 
   it('re-syncs App A with the same manifest without error', async () => {
-    // Both syncs live here so the test does not depend on its sibling having
-    // run first when a single test is selected.
     await syncApplication({
       manifest: buildAppAManifest(),
       expectToFail: false,

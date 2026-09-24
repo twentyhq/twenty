@@ -15,13 +15,6 @@ export type ApplicationSchemaScopeFlatEntityIds = {
   flatIndexMetadataIds: string[];
 };
 
-// An application can declare a relation whose target object belongs to another
-// application (another installed app or the workspace custom one). The schema
-// generator needs that object's type, so the target is pulled in with the
-// fields its own application defines on it, and those are followed in turn.
-// Only the requesting application's relations seed the walk: twenty-standard
-// never owns a relation leaving the standard app, and seeding from it would
-// let one application's schema grow with every app installed in the workspace.
 export const computeApplicationSchemaScopeFlatEntityIds = ({
   applicationId,
   twentyStandardApplicationId,
@@ -83,8 +76,6 @@ export const computeApplicationSchemaScopeFlatEntityIds = ({
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
-    // A target missing from the workspace is left to the generator, which
-    // already reports it.
     if (!isDefined(targetFlatObjectMetadata)) {
       continue;
     }
