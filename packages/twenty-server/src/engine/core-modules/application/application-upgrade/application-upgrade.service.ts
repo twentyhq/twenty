@@ -24,11 +24,8 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { isUpgradeRoleGrantsApprovalError } from 'src/engine/core-modules/application/utils/is-upgrade-role-grants-approval-error.util';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
-
-const isUpgradeRoleGrantsApprovalError = (error: unknown): boolean =>
-  error instanceof ApplicationException &&
-  error.code === ApplicationExceptionCode.UPGRADE_REQUIRES_ROLE_GRANTS_APPROVAL;
 
 @Injectable()
 export class ApplicationUpgradeService {

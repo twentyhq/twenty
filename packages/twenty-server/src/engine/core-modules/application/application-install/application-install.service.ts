@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
+import { isUpgradeRoleGrantsApprovalError } from 'src/engine/core-modules/application/utils/is-upgrade-role-grants-approval-error.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
@@ -237,6 +238,10 @@ export class ApplicationInstallService {
 
       return result;
     } catch (error) {
+      if (isUpgradeRoleGrantsApprovalError(error)) {
+        throw error;
+      }
+
       this.metricsService.incrementCounterBy({
         key: isVersionUpgrade
           ? MetricsKeys.AppUpgradeFailed
@@ -499,7 +504,7 @@ export class ApplicationInstallService {
     manifest: Manifest;
     hasUserApprovedRoleGrants?: boolean;
   }): Promise<void> {
-    if (hasUserApprovedRoleGrants === true) {
+    if (hasUserApprovedRoleGrants) {
       return;
     }
 
