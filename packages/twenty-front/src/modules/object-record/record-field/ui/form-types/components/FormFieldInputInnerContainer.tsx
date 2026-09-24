@@ -1,9 +1,10 @@
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
-import { forwardRef, type HTMLAttributes, type Ref, useEffect } from 'react';
+import { forwardRef, type HTMLAttributes, type Ref } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type FormFieldInputInnerContainerProps = {
@@ -99,21 +100,10 @@ export const FormFieldInputInnerContainer = forwardRef(
     const { removeFocusItemFromFocusStackById } =
       useRemoveFocusItemFromFocusStackById();
 
-    useEffect(() => {
-      if (preventFocusStackUpdate) {
-        return;
-      }
-
-      return () => {
-        removeFocusItemFromFocusStackById({
-          focusId: formFieldInputInstanceId,
-        });
-      };
-    }, [
-      formFieldInputInstanceId,
-      preventFocusStackUpdate,
-      removeFocusItemFromFocusStackById,
-    ]);
+    useRemoveFocusItemFromFocusStackOnUnmount({
+      focusId: formFieldInputInstanceId,
+      isEnabled: !preventFocusStackUpdate,
+    });
 
     const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
       onFocus?.(e);
