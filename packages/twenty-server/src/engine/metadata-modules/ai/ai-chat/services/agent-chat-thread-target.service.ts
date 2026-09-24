@@ -13,8 +13,14 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -180,10 +186,38 @@ export class AgentChatThreadTargetService {
     recordId,
   }: RecordReference): Promise<void> {
     const record = await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager
-          .getRepository(objectNameSingular)
-          .findOne({ where: { id: recordId }, select: { id: true } }),
+      async () => {
+        const { authContext, userWorkspaceRoleMap, apiKeyRoleMap } =
+          getWorkspaceContext();
+
+        // The ORM does not fall back to the caller's role: with no config it
+        // resolves to an empty permission map and no bypass, which denies
+        // every object rather than consulting the grants this check exists for.
+        const rolePermissionConfig = resolveRolePermissionConfig({
+          authContext,
+          userWorkspaceRoleMap,
+          apiKeyRoleMap,
+        });
+
+        if (!isDefined(rolePermissionConfig)) {
+          return null;
+        }
+
+        try {
+          return await this.workspaceOrmManager
+            .getRepository(objectNameSingular, rolePermissionConfig)
+            .findOne({ where: { id: recordId }, select: { id: true } });
+        } catch (error) {
+          if (
+            error instanceof PermissionsException &&
+            error.code === PermissionsExceptionCode.PERMISSION_DENIED
+          ) {
+            return null;
+          }
+
+          throw error;
+        }
+      },
     );
 
     // Not-found rather than forbidden, so a member cannot probe for records
