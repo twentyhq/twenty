@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { EditorContent, type Editor } from '@tiptap/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -41,7 +42,7 @@ export const HtmlNodeInlineEditor = ({
   onFocus,
 }: HtmlNodeInlineEditorProps) => {
   const htmlEditor = useTextVariableEditor({
-    placeholder: '<p>Paste or write your HTML here</p>',
+    placeholder: t`Paste or write your HTML here`,
     multiline: true,
     readonly: false,
     defaultValue: html,
