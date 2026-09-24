@@ -44,6 +44,34 @@ describe('CreateEventLogFromInternalEvent', () => {
     expect(ingestedEnvelopes[0].table).toBe('objectEvent');
   });
 
+  it('logs record restores', async () => {
+    await handler.handle({ ...batch, name: 'company.restored' });
+
+    const ingestedEnvelopes = ingest.mock.calls[0]?.[0];
+
+    expect(ingestedEnvelopes[0].row.event).toBe('Object Record Restored');
+  });
+
+  it('logs permanent deletes with the record snapshot before deletion', async () => {
+    const before = { id: 'record-1', name: 'Maple Consulting Inc.' };
+
+    await handler.handle({
+      ...batch,
+      name: 'company.destroyed',
+      events: [
+        { recordId: 'record-1', userId: 'user-1', properties: { before } },
+      ],
+    });
+
+    const ingestedEnvelopes = ingest.mock.calls[0]?.[0];
+
+    expect(ingestedEnvelopes[0].row).toMatchObject({
+      event: 'Object Record Destroyed',
+      recordId: 'record-1',
+      properties: { before },
+    });
+  });
+
   it('requeues once on a transient ClickHouse network error instead of failing', async () => {
     ingest.mockRejectedValue(transientError);
 

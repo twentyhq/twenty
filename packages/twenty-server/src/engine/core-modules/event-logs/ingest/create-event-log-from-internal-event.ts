@@ -12,6 +12,8 @@ import {
 } from 'src/engine/core-modules/event-logs/emit/build-event-envelope';
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-created';
 import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-delete';
+import { OBJECT_RECORD_DESTROYED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-destroyed';
+import { OBJECT_RECORD_RESTORED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-restored';
 import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-updated';
 import { OBJECT_RECORD_UPSERTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-upserted';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -33,6 +35,8 @@ const OBJECT_EVENT_BY_SUFFIX = {
   '.updated': OBJECT_RECORD_UPDATED_EVENT,
   '.deleted': OBJECT_RECORD_DELETED_EVENT,
   '.upserted': OBJECT_RECORD_UPSERTED_EVENT,
+  '.restored': OBJECT_RECORD_RESTORED_EVENT,
+  '.destroyed': OBJECT_RECORD_DESTROYED_EVENT,
 } as const;
 
 @Processor(MessageQueue.eventLogQueue)
