@@ -640,6 +640,34 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(document.body.matches(':dir(ltr)')).toBe(true);
     });
 
+    it('should resolve :dir from the text of dir="auto" and bdi elements', () => {
+      const { document } = createSelectorFixture();
+      const hebrewText = String.fromCodePoint(0x05e9, 0x05dc, 0x05d5, 0x05dd);
+      const rightToLeftContainer = document.createElement('article');
+      const autoHebrew = document.createElement('p');
+      const autoHebrewChild = document.createElement('span');
+      const autoLatin = document.createElement('p');
+      const autoDigits = document.createElement('p');
+      const isolatedHebrew = document.createElement('bdi');
+      rightToLeftContainer.setAttribute('dir', 'rtl');
+      autoHebrew.setAttribute('dir', 'auto');
+      autoLatin.setAttribute('dir', 'auto');
+      autoDigits.setAttribute('dir', 'auto');
+      autoHebrew.append(document.createTextNode(`42 ${hebrewText}`));
+      autoHebrew.append(autoHebrewChild);
+      autoLatin.append(document.createTextNode('Account'));
+      autoDigits.append(document.createTextNode('42'));
+      isolatedHebrew.append(document.createTextNode(hebrewText));
+      rightToLeftContainer.append(autoLatin, autoDigits);
+      document.body.append(autoHebrew, rightToLeftContainer, isolatedHebrew);
+
+      expect(autoHebrew.matches(':dir(rtl)')).toBe(true);
+      expect(autoHebrewChild.matches(':dir(rtl)')).toBe(true);
+      expect(autoLatin.matches(':dir(ltr)')).toBe(true);
+      expect(autoDigits.matches(':dir(ltr)')).toBe(true);
+      expect(isolatedHebrew.matches(':dir(rtl)')).toBe(true);
+    });
+
     it('should derive the checked option from the select value or its first enabled option', () => {
       const { document } = createSelectorFixture();
       const createSelect = (optionValues: string[]) => {
