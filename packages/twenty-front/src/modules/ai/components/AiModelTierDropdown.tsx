@@ -11,7 +11,7 @@ import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const SLIDER_DROPDOWN_WIDTH_PX = 240;
@@ -64,7 +64,7 @@ export const AiModelTierDropdown = ({
         />
       }
       dropdownComponents={
-        <DropdownContent widthInPixels={SLIDER_DROPDOWN_WIDTH_PX}>
+        <LegacyDropdownContent widthInPixels={SLIDER_DROPDOWN_WIDTH_PX}>
           <StyledSliderContainer
             role="group"
             aria-label={t`Choose a model mode`}
@@ -75,7 +75,7 @@ export const AiModelTierDropdown = ({
               disabled={disabled}
             />
           </StyledSliderContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

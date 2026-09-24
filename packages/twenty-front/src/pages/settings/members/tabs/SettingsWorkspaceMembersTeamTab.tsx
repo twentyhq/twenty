@@ -1,5 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -180,7 +180,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
               >{t`Open`}</Button>
             }
           />
-          <DropdownRootContent align="end" sideOffset={DROPDOWN_OFFSET_Y}>
+          <DropdownContent align="end" sideOffset={DROPDOWN_OFFSET_Y}>
             <Dropdown.Section>
               <Dropdown.ActionItem
                 startIcon={<IconListDetails />}
@@ -199,7 +199,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                 }}
               >{t`See data model settings`}</Dropdown.ActionItem>
             </Dropdown.Section>
-          </DropdownRootContent>
+          </DropdownContent>
         </DropdownRoot>
       </StyledSearchContainer>
       <StyledTableContainer hasMoreRows={hasNextPage}>

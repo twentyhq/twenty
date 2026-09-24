@@ -1,6 +1,6 @@
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { OPTIONS_DROPDOWN_GLOBAL_HOTKEYS_CONFIG } from '@/ui/layout/dropdown/constants/OptionsDropdownGlobalHotkeysConfig';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
@@ -52,7 +52,7 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
               </IconButton>
             }
           />
-          <DropdownRootContent
+          <DropdownContent
             side="right"
             align="start"
             sideOffset={DROPDOWN_OFFSET_Y}
@@ -65,7 +65,7 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
                 onDeleteNode={onDelete}
               />
             </Dropdown.Section>
-          </DropdownRootContent>
+          </DropdownContent>
         </DropdownRoot>
       </ParentClickOutsideIdContext.Provider>
     </StyledOptionsButtonContainer>

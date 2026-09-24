@@ -5,7 +5,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client/react';
@@ -175,7 +175,7 @@ export const SettingsAgentEvalsTab = ({
                     </LightIconButton>
                   }
                 />
-                <DropdownRootContent side="right">
+                <DropdownContent side="right">
                   <Dropdown.Section>
                     <Dropdown.ActionItem
                       startIcon={<IconPlayerPlay />}
@@ -187,7 +187,7 @@ export const SettingsAgentEvalsTab = ({
                       onClick={() => openDeleteModal(item.id)}
                     >{t`Delete`}</Dropdown.ActionItem>
                   </Dropdown.Section>
-                </DropdownRootContent>
+                </DropdownContent>
               </DropdownRoot>
             )}
             hasFooter={false}

@@ -1,6 +1,6 @@
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import { OPTIONS_DROPDOWN_GLOBAL_HOTKEYS_CONFIG } from '@/ui/layout/dropdown/constants/OptionsDropdownGlobalHotkeysConfig';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
@@ -55,13 +55,9 @@ export const SidePanelOptionsDropdown = ({
           </IconButton>
         }
       />
-      <DropdownRootContent
-        side="top"
-        align="end"
-        sideOffset={DROPDOWN_OFFSET_Y}
-      >
+      <DropdownContent side="top" align="end" sideOffset={DROPDOWN_OFFSET_Y}>
         <Dropdown.Section>{children}</Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

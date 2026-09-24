@@ -1,5 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
@@ -91,7 +91,7 @@ export const SettingsAccountsRowDropdownMenu = ({
             </LightIconButton>
           }
         />
-        <DropdownRootContent side="right" align="start">
+        <DropdownContent side="right" align="start">
           <Dropdown.Section>
             {hasPendingConfiguration && (
               <Dropdown.ActionItem
@@ -158,7 +158,7 @@ export const SettingsAccountsRowDropdownMenu = ({
               }}
             >{t`Delete account and synced data`}</Dropdown.ActionItem>
           </Dropdown.Section>
-        </DropdownRootContent>
+        </DropdownContent>
       </DropdownRoot>
       <ConfirmationDialog
         dialogId={disconnectAccountModalId}

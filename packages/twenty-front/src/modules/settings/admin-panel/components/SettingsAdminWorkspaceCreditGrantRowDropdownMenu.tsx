@@ -1,5 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
@@ -23,7 +23,7 @@ export const SettingsAdminWorkspaceCreditGrantRowDropdownMenu = ({
           </LightIconButton>
         }
       />
-      <DropdownRootContent side="right" align="start">
+      <DropdownContent side="right" align="start">
         <Dropdown.Section>
           <Dropdown.ActionItem
             color="danger"
@@ -31,7 +31,7 @@ export const SettingsAdminWorkspaceCreditGrantRowDropdownMenu = ({
             onClick={onRevoke}
           >{t`Revoke`}</Dropdown.ActionItem>
         </Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

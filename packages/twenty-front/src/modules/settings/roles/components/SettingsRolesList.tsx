@@ -3,7 +3,7 @@ import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRoles
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -105,7 +105,7 @@ export const SettingsRolesList = () => {
             />
           }
           dropdownComponents={
-            <DropdownContent>
+            <LegacyDropdownContent>
               <DropdownMenuItemsContainer>
                 <SettingsRow
                   startIcon={<IconLego />}
@@ -118,7 +118,7 @@ export const SettingsRolesList = () => {
                   checked={showApiKeyRoles}
                 >{t`API key roles`}</SettingsRow>
               </DropdownMenuItemsContainer>
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
         />
       </StyledSearchAndFilterContainer>

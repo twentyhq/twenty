@@ -3,7 +3,7 @@ import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type SettingsSkillInactiveMenuDropDownProps = {
@@ -33,7 +33,7 @@ export const SettingsSkillInactiveMenuDropDown = ({
         </LightIconButton>
       }
     />
-    <DropdownRootContent align="end" width={GenericDropdownContentWidth.Narrow}>
+    <DropdownContent align="end" width={GenericDropdownContentWidth.Narrow}>
       <Dropdown.Section>
         <Dropdown.ActionItem
           startIcon={<IconArchiveOff />}
@@ -47,6 +47,6 @@ export const SettingsSkillInactiveMenuDropDown = ({
           >{t`Delete`}</Dropdown.ActionItem>
         )}
       </Dropdown.Section>
-    </DropdownRootContent>
+    </DropdownContent>
   </DropdownRoot>
 );

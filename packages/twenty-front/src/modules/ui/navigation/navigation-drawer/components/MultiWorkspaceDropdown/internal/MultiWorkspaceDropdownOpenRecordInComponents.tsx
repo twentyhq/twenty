@@ -1,7 +1,7 @@
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -23,7 +23,7 @@ export const MultiWorkspaceDropdownOpenRecordInComponents = () => {
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -53,6 +53,6 @@ export const MultiWorkspaceDropdownOpenRecordInComponents = () => {
           </ListItem>
         ))}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

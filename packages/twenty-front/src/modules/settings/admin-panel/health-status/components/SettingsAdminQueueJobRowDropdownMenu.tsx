@@ -1,5 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
@@ -29,7 +29,7 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
           </LightIconButton>
         }
       />
-      <DropdownRootContent side="right" align="start">
+      <DropdownContent side="right" align="start">
         <Dropdown.Section>
           {jobState === JobState.FAILED && isDefined(onRetry) && (
             <Dropdown.ActionItem
@@ -43,7 +43,7 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
             onClick={onDelete}
           >{t`Delete`}</Dropdown.ActionItem>
         </Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { Dropdown, IconButton } from 'twenty-ui/components';
 
 type WorkflowStepFilterGroupOptionsDropdownProps = {
@@ -36,7 +36,7 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
           </IconButton>
         }
       />
-      <DropdownRootContent
+      <DropdownContent
         align="end"
         sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET.y}
       >
@@ -49,7 +49,7 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
             {t`Delete group`}
           </Dropdown.ActionItem>
         </Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

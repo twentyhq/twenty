@@ -6,7 +6,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
@@ -39,10 +39,7 @@ export const AttachmentDropdown = ({
           </LightIconButton>
         }
       />
-      <DropdownRootContent
-        align="end"
-        width={GenericDropdownContentWidth.Narrow}
-      >
+      <DropdownContent align="end" width={GenericDropdownContentWidth.Narrow}>
         <Dropdown.Section>
           {hasDownloadPermission && (
             <Dropdown.ActionItem
@@ -63,7 +60,7 @@ export const AttachmentDropdown = ({
             {t`Delete`}
           </Dropdown.ActionItem>
         </Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

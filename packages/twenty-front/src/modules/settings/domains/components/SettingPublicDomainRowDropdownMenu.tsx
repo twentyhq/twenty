@@ -1,5 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -55,7 +55,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
           </LightIconButton>
         }
       />
-      <DropdownRootContent side="right" align="start">
+      <DropdownContent side="right" align="start">
         <Dropdown.Section>
           <Dropdown.ActionItem
             color="danger"
@@ -63,7 +63,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
             onClick={handleDeletePublicDomain}
           >{t`Delete`}</Dropdown.ActionItem>
         </Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

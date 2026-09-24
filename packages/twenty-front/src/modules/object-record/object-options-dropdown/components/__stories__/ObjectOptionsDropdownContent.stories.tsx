@@ -18,7 +18,7 @@ import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -135,9 +135,9 @@ const createContentDecorator =
               dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
             }}
           >
-            <DropdownContent>
+            <LegacyDropdownContent>
               <Story />
-            </DropdownContent>
+            </LegacyDropdownContent>
           </ObjectOptionsDropdownContext.Provider>
         </DropdownComponentInstanceContext.Provider>
       </RecordIndexContextProvider>

@@ -9,7 +9,7 @@ import {
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type SettingsObjectInactiveMenuDropDownProps = {
@@ -46,10 +46,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
           </LightIconButton>
         }
       />
-      <DropdownRootContent
-        align="end"
-        width={GenericDropdownContentWidth.Narrow}
-      >
+      <DropdownContent align="end" width={GenericDropdownContentWidth.Narrow}>
         <Dropdown.Section>
           <Dropdown.ActionItem
             startIcon={isEditable ? <IconPencil /> : <IconEye />}
@@ -71,7 +68,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
             >{t`Delete`}</Dropdown.ActionItem>
           )}
         </Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

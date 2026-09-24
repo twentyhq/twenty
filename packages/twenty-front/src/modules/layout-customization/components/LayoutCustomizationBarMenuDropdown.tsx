@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
@@ -47,7 +47,7 @@ export const LayoutCustomizationBarMenuDropdown = () => {
           }
         />
       </StyledInvertedIconButtonWrapper>
-      <DropdownRootContent width={GenericDropdownContentWidth.Large}>
+      <DropdownContent width={GenericDropdownContentWidth.Large}>
         <Dropdown.Section>
           <Dropdown.ActionItem
             startIcon={<IconReload />}
@@ -56,7 +56,7 @@ export const LayoutCustomizationBarMenuDropdown = () => {
             {t`Reset record page layout`}
           </Dropdown.ActionItem>
         </Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

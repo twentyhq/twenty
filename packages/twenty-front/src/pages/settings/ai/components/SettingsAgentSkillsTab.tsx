@@ -1,7 +1,7 @@
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -138,7 +138,7 @@ export const SettingsAgentSkillsTab = () => {
               dropdownOffset={{ x: 0, y: 8 }}
               clickableComponent={filterButton}
               dropdownComponents={
-                <DropdownContent>
+                <LegacyDropdownContent>
                   <DropdownMenuItemsContainer>
                     <SettingsRow
                       startIcon={<IconArchive />}
@@ -153,7 +153,7 @@ export const SettingsAgentSkillsTab = () => {
                       >{t`System skills`}</SettingsRow>
                     )}
                   </DropdownMenuItemsContainer>
-                </DropdownContent>
+                </LegacyDropdownContent>
               }
             />
           )}

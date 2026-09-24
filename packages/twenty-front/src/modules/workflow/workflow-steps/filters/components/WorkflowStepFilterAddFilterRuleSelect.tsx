@@ -1,7 +1,7 @@
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { Dropdown } from 'twenty-ui/components';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks/useAddStepFilterToGroup';
@@ -90,7 +90,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
           </NavigationButton>
         }
       />
-      <DropdownRootContent>
+      <DropdownContent>
         <Dropdown.Section>
           <Dropdown.ActionItem
             startIcon={<IconPlus />}
@@ -105,7 +105,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
             {t`Add rule group`}
           </Dropdown.ActionItem>
         </Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

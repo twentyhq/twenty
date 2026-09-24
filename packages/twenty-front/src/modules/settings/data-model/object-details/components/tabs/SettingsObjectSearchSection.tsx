@@ -9,7 +9,7 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -267,7 +267,7 @@ export const SettingsObjectSearchSection = ({
               >{t`Add field`}</Button>
             }
             dropdownComponents={
-              <DropdownContent>
+              <LegacyDropdownContent>
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {addableFields.map((field) => {
                     const FieldIcon = getIcon(field.icon);
@@ -286,7 +286,7 @@ export const SettingsObjectSearchSection = ({
                     );
                   })}
                 </DropdownMenuItemsContainer>
-              </DropdownContent>
+              </LegacyDropdownContent>
             }
           />
         </StyledButtonContainer>

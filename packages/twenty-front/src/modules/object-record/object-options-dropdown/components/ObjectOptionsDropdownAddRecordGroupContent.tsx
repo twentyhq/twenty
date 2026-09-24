@@ -5,7 +5,7 @@ import { SingleRecordPickerMenuItemsWithSearch } from '@/object-record/record-pi
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -64,7 +64,7 @@ export const ObjectOptionsDropdownAddRecordGroupContent = () => {
     <SingleRecordPickerComponentInstanceContext.Provider
       value={{ instanceId: addRecordGroupPickerInstanceId }}
     >
-      <DropdownContent>
+      <LegacyDropdownContent>
         <DropdownMenuHeader
           StartComponent={
             <DropdownMenuHeaderLeftComponent
@@ -82,7 +82,7 @@ export const ObjectOptionsDropdownAddRecordGroupContent = () => {
           objectNameSingulars={[targetObjectNameSingular]}
           excludedRecordIds={excludedRecordIds}
         />
-      </DropdownContent>
+      </LegacyDropdownContent>
     </SingleRecordPickerComponentInstanceContext.Provider>
   );
 };

@@ -29,7 +29,7 @@ import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layo
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
@@ -248,9 +248,9 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   id="record-table-source"
                   dropdownId="record-table-source"
                   dropdownComponents={
-                    <DropdownContent>
+                    <LegacyDropdownContent>
                       <RecordTableDataSourceDropdownContent />
-                    </DropdownContent>
+                    </LegacyDropdownContent>
                   }
                   dropdownPlacement="bottom-end"
                   hasSubMenu
@@ -266,14 +266,14 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   dropdownId="object-view-layout"
                   dropdownComponents={
                     hasViewId ? (
-                      <DropdownContent>
+                      <LegacyDropdownContent>
                         <RecordTableLayoutDropdownContent
                           pageLayoutId={pageLayoutId}
                           widgetId={widgetInEditMode.id}
                           objectMetadataId={widgetInEditMode.objectMetadataId!}
                           currentLayoutViewType={currentLayoutViewType}
                         />
-                      </DropdownContent>
+                      </LegacyDropdownContent>
                     ) : (
                       <></>
                     )
@@ -343,7 +343,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         id="record-table-calendar-field"
                         dropdownId="record-table-calendar-field"
                         dropdownComponents={
-                          <DropdownContent>
+                          <LegacyDropdownContent>
                             <RecordTableCalendarFieldDropdownContent
                               pageLayoutId={pageLayoutId}
                               widgetId={widgetInEditMode.id}
@@ -354,7 +354,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                                 calendarFieldMetadataId
                               }
                             />
-                          </DropdownContent>
+                          </LegacyDropdownContent>
                         }
                         dropdownPlacement="bottom-end"
                         hasSubMenu
@@ -371,13 +371,13 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         id="record-table-calendar-layout"
                         dropdownId="record-table-calendar-layout"
                         dropdownComponents={
-                          <DropdownContent>
+                          <LegacyDropdownContent>
                             <RecordTableCalendarLayoutDropdownContent
                               pageLayoutId={pageLayoutId}
                               widgetId={widgetInEditMode.id}
                               currentCalendarLayout={currentCalendarLayout}
                             />
-                          </DropdownContent>
+                          </LegacyDropdownContent>
                         }
                         dropdownPlacement="bottom-end"
                         hasSubMenu
@@ -394,7 +394,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         id="record-table-group-by"
                         dropdownId="record-table-group-by"
                         dropdownComponents={
-                          <DropdownContent>
+                          <LegacyDropdownContent>
                             <RecordTableGroupByDropdownContent
                               pageLayoutId={pageLayoutId}
                               widgetId={widgetInEditMode.id}
@@ -406,7 +406,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                               }
                               isClearable={!isKanbanLayout}
                             />
-                          </DropdownContent>
+                          </LegacyDropdownContent>
                         }
                         dropdownPlacement="bottom-end"
                         hasSubMenu

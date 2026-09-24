@@ -1,5 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
@@ -61,7 +61,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
           </LightIconButton>
         }
       />
-      <DropdownRootContent side="right" align="start">
+      <DropdownContent side="right" align="start">
         <Dropdown.Section>
           <Dropdown.ActionItem
             color="danger"
@@ -71,7 +71,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
             {t`Delete`}
           </Dropdown.ActionItem>
         </Dropdown.Section>
-      </DropdownRootContent>
+      </DropdownContent>
     </DropdownRoot>
   );
 };
