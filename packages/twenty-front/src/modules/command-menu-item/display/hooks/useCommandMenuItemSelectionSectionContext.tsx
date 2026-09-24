@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -68,6 +69,7 @@ export const useCommandMenuItemSelectionSectionContext = ():
               key={record.id}
               objectMetadataItem={objectMetadataItem}
               record={record}
+              borderColor={themeCssVariables.background.primary}
             />
           ))
         : undefined,

@@ -390,15 +390,13 @@ export const NavigationSitsLastAtRest: Story = {
     expect(await canvas.findByText('Import records')).toBeVisible();
     expect(await canvas.findByText('Go to People')).toBeVisible();
 
-    expect(await canvas.findByText('Companies')).toBeVisible();
-
     const headings = canvas.getAllByText(
-      /^(Selection|Object:|Workspace|Go to)$/,
+      /^(Selection|Object: Companies|Workspace|Go to)$/,
     );
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
       'Selection',
-      'Object:',
+      'Object: Companies',
       'Workspace',
       'Go to',
     ]);
@@ -420,18 +418,16 @@ export const SectionHeadersShowTheirContext: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('2 Companies')).toBeVisible();
-    expect(await canvas.findByText('Prospects')).toBeVisible();
-    expect(await canvas.findByText('Companies')).toBeVisible();
+    expect(await canvas.findByText('Selection: 2 Companies')).toBeVisible();
 
     const headings = canvas.getAllByText(
-      /^(Selection:|Current view:|Object:)$/,
+      /^(Selection: 2 Companies|Current view: Prospects|Object: Companies)$/,
     );
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
-      'Selection:',
-      'Current view:',
-      'Object:',
+      'Selection: 2 Companies',
+      'Current view: Prospects',
+      'Object: Companies',
     ]);
   },
 };
