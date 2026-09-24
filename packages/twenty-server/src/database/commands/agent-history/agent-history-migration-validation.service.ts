@@ -49,7 +49,7 @@ export class AgentHistoryMigrationValidationService {
        LIMIT 1`,
     );
 
-    if (rows.length > 0) {
+    if (isNonEmptyArray(rows)) {
       throw new Error(
         'Records are still linked to chat threads in this workspace. Detach them before rolling agent history back to core.',
       );
