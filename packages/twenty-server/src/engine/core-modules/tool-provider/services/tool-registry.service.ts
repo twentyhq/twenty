@@ -329,7 +329,7 @@ export class ToolRegistryService {
         return {
           success: false,
           message: `Tool "${toolName}" not found`,
-          error: `Tool "${toolName}" not found.${suggestionHint} Use learn_tools to discover available tools.`,
+          error: `Tool "${toolName}" not found.${suggestionHint} Pass your best candidate name to learn_tools to confirm it before executing.`,
         };
       }
 
