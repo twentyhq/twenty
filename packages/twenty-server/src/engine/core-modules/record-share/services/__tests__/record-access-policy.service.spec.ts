@@ -6,7 +6,7 @@ import {
 } from 'twenty-shared/types';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
-import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -27,7 +27,7 @@ const setup = async ({
         },
       },
       {
-        provide: RecordShareService,
+        provide: RecordShareStorageService,
         useValue: {
           findByRecordIds: jest.fn().mockResolvedValue(
             rowCause
@@ -56,6 +56,7 @@ const setup = async ({
 };
 
 const subject = {
+  isSystemContext: false,
   objectsPermissions: undefined,
   principalIds: ['member'],
   isOwningApplication: () => false,
