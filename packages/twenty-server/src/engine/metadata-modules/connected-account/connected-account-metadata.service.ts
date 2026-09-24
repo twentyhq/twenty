@@ -384,6 +384,28 @@ export class ConnectedAccountMetadataService {
 
     const connectedAccountIds = connectedAccounts.map((account) => account.id);
 
+    const [messageChannels, calendarChannels] = await Promise.all([
+      this.messageChannelRepository.find({
+        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+        select: { id: true },
+      }),
+      this.calendarChannelRepository.find({
+        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+        select: { id: true },
+      }),
+    ]);
+
+    await this.stopWebhookSubscriptions({
+      messageChannels,
+      calendarChannels,
+      workspaceId,
+    }).catch((error) =>
+      this.logger.warn(
+        `WorkspaceId: ${workspaceId} Failed to stop webhook subscriptions while transferring connected accounts from ${fromUserWorkspaceId}`,
+        error,
+      ),
+    );
+
     await this.repository.manager.transaction(async (entityManager) => {
       await entityManager.update(
         ConnectedAccountEntity,
@@ -412,6 +434,26 @@ export class ConnectedAccountMetadataService {
         CalendarChannelEntity,
         { connectedAccountId: In(connectedAccountIds), workspaceId },
         { isSyncEnabled: false },
+      );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        {
+          connectedAccountId: In(connectedAccountIds),
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        {
+          connectedAccountId: In(connectedAccountIds),
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
       );
     });
 
