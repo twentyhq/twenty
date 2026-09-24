@@ -399,13 +399,15 @@ export class UserService {
       });
     }, authContext);
 
-    await this.agentChatThreadRepository.delete(workspaceId, {
-      userWorkspaceId,
-    });
-
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId,
       workspaceId,
+    });
+
+    // Runs after the membership is gone so a failed removal keeps the history
+    // and threads created during the removal are still cleaned up.
+    await this.agentChatThreadRepository.delete(workspaceId, {
+      userWorkspaceId,
     });
   }
 
