@@ -1,37 +1,26 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/numeric-config-variable-key.type';
-import { type UsageLimitDefault } from 'src/engine/core-modules/usage-limit/types/usage-limit-default.type';
-import { buildUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-defaults.util';
+import { type UsageLimitDefaultDefinition } from 'src/engine/core-modules/usage-limit/types/usage-limit-default-definition.type';
 import { type UsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
+import { findUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-defaults.util';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-export type UsageLimitDefaultScope = UsageLimitScope &
-  Pick<UsageLimitDefault, 'isOverridable'> & {
-    limitValue: number;
-  };
+export type UsageLimitDefaultScope = UsageLimitScope & {
+  isOverridable: boolean;
+  limitValue: number;
+};
 
-const buildPeriod = ({
+const buildPeriodCount = ({
   usageLimitDefault,
   getConfigValue,
 }: {
-  usageLimitDefault: UsageLimitDefault;
+  usageLimitDefault: UsageLimitDefaultDefinition;
   getConfigValue: (key: NumericConfigVariableKey) => number;
-}): Pick<UsageLimitScope, 'periodCount' | 'periodUnit'> => {
-  if (
-    usageLimitDefault.limitKind === 'speed' &&
-    isDefined(usageLimitDefault.windowMsConfigVariable)
-  ) {
-    return {
-      periodCount: Math.ceil(
-        getConfigValue(usageLimitDefault.windowMsConfigVariable) / 1000,
-      ),
-      periodUnit: 'second',
-    };
-  }
-
-  return { periodCount: 1, periodUnit: 'lifetime' };
-};
+}): number =>
+  usageLimitDefault.limitKind === 'speed'
+    ? // buildDefaultSpeedBucket rounds the same way, so the scope an operator
+      // overrides is the one the bucket is actually keyed on.
+      Math.ceil(getConfigValue(usageLimitDefault.windowMsConfigVariable) / 1000)
+    : usageLimitDefault.periodCount;
 
 export const buildUsageLimitDefaultScopes = ({
   getConfigValue,
@@ -39,14 +28,15 @@ export const buildUsageLimitDefaultScopes = ({
   getConfigValue: (key: NumericConfigVariableKey) => number;
 }): UsageLimitDefaultScope[] =>
   Object.values(UsageResourceType).flatMap((resourceType) =>
-    buildUsageLimitDefaults({ resourceType }).map((usageLimitDefault) => ({
+    findUsageLimitDefaults({ resourceType }).map((usageLimitDefault) => ({
       resourceType: usageLimitDefault.resourceType,
       operationType: usageLimitDefault.operationType,
       spenderType: usageLimitDefault.spenderType,
-      spenderId: '',
+      spenderId: usageLimitDefault.spenderId,
       limitKind: usageLimitDefault.limitKind,
       meter: usageLimitDefault.meter,
-      ...buildPeriod({ usageLimitDefault, getConfigValue }),
+      periodUnit: usageLimitDefault.periodUnit,
+      periodCount: buildPeriodCount({ usageLimitDefault, getConfigValue }),
       limitValue: getConfigValue(usageLimitDefault.limitValueConfigVariable),
       isOverridable: usageLimitDefault.isOverridable,
     })),

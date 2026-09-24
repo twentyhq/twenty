@@ -4,11 +4,12 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 import { type StockLimitDefaultDefinition } from 'src/engine/core-modules/usage-limit/types/stock-limit-default-definition.type';
 import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-type SpeedLimitDefinition = {
+type SpeedLimitDefinition<TResourceType extends UsageResourceType> = {
   allowedOperationTypes: UsageOperationType[];
   allowedSpenderTypes: SpenderType[];
-  defaults: SpeedLimitDefaultDefinition[];
+  defaults: SpeedLimitDefaultDefinition<TResourceType>[];
 };
 
 type QuotaLimitDefinition = {
@@ -17,15 +18,22 @@ type QuotaLimitDefinition = {
   allowedMeters: QuotaMeter[];
 };
 
-type StockLimitDefinition = {
+type StockLimitDefinition<TResourceType extends UsageResourceType> = {
   allowedOperationTypes: UsageOperationType[];
   allowedSpenderTypes: SpenderType[];
   allowedMeters: StockMeter[];
-  defaults: StockLimitDefaultDefinition[];
+  defaults: StockLimitDefaultDefinition<TResourceType>[];
 };
 
-export type UsageLimitDefinitions = {
-  speed?: SpeedLimitDefinition;
+export type UsageLimitDefinitions<
+  TResourceType extends UsageResourceType = UsageResourceType,
+> = {
+  speed?: SpeedLimitDefinition<TResourceType>;
   quota?: QuotaLimitDefinition;
-  stock?: StockLimitDefinition;
+  stock?: StockLimitDefinition<TResourceType>;
+};
+
+// The key a definition sits under pins the resourceType its defaults may name.
+export type UsageLimitDefinitionsByResourceType = {
+  [TResourceType in UsageResourceType]: UsageLimitDefinitions<TResourceType>;
 };

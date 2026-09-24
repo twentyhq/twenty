@@ -1,4 +1,4 @@
-import { buildUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-defaults.util';
+import { findUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-defaults.util';
 import {
   buildUsageLimitScope,
   type UsageLimitScope,
@@ -105,7 +105,7 @@ describe('findSuppressedUsageLimitDefaults', () => {
 
   it('declares at most one overridable default per suppressible scope', () => {
     const suppressionKeysWithTwoDefaults = Object.values(UsageResourceType)
-      .flatMap((resourceType) => buildUsageLimitDefaults({ resourceType }))
+      .flatMap((resourceType) => findUsageLimitDefaults({ resourceType }))
       .filter((usageLimitDefault) => usageLimitDefault.isOverridable)
       .map(
         (usageLimitDefault) =>

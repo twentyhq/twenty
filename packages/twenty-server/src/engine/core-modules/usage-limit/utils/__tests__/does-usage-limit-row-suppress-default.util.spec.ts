@@ -1,4 +1,4 @@
-import { type UsageLimitDefault } from 'src/engine/core-modules/usage-limit/types/usage-limit-default.type';
+import { type StockLimitDefaultDefinition } from 'src/engine/core-modules/usage-limit/types/stock-limit-default-definition.type';
 import {
   buildUsageLimitScope,
   type UsageLimitScope,
@@ -8,17 +8,18 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 const buildDefault = (
-  overrides: Partial<UsageLimitDefault> = {},
-): UsageLimitDefault => ({
+  overrides: Partial<StockLimitDefaultDefinition> = {},
+): StockLimitDefaultDefinition => ({
   resourceType: UsageResourceType.STORAGE,
   operationType: UsageOperationType.STORAGE_FILE,
   limitKind: 'stock',
   spenderType: 'workspace',
+  spenderId: '',
   meter: 'bytes',
-  isOverridable: true,
+  periodUnit: 'lifetime',
+  periodCount: 1,
   limitValueConfigVariable: 'WORKSPACE_STORAGE_LIMIT_BYTES',
-  windowMsConfigVariable: null,
-  counterScope: null,
+  isOverridable: true,
   ...overrides,
 });
 
