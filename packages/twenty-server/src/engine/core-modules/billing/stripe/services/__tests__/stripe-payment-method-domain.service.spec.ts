@@ -45,10 +45,12 @@ describe('StripePaymentMethodDomainService', () => {
 
     await service.registerDomain('acme.twenty.com');
 
+    expect(stripe.paymentMethodDomains.list).toHaveBeenCalledTimes(1);
     expect(stripe.paymentMethodDomains.list).toHaveBeenCalledWith({
       domain_name: 'acme.twenty.com',
       limit: 1,
     });
+    expect(stripe.paymentMethodDomains.create).toHaveBeenCalledTimes(1);
     expect(stripe.paymentMethodDomains.create).toHaveBeenCalledWith({
       domain_name: 'acme.twenty.com',
     });
