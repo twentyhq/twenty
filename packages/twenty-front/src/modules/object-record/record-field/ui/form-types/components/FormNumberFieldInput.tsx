@@ -72,9 +72,17 @@ export const FormNumberFieldInput = ({
   const [inputText, setInputText] = useState(draftValue.value);
   const [previousDraftText, setPreviousDraftText] = useState(draftValue.value);
 
+  const trimmedInputText = inputText.trim();
+  const isInputTextShowingDraftValue =
+    canBeCastAsNumberOrNull(trimmedInputText) &&
+    String(castAsNumberOrNull(trimmedInputText) ?? '') === draftValue.value;
+
   if (previousDraftText !== draftValue.value) {
     setPreviousDraftText(draftValue.value);
-    setInputText(draftValue.value);
+
+    if (!isInputTextShowingDraftValue) {
+      setInputText(draftValue.value);
+    }
   }
 
   const persistNumber = (newValue: string) => {
