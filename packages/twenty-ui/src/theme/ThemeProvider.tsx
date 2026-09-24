@@ -7,6 +7,7 @@ import { computeThemeFromCss } from './internal/computeThemeFromCss';
 import { getThemeContext } from './internal/getThemeContext';
 import { getThemeScopeContext } from './internal/getThemeScopeContext';
 import { resolveExplicitTheme } from './internal/resolveExplicitTheme';
+import { type ThemeContextType } from './internal/ThemeContextType';
 import { type ThemeProviderProps } from './ThemeProviderProps';
 import { type ThemeType } from './themeTypes';
 
@@ -31,13 +32,25 @@ export const ThemeProvider = ({
   const ThemeScopeContext = getThemeScopeContext();
   const isScoped = isDefined(overrides) || !applyToRoot;
 
+  const parentThemeContext = React.useContext(ThemeContext);
+  const resolvedProvidedTheme = React.useMemo(
+    () =>
+      isDefined(providedTheme)
+        ? resolveExplicitTheme(providedTheme)
+        : undefined,
+    [providedTheme],
+  );
+  const explicitTheme =
+    resolvedProvidedTheme ?? parentThemeContext.explicitTheme;
+  const hasExplicitTheme = isDefined(explicitTheme);
+
   const wrapperRef = React.useRef<HTMLDivElement>(null);
 
-  const [theme, setTheme] = React.useState<ThemeType>(() => {
+  const [cssTheme, setCssTheme] = React.useState<ThemeType | undefined>(() => {
     if (applyToRoot) {
       applyColorSchemeClass(colorScheme);
     }
-    return computeThemeFromCss();
+    return hasExplicitTheme ? undefined : computeThemeFromCss();
   });
   const [scopeContainer, setScopeContainer] =
     React.useState<HTMLElement | null>(null);
@@ -49,13 +62,16 @@ export const ThemeProvider = ({
       applyColorSchemeClass(colorScheme);
     }
 
-    setTheme(
-      computeThemeFromCss(
-        isScoped ? (wrapperRef.current ?? undefined) : undefined,
-      ),
-    );
+    if (!hasExplicitTheme) {
+      setCssTheme(
+        computeThemeFromCss(
+          isScoped ? (wrapperRef.current ?? undefined) : undefined,
+        ),
+      );
+    }
+
     setScopeContainer(isScoped ? wrapperRef.current : null);
-  }, [colorScheme, applyToRoot, isScoped, overridesKey]);
+  }, [colorScheme, applyToRoot, isScoped, overridesKey, hasExplicitTheme]);
 
   // The interface scale preference is consumed by the root zoom rule in the
   // app stylesheet through --t-scale-user, which only reads from the html
@@ -78,15 +94,12 @@ export const ThemeProvider = ({
     };
   }, [scale, isScoped]);
 
-  const explicitTheme = React.useMemo(
-    () =>
-      isDefined(providedTheme)
-        ? resolveExplicitTheme(providedTheme)
-        : undefined,
-    [providedTheme],
-  );
+  const theme = explicitTheme ?? cssTheme ?? parentThemeContext.theme;
 
-  const contextValue = { theme: explicitTheme ?? theme, colorScheme };
+  const contextValue = React.useMemo<ThemeContextType>(
+    () => ({ theme, colorScheme, explicitTheme }),
+    [theme, colorScheme, explicitTheme],
+  );
 
   if (!isScoped) {
     return (

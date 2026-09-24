@@ -7,7 +7,6 @@
  *                              |___/
  */
 
-export { MOBILE_VIEWPORT } from './constants';
 export { ANIMATION } from './constants/Animation';
 export type { AnimationDuration } from './constants/AnimationDuration';
 export { DEFAULT_THEME_COLOR_FALLBACK } from './constants/DefaultThemeColorFallback';
@@ -15,6 +14,7 @@ export { GRAY_SCALE_DARK } from './constants/GrayScaleDark';
 export { GRAY_SCALE_LIGHT } from './constants/GrayScaleLight';
 export type { ThemeColor } from './constants/MainColorNames';
 export { MAIN_COLOR_NAMES } from './constants/MainColorNames';
+export { MOBILE_VIEWPORT } from './constants/MobileViewport';
 export { RGBA } from './constants/Rgba';
 export { THEME_COMMON } from './constants/ThemeCommon';
 export { THEME_DARK } from './constants/ThemeDark';
