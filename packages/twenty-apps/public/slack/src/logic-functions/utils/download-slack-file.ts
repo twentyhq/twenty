@@ -15,6 +15,8 @@ const TOO_LARGE_ERROR = `file is over the ${SLACK_ASSISTANT_MAX_ATTACHMENT_SIZE_
 
 const AUTH_REFUSAL_STATUSES = new Set([401, 403]);
 
+const SIGN_IN_PAGE_CONTENT_TYPE = 'text/html';
+
 const parseContentLengthBytes = (
   headerValue: string | null,
 ): number | undefined => {
@@ -114,10 +116,18 @@ export const downloadSlackFile = async ({
   const responseContentType = response.headers.get('content-type') ?? '';
 
   if (!responseContentType.startsWith(mimeType)) {
+    if (responseContentType.startsWith(SIGN_IN_PAGE_CONTENT_TYPE)) {
+      return {
+        success: false,
+        error: `Slack returned its sign-in page instead of ${mimeType}, which usually means the bot token predates the files:read scope`,
+        reason: 'missing-scope',
+      };
+    }
+
     return {
       success: false,
-      error: `expected ${mimeType} but Slack returned ${isNonEmptyString(responseContentType) ? responseContentType : 'no content type'}, which usually means the bot token predates the files:read scope`,
-      reason: 'missing-scope',
+      error: `expected ${mimeType} but Slack returned ${isNonEmptyString(responseContentType) ? responseContentType : 'no content type'}`,
+      reason: 'download-failed',
     };
   }
 
