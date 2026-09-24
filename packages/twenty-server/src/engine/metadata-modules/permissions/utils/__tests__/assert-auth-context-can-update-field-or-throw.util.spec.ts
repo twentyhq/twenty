@@ -210,16 +210,23 @@ describe('assertAuthContextCanUpdateFieldOrThrow', () => {
     ).toThrow(PermissionsException);
   });
 
-  it('should exempt a system object the same way the attach step does', () => {
+  it('should enforce a role that denies updates on a system object like the attach step does', () => {
     expect(() =>
       assertCanUpdate({
-        rolesPermissions: { [USER_ROLE_ID]: {}, [APPLICATION_ROLE_ID]: {} },
+        rolesPermissions: {
+          ...bothRolesCanUpdate,
+          [APPLICATION_ROLE_ID]: {
+            [OBJECT_METADATA_ID]: buildObjectPermissions({
+              canUpdateObjectRecords: false,
+            }),
+          },
+        },
         objectMetadata: buildObjectMetadata({
           isSystem: true,
           universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
         }),
       }),
-    ).not.toThrow();
+    ).toThrow(PermissionsException);
   });
 
   it('should refuse a field only its owning application may write', () => {
