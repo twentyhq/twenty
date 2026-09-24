@@ -44,6 +44,7 @@ describe('resolveMinLikelihood', () => {
         expect(
           resolveMinLikelihood({
             inputMinLikelihood: null,
+            inputWeakIdentifierMinLikelihood: null,
             minLikelihoodVariableName: variableName,
             hasStrongIdentifier: false,
           }),
@@ -142,7 +143,7 @@ describe('resolveMinLikelihood', () => {
   });
 
   it.each([1, 6, 10])(
-    'uses an explicit likelihood of %s over invalid settings for both identifier strengths',
+    'uses explicit likelihoods of %s over invalid settings for both identifier strengths',
     (inputMinLikelihood) => {
       vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', 'invalid');
       vi.stubEnv('PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD', 'invalid');
@@ -151,11 +152,79 @@ describe('resolveMinLikelihood', () => {
         expect(
           resolveMinLikelihood({
             inputMinLikelihood,
+            inputWeakIdentifierMinLikelihood: inputMinLikelihood,
             minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
             hasStrongIdentifier,
           }),
         ).toBe(inputMinLikelihood);
       }
+    },
+  );
+
+  it.each([
+    {
+      inputMinLikelihood: 3,
+      inputWeakIdentifierMinLikelihood: undefined,
+      expected: 7,
+    },
+    {
+      inputMinLikelihood: undefined,
+      inputWeakIdentifierMinLikelihood: 4,
+      expected: 8,
+    },
+    {
+      inputMinLikelihood: 3,
+      inputWeakIdentifierMinLikelihood: 4,
+      expected: 4,
+    },
+    {
+      inputMinLikelihood: 9,
+      inputWeakIdentifierMinLikelihood: 4,
+      expected: 9,
+    },
+  ])(
+    'resolves name-based matches to $expected with workflow overrides $inputMinLikelihood and $inputWeakIdentifierMinLikelihood',
+    ({ inputMinLikelihood, inputWeakIdentifierMinLikelihood, expected }) => {
+      vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', '8');
+      vi.stubEnv('PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD', '7');
+
+      expect(
+        resolveMinLikelihood({
+          inputMinLikelihood,
+          inputWeakIdentifierMinLikelihood,
+          minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
+          hasStrongIdentifier: false,
+        }),
+      ).toBe(expected);
+    },
+  );
+
+  it('does not apply the name-based workflow minimum to strong identifiers', () => {
+    expect(
+      resolveMinLikelihood({
+        inputMinLikelihood: 3,
+        inputWeakIdentifierMinLikelihood: 9,
+        minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
+        hasStrongIdentifier: true,
+      }),
+    ).toBe(3);
+  });
+
+  it.each([-1, 0, 11, 1.5, NaN, Infinity])(
+    'rejects an invalid name-based input likelihood of %s',
+    (inputWeakIdentifierMinLikelihood) => {
+      expect(() =>
+        resolveMinLikelihood({
+          inputMinLikelihood: 3,
+          inputWeakIdentifierMinLikelihood,
+          minLikelihoodVariableName: 'PDL_PERSON_MIN_LIKELIHOOD',
+          hasStrongIdentifier: false,
+        }),
+      ).toThrow(
+        new PdlInvalidInputError(
+          'Minimum likelihood for name-based matches must be an integer between 1 and 10.',
+        ),
+      );
     },
   );
 

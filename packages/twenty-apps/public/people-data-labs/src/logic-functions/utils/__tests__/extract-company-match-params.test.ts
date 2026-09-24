@@ -124,4 +124,20 @@ describe('extractCompanyMatchParams', () => {
       }),
     ).toBeUndefined();
   });
+
+  it('honors both workflow minimums when matching by name only', () => {
+    vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', '8');
+    vi.stubEnv('PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD', '10');
+
+    expect(
+      extractCompanyMatchParams({
+        node: { ...COMPANY_NODE_MOCK, domainName: null, name: 'Acme' },
+        input: {
+          records: [],
+          minLikelihood: 3,
+          weakIdentifierMinLikelihood: 4,
+        },
+      }),
+    ).toMatchObject({ minLikelihood: 4 });
+  });
 });

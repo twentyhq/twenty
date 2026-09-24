@@ -29,10 +29,12 @@ const getConfiguredMinLikelihood = (variableName: string): number => {
 
 export const resolveMinLikelihood = ({
   inputMinLikelihood,
+  inputWeakIdentifierMinLikelihood,
   minLikelihoodVariableName,
   hasStrongIdentifier,
 }: {
   inputMinLikelihood: number | null | undefined;
+  inputWeakIdentifierMinLikelihood?: number | null;
   minLikelihoodVariableName:
     | 'PDL_PERSON_MIN_LIKELIHOOD'
     | 'PDL_COMPANY_MIN_LIKELIHOOD';
@@ -46,11 +48,17 @@ export const resolveMinLikelihood = ({
     );
   }
 
-  if (hasInputMinLikelihood) {
-    return inputMinLikelihood;
+  if (
+    isDefined(inputWeakIdentifierMinLikelihood) &&
+    !isValidLikelihood(inputWeakIdentifierMinLikelihood)
+  ) {
+    throw new PdlInvalidInputError(
+      `Minimum likelihood for name-based matches must be an integer between ${MIN_LIKELIHOOD} and ${MAX_LIKELIHOOD}.`,
+    );
   }
 
-  const minLikelihood = getConfiguredMinLikelihood(minLikelihoodVariableName);
+  const minLikelihood =
+    inputMinLikelihood ?? getConfiguredMinLikelihood(minLikelihoodVariableName);
 
   if (hasStrongIdentifier) {
     return minLikelihood;
@@ -63,6 +71,7 @@ export const resolveMinLikelihood = ({
 
   return Math.max(
     minLikelihood,
-    getConfiguredMinLikelihood(weakIdentifierMinLikelihoodVariableName),
+    inputWeakIdentifierMinLikelihood ??
+      getConfiguredMinLikelihood(weakIdentifierMinLikelihoodVariableName),
   );
 };

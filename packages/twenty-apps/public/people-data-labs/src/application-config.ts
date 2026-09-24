@@ -37,7 +37,7 @@ export default defineApplication({
       universalIdentifier: '4160c7ad-fc3f-405d-87ed-7950292fbe22',
       label: 'Minimum likelihood for name-based people matches',
       description:
-        'Minimum match likelihood (1-10) when matching a person by name and company. Uses the higher of this value and the people minimum. An explicit workflow minimum likelihood takes precedence.',
+        'Minimum match likelihood (1-10) when matching a person by name and company. Uses the higher of this value and the people minimum. An explicit workflow minimum likelihood for name-based matches takes precedence.',
       type: FieldType.NUMBER,
       isSecret: false,
       value: 6,
@@ -46,7 +46,7 @@ export default defineApplication({
       universalIdentifier: '1f608910-8ab1-4546-b27f-44507eb3d6f8',
       label: 'Minimum likelihood for name-based company matches',
       description:
-        'Minimum match likelihood (1-10) when matching a company by name only. Uses the higher of this value and the company minimum. An explicit workflow minimum likelihood takes precedence.',
+        'Minimum match likelihood (1-10) when matching a company by name only. Uses the higher of this value and the company minimum. An explicit workflow minimum likelihood for name-based matches takes precedence.',
       type: FieldType.NUMBER,
       isSecret: false,
       value: 6,

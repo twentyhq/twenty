@@ -115,6 +115,27 @@ describe('extractPersonMatchParams', () => {
     ).toMatchObject({ minLikelihood: 9 });
   });
 
+  it('honors both workflow minimums when matching by name and company', () => {
+    vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', '8');
+    vi.stubEnv('PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD', '10');
+
+    expect(
+      extractPersonMatchParams({
+        node: {
+          ...PERSON_NODE_MOCK,
+          linkedinLink: null,
+          name: { firstName: 'Jane', lastName: 'Doe' },
+          company: { id: 'co-1', name: 'Acme' },
+        },
+        input: {
+          records: [],
+          minLikelihood: 3,
+          weakIdentifierMinLikelihood: 4,
+        },
+      }),
+    ).toMatchObject({ minLikelihood: 4 });
+  });
+
   it('returns undefined when there is no usable identifier', () => {
     expect(
       extractPersonMatchParams({
