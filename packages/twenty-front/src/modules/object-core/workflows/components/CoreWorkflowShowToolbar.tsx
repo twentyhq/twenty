@@ -1,8 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { Select } from '@/ui/input/components/Select';
@@ -29,10 +27,7 @@ type CoreWorkflowShowToolbarProps = {
   visibility: WorkflowVisibility;
   canChangeVisibility: boolean;
   isHistoricalVersion: boolean;
-  isValidating: boolean;
   onVersionChange: (versionId: string) => void;
-  onValidate: () => Promise<void>;
-  onRefresh: () => Promise<void>;
 };
 
 export const CoreWorkflowShowToolbar = ({
@@ -42,10 +37,7 @@ export const CoreWorkflowShowToolbar = ({
   visibility,
   canChangeVisibility,
   isHistoricalVersion,
-  isValidating,
   onVersionChange,
-  onValidate,
-  onRefresh,
 }: CoreWorkflowShowToolbarProps) => (
   <StyledToolbar>
     <Select
@@ -64,16 +56,6 @@ export const CoreWorkflowShowToolbar = ({
         coreWorkflowVersionId={selectedVersionId}
       />
     )}
-    <Button
-      size="sm"
-      disabled={!isDefined(selectedVersionId) || isValidating}
-      onClick={onValidate}
-    >
-      {t`Validate`}
-    </Button>
-    <Button size="sm" startIcon={<IconRefresh />} onClick={onRefresh}>
-      {t`Refresh`}
-    </Button>
     <CoreWorkflowVisibilitySelect
       coreWorkflowId={coreWorkflowId}
       visibility={visibility}

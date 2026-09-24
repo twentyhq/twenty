@@ -2,7 +2,6 @@ import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkf
 import { CoreWorkflowShowToolbar } from '@/object-core/workflows/components/CoreWorkflowShowToolbar';
 import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
 import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCoreWorkflow';
-import { useValidateCoreWorkflowVersion } from '@/object-core/workflows/hooks/useValidateCoreWorkflowVersion';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
@@ -85,9 +84,6 @@ const CoreWorkflowShowContent = ({
     coreWorkflowId,
     currentName: record?.name,
   });
-  const { validate, isValidating } = useValidateCoreWorkflowVersion(
-    selectedVersion?.id,
-  );
 
   const resource = (
     <RecordShowPageResourceEffect
@@ -179,15 +175,12 @@ const CoreWorkflowShowContent = ({
             }
             canChangeVisibility={coreWorkflow?.canChangeVisibility ?? false}
             isHistoricalVersion={isHistoricalVersion}
-            isValidating={isValidating}
             onVersionChange={(versionId) => {
               closeSidePanelMenu();
               setSearchParams(
                 versionId === currentVersion?.id ? {} : { version: versionId },
               );
             }}
-            onValidate={validate}
-            onRefresh={() => invalidateCoreWorkflowVersions(client)}
           />
           {isDefined(selectedVersion) ? (
             <CoreWorkflowEditor
