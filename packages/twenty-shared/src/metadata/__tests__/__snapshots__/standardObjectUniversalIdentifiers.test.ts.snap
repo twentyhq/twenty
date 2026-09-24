@@ -429,6 +429,18 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
       },
+      "attachmentRecordPageFields": {
+        "universalIdentifier": "c002db33-a973-5565-bf4c-092881c25fa6",
+        "viewFieldGroups": {},
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "e52334fc-3757-58ad-afaa-f8729dc45595",
+          },
+          "createdBy": {
+            "universalIdentifier": "ca777867-3f7a-56f6-ac5f-2b3802fa41bf",
+          },
+        },
+      },
     },
   },
   "blocklist": {

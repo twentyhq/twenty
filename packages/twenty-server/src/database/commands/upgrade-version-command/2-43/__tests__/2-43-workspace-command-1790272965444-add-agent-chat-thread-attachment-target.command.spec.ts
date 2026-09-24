@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { AddAgentChatThreadAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790265225251-add-agent-chat-thread-attachment-target.command';
+import { AddAgentChatThreadAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790272965444-add-agent-chat-thread-attachment-target.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';

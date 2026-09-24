@@ -24,7 +24,7 @@ const AGENT_CHAT_THREAD_ATTACHMENT_INDEX_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.43.0', 1790265225251)
+@RegisteredWorkspaceCommand('2.43.0', 1790272965444)
 @Command({
   name: 'upgrade:2-43:add-agent-chat-thread-attachment-target',
   description:
