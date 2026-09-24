@@ -13,10 +13,7 @@ import {
   IconPhone,
   IconUser,
 } from 'twenty-ui/icon';
-import {
-  AVATAR_URL_MOCK,
-  ComponentWithRouterDecorator,
-} from 'twenty-ui/testing';
+import { AVATAR_URL_MOCK } from 'twenty-ui/testing';
 
 const tabs = [
   { id: 'general', title: 'General', logo: AVATAR_URL_MOCK },
@@ -42,6 +39,7 @@ const tabs = [
 ];
 
 import { themeCssVariables } from 'twenty-ui/theme';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const StyledInteractiveContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.strong};

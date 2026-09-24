@@ -5,7 +5,6 @@ import { styled } from '@linaria/react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useEffect, useMemo } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -21,6 +20,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const StyledContainer = styled.div<{ containerWidth: number }>`
   border: 1px solid ${themeCssVariables.border.color.strong};
