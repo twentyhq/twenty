@@ -496,6 +496,19 @@ describe('installSelectorMethodsPolyfill', () => {
       ).toThrow(expect.objectContaining({ name: 'SyntaxError' }));
     });
 
+    it('should skip parentheses inside quoted strings of an of selector', () => {
+      const { document } = createSelectorFixture();
+      const { firstTab, secondTab } = createTree(document);
+      firstTab.setAttribute('data-label', ')');
+      secondTab.setAttribute('data-label', '(');
+
+      expect(firstTab.matches(':nth-child(1 of [data-label=")"])')).toBe(true);
+      expect(secondTab.matches(":nth-child(1 of [data-label='('])")).toBe(true);
+      expect(() =>
+        firstTab.matches(':nth-child(1 of [data-label=")"]'),
+      ).toThrow(expect.objectContaining({ name: 'SyntaxError' }));
+    });
+
     it('should reject non-standard and nested :has selectors', () => {
       const { document } = createSelectorFixture();
       const { firstTab } = createTree(document);

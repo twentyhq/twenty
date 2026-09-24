@@ -70,6 +70,24 @@ const isEscaped = (state: SelectorParserState, position: number): boolean => {
   return backslashCount % 2 === 1;
 };
 
+const findClosingQuoteIndex = (
+  state: SelectorParserState,
+  openingQuoteIndex: number,
+): number => {
+  const quote = state.selectorsText.charAt(openingQuoteIndex);
+  let closingQuoteIndex = openingQuoteIndex + 1;
+
+  while (
+    closingQuoteIndex < state.selectorsText.length &&
+    (state.selectorsText.charAt(closingQuoteIndex) !== quote ||
+      isEscaped(state, closingQuoteIndex))
+  ) {
+    closingQuoteIndex += 1;
+  }
+
+  return closingQuoteIndex;
+};
+
 const readValueWithParenthesis = (state: SelectorParserState): string => {
   state.selectorIndex += 1;
 
@@ -82,7 +100,9 @@ const readValueWithParenthesis = (state: SelectorParserState): string => {
   ) {
     const isUnescaped = !isEscaped(state, state.selectorIndex);
 
-    if (readCharacter(state) === '(' && isUnescaped) {
+    if (isQuote(readCharacter(state)) && isUnescaped) {
+      state.selectorIndex = findClosingQuoteIndex(state, state.selectorIndex);
+    } else if (readCharacter(state) === '(' && isUnescaped) {
       openParenthesisCount += 1;
     } else if (readCharacter(state) === ')' && isUnescaped) {
       openParenthesisCount -= 1;
@@ -202,15 +222,7 @@ const readAttributeAction = (
 
 const readQuotedAttributeValue = (state: SelectorParserState): string => {
   const quote = readCharacter(state);
-  let sectionEndIndex = state.selectorIndex + 1;
-
-  while (
-    sectionEndIndex < state.selectorsText.length &&
-    (state.selectorsText.charAt(sectionEndIndex) !== quote ||
-      isEscaped(state, sectionEndIndex))
-  ) {
-    sectionEndIndex += 1;
-  }
+  const sectionEndIndex = findClosingQuoteIndex(state, state.selectorIndex);
 
   if (state.selectorsText.charAt(sectionEndIndex) !== quote) {
     throw new Error("Attribute value didn't end");
