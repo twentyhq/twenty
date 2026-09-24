@@ -59,7 +59,13 @@ export const getAgentHistorySchemaAdditions = ({
     .filter(isDefined)
     .filter(
       (field) =>
-        objectIdentifiers.has(field.objectMetadataUniversalIdentifier) &&
+        // Relations are created with both sides, including the inverse field
+        // on a non-history object such as workspaceMember.
+        (objectIdentifiers.has(field.objectMetadataUniversalIdentifier) ||
+          (isDefined(field.relationTargetObjectMetadataUniversalIdentifier) &&
+            objectIdentifiers.has(
+              field.relationTargetObjectMetadataUniversalIdentifier,
+            ))) &&
         !isDefined(
           existing.flatFieldMetadataMaps.byUniversalIdentifier[
             field.universalIdentifier

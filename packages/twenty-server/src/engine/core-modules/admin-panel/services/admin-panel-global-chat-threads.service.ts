@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { buildUserWorkspaceIdFromWorkspaceMemberIdSql } from 'src/engine/metadata-modules/ai/ai-history/utils/build-agent-chat-thread-owner-sql.util';
 import { ADMIN_CHAT_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/admin-panel/constants/admin-chat-threads-max-page-size.constant';
 import { type PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin-panel/dtos/paginated-admin-chat-threads.dto';
 import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
@@ -104,21 +105,33 @@ export class AdminPanelGlobalChatThreadsService {
                 storage === 'core'
                   ? 'AND thread."workspaceId" = workspace.id'
                   : '';
+              // Workspace partitions hold one workspace whose threads may not
+              // have been moved from membership to member ownership yet.
+              const ownerUserWorkspaceIdSql =
+                storage === 'core'
+                  ? 'thread."userWorkspaceId"'
+                  : `COALESCE((to_jsonb(thread)->>'userWorkspaceId')::uuid, ${buildUserWorkspaceIdFromWorkspaceMemberIdSql(
+                      {
+                        workspaceId: workspaceIds[0],
+                        workspaceMemberIdSql: `(to_jsonb(thread)->>'workspaceMemberId')::uuid`,
+                        workspaceIdSql: 'workspace.id',
+                      },
+                    )})`;
               const search = args.searchTerm?.trim().replace(/[\\%_]/g, '\\$&');
               const query = `
           WITH candidates AS (
             SELECT thread.id, thread.title, workspace.id AS "workspaceId", workspace."displayName" AS "workspaceDisplayName",
-              thread."userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
+              ${ownerUserWorkspaceIdSql} AS "userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
               ${storage === 'core' ? 'thread."deletedAt"' : 'thread."archivedAt"'} AS "deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
               (EXISTS (SELECT 1 FROM ${table('agentMessage')} hidden WHERE hidden."threadId" = thread.id AND hidden."isHidden" = true)
-                OR thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || thread."userWorkspaceId"::text)) AS "isOnboardingThread",
+                OR thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || (${ownerUserWorkspaceIdSql})::text)) AS "isOnboardingThread",
               (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false) AS "messageCount",
               ((SELECT COUNT(*) FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false AND message.role = 'user')
                 + (SELECT COUNT(*) FROM ${table('agentMessagePart')} part JOIN ${table('agentMessage')} message ON message.id = part."messageId"
                    WHERE message."threadId" = thread.id AND message."isHidden" = false AND part."toolName" = $3 AND part."toolOutput"->'result'->>'status' = 'answered'))::int AS "userReplyCount"
             FROM ${table('agentChatThread')} thread
             JOIN core.workspace workspace ON workspace.id = ANY($1::uuid[]) AND workspace."allowImpersonation" = true AND workspace."deletedAt" IS NULL
-            LEFT JOIN core."userWorkspace" membership ON membership.id = thread."userWorkspaceId" AND membership."workspaceId" = workspace.id
+            LEFT JOIN core."userWorkspace" membership ON membership.id = ${ownerUserWorkspaceIdSql} AND membership."workspaceId" = workspace.id
             LEFT JOIN core."user" owner ON owner.id = membership."userId"
             WHERE true ${workspaceCondition}
               AND ($4::text IS NULL OR workspace."displayName" ILIKE $4 OR owner.email ILIKE $4 OR thread.id::text ILIKE $4)

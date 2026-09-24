@@ -61,13 +61,13 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "updatedAt": {
         "universalIdentifier": "d6db0ef9-8f0f-5a8c-b218-2837154c29fe",
       },
-      "userWorkspaceId": {
-        "universalIdentifier": "bf830886-b6dc-46e9-a229-eecbb0e66032",
+      "workspaceMember": {
+        "universalIdentifier": "6f3ed3b5-0642-4a2a-9558-98376adb60f4",
       },
     },
     "indexes": {
-      "ownerIndex": {
-        "universalIdentifier": "c97a4c97-266b-490a-a4d6-76274f5de429",
+      "workspaceMemberIndex": {
+        "universalIdentifier": "079f2dd7-6c11-4eae-be8a-cce2d1bee0fb",
       },
     },
     "universalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
@@ -3926,6 +3926,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "fields": {
       "accountOwnerForCompanies": {
         "universalIdentifier": "20202020-dc29-4bd4-a3c1-29eafa324bee",
+      },
+      "agentChatThreads": {
+        "universalIdentifier": "fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1",
       },
       "assignedTasks": {
         "universalIdentifier": "20202020-61dc-4a1c-99e8-38ebf8d2bbeb",

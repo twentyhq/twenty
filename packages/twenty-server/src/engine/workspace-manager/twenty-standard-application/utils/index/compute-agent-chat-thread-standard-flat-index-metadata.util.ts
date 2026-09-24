@@ -7,11 +7,11 @@ import {
 export const buildAgentChatThreadStandardFlatIndexMetadatas = (
   args: Omit<CreateStandardIndexArgs<'agentChatThread'>, 'context'>,
 ): Record<string, FlatIndexMetadata> => ({
-  ownerIndex: createStandardIndexFlatMetadata({
+  workspaceMemberIndex: createStandardIndexFlatMetadata({
     ...args,
     context: {
-      indexName: 'ownerIndex',
-      relatedFieldNames: ['userWorkspaceId'],
+      indexName: 'workspaceMemberIndex',
+      relatedFieldNames: ['workspaceMember'],
       isUnique: false,
       indexWhereClause: null,
     },

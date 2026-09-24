@@ -12,7 +12,7 @@ const createStandardMetadata = () =>
     twentyStandardApplicationId: '20202020-2222-4222-8222-222222222222',
   }).allFlatEntityMaps;
 
-const HISTORY_IDENTIFIERS = [
+const HISTORY_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.agentChatThread.universalIdentifier,
   STANDARD_OBJECTS.agentTurn.universalIdentifier,
   STANDARD_OBJECTS.agentMessage.universalIdentifier,
@@ -35,11 +35,42 @@ describe('getAgentHistorySchemaAdditions', () => {
     ).toEqual([...HISTORY_IDENTIFIERS].sort());
     expect(additions.fields.length).toBeGreaterThan(0);
     expect(additions.indexes.length).toBeGreaterThan(0);
-    for (const entry of [...additions.fields, ...additions.indexes]) {
+    for (const field of additions.fields) {
+      expect(
+        HISTORY_IDENTIFIERS.includes(field.objectMetadataUniversalIdentifier) ||
+          HISTORY_IDENTIFIERS.includes(
+            field.relationTargetObjectMetadataUniversalIdentifier ?? '',
+          ),
+      ).toBe(true);
+    }
+    for (const index of additions.indexes) {
       expect(HISTORY_IDENTIFIERS).toContain(
-        entry.objectMetadataUniversalIdentifier,
+        index.objectMetadataUniversalIdentifier,
       );
     }
+  });
+
+  it('adds both sides of the thread owner relation', () => {
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard: createStandardMetadata(),
+    });
+    const fieldIdentifiers = additions.fields.map(
+      (field) => field.universalIdentifier,
+    );
+
+    expect(fieldIdentifiers).toContain(
+      STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
+        .universalIdentifier,
+    );
+    expect(fieldIdentifiers).toContain(
+      STANDARD_OBJECTS.workspaceMember.fields.agentChatThreads
+        .universalIdentifier,
+    );
   });
 
   it('adds nothing when all history metadata already exists', () => {

@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
   MetadataWritability,
+  RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -39,30 +40,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isUIEditable: false,
         isNullable: false,
         defaultValue: 'uuid',
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
-  userWorkspaceId: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'userWorkspaceId',
-        type: FieldMetadataType.UUID,
-        label: i18nLabel(
-          msg({ message: 'User Workspace ID', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'User Workspace ID',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconId',
-        isSystem: true,
-        isUIEditable: false,
-        isNullable: false,
       },
     }),
     writability: MetadataWritability.SYSTEM,
@@ -491,6 +468,37 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         settings: {
           relationType: RelationType.ONE_TO_MANY,
           joinColumnName: null,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  workspaceMember: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'workspaceMember',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Workspace Member', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Workspace member who owns the thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'agentChatThreads',
+        morphId: null,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'workspaceMemberId',
         },
       },
     }),

@@ -3,6 +3,9 @@ import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storag
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { buildWorkspaceMemberIdFromUserWorkspaceIdSql } from 'src/engine/metadata-modules/ai/ai-history/utils/build-agent-chat-thread-owner-sql.util';
+import { getAgentChatThreadOwnerColumn } from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-column.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
@@ -171,17 +174,31 @@ export class AgentChatService {
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
     const rankedThreads = await this.threadRepository.query(
       workspaceId,
-      ({ manager, table, storage }) =>
-        manager.query<{ id: string; last_message_at: Date | null }[]>(
+      async ({ manager, table, storage }) => {
+        const ownerColumn = await getAgentChatThreadOwnerColumn({
+          manager,
+          workspaceId,
+          storage,
+        });
+        const ownerSql =
+          ownerColumn === 'workspaceMemberId'
+            ? buildWorkspaceMemberIdFromUserWorkspaceIdSql({
+                workspaceId,
+                userWorkspaceIdSql: '$1::uuid',
+              })
+            : '$1::uuid';
+
+        return manager.query<{ id: string; last_message_at: Date | null }[]>(
           `SELECT thread.id, MAX(message."createdAt") AS last_message_at
        FROM ${table('agentChatThread')} thread
        LEFT JOIN ${table('agentMessage')} message ON message."threadId" = thread.id AND message."isHidden" = false
-       WHERE thread."userWorkspaceId" = $1 ${storage === 'core' ? 'AND thread."workspaceId" = $2' : ''}
+       WHERE thread.${escapeIdentifier(ownerColumn)} = ${ownerSql} ${storage === 'core' ? 'AND thread."workspaceId" = $2' : ''}
        GROUP BY thread.id ORDER BY last_message_at DESC NULLS LAST, thread."updatedAt" DESC`,
           storage === 'core'
             ? [userWorkspaceId, workspaceId]
             : [userWorkspaceId],
-        ),
+        );
+      },
     );
 
     if (rankedThreads.length === 0) {

@@ -15,6 +15,7 @@ import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-mo
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { deleteAgentChatThreadsOfOwner } from 'src/engine/metadata-modules/ai/ai-history/utils/delete-agent-chat-threads-of-owner.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -107,8 +108,11 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
 
     // Runs after the membership is gone so a failed removal keeps the history
     // and threads created during the removal are still cleaned up.
-    await this.agentChatThreadRepository.delete(workspace.id, {
+    await deleteAgentChatThreadsOfOwner({
+      agentChatThreadRepository: this.agentChatThreadRepository,
+      workspaceId: workspace.id,
       userWorkspaceId: userWorkspace.id,
+      workspaceMemberId: targettedWorkspaceMemberId,
     });
   }
 }
