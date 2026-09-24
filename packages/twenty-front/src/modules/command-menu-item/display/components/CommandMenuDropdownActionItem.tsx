@@ -1,5 +1,5 @@
 import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
-import { ApplicationName } from '@/applications/components/ApplicationName';
+import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
 import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
@@ -14,6 +14,9 @@ export const CommandMenuDropdownActionItem = ({
   const { Icon, label, handleClick, disabled, progress, isLoading } =
     useCommandMenuItemDisplay(item);
   const isThirdPartyApp = useIsThirdPartyApplication(item.applicationId);
+  const { applicationChipData } = useApplicationChipData({
+    applicationId: item.applicationId,
+  });
 
   return (
     <Dropdown.ActionItem
@@ -27,11 +30,7 @@ export const CommandMenuDropdownActionItem = ({
           <Icon />
         )
       }
-      description={
-        isThirdPartyApp ? (
-          <ApplicationName applicationId={item.applicationId} />
-        ) : undefined
-      }
+      description={isThirdPartyApp ? applicationChipData.name : undefined}
       endIcon={
         isLoading ? <CommandListItemLoader progress={progress} /> : undefined
       }
