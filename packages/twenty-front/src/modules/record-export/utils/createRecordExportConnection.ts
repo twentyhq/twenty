@@ -64,12 +64,17 @@ export const createRecordExportConnection = () => {
               }
               onProgress?.(recordExport.progress);
               if (isDefined(recordExport.downloadUrl)) {
-                const { pathname, search } = new URL(
+                const { search } = new URL(
                   recordExport.downloadUrl,
                   REACT_APP_SERVER_BASE_URL,
                 );
-                const downloadUrl = new URL(REACT_APP_SERVER_BASE_URL);
-                downloadUrl.pathname = pathname;
+                // The canonical server URL can have a different path prefix.
+                const downloadUrl = new URL(
+                  `${REACT_APP_SERVER_BASE_URL.replace(
+                    /\/$/,
+                    '',
+                  )}/file/record-export/${recordExport.id}`,
+                );
                 downloadUrl.search = search;
                 const link = document.createElement('a');
                 link.href = downloadUrl.toString();
