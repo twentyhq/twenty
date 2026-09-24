@@ -17,9 +17,7 @@ const buildPeriodCount = ({
   getConfigValue: (key: NumericConfigVariableKey) => number;
 }): number =>
   usageLimitDefault.limitKind === 'speed'
-    ? // buildDefaultSpeedBucket rounds the same way, so the scope an operator
-      // overrides is the one the bucket is actually keyed on.
-      Math.ceil(getConfigValue(usageLimitDefault.windowMsConfigVariable) / 1000)
+    ? Math.ceil(getConfigValue(usageLimitDefault.windowMsConfigVariable) / 1000)
     : usageLimitDefault.periodCount;
 
 export const buildUsageLimitDefaultScopes = ({

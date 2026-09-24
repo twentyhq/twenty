@@ -33,7 +33,6 @@ export type UsageLimitDefinitions<
   stock?: StockLimitDefinition<TResourceType>;
 };
 
-// The key a definition sits under pins the resourceType its defaults may name.
 export type UsageLimitDefinitionsByResourceType = {
   [TResourceType in UsageResourceType]: UsageLimitDefinitions<TResourceType>;
 };
