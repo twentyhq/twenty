@@ -142,7 +142,11 @@ export class UsageLimitService {
 
     const { affected } = await this.usageLimitRepository.update(
       workspaceId,
-      { id: usageLimit.id, ...authorizedScope },
+      {
+        id: usageLimit.id,
+        ...authorizedScope,
+        isInstanceOverride: usageLimit.isInstanceOverride,
+      },
       {
         ...scope,
         limitValue: input.payload.limitValue,
@@ -270,6 +274,7 @@ export class UsageLimitService {
     const { affected } = await this.usageLimitRepository.delete(workspaceId, {
       id: usageLimitId,
       ...buildUsageLimitScope(usageLimit),
+      isInstanceOverride: usageLimit.isInstanceOverride,
     });
 
     if (!isDefined(affected) || affected === 0) {
