@@ -54,11 +54,15 @@ export type AppDevOnceResult = {
   applied: boolean;
 };
 
-const appendRecoveryHint = (
-  message: string,
-  errorMessage: string | undefined,
-  subCode: string | undefined,
-): string => {
+const appendRecoveryHint = ({
+  message,
+  errorMessage,
+  subCode,
+}: {
+  message: string;
+  errorMessage: string | undefined;
+  subCode: string | undefined;
+}): string => {
   const hint = getSyncErrorRecoveryHint({ message: errorMessage, subCode });
 
   return hint ? `${message}\n\n${hint}` : message;
@@ -112,11 +116,11 @@ const buildSyncError = (
 
   return {
     code: APP_ERROR_CODES.SYNC_FAILED,
-    message: appendRecoveryHint(
+    message: appendRecoveryHint({
       message,
-      result.message,
-      getSyncErrorSubCode(result.error),
-    ),
+      errorMessage: result.message,
+      subCode: getSyncErrorSubCode(result.error),
+    }),
   };
 };
 
