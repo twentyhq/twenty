@@ -179,14 +179,14 @@ export class AgentChatService {
   // links rather than the ranked conversations, and would let one member's
   // attachments crowd everyone else's out of that prefix.
   async getThreadsAttachedToRecord({
-    objectMetadataId,
+    joinColumnName,
     recordId,
     userWorkspaceId,
     workspaceId,
     limit,
     offset,
   }: {
-    objectMetadataId: string;
+    joinColumnName: string;
     recordId: string;
     userWorkspaceId: string;
     workspaceId: string;
@@ -194,7 +194,7 @@ export class AgentChatService {
     offset?: number;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
     return this.getRankedThreads({
-      attachedToRecord: { objectMetadataId, recordId },
+      attachedToRecord: { joinColumnName, recordId },
       userWorkspaceId,
       workspaceId,
       limit,
@@ -209,7 +209,7 @@ export class AgentChatService {
     limit,
     offset,
   }: {
-    attachedToRecord?: { objectMetadataId: string; recordId: string };
+    attachedToRecord?: { joinColumnName: string; recordId: string };
     userWorkspaceId: string;
     workspaceId: string;
     limit?: number;
@@ -233,16 +233,12 @@ export class AgentChatService {
             return [];
           }
 
-          parameters.push(attachedToRecord.objectMetadataId);
-          const objectMetadataIdParameter = parameters.length;
-
           parameters.push(attachedToRecord.recordId);
 
           conditions.push(
             `EXISTS (SELECT 1 FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThreadTarget" target
              WHERE target."threadId" = thread.id
-               AND target."objectMetadataId" = $${objectMetadataIdParameter}
-               AND target."recordId" = $${parameters.length}
+               AND target.${escapeIdentifier(attachedToRecord.joinColumnName)} = $${parameters.length}
                AND target."deletedAt" IS NULL)`,
           );
         }

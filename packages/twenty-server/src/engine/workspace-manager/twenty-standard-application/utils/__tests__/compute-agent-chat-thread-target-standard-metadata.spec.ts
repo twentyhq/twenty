@@ -1,4 +1,9 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -9,6 +14,11 @@ const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
     twentyStandardApplicationId: '20202020-2222-4222-8222-222222222222',
   },
 );
+
+const findField = (universalIdentifier: string) =>
+  allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+    universalIdentifier
+  ];
 
 const findIndex = (
   indexName: keyof typeof STANDARD_OBJECTS.agentChatThreadTarget.indexes,
@@ -33,32 +43,98 @@ const getIndexedFieldUniversalIdentifiers = (
 
 const fields = STANDARD_OBJECTS.agentChatThreadTarget.fields;
 
-describe('agent chat thread target workspace metadata', () => {
-  // Attach is ON CONFLICT DO NOTHING against this index, so its exact shape
-  // decides what a second attach does: without uniqueness it duplicates the
-  // link, and with fewer columns or no predicate it can silently swallow a
-  // legitimate attach.
-  it('keeps one live link per thread and record', () => {
-    expect(findIndex('threadTargetUniqueIndex')).toMatchObject({
-      isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL',
-    });
-    expect(
-      getIndexedFieldUniversalIdentifiers('threadTargetUniqueIndex'),
-    ).toEqual([
-      fields.thread.universalIdentifier,
-      fields.objectMetadataId.universalIdentifier,
-      fields.recordId.universalIdentifier,
-    ]);
-  });
+const LEGS = [
+  {
+    objectName: 'person',
+    leg: fields.targetPerson,
+    joinColumnName: 'targetPersonId',
+    idIndexName: 'personIdIndex',
+    uniqueIndexName: 'threadPersonUniqueIndex',
+  },
+  {
+    objectName: 'company',
+    leg: fields.targetCompany,
+    joinColumnName: 'targetCompanyId',
+    idIndexName: 'companyIdIndex',
+    uniqueIndexName: 'threadCompanyUniqueIndex',
+  },
+  {
+    objectName: 'opportunity',
+    leg: fields.targetOpportunity,
+    joinColumnName: 'targetOpportunityId',
+    idIndexName: 'opportunityIdIndex',
+    uniqueIndexName: 'threadOpportunityUniqueIndex',
+  },
+] as const;
 
-  it('indexes the pair the record lookup filters on', () => {
-    expect(findIndex('targetRecordIndex')).toMatchObject({ isUnique: false });
-    expect(getIndexedFieldUniversalIdentifiers('targetRecordIndex')).toEqual([
-      fields.objectMetadataId.universalIdentifier,
-      fields.recordId.universalIdentifier,
-    ]);
-  });
+describe('agent chat thread target workspace metadata', () => {
+  // One morph id makes the legs a single polymorphic target, which is what the
+  // default-relation tooling extends for custom objects. CASCADE is the only
+  // thing that removes a destroyed record's links.
+  it.each(LEGS)(
+    'attaches to a $objectName through its own leg of the target morph',
+    ({ objectName, leg, joinColumnName }) => {
+      expect(findField(leg.universalIdentifier)).toMatchObject({
+        type: FieldMetadataType.MORPH_RELATION,
+        morphId:
+          STANDARD_OBJECTS.agentChatThreadTarget.morphIds.targetMorphId.morphId,
+        isUIEditable: false,
+        relationTargetObjectMetadataUniversalIdentifier:
+          STANDARD_OBJECTS[objectName].universalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier:
+          STANDARD_OBJECTS[objectName].fields.agentChatThreadTargets
+            .universalIdentifier,
+        universalSettings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName,
+        },
+      });
+    },
+  );
+
+  it.each(LEGS)(
+    'gives the $objectName the reverse side of its leg',
+    ({ objectName, leg }) => {
+      expect(
+        findField(
+          STANDARD_OBJECTS[objectName].fields.agentChatThreadTargets
+            .universalIdentifier,
+        ),
+      ).toMatchObject({
+        type: FieldMetadataType.RELATION,
+        relationTargetObjectMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier: leg.universalIdentifier,
+        universalSettings: { relationType: RelationType.ONE_TO_MANY },
+      });
+    },
+  );
+
+  // A second attach of the same thread to the same record must not add a row.
+  it.each(LEGS)(
+    'keeps one live link per thread and $objectName',
+    ({ leg, uniqueIndexName }) => {
+      expect(findIndex(uniqueIndexName)).toMatchObject({
+        isUnique: true,
+        indexWhereClause: '"deletedAt" IS NULL',
+      });
+      expect(getIndexedFieldUniversalIdentifiers(uniqueIndexName)).toEqual([
+        fields.thread.universalIdentifier,
+        leg.universalIdentifier,
+      ]);
+    },
+  );
+
+  it.each(LEGS)(
+    'indexes the $objectName join column the record lookup filters on',
+    ({ leg, idIndexName }) => {
+      expect(findIndex(idIndexName)).toMatchObject({ isUnique: false });
+      expect(getIndexedFieldUniversalIdentifiers(idIndexName)).toEqual([
+        leg.universalIdentifier,
+      ]);
+    },
+  );
 
   it('indexes the thread side the relation cascades from', () => {
     expect(getIndexedFieldUniversalIdentifiers('threadIdIndex')).toEqual([

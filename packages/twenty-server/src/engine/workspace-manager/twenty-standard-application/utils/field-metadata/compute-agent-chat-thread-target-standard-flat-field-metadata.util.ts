@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   MetadataWritability,
@@ -74,52 +75,100 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  objectMetadataId: {
-    ...createStandardFieldFlatMetadata({
+  targetPerson: {
+    ...createStandardRelationFieldFlatMetadata({
       ...args,
       context: {
-        fieldName: 'objectMetadataId',
-        type: FieldMetadataType.UUID,
+        fieldName: 'targetPerson',
+        type: FieldMetadataType.MORPH_RELATION,
         label: i18nLabel(
-          msg({
-            message: 'Object Metadata ID',
-            context: 'fieldMetadata.label',
-          }),
+          msg({ message: 'Person', context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
-            message: 'Object of the attached record',
+            message: 'Record the chat is attached to',
             context: 'fieldMetadata.description',
           }),
         ),
-        icon: 'IconId',
-        isSystem: true,
+        icon: 'IconUser',
+        isNullable: true,
         isUIEditable: false,
-        isNullable: false,
+        isSystemSideEffect: true,
+        targetObjectName: 'person',
+        targetFieldName: 'agentChatThreadTargets',
+        morphId:
+          STANDARD_OBJECTS.agentChatThreadTarget.morphIds.targetMorphId.morphId,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'targetPersonId',
+        },
       },
     }),
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  recordId: {
-    ...createStandardFieldFlatMetadata({
+  targetCompany: {
+    ...createStandardRelationFieldFlatMetadata({
       ...args,
       context: {
-        fieldName: 'recordId',
-        type: FieldMetadataType.UUID,
+        fieldName: 'targetCompany',
+        type: FieldMetadataType.MORPH_RELATION,
         label: i18nLabel(
-          msg({ message: 'Record ID', context: 'fieldMetadata.label' }),
+          msg({ message: 'Company', context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
-            message: 'Attached record',
+            message: 'Record the chat is attached to',
             context: 'fieldMetadata.description',
           }),
         ),
-        icon: 'IconId',
-        isSystem: true,
+        icon: 'IconBuildingSkyscraper',
+        isNullable: true,
         isUIEditable: false,
-        isNullable: false,
+        isSystemSideEffect: true,
+        targetObjectName: 'company',
+        targetFieldName: 'agentChatThreadTargets',
+        morphId:
+          STANDARD_OBJECTS.agentChatThreadTarget.morphIds.targetMorphId.morphId,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'targetCompanyId',
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  targetOpportunity: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'targetOpportunity',
+        type: FieldMetadataType.MORPH_RELATION,
+        label: i18nLabel(
+          msg({ message: 'Opportunity', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Record the chat is attached to',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconTargetArrow',
+        isNullable: true,
+        isUIEditable: false,
+        isSystemSideEffect: true,
+        targetObjectName: 'opportunity',
+        targetFieldName: 'agentChatThreadTargets',
+        morphId:
+          STANDARD_OBJECTS.agentChatThreadTarget.morphIds.targetMorphId.morphId,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'targetOpportunityId',
+        },
       },
     }),
     writability: MetadataWritability.SYSTEM,

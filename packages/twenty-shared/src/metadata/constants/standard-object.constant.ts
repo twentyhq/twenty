@@ -1411,15 +1411,30 @@ export const STANDARD_OBJECTS = {
     universalIdentifier:
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
     fields: STANDARD_OBJECT_FIELDS.agentChatThreadTarget,
+    morphIds: {
+      targetMorphId: { morphId: '2c4cc537-39a2-4df9-81a1-dda26eb19658' },
+    },
     indexes: {
       threadIdIndex: {
         universalIdentifier: '19291d2c-15ab-43a0-91f7-1694b34813dd',
       },
-      targetRecordIndex: {
-        universalIdentifier: '0ab6ceeb-59e0-497c-8497-111033ac6427',
+      personIdIndex: {
+        universalIdentifier: 'fe9c48d0-5b2a-4a51-bd47-f9205ea0c09d',
       },
-      threadTargetUniqueIndex: {
-        universalIdentifier: '578185a7-700e-411a-b499-e5ca9991eac3',
+      companyIdIndex: {
+        universalIdentifier: 'ab45593a-3614-41c8-aab1-20aa91f1095c',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: 'b68e2031-73c6-4bc4-b062-5f795539e452',
+      },
+      threadPersonUniqueIndex: {
+        universalIdentifier: '5a12050f-4de2-4076-aecc-959b863e14b2',
+      },
+      threadCompanyUniqueIndex: {
+        universalIdentifier: 'd9067628-fd16-4843-955b-5fd47fea52a9',
+      },
+      threadOpportunityUniqueIndex: {
+        universalIdentifier: '1b9bec10-2788-40be-9435-44937b9f7018',
       },
     },
     views: {},

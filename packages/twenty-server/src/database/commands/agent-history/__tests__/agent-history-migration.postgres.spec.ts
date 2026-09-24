@@ -433,6 +433,42 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).toEqual([{ senderUserWorkspaceId: OWNER_ID }]);
     });
 
+    it('refuses rollback only while a record is still linked to a chat thread', async () => {
+      const validation = new AgentHistoryMigrationValidationService();
+      const runner = dataSource.createQueryRunner();
+      const table = `"${SCHEMA}"."agentChatThreadTarget"`;
+
+      await runner.connect();
+      try {
+        await runner.query(
+          `CREATE TABLE ${table} (id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), "threadId" uuid, "targetPersonId" uuid, "targetPetId" uuid, "deletedAt" timestamptz)`,
+        );
+        // What destroying a custom record leaves behind: its leg set to null.
+        await runner.query(`INSERT INTO ${table} ("threadId") VALUES ($1)`, [
+          THREAD_ID,
+        ]);
+        await expect(
+          validation.assertNoThreadTargets({
+            runner,
+            workspaceId: WORKSPACE_ID,
+          }),
+        ).resolves.toBeUndefined();
+
+        await runner.query(
+          `INSERT INTO ${table} ("threadId", "targetPetId") VALUES ($1, $2)`,
+          [THREAD_ID, MESSAGE_ID],
+        );
+        await expect(
+          validation.assertNoThreadTargets({
+            runner,
+            workspaceId: WORKSPACE_ID,
+          }),
+        ).rejects.toThrow(/Detach them before rolling agent history back/);
+      } finally {
+        await runner.release();
+      }
+    });
+
     it('copies all five tables, exact credits and archive state before changing the route', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
