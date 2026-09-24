@@ -9,7 +9,7 @@ import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/i
 import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -26,7 +26,15 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
-import { type FocusEvent, useContext, useId, useRef, useState } from 'react';
+import {
+  type FocusEvent,
+  type KeyboardEvent,
+  useContext,
+  useId,
+  useRef,
+  useState,
+} from 'react';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -189,7 +197,15 @@ export const FormArrayFieldInput = ({
     }
   };
 
-  const handleFirstItemInputEnter = () => {
+  const handleFirstItemInputKeyDown = (
+    event: KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key !== Key.Enter || event.nativeEvent.isComposing) {
+      return;
+    }
+
+    event.stopPropagation();
+
     if (!commitFirstItemDraft()) {
       return;
     }
@@ -367,15 +383,14 @@ export const FormArrayFieldInput = ({
               </StyledDisplayModeReadonlyContainer>
             ) : draftValue.value.length === 0 ? (
               <StyledInputContainer>
-                <TextInput
-                  instanceId={formFieldInputInstanceId}
+                <StyledTextInput
+                  autoComplete="off"
                   placeholder={t`Enter an item`}
                   value={newItemDraftValue}
-                  copyButton={false}
-                  isKeyboardAccessible
-                  onChange={handleFirstItemInputChange}
-                  onEnter={handleFirstItemInputEnter}
-                  shouldTrim={false}
+                  onChange={(event) =>
+                    handleFirstItemInputChange(event.target.value)
+                  }
+                  onKeyDown={handleFirstItemInputKeyDown}
                 />
               </StyledInputContainer>
             ) : (

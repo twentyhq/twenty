@@ -1,6 +1,4 @@
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
-import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
-import { TextInput } from '@/ui/field/input/components/TextInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
 import { FormFullNameFieldInput } from '@/object-record/record-field/ui/form-types/components/FormFullNameFieldInput';
@@ -157,26 +155,3 @@ it('tabs through a links field and past its empty secondary links', async () => 
   await user.tab({ shift: true });
   expect(document.activeElement).toHaveAttribute('contenteditable', 'true');
 });
-
-it.each([false, true])(
-  'keeps Tab inside inputs that do not opt into native navigation (shift: %s)',
-  async (shift) => {
-    const user = userEvent.setup();
-    render(
-      <>
-        <button>Before</button>
-        <FormFieldInputInnerContainer
-          formFieldInputInstanceId="cell-input"
-          hasRightElement={false}
-        >
-          <TextInput instanceId="cell-input" value="Draft" copyButton={false} />
-        </FormFieldInputInnerContainer>
-        <button>After</button>
-      </>,
-    );
-    const input = screen.getByDisplayValue('Draft');
-    await user.click(input);
-    await user.tab({ shift });
-    expect(input).toHaveFocus();
-  },
-);

@@ -3,7 +3,7 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
@@ -67,6 +67,14 @@ export const FormNumberFieldInput = ({
         value: isDefined(defaultValue) ? String(defaultValue) : '',
       };
 
+  const [inputText, setInputText] = useState(draftValue.value);
+  const [previousDraftText, setPreviousDraftText] = useState(draftValue.value);
+
+  if (previousDraftText !== draftValue.value) {
+    setPreviousDraftText(draftValue.value);
+    setInputText(draftValue.value);
+  }
+
   const persistNumber = (newValue: string) => {
     if (!canBeCastAsNumberOrNull(newValue)) {
       setErrorMessage(t`Invalid number`);
@@ -83,6 +91,7 @@ export const FormNumberFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
+    setInputText(newText);
     persistNumber(newText.trim());
   };
 
@@ -107,17 +116,16 @@ export const FormNumberFieldInput = ({
           onBlur={onBlur}
         >
           {draftValue.type === 'static' ? (
-            <TextInput
-              instanceId={instanceId}
+            <StyledTextInput
+              id={instanceId}
+              autoComplete="off"
               placeholder={
                 isDefined(placeholder) && !isEmpty(placeholder)
                   ? placeholder
                   : t`Enter a number`
               }
-              value={draftValue.value}
-              copyButton={false}
-              isKeyboardAccessible
-              onChange={handleChange}
+              value={inputText}
+              onChange={(event) => handleChange(event.target.value)}
               disabled={readonly}
             />
           ) : (
