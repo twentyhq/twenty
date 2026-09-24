@@ -1,5 +1,7 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { jsonSchema } from 'ai';
 import { type JSONSchema7 } from 'json-schema';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -49,6 +51,7 @@ export const createExecuteToolTool = (
     isToolAllowed?: (toolName: string) => boolean;
     compactOutput?: boolean;
     spillLargeOutput?: boolean;
+    discoveryHint?: string;
   },
 ) => ({
   description:
@@ -65,9 +68,31 @@ export const createExecuteToolTool = (
       };
     }
 
-    return toolRegistry.resolveAndExecute(toolName, args, context, {
-      compactOutput: options?.compactOutput,
-      spillLargeOutput: options?.spillLargeOutput,
-    });
+    const result = await toolRegistry.resolveAndExecute(
+      toolName,
+      args,
+      context,
+      {
+        compactOutput: options?.compactOutput,
+        spillLargeOutput: options?.spillLargeOutput,
+      },
+    );
+
+    // The registry stays surface-neutral and reports an unknown name only
+    // through this message, which the MCP catalog contract test also pins.
+    const isUnknownTool =
+      result.success === false &&
+      result.message === `Tool "${toolName}" not found`;
+
+    if (!isUnknownTool || !isDefined(options?.discoveryHint)) {
+      return result;
+    }
+
+    return {
+      ...result,
+      error: [result.error, options.discoveryHint]
+        .filter(isNonEmptyString)
+        .join(' '),
+    };
   },
 });

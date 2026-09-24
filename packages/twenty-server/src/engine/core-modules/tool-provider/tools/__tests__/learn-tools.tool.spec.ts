@@ -76,7 +76,7 @@ describe('createLearnToolsTool', () => {
     );
   });
 
-  it('does not report disallowed tools as not found or suggest alternatives', async () => {
+  it('reports disallowed tools as unavailable without suggesting alternatives', async () => {
     const suggestSimilarToolNames = jest.fn();
     const toolRegistry = {
       getToolInfo: jest.fn().mockResolvedValue([]),
@@ -95,10 +95,12 @@ describe('createLearnToolsTool', () => {
     expect(toolRegistry.getToolInfo).toHaveBeenCalledWith([], context, [
       'description',
     ]);
-    expect(result.notFound).toEqual([]);
+    expect(result.notFound).toEqual(['code_interpreter']);
     expect(result.suggestions).toBeUndefined();
     expect(suggestSimilarToolNames).not.toHaveBeenCalled();
-    expect(result.message).toBe('No matching tools found.');
+    expect(result.message).toBe(
+      'Could not find: code_interpreter (not available in this context).',
+    );
   });
 
   it('only learns tools the predicate allows', async () => {
@@ -122,8 +124,64 @@ describe('createLearnToolsTool', () => {
       context,
       ['description'],
     );
-    expect(result.notFound).toEqual([]);
+    expect(result.notFound).toEqual(['create_one_workflow']);
     expect(suggestSimilarToolNames).not.toHaveBeenCalled();
+  });
+
+  it('appends the caller discovery hint when a tool is not found', async () => {
+    const toolRegistry = {
+      getToolInfo: jest.fn().mockResolvedValue([]),
+      suggestSimilarToolNames: jest
+        .fn()
+        .mockResolvedValue({ group_by_person: ['group_by_people'] }),
+    } as unknown as ToolRegistryService;
+
+    const learnTools = createLearnToolsTool(toolRegistry, context, {
+      discoveryHint: 'Use get_tool_catalog with a query.',
+    });
+
+    const result = await learnTools.execute({
+      toolNames: ['group_by_person'],
+      aspects: ['description'],
+    });
+
+    expect(result.message).toBe(
+      'Could not find: group_by_person (did you mean: group_by_people?). Use get_tool_catalog with a query.',
+    );
+  });
+
+  it('leaves the not-found message unchanged when no hint is supplied', async () => {
+    const toolRegistry = {
+      getToolInfo: jest.fn().mockResolvedValue([]),
+      suggestSimilarToolNames: jest.fn().mockResolvedValue({}),
+    } as unknown as ToolRegistryService;
+
+    const learnTools = createLearnToolsTool(toolRegistry, context);
+
+    const result = await learnTools.execute({
+      toolNames: ['send_fax'],
+      aspects: ['description'],
+    });
+
+    expect(result.message).toBe('Could not find: send_fax.');
+  });
+
+  it('does not append the hint when every tool resolves', async () => {
+    const toolRegistry = {
+      getToolInfo: jest.fn().mockResolvedValue([{ name: 'find_many_people' }]),
+      suggestSimilarToolNames: jest.fn(),
+    } as unknown as ToolRegistryService;
+
+    const learnTools = createLearnToolsTool(toolRegistry, context, {
+      discoveryHint: 'Use get_tool_catalog with a query.',
+    });
+
+    const result = await learnTools.execute({
+      toolNames: ['find_many_people'],
+      aspects: ['description'],
+    });
+
+    expect(result.message).toBe('Learned 1 tool: find_many_people.');
   });
 
   it('does not consult the spill service when spillLargeOutput is not set', async () => {

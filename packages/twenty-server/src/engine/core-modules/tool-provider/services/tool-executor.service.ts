@@ -326,7 +326,7 @@ export class ToolExecutorService {
       return {
         success: false,
         message: `Tool "${descriptor.name}" is not available`,
-        error: `Tool "${descriptor.name}" is not available in this context. Use get_tool_catalog to see available tools.`,
+        error: `Tool "${descriptor.name}" is not available in this context.`,
       };
     }
 
