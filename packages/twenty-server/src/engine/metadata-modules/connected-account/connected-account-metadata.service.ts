@@ -380,6 +380,23 @@ export class ConnectedAccountMetadataService {
 
     const connectedAccountIds = connectedAccounts.map((account) => account.id);
 
+    const [messageChannels, calendarChannels] = await Promise.all([
+      this.messageChannelRepository.find({
+        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+        select: { id: true },
+      }),
+      this.calendarChannelRepository.find({
+        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
+        select: { id: true },
+      }),
+    ]);
+
+    await this.stopWebhookSubscriptions({
+      messageChannels,
+      calendarChannels,
+      workspaceId,
+    });
+
     await this.repository.manager.transaction(async (entityManager) => {
       await entityManager.update(
         ConnectedAccountEntity,
