@@ -7,7 +7,7 @@ import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usag
 import { buildQuotaDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-counter-key.util';
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 
-export const buildShadowedQuotaDefaultCounterKeys = ({
+export const buildOverriddenQuotaDefaultCounterKeys = ({
   usageLimit,
   quotaLimitDefaults,
   periodByUnit,

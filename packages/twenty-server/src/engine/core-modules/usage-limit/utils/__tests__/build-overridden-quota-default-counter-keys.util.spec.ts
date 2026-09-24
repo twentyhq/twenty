@@ -2,7 +2,7 @@ import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/perio
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
-import { buildShadowedQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-shadowed-quota-default-counter-keys.util';
+import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-overridden-quota-default-counter-keys.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
@@ -52,13 +52,13 @@ const buildKeys = ({
   quotaLimitDefaults?: QuotaLimitDefault[];
   periodByUnit?: Partial<Record<PeriodUnit, UsagePeriod>>;
 } = {}) =>
-  buildShadowedQuotaDefaultCounterKeys({
+  buildOverriddenQuotaDefaultCounterKeys({
     usageLimit,
     quotaLimitDefaults,
     periodByUnit,
   });
 
-describe('buildShadowedQuotaDefaultCounterKeys', () => {
+describe('buildOverriddenQuotaDefaultCounterKeys', () => {
   it('keys the default counter the row suppresses', () => {
     expect(buildKeys()).toEqual([DEFAULT_COUNTER_KEY]);
   });

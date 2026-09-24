@@ -40,7 +40,7 @@ import { buildQuotaDefaultActiveValueKey } from 'src/engine/core-modules/usage-l
 import { buildQuotaDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-counter-key.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
-import { buildShadowedQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-shadowed-quota-default-counter-keys.util';
+import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-overridden-quota-default-counter-keys.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
@@ -217,7 +217,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
             }),
           ]
         : []),
-      ...buildShadowedQuotaDefaultCounterKeys({
+      ...buildOverriddenQuotaDefaultCounterKeys({
         usageLimit,
         quotaLimitDefaults,
         periodByUnit,

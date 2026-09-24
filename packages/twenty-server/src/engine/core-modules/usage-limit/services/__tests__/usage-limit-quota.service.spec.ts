@@ -679,7 +679,7 @@ describe('UsageLimitQuotaService', () => {
       ]);
     });
 
-    it('also drops the default counter the limit shadows', async () => {
+    it('also drops the default counter the limit overrides', async () => {
       periodByUnit.day = DAY_PERIOD;
 
       await service.dropLimitCounter(
