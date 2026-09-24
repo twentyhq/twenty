@@ -1,6 +1,7 @@
 import { getSystemRelationFieldUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findObjectsMissingAgentChatThreadTargetRelation } from 'src/database/commands/upgrade-version-command/2-43/utils/find-objects-missing-agent-chat-thread-target-relation.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -86,7 +87,7 @@ const buildArgs = ({
   for (const source of sources) {
     const sourceFieldIds: string[] = [];
 
-    if (source.hasReverseField === true) {
+    if (source.hasReverseField) {
       targetFieldIds.push(
         registerField({
           id: `field-target-${source.key}`,
@@ -101,7 +102,7 @@ const buildArgs = ({
       );
     }
 
-    if (source.forwardField !== undefined) {
+    if (isDefined(source.forwardField)) {
       sourceFieldIds.push(
         registerField({
           id: `field-${source.key}-forward`,
@@ -109,7 +110,7 @@ const buildArgs = ({
           name: source.forwardField.name ?? TARGET_NAME_PLURAL,
           type: FieldMetadataType.RELATION,
           relationTargetObjectMetadataId: TARGET_OBJECT_ID,
-          ...(source.forwardField.universalIdentifier !== undefined && {
+          ...(isDefined(source.forwardField.universalIdentifier) && {
             universalIdentifier: source.forwardField.universalIdentifier,
           }),
         }),
