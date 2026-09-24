@@ -15,9 +15,6 @@ const INVALID_CONFIGURED_VALUES = [
   'NaN',
   'Infinity',
   '7invalid',
-  '0x7',
-  '1e1',
-  '0b11',
 ];
 
 const INVALID_INPUT_VALUES = [-1, 0, 11, 1.5, NaN, Infinity];

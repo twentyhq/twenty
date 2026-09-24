@@ -5,8 +5,6 @@ import { toText } from 'src/logic-functions/utils/to-text';
 import { type MinLikelihoodSetting } from 'src/types/min-likelihood-setting';
 import { isDefined } from 'src/utils/is-defined';
 
-const DECIMAL_DIGITS_PATTERN = /^\d+$/;
-
 export const getConfiguredMinLikelihood = ({
   variableName,
   label,
@@ -19,11 +17,8 @@ export const getConfiguredMinLikelihood = ({
   }
 
   const minLikelihood = Number(configuredMinLikelihood);
-  const isWrittenAsDecimalDigits = DECIMAL_DIGITS_PATTERN.test(
-    configuredMinLikelihood,
-  );
 
-  if (!isWrittenAsDecimalDigits || !isValidLikelihood(minLikelihood)) {
+  if (!isValidLikelihood(minLikelihood)) {
     throw new PdlConfigError(buildInvalidLikelihoodMessage(label));
   }
 
