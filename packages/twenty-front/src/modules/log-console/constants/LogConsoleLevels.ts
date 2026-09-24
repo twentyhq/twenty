@@ -2,16 +2,16 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { type TagColor } from 'twenty-ui/primitives/data-display';
 
-import { type SettingsLogsSeverity } from '@/log-console/types/SettingsLogsSeverity';
+import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 
-export const SETTINGS_LOGS_LEVELS: Partial<
+export const LOG_CONSOLE_LEVELS: Partial<
   Record<
     string,
     {
       label: MessageDescriptor;
       color: TagColor;
       variant: 'soft' | 'outline';
-      severity?: SettingsLogsSeverity;
+      severity?: LogConsoleSeverity;
     }
   >
 > = {

@@ -6,10 +6,10 @@ import {
   IconTerminal,
 } from 'twenty-ui/icon';
 
-import { SETTINGS_LOGS_APPLICATION_LOG_COLUMNS } from '@/log-console/constants/SettingsLogsApplicationLogColumns';
-import { SETTINGS_LOGS_EVENT_COLUMNS } from '@/log-console/constants/SettingsLogsEventColumns';
-import { SETTINGS_LOGS_LEVELS } from '@/log-console/constants/SettingsLogsLevels';
-import { SETTINGS_LOGS_USAGE_EVENT_COLUMNS } from '@/log-console/constants/SettingsLogsUsageEventColumns';
+import { LOG_CONSOLE_APPLICATION_LOG_COLUMNS } from '@/log-console/constants/LogConsoleApplicationLogColumns';
+import { LOG_CONSOLE_EVENT_COLUMNS } from '@/log-console/constants/LogConsoleEventColumns';
+import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
+import { LOG_CONSOLE_USAGE_EVENT_COLUMNS } from '@/log-console/constants/LogConsoleUsageEventColumns';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { EventLogTable } from '~/generated-metadata/graphql';
 
@@ -20,7 +20,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     Icon: IconAddressBook,
     table: EventLogTable.OBJECT_EVENT,
     requiresAuditLogs: true,
-    columns: SETTINGS_LOGS_EVENT_COLUMNS,
+    columns: LOG_CONSOLE_EVENT_COLUMNS,
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} change`,
@@ -33,14 +33,14 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     Icon: IconTerminal,
     table: EventLogTable.APPLICATION_LOG,
     requiresAuditLogs: false,
-    columns: SETTINGS_LOGS_APPLICATION_LOG_COLUMNS,
+    columns: LOG_CONSOLE_APPLICATION_LOG_COLUMNS,
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
-        one: `${formattedCount} log line`,
-        other: `${formattedCount} log lines`,
+        one: `${formattedCount} log`,
+        other: `${formattedCount} logs`,
       }),
     getSeverity: (entry) =>
-      SETTINGS_LOGS_LEVELS[entry.properties?.level]?.severity,
+      LOG_CONSOLE_LEVELS[entry.properties?.level]?.severity,
   },
   {
     id: 'page-views',
@@ -48,7 +48,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     Icon: IconEye,
     table: EventLogTable.PAGEVIEW,
     requiresAuditLogs: true,
-    columns: SETTINGS_LOGS_EVENT_COLUMNS,
+    columns: LOG_CONSOLE_EVENT_COLUMNS,
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} page view`,
@@ -61,7 +61,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     Icon: IconGauge,
     table: EventLogTable.USAGE_EVENT,
     requiresAuditLogs: true,
-    columns: SETTINGS_LOGS_USAGE_EVENT_COLUMNS,
+    columns: LOG_CONSOLE_USAGE_EVENT_COLUMNS,
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} usage event`,

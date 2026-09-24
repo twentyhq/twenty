@@ -1,13 +1,19 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { IconButton } from 'twenty-ui/components';
+import { IconRefresh } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { SettingsLogsEmptyState } from '@/log-console/components/SettingsLogsEmptyState';
-import { SettingsLogsErrorState } from '@/log-console/components/SettingsLogsErrorState';
-import { SettingsLogsTable } from '@/log-console/components/SettingsLogsTable';
+import { LogConsoleTable } from '@/log-console/components/LogConsoleTable';
+import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
+import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 
 const RECORDS_PER_PAGE = 100;
 
@@ -15,20 +21,21 @@ const StyledResults = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
   min-height: 0;
 `;
 
-const StyledCount = styled.div`
+const StyledToolbar = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing[8]};
+  justify-content: flex-end;
+`;
+
+const StyledCount = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
-  height: ${themeCssVariables.spacing[4]};
-  padding: 0 ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTableContainer = styled.div`
-  flex: 1;
-  min-height: 0;
 `;
 
 type LogConsoleResultsProps = {
@@ -36,6 +43,7 @@ type LogConsoleResultsProps = {
 };
 
 export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
+  const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
 
   const { records, totalCount, loading, error, loadMore, refetch } =
@@ -44,31 +52,76 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
       first: RECORDS_PER_PAGE,
     });
 
-  if (isDefined(error)) {
-    return <SettingsLogsErrorState onRetry={() => void refetch()} />;
-  }
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
+    LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
+  );
 
-  if (!loading && records.length === 0) {
-    return <SettingsLogsEmptyState />;
-  }
+  const refreshLogs = () => {
+    getScrollWrapperElement().scrollWrapperElement?.scrollTo({ top: 0 });
+    void refetch();
+  };
+
+  const renderLogs = () => {
+    if (isDefined(error)) {
+      return (
+        <ErrorState.Root>
+          <ErrorState.Content>
+            <ErrorState.Title>{t`Couldn't load logs`}</ErrorState.Title>
+          </ErrorState.Content>
+          <Button
+            variant="outline"
+            startIcon={<IconRefresh />}
+            onClick={refreshLogs}
+          >
+            {t`Try again`}
+          </Button>
+        </ErrorState.Root>
+      );
+    }
+
+    if (!loading && records.length === 0) {
+      return (
+        <EmptyState.Root>
+          <EmptyState.Content>
+            <EmptyState.Title>{t`No logs yet`}</EmptyState.Title>
+          </EmptyState.Content>
+        </EmptyState.Root>
+      );
+    }
+
+    return (
+      <LogConsoleTable
+        source={source}
+        entries={records}
+        loading={loading}
+        onLoadMore={loadMore}
+      />
+    );
+  };
 
   return (
     <StyledResults>
-      <StyledCount>
-        {records.length > 0 &&
-          source.getCountLabel({
-            count: totalCount,
-            formattedCount: formatNumber(totalCount),
-          })}
-      </StyledCount>
-      <StyledTableContainer>
-        <SettingsLogsTable
-          source={source}
-          entries={records}
+      <StyledToolbar>
+        {records.length > 0 && (
+          <StyledCount>
+            {source.getCountLabel({
+              count: totalCount,
+              formattedCount: formatNumber(totalCount),
+            })}
+          </StyledCount>
+        )}
+        <IconButton
+          size="sm"
+          variant="ghost"
+          tooltip={t`Refresh`}
+          aria-label={t`Refresh`}
           loading={loading}
-          onLoadMore={loadMore}
-        />
-      </StyledTableContainer>
+          onClick={refreshLogs}
+        >
+          <IconRefresh />
+        </IconButton>
+      </StyledToolbar>
+      {renderLogs()}
     </StyledResults>
   );
 };

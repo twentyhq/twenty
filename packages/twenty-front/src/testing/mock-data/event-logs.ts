@@ -305,4 +305,38 @@ export const mockedEventLogRecordsByTable: Partial<
       },
     },
   ],
+  [EventLogTable.USAGE_EVENT]: [
+    {
+      __typename: 'EventLogRecord',
+      event: 'AI',
+      timestamp: '2026-09-24T11:56:21.408Z',
+      userId: JONAS_WEBER.userWorkspaceId,
+      recordId: null,
+      objectMetadataId: null,
+      properties: {
+        operationType: 'AI_CHAT_TOKEN',
+        quantity: 1320,
+        unit: 'TOKEN',
+        creditsUsedMicro: 5500,
+        resourceId: '',
+        resourceContext: 'anthropic/claude-opus-4-6',
+      },
+    },
+    {
+      __typename: 'EventLogRecord',
+      event: 'WORKFLOW',
+      timestamp: '2026-09-24T11:41:09.772Z',
+      userId: SARAH_CHEN.userWorkspaceId,
+      recordId: null,
+      objectMetadataId: null,
+      properties: {
+        operationType: 'WORKFLOW_EXECUTION',
+        quantity: 1,
+        unit: 'INVOCATION',
+        creditsUsedMicro: 12000,
+        resourceId: '',
+        resourceContext: '',
+      },
+    },
+  ],
 };

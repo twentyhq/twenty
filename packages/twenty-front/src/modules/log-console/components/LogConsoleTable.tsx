@@ -5,7 +5,8 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-import { type SettingsLogsSeverity } from '@/log-console/types/SettingsLogsSeverity';
+import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
+import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -15,23 +16,22 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 
-const SETTINGS_LOGS_TABLE_SCROLL_WRAPPER_ID = 'settings-logs-table';
-
 const SKELETON_ROW_COUNT = 8;
 
-const SEVERITY_STRIPE_COLORS: Record<SettingsLogsSeverity, string> = {
+const SEVERITY_STRIPE_COLORS: Record<LogConsoleSeverity, string> = {
   error: themeCssVariables.color.red,
   warning: themeCssVariables.color.orange,
 };
 
 const StyledHeaderRow = styled(TableRow)`
   background-color: ${themeCssVariables.background.primary};
+  border-radius: 0;
   position: sticky;
   top: 0;
   z-index: 1;
 `;
 
-const StyledEntryRow = styled(TableRow)<{ severity?: SettingsLogsSeverity }>`
+const StyledEntryRow = styled(TableRow)<{ severity?: LogConsoleSeverity }>`
   & > :first-child {
     box-shadow: ${({ severity }) =>
       isDefined(severity)
@@ -44,30 +44,24 @@ const StyledLoadMoreTrigger = styled.div`
   height: 1px;
 `;
 
-const StyledLoadingMore = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[4]};
-  text-align: center;
-`;
-
-type SettingsLogsTableProps = {
+type LogConsoleTableProps = {
   source: LogConsoleSource;
   entries: EventLogRecord[];
   loading: boolean;
   onLoadMore: () => void;
 };
 
-export const SettingsLogsTable = ({
+export const LogConsoleTable = ({
   source,
   entries,
   loading,
   onLoadMore,
-}: SettingsLogsTableProps) => {
+}: LogConsoleTableProps) => {
   const { t } = useLingui();
   const theme = useTheme();
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
-    SETTINGS_LOGS_TABLE_SCROLL_WRAPPER_ID,
+    LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
   );
 
   const { ref: loadMoreTriggerRef } = useInView({
@@ -87,7 +81,7 @@ export const SettingsLogsTable = ({
   const isInitialLoading = loading && entries.length === 0;
 
   return (
-    <ScrollWrapper componentInstanceId={SETTINGS_LOGS_TABLE_SCROLL_WRAPPER_ID}>
+    <ScrollWrapper componentInstanceId={LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID}>
       <Table>
         <StyledHeaderRow
           gridTemplateColumns={gridTemplateColumns}
@@ -121,10 +115,18 @@ export const SettingsLogsTable = ({
             <StyledEntryRow
               key={entryIndex}
               gridTemplateColumns={gridTemplateColumns}
+              hoverBackgroundColor={
+                themeCssVariables.background.transparent.light
+              }
               severity={source.getSeverity?.(entry)}
             >
               {source.columns.map((column) => (
-                <TableCell key={column.id} overflow="hidden">
+                <TableCell
+                  key={column.id}
+                  gap={themeCssVariables.spacing[2]}
+                  overflow="hidden"
+                  whiteSpace="nowrap"
+                >
                   {column.renderCell(entry)}
                 </TableCell>
               ))}
@@ -133,9 +135,6 @@ export const SettingsLogsTable = ({
         )}
       </Table>
       <StyledLoadMoreTrigger ref={loadMoreTriggerRef} />
-      {loading && entries.length > 0 && (
-        <StyledLoadingMore>{t`Loading more...`}</StyledLoadingMore>
-      )}
     </ScrollWrapper>
   );
 };

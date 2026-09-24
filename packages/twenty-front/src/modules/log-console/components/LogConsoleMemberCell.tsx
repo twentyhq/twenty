@@ -1,24 +1,18 @@
-import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ActorDisplay } from '@/ui/field/display/components/ActorDisplay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const StyledUnknownMember = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-type SettingsLogsMemberCellProps = {
+type LogConsoleMemberCellProps = {
   userId?: string | null;
   userWorkspaceId?: string | null;
 };
 
-export const SettingsLogsMemberCell = ({
+export const LogConsoleMemberCell = ({
   userId,
   userWorkspaceId,
-}: SettingsLogsMemberCellProps) => {
+}: LogConsoleMemberCellProps) => {
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
@@ -30,7 +24,7 @@ export const SettingsLogsMemberCell = ({
     : currentWorkspaceMembers.find((member) => member.userId === userId);
 
   if (!isDefined(workspaceMember)) {
-    return <StyledUnknownMember>—</StyledUnknownMember>;
+    return null;
   }
 
   return (

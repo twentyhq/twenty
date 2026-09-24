@@ -3,16 +3,18 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { DATE_FORMAT_WITHOUT_YEAR } from '@/localization/constants/DateFormatWithoutYear';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { useSettingsLogsTimeZone } from '@/log-console/hooks/useSettingsLogsTimeZone';
+import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/format-preferences/getWorkspaceDateFormatFromDateFormat';
+import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledTime = styled.span`
-  color: ${themeCssVariables.font.color.primary};
+  color: ${themeCssVariables.font.color.secondary};
   font-family: ${themeCssVariables.code.font.family};
   white-space: nowrap;
 `;
@@ -21,18 +23,20 @@ const StyledMilliseconds = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-type SettingsLogsTimeCellProps = {
+type LogConsoleTimeCellProps = {
   timestamp: string;
 };
 
-export const SettingsLogsTimeCell = ({
-  timestamp,
-}: SettingsLogsTimeCellProps) => {
-  const timeZone = useSettingsLogsTimeZone();
-  const { timeFormat } = useDateTimeFormat();
+export const LogConsoleTimeCell = ({ timestamp }: LogConsoleTimeCellProps) => {
+  const timeZone = useLogConsoleTimeZone();
+  const { dateFormat, timeFormat } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const isTwelveHourFormat = timeFormat === TimeFormat.HOUR_12;
+
+  const dayAndMonthFormat =
+    DATE_FORMAT_WITHOUT_YEAR[getWorkspaceDateFormatFromDateFormat(dateFormat)];
+  const timeWithSecondsFormat = isTwelveHourFormat ? 'h:mm:ss' : 'HH:mm:ss';
 
   const formatTimestamp = (format: string) =>
     formatInTimeZone(timestamp, timeZone, format, { locale: localeCatalog });
@@ -43,9 +47,7 @@ export const SettingsLogsTimeCell = ({
       delay={TooltipDelay.mediumDelay}
     >
       <StyledTime>
-        {formatTimestamp(
-          isTwelveHourFormat ? 'MMM d h:mm:ss' : 'MMM d HH:mm:ss',
-        )}
+        {formatTimestamp(`${dayAndMonthFormat} ${timeWithSecondsFormat}`)}
         <StyledMilliseconds>{formatTimestamp('.SSS')}</StyledMilliseconds>
         {isTwelveHourFormat && formatTimestamp(' aa')}
       </StyledTime>

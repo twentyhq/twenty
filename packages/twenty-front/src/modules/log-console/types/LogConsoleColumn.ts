@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 
-export type SettingsLogsColumn = {
+export type LogConsoleColumn = {
   id: string;
   label: MessageDescriptor;
   gridTrack: string;

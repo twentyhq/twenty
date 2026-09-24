@@ -1,8 +1,8 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { type IconComponent } from 'twenty-ui/icon';
 
-import { type SettingsLogsColumn } from '@/log-console/types/SettingsLogsColumn';
-import { type SettingsLogsSeverity } from '@/log-console/types/SettingsLogsSeverity';
+import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
+import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 import { type LogConsoleSourceId } from '@/log-console/types/LogConsoleSourceId';
 import {
   type EventLogRecord,
@@ -15,7 +15,7 @@ export type LogConsoleSource = {
   Icon: IconComponent;
   table: EventLogTable;
   requiresAuditLogs: boolean;
-  columns: SettingsLogsColumn[];
+  columns: LogConsoleColumn[];
   getCountLabel: (input: { count: number; formattedCount: string }) => string;
-  getSeverity?: (entry: EventLogRecord) => SettingsLogsSeverity | undefined;
+  getSeverity?: (entry: EventLogRecord) => LogConsoleSeverity | undefined;
 };

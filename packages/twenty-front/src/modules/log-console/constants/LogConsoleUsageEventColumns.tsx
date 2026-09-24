@@ -1,12 +1,12 @@
 import { msg } from '@lingui/core/macro';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { SettingsLogsMemberCell } from '@/log-console/components/SettingsLogsMemberCell';
-import { SETTINGS_LOGS_TIME_COLUMN } from '@/log-console/constants/SettingsLogsTimeColumn';
-import { type SettingsLogsColumn } from '@/log-console/types/SettingsLogsColumn';
+import { LogConsoleMemberCell } from '@/log-console/components/LogConsoleMemberCell';
+import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
+import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
 
-export const SETTINGS_LOGS_USAGE_EVENT_COLUMNS: SettingsLogsColumn[] = [
-  SETTINGS_LOGS_TIME_COLUMN,
+export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
+  LOG_CONSOLE_TIME_COLUMN,
   {
     id: 'event',
     label: msg`Event`,
@@ -18,13 +18,13 @@ export const SETTINGS_LOGS_USAGE_EVENT_COLUMNS: SettingsLogsColumn[] = [
     label: msg`Member`,
     gridTrack: '200px',
     renderCell: (entry) => (
-      <SettingsLogsMemberCell userWorkspaceId={entry.userId} />
+      <LogConsoleMemberCell userWorkspaceId={entry.userId} />
     ),
   },
   {
     id: 'details',
     label: msg`Details`,
-    gridTrack: 'minmax(320px, 1fr)',
+    gridTrack: 'minmax(0, 1fr)',
     renderCell: (entry) => (
       <Text truncate>{JSON.stringify(entry.properties)}</Text>
     ),

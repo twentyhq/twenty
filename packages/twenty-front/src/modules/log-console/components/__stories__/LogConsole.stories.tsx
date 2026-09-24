@@ -135,6 +135,20 @@ type Story = StoryObj<typeof LogConsole>;
 
 export const Collapsed: Story = {};
 
+export const RecordChangesOpen: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('tab', { name: 'Record changes' }),
+    );
+    await canvas.findByText('Sarah Chen');
+  },
+};
+
 export const AppLogsOpen: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
@@ -152,7 +166,7 @@ export const AppLogsOpen: Story = {
   },
 };
 
-export const PageViews: Story = {
+export const PageViewsOpen: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
   },
@@ -166,31 +180,19 @@ export const PageViews: Story = {
   },
 };
 
-export const LoadError: Story = {
+export const UsageOpen: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
-  },
-  parameters: {
-    msw: {
-      handlers: [
-        metadataGraphql.query(getOperationName(GET_EVENT_LOGS) ?? '', () =>
-          HttpResponse.json({
-            errors: [{ message: 'ClickHouse is unavailable' }],
-          }),
-        ),
-        ...(meta.parameters?.msw.handlers ?? []),
-      ],
-    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText("Couldn't load logs");
-    await canvas.findByRole('button', { name: 'Try again' });
+    await userEvent.click(await canvas.findByRole('tab', { name: 'Usage' }));
+    await canvas.findByText('Jonas Weber');
   },
 };
 
-export const NoLogs: Story = {
+export const Empty: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
   },
@@ -221,6 +223,30 @@ export const NoLogs: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('No logs yet');
+  },
+};
+
+export const LoadError: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query(getOperationName(GET_EVENT_LOGS) ?? '', () =>
+          HttpResponse.json({
+            errors: [{ message: 'ClickHouse is unavailable' }],
+          }),
+        ),
+        ...(meta.parameters?.msw.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText("Couldn't load logs");
+    await canvas.findByRole('button', { name: 'Try again' });
   },
 };
 
