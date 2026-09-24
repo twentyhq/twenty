@@ -3,11 +3,12 @@ import { WorkflowEditActionClassify } from '@/workflow/workflow-steps/workflow-a
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, screen, userEvent, within } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const DEFAULT_ACTION: WorkflowClassifyAction = {
   id: getWorkflowNodeIdMock(),
@@ -31,7 +32,7 @@ const meta = {
   decorators: [
     WorkflowStepDecorator,
     ComponentDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     WorkspaceDecorator,
   ],
   args: { action: DEFAULT_ACTION, actionOptions: { onActionUpdate: fn() } },
