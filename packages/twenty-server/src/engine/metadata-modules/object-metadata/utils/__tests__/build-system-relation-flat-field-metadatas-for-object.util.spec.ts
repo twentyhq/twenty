@@ -66,7 +66,7 @@ describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
     ]);
   });
 
-  it('adds the chat pair on the same morph as the standard legs', () => {
+  it('adds the chat pair when the chat target is passed', () => {
     const bundles = buildSystemRelationFlatFieldMetadatasForObject({
       sourceFlatObjectMetadata: petFlatObjectMetadata,
       standardTargetFlatObjectMetadataByNameSingular: {
@@ -76,9 +76,33 @@ describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
       applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
-    expect(bundles).toHaveLength(5);
+    expect(
+      bundles.map(
+        ({ reverseFlatFieldMetadata }) =>
+          reverseFlatFieldMetadata.objectMetadataUniversalIdentifier,
+      ),
+    ).toEqual([
+      STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+      STANDARD_OBJECTS.attachment.universalIdentifier,
+      STANDARD_OBJECTS.noteTarget.universalIdentifier,
+      STANDARD_OBJECTS.taskTarget.universalIdentifier,
+      STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+    ]);
+  });
 
-    const chatBundle = bundles[4];
+  // The 2-43 backfill passes the chat target alone to mint only its pair.
+  it('mints the chat pair on the same morph as the standard legs', () => {
+    const bundles = buildSystemRelationFlatFieldMetadatasForObject({
+      sourceFlatObjectMetadata: petFlatObjectMetadata,
+      standardTargetFlatObjectMetadataByNameSingular: {
+        agentChatThreadTarget: findStandardObject('agentChatThreadTarget'),
+      },
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(bundles).toHaveLength(1);
+
+    const [chatBundle] = bundles;
 
     expect(chatBundle.forwardFlatFieldMetadata).toMatchObject({
       name: 'agentChatThreadTargets',
