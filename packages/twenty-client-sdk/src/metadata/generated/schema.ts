@@ -3279,11 +3279,11 @@ export interface MinimalMetadata {
 export interface Query {
     navigationMenuItems: NavigationMenuItem[]
     navigationMenuItem?: NavigationMenuItem
-    applicationSdkClientChecksums?: SdkClientChecksums
-    isApplicationStopped: Scalars['Boolean']
     enterprisePortalSession?: Scalars['String']
     enterpriseCheckoutSession?: Scalars['String']
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
+    applicationSdkClientChecksums?: SdkClientChecksums
+    isApplicationStopped: Scalars['Boolean']
     usageLimits: UsageLimit[]
     usageQuotasWithConsumption: UsageQuotaWithConsumption[]
     usageQuotaDefinitions: UsageQuotaDefinitions
@@ -3428,8 +3428,13 @@ export interface Mutation {
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
     setEnterpriseKey: EnterpriseLicenseInfoDTO
+    /** @deprecated Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage. */
     uploadWorkspaceLogo: FileWithSignedUrl
+    /** @deprecated Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage. */
     uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
+    completeWorkspaceLogoUpload: FileWithSignedUrl
+    completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl
+    /** @deprecated Use createFileUpload with the FilesField folder and the fieldMetadataUniversalIdentifier, then completeFileUpload, which send the file straight to file storage. */
     uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl
     createUsageLimit: UsageLimit
     updateUsageLimit: UsageLimit
@@ -3635,7 +3640,10 @@ export interface Mutation {
     signUp: AvailableWorkspacesAndAccessTokens
     signUpInWorkspace: SignUp
     signUpInNewWorkspace: SignUp
+    /** @deprecated Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage. */
     uploadNewWorkspaceLogo: FileWithSignedUrl
+    createNewWorkspaceLogoUpload: FileUploadTarget
+    completeNewWorkspaceLogoUpload: FileWithSignedUrl
     generateTransientToken: TransientToken
     getAuthTokensFromLoginToken: AuthTokens
     getAuthTokensFromSSOExchangeToken: AuthTokens
@@ -3674,6 +3682,7 @@ export interface Mutation {
     checkPublicDomainValidRecords?: DomainValidRecords
     createDevelopmentApplication: DevelopmentApplication
     syncApplication: WorkspaceMigration
+    /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
     uploadApplicationFile: File
     createApplicationFileUploads: CreateApplicationFileUploadsResult
     completeApplicationFileUploads: CompleteApplicationFileUploadsResult
@@ -7111,11 +7120,11 @@ export interface MinimalMetadataGenqlSelection{
 export interface QueryGenqlSelection{
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    isApplicationStopped?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
+    applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    isApplicationStopped?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     usageLimits?: UsageLimitGenqlSelection
     usageQuotasWithConsumption?: UsageQuotaWithConsumptionGenqlSelection
     usageQuotaDefinitions?: UsageQuotaDefinitionsGenqlSelection
@@ -7309,8 +7318,13 @@ export interface MutationGenqlSelection{
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
+    /** @deprecated Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage. */
     uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
+    /** @deprecated Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage. */
     uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
+    completeWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
+    completeWorkspaceMemberProfilePictureUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
+    /** @deprecated Use createFileUpload with the FilesField folder and the fieldMetadataUniversalIdentifier, then completeFileUpload, which send the file straight to file storage. */
     uploadFilesFieldFileByUniversalIdentifier?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataUniversalIdentifier: Scalars['String']} })
     createUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: CreateUsageLimitInput} })
     updateUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: UpdateUsageLimitInput} })
@@ -7516,7 +7530,10 @@ export interface MutationGenqlSelection{
     signUp?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null), captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInNewWorkspace?: (SignUpGenqlSelection & { __args?: {input?: (SignUpInNewWorkspaceInput | null)} })
+    /** @deprecated Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage. */
     uploadNewWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {workspaceId: Scalars['String'], file: Scalars['Upload']} })
+    createNewWorkspaceLogoUpload?: (FileUploadTargetGenqlSelection & { __args: {workspaceId: Scalars['String'], filename: Scalars['String'], size: Scalars['Float']} })
+    completeNewWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {workspaceId: Scalars['String'], fileId: Scalars['String']} })
     generateTransientToken?: TransientTokenGenqlSelection
     getAuthTokensFromLoginToken?: (AuthTokensGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     getAuthTokensFromSSOExchangeToken?: (AuthTokensGenqlSelection & { __args: {ssoExchangeToken: Scalars['String']} })
@@ -7555,6 +7572,7 @@ export interface MutationGenqlSelection{
     checkPublicDomainValidRecords?: (DomainValidRecordsGenqlSelection & { __args: {domain: Scalars['String']} })
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {manifest: Scalars['JSON'], dryRun?: (Scalars['Boolean'] | null), inferDeletionFromMissingEntities?: (Scalars['Boolean'] | null)} })
+    /** @deprecated Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage. */
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
     createApplicationFileUploads?: (CreateApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], files: ApplicationFileUploadRequestInput[]} })
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })

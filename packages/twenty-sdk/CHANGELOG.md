@@ -26,6 +26,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
   The returned `{ id, path, size, createdAt, url }` is unchanged. `uploadFile` now requires a Twenty server that exposes the `createFileUpload` and `completeFileUpload` mutations.
 
+### Removed
+
+- **The per-file multipart fallback in `twenty app deploy` and `twenty app dev`.** Application files are only uploaded straight to file storage now (`createApplicationFileUploads`, PUT, `completeApplicationFileUploads`). The CLI no longer falls back to the `uploadApplicationFile` mutation on a server that lacks the batch mutations, so deploying to a server older than the direct upload fails instead of degrading.
+
 ### Added
 
 - **`enqueueJobs` in `twenty-sdk/logic-function`.** Enqueues one run per payload of a single logic function in one call (up to 200 payloads per batch). `retryLimit` and `delayMs` apply to every run in the batch.
