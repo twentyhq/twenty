@@ -9,7 +9,6 @@ import { isElementLink } from '@/polyfills/selectors/utils/isElementLink';
 import { isElementPlaceholderShown } from '@/polyfills/selectors/utils/isElementPlaceholderShown';
 import { isElementReadWrite } from '@/polyfills/selectors/utils/isElementReadWrite';
 import { isElementRequired } from '@/polyfills/selectors/utils/isElementRequired';
-import { isElementValid } from '@/polyfills/selectors/utils/isElementValid';
 
 export const STATE_PSEUDO_CLASS_MATCHER_BY_NAME: Record<
   string,
@@ -29,5 +28,4 @@ export const STATE_PSEUDO_CLASS_MATCHER_BY_NAME: Record<
   'read-only': (element) => !isElementReadWrite(element),
   'read-write': isElementReadWrite,
   required: isElementRequired,
-  valid: isElementValid,
 };

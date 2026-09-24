@@ -585,8 +585,7 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(checkbox.matches(':indeterminate')).toBe(true);
       expect(progress.matches(':indeterminate')).toBe(true);
       expect(plainDiv.matches(':indeterminate')).toBe(false);
-      expect(checkbox.matches(':valid')).toBe(true);
-      expect(plainDiv.matches(':valid')).toBe(false);
+      expect(checkbox.matches(':valid')).toBe(false);
       expect(checkbox.matches(':invalid')).toBe(false);
       expect(details.matches(':open')).toBe(true);
       expect(plainDiv.matches(':open')).toBe(false);
@@ -614,55 +613,6 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(paragraph.matches(':dir(rtl)')).toBe(true);
       expect(paragraph.matches(':dir(ltr)')).toBe(false);
       expect(document.body.matches(':dir(ltr)')).toBe(true);
-    });
-
-    it('should not match :valid on elements barred from constraint validation', () => {
-      const { document } = createSelectorFixture();
-      const createElementWithAttributes = (
-        tagName: string,
-        attributes: Record<string, string>,
-      ): Element => {
-        const element = document.createElement(tagName);
-
-        for (const [attributeName, attributeValue] of Object.entries(
-          attributes,
-        )) {
-          element.setAttribute(attributeName, attributeValue);
-        }
-
-        document.body.append(element);
-
-        return element;
-      };
-
-      const barredElements = [
-        createElementWithAttributes('output', {}),
-        createElementWithAttributes('input', { disabled: '' }),
-        createElementWithAttributes('input', { type: 'hidden' }),
-        createElementWithAttributes('input', { readonly: '' }),
-        createElementWithAttributes('textarea', { readonly: '' }),
-        createElementWithAttributes('button', { type: 'button' }),
-        createElementWithAttributes('button', { type: 'reset' }),
-      ];
-      const validElements = [
-        createElementWithAttributes('input', {}),
-        createElementWithAttributes('input', {
-          type: 'checkbox',
-          readonly: '',
-        }),
-        createElementWithAttributes('button', {}),
-        createElementWithAttributes('select', {}),
-        createElementWithAttributes('fieldset', {}),
-        createElementWithAttributes('form', {}),
-      ];
-
-      for (const barredElement of barredElements) {
-        expect(barredElement.matches(':valid')).toBe(false);
-      }
-
-      for (const validElement of validElements) {
-        expect(validElement.matches(':valid')).toBe(true);
-      }
     });
 
     it('should derive the checked option from the select value or its first enabled option', () => {
