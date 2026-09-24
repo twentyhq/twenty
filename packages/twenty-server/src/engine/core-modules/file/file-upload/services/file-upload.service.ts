@@ -72,8 +72,8 @@ export class FileUploadService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
   ) {}
@@ -375,16 +375,18 @@ export class FileUploadService {
         );
       }
 
-      const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
-        select: ['applicationId', 'universalIdentifier'],
-        where: {
-          ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
-          ...(fieldMetadataUniversalIdentifier
-            ? { universalIdentifier: fieldMetadataUniversalIdentifier }
-            : {}),
-          workspaceId,
+      const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
+        workspaceId,
+        {
+          select: ['applicationId', 'universalIdentifier'],
+          where: {
+            ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
+            ...(fieldMetadataUniversalIdentifier
+              ? { universalIdentifier: fieldMetadataUniversalIdentifier }
+              : {}),
+          },
         },
-      });
+      );
 
       const application = await this.applicationRepository.findOneOrFail({
         where: {

@@ -1,6 +1,10 @@
 import { AGENT_CHAT_THREAD_TARGET_FLAT_ENTITY_MAPS_MOCK } from 'src/engine/metadata-modules/ai/ai-chat/__mocks__/agent-chat-thread-target-flat-entity-maps.mock';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -39,28 +43,27 @@ const args = {
 };
 
 const buildService = () => {
-  const threads = [{ id: THREAD_ID, userWorkspaceId: OWNER_ID }];
+  // Conversations the caller can edit; the sharing service reports any other
+  // as not found.
+  const editableThreadIdsByMember = new Map([[OWNER_ID, [THREAD_ID]]]);
 
-  const threadRepository = {
-    find: jest.fn().mockImplementation(async (_workspaceId, { where }) => {
-      // `In(...)` is a FindOperator here; read the ids it carries.
-      const requestedThreadIds: string[] = where.id._value;
+  const agentChatSharingService = {
+    getThreadWithAccess: jest
+      .fn()
+      .mockImplementation(async ({ threadId, userWorkspaceId }) => {
+        if (
+          !(editableThreadIdsByMember.get(userWorkspaceId) ?? []).includes(
+            threadId,
+          )
+        ) {
+          throw new AiException(
+            'Thread not found',
+            AiExceptionCode.THREAD_NOT_FOUND,
+          );
+        }
 
-      return threads.filter(
-        (thread) =>
-          thread.userWorkspaceId === where.userWorkspaceId &&
-          requestedThreadIds.includes(thread.id),
-      );
-    }),
-    findOne: jest.fn().mockImplementation(async (_workspaceId, { where }) => {
-      return (
-        threads.find(
-          (thread) =>
-            thread.id === where.id &&
-            thread.userWorkspaceId === where.userWorkspaceId,
-        ) ?? null
-      );
-    }),
+        return { id: threadId };
+      }),
   };
 
   const targetRepository = {
@@ -114,18 +117,17 @@ const buildService = () => {
 
   return {
     service: new AgentChatThreadTargetService(
-      threadRepository as never,
+      agentChatSharingService as never,
       agentHistoryStorageService as never,
       workspaceOrmManager as never,
       workspaceCacheService as never,
     ),
     targetRepository,
-    threadRepository,
+    agentChatSharingService,
     recordRepository,
     readableRecordIds,
     workspaceOrmManager,
     storage,
-    threads,
   };
 };
 
@@ -156,7 +158,7 @@ describe('Attaching a conversation to a record', () => {
     expect(targetRepository.insert).not.toHaveBeenCalled();
   });
 
-  it('refuses to attach a conversation the member does not own', async () => {
+  it('refuses to attach a conversation the member cannot edit', async () => {
     const { service, targetRepository } = buildService();
 
     await expect(
@@ -167,6 +169,20 @@ describe('Attaching a conversation to a record', () => {
     ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
 
     expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+
+  // Filing a conversation under a record changes it, as renaming it does.
+  it('asks for edit access to the conversation', async () => {
+    const { service, agentChatSharingService } = buildService();
+
+    await service.attachThreadToRecord(args);
+
+    expect(agentChatSharingService.getThreadWithAccess).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: OWNER_ID,
+      threadId: THREAD_ID,
+      operationType: 'update',
+    });
   });
 
   it('rejects an object name the workspace does not have', async () => {

@@ -215,6 +215,16 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         {} as never,
         { broadcast: jest.fn().mockResolvedValue(undefined) } as never,
         {} as never,
+        {
+          getThreadWithAccess: ({
+            workspaceId,
+            threadId,
+          }: {
+            workspaceId: string;
+            threadId: string;
+          }) => threads.findOne(workspaceId, { where: { id: threadId } }),
+          getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
+        } as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>
@@ -1529,20 +1539,27 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
         expect(selected).toBe('workspace'),
       );
-      await lifecycle.setNewWorkspaceDefault('core');
+      await expect(lifecycle.setNewWorkspaceDefault('core')).rejects.toThrow(
+        'New workspaces require workspace agent history storage',
+      );
       await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
         expect(selected).toBe('workspace'),
       );
     });
 
-    it('honors an explicit core default for a new empty workspace', async () => {
+    it('ignores a legacy core default when provisioning a new empty workspace', async () => {
       for (const table of [...AGENT_HISTORY_TABLES].reverse())
         await dataSource.query(`DELETE FROM core."${table.name}"`);
-      await lifecycle.setNewWorkspaceDefault('core');
+      await expect(lifecycle.setNewWorkspaceDefault('core')).rejects.toThrow(
+        'New workspaces require workspace agent history storage',
+      );
+      await dataSource.query(
+        `INSERT INTO core."keyValuePair" ("key", "type", "value") VALUES ('agent-history-new-workspace-storage-v1', 'CONFIG_VARIABLE', '{"storage":"core"}'::jsonb)`,
+      );
       await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await storage.run(WORKSPACE_ID, async ({ storage: selected }) =>
-        expect(selected).toBe('core'),
+        expect(selected).toBe('workspace'),
       );
     });
     it('does not allow copy to resume after an interrupted abort', async () => {
