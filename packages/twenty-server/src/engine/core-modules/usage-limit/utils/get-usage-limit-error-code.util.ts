@@ -15,5 +15,9 @@ export const getUsageLimitErrorCode = (
     return ErrorCode.FORBIDDEN;
   }
 
+  if (code === UsageLimitExceptionCode.LIMIT_CONFLICT) {
+    return ErrorCode.CONFLICT;
+  }
+
   return ErrorCode.RATE_LIMITED;
 };

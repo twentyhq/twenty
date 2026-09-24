@@ -19,7 +19,10 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { assertUsageLimitDefaultOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-default-override-is-allowed.util';
 import { assertUsageLimitInstanceOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-instance-override-is-allowed.util';
-import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
+import {
+  buildUsageLimitScope,
+  type UsageLimitScope,
+} from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
@@ -153,7 +156,7 @@ export class UsageLimitService {
     if (!isDefined(affected) || affected === 0) {
       throw new UsageLimitException(
         `Usage limit ${input.id} changed while this request was being authorized`,
-        UsageLimitExceptionCode.LIMIT_FORBIDDEN,
+        UsageLimitExceptionCode.LIMIT_CONFLICT,
       );
     }
 
@@ -179,7 +182,7 @@ export class UsageLimitService {
     allowedUsageLimitId,
   }: {
     workspaceId: string;
-    scope: ReturnType<typeof buildUsageLimitScope>;
+    scope: UsageLimitScope;
     allowedUsageLimitId?: string;
   }): Promise<void> {
     const usageLimitHoldingScope = await this.usageLimitRepository.findOne(
@@ -275,7 +278,10 @@ export class UsageLimitService {
     });
 
     if (!isDefined(affected) || affected === 0) {
-      return false;
+      throw new UsageLimitException(
+        `Usage limit ${usageLimitId} changed while this request was being authorized`,
+        UsageLimitExceptionCode.LIMIT_CONFLICT,
+      );
     }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [

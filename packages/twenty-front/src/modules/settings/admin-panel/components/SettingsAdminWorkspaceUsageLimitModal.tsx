@@ -22,6 +22,7 @@ import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel'
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { type DeleteWorkspaceUsageLimitMutation } from '~/generated-admin/graphql';
 
 type SettingsAdminWorkspaceUsageLimitModalProps = {
   dialogId: string;
@@ -85,10 +86,11 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     UPDATE_WORKSPACE_USAGE_LIMIT,
     mutationOptions,
   );
-  const [deleteWorkspaceUsageLimit, { loading: isResetting }] = useMutation(
-    DELETE_WORKSPACE_USAGE_LIMIT,
-    mutationOptions,
-  );
+  const [deleteWorkspaceUsageLimit, { loading: isResetting }] =
+    useMutation<DeleteWorkspaceUsageLimitMutation>(
+      DELETE_WORKSPACE_USAGE_LIMIT,
+      mutationOptions,
+    );
 
   const parsedLimitValue = parsePositiveInteger(limitValue);
   const hasBurstValue = isNonEmptyString(burstValue.trim());
@@ -153,9 +155,19 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     }
 
     try {
-      await deleteWorkspaceUsageLimit({
+      const { data } = await deleteWorkspaceUsageLimit({
         variables: { workspaceId, usageLimitId: row.usageLimitId },
       });
+
+      if (data?.deleteWorkspaceUsageLimit !== true) {
+        enqueueToast({
+          variant: 'error',
+          children: t`This override no longer exists. Reload to see the current limit.`,
+        });
+        handleClose();
+
+        return;
+      }
 
       enqueueToast({
         variant: 'success',
