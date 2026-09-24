@@ -27,7 +27,7 @@ import {
   useCallback,
   useState,
 } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSidePanelWrapper = styled.div<{ isOpen: boolean }>`
   background: ${themeCssVariables.background.primary};

@@ -1,5 +1,5 @@
 import { css } from '@linaria/core';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const styles = {
   animatedPath: css`

@@ -13,7 +13,7 @@ import {
 } from '@/settings/mcp-and-apis/utils/mcpSetup';
 import { Section } from 'twenty-ui/components';
 import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledMcpEditorHeaderTitle = styled.div`

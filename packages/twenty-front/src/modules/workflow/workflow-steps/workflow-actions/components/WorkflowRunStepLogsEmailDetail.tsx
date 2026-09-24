@@ -10,7 +10,7 @@ import {
   IconMail,
   IconPaperclip,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { formatBytes } from '@/workflow/workflow-steps/workflow-actions/utils/formatBytes';
 import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';

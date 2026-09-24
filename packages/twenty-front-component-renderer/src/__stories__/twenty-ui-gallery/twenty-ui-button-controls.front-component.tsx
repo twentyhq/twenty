@@ -12,7 +12,7 @@ import {
 import { IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import 'twenty-ui/style.css';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 const ButtonControls = () => {
   const [activations, setActivations] = useState(0);

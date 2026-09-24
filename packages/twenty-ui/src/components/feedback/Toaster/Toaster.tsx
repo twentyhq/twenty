@@ -3,7 +3,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 import { createPortal } from 'react-dom';
 
-import { useThemeContainer } from '@ui/theme-constants';
+import { useThemeContainer } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Toaster.module.scss';

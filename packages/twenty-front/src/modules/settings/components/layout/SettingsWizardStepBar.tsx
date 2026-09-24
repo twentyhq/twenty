@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsWizardStepBarProps = {
   label: ReactNode;

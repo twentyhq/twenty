@@ -1,7 +1,7 @@
 import IllustrationIconCurrencyRaw from '@assets/icons/illustration-currency.svg?react';
 import { IllustrationIconWrapper } from '@ui/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 type IllustrationIconCurrencyProps = Pick<IconComponentProps, 'size'>;
 

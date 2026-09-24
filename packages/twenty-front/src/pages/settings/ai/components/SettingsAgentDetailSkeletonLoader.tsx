@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSkeletonContainer = styled.div`
   display: flex;
@@ -32,7 +31,7 @@ const StyledNameContainer = styled.div`
 `;
 
 export const SettingsAgentDetailSkeletonLoader = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}

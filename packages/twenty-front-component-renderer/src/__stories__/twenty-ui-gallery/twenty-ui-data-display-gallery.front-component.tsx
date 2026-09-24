@@ -14,7 +14,7 @@ import {
   Status,
   Tag,
 } from 'twenty-ui/primitives/data-display';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,

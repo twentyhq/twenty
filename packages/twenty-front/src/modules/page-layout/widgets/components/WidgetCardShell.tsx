@@ -14,10 +14,10 @@ import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetC
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { styled } from '@linaria/react';
-import { type MouseEvent, useContext } from 'react';
+import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -61,7 +61,7 @@ export const WidgetCardShell = ({
   onMouseEnter,
   onMouseLeave,
 }: WidgetCardShellProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { layoutMode } = usePageLayoutContentContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 

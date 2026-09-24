@@ -711,7 +711,7 @@ yarn add twenty-ui@1.0.0-alpha.1
 | `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` 등              |
 | `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` 등 |
 | `twenty-ui/icon`            | `Icon*` 컴포넌트(예: `IconCheck`)               |
-| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`       |
+| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`       |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -752,7 +752,7 @@ Twenty UI 컴포넌트는 워크스페이스의 라이트 및 다크 테마와 �
 자신의 인라인 스타일에서 동일한 디자인 토큰을 사용하려면 `useTheme()` 훅을 호출하세요. 이 훅은 활성 테마에 연결된 Twenty의 테마 토큰(여백, 색상, 모서리 반경, 폰트)을 반환하며, 컴포넌트에서 별도의 `ThemeProvider` 설정이 필요하지 않습니다:
 
 ```tsx
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const Card = () => {
   const theme = useTheme();

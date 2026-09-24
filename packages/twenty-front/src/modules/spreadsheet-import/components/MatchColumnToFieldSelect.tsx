@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 interface MatchColumnToFieldSelectProps {
   columnIndex: string;

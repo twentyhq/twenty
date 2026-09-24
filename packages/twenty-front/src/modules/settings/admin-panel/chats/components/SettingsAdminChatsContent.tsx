@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsAdminChatsTable } from '@/settings/admin-panel/chats/components/SettingsAdminChatsTable';
 import { type AdminChatThreadListItem } from '@/settings/admin-panel/chats/types/AdminChatThreadListItem';

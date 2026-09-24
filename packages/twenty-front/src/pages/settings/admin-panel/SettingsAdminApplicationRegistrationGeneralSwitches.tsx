@@ -5,7 +5,7 @@ import { IconArrowBarToDown, IconPinned, IconShield } from 'twenty-ui/icon';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { UpdateAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';

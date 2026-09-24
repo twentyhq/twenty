@@ -18,26 +18,25 @@ import { THEME_COMMON_ROOT_KEYS } from '../design-tokens/themeCommonRootKeys';
 import { THEME_CSS_FILE_NAME_BY_SCHEME } from '../design-tokens/themeCssFileNameByScheme';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const themeConstantsDirectory = resolve(packageRoot, 'src/theme-constants');
 const themeDirectory = resolve(packageRoot, 'src/theme');
 
 const leaves = collectLeaves(DESIGN_TOKENS);
 
 const sourceOutputs = [
   {
-    path: resolve(themeConstantsDirectory, THEME_CSS_FILE_NAME_BY_SCHEME.light),
+    path: resolve(themeDirectory, THEME_CSS_FILE_NAME_BY_SCHEME.light),
     content: buildThemeCss({ leaves, scheme: 'light' }),
   },
   {
-    path: resolve(themeConstantsDirectory, THEME_CSS_FILE_NAME_BY_SCHEME.dark),
+    path: resolve(themeDirectory, THEME_CSS_FILE_NAME_BY_SCHEME.dark),
     content: buildThemeCss({ leaves, scheme: 'dark' }),
   },
   {
-    path: resolve(themeConstantsDirectory, 'themeCssVariables.ts'),
+    path: resolve(themeDirectory, 'themeCssVariables.ts'),
     content: buildThemeCssVariables(leaves),
   },
   {
-    path: resolve(themeConstantsDirectory, 'themeTypes.ts'),
+    path: resolve(themeDirectory, 'themeTypes.ts'),
     content: buildThemeTypes(leaves),
   },
   {

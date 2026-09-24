@@ -10,7 +10,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -18,7 +18,7 @@ import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   GetToolIndexDocument,
@@ -31,7 +31,7 @@ const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
 
 export const SettingsToolDetail = () => {
   const { toolIdentifier } = useParams();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const navigate = useNavigate();
   const { enqueueToast } = useToast();
   const { updateLogicFunction, deleteLogicFunction } =
