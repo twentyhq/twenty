@@ -114,10 +114,12 @@ export class UsageLimitService {
       );
     }
 
+    const authorizedScope = buildUsageLimitScope(usageLimit);
+
     // An update rewrites the whole scope, so moving a row off a default is a
     // deletion in disguise and needs the gate the leaving scope would get.
     assertUsageLimitDefaultOverrideIsAllowed({
-      scope: buildUsageLimitScope(usageLimit),
+      scope: authorizedScope,
       isOperator,
     });
 
@@ -133,15 +135,26 @@ export class UsageLimitService {
       allowedUsageLimitId: usageLimit.id,
     });
 
-    await this.usageLimitRepository.update(
+    // Conditioned on the scope the gate just cleared, not on the id alone: an
+    // operator moving this row onto a protected default between the read and
+    // the write would otherwise have its override rewritten by a tenant whose
+    // request was authorized against the older scope.
+    const { affected } = await this.usageLimitRepository.update(
       workspaceId,
-      { id: usageLimit.id },
+      { id: usageLimit.id, ...authorizedScope },
       {
         ...scope,
         limitValue: input.payload.limitValue,
         burstValue: input.payload.burstValue ?? null,
       },
     );
+
+    if (!isDefined(affected) || affected === 0) {
+      throw new UsageLimitException(
+        `Usage limit ${input.id} changed while this request was being authorized`,
+        UsageLimitExceptionCode.LIMIT_FORBIDDEN,
+      );
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimits',
@@ -253,8 +266,11 @@ export class UsageLimitService {
       isOperator,
     });
 
+    // Same scope condition as update: a row an operator moved onto a protected
+    // default after the gate ran must not be deleted by this request.
     const { affected } = await this.usageLimitRepository.delete(workspaceId, {
       id: usageLimitId,
+      ...buildUsageLimitScope(usageLimit),
     });
 
     if (!isDefined(affected) || affected === 0) {

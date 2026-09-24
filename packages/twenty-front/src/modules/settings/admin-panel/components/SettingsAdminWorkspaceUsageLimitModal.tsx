@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
@@ -92,15 +92,15 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
   );
 
   const parsedLimitValue = parsePositiveInteger(limitValue);
-  const parsedBurstValue =
-    burstValue.trim() === '' ? null : parsePositiveInteger(burstValue);
+  const hasBurstValue = isNonEmptyString(burstValue.trim());
+  const parsedBurstValue = hasBurstValue
+    ? parsePositiveInteger(burstValue)
+    : null;
   const isBurstAllowed = row.limitKind === 'speed';
   const isBusy = isCreating || isUpdating || isResetting;
   const isValid =
     isDefined(parsedLimitValue) &&
-    (!isBurstAllowed ||
-      burstValue.trim() === '' ||
-      isDefined(parsedBurstValue));
+    (!isBurstAllowed || !hasBurstValue || isDefined(parsedBurstValue));
 
   const handleClose = () => {
     closeDialog(dialogId);
@@ -170,6 +170,10 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
 
   const meterLabel = getUsageLimitLabel(USAGE_LIMIT_METER_LABELS, row.meter);
   const scopeLabel = getAdminUsageLimitScopeLabel(row);
+  const unenforcedNotice =
+    row.isOverridden && !row.isOverrideEnforced
+      ? t`This override is stored but the workspace's plan does not enforce it, so the instance default still caps this scope.`
+      : null;
   const defaultText = formatUsageLimitValue({
     value: row.defaultValue,
     meter: row.meter,
@@ -205,6 +209,11 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
             <Section.Root align="center" color="primary">
               {t`${scopeLabel} — the instance default is ${defaultText}. Saving applies to this workspace only.`}
             </Section.Root>
+            {isDefined(unenforcedNotice) && (
+              <Section.Root align="center" color="primary">
+                {unenforcedNotice}
+              </Section.Root>
+            )}
           </StyledSectionContainer>
 
           <StyledFields>
