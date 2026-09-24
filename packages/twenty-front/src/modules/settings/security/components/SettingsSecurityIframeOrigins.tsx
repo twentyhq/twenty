@@ -1,18 +1,20 @@
 import { useState } from 'react';
-import { useMutation } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import { isDefined, normalizeAllowedIframeOrigin } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconPlus, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import {
+  GetWorkspaceIframeOriginsDocument,
+  UpdateWorkspaceAllowedIframeOriginsDocument,
+} from '~/generated-metadata/graphql';
 
 const StyledList = styled.div`
   display: flex;
@@ -36,43 +38,37 @@ export const SettingsSecurityIframeOrigins = () => {
   const { enqueueToast } = useToast();
   const [originInput, setOriginInput] = useState('');
   const [error, setError] = useState<string>();
-  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
-    currentWorkspaceState,
+  const {
+    data,
+    loading: isLoadingPolicy,
+    error: policyError,
+    refetch,
+  } = useQuery(GetWorkspaceIframeOriginsDocument, {
+    fetchPolicy: 'network-only',
+  });
+  const [updateOrigins, { loading }] = useMutation(
+    UpdateWorkspaceAllowedIframeOriginsDocument,
   );
-  const [updateWorkspace, { loading }] = useMutation(UpdateWorkspaceDocument);
-  const origins = currentWorkspace?.allowedIframeOrigins ?? [];
+  const origins = data?.currentWorkspace.allowedIframeOrigins ?? [];
+  const isPolicyLoaded = isDefined(data?.currentWorkspace.allowedIframeOrigins);
+  const hasReachedOriginLimit = origins.length >= MAX_ALLOWED_IFRAME_ORIGINS;
+  const isDisabled = loading || isLoadingPolicy || !isPolicyLoaded;
 
-  const saveOrigins = async (
-    allowedIframeOrigins: string[],
+  const saveOrigin = async (
+    operation: 'add' | 'remove',
+    origin: string,
   ): Promise<boolean> => {
-    if (!isDefined(currentWorkspace) || loading) {
+    if (isDisabled) {
       return false;
     }
 
-    const workspaceId = currentWorkspace.id;
-
     try {
-      const { data } = await updateWorkspace({
-        variables: { input: { allowedIframeOrigins } },
+      const { data } = await updateOrigins({
+        variables: { input: { operation, origin } },
       });
-
-      if (!isDefined(data?.updateWorkspace)) {
-        return false;
-      }
-
-      setCurrentWorkspace((workspace) =>
-        workspace?.id === workspaceId
-          ? {
-              ...workspace,
-              allowedIframeOrigins: data.updateWorkspace.allowedIframeOrigins,
-            }
-          : workspace,
-      );
-
-      return true;
+      return isDefined(data?.updateWorkspaceAllowedIframeOrigins);
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
-
       return false;
     }
   };
@@ -82,7 +78,7 @@ export const SettingsSecurityIframeOrigins = () => {
 
     if (!isDefined(origin)) {
       setError(
-        t`Enter an HTTPS origin without a path or wildcard, such as https://portal.example.com.`,
+        t`Enter an HTTP or HTTPS origin without a path or wildcard, such as https://portal.example.com.`,
       );
 
       return;
@@ -94,13 +90,13 @@ export const SettingsSecurityIframeOrigins = () => {
       return;
     }
 
-    if (origins.length >= 20) {
-      setError(t`You can allow up to 20 origins.`);
+    if (hasReachedOriginLimit) {
+      setError(t`You can allow up to ${MAX_ALLOWED_IFRAME_ORIGINS} origins.`);
 
       return;
     }
 
-    if (await saveOrigins([...origins, origin])) {
+    if (await saveOrigin('add', origin)) {
       setOriginInput('');
       setError(undefined);
     }
@@ -110,9 +106,15 @@ export const SettingsSecurityIframeOrigins = () => {
     <Section.Root>
       <Section.Header
         title={t`Iframe embedding`}
-        description={t`Allow trusted websites to display this workspace in an iframe. Users still need to sign in. Leave the list empty to block external embedding.`}
+        description={t`Allow trusted websites to display this workspace in an iframe. Users who are already signed in may see their workspace inside those websites, so only add origins you fully trust. Leave the list empty to block external embedding.`}
       />
       <StyledList>
+        {isDefined(policyError) && (
+          <>
+            <StyledOrigin role="alert">{t`Unable to load embedding settings.`}</StyledOrigin>
+            <Button onClick={() => refetch()}>{t`Retry`}</Button>
+          </>
+        )}
         {origins.map((origin) => (
           <StyledRow key={origin}>
             <StyledOrigin>{origin}</StyledOrigin>
@@ -121,10 +123,8 @@ export const SettingsSecurityIframeOrigins = () => {
               startIcon={<IconTrash size={16} />}
               variant="outline"
               size="sm"
-              disabled={loading}
-              onClick={() =>
-                saveOrigins(origins.filter((value) => value !== origin))
-              }
+              disabled={isDisabled}
+              onClick={() => saveOrigin('remove', origin)}
             >
               {t`Remove`}
             </Button>
@@ -135,7 +135,7 @@ export const SettingsSecurityIframeOrigins = () => {
           label={t`Allowed origin`}
           placeholder="https://portal.example.com"
           value={originInput}
-          disabled={loading || !currentWorkspace || origins.length >= 20}
+          disabled={isDisabled || hasReachedOriginLimit}
           onChange={(value) => {
             setOriginInput(value);
             setError(undefined);
@@ -148,10 +148,7 @@ export const SettingsSecurityIframeOrigins = () => {
             variant="outline"
             size="sm"
             disabled={
-              loading ||
-              !currentWorkspace ||
-              originInput.trim() === '' ||
-              origins.length >= 20
+              isDisabled || originInput.trim() === '' || hasReachedOriginLimit
             }
             startIcon={<IconPlus size={16} />}
             onClick={handleAddOrigin}

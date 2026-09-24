@@ -1,3 +1,5 @@
+import { CLIENT_CONFIG_BOOTSTRAP_ELEMENT_ID } from 'twenty-shared/constants';
+
 import { type ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
 
 export const renderFrontendHtml = (
@@ -20,6 +22,6 @@ export const renderFrontendHtml = (
     .replace(
       '</head>',
       () =>
-        `<script id="twenty-client-config" type="application/json">${serializedConfig}</script></head>`,
+        `<script id="${CLIENT_CONFIG_BOOTSTRAP_ELEMENT_ID}" type="application/json">${serializedConfig}</script></head>`,
     );
 };

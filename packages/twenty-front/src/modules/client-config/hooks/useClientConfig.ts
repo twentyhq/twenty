@@ -47,7 +47,6 @@ type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
   loading: boolean;
   error: Error | undefined;
-  fetchClientConfig: () => Promise<void>;
   initializeClientConfig: () => Promise<void>;
   refetch: () => Promise<void>;
 };
@@ -156,16 +155,14 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setAppVersion = useSetAtomState(appVersionState);
 
   const loadClientConfig = useCallback(
-    async (useBootstrap = false) => {
+    async (getConfiguration: () => Promise<ClientConfig>) => {
       setClientConfigApiStatus((prev) => ({
         ...prev,
         isLoading: true,
       }));
 
       try {
-        const clientConfig = await (useBootstrap
-          ? getInitialClientConfig()
-          : getClientConfig());
+        const clientConfig = await getConfiguration();
         setClientConfigApiStatus((prev) => ({
           ...prev,
           isLoading: false,
@@ -317,13 +314,13 @@ export const useClientConfig = (): UseClientConfigResult => {
     ],
   );
 
-  const fetchClientConfig = useCallback(
-    () => loadClientConfig(),
+  const refetch = useCallback(
+    () => loadClientConfig(getClientConfig),
     [loadClientConfig],
   );
 
   const initializeClientConfig = useCallback(
-    () => loadClientConfig(true),
+    () => loadClientConfig(getInitialClientConfig),
     [loadClientConfig],
   );
 
@@ -331,8 +328,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     data: clientConfigApiStatus.data,
     loading: clientConfigApiStatus.isLoading || false,
     error: clientConfigApiStatus.error,
-    fetchClientConfig,
     initializeClientConfig,
-    refetch: fetchClientConfig,
+    refetch,
   };
 };

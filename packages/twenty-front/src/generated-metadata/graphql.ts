@@ -1,4 +1,4 @@
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import { type TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -13,12 +13,19 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   BigInt: { input: any; output: any; }
+  /** Cursor for paging through collections */
   ConnectionCursor: { input: any; output: any; }
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: string; output: string; }
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any; }
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSONObject: { input: any; output: any; }
+  /** A UUID scalar type */
   UUID: { input: string; output: string; }
+  /** The `Upload` scalar type represents a file upload. */
   Upload: { input: any; output: any; }
 };
 
@@ -2004,6 +2011,8 @@ export type EnqueueJobsInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
   jobs?: InputMaybe<Array<EnqueueJobItemInput>>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
+  /** @deprecated Use jobs instead. */
+  payloads?: InputMaybe<Array<Scalars['JSON']['input']>>;
   retryLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -3264,6 +3273,7 @@ export type Mutation = {
   updateViewSort: ViewSort;
   updateWebhook: Webhook;
   updateWorkspace: Workspace;
+  updateWorkspaceAllowedIframeOrigins: Workspace;
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
@@ -4476,6 +4486,11 @@ export type MutationUpdateWorkspaceArgs = {
 };
 
 
+export type MutationUpdateWorkspaceAllowedIframeOriginsArgs = {
+  data: UpdateWorkspaceAllowedIframeOriginsInput;
+};
+
+
 export type MutationUpdateWorkspaceMemberRoleArgs = {
   roleId: Scalars['UUID']['input'];
   workspaceMemberId: Scalars['UUID']['input'];
@@ -4495,6 +4510,7 @@ export type MutationUpgradeApplicationArgs = {
 
 export type MutationUploadAppTarballArgs = {
   file: Scalars['Upload']['input'];
+  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6683,6 +6699,8 @@ export type UpdateViewFieldGroupInput = {
 };
 
 export type UpdateViewFieldGroupInputUpdates = {
+  /** @deprecated Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead. */
+  deletedAt?: InputMaybe<Scalars['String']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
@@ -6790,6 +6808,11 @@ export type UpdateWebhookInputUpdates = {
   targetUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateWorkspaceAllowedIframeOriginsInput = {
+  operation: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
+};
+
 export type UpdateWorkspaceInput = {
   aiAdditionalInstructions?: InputMaybe<Scalars['String']['input']>;
   aiAgentModelTier?: InputMaybe<AiModelTier>;
@@ -6797,7 +6820,6 @@ export type UpdateWorkspaceInput = {
   aiEvaluationModelId?: InputMaybe<Scalars['String']['input']>;
   aiModelIdByTier?: InputMaybe<Scalars['JSON']['input']>;
   allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
-  allowedIframeOrigins?: InputMaybe<Array<Scalars['String']['input']>>;
   customDomain?: InputMaybe<Scalars['String']['input']>;
   defaultRoleId?: InputMaybe<Scalars['UUID']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
@@ -10192,6 +10214,13 @@ export type UpdateWorkspaceMutationVariables = Exact<{
 
 export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, workspaceDiscoverability: WorkspaceDiscoverability, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isTwoFactorAuthenticationEnforced: boolean, allowedIframeOrigins?: Array<string> | null, isInternalMessagesImportEnabled: boolean, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } };
 
+export type UpdateWorkspaceAllowedIframeOriginsMutationVariables = Exact<{
+  input: UpdateWorkspaceAllowedIframeOriginsInput;
+}>;
+
+
+export type UpdateWorkspaceAllowedIframeOriginsMutation = { __typename?: 'Mutation', updateWorkspaceAllowedIframeOrigins: { __typename?: 'Workspace', id: string, allowedIframeOrigins?: Array<string> | null } };
+
 export type UploadWorkspaceLogoMutationVariables = Exact<{
   file: Scalars['Upload']['input'];
 }>;
@@ -10222,6 +10251,11 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
+
+export type GetWorkspaceIframeOriginsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetWorkspaceIframeOriginsQuery = { __typename?: 'Query', currentWorkspace: { __typename?: 'Workspace', id: string, allowedIframeOrigins?: Array<string> | null } };
 
 export type FindManyApplicationsForToolTableQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -10581,10 +10615,12 @@ export const GetWorkspaceInvitationsDocument = {"kind":"Document","definitions":
 export const ActivateWorkspaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateWorkspace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ActivateWorkspaceInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activateWorkspace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>;
 export const DeleteCurrentWorkspaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteCurrentWorkspace"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteCurrentWorkspace"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteCurrentWorkspaceMutation, DeleteCurrentWorkspaceMutationVariables>;
 export const UpdateWorkspaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkspace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkspaceInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkspace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"customDomain"}},{"kind":"Field","name":{"kind":"Name","value":"subdomain"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"allowImpersonation"}},{"kind":"Field","name":{"kind":"Name","value":"isPublicInviteLinkEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceDiscoverability"}},{"kind":"Field","name":{"kind":"Name","value":"isGoogleAuthEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isMicrosoftAuthEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isPasswordAuthEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isTwoFactorAuthenticationEnforced"}},{"kind":"Field","name":{"kind":"Name","value":"allowedIframeOrigins"}},{"kind":"Field","name":{"kind":"Name","value":"isInternalMessagesImportEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"defaultRole"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RoleFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RoleFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Role"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateAllSettings"}},{"kind":"Field","name":{"kind":"Name","value":"canAccessAllTools"}},{"kind":"Field","name":{"kind":"Name","value":"isEditable"}},{"kind":"Field","name":{"kind":"Name","value":"canReadAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canSoftDeleteAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canDestroyAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToUsers"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToAgents"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToApiKeys"}}]}}]} as unknown as DocumentNode<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
+export const UpdateWorkspaceAllowedIframeOriginsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkspaceAllowedIframeOrigins"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkspaceAllowedIframeOriginsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkspaceAllowedIframeOrigins"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"allowedIframeOrigins"}}]}}]}}]} as unknown as DocumentNode<UpdateWorkspaceAllowedIframeOriginsMutation, UpdateWorkspaceAllowedIframeOriginsMutationVariables>;
 export const UploadWorkspaceLogoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadWorkspaceLogo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"file"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadWorkspaceLogo"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"file"},"value":{"kind":"Variable","name":{"kind":"Name","value":"file"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
 export const CheckCustomDomainValidRecordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CheckCustomDomainValidRecords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"checkCustomDomainValidRecords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"isCustomDomainEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"records"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"validationType"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}}]} as unknown as DocumentNode<CheckCustomDomainValidRecordsMutation, CheckCustomDomainValidRecordsMutationVariables>;
 export const GetAiSystemPromptPreviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAiSystemPromptPreview"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAiSystemPromptPreview"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTokenCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTokenCount"}}]}}]}}]} as unknown as DocumentNode<GetAiSystemPromptPreviewQuery, GetAiSystemPromptPreviewQueryVariables>;
 export const GetPublicWorkspaceDataByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPublicWorkspaceDataById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getPublicWorkspaceDataById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}}]}}]}}]} as unknown as DocumentNode<GetPublicWorkspaceDataByIdQuery, GetPublicWorkspaceDataByIdQueryVariables>;
 export const GetWorkspaceFromInviteHashDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWorkspaceFromInviteHash"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inviteHash"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findWorkspaceFromInviteHash"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inviteHash"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inviteHash"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"allowImpersonation"}}]}}]}}]} as unknown as DocumentNode<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>;
+export const GetWorkspaceIframeOriginsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWorkspaceIframeOrigins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentWorkspace"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"allowedIframeOrigins"}}]}}]}}]} as unknown as DocumentNode<GetWorkspaceIframeOriginsQuery, GetWorkspaceIframeOriginsQueryVariables>;
 export const FindManyApplicationsForToolTableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyApplicationsForToolTable"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyApplications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}}]}}]}}]} as unknown as DocumentNode<FindManyApplicationsForToolTableQuery, FindManyApplicationsForToolTableQueryVariables>;
 export const FindManyMarketplaceAppsForToolTableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyMarketplaceAppsForToolTable"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyMarketplaceApps"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}}]}}]}}]} as unknown as DocumentNode<FindManyMarketplaceAppsForToolTableQuery, FindManyMarketplaceAppsForToolTableQueryVariables>;

@@ -4,6 +4,7 @@ import { join } from 'path';
 
 import { Controller, Get, type INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { HttpAdapterHost } from '@nestjs/core';
 
 import { FrontendModule } from 'src/engine/core-modules/frontend/frontend.module';
 import request from 'supertest';
@@ -93,6 +94,24 @@ describe('frontend HTML delivery', () => {
     rmSync(directory, { recursive: true, force: true });
   });
 
+  it('initializes CLI application contexts with bundled HTML and no HTTP adapter', async () => {
+    const module = await Test.createTestingModule({ imports: [FrontendModule] })
+      .overrideProvider(FrontendService)
+      .useValue(
+        new FrontendService(
+          { getClientConfig } as unknown as ClientConfigService,
+          {
+            resolveWorkspaceAndPublicDomain,
+          } as unknown as WorkspaceDomainsService,
+          directory,
+        ),
+      )
+      .compile();
+    expect(module.get(HttpAdapterHost).httpAdapter).toBeUndefined();
+    await expect(module.init()).resolves.toBeDefined();
+    await module.close();
+  });
+
   it.each(['/', '/index.html', '/objects/people'])(
     'bootstraps configuration and applies the hostname policy on %s',
     async (pathname) => {
@@ -130,11 +149,14 @@ describe('frontend HTML delivery', () => {
   });
 
   it('reads fresh policy and configuration on subsequent documents, even with a conditional request', async () => {
-    await request(app.getHttpServer())
+    const initial = await request(app.getHttpServer())
       .get('/')
       .set('Accept', 'text/html')
       .set('Host', 'customer.twenty.test')
       .set('X-Forwarded-Proto', 'https');
+    expect(initial.headers['content-security-policy']).toContain(
+      'https://portal.customer.com',
+    );
     resolveWorkspaceAndPublicDomain.mockResolvedValue({
       workspace: { allowedIframeOrigins: [] },
       isIsolatedOrigin: false,
@@ -143,6 +165,7 @@ describe('frontend HTML delivery', () => {
       .get('/')
       .set('Accept', 'text/html')
       .set('Host', 'customer.twenty.test')
+      .set('X-Forwarded-Proto', 'https')
       .set('If-None-Match', '*')
       .expect(200);
     expect(response.headers['content-security-policy']).not.toContain(

@@ -7,6 +7,7 @@ import express, {
   type NextFunction,
 } from 'express';
 import { join } from 'path';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ClientConfigModule } from 'src/engine/core-modules/client-config/client-config.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -26,13 +27,14 @@ export class FrontendModule implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    if (!this.frontendService.isEnabled) {
+    const adapter = this.httpAdapterHost.httpAdapter;
+
+    // CLI commands initialize this module without an HTTP server.
+    if (!this.frontendService.isEnabled || !isDefined(adapter)) {
       return;
     }
 
     // Register after API controllers, before Nest's not-found handler.
-    const adapter = this.httpAdapterHost.httpAdapter;
-
     const serveStatic = express.static(this.frontendService.frontPath, {
       index: false,
       redirect: false,

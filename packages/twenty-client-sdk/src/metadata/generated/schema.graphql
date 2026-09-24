@@ -4113,6 +4113,7 @@ type Mutation {
   deleteFrontComponent(id: UUID!): FrontComponent!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
+  updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
@@ -5001,9 +5002,13 @@ input UpdateWorkspaceInput {
   aiModelIdByTier: JSON
   aiEvaluationModelId: String
   aiAdditionalInstructions: String
-  allowedIframeOrigins: [String!]
   editableProfileFields: [String!]
   isInternalMessagesImportEnabled: Boolean
+}
+
+input UpdateWorkspaceAllowedIframeOriginsInput {
+  operation: String!
+  origin: String!
 }
 
 input CreateApplicationRegistrationInput {

@@ -2,14 +2,9 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { type AiModelTier } from 'twenty-shared/ai';
-import { normalizeAllowedIframeOrigin, isDefined } from 'twenty-shared/utils';
-import { isString } from '@sniptt/guards';
 
 import {
   IsArray,
-  ArrayMaxSize,
-  ValidateBy,
-  ValidateIf,
   IsBoolean,
   IsEnum,
   IsInt,
@@ -153,24 +148,6 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   aiAdditionalInstructions?: string;
-
-  @Field(() => [String], { nullable: true })
-  @ValidateIf((_object, value) => value !== undefined)
-  @IsArray()
-  @ArrayMaxSize(20)
-  @ValidateBy(
-    {
-      name: 'allowedIframeOrigin',
-      validator: {
-        validate: (value: unknown) =>
-          isString(value) && isDefined(normalizeAllowedIframeOrigin(value)),
-        defaultMessage: () =>
-          'Each embedding origin must be an HTTPS origin without a path or wildcard',
-      },
-    },
-    { each: true },
-  )
-  allowedIframeOrigins?: string[];
 
   @Field(() => [String], { nullable: true })
   @IsArray()
