@@ -1,8 +1,8 @@
 import {
   BaseGraphQLError,
-  ConflictError,
   ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { workspaceMigrationRunnerGraphqlApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/workspace-migration-runner-graphql-api-exception-handler.util';
 import {
   type WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -11,15 +11,7 @@ import {
 export const workspaceMigrationRunnerExceptionFormatter = (
   error: WorkspaceMigrationRunnerException,
 ) => {
-  if (
-    error.code ===
-    WorkspaceMigrationRunnerExceptionCode.DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS
-  ) {
-    throw new ConflictError(error.message, {
-      subCode: error.code,
-      userFriendlyMessage: error.userFriendlyMessage,
-    });
-  }
+  workspaceMigrationRunnerGraphqlApiExceptionHandler(error);
 
   const isExecutionFailed =
     error.code === WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED;

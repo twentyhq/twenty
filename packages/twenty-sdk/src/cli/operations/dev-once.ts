@@ -20,7 +20,9 @@ import {
   hasDestructiveActions,
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
+import { getDeferredMigrationConflictMessage } from '@/cli/utilities/error/get-deferred-migration-conflict-message';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
+import { getSyncErrorSubCode } from '@/cli/utilities/error/get-sync-error-sub-code';
 import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
@@ -62,11 +64,6 @@ const appendRecoveryHint = (
   return hint ? `${message}\n\n${hint}` : message;
 };
 
-const getSubCode = (
-  error: MetadataValidationErrorResponse | undefined,
-): string | undefined =>
-  isPlainObject(error) ? (error as { subCode?: string }).subCode : undefined;
-
 const NOT_INSTALLED_SUB_CODES = new Set([
   'APP_NOT_INSTALLED',
   'APPLICATION_NOT_FOUND',
@@ -103,16 +100,22 @@ const buildSyncError = (
     ? null
     : formatManifestValidationErrors(result.error);
 
-  const message = errorEvents
-    ? errorEvents.map((event) => event.message).join('\n')
-    : `Sync failed with error: ${result.message ?? 'Unknown error'}`;
+  const deferredMigrationConflictMessage = getDeferredMigrationConflictMessage(
+    result.error,
+  );
+
+  const message =
+    deferredMigrationConflictMessage ??
+    (errorEvents
+      ? errorEvents.map((event) => event.message).join('\n')
+      : `Sync failed with error: ${result.message ?? 'Unknown error'}`);
 
   return {
     code: APP_ERROR_CODES.SYNC_FAILED,
     message: appendRecoveryHint(
       message,
       result.message,
-      getSubCode(result.error),
+      getSyncErrorSubCode(result.error),
     ),
   };
 };
