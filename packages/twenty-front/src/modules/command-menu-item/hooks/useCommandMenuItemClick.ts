@@ -13,6 +13,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { isValidElement, useContext } from 'react';
 import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
+import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 
@@ -76,10 +77,11 @@ export const useCommandMenuItemClick = ({
       const engineComponent = isDefined(item.engineComponentKey)
         ? ENGINE_COMPONENT_KEY_COMPONENT_MAP[item.engineComponentKey]
         : undefined;
-      const isExport =
+      const isIndexExport =
         isValidElement(engineComponent) &&
-        engineComponent.type === ExportRecordsCommand;
-      if (!isExport) {
+        engineComponent.type === ExportRecordsCommand &&
+        commandMenuContextApi.pageType === ContextStorePageType.Index;
+      if (!isIndexExport) {
         closeCommandMenu();
       }
 
