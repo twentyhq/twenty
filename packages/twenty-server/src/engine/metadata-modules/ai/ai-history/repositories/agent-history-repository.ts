@@ -12,12 +12,10 @@ import {
   type AgentChatThreadOwnerFields,
   getAgentChatThreadOwnerFields,
 } from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-fields.util';
-import {
-  hydrateAgentChatThreadOwners,
-  mapAgentChatThreadOwnerSelectToWorkspace,
-  mapAgentChatThreadOwnerValuesToWorkspace,
-  mapAgentChatThreadOwnerWhereToWorkspace,
-} from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-chat-thread-owner-to-workspace.util';
+import { hydrateAgentChatThreadOwners } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-chat-thread-owners.util';
+import { mapAgentChatThreadOwnerSelectToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-chat-thread-owner-select-to-workspace.util';
+import { mapAgentChatThreadOwnerValuesToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-chat-thread-owner-values-to-workspace.util';
+import { mapAgentChatThreadOwnerWhereToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-chat-thread-owner-where-to-workspace.util';
 import {
   AiException,
   AiExceptionCode,
@@ -310,7 +308,11 @@ export class AgentHistoryRepository<
     const mapped = await this.mapWorkspaceValues(workspaceId, values, context);
 
     return this.name === 'agentMessage'
-      ? prepareAgentMessageSenderValues(mapped, context, workspaceId)
+      ? prepareAgentMessageSenderValues({
+          values: mapped,
+          context,
+          workspaceId,
+        })
       : mapped;
   }
 

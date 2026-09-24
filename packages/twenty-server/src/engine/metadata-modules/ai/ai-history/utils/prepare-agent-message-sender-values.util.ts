@@ -10,11 +10,15 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 
-export const prepareAgentMessageSenderValues = async (
-  values: ObjectLiteral | ObjectLiteral[],
-  context: AgentHistoryStorageContext,
-  workspaceId: string,
-): Promise<ObjectLiteral | ObjectLiteral[]> => {
+export const prepareAgentMessageSenderValues = async ({
+  values,
+  context,
+  workspaceId,
+}: {
+  values: ObjectLiteral | ObjectLiteral[];
+  context: AgentHistoryStorageContext;
+  workspaceId: string;
+}): Promise<ObjectLiteral | ObjectLiteral[]> => {
   const {
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
