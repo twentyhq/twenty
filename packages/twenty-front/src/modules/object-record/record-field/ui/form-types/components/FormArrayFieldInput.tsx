@@ -173,7 +173,7 @@ export const FormArrayFieldInput = ({
       return false;
     }
 
-    const updatedItems = [...draftValue.value, newItemDraftValue];
+    const updatedItems = [...draftValue.value, newItemDraftValue.trim()];
 
     setDraftValue({
       type: 'static',
