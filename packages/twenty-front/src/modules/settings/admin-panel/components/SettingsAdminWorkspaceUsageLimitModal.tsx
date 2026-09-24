@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
@@ -11,7 +11,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { ADMIN_USAGE_LIMIT_METER_LABELS } from '@/settings/admin-panel/constants/UsageLimitMeterLabels';
 import { CREATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceUsageLimit';
 import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/deleteWorkspaceUsageLimit';
 import { UPDATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/updateWorkspaceUsageLimit';
@@ -19,6 +18,8 @@ import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/w
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
 import { formatUsageLimitValue } from '@/settings/admin-panel/utils/formatUsageLimitValue';
 import { getAdminUsageLimitScopeLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitScopeLabel';
+import { USAGE_LIMIT_METER_LABELS } from '@/settings/billing/constants/UsageLimitMeterLabels';
+import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -26,7 +27,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 type SettingsAdminWorkspaceUsageLimitModalProps = {
   dialogId: string;
   workspaceId: string;
-  row: AdminUsageLimitRow | null;
+  row: AdminUsageLimitRow;
 };
 
 const StyledSectionContainer = styled.div`
@@ -65,17 +66,10 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
   const { enqueueToast } = useToast();
   const apolloAdminClient = useApolloAdminClient();
 
-  const [limitValue, setLimitValue] = useState('');
-  const [burstValue, setBurstValue] = useState('');
-
-  // The dialog stays mounted for the whole tab, so without this the next row
-  // opened starts from the previous row's numbers.
-  useEffect(() => {
-    setLimitValue(isDefined(row) ? String(row.limitValue) : '');
-    setBurstValue(
-      isDefined(row) && isDefined(row.burstValue) ? String(row.burstValue) : '',
-    );
-  }, [row]);
+  const [limitValue, setLimitValue] = useState(String(row.limitValue));
+  const [burstValue, setBurstValue] = useState(
+    isDefined(row.burstValue) ? String(row.burstValue) : '',
+  );
 
   const mutationOptions = {
     client: apolloAdminClient,
@@ -96,10 +90,6 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     DELETE_WORKSPACE_USAGE_LIMIT,
     mutationOptions,
   );
-
-  if (!isDefined(row)) {
-    return null;
-  }
 
   const parsedLimitValue = parsePositiveInteger(limitValue);
   const parsedBurstValue =
@@ -178,11 +168,17 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     }
   };
 
-  const meterLabel = ADMIN_USAGE_LIMIT_METER_LABELS[row.meter];
+  const meterLabel = getUsageLimitLabel(USAGE_LIMIT_METER_LABELS, row.meter);
+  const scopeLabel = getAdminUsageLimitScopeLabel(row);
   const defaultText = formatUsageLimitValue({
     value: row.defaultValue,
     meter: row.meter,
   });
+  // 'quantity' renders as the number already typed, so echoing it says nothing.
+  const limitValueAdornment =
+    isDefined(parsedLimitValue) && row.meter !== 'quantity'
+      ? formatUsageLimitValue({ value: parsedLimitValue, meter: row.meter })
+      : undefined;
 
   return (
     <DialogInstance
@@ -207,10 +203,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
           </Dialog.Title>
           <StyledSectionContainer>
             <Section.Root align="center" color="primary">
-              {getAdminUsageLimitScopeLabel(row)}
-              {t` — the instance default is ${defaultText}. Saving applies to this workspace only.`}
-              {row.suppressedTogetherCount > 1 &&
-                t` This scope carries ${row.suppressedTogetherCount} instance caps and one override replaces all of them, so the others stop being enforced until you restate them.`}
+              {t`${scopeLabel} — the instance default is ${defaultText}. Saving applies to this workspace only.`}
             </Section.Root>
           </StyledSectionContainer>
 
@@ -222,6 +215,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
               min={1}
               value={limitValue}
               onChange={setLimitValue}
+              rightAdornment={limitValueAdornment}
               autoFocusOnMount
               fullWidth
             />

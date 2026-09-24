@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyArray, isNonEmptyString } from 'twenty-shared/utils';
+import { isNonEmptyString } from 'twenty-shared/utils';
 
 import {
   type AdminPanelUsageLimitDefaultDTO,
@@ -15,7 +15,6 @@ import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage
 import { buildUsageLimitDefaultScopes } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-default-scopes.util';
 import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
-import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
 
 @Injectable()
@@ -37,10 +36,7 @@ export class AdminPanelUsageLimitService {
     ]);
 
     return {
-      defaults: this.buildDefaults({
-        usageLimits,
-        isIntraWorkspaceLimitEntitled,
-      }),
+      defaults: this.buildDefaults(usageLimits),
       limits: usageLimits.map((usageLimit) =>
         this.buildLimit({ usageLimit, isIntraWorkspaceLimitEntitled }),
       ),
@@ -63,18 +59,17 @@ export class AdminPanelUsageLimitService {
     });
   }
 
-  private buildDefaults({
-    usageLimits,
-    isIntraWorkspaceLimitEntitled,
-  }: {
-    usageLimits: UsageLimitEntity[];
-    isIntraWorkspaceLimitEntitled: boolean;
-  }): AdminPanelUsageLimitDefaultDTO[] {
+  private buildDefaults(
+    usageLimits: UsageLimitEntity[],
+  ): AdminPanelUsageLimitDefaultDTO[] {
     const getConfigValue = (key: NumericConfigVariableKey) =>
       this.twentyConfigService.get(key);
 
     return buildUsageLimitDefaultScopes({ getConfigValue }).map(
       (usageLimitDefault) => {
+        // Period-blind, like the builders: a row on another period still drops
+        // this default, so naming it here is what keeps the table's claim and
+        // what actually caps the workspace the same statement.
         const overridingUsageLimit = usageLimits.find((usageLimit) =>
           doesUsageLimitRowSuppressDefault({
             scope: buildUsageLimitScope(usageLimit),
@@ -92,13 +87,7 @@ export class AdminPanelUsageLimitService {
           meter: usageLimitDefault.meter,
           limitValue: usageLimitDefault.limitValue,
           limitValueConfigVariable: usageLimitDefault.limitValueConfigVariable,
-          windowMsConfigVariable: usageLimitDefault.windowMsConfigVariable,
-          counterScope: usageLimitDefault.counterScope,
           isOverridable: usageLimitDefault.isOverridable,
-          isEnforcedOnCurrentPlan: this.isEnforcedOnCurrentPlan({
-            spenderType: usageLimitDefault.spenderType,
-            isIntraWorkspaceLimitEntitled,
-          }),
           overriddenByUsageLimitId: overridingUsageLimit?.id ?? null,
         };
       },
@@ -130,16 +119,14 @@ export class AdminPanelUsageLimitService {
         spenderType: usageLimit.spenderType,
         isIntraWorkspaceLimitEntitled,
       }),
-      suppressesDefault: isNonEmptyArray(
-        findSuppressedUsageLimitDefaults(buildUsageLimitScope(usageLimit)),
-      ),
       createdAt: usageLimit.createdAt,
       updatedAt: usageLimit.updatedAt,
     };
   }
 
-  // findEnforceableLimits drops intra-workspace limits on a workspace without the
-  // entitlement, so a row can be stored and still never refuse anything.
+  // findEnforceableLimits drops an intra-workspace row on a workspace without the
+  // entitlement. It never touches declared defaults, so the instance default is
+  // what applies instead and this only means anything about a stored override.
   private isEnforcedOnCurrentPlan({
     spenderType,
     isIntraWorkspaceLimitEntitled,

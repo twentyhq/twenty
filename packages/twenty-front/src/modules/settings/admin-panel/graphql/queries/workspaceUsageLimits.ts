@@ -12,29 +12,16 @@ export const WORKSPACE_USAGE_LIMITS = gql`
         periodUnit
         meter
         limitValue
-        limitValueConfigVariable
-        windowMsConfigVariable
-        counterScope
         isOverridable
-        isEnforcedOnCurrentPlan
         overriddenByUsageLimitId
       }
       limits {
         id
-        resourceType
-        operationType
-        spenderType
-        spenderId
-        limitKind
         periodCount
         periodUnit
-        meter
         limitValue
         burstValue
         isEnforcedOnCurrentPlan
-        suppressesDefault
-        createdAt
-        updatedAt
       }
     }
   }

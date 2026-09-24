@@ -28,7 +28,6 @@ const WORKSPACE_USAGE_LIMITS = gql`
       limits {
         id
         limitValue
-        suppressesDefault
       }
     }
   }
@@ -42,7 +41,6 @@ const CREATE_WORKSPACE_USAGE_LIMIT = gql`
     createWorkspaceUsageLimit(workspaceId: $workspaceId, payload: $payload) {
       id
       limitValue
-      suppressesDefault
     }
   }
 `;
@@ -123,9 +121,6 @@ describe('Workspace usage limits from the admin panel', () => {
     const usageLimitId = response.body.data?.createWorkspaceUsageLimit?.id;
 
     jestExpectToBeDefined(usageLimitId);
-    expect(response.body.data.createWorkspaceUsageLimit.suppressesDefault).toBe(
-      true,
-    );
 
     const workspaceUsageLimits = await findWorkspaceUsageLimits();
 

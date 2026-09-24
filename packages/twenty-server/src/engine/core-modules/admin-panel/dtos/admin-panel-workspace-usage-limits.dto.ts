@@ -3,6 +3,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UsageLimitDTO } from 'src/engine/core-modules/usage-limit/dtos/usage-limit.dto';
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
@@ -36,71 +37,24 @@ export class AdminPanelUsageLimitDefaultDTO {
   @Field(() => GraphQLBigInt)
   limitValue: number;
 
+  // Not rendered: it is the only stable identity a default has, so the
+  // integration suite names rows by it.
   @Field(() => String)
   limitValueConfigVariable: string;
 
-  @Field(() => String, { nullable: true })
-  windowMsConfigVariable: string | null;
-
-  @Field(() => String, { nullable: true })
-  counterScope: string | null;
-
   @Field(() => Boolean)
   isOverridable: boolean;
-
-  @Field(() => Boolean)
-  isEnforcedOnCurrentPlan: boolean;
 
   @Field(() => UUIDScalarType, { nullable: true })
   overriddenByUsageLimitId: string | null;
 }
 
 @ObjectType('AdminPanelUsageLimit')
-export class AdminPanelUsageLimitDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
-
-  @Field(() => UsageResourceType)
-  resourceType: UsageResourceType;
-
-  @Field(() => UsageOperationType)
-  operationType: UsageOperationType;
-
-  @Field(() => String)
-  spenderType: SpenderType;
-
-  @Field(() => String, { nullable: true })
-  spenderId: string | null;
-
-  @Field(() => String)
-  limitKind: LimitKind;
-
-  @Field(() => Int)
-  periodCount: number;
-
-  @Field(() => String)
-  periodUnit: PeriodUnit;
-
-  @Field(() => String)
-  meter: UsageMeter;
-
-  @Field(() => GraphQLBigInt)
-  limitValue: number;
-
-  @Field(() => GraphQLBigInt, { nullable: true })
-  burstValue: number | null;
-
+export class AdminPanelUsageLimitDTO extends UsageLimitDTO {
+  // findEnforceableLimits drops an intra-workspace row on a workspace without
+  // the entitlement, and the instance default takes back over.
   @Field(() => Boolean)
   isEnforcedOnCurrentPlan: boolean;
-
-  @Field(() => Boolean)
-  suppressesDefault: boolean;
-
-  @Field(() => Date)
-  createdAt: Date;
-
-  @Field(() => Date)
-  updatedAt: Date;
 }
 
 @ObjectType('AdminPanelWorkspaceUsageLimits')

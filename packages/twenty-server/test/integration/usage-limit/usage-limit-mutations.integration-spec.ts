@@ -6,6 +6,7 @@ import { gql } from 'graphql-tag';
 import { createClient } from 'redis';
 import { type Repository } from 'typeorm';
 
+import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -49,8 +50,8 @@ const USAGE_QUOTAS_WITH_CONSUMPTION = gql`
 `;
 
 const buildPayload = (
-  overrides: Record<string, unknown> = {},
-): Record<string, unknown> => ({
+  overrides: Partial<CreateUsageLimitInput> = {},
+): CreateUsageLimitInput => ({
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.AI_CHAT_TOKEN,
   spenderType: 'workspace',
@@ -68,7 +69,9 @@ describe('Usage limit mutations', () => {
   let usageLimitRepository: Repository<UsageLimitEntity>;
   let redis: Awaited<ReturnType<typeof createClient>>;
 
-  const createUsageLimitRequest = (overrides: Record<string, unknown> = {}) =>
+  const createUsageLimitRequest = (
+    overrides: Partial<CreateUsageLimitInput> = {},
+  ) =>
     makeMetadataAPIRequest({
       query: CREATE_USAGE_LIMIT,
       variables: { input: buildPayload(overrides) },
@@ -76,7 +79,7 @@ describe('Usage limit mutations', () => {
 
   const updateUsageLimit = (
     id: string,
-    overrides: Record<string, unknown> = {},
+    overrides: Partial<CreateUsageLimitInput> = {},
   ) =>
     makeMetadataAPIRequest({
       query: UPDATE_USAGE_LIMIT,
@@ -91,7 +94,9 @@ describe('Usage limit mutations', () => {
     return response.body.data?.usageQuotasWithConsumption ?? [];
   };
 
-  const createUsageLimit = async (overrides: Record<string, unknown> = {}) => {
+  const createUsageLimit = async (
+    overrides: Partial<CreateUsageLimitInput> = {},
+  ) => {
     const response = await createUsageLimitRequest(overrides);
     const usageLimitId = response.body.data?.createUsageLimit?.id;
 
@@ -246,7 +251,9 @@ describe('Usage limit mutations', () => {
   describe('instance defaults', () => {
     const OPERATOR_ONLY_MESSAGE = 'only an operator can replace it';
 
-    const storageStockPayload = (overrides: Record<string, unknown> = {}) =>
+    const storageStockPayload = (
+      overrides: Partial<CreateUsageLimitInput> = {},
+    ) =>
       buildPayload({
         resourceType: UsageResourceType.STORAGE,
         operationType: UsageOperationType.STORAGE_FILE,
@@ -263,7 +270,7 @@ describe('Usage limit mutations', () => {
     const seedOperatorOverride = async () => {
       await usageLimitRepository.insert({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        ...(storageStockPayload() as object),
+        ...storageStockPayload(),
         spenderId: '',
         burstValue: null,
       });

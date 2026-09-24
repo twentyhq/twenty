@@ -1,11 +1,14 @@
 import { useQuery } from '@apollo/client/react';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton, Section } from 'twenty-ui/components';
-import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconPencil } from 'twenty-ui/icon';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceUsageLimitModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal';
@@ -13,12 +16,11 @@ import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/w
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
 import { buildAdminUsageLimitRows } from '@/settings/admin-panel/utils/buildAdminUsageLimitRows';
 import { formatUsageLimitValue } from '@/settings/admin-panel/utils/formatUsageLimitValue';
-import {
-  getAdminUsageLimitOperationLabel,
-  getAdminUsageLimitPeriodLabel,
-  getAdminUsageLimitResourceLabel,
-  getAdminUsageLimitSpenderLabel,
-} from '@/settings/admin-panel/utils/getAdminUsageLimitScopeLabel';
+import { getAdminUsageLimitOperationLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitOperationLabel';
+import { getAdminUsageLimitPeriodLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitPeriodLabel';
+import { getAdminUsageLimitResourceLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitResourceLabel';
+import { getAdminUsageLimitSpenderLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitSpenderLabel';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -34,6 +36,27 @@ const EDIT_LIMIT_DIALOG_ID = 'settings-admin-usage-limit-edit';
 // rows whose tags differ in width.
 const USAGE_LIMITS_GRID_AUTO_COLUMNS = '1fr 120px 120px 110px 100px 36px';
 
+const getStatus = (
+  row: AdminUsageLimitRow,
+): { label: MessageDescriptor; color: ThemeColor } => {
+  if (!row.isOverridden) {
+    return { label: msg`Default`, color: 'green' };
+  }
+
+  // Stored, but findEnforceableLimits drops it at read time and the instance
+  // default is what actually caps the workspace.
+  if (!row.isOverrideEnforced) {
+    return { label: msg`Inactive`, color: 'gray' };
+  }
+
+  return { label: msg`Override`, color: 'blue' };
+};
+
+const getEnforcedValue = (row: AdminUsageLimitRow): number =>
+  row.isOverridden && row.isOverrideEnforced
+    ? row.limitValue
+    : row.defaultValue;
+
 export const SettingsAdminWorkspaceUsageLimitsSection = ({
   workspaceId,
 }: SettingsAdminWorkspaceUsageLimitsSectionProps) => {
@@ -41,9 +64,14 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
 
-  const [editedRow, setEditedRow] = useState<AdminUsageLimitRow | null>(null);
+  // The sequence is what makes every pencil click a fresh dialog: keying on the
+  // row alone would hand the operator back the number they abandoned last time.
+  const [editedRowOpening, setEditedRowOpening] = useState<{
+    rowId: string;
+    sequence: number;
+  } | null>(null);
 
-  const { data, loading } = useQuery<WorkspaceUsageLimitsQuery>(
+  const { data, loading, error } = useQuery<WorkspaceUsageLimitsQuery>(
     WORKSPACE_USAGE_LIMITS,
     {
       client: apolloAdminClient,
@@ -60,8 +88,17 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
     ? buildAdminUsageLimitRows(data.workspaceUsageLimits)
     : [];
 
+  // Held by id, so a save that refetches hands the dialog the stored row rather
+  // than the snapshot taken when it was opened.
+  const editedRow = isDefined(editedRowOpening)
+    ? rows.find((row) => row.id === editedRowOpening.rowId)
+    : undefined;
+
   const handleEditClick = (row: AdminUsageLimitRow) => {
-    setEditedRow(row);
+    setEditedRowOpening((opening) => ({
+      rowId: row.id,
+      sequence: (opening?.sequence ?? 0) + 1,
+    }));
     openDialog(EDIT_LIMIT_DIALOG_ID);
   };
 
@@ -95,7 +132,7 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
             Cell: ({ item }) => (
               <>
                 {formatUsageLimitValue({
-                  value: item.limitValue,
+                  value: getEnforcedValue(item),
                   meter: item.meter,
                 })}
               </>
@@ -107,12 +144,11 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
           },
           {
             label: t`Source`,
-            Cell: ({ item }) =>
-              item.isOverridden ? (
-                <Tag color="blue">{t`Override`}</Tag>
-              ) : (
-                <Tag color="green">{t`Default`}</Tag>
-              ),
+            Cell: ({ item }) => {
+              const status = getStatus(item);
+
+              return <Tag color={status.color}>{t(status.label)}</Tag>;
+            },
           },
           {
             label: '',
@@ -131,11 +167,18 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
         gridAutoColumns={USAGE_LIMITS_GRID_AUTO_COLUMNS}
       />
 
-      <SettingsAdminWorkspaceUsageLimitModal
-        dialogId={EDIT_LIMIT_DIALOG_ID}
-        workspaceId={workspaceId}
-        row={editedRow}
-      />
+      {isDefined(error) && (
+        <SettingsEmptyPlaceholder>{t`Failed to load usage limits.`}</SettingsEmptyPlaceholder>
+      )}
+
+      {isDefined(editedRow) && isDefined(editedRowOpening) && (
+        <SettingsAdminWorkspaceUsageLimitModal
+          key={`${editedRowOpening.rowId}:${editedRowOpening.sequence}`}
+          dialogId={EDIT_LIMIT_DIALOG_ID}
+          workspaceId={workspaceId}
+          row={editedRow}
+        />
+      )}
     </Section.Root>
   );
 };

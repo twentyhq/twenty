@@ -20,9 +20,8 @@ export type AdminUsageLimitRow = {
   burstValue: number | null;
   usageLimitId: string | null;
   isOverridden: boolean;
-  isEnforcedOnCurrentPlan: boolean;
-  limitValueConfigVariable: string;
-  // How many overridable defaults share this one's scope. Above one, a single
-  // override replaces all of them, because the speed rule ignores the period.
-  suppressedTogetherCount: number;
+  // The entitlement gate drops an intra-workspace override at read time and the
+  // instance default applies instead, so this only says anything once
+  // isOverridden is true.
+  isOverrideEnforced: boolean;
 };
