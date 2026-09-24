@@ -17,6 +17,9 @@ const AUTH_REFUSAL_STATUSES = new Set([401, 403]);
 
 const SIGN_IN_PAGE_CONTENT_TYPE = 'text/html';
 
+const FILES_READ_SCOPE_MISSING_HINT =
+  'which usually means the bot token predates the files:read scope';
+
 const parseContentLengthBytes = (
   headerValue: string | null,
 ): number | undefined => {
@@ -101,7 +104,7 @@ export const downloadSlackFile = async ({
     if (AUTH_REFUSAL_STATUSES.has(response.status)) {
       return {
         success: false,
-        error: `Slack refused the download with status ${response.status}, which usually means the bot token predates the files:read scope`,
+        error: `Slack refused the download with status ${response.status}, ${FILES_READ_SCOPE_MISSING_HINT}`,
         reason: 'missing-scope',
       };
     }
@@ -119,7 +122,7 @@ export const downloadSlackFile = async ({
     if (responseContentType.startsWith(SIGN_IN_PAGE_CONTENT_TYPE)) {
       return {
         success: false,
-        error: `Slack returned its sign-in page instead of ${mimeType}, which usually means the bot token predates the files:read scope`,
+        error: `Slack returned its sign-in page instead of ${mimeType}, ${FILES_READ_SCOPE_MISSING_HINT}`,
         reason: 'missing-scope',
       };
     }
