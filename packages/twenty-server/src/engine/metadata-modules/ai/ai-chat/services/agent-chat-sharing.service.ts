@@ -308,11 +308,14 @@ export class AgentChatSharingService {
         }
         return storage === 'core'
           ? record
-          : (normalizeAgentHistoryRecord({
-              record,
-              workspaceId: args.workspaceId,
-              objectName: 'agentChatThread',
-            }) as AgentChatThreadEntity);
+          : ({
+              ...normalizeAgentHistoryRecord({
+                record,
+                workspaceId: args.workspaceId,
+                objectName: 'agentChatThread',
+              }),
+              userWorkspaceId: thread.userWorkspaceId,
+            } as AgentChatThreadEntity);
       },
     });
   }

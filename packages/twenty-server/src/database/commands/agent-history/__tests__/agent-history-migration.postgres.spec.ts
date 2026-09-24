@@ -203,12 +203,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
     };
 
-    const createChatService = (
-      messageRepository: typeof messages,
-      threadRepository: typeof threads = threads,
-    ) =>
+    const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
-        threadRepository,
+        threads,
         new AgentHistoryRepository('agentTurn', AgentTurnEntity, storage, orm),
         messageRepository,
         new AgentHistoryRepository(
@@ -979,9 +976,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(created.userWorkspaceId).toBe(OWNER_ID);
       expect(
         (
-          await createChatService(messages).getThreadsForUser({
-            workspaceId: WORKSPACE_ID,
-            userWorkspaceId: OWNER_ID,
+          await threads.find(WORKSPACE_ID, {
+            where: { userWorkspaceId: OWNER_ID },
           })
         ).map((thread) => thread.id),
       ).toEqual(expect.arrayContaining([THREAD_ID, created.id]));
@@ -998,6 +994,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(
         threads.insert(WORKSPACE_ID, { userWorkspaceId: TURN_ID }),
       ).rejects.toThrow('not a member of this workspace');
+      await expect(
+        threads.insert(WORKSPACE_ID, { title: 'Ownerless' }),
+      ).rejects.toThrow('Chat threads require an owner');
       await dataSource.query(
         `DELETE FROM "${SCHEMA}"."workspaceMember" WHERE id = $1`,
         [MEMBER_ID],
@@ -1035,7 +1034,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         target: 'workspace',
       });
       await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentChatThread" ADD COLUMN "userWorkspaceId" uuid`,
+        `ALTER TABLE "${SCHEMA}"."agentChatThread" ADD COLUMN "userWorkspaceId" uuid, ALTER COLUMN "workspaceMemberId" DROP NOT NULL`,
       );
       await dataSource.query(
         `UPDATE "${SCHEMA}"."agentChatThread" SET "userWorkspaceId" = $1, "workspaceMemberId" = NULL`,
@@ -1086,9 +1085,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).toEqual([{ userWorkspaceId: OWNER_ID, workspaceMemberId: MEMBER_ID }]);
       expect(
         (
-          await createChatService(messages, legacyThreads).getThreadsForUser({
-            workspaceId: WORKSPACE_ID,
-            userWorkspaceId: OWNER_ID,
+          await legacyThreads.find(WORKSPACE_ID, {
+            where: { userWorkspaceId: OWNER_ID },
           })
         ).map((thread) => thread.id),
       ).toEqual(expect.arrayContaining([THREAD_ID, created.id]));

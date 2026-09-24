@@ -32,6 +32,7 @@ import {
   type ObjectLiteral,
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -295,6 +296,17 @@ export class AgentHistoryRepository<
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
     context: AgentHistoryStorageContext,
   ): Promise<ObjectLiteral | ObjectLiteral[]> {
+    if (
+      this.name === 'agentChatThread' &&
+      ((Array.isArray(values) ? values : [values]) as ObjectLiteral[]).some(
+        (value) => !isNonEmptyString(value.userWorkspaceId),
+      )
+    ) {
+      throw new AgentHistoryStorageException(
+        'INVALID_CRITERIA',
+        'Chat threads require an owner',
+      );
+    }
     const mapped = await this.mapWorkspaceValues(workspaceId, values, context);
 
     return this.name === 'agentMessage'

@@ -491,7 +491,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         ),
         icon: 'IconUsers',
         isUIEditable: false,
-        isNullable: true,
+        isNullable: false,
         targetObjectName: 'workspaceMember',
         targetFieldName: 'agentChatThreads',
         morphId: null,

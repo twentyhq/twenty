@@ -1,6 +1,7 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
@@ -62,8 +63,16 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
       flatFieldMetadataMaps.byUniversalIdentifier[
         LEGACY_USER_WORKSPACE_ID_FIELD_UNIVERSAL_IDENTIFIER
       ];
+    const ownerField =
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
+          .universalIdentifier
+      ];
 
-    if (!isDefined(legacyField)) {
+    if (
+      !isDefined(ownerField) ||
+      (!isDefined(legacyField) && !ownerField.isNullable)
+    ) {
       return;
     }
 
@@ -94,17 +103,38 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
 
       const threadTable = `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThread"`;
 
-      await this.dataSource.query(
-        `UPDATE ${threadTable} thread SET "workspaceMemberId" = ${buildWorkspaceMemberIdFromUserWorkspaceIdSql(
-          {
-            workspaceId,
-            userWorkspaceIdSql: 'thread."userWorkspaceId"',
-          },
-        )} WHERE thread."workspaceMemberId" IS NULL`,
-      );
+      if (isDefined(legacyField)) {
+        await this.dataSource.query(
+          `UPDATE ${threadTable} thread SET "workspaceMemberId" = ${buildWorkspaceMemberIdFromUserWorkspaceIdSql(
+            {
+              workspaceId,
+              userWorkspaceIdSql: 'thread."userWorkspaceId"',
+            },
+          )} WHERE thread."workspaceMemberId" IS NULL`,
+        );
 
-      // The removed userWorkspace cascade used to delete these. Their owner
-      // left the workspace, so no one can reach them anymore.
+        const legacyIndex =
+          flatIndexMaps.byUniversalIdentifier[
+            LEGACY_OWNER_INDEX_UNIVERSAL_IDENTIFIER
+          ];
+
+        await this.runMigrationOrThrow(workspaceId, {
+          index: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: isDefined(legacyIndex) ? [legacyIndex] : [],
+            flatEntityToUpdate: [],
+          },
+          fieldMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: [legacyField],
+            flatEntityToUpdate: [],
+          },
+        });
+      }
+
+      // Runs only once the legacy column is gone, so a failed drop never
+      // loses a thread. Their owner left the workspace and no one can reach
+      // them; the removed userWorkspace cascade used to delete them.
       const orphans: { id: string }[] = await this.dataSource.query(
         `DELETE FROM ${threadTable} WHERE "workspaceMemberId" IS NULL RETURNING id`,
       );
@@ -115,34 +145,14 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
         );
       }
 
-      const legacyIndex =
-        flatIndexMaps.byUniversalIdentifier[
-          LEGACY_OWNER_INDEX_UNIVERSAL_IDENTIFIER
-        ];
-      const result =
-        await this.migrations.validateBuildAndRunLegacyWorkspaceMigration({
-          workspaceId,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          allFlatEntityOperationByMetadataName: {
-            index: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: isDefined(legacyIndex) ? [legacyIndex] : [],
-              flatEntityToUpdate: [],
-            },
-            fieldMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [legacyField],
-              flatEntityToUpdate: [],
-            },
+      if (ownerField.isNullable) {
+        await this.runMigrationOrThrow(workspaceId, {
+          fieldMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: [],
+            flatEntityToUpdate: [{ ...ownerField, isNullable: false }],
           },
         });
-
-      if (result.status === 'fail') {
-        throw new Error(
-          `Could not drop the chat thread userWorkspaceId field for ${workspaceId}: ${JSON.stringify(result)}`,
-        );
       }
 
       await lockRunner.commitTransaction();
@@ -153,6 +163,28 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
       throw error;
     } finally {
       await lockRunner.release();
+    }
+  }
+
+  private async runMigrationOrThrow(
+    workspaceId: string,
+    allFlatEntityOperationByMetadataName: Parameters<
+      WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunLegacyWorkspaceMigration']
+    >[0]['allFlatEntityOperationByMetadataName'],
+  ): Promise<void> {
+    const result =
+      await this.migrations.validateBuildAndRunLegacyWorkspaceMigration({
+        workspaceId,
+        isSystemBuild: true,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        allFlatEntityOperationByMetadataName,
+      });
+
+    if (result.status === 'fail') {
+      throw new Error(
+        `Could not move chat thread owners to workspace members for ${workspaceId}: ${JSON.stringify(result)}`,
+      );
     }
   }
 

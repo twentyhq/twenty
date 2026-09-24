@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type DataSource } from 'typeorm';
 
 import { type AgentHistorySchemaService } from 'src/database/commands/agent-history/agent-history-schema.service';
@@ -12,13 +13,24 @@ const LEGACY_FIELD_UNIVERSAL_IDENTIFIER =
   'bf830886-b6dc-46e9-a229-eecbb0e66032';
 const LEGACY_INDEX_UNIVERSAL_IDENTIFIER =
   'c97a4c97-266b-490a-a4d6-76274f5de429';
+const OWNER_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.agentChatThread.fields.workspaceMember.universalIdentifier;
+
+type MigrationOperations = {
+  fieldMetadata: {
+    flatEntityToDelete: unknown[];
+    flatEntityToUpdate: { isNullable: boolean }[];
+  };
+};
 
 const buildCommand = ({
   hasLegacyField = true,
+  isOwnerNullable = true,
   isEmptyUnprovisionedWorkspace = false,
   migrationStatus = 'success',
 }: {
   hasLegacyField?: boolean;
+  isOwnerNullable?: boolean;
   isEmptyUnprovisionedWorkspace?: boolean;
   migrationStatus?: 'success' | 'fail';
 } = {}) => {
@@ -28,6 +40,10 @@ const buildCommand = ({
   };
   const legacyIndex = {
     universalIdentifier: LEGACY_INDEX_UNIVERSAL_IDENTIFIER,
+  };
+  const ownerField = {
+    universalIdentifier: OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+    isNullable: isOwnerNullable,
   };
   const lockRunner = {
     isTransactionActive: false,
@@ -62,10 +78,21 @@ const buildCommand = ({
   const prepare = jest.fn(async () => {
     calls.push('prepare');
   });
-  const validateBuildAndRunLegacyWorkspaceMigration = jest.fn(async () => {
-    calls.push('drop-legacy-field');
-    return { status: migrationStatus };
-  });
+  const validateBuildAndRunLegacyWorkspaceMigration = jest.fn(
+    async ({
+      allFlatEntityOperationByMetadataName,
+    }: {
+      allFlatEntityOperationByMetadataName: MigrationOperations;
+    }) => {
+      calls.push(
+        allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToDelete
+          .length > 0
+          ? 'drop-legacy-field'
+          : 'require-owner',
+      );
+      return { status: migrationStatus };
+    },
+  );
   const command = new LinkChatThreadsToWorkspaceMembersCommand(
     {} as WorkspaceIteratorService,
     { prepare } as unknown as AgentHistorySchemaService,
@@ -77,9 +104,12 @@ const buildCommand = ({
     {
       getOrRecompute: jest.fn().mockResolvedValue({
         flatFieldMetadataMaps: {
-          byUniversalIdentifier: hasLegacyField
-            ? { [LEGACY_FIELD_UNIVERSAL_IDENTIFIER]: legacyField }
-            : {},
+          byUniversalIdentifier: {
+            [OWNER_FIELD_UNIVERSAL_IDENTIFIER]: ownerField,
+            ...(hasLegacyField
+              ? { [LEGACY_FIELD_UNIVERSAL_IDENTIFIER]: legacyField }
+              : {}),
+          },
         },
         flatIndexMaps: {
           byUniversalIdentifier: {
@@ -117,7 +147,7 @@ const run = (
   });
 
 describe('LinkChatThreadsToWorkspaceMembersCommand', () => {
-  it('backfills members and drops the legacy column while chat history is locked', async () => {
+  it('drops the legacy column before deleting ownerless threads and requiring an owner', async () => {
     const {
       calls,
       command,
@@ -133,13 +163,14 @@ describe('LinkChatThreadsToWorkspaceMembersCommand', () => {
       'lock',
       'lock',
       'backfill',
-      'delete-orphans',
       'drop-legacy-field',
+      'delete-orphans',
+      'require-owner',
       'commit',
     ]);
-    expect(validateBuildAndRunLegacyWorkspaceMigration).toHaveBeenCalledWith(
+    expect(validateBuildAndRunLegacyWorkspaceMigration).toHaveBeenNthCalledWith(
+      1,
       expect.objectContaining({
-        workspaceId: WORKSPACE_ID,
         allFlatEntityOperationByMetadataName: {
           index: {
             flatEntityToCreate: [],
@@ -154,10 +185,43 @@ describe('LinkChatThreadsToWorkspaceMembersCommand', () => {
         },
       }),
     );
+    expect(validateBuildAndRunLegacyWorkspaceMigration).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        allFlatEntityOperationByMetadataName: {
+          fieldMetadata: expect.objectContaining({
+            flatEntityToUpdate: [
+              expect.objectContaining({
+                universalIdentifier: OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+                isNullable: false,
+              }),
+            ],
+          }),
+        },
+      }),
+    );
   });
 
-  it('only provisions the relation when the legacy column is already gone', async () => {
+  it('finishes a run interrupted after the legacy column was dropped', async () => {
     const { calls, command } = buildCommand({ hasLegacyField: false });
+
+    await run(command);
+
+    expect(calls).toEqual([
+      'prepare',
+      'lock',
+      'lock',
+      'delete-orphans',
+      'require-owner',
+      'commit',
+    ]);
+  });
+
+  it('only provisions when the owner is already required', async () => {
+    const { calls, command } = buildCommand({
+      hasLegacyField: false,
+      isOwnerNullable: false,
+    });
 
     await run(command);
 
@@ -183,14 +247,15 @@ describe('LinkChatThreadsToWorkspaceMembersCommand', () => {
     expect(calls).toEqual([]);
   });
 
-  it('releases the lock without committing when dropping the column fails', async () => {
+  it('keeps every thread when dropping the legacy column fails', async () => {
     const { calls, command, lockRunner } = buildCommand({
       migrationStatus: 'fail',
     });
 
     await expect(run(command)).rejects.toThrow(
-      'Could not drop the chat thread userWorkspaceId field',
+      'Could not move chat thread owners to workspace members',
     );
+    expect(calls).not.toContain('delete-orphans');
     expect(calls[calls.length - 1]).toBe('rollback');
     expect(lockRunner.release).toHaveBeenCalled();
   });
