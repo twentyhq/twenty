@@ -1,6 +1,5 @@
-import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
-import { isSelectorElementNode } from '@/polyfills/selectors/utils/isSelectorElementNode';
+import { iterateMatchingDescendants } from '@/polyfills/selectors/utils/iterateMatchingDescendants';
 
 export const collectMatchingDescendants = ({
   nodes,
@@ -8,16 +7,6 @@ export const collectMatchingDescendants = ({
 }: {
   nodes: SelectorElementLike[];
   isElementMatching: (element: SelectorElementLike) => boolean;
-}): SelectorElementLike[] => {
-  const matchingDescendants: SelectorElementLike[] = [];
-
-  for (const node of nodes) {
-    for (const descendant of iterateElementSubtree(node)) {
-      if (isSelectorElementNode(descendant) && isElementMatching(descendant)) {
-        matchingDescendants.push(descendant);
-      }
-    }
-  }
-
-  return matchingDescendants;
-};
+}): SelectorElementLike[] => [
+  ...iterateMatchingDescendants({ nodes, isElementMatching }),
+];
