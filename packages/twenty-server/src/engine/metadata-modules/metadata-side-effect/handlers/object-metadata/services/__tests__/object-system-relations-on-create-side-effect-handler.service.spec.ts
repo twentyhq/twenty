@@ -80,7 +80,9 @@ describe('ObjectSystemRelationsOnCreateSideEffectHandlerService', () => {
   it('still creates the object when the chat target is not provisioned yet', () => {
     const result = handler.buildSideEffects(
       buildArgs(
-        withoutObject(STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier),
+        withoutObject(
+          STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier,
+        ),
       ),
     );
 
