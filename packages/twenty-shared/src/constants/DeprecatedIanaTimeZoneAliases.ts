@@ -1,4 +1,3 @@
-// Keep PostgreSQL abbreviations and POSIX zones unchanged to preserve bucket boundaries.
 export const DEPRECATED_IANA_TIME_ZONE_ALIASES: Record<string, string> = {
   'Africa/Asmera': 'Africa/Asmara',
   'America/Argentina/ComodRivadavia': 'America/Argentina/Catamarca',

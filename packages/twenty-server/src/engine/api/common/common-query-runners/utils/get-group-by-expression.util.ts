@@ -71,7 +71,6 @@ export const getGroupByExpression = ({
     );
   }
 
-  // PostgreSQL installations without tzdata-legacy reject these accepted aliases.
   const normalizedTimeZone = isNonEmptyString(groupByField.timeZone)
     ? (DEPRECATED_IANA_TIME_ZONE_ALIASES[groupByField.timeZone] ??
       groupByField.timeZone)

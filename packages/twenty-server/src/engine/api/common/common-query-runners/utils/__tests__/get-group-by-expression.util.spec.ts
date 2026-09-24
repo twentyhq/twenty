@@ -96,8 +96,6 @@ describe('getGroupByExpression', () => {
   });
 
   describe('deprecated timezone alias normalization', () => {
-    // Postgres builds without tzdata's backward links reject these aliases, so
-    // they must be resolved before reaching SQL. Browsers still report them.
     it.each([
       ['Asia/Calcutta', 'Asia/Kolkata'],
       ['Europe/Kiev', 'Europe/Kyiv'],
@@ -122,46 +120,26 @@ describe('getGroupByExpression', () => {
       },
     );
 
-    it('should leave canonical timezones untouched', () => {
-      const groupByField = buildGroupByDateField({ timeZone: 'Asia/Kolkata' });
+    it.each([
+      'Asia/Kolkata',
+      'UTC',
+      'GMT',
+      'CET',
+      'MET',
+      'WET',
+      'EET',
+      'EST5EDT',
+      'Zulu',
+    ])('should leave supported timezone %s unchanged', (timeZone) => {
+      const groupByField = buildGroupByDateField({ timeZone });
 
       const result = getGroupByExpression({
         groupByField,
         columnNameWithQuotes,
       });
 
-      expect(result).toContain("'Asia/Kolkata'");
+      expect(result).toContain(`'${timeZone}'`);
     });
-
-    // These are aliases too, but base tzdata carries them, so Postgres accepts
-    // them everywhere and rewriting would be gratuitous churn.
-    it.each(['UTC', 'GMT'])(
-      'should not rewrite %s, which base tzdata already provides',
-      (timeZone) => {
-        const groupByField = buildGroupByDateField({ timeZone });
-
-        const result = getGroupByExpression({
-          groupByField,
-          columnNameWithQuotes,
-        });
-
-        expect(result).toContain(`'${timeZone}'`);
-      },
-    );
-
-    it.each(['CET', 'MET', 'WET', 'EET', 'EST5EDT', 'Zulu'])(
-      'should not rewrite %s, which Postgres resolves without tzdata-legacy',
-      (timeZone) => {
-        const groupByField = buildGroupByDateField({ timeZone });
-
-        const result = getGroupByExpression({
-          groupByField,
-          columnNameWithQuotes,
-        });
-
-        expect(result).toContain(`'${timeZone}'`);
-      },
-    );
 
     it('should normalize both interpolations of the timezone in the WEEK expression', () => {
       const groupByField = buildGroupByDateField({
