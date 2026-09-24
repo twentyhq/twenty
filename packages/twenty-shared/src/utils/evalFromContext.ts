@@ -228,7 +228,7 @@ export const evalFromContext = (
   const firstSegment = segments[0];
   const lastSegment = segments[segments.length - 1];
 
-  if (firstSegment === undefined || lastSegment === undefined) {
+  if (!isDefined(firstSegment) || !isDefined(lastSegment)) {
     return toJsonValue(context);
   }
 

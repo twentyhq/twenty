@@ -55,7 +55,7 @@ const applyDiffToPath = (
   const pathLength = path.length;
   const lastPathElement = path[pathLength - 1];
 
-  if (lastPathElement === undefined) {
+  if (!isDefined(lastPathElement)) {
     throw new Error('Cannot apply diff at an empty path');
   }
 

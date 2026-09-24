@@ -21,7 +21,7 @@ export const findOutputSchemaPathFailure = ({
   for (let index = 0; index < propertyPath.length; index++) {
     const segment = propertyPath[index];
 
-    if (segment === undefined) {
+    if (!isDefined(segment)) {
       return undefined;
     }
 
@@ -46,7 +46,7 @@ export const findOutputSchemaPathFailure = ({
     if (field.isLeaf) {
       const nextSegment = propertyPath[index + 1];
 
-      if (nextSegment !== undefined) {
+      if (isDefined(nextSegment)) {
         return {
           validPrefix: propertyPath.slice(0, index + 1),
           failedSegment: nextSegment,

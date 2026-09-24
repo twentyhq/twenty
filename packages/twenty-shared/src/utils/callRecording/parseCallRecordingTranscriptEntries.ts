@@ -69,7 +69,7 @@ const readTranscriptEntry = (
   const firstWord = words[0];
   const lastWord = words[words.length - 1];
 
-  if (firstWord === undefined || lastWord === undefined) {
+  if (!isDefined(firstWord) || !isDefined(lastWord)) {
     return undefined;
   }
 

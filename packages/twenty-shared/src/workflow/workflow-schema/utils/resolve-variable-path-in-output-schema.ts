@@ -102,7 +102,7 @@ const resolveInGenericMap = (
 ): ResolvedVariable => {
   const [segment, ...rest] = segments;
 
-  if (segment === undefined) {
+  if (!isDefined(segment)) {
     return NOT_FOUND;
   }
 

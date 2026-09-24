@@ -6,7 +6,8 @@ export const isNonEmptyArray = <TArray extends readonly unknown[]>(
   if (
     Array.isArray(probableArray) &&
     isNumber(probableArray.length) &&
-    probableArray.length > 0
+    probableArray.length > 0 &&
+    0 in probableArray
   ) {
     return true;
   }

@@ -19,6 +19,16 @@ describe('isNonEmptyArray', () => {
     }
   });
 
+  it('should return false for an array whose first element is a hole', () => {
+    const sparseValues = new Array<string>(2);
+
+    expect(isNonEmptyArray(sparseValues)).toBe(false);
+
+    sparseValues[0] = 'first';
+
+    expect(isNonEmptyArray(sparseValues)).toBe(true);
+  });
+
   it('should keep a narrowed readonly array readonly', () => {
     const values: readonly string[] = Object.freeze(['first']);
 
