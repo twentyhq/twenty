@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOneOptions, type Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -28,12 +26,14 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class FieldMetadataService {
   constructor(
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
@@ -51,9 +51,8 @@ export class FieldMetadataService {
     objectMetadataId?: string;
     limit: number;
   }): Promise<FieldMetadataEntity[]> {
-    return this.fieldMetadataRepository.find({
+    return this.fieldMetadataRepository.find(workspaceId, {
       where: {
-        workspaceId,
         ...(isDefined(fieldMetadataId) ? { id: fieldMetadataId } : {}),
         ...(isDefined(objectMetadataId) ? { objectMetadataId } : {}),
       },
@@ -474,20 +473,5 @@ export class FieldMetadataService {
         flatEntityMaps: recomputedFlatFieldMetadataMaps,
       },
     );
-  }
-
-  public async findOneWithinWorkspace(
-    workspaceId: string,
-    options: FindOneOptions<FieldMetadataEntity>,
-  ) {
-    const [fieldMetadata] = await this.fieldMetadataRepository.find({
-      ...options,
-      where: {
-        ...options.where,
-        workspaceId,
-      },
-    });
-
-    return fieldMetadata;
   }
 }
