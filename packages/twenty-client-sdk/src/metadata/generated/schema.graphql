@@ -869,6 +869,7 @@ type Workspace {
   isMicrosoftAuthBypassEnabled: Boolean!
   isCustomDomainEnabled: Boolean!
   isInternalMessagesImportEnabled: Boolean!
+  allowedIframeOrigins: [String!]
   editableProfileFields: [String!]
   defaultRole: Role
   aiChatModelTier: AiModelTier!
@@ -3776,11 +3777,11 @@ type Query {
   recordSharing(target: RecordSharingTargetInput!): RecordSharingDTO!
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
-  applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
-  isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
+  applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
+  isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   usageLimits: [UsageLimit!]!
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
@@ -4068,8 +4069,10 @@ type Mutation {
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
-  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
+  uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl! @deprecated(reason: "Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage.")
+  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl! @deprecated(reason: "Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.")
+  completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
+  completeWorkspaceMemberProfilePictureUpload(fileId: String!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   createUsageLimit(input: CreateUsageLimitInput!): UsageLimit!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
@@ -4166,6 +4169,7 @@ type Mutation {
   deleteFrontComponent(id: UUID!): FrontComponent!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
+  updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
@@ -4271,7 +4275,9 @@ type Mutation {
   signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
-  uploadNewWorkspaceLogo(workspaceId: String!, file: Upload!): FileWithSignedUrl!
+  uploadNewWorkspaceLogo(workspaceId: String!, file: Upload!): FileWithSignedUrl! @deprecated(reason: "Use createNewWorkspaceLogoUpload and completeNewWorkspaceLogoUpload, which send the logo straight to file storage.")
+  createNewWorkspaceLogoUpload(workspaceId: String!, filename: String!, size: Float!): FileUploadTarget!
+  completeNewWorkspaceLogoUpload(workspaceId: String!, fileId: String!): FileWithSignedUrl!
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   getAuthTokensFromSSOExchangeToken(ssoExchangeToken: String!): AuthTokens!
@@ -5062,6 +5068,11 @@ input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
   isInternalMessagesImportEnabled: Boolean
+}
+
+input UpdateWorkspaceAllowedIframeOriginsInput {
+  operation: String!
+  origin: String!
 }
 
 input CreateApplicationRegistrationInput {

@@ -7,6 +7,7 @@ export const settings: Settings = {
     // without transiting the server memory, so they get a much higher cap
     // than multipart uploads.
     maxDirectUploadFileSize: '1GB',
+    maxCorePictureFileSize: '10MB',
   },
   minLengthOfStringForDuplicateCheck: 3,
   maxVisibleViewFields: 30,
