@@ -40,6 +40,5 @@ export const WORKSPACE_SCOPED_EXEMPTIONS = [
   'MessageChannelEntity',
   'UserWorkspaceEntity',
   'ConnectedAccountEntity',
-  'MessageFolderEntity',
   'WorkspaceSsoIdentityProviderEntity',
 ] as const;
