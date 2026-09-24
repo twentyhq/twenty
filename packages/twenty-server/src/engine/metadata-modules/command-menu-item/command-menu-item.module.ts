@@ -9,6 +9,7 @@ import { FrontComponentModule } from 'src/engine/metadata-modules/front-componen
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/command-menu-item/interceptors/command-menu-item-graphql-api-exception.interceptor';
 import { FlatCommandMenuItemModule } from 'src/engine/metadata-modules/flat-command-menu-item/flat-command-menu-item.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -25,6 +26,7 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
     FrontComponentModule,
     FeatureFlagModule,
     I18nModule,
+    PermissionsModule,
   ],
   providers: [
     CommandMenuItemService,
