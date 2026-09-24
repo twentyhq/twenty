@@ -56,8 +56,13 @@ export const resolveMinLikelihood = ({
     return minLikelihood;
   }
 
+  const weakIdentifierMinLikelihoodVariableName =
+    minLikelihoodVariableName === 'PDL_PERSON_MIN_LIKELIHOOD'
+      ? 'PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD'
+      : 'PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD';
+
   return Math.max(
     minLikelihood,
-    getConfiguredMinLikelihood('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD'),
+    getConfiguredMinLikelihood(weakIdentifierMinLikelihoodVariableName),
   );
 };

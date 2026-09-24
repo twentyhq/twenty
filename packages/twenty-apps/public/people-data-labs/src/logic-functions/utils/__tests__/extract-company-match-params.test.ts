@@ -9,7 +9,8 @@ describe('extractCompanyMatchParams', () => {
   beforeEach(() => {
     vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', undefined);
     vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', undefined);
-    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD', undefined);
   });
 
   afterEach(() => {
@@ -103,8 +104,9 @@ describe('extractCompanyMatchParams', () => {
     ).toMatchObject({ minLikelihood: 9 });
   });
 
-  it('uses the name-based setting when matching by name only', () => {
-    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', '9');
+  it('uses only the company name-based setting when matching by name only', () => {
+    vi.stubEnv('PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD', '9');
+    vi.stubEnv('PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD', '10');
 
     expect(
       extractCompanyMatchParams({

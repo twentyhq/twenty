@@ -8,7 +8,8 @@ describe('resolveMinLikelihood', () => {
   beforeEach(() => {
     vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', undefined);
     vi.stubEnv('PDL_COMPANY_MIN_LIKELIHOOD', undefined);
-    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD', undefined);
+    vi.stubEnv('PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD', undefined);
   });
 
   afterEach(() => {
@@ -16,14 +17,22 @@ describe('resolveMinLikelihood', () => {
   });
 
   describe.each([
-    { variableName: 'PDL_PERSON_MIN_LIKELIHOOD', label: 'people' },
-    { variableName: 'PDL_COMPANY_MIN_LIKELIHOOD', label: 'companies' },
-  ] as const)('$label', ({ variableName, label }) => {
+    {
+      variableName: 'PDL_PERSON_MIN_LIKELIHOOD',
+      weakVariableName: 'PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD',
+      label: 'people',
+    },
+    {
+      variableName: 'PDL_COMPANY_MIN_LIKELIHOOD',
+      weakVariableName: 'PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD',
+      label: 'companies',
+    },
+  ] as const)('$label', ({ variableName, weakVariableName, label }) => {
     it.each([undefined, '', '   '])(
       'uses application variable defaults when the setting is %j',
       (value) => {
         vi.stubEnv(variableName, value);
-        vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', value);
+        vi.stubEnv(weakVariableName, value);
 
         expect(
           resolveMinLikelihood({
@@ -97,7 +106,7 @@ describe('resolveMinLikelihood', () => {
     'uses $expected for name-based matches with minimums $minimum and $weakMinimum',
     ({ minimum, weakMinimum, expected }) => {
       vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', minimum);
-      vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', weakMinimum);
+      vi.stubEnv('PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD', weakMinimum);
 
       expect(
         resolveMinLikelihood({
@@ -110,7 +119,7 @@ describe('resolveMinLikelihood', () => {
   );
 
   it('validates the name-based setting only for weak identifiers', () => {
-    vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', 'invalid');
+    vi.stubEnv('PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD', 'invalid');
 
     expect(
       resolveMinLikelihood({
@@ -127,7 +136,7 @@ describe('resolveMinLikelihood', () => {
       }),
     ).toThrow(
       new PdlConfigError(
-        'Minimum likelihood for name-based matches must be an integer between 1 and 10.',
+        'Minimum likelihood for name-based people matches must be an integer between 1 and 10.',
       ),
     );
   });
@@ -136,7 +145,7 @@ describe('resolveMinLikelihood', () => {
     'uses an explicit likelihood of %s over invalid settings for both identifier strengths',
     (inputMinLikelihood) => {
       vi.stubEnv('PDL_PERSON_MIN_LIKELIHOOD', 'invalid');
-      vi.stubEnv('PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD', 'invalid');
+      vi.stubEnv('PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD', 'invalid');
 
       for (const hasStrongIdentifier of [true, false]) {
         expect(

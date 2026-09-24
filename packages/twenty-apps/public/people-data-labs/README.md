@@ -14,7 +14,8 @@ Set the minimum match likelihood in the app's settings. Each setting accepts an 
 
 - **Minimum likelihood for people** (`PDL_PERSON_MIN_LIKELIHOOD`): defaults to 2.
 - **Minimum likelihood for companies** (`PDL_COMPANY_MIN_LIKELIHOOD`): defaults to 2.
-- **Minimum likelihood for name-based matches** (`PDL_WEAK_IDENTIFIER_MIN_LIKELIHOOD`): defaults to 6. Applies when matching a person by name and company, or a company by name only. Uses the higher of this value and the people or company minimum.
+- **Minimum likelihood for name-based people matches** (`PDL_PERSON_WEAK_IDENTIFIER_MIN_LIKELIHOOD`): defaults to 6. Applies when matching a person by name and company. Uses the higher of this value and the people minimum.
+- **Minimum likelihood for name-based company matches** (`PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD`): defaults to 6. Applies when matching a company by name only. Uses the higher of this value and the company minimum.
 
 Command menu items use these defaults. Single-record and bulk workflow nodes use them when their minimum likelihood input is empty; an explicit workflow value takes precedence.
 
