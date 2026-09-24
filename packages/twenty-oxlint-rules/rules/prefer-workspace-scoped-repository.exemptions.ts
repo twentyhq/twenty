@@ -1,10 +1,4 @@
 // Kept free of imports: twenty-server's exemptions spec loads this module.
-//
-// Removing an entity from WORKSPACE_SCOPED_EXEMPTIONS can surface raw
-// injections sitting in frozen upgrade-version-command directories, which
-// cannot take an in-file suppression. twenty-server/.oxlintrc.json turns the
-// rule off for the directories that need it; extend that list if a migration
-// reports a violation under one.
 // Entities that do not fit the scoped wrapper: workspace itself,
 // nullable-workspaceId rows (instance-level config / migrations / tokens),
 // and global tables with no workspaceId column at all.

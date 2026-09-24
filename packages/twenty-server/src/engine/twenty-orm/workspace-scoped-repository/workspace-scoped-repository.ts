@@ -312,9 +312,6 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.createQueryBuilder(alias);
   }
 
-  // Same builder with the workspace predicate already applied, so a caller
-  // that needs a query builder does not have to re-derive the guard. Further
-  // criteria must go through andWhere, or they replace it.
   createScopedQueryBuilder(
     workspaceId: string,
     alias: string,
