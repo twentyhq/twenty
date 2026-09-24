@@ -650,4 +650,37 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  targetAgentChatThread: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
+      fieldName: 'targetAgentChatThread',
+      label: i18nLabel(
+        msg({ message: `Agent chat thread`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconFileImport',
+      isNullable: true,
+      isUIEditable: false,
+      isSystemSideEffect: true,
+      targetObjectName: 'agentChatThread',
+      targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'targetAgentChatThreadId',
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
+import { AddAgentChatThreadAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790265225251-add-agent-chat-thread-attachment-target.command';
 import { AttributeChatMessageSendersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790171503075-attribute-chat-message-senders.command';
 import { DeleteSystemReadableObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790180964414-delete-system-readable-object-navigation-command-menu-items.command';
 import { MoveCampaignSendingTablesToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790203235337-move-campaign-sending-tables-to-workspace.command';
@@ -20,6 +21,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    AddAgentChatThreadAttachmentTargetCommand,
     AttributeChatMessageSendersCommand,
     DeleteSystemReadableObjectNavigationCommandMenuItemsCommand,
     MoveCampaignSendingTablesToWorkspaceCommand,

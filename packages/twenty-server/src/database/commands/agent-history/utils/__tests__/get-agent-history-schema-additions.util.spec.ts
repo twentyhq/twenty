@@ -21,7 +21,7 @@ const HISTORY_IDENTIFIERS = [
 ];
 
 describe('getAgentHistorySchemaAdditions', () => {
-  it('selects only history objects and their fields and indexes', () => {
+  it('selects only history objects and the fields and indexes relating to them', () => {
     const additions = getAgentHistorySchemaAdditions({
       existing: {
         flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
@@ -35,11 +35,52 @@ describe('getAgentHistorySchemaAdditions', () => {
     ).toEqual([...HISTORY_IDENTIFIERS].sort());
     expect(additions.fields.length).toBeGreaterThan(0);
     expect(additions.indexes.length).toBeGreaterThan(0);
-    for (const entry of [...additions.fields, ...additions.indexes]) {
-      expect(HISTORY_IDENTIFIERS).toContain(
-        entry.objectMetadataUniversalIdentifier,
-      );
+    const historyIdentifiers = new Set<string>(HISTORY_IDENTIFIERS);
+
+    for (const field of additions.fields) {
+      expect(
+        historyIdentifiers.has(field.objectMetadataUniversalIdentifier) ||
+          historyIdentifiers.has(
+            field.relationTargetObjectMetadataUniversalIdentifier ?? '',
+          ),
+      ).toBe(true);
     }
+  });
+
+  it('provisions both sides of relations from other objects into history objects', () => {
+    const standard = createStandardMetadata();
+    const additions = getAgentHistorySchemaAdditions({
+      existing: {
+        flatObjectMetadataMaps: standard.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      },
+      standard,
+    });
+    const fieldIdentifiers = additions.fields.map(
+      (field) => field.universalIdentifier,
+    );
+    const indexIdentifiers = additions.indexes.map(
+      (index) => index.universalIdentifier,
+    );
+
+    expect(fieldIdentifiers).toEqual(
+      expect.arrayContaining([
+        STANDARD_OBJECTS.agentChatThread.fields.attachments.universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.targetAgentChatThread
+          .universalIdentifier,
+      ]),
+    );
+    expect(indexIdentifiers).toContain(
+      STANDARD_OBJECTS.attachment.indexes.agentChatThreadIdIndex
+        .universalIdentifier,
+    );
+    expect(fieldIdentifiers).not.toContain(
+      STANDARD_OBJECTS.attachment.fields.targetNote.universalIdentifier,
+    );
+    expect(indexIdentifiers).not.toContain(
+      STANDARD_OBJECTS.attachment.indexes.noteIdIndex.universalIdentifier,
+    );
   });
 
   it('adds nothing when all history metadata already exists', () => {
