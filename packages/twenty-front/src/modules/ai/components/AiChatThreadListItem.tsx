@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconArchive, IconSparkles } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
@@ -92,7 +91,7 @@ export const AiChatThreadListItem = ({
   thread,
   surface = AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
 }: AiChatThreadListItemProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { handleThreadClick } = useAiChatThreadClick();
   const {

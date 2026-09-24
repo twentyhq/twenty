@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
 import { RATING_VALUES } from 'twenty-shared/constants';
 import { type FieldRatingValue } from 'twenty-shared/types';
 import { IconTwentyStarFilled } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -32,7 +32,7 @@ export const RatingInput = ({
   readonly,
 }: RatingInputProps) => {
   const clearField = useClearField();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const iconSizeMd = theme.icon.size.md;
   const activeColor = themeCssVariables.font.color.secondary;

@@ -1,4 +1,4 @@
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type FrontComponentErrorBoxProps = {
   error: Error;

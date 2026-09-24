@@ -1,5 +1,5 @@
 import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -42,7 +42,7 @@ export const PlaceAutocompleteSelect = ({
         selectableItemIdArray={selectableItemIdArray}
         focusId={dropdownId}
       >
-        <DropdownContent
+        <LegacyDropdownContent
           ref={selectContainerRef}
           selectDisabled
           widthInPixels={345}
@@ -75,7 +75,7 @@ export const PlaceAutocompleteSelect = ({
               );
             })}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       </SelectableList>
     </StyledContainer>
   );

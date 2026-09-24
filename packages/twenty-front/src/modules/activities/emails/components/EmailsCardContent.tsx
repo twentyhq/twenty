@@ -6,7 +6,7 @@ import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInbox
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { styled } from '@linaria/react';
 import { Section } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineThread } from '~/generated/graphql';
 
 const StyledContainer = styled(StyledWidgetContentContainer)`

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { workflowRunStepLogSchema } from 'twenty-shared/workflow';
 import { JsonTree } from 'twenty-ui/components';
 import { IconInfoCircle } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';

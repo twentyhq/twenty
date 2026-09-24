@@ -1,9 +1,8 @@
 import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
-import { ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { useTheme } from 'twenty-ui/theme';
 
 export const WorkflowDiagramCustomMarkers = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   return (
     <svg style={{ position: 'absolute', top: 0, left: 0 }}>
       <defs>

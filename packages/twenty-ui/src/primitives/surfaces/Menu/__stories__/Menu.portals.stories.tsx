@@ -3,7 +3,7 @@ import { useId, useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Menu } from '../Menu';
 import { type MenuPopupProps } from '../types/MenuPopupProps';

@@ -1,7 +1,7 @@
 import { type ReactNode, useSyncExternalStore } from 'react';
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
-import '@ui/theme-constants/theme-light.css';
-import '@ui/theme-constants/theme-dark.css';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
+import '@ui/theme/theme-light.css';
+import '@ui/theme/theme-dark.css';
 import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-500.css';
 import '@fontsource/inter/latin-600.css';

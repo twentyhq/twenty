@@ -1,12 +1,10 @@
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
-import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
-import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMenuItemClick';
+import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -14,13 +12,9 @@ import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-l
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/primitives/feedback';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -43,26 +37,16 @@ const CommandMenuItemButtonRenderer = ({
   isPrimaryAction = false,
   shouldHideLabel = false,
 }: CommandMenuItemButtonRendererProps) => {
-  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-  );
-  const { commandMenuContextApi, isInPreviewMode } =
-    useContext(CommandMenuContext);
-  const { getIcon } = useIcons();
-
-  const { iconKey, label, shortLabel } = interpolateCommandMenuItemFields(
-    item,
-    commandMenuContextApi,
-  );
-
-  const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
-
-  const { handleClick, disabled, progress, showDisabledLoader } =
-    useCommandMenuItemClick({
-      item,
-      Icon,
-      label,
-    });
+  const { isInPreviewMode } = useContext(CommandMenuContext);
+  const {
+    Icon,
+    label,
+    shortLabel,
+    handleClick,
+    disabled,
+    progress,
+    isLoading,
+  } = useCommandMenuItemDisplay(item);
 
   const command = {
     key: item.id,
@@ -89,8 +73,8 @@ const CommandMenuItemButtonRenderer = ({
       command={command}
       onClick={disabled ? undefined : handleClick}
       disabled={disabled}
-      progress={isAsyncCsvExportEnabled ? progress : undefined}
-      loading={isAsyncCsvExportEnabled && showDisabledLoader}
+      progress={progress}
+      loading={isLoading}
       isPrimaryAction={isPrimaryAction}
       shouldHideLabel={shouldHideLabel}
     />
@@ -103,21 +87,8 @@ const CommandMenuItemSelectableRenderer = ({
 }: CommandMenuItemRendererProps & {
   displayType: 'listItem' | 'dropdownItem';
 }) => {
-  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-  );
-  const { commandMenuContextApi } = useContext(CommandMenuContext);
-  const { getIcon } = useIcons();
-
-  const { iconKey, label } = interpolateCommandMenuItemFields(
-    item,
-    commandMenuContextApi,
-  );
-
-  const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
-
-  const { handleClick, disabled, progress, showDisabledLoader } =
-    useCommandMenuItemClick({ item, Icon, label });
+  const { Icon, label, handleClick, disabled, progress, isLoading } =
+    useCommandMenuItemDisplay(item);
 
   const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
@@ -138,14 +109,9 @@ const CommandMenuItemSelectableRenderer = ({
     handleClick();
   };
 
-  const loaderComponent =
-    isAsyncCsvExportEnabled && disabled && showDisabledLoader ? (
-      isDefined(progress) ? (
-        <CommandListItemLoader progress={progress} />
-      ) : (
-        <Loader />
-      )
-    ) : undefined;
+  const loaderComponent = isLoading ? (
+    <CommandListItemLoader progress={progress} />
+  ) : undefined;
 
   if (isThirdPartyApp) {
     return (

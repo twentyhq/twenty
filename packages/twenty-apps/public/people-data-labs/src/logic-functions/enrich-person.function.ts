@@ -36,6 +36,10 @@ export default defineLogicFunction({
             type: 'number',
             label: 'Minimum likelihood (1-10)',
           },
+          weakIdentifierMinLikelihood: {
+            type: 'number',
+            label: 'Minimum likelihood for name-based matches (1-10)',
+          },
         },
       },
     ],

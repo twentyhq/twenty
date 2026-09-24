@@ -1,7 +1,7 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 // KNOWN ISSUE: CodeEditor wraps @monaco-editor/react, which lazy-loads the
 // monaco runtime through script injection at mount. The sandbox worker has no

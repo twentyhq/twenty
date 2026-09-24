@@ -55,7 +55,7 @@ import {
   Text,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   GetUpgradeStatusDocument,
   UpdateWorkspaceFeatureFlagDocument,
