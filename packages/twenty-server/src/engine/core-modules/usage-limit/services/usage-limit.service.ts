@@ -211,8 +211,6 @@ export class UsageLimitService {
     validateUsageLimitAgainstDefinition(input);
     validateUsageLimitAgainstKindRule(input);
 
-    // The entitlement upsells the tenant on their own surface, so it has no say
-    // over what an operator sets on someone else's workspace.
     if (
       !isOperator &&
       isIntraWorkspaceScoped(input.spenderType) &&
