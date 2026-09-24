@@ -6964,6 +6964,7 @@ msgstr "elimina"
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
@@ -15905,7 +15906,7 @@ msgstr "Segreto opzionale usato per calcolare la firma HMAC per i payload dei we
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
+#: src/modules/side-panel/components/SidePanelOptionsDropdown.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 msgid "Options"
 msgstr "Opzioni"
@@ -16267,6 +16268,11 @@ msgstr "In ritardo"
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
 msgid "Paste a link to a hosted image"
 msgstr "Incolla un link a un’immagine ospitata"
+
+#. js-lingui-id: YrKalV
+#: src/modules/advanced-text-editor/extensions/blocks/HtmlNodeInlineEditor.tsx
+msgid "Paste or write your HTML here"
+msgstr "Incolla o scrivi qui il tuo HTML"
 
 #. js-lingui-id: cpStVq
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
@@ -17624,12 +17630,12 @@ msgstr "Rimuovi dalla barra laterale"
 #. js-lingui-id: np3jVO
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Remove invitation"
-msgstr ""
+msgstr "Rimuovi invito"
 
 #. js-lingui-id: 484LKL
 #: src/modules/advanced-text-editor/components/LinkBubbleMenu.tsx
 msgid "Remove link"
-msgstr ""
+msgstr "Rimuovi link"
 
 #. js-lingui-id: O90CN2
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -17649,7 +17655,7 @@ msgstr "Rimuovi membro dallo spazio di lavoro"
 #. js-lingui-id: RlqUBz
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 msgid "Remove model"
-msgstr ""
+msgstr "Rimuovi il modello"
 
 #. js-lingui-id: FeQ/sf
 #. placeholder {0}: modelToRemove?.label ?? ''
@@ -17665,13 +17671,13 @@ msgstr "Rimuovi opzione"
 #. js-lingui-id: y/tlit
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaFieldHeader.tsx
 msgid "Remove output field"
-msgstr ""
+msgstr "Rimuovi campo di output"
 
 #. js-lingui-id: cp/fZQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsFlagRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsPermissionRow.tsx
 msgid "Remove permission"
-msgstr ""
+msgstr "Rimuovi autorizzazione"
 
 #. js-lingui-id: bKJVLZ
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -17687,12 +17693,12 @@ msgstr "Rimuovi il provider \"{0}\""
 #. js-lingui-id: +WeuHF
 #: src/modules/ai/components/AiChatQueuedMessages.tsx
 msgid "Remove queued message"
-msgstr ""
+msgstr "Rimuovi messaggio in coda"
 
 #. js-lingui-id: PhLz3E
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsTable.tsx
 msgid "Remove redirect URI"
-msgstr ""
+msgstr "Rimuovi URI di reindirizzamento"
 
 #. js-lingui-id: SjxzXf
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
@@ -17708,7 +17714,7 @@ msgstr "Rimuovi gruppo di regole"
 #. js-lingui-id: YXJhT3
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Remove searchable field"
-msgstr ""
+msgstr "Rimuovi campo ricercabile"
 
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -17739,7 +17745,7 @@ msgstr "Rimuovi variabile"
 #. js-lingui-id: Rkg5R1
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
 msgid "Remove widget"
-msgstr ""
+msgstr "Rimuovi widget"
 
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
@@ -17865,7 +17871,7 @@ msgstr "Rinvia email"
 #. js-lingui-id: wIa8Qe
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Resend invitation"
-msgstr ""
+msgstr "Reinvia invito"
 
 #. js-lingui-id: OfhWJH
 #: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
@@ -17932,17 +17938,17 @@ msgstr "Ripristina variabile"
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Resize input"
-msgstr ""
+msgstr "Ridimensiona input"
 
 #. js-lingui-id: w62xpE
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 msgid "Resize logs"
-msgstr ""
+msgstr "Ridimensiona log"
 
 #. js-lingui-id: UQyayN
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
 msgid "Resize output"
-msgstr ""
+msgstr "Ridimensiona output"
 
 #. js-lingui-id: N0vrR6
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -18161,7 +18167,7 @@ msgstr "flag dei permessi del ruolo"
 #. js-lingui-id: mPGttZ
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role settings"
-msgstr ""
+msgstr "Impostazioni del ruolo"
 
 #. js-lingui-id: jLNGne
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -18197,7 +18203,7 @@ msgstr "Rumeno"
 #. js-lingui-id: cepC1f
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Root level"
-msgstr ""
+msgstr "Livello radice"
 
 #. js-lingui-id: vQrTaX
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
@@ -18284,7 +18290,7 @@ msgstr "Esegui funzioni logiche da pacchetti di applicazioni predefiniti."
 #. js-lingui-id: 1yxEhK
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr ""
+msgstr "Esegui in background le parti lente delle modifiche al modello di dati dopo il loro salvataggio."
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/build-generic-tool-status-message.util.ts
@@ -18336,7 +18342,7 @@ msgstr "Input di esempio"
 #. js-lingui-id: wlUvzf
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "Satisfied"
-msgstr ""
+msgstr "Soddisfatta"
 
 #. js-lingui-id: +5kO8P
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
@@ -18355,7 +18361,7 @@ msgstr "Salva"
 #. js-lingui-id: PI8MEC
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Save 25% when billed annually"
-msgstr ""
+msgstr "Risparmia il 25% se fatturato annualmente"
 
 #. js-lingui-id: apLRCm
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -18365,7 +18371,7 @@ msgstr "Salva come nuova vista"
 #. js-lingui-id: VenpPu
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput.tsx
 msgid "Save item"
-msgstr ""
+msgstr "Salva elemento"
 
 #. js-lingui-id: 7byqGp
 #: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
@@ -18375,7 +18381,7 @@ msgstr ""
 #. js-lingui-id: haaI+P
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Save settings"
-msgstr ""
+msgstr "Salva impostazioni"
 
 #. js-lingui-id: bL2pm9
 #: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
@@ -18536,7 +18542,7 @@ msgstr "Cerca un tipo"
 #. js-lingui-id: ujLBwP
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 msgid "Search address fields"
-msgstr ""
+msgstr "Cerca campi indirizzo"
 
 #. js-lingui-id: +7s4fw
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -18804,7 +18810,7 @@ msgstr "Secondo"
 #. js-lingui-id: hVODsn
 #: src/modules/object-record/record-field/ui/form-types/components/FormLinksFieldInput.tsx
 msgid "Secondary Links"
-msgstr ""
+msgstr "Link secondari"
 
 #. js-lingui-id: V+rJKF
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -18998,7 +19004,7 @@ msgstr "Seleziona un provider noto o creane uno personalizzato"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview.tsx
 msgid "Select a menu item"
-msgstr ""
+msgstr "Seleziona una voce di menu"
 
 #. js-lingui-id: p4N5TB
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerCreateTargetSelect.tsx
@@ -19041,7 +19047,7 @@ msgstr "Seleziona Azione"
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 msgid "Select address fields"
-msgstr ""
+msgstr "Seleziona campi indirizzo"
 
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -19194,7 +19200,7 @@ msgstr "Cartelle selezionate"
 #. js-lingui-id: p7/fS2
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Selection"
-msgstr ""
+msgstr "Selezione"
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -19253,7 +19259,7 @@ msgstr "Invia più tardi"
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 #: src/modules/ai/components/internal/SendMessageButton.tsx
 msgid "Send message"
-msgstr ""
+msgstr "Invia messaggio"
 
 #. js-lingui-id: NpEm3p
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
@@ -19438,7 +19444,7 @@ msgstr "Configura un campo Selezione su {objectLabel} per creare un Kanban"
 #. js-lingui-id: +OEjaB
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainAiSetup.tsx
 msgid "Set up DNS with AI"
-msgstr ""
+msgstr "Configura DNS con l'IA"
 
 #. js-lingui-id: l6W1lM
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -19481,7 +19487,7 @@ msgstr "Impostazioni"
 #. js-lingui-id: UEI02L
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "settings menu item"
-msgstr ""
+msgstr "voce di menu delle impostazioni"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -19592,7 +19598,7 @@ msgstr "Mostra tutto"
 #: src/modules/views/components/ViewFieldsHiddenDropdownSection.tsx
 #: src/modules/views/components/ViewFieldsSearchDropdownSection.tsx
 msgid "Show field"
-msgstr ""
+msgstr "Mostra campo"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
@@ -20212,12 +20218,12 @@ msgstr "Termina l'impersonificazione"
 #. js-lingui-id: 5e5VJg
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Stop recording for {applicationName}"
-msgstr ""
+msgstr "Interrompi la registrazione per {applicationName}"
 
 #. js-lingui-id: lQeGNv
 #: src/modules/ai/components/internal/SendMessageButton.tsx
 msgid "Stop response"
-msgstr ""
+msgstr "Interrompi risposta"
 
 #. js-lingui-id: BrrIs8
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
@@ -20247,7 +20253,7 @@ msgstr "Indirizzo 2"
 #. js-lingui-id: WhOsNE
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
 msgid "Strikethrough"
-msgstr ""
+msgstr "Barrato"
 
 #. js-lingui-id: UJNV7l
 #: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
@@ -20405,12 +20411,12 @@ msgstr "La sottoscrizione è stata cambiata al piano {planLabel}."
 #. js-lingui-id: mxY+I+
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
 msgid "Subscription has been switched to annual billing."
-msgstr ""
+msgstr "L'abbonamento è stato cambiato alla fatturazione annuale."
 
 #. js-lingui-id: 3SS5AR
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
 msgid "Subscription has been switched to monthly billing."
-msgstr ""
+msgstr "L'abbonamento è stato cambiato alla fatturazione mensile."
 
 #. js-lingui-id: q2Qf76
 #. placeholder {0}: getBeautifiedRenewDate()
@@ -20422,7 +20428,7 @@ msgstr "L'abbonamento verrà cambiato al piano {planLabel} il {0}."
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useApplyBillingSubscriptionChange.ts
 msgid "Subscription will be switched to monthly billing the {0}."
-msgstr ""
+msgstr "L'abbonamento sarà cambiato alla fatturazione mensile il {0}."
 
 #. js-lingui-id: pEToQK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -20531,17 +20537,17 @@ msgstr "Svedese"
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Switch to annual"
-msgstr ""
+msgstr "Passa alla fatturazione annuale"
 
 #. js-lingui-id: rdZlzY
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Switch to monthly"
-msgstr ""
+msgstr "Passa alla fatturazione mensile"
 
 #. js-lingui-id: SVxgrl
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Switch to monthly billing?"
-msgstr ""
+msgstr "Passare alla fatturazione mensile?"
 
 #. js-lingui-id: GPKudC
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
@@ -20606,7 +20612,7 @@ msgstr "Sincronizzazione persa con la casella di posta {mailboxHandle}. Riconnet
 #. js-lingui-id: U6wmNc
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Sync paused"
-msgstr ""
+msgstr "Sincronizzazione in pausa"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -20636,7 +20642,7 @@ msgstr "Sincronizza etichette degli oggetti e nomi API"
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Syncing will stop and this account's credentials will be removed. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "La sincronizzazione verrà interrotta e le credenziali di questo account verranno rimosse. Le tue email e i tuoi eventi verranno mantenuti e saranno disponibili dopo la riconnessione."
 
 #. js-lingui-id: D+NlUC
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem.tsx
@@ -20970,12 +20976,12 @@ msgstr "L'ora di fine deve essere successiva all'ora di inizio."
 #. js-lingui-id: h9mpr+
 #: src/modules/record-export/utils/createRecordExportConnection.ts
 msgid "The export connection was lost. Please try again."
-msgstr ""
+msgstr "La connessione per l'esportazione è stata persa. Riprova."
 
 #. js-lingui-id: qc958u
 #: src/modules/record-export/utils/createRecordExportConnection.ts
 msgid "The export was interrupted. Please try again."
-msgstr ""
+msgstr "L'esportazione è stata interrotta. Riprova."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -20990,7 +20996,7 @@ msgstr "L'icona che il tuo trigger del flusso di lavoro mostrerà nel menu coman
 #. js-lingui-id: JNopdb
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
 msgid "The messages in this thread are missing or incomplete."
-msgstr ""
+msgstr "I messaggi in questa conversazione sono mancanti o incompleti."
 
 #. js-lingui-id: 4m3QoL
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -21092,7 +21098,7 @@ msgstr "Non è stato possibile generare la trascrizione."
 #. js-lingui-id: DLD5Rt
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "The transcript expired before it could be imported."
-msgstr ""
+msgstr "La trascrizione è scaduta prima di poter essere importata."
 
 #. js-lingui-id: Qdm4D5
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -21320,18 +21326,18 @@ msgstr "Questa chiamata è in fase di registrazione…"
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "This cancels the scheduled switch to {upcomingIntervalAdjective} billing on {0}."
-msgstr ""
+msgstr "Questa operazione annulla il passaggio programmato alla fatturazione {upcomingIntervalAdjective} il {0}."
 
 #. js-lingui-id: +iT8xP
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "This cancels the scheduled switch to {upcomingPlanLabel} on {0}."
-msgstr ""
+msgstr "Questa operazione annulla il passaggio programmato a {upcomingPlanLabel} il {0}."
 
 #. js-lingui-id: W4SVNX
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "This claim was started in another browser, or the claim link was opened from somewhere else. Start the claim again from this browser."
-msgstr ""
+msgstr "Questa richiesta è stata avviata in un altro browser oppure il link per la richiesta è stato aperto da un'altra posizione. Avvia nuovamente la richiesta da questo browser."
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -21351,7 +21357,7 @@ msgstr "Questo contenuto è stato salvato in un formato precedente e non può es
 #. js-lingui-id: 5VD/sC
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "This custom domain does not exist or does not belong to this application."
-msgstr ""
+msgstr "Questo dominio personalizzato non esiste o non appartiene a questa applicazione."
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -21391,7 +21397,7 @@ msgstr "Questa funzione non ha alcun trigger configurato, quindi può essere inv
 #. js-lingui-id: uH29XK
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "This grants access to this app for everyone in your workspace."
-msgstr ""
+msgstr "Questo concede l'accesso a questa app a tutti nel tuo spazio di lavoro."
 
 #. js-lingui-id: 6IcJ94
 #: src/modules/settings/admin-panel/ai/hooks/useCustomAiProviderAccess.ts
@@ -21441,7 +21447,7 @@ msgstr "Questo mese"
 #. js-lingui-id: um21gF
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "This object"
-msgstr ""
+msgstr "Questo oggetto"
 
 #. js-lingui-id: ThVMIW
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -21466,7 +21472,7 @@ msgstr "Questa pagina non è disponibile."
 #. js-lingui-id: PIZjqy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "This permanently deletes {accountHandle} and all of its synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "Questa operazione elimina definitivamente {accountHandle} e tutte le relative email ed eventi sincronizzati. Questa azione non può essere annullata."
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -21747,7 +21753,7 @@ msgstr "Alternare tutte le autorizzazioni degli oggetti"
 #. js-lingui-id: MxmNZq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 msgid "Toggle all permissions"
-msgstr ""
+msgstr "Attiva/disattiva tutte le autorizzazioni"
 
 #. js-lingui-id: IHtFjq
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -21822,7 +21828,7 @@ msgstr "Strumento eliminato"
 #. js-lingui-id: RO68oO
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "Tool details: {displayMessage}"
-msgstr ""
+msgstr "Dettagli dello strumento: {displayMessage}"
 
 #. js-lingui-id: OvFVjH
 #: src/modules/ai/components/ToolStepRenderer.tsx
@@ -21904,7 +21910,7 @@ msgstr "Trascrizione copiata negli appunti"
 #. js-lingui-id: WDwcvt
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Transcript Expired"
-msgstr ""
+msgstr "Trascrizione scaduta"
 
 #. js-lingui-id: U2CSqa
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -21914,7 +21920,7 @@ msgstr "Trascrizione non riuscita"
 #. js-lingui-id: w6D8fb
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Transcript Unavailable"
-msgstr ""
+msgstr "Trascrizione non disponibile"
 
 #. js-lingui-id: zPGNJm
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -22225,7 +22231,7 @@ msgstr "Tipi di contenuti che questo modello può elaborare oltre al testo"
 #. js-lingui-id: G7gWQo
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 msgid "TypeSafe AI API key missing"
-msgstr ""
+msgstr "Chiave API TypeSafe AI mancante"
 
 #. js-lingui-id: V9+2pH
 #: src/localization/hooks/useLocaleOptions.ts
@@ -22250,7 +22256,7 @@ msgstr "Impossibile caricare i dettagli dell'applicazione. Per favore riprova pi
 #. js-lingui-id: QtqGu9
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Unable to load embedding settings."
-msgstr ""
+msgstr "Impossibile caricare le impostazioni di embedding."
 
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
@@ -22287,7 +22293,7 @@ msgstr "Non definito"
 #. js-lingui-id: YyXtnN
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
 msgid "Underline"
-msgstr ""
+msgstr "Sottolineato"
 
 #. js-lingui-id: o23uCL
 #: src/modules/side-panel/pages/page-layout/utils/getChartLimitMessage.ts
@@ -22416,7 +22422,7 @@ msgstr "Oggetto sconosciuto"
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
 msgid "Unknown sender"
-msgstr ""
+msgstr "Mittente sconosciuto"
 
 #. js-lingui-id: 0Wy3/1
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
@@ -22504,7 +22510,7 @@ msgstr "Non pagato"
 #. js-lingui-id: nWMRxa
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Unpin"
-msgstr ""
+msgstr "Rimuovi dai preferiti"
 
 #. js-lingui-id: SYfHmN
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -22546,7 +22552,7 @@ msgstr "Pagina di annullamento dell'iscrizione"
 #. js-lingui-id: gOL19R
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribe.tsx
 msgid "Unsubscribe settings"
-msgstr ""
+msgstr "Impostazioni di annullamento dell'iscrizione"
 
 #. js-lingui-id: BEZcuL
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -22833,17 +22839,17 @@ msgstr "Esegui l'upgrade per accedere ai log di audit"
 #. js-lingui-id: mjRbV9
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Upgrade to annual"
-msgstr ""
+msgstr "Passa al piano annuale"
 
 #. js-lingui-id: 5gLbcs
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Upgrade to annual billing?"
-msgstr ""
+msgstr "Passare alla fatturazione annuale?"
 
 #. js-lingui-id: LiRjC+
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Upgrade to Organization"
-msgstr ""
+msgstr "Passa a Organization"
 
 #. js-lingui-id: q10MiT
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -22853,7 +22859,7 @@ msgstr "Esegui l'upgrade a Organization per accedere ai log di audit."
 #. js-lingui-id: Ic7ooY
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Upgrade to Organization?"
-msgstr ""
+msgstr "Passare a Organization?"
 
 #. js-lingui-id: yV3xLN
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -23110,17 +23116,17 @@ msgstr "Usa questa email"
 #. js-lingui-id: rtnaBc
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "Use this name to find the answer in later workflow steps."
-msgstr ""
+msgstr "Usa questo nome per trovare la risposta nei passaggi successivi del workflow."
 
 #. js-lingui-id: Z4/IP1
 #: src/modules/marketplace/utils/buildApplicationCapabilitySummary.ts
 msgid "Use your camera"
-msgstr ""
+msgstr "Usa la tua fotocamera"
 
 #. js-lingui-id: p24DTN
 #: src/modules/marketplace/utils/buildApplicationCapabilitySummary.ts
 msgid "Use your microphone"
-msgstr ""
+msgstr "Usa il tuo microfono"
 
 #. js-lingui-id: aL1w5Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
@@ -23193,7 +23199,7 @@ msgstr "Utilizzo dell'utente"
 #. js-lingui-id: FYgCVU
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 msgid "User workspaces"
-msgstr ""
+msgstr "Spazi di lavoro dell'utente"
 
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -23234,7 +23240,7 @@ msgstr "Uzbeco"
 #. js-lingui-id: NJevqq
 #: src/modules/object-core/workflows/components/CoreWorkflowShowToolbar.tsx
 msgid "Validate"
-msgstr ""
+msgstr "Convalida"
 
 #. js-lingui-id: Clr4qp
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
@@ -23394,7 +23400,7 @@ msgstr "Videoconferenza"
 #. js-lingui-id: 5LXK/o
 #: src/modules/settings/components/SettingsCustomizeVideoModal.tsx
 msgid "Video tutorials"
-msgstr ""
+msgstr "Tutorial video"
 
 #. js-lingui-id: fROFIL
 #: src/localization/hooks/useLocaleOptions.ts
@@ -23538,7 +23544,7 @@ msgstr "Tipi di vista"
 #. js-lingui-id: sEyiuO
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "View update options"
-msgstr ""
+msgstr "Visualizza opzioni di aggiornamento"
 
 #. js-lingui-id: ZjBqNE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -23648,7 +23654,7 @@ msgstr "In attesa dell'output..."
 #. js-lingui-id: FZKt6U
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
 msgid "Waiting for permission"
-msgstr ""
+msgstr "In attesa dell'autorizzazione"
 
 #. js-lingui-id: THYlSm
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -23935,12 +23941,12 @@ msgstr "Cosa visualizza ciascuna lingua per le etichette di questo oggetto"
 #. js-lingui-id: 51JeJw
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "What should be classified?"
-msgstr ""
+msgstr "Che cosa deve essere classificato?"
 
 #. js-lingui-id: N0N49E
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "What should the model decide?"
-msgstr ""
+msgstr "Cosa deve decidere il modello?"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -23981,12 +23987,12 @@ msgstr "Quando è disattivato, l'evento viene creato senza partecipanti e nessun
 #. js-lingui-id: 7pDj1C
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "When should this level apply?"
-msgstr ""
+msgstr "Quando deve essere applicato questo livello?"
 
 #. js-lingui-id: RciZ6q
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria.tsx
 msgid "When should this option be chosen?"
-msgstr ""
+msgstr "Quando deve essere scelta questa opzione?"
 
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -24001,7 +24007,7 @@ msgstr "Quando la chiave sarà disabilitata"
 #. js-lingui-id: kKHjOh
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "When your trial ends, you will be charged {priceLabel}."
-msgstr ""
+msgstr "Al termine del periodo di prova, ti verrà addebitato {priceLabel}."
 
 #. js-lingui-id: YvwwqC
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
@@ -24094,7 +24100,7 @@ msgstr "Azione del workflow"
 #. js-lingui-id: 3XnNu6
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup.tsx
 msgid "Workflow connection controls"
-msgstr ""
+msgstr "Controlli di connessione del workflow"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
@@ -24114,12 +24120,12 @@ msgstr "Pagina di indice dei workflow"
 #. js-lingui-id: M5Dwid
 #: src/modules/object-core/workflows/hooks/useValidateCoreWorkflowVersion.ts
 msgid "Workflow is valid"
-msgstr ""
+msgstr "Il workflow è valido"
 
 #. js-lingui-id: 975MSi
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Workflow name"
-msgstr ""
+msgstr "Nome del workflow"
 
 #. js-lingui-id: R67jts
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
@@ -24129,7 +24135,7 @@ msgstr "Flusso di lavoro non trovato."
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Workflow step results"
-msgstr ""
+msgstr "Risultati dei passaggi del workflow"
 
 #. js-lingui-id: 2CydYH
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -24140,7 +24146,7 @@ msgstr "versione del workflow"
 #: src/modules/object-core/workflows/components/CoreWorkflowEditor.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Workflow version not found."
-msgstr ""
+msgstr "Versione del workflow non trovata."
 
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
@@ -24243,7 +24249,7 @@ msgstr "Workspace"
 #. js-lingui-id: rxazlH
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Workspace communications"
-msgstr ""
+msgstr "Comunicazioni dello spazio di lavoro"
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
@@ -24259,7 +24265,7 @@ msgstr "Eliminazione Workspace"
 #. js-lingui-id: KNUGRD
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Workspace details"
-msgstr ""
+msgstr "Dettagli dello spazio di lavoro"
 
 #. js-lingui-id: Qx8HXb
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -24341,7 +24347,7 @@ msgstr "Vuoi rimuovere l'ordinamento per gruppo '{recordIndexRecordGroupSort}'?"
 #. js-lingui-id: tiCYxY
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 msgid "would_recommend"
-msgstr ""
+msgstr "would_recommend"
 
 #. js-lingui-id: 5iSD9O
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
@@ -24463,7 +24469,7 @@ msgstr "Appartieni già a questo workspace"
 #. js-lingui-id: uXvWx/
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "You are charged {priceLabel}."
-msgstr ""
+msgstr "Ti viene addebitato {priceLabel}."
 
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
@@ -24514,7 +24520,7 @@ msgstr "Non hai il permesso di accedere all'oggetto {objectName}"
 #. js-lingui-id: wOO/5N
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "You do not have permission to access workflows."
-msgstr ""
+msgstr "Non hai l'autorizzazione per accedere ai workflow."
 
 #. js-lingui-id: D0mU8n
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
@@ -24544,17 +24550,17 @@ msgstr "Hai programmato un cambio del pacchetto di crediti. Vuoi annullarlo?"
 #. js-lingui-id: hcG97e
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "You keep {currentIntervalAdjective} billing on the {currentPlanLabel} plan."
-msgstr ""
+msgstr "Mantieni la fatturazione {currentIntervalAdjective} con il piano {currentPlanLabel}."
 
 #. js-lingui-id: JWqQIk
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "You stay on the {currentPlanLabel} plan."
-msgstr ""
+msgstr "Rimani con il piano {currentPlanLabel}."
 
 #. js-lingui-id: VW98bk
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "You will be charged {priceLabel}."
-msgstr ""
+msgstr "Ti verrà addebitato {priceLabel}."
 
 #. js-lingui-id: 5K1++A
 #: src/modules/settings/billing/components/StartSubscriptionConfirmationModal.tsx
@@ -24589,18 +24595,18 @@ msgstr "La versione dell'app è obsoleta. Si prega di aggiornare la pagina."
 #. js-lingui-id: V2wkfv
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your billing switches to {intervalAdjective} immediately and your trial continues."
-msgstr ""
+msgstr "La tua fatturazione passa immediatamente a {intervalAdjective} e il tuo periodo di prova continua."
 
 #. js-lingui-id: 7iuaeY
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your billing switches to annual immediately. A new annual period starts today and the unused part of your current period is credited."
-msgstr ""
+msgstr "La tua fatturazione passa immediatamente ad annuale. Un nuovo periodo annuale inizia oggi e la parte non utilizzata del periodo corrente viene accreditata."
 
 #. js-lingui-id: aeKOPV
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your billing switches to monthly on {0}, at the end of your current billing period."
-msgstr ""
+msgstr "La tua fatturazione passa a mensile il {0}, al termine del periodo di fatturazione corrente."
 
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
@@ -24656,18 +24662,18 @@ msgstr "I tuoi dati di pagamento sono incompleti. Verifica e riprova."
 #. js-lingui-id: Bz74IS
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your plan switches to {planLabel} immediately and your trial continues."
-msgstr ""
+msgstr "Il tuo piano passa immediatamente a {planLabel} e il tuo periodo di prova continua."
 
 #. js-lingui-id: nc0H/r
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your plan switches to Organization immediately, with a prorated charge for the rest of your current billing period."
-msgstr ""
+msgstr "Il tuo piano passa immediatamente a Organization, con un addebito proporzionale per il resto del periodo di fatturazione corrente."
 
 #. js-lingui-id: A2fEIi
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your plan switches to Pro on {0}, at the end of your current billing period."
-msgstr ""
+msgstr "Il tuo piano passa a Pro il {0}, al termine del periodo di fatturazione corrente."
 
 #. js-lingui-id: iizYt1
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -24698,13 +24704,13 @@ msgstr "La chiave API del tuo provider per l'autenticazione"
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your scheduled switch to {upcomingIntervalAdjective} billing on {0} is kept."
-msgstr ""
+msgstr "Il passaggio programmato alla fatturazione {upcomingIntervalAdjective} il {0} viene mantenuto."
 
 #. js-lingui-id: NOJYn4
 #. placeholder {0}: getBeautifiedRenewDate()
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your scheduled switch to {upcomingPlanLabel} on {0} is kept."
-msgstr ""
+msgstr "Il passaggio programmato a {upcomingPlanLabel} il {0} viene mantenuto."
 
 #. js-lingui-id: 319YPG
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -24754,9 +24760,9 @@ msgstr "Zed"
 #. js-lingui-id: AWOSPo
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx
 msgid "Zoom in"
-msgstr ""
+msgstr "Ingrandisci"
 
 #. js-lingui-id: FjkaiT
 #: src/modules/settings/data-model/graph-overview/components/SettingsDataModelOverview.tsx
 msgid "Zoom out"
-msgstr ""
+msgstr "Riduci"

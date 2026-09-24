@@ -7,7 +7,7 @@ import {
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { styled } from '@linaria/react';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type FullScreenContainerProps = {
   children: JSX.Element | JSX.Element[];

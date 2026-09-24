@@ -5,7 +5,7 @@ import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
@@ -53,7 +53,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   } = useViewFieldAggregateOperation();
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuItemsContainer>
         <ListItem
           onClick={() => {
@@ -95,6 +95,6 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
           selected={!isDefined(currentViewFieldAggregateOperation)}
         >{t`None`}</ListItem>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

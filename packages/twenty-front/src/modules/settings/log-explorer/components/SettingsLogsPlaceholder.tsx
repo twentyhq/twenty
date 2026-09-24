@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { TintedIconTile } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 
@@ -23,7 +23,7 @@ export const SettingsLogsPlaceholder = ({
   description,
   actions,
 }: SettingsLogsPlaceholderProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <EmptyState.Root>

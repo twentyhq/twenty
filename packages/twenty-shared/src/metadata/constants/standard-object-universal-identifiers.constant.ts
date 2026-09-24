@@ -10,6 +10,8 @@ export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   agentMessage: '62d0354c-3b99-4769-b0f5-4e2651c2ca7d',
   agentMessagePart: '214bacb0-df89-494e-be42-e5b11c99cff6',
   agentTurnEvaluation: '73741409-7835-426f-8425-9de13af22302',
+  campaignDelivery: '0c76066d-26f7-4f57-b0bd-0eb61465fb1a',
+  messageSuppression: '41410724-723c-48ab-8312-9b85131b4d84',
   timelineActivity: '20202020-6736-4337-b5c4-8b39fae325a5',
   attachment: '20202020-bd3d-4c60-8dca-571c71d4447a',
   blocklist: '20202020-0408-4f38-b8a8-4d5e3e26e24d',

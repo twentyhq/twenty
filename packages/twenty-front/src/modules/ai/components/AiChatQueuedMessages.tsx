@@ -10,7 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledQueueContainer = styled(StyledAiChatContentContainer)`
   display: flex;

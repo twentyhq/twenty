@@ -56,7 +56,7 @@ const everyoneFullRowFor = (recordId: string) => ({
 
 describe('buildRecordShareInputsForCreatedRecords', () => {
   describe('with record sharing enabled', () => {
-    const isRecordSharingEnabled = true;
+    const isRecordSharingEnforced = true;
 
     it('should give a user a FULL owner row per record', () => {
       expect(
@@ -65,7 +65,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: userAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
         }),
       ).toEqual([
         {
@@ -96,7 +96,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: userAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.READ },
             {
@@ -135,7 +135,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: apiKeyAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
@@ -169,7 +169,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: apiKeyAuthContext,
           apiKeyRoleMap: {},
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
@@ -189,7 +189,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: applicationAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
           ],
@@ -223,7 +223,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: applicationAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             {
               roleId: APPLICATION_ROLE_ID,
@@ -254,7 +254,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             application: { id: APPLICATION_ID, defaultRoleId: null },
           } as unknown as WorkspaceAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
           ],
@@ -269,7 +269,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: systemAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
@@ -289,7 +289,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
   });
 
   describe('with record sharing disabled', () => {
-    const isRecordSharingEnabled = false;
+    const isRecordSharingEnforced = false;
 
     it('should give a user the FULL owner row and an EVERYONE FULL row, so the record stays open once the flag turns on', () => {
       expect(
@@ -298,7 +298,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: userAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: null,
         }),
       ).toEqual([
@@ -317,7 +317,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: apiKeyAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
         }),
       ).toEqual([
         everyoneFullRowFor('record-1'),
@@ -332,7 +332,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: systemAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [],
         }),
       ).toEqual([everyoneFullRowFor('record-1')]);
@@ -345,7 +345,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: apiKeyAuthContext,
           apiKeyRoleMap,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             {
               workspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,

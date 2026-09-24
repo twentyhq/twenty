@@ -5,7 +5,7 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledItems = styled.div`
   display: flex;

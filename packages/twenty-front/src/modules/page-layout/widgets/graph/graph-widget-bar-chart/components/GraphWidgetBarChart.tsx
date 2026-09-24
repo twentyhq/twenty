@@ -28,9 +28,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { isNumber } from '@sniptt/guards';
-import { useContext, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
@@ -93,7 +93,7 @@ export const GraphWidgetBarChart = ({
   customFormatter,
   onSliceClick,
 }: GraphWidgetBarChartProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme.color);
 
   const [chartWidth, setChartWidth] = useState<number>(0);

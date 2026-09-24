@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Suspense, lazy, useContext, type ComponentType } from 'react';
+import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -30,7 +30,7 @@ import {
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -132,7 +132,7 @@ export const DatePicker = ({
   onRelativeDateChange,
   hideHeaderInput,
 }: DatePickerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const plainDate = isDefined(plainDateString)
     ? Temporal.PlainDate.from(plainDateString)
     : Temporal.Now.plainDateISO();

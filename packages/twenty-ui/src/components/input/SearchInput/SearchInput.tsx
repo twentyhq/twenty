@@ -5,7 +5,7 @@ import { type SearchInputProps } from './types/SearchInputProps';
 
 import { IconFilter, IconSearch } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 import styles from './SearchInput.module.scss';
 

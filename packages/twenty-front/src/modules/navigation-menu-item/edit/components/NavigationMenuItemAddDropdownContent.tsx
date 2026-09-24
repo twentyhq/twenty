@@ -20,7 +20,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconX } from 'twenty-ui/icon';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -175,7 +175,9 @@ export const NavigationMenuItemAddDropdownContent = ({
   const emptyMessage = getEmptyMessage();
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+    <LegacyDropdownContent
+      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+    >
       <NavigationMenuItemInsertionPreviewEffect
         dropdownId={dropdownId}
         section={section}
@@ -223,6 +225,6 @@ export const NavigationMenuItemAddDropdownContent = ({
           {items.length === 0 && <ListItem disabled>{emptyMessage}</ListItem>}
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

@@ -84,12 +84,7 @@
   {
     "name": "theme",
     "path": "dist/theme.mjs",
-    "limit": "25 kB"
-  },
-  {
-    "name": "theme-constants",
-    "path": "dist/theme-constants.mjs",
-    "limit": "12 kB"
+    "limit": "37 kB"
   },
   {
     "name": "utilities",

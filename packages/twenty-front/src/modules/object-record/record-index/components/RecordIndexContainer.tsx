@@ -13,7 +13,7 @@ import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-i
 import { useHasCurrentViewNonReadableFields } from '@/object-record/record-index/hooks/useHasCurrentViewNonReadableFields';
 import { RecordListContainer } from '@/object-record/record-list/components/RecordListContainer';
 import { ViewType } from '@/views/types/ViewType';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;

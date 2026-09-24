@@ -6,7 +6,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';

@@ -5,7 +5,7 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -37,7 +37,7 @@ import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPic
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconX } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldAvailableContainer = styled.div`
   color: ${themeCssVariables.font.color.light};
@@ -153,7 +153,7 @@ export const ViewPickerContentCreateMode = () => {
   const objectLabel = objectMetadataItem.labelPlural;
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent onClick={handleClose} Icon={IconX} />
@@ -264,6 +264,6 @@ export const ViewPickerContentCreateMode = () => {
           <ViewPickerCreateButton />
         </ViewPickerSaveButtonContainer>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };
