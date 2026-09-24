@@ -4650,6 +4650,8 @@ msgstr "Файл не знайдено в архіві клієнта SDK."
 
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+#: src/engine/core-modules/file/file-core-picture/services/file-core-picture.service.ts
+#: src/engine/core-modules/file/file-core-picture/services/file-core-picture.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
@@ -11802,6 +11804,7 @@ msgid "This file path is too long to upload."
 msgstr "Цей шлях до файлу надто довгий для завантаження."
 
 #. js-lingui-id: 6ekAtL
+#: src/engine/core-modules/file/file-core-picture/services/file-core-picture.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "Це завантаження файлу вже було завершено."
@@ -14455,6 +14458,7 @@ msgid "You do not have access to this message folder."
 msgstr "Ви не маєте доступу до цієї папки повідомлень."
 
 #. js-lingui-id: EFQeXU
+#: src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard.ts
 #: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Ви не маєте дозволу на доступ до цієї функції. Зверніться до адміністратора робочого простору для отримання доступу."
