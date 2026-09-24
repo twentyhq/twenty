@@ -2038,9 +2038,21 @@ export type EventLogDateRangeInput = {
   start?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
+export type EventLogFieldFilterInput = {
+  field: Scalars['String']['input'];
+  operand: EventLogFilterOperand;
+  values: Array<Scalars['String']['input']>;
+};
+
+export enum EventLogFilterOperand {
+  IS = 'IS',
+  IS_NOT = 'IS_NOT'
+}
+
 export type EventLogFiltersInput = {
   dateRange?: InputMaybe<EventLogDateRangeInput>;
   eventType?: InputMaybe<Scalars['String']['input']>;
+  fieldFilters?: InputMaybe<Array<EventLogFieldFilterInput>>;
   objectMetadataId?: InputMaybe<Scalars['String']['input']>;
   recordId?: InputMaybe<Scalars['String']['input']>;
   userWorkspaceId?: InputMaybe<Scalars['String']['input']>;

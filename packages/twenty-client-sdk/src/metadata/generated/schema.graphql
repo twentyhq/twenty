@@ -3981,11 +3981,23 @@ input EventLogFiltersInput {
   dateRange: EventLogDateRangeInput
   recordId: String
   objectMetadataId: String
+  fieldFilters: [EventLogFieldFilterInput!]
 }
 
 input EventLogDateRangeInput {
   start: DateTime
   end: DateTime
+}
+
+input EventLogFieldFilterInput {
+  field: String!
+  operand: EventLogFilterOperand!
+  values: [String!]!
+}
+
+enum EventLogFilterOperand {
+  IS
+  IS_NOT
 }
 
 input PieChartDataInput {

@@ -22,6 +22,7 @@ export type EventLogTypeDefinition = {
   // null = free on every plan; otherwise the required billing entitlement
   requiresEntitlement: BillingEntitlementKey | null;
   eventFieldName: string;
+  filterableFields: string[];
   // The shared dispatcher stamps `timestamp`; each type maps only its own fields.
   normalize: (
     row: Record<string, unknown>,
@@ -48,24 +49,28 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
     clickHouseTable: 'workspaceEvent',
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'event',
+    filterableFields: ['event', 'userId'],
     normalize: normalizeGenericEvent('event'),
   },
   [EventLogTable.PAGEVIEW]: {
     clickHouseTable: 'pageview',
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'name',
+    filterableFields: ['userId'],
     normalize: normalizeGenericEvent('name'),
   },
   [EventLogTable.OBJECT_EVENT]: {
     clickHouseTable: 'objectEvent',
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'event',
+    filterableFields: ['event', 'objectMetadataId', 'recordId', 'userId'],
     normalize: normalizeGenericEvent('event'),
   },
   [EventLogTable.USAGE_EVENT]: {
     clickHouseTable: 'usageEvent',
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'resourceType',
+    filterableFields: [],
     normalize: (row) => {
       const record = row as StoredRow<UsageEventRow>;
 
@@ -88,6 +93,12 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
     clickHouseTable: 'applicationLog',
     requiresEntitlement: null,
     eventFieldName: 'logicFunctionName',
+    filterableFields: [
+      'level',
+      'logicFunctionId',
+      'applicationId',
+      'executionId',
+    ],
     normalize: (row) => {
       const record = row as StoredRow<ApplicationLogRow>;
 

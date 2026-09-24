@@ -6,7 +6,10 @@ import {
   type EventLogsException,
   EventLogsExceptionCode,
 } from 'src/engine/core-modules/event-logs/event-logs.exception';
-import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ForbiddenError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export const eventLogsGraphqlApiExceptionHandler = (
   exception: EventLogsException,
@@ -15,6 +18,8 @@ export const eventLogsGraphqlApiExceptionHandler = (
     case EventLogsExceptionCode.CLICKHOUSE_NOT_CONFIGURED:
     case EventLogsExceptionCode.NO_ENTITLEMENT:
       throw new ForbiddenError(exception);
+    case EventLogsExceptionCode.INVALID_FIELD_FILTER:
+      throw new UserInputError(exception);
     default: {
       assertUnreachable(exception.code);
     }

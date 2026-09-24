@@ -3415,6 +3415,8 @@ export interface Query {
 
 export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
 
+export type EventLogFilterOperand = 'IS' | 'IS_NOT'
+
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
     removeQueryFromEventStream: Scalars['Boolean']
@@ -7296,9 +7298,11 @@ export interface MetadataTranslationsInput {objectMetadataId?: (Scalars['UUID'] 
 
 export interface EventLogQueryInput {table: EventLogTable,filters?: (EventLogFiltersInput | null),first?: (Scalars['Int'] | null),after?: (Scalars['String'] | null)}
 
-export interface EventLogFiltersInput {eventType?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),dateRange?: (EventLogDateRangeInput | null),recordId?: (Scalars['String'] | null),objectMetadataId?: (Scalars['String'] | null)}
+export interface EventLogFiltersInput {eventType?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),dateRange?: (EventLogDateRangeInput | null),recordId?: (Scalars['String'] | null),objectMetadataId?: (Scalars['String'] | null),fieldFilters?: (EventLogFieldFilterInput[] | null)}
 
 export interface EventLogDateRangeInput {start?: (Scalars['DateTime'] | null),end?: (Scalars['DateTime'] | null)}
+
+export interface EventLogFieldFilterInput {field: Scalars['String'],operand: EventLogFilterOperand,values: Scalars['String'][]}
 
 export interface PieChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
 
@@ -11365,6 +11369,11 @@ export const enumEventLogTable = {
    OBJECT_EVENT: 'OBJECT_EVENT' as const,
    USAGE_EVENT: 'USAGE_EVENT' as const,
    APPLICATION_LOG: 'APPLICATION_LOG' as const
+}
+
+export const enumEventLogFilterOperand = {
+   IS: 'IS' as const,
+   IS_NOT: 'IS_NOT' as const
 }
 
 export const enumMessageParticipantRole = {
