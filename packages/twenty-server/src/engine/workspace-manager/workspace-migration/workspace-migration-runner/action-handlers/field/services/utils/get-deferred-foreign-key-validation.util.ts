@@ -14,8 +14,8 @@ export const getDeferredForeignKeyValidation = ({
   featureFlagsMap?: Partial<FeatureFlagMap>;
 }):
   | {
-      name: 'validateForeignKey';
-      payload: DeferredWorkspaceMigrationActionPayload<'validateForeignKey'>;
+      name: 'validate_foreignKey';
+      payload: DeferredWorkspaceMigrationActionPayload<'validate_foreignKey'>;
     }
   | undefined => {
   if (
@@ -43,7 +43,7 @@ export const getDeferredForeignKeyValidation = ({
   }
 
   return {
-    name: 'validateForeignKey' as const,
+    name: 'validate_foreignKey' as const,
     payload: { fieldMetadataId: flatFieldMetadata.id },
   };
 };

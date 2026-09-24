@@ -114,7 +114,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     return {
-      name: 'buildIndex' as const,
+      name: 'build_index' as const,
       payload: { indexMetadataId: context.flatAction.flatEntity.id },
     };
   }
@@ -130,7 +130,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     attempt,
     queryRunner,
   }: DeferredWorkspaceMigrationActionExecutionArgs<
-    DeferredWorkspaceMigrationActionPayload<'buildIndex'>
+    DeferredWorkspaceMigrationActionPayload<'build_index'>
   >): Promise<void> {
     const flatIndexMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: flatIndexMaps,

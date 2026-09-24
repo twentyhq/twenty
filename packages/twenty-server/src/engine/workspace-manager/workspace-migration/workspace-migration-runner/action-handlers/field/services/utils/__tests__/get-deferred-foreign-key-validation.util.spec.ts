@@ -45,7 +45,7 @@ describe('getDeferredForeignKeyValidation', () => {
         featureFlagsMap: FEATURE_FLAGS_ON,
       }),
     ).toEqual({
-      name: 'validateForeignKey',
+      name: 'validate_foreignKey',
       payload: { fieldMetadataId: flatEntity.id },
     });
   });

@@ -14,9 +14,9 @@ export type DeferredWorkspaceMigrationActionNameByHandlerKey<
 }[DeferredWorkspaceMigrationActionName];
 
 type DeferredWorkspaceMigrationActionPayloadByName = {
-  buildIndex: { indexMetadataId: string };
-  validateForeignKey: { fieldMetadataId: string };
-  deleteLogicFunctionResources: { flatLogicFunction: FlatLogicFunction };
+  build_index: { indexMetadataId: string };
+  validate_foreignKey: { fieldMetadataId: string };
+  delete_logicFunctionResources: { flatLogicFunction: FlatLogicFunction };
 };
 
 export type DeferredWorkspaceMigrationActionPayload<

@@ -212,7 +212,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     allFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
     queryRunner,
   }: DeferredWorkspaceMigrationActionExecutionArgs<
-    DeferredWorkspaceMigrationActionPayload<'validateForeignKey'>
+    DeferredWorkspaceMigrationActionPayload<'validate_foreignKey'>
   >): Promise<void> {
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: flatFieldMetadataMaps,
