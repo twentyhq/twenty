@@ -7,6 +7,7 @@ import {
   TYPING_DELAY,
 } from '@/__stories__/shared/test-utils/timeouts';
 import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
+import { type SandboxErrorExpectation } from '@/__stories__/twenty-ui-gallery/types/SandboxErrorExpectation';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
 
@@ -149,14 +150,41 @@ export const sliderTest: TwentyUiGalleryPlayFunction = async ({
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
-type CreateRadioGroupPreactTestOptions = {
-  optionName: 'Daily' | 'Pro plan';
+// The hidden thumbs have no accessible name, so the sliders are matched by
+// their aria-label attribute instead of a name filter.
+export const sliderRangeTest: TwentyUiGalleryPlayFunction = async ({
+  canvasElement,
+}) => {
+  const canvas = within(canvasElement);
+  await expectFrontComponentMounted(canvas);
+  const priceRange = within(canvas.getByRole('group', { name: 'Price range' }));
+  const [minimumThumb, maximumThumb] = priceRange.getAllByRole('slider', {
+    hidden: true,
+  });
+
+  expect(minimumThumb).toHaveAttribute('aria-label', 'Minimum price');
+  expect(minimumThumb).toHaveValue('20');
+  expect(maximumThumb).toHaveAttribute('aria-label', 'Maximum price');
+  expect(maximumThumb).toHaveValue('80');
+  expect(priceRange.getByRole('status')).toHaveTextContent('20 – 80');
+  expect(errorHandler).not.toHaveBeenCalled();
 };
 
-export const createRadioGroupPreactTest =
+type CreateRadioGroupTestOptions = {
+  optionName: 'Daily' | 'Pro plan';
+  activationErrors: SandboxErrorExpectation;
+};
+
+const RADIO_ACTIVATION_ERRORS: SandboxErrorExpectation = {
+  requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_EVENT_CONSTRUCTOR],
+  allowedAdditionalErrors: [SANDBOX_ERROR_PATTERNS.COMPOSED_PATH],
+};
+
+const createRadioGroupTest =
   ({
     optionName,
-  }: CreateRadioGroupPreactTestOptions): TwentyUiGalleryPlayFunction =>
+    activationErrors,
+  }: CreateRadioGroupTestOptions): TwentyUiGalleryPlayFunction =>
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expectFrontComponentMounted(canvas);
@@ -167,15 +195,28 @@ export const createRadioGroupPreactTest =
     expect(disabled).not.toBeChecked();
     expect(canvas.getByRole('radio', { name: 'Basic plan' })).toBeChecked();
 
-    // Preact can report ordering and forwarded-event errors before PointerEvent fails.
     await userEvent.click(canvas.getByRole('radio', { name: optionName }));
-    await expectSandboxErrors({
-      requiredErrors: [SANDBOX_ERROR_PATTERNS.POINTER_EVENT_CONSTRUCTOR],
-      allowedAdditionalErrors: [
-        SANDBOX_ERROR_PATTERNS.DOCUMENT_POSITION,
-        SANDBOX_ERROR_PATTERNS.COMPOSED_PATH,
-      ],
-    });
+    await expectSandboxErrors(activationErrors);
+
     expect(canvas.getByText('Frequency: weekly')).toBeVisible();
     expect(canvas.getByText('Plan: basic')).toBeVisible();
   };
+
+export const radioGroupTest = createRadioGroupTest({
+  optionName: 'Daily',
+  activationErrors: RADIO_ACTIVATION_ERRORS,
+});
+
+export const cardPickerTest = createRadioGroupTest({
+  optionName: 'Pro plan',
+  activationErrors: RADIO_ACTIVATION_ERRORS,
+});
+
+// React drops the click handler Base UI adds through cloneElement, so only
+// the group's focus handling reports the missing nativeEvent.
+export const cardPickerDroppedClickTest = createRadioGroupTest({
+  optionName: 'Pro plan',
+  activationErrors: {
+    requiredErrors: [SANDBOX_ERROR_PATTERNS.COMPOSED_PATH],
+  },
+});
