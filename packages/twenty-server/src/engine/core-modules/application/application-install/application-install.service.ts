@@ -130,6 +130,7 @@ export class ApplicationInstallService {
           skipWorkspaceCompatibilityCheck:
             params.skipWorkspaceCompatibilityCheck,
           hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
+          hasUserApprovedRoleGrants: params.hasUserApprovedRoleGrants,
         }),
       buildApplicationLifecycleLockKey({
         workspaceId: params.workspaceId,
