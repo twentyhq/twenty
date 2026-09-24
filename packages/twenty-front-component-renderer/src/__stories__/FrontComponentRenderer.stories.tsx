@@ -1,10 +1,62 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type ComponentProps, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import checksumFixtures from '@/__stories__/example-sources-built/checksum-fixtures.json';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
+import { getFingerprintedStoryComponentUrl } from '@/__stories__/utils/getFingerprintedStoryComponentUrl';
 
 const errorHandler = fn();
+
+const CHECKSUM_MISMATCH_MESSAGE_PATTERN = /checksum mismatch/;
+
+type ChecksumRecoveryHarnessProps = Pick<
+  ComponentProps<typeof FrontComponentRenderer>,
+  | 'onError'
+  | 'applicationAccessToken'
+  | 'executionContext'
+  | 'frontComponentHostCommunicationApi'
+  | 'colorScheme'
+>;
+
+const ChecksumRecoveryHarness = ({
+  onError,
+  applicationAccessToken,
+  executionContext,
+  frontComponentHostCommunicationApi,
+  colorScheme,
+}: ChecksumRecoveryHarnessProps) => {
+  const [componentUrl, setComponentUrl] = useState(
+    getFingerprintedStoryComponentUrl(checksumFixtures.staleChecksum),
+  );
+
+  return (
+    <>
+      <button
+        type="button"
+        data-testid="load-matching-build"
+        onClick={() =>
+          setComponentUrl(
+            getFingerprintedStoryComponentUrl(
+              checksumFixtures.matchingChecksum,
+            ),
+          )
+        }
+      >
+        Load matching build
+      </button>
+      <FrontComponentRenderer
+        componentUrl={componentUrl}
+        onError={onError}
+        applicationAccessToken={applicationAccessToken}
+        executionContext={executionContext}
+        frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+        colorScheme={colorScheme}
+      />
+    </>
+  );
+};
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Feature',
@@ -113,6 +165,76 @@ export const ErrorHandling: Story = {
       },
       { timeout: 10000 },
     );
+  },
+};
+
+export const ChecksumMismatch: Story = {
+  args: {
+    componentUrl: getFingerprintedStoryComponentUrl(
+      checksumFixtures.staleChecksum,
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        CHECKSUM_MISMATCH_MESSAGE_PATTERN,
+        {},
+        { timeout: 10000 },
+      ),
+    ).toBeVisible();
+
+    await waitFor(() => {
+      expect(errorHandler).toHaveBeenCalledWith(
+        expect.objectContaining({
+          code: 'FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH',
+        }),
+      );
+    });
+
+    expect(canvas.queryByTestId('static-component')).not.toBeInTheDocument();
+  },
+};
+
+export const ChecksumRecovery: Story = {
+  args: {
+    componentUrl: getFingerprintedStoryComponentUrl(
+      checksumFixtures.staleChecksum,
+    ),
+  },
+  render: ({
+    onError,
+    applicationAccessToken,
+    executionContext,
+    frontComponentHostCommunicationApi,
+    colorScheme,
+  }) => (
+    <ChecksumRecoveryHarness
+      onError={onError}
+      applicationAccessToken={applicationAccessToken}
+      executionContext={executionContext}
+      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+      colorScheme={colorScheme}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      CHECKSUM_MISMATCH_MESSAGE_PATTERN,
+      {},
+      { timeout: 10000 },
+    );
+
+    await userEvent.click(await canvas.findByTestId('load-matching-build'));
+
+    expect(
+      await canvas.findByTestId('static-component', {}, { timeout: 30000 }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText(CHECKSUM_MISMATCH_MESSAGE_PATTERN),
+    ).not.toBeInTheDocument();
   },
 };
 
