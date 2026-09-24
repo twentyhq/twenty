@@ -3,7 +3,7 @@ import { type Country } from '@/ui/input/components/internal/types/Country';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { styled } from '@linaria/react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dropdown } from 'twenty-ui/components';
 
 import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSelect';
@@ -14,7 +14,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconWorld } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
@@ -83,7 +83,7 @@ export const PhoneCountryPickerDropdownButton = ({
   );
 
   const countries = useCountries();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   useEffect(() => {
     const country = countries.find(({ countryCode }) => countryCode === value);

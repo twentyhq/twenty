@@ -6,7 +6,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { IconPlug } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderItem';
 import { getProviderIcon } from '@/settings/admin-panel/ai/utils/getProviderIcon';

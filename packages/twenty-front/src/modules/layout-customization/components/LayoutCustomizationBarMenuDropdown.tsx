@@ -6,8 +6,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
-import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { GRAY_SCALE_LIGHT, themeCssVariables } from 'twenty-ui/theme';
 
 import { RESET_RECORD_PAGE_LAYOUT_MODAL_ID } from '@/layout-customization/constants/ResetRecordPageLayoutModalId';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';

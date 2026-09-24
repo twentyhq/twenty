@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
@@ -39,7 +38,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
     useAvailableComponentInstanceIdOrThrow(
       ObjectFilterDropdownComponentInstanceContext,
     );
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const options = [true, false];
 
   const { objectFilterDropdownFilterValue } =

@@ -13,7 +13,7 @@ import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`

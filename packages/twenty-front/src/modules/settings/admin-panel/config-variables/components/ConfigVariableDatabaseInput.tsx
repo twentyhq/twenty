@@ -11,7 +11,7 @@ import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { ConfigVariableType } from '~/generated-admin/graphql';
 
 const StyledJsonEditorContainer = styled.div`

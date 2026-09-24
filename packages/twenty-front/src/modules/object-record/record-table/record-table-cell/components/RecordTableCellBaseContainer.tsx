@@ -9,7 +9,7 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { getRecordTableCellId } from '@/object-record/record-table/utils/getRecordTableCellId';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
   fontColorMedium: string;
@@ -59,7 +59,7 @@ export const RecordTableCellBaseContainer = ({
     isLabelIdentifier,
   } = useContext(FieldContext);
   const { openTableCell } = useOpenRecordTableCellFromCell();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { cellPosition } = useContext(RecordTableCellContext);
   const { recordTableId } = useRecordTableContextOrThrow();

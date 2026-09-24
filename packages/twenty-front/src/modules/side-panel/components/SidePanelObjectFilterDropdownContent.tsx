@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import { Dropdown, SettingsRow, TintedIconTile } from 'twenty-ui/components';
 import { IconCube } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeader = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};

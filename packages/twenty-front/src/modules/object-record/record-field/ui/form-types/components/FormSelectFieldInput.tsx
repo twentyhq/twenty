@@ -10,13 +10,13 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { IconCircleOff } from 'twenty-ui/icon';
 import { Field, type SelectOption } from 'twenty-ui/primitives/input';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -41,7 +41,7 @@ export const FormSelectFieldInput = ({
   isNullable,
   callToActionButton,
 }: FormSelectFieldInputProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const instanceId = useId();
 
   const { removeFocusItemFromFocusStackById } =

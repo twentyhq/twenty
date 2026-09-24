@@ -12,10 +12,9 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { IconChevronDown, IconSquareCheck, IconSquareX } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
 
@@ -53,7 +52,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
   isRecordPage = false,
 }: CommandMenuItemEditRecordSelectionDropdownProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { closeDropdown } = useCloseDropdown();
 
   const mainContextStoreHasSelectedRecords = useAtomStateValue(

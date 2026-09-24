@@ -5,7 +5,7 @@ import { StyledFormCardTitle } from '@/settings/data-model/fields/components/Sty
 import { Trans } from '@lingui/react/macro';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsDataModelPreviewFormCardProps = {
   className?: string;

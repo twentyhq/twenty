@@ -10,7 +10,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconEdit } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledIconButtonContainer = styled.div`
   color: ${themeCssVariables.font.color.secondary};

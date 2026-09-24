@@ -1,6 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAppIconContainer = styled.span`
   background: ${themeCssVariables.background.transparent.light};

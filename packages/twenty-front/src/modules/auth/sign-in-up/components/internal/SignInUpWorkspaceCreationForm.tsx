@@ -19,7 +19,7 @@ import { LightIconButton, MainButton } from 'twenty-ui/components';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContentContainer = styled.div`
   display: flex;

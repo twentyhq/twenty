@@ -10,8 +10,7 @@ import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDro
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledColorMenuItem = styled.div`
   align-items: center;
@@ -56,7 +55,7 @@ export const DashboardColorSelectionMenu = ({
   onBackgroundColorSelect,
 }: DashboardColorSelectionMenuProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   return (
     <LegacyDropdownContent>
       <DropdownMenuItemsContainer hasMaxHeight>

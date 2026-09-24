@@ -2,7 +2,7 @@ import { Avatar as AvatarPrimitive } from '@base-ui/react/avatar';
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { type CSSProperties } from 'react';
 
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';

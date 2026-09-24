@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // Containment boundary for third-party widget content, which the page cannot
 // style and must not let bleed into its neighbours.

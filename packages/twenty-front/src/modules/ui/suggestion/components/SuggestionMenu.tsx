@@ -24,7 +24,7 @@ import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuPr
 import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // The preview card brings its own surface, so the tooltip only contributes
 // the shadow. Tooltips render at 0.9 opacity, which would make it translucent.

@@ -13,7 +13,7 @@ import { RecordCalendarAddNew } from '@/object-record/record-calendar/components
 import { RECORD_CALENDAR_CARD_DND_TYPE } from '@/object-record/record-calendar/constants/RecordCalendarCardDndType';
 import { RECORD_CALENDAR_DAY_COLLISION_PRIORITY } from '@/object-record/record-calendar/constants/RecordCalendarDayCollisionPriority';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div<{
   isOtherMonth: boolean;
