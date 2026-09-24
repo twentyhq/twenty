@@ -1343,13 +1343,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  private hasInheritingRecordLinks(): boolean {
-    return (
-      this.shouldValidateInheritedParents() &&
-      this.resolveInheritingRecordLinks().length > 0
-    );
-  }
-
   private async validateParentRecordsAreWritableOrThrow({
     parent,
     records,
