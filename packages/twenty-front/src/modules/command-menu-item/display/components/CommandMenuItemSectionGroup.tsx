@@ -42,10 +42,16 @@ const StyledHeadingText = styled.span`
   white-space: nowrap;
 `;
 
+// Keyboard navigation scrolls the selected command into view, so the first
+// command reserves room for its section header above it.
 const StyledGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[0.5]};
+
+  & > :first-child {
+    scroll-margin-top: ${themeCssVariables.spacing[12]};
+  }
 `;
 
 type CommandMenuItemSectionGroupProps = {

@@ -122,7 +122,7 @@ const PROSPECTS_VIEW: ViewWithRelations = {
   name: 'Prospects',
 };
 
-const SELECTED_COMPANIES = mockedCompanyRecords.slice(0, 2);
+const SELECTED_COMPANIES = mockedCompanyRecords.slice(0, 5);
 
 const SelectedCompaniesInProspectsViewDecorator: Decorator = (Story) => {
   for (const company of SELECTED_COMPANIES) {
@@ -418,14 +418,15 @@ export const SectionHeadersShowTheirContext: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Selection: 2 Companies')).toBeVisible();
+    expect(await canvas.findByText('Selection: 5 Companies')).toBeVisible();
+    expect(await canvas.findByText('+2')).toBeVisible();
 
     const headings = canvas.getAllByText(
-      /^(Selection: 2 Companies|View: Prospects|Object: Companies)$/,
+      /^(Selection: 5 Companies|View: Prospects|Object: Companies)$/,
     );
 
     expect(headings.map((heading) => heading.textContent)).toEqual([
-      'Selection: 2 Companies',
+      'Selection: 5 Companies',
       'View: Prospects',
       'Object: Companies',
     ]);

@@ -1,10 +1,10 @@
-import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemSelectionOverflowCount } from '@/command-menu-item/display/components/CommandMenuItemSelectionOverflowCount';
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -16,20 +16,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const MAX_RECORD_AVATARS = 3;
-
-const StyledOverflowCount = styled.span`
-  align-items: center;
-  background: ${themeCssVariables.background.tertiary};
-  border: 1px solid ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  height: ${themeCssVariables.spacing[4]};
-  margin-left: -${themeCssVariables.spacing[1]};
-  padding: 0 ${themeCssVariables.spacing[1]};
-`;
 
 export const useCommandMenuItemSelectionSectionContext = ():
   | CommandMenuItemSectionContext
@@ -91,7 +77,7 @@ export const useCommandMenuItemSelectionSectionContext = ():
             />
           ))}
           {overflowCount > 0 && (
-            <StyledOverflowCount>+{overflowCount}</StyledOverflowCount>
+            <CommandMenuItemSelectionOverflowCount count={overflowCount} />
           )}
         </>
       ) : undefined,
