@@ -2,13 +2,14 @@ import { type Settings } from './interfaces/settings.interface';
 
 export const settings: Settings = {
   storage: {
-    maxFileSize: '100MB',
+    maxMultipartFileSize: '5MB',
     // Direct uploads (createFileUpload/completeFileUpload) stream to storage
     // without transiting the server memory, so they get a much higher cap
     // than multipart uploads.
     maxDirectUploadFileSize: '1GB',
     maxCorePictureFileSize: '10MB',
   },
+  maxRequestBodySize: '100MB',
   minLengthOfStringForDuplicateCheck: 3,
   maxVisibleViewFields: 30,
 };
