@@ -32,8 +32,6 @@ type SettingsAdminWorkspaceUsageLimitsSectionProps = {
 
 const EDIT_LIMIT_DIALOG_ID = 'settings-admin-usage-limit-edit';
 
-// Every row is its own grid, so fixed widths keep the columns lined up between
-// rows whose tags differ in width.
 const USAGE_LIMITS_GRID_AUTO_COLUMNS = '1fr 120px 120px 110px 100px 36px';
 
 const getStatus = (
