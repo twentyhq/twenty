@@ -557,6 +557,14 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(readOnlyInput.matches(':read-only')).toBe(true);
       expect(disabledTextarea.matches(':read-only')).toBe(true);
       expect(nestedEditorText.matches(':read-write')).toBe(true);
+      const invalidEditor = document.createElement('div');
+      const nestedInvalidEditor = document.createElement('div');
+      invalidEditor.setAttribute('contenteditable', 'bogus');
+      nestedInvalidEditor.setAttribute('contenteditable', 'bogus');
+      editor.append(nestedInvalidEditor);
+      document.body.append(invalidEditor);
+      expect(invalidEditor.matches(':read-only')).toBe(true);
+      expect(nestedInvalidEditor.matches(':read-write')).toBe(true);
       expect(textInput.matches(':placeholder-shown')).toBe(true);
       textInput.value = 'acme';
       expect(textInput.matches(':placeholder-shown')).toBe(false);
