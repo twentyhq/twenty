@@ -12,6 +12,7 @@ type FormFieldInputInnerContainerProps = {
   multiline?: boolean;
   readonly?: boolean;
   preventFocusStackUpdate?: boolean;
+  enableGlobalEscapeHotkeys?: boolean;
   formFieldInputInstanceId: string;
   variant?: FormFieldInputVariant;
 };
@@ -87,6 +88,7 @@ export const FormFieldInputInnerContainer = forwardRef(
       multiline,
       readonly,
       preventFocusStackUpdate = false,
+      enableGlobalEscapeHotkeys = true,
       onClick,
       formFieldInputInstanceId,
       variant = 'default',
@@ -109,6 +111,7 @@ export const FormFieldInputInnerContainer = forwardRef(
           },
           globalHotkeysConfig: {
             enableGlobalHotkeysConflictingWithKeyboard: false,
+            enableGlobalEscapeHotkeys,
           },
         });
       }
