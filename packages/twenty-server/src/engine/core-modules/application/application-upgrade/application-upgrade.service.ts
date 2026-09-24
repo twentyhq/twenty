@@ -26,6 +26,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
+const isUpgradeRoleGrantsApprovalError = (error: unknown): boolean =>
+  error instanceof ApplicationException &&
+  error.code === ApplicationExceptionCode.UPGRADE_REQUIRES_ROLE_GRANTS_APPROVAL;
+
 @Injectable()
 export class ApplicationUpgradeService {
   private readonly logger = new Logger(ApplicationUpgradeService.name);
@@ -247,11 +251,7 @@ export class ApplicationUpgradeService {
         workspaceId,
       });
     } catch (error) {
-      if (
-        error instanceof ApplicationException &&
-        error.code ===
-          ApplicationExceptionCode.UPGRADE_REQUIRES_ROLE_GRANTS_APPROVAL
-      ) {
+      if (isUpgradeRoleGrantsApprovalError(error)) {
         this.logger.log(
           `Skipping upgrade of ${appRegistration.universalIdentifier} on workspace ${workspaceId}: version ${targetVersion} grants its default role more permissions and needs approval from a workspace admin`,
         );
@@ -354,12 +354,7 @@ export class ApplicationUpgradeService {
     } catch (error) {
       const appName =
         appRegistration.sourcePackage ?? appRegistration.universalIdentifier;
-      const isWaitingForRoleGrantsApproval =
-        error instanceof ApplicationException &&
-        error.code ===
-          ApplicationExceptionCode.UPGRADE_REQUIRES_ROLE_GRANTS_APPROVAL;
-
-      if (!isWaitingForRoleGrantsApproval) {
+      if (!isUpgradeRoleGrantsApprovalError(error)) {
         this.logger.error(`Upgrade failed for ${appName}`, error);
       }
 
