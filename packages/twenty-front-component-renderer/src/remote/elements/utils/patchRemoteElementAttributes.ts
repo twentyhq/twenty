@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 import { isAriaOrDataAttribute } from '@/remote/elements/utils/isAriaOrDataAttribute';
+import { serializeRemotePropertyAsAttributeValue } from '@/remote/elements/utils/serializeRemotePropertyAsAttributeValue';
 
 const PROPERTY_MAPPED_ATTRIBUTES = [
   { attributeName: 'for', elementPropertyName: 'htmlFor' },
@@ -30,6 +31,27 @@ type RemoteElementConstructor = CustomElementConstructor &
     observedAttributes?: string[];
     prototype: RemoteElementWithAttributeUpdater;
   };
+
+type RemotePropertyDefinition = {
+  name: string;
+  type?: unknown;
+  attribute?: string;
+};
+
+const readRemotePropertyAsAttributeValue = ({
+  element,
+  attributeName,
+  remotePropertyDefinition,
+}: {
+  element: RemoteElementWithAttributeUpdater;
+  attributeName: string;
+  remotePropertyDefinition: RemotePropertyDefinition;
+}): string | null =>
+  serializeRemotePropertyAsAttributeValue({
+    attributeName,
+    propertyValue: element[remotePropertyDefinition.name],
+    isBooleanTypedProperty: remotePropertyDefinition.type === Boolean,
+  });
 
 export const patchRemoteElementAttributes = (): void => {
   for (const allowedHtmlElement of ALLOWED_HTML_ELEMENTS) {
@@ -70,6 +92,21 @@ export const patchRemoteElementAttributes = (): void => {
         : attributeName;
     };
 
+    const remotePropertyDefinitionByAttributeName = new Map<
+      string,
+      RemotePropertyDefinition
+    >();
+
+    for (const remotePropertyDefinition of elementConstructor.remotePropertyDefinitions?.values() ??
+      []) {
+      if (isDefined(remotePropertyDefinition.attribute)) {
+        remotePropertyDefinitionByAttributeName.set(
+          remotePropertyDefinition.attribute,
+          remotePropertyDefinition,
+        );
+      }
+    }
+
     const originalGetAttribute = elementConstructor.prototype.getAttribute;
 
     elementConstructor.prototype.getAttribute = function (
@@ -88,6 +125,17 @@ export const patchRemoteElementAttributes = (): void => {
           : null;
       }
 
+      const remotePropertyDefinition =
+        remotePropertyDefinitionByAttributeName.get(attributeName);
+
+      if (isDefined(remotePropertyDefinition)) {
+        return readRemotePropertyAsAttributeValue({
+          element: this,
+          attributeName,
+          remotePropertyDefinition,
+        });
+      }
+
       return originalGetAttribute.call(this, attributeName);
     };
 
@@ -103,6 +151,19 @@ export const patchRemoteElementAttributes = (): void => {
 
       if (isDefined(mappedElementPropertyName)) {
         return isDefined(this[mappedElementPropertyName]);
+      }
+
+      const remotePropertyDefinition =
+        remotePropertyDefinitionByAttributeName.get(attributeName);
+
+      if (isDefined(remotePropertyDefinition)) {
+        return isDefined(
+          readRemotePropertyAsAttributeValue({
+            element: this,
+            attributeName,
+            remotePropertyDefinition,
+          }),
+        );
       }
 
       return originalHasAttribute.call(this, attributeName);

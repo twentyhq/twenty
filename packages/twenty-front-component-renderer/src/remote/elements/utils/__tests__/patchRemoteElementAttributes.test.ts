@@ -1,6 +1,7 @@
 import '@/remote/generated/remote-elements';
 
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
+import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
 
 import { patchRemoteElementAttributes } from '../patchRemoteElementAttributes';
@@ -22,6 +23,7 @@ const createHtmlSvgElement = (): RemoteSvgElement =>
 
 describe('patchRemoteElementAttributes', () => {
   beforeAll(() => {
+    installStylePropertyOnRemoteElements();
     patchRemoteElementAttributes();
     installClassAttributeAccessors({
       elementPrototype: Element.prototype,
@@ -255,6 +257,84 @@ describe('patchRemoteElementAttributes', () => {
 
       expect(element.getAttribute('data-icon')).toBe('lock');
       expect(element.getAttributeNames()).toEqual(['data-icon']);
+    });
+  });
+
+  describe('remote properties read through attribute methods', () => {
+    it('should read a string property that React or Preact assigned directly', () => {
+      const element =
+        createHtmlDivElement() as RemoteElementWithPropertyUpdater &
+          Record<string, unknown>;
+
+      element.role = 'combobox';
+      element['aria-label'] = 'Account';
+
+      expect(element.getAttribute('role')).toBe('combobox');
+      expect(element.hasAttribute('role')).toBe(true);
+      expect(element.getAttribute('aria-label')).toBe('Account');
+    });
+
+    it('should serialize a true aria-hidden property the way the page renders it', () => {
+      const element =
+        createHtmlDivElement() as RemoteElementWithPropertyUpdater &
+          Record<string, unknown>;
+
+      element['aria-hidden'] = true;
+
+      expect(element.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('should treat a false aria-hidden property like a missing attribute', () => {
+      const element =
+        createHtmlDivElement() as RemoteElementWithPropertyUpdater &
+          Record<string, unknown>;
+
+      element['aria-hidden'] = false;
+
+      expect(element.getAttribute('aria-hidden')).toBeNull();
+      expect(element.hasAttribute('aria-hidden')).toBe(false);
+    });
+
+    it('should serialize boolean draggable values as true and false', () => {
+      const draggableElement = createHtmlDivElement();
+      const fixedElement = createHtmlDivElement();
+
+      draggableElement.draggable = true;
+      fixedElement.draggable = false;
+
+      expect(draggableElement.getAttribute('draggable')).toBe('true');
+      expect(fixedElement.getAttribute('draggable')).toBe('false');
+    });
+
+    it('should serialize boolean HTML attributes as present or absent', () => {
+      const button = document.createElement(
+        'html-button',
+      ) as RemoteElementWithPropertyUpdater & { disabled: boolean };
+
+      button.disabled = true;
+      expect(button.getAttribute('disabled')).toBe('');
+
+      button.disabled = false;
+      expect(button.hasAttribute('disabled')).toBe(false);
+    });
+
+    it('should report the live property instead of the attribute it replaced', () => {
+      const element =
+        createHtmlDivElement() as RemoteElementWithPropertyUpdater &
+          Record<string, unknown>;
+
+      element.setAttribute('aria-label', 'First label');
+      element['aria-label'] = 'Second label';
+
+      expect(element.getAttribute('aria-label')).toBe('Second label');
+    });
+
+    it('should read inline styles written through the style property', () => {
+      const element = createHtmlDivElement();
+
+      element.style.color = 'red';
+
+      expect(element.getAttribute('style')).toBe('color:red');
     });
   });
 
