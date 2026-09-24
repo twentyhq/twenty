@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -12,6 +11,7 @@ import { In } from 'typeorm';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
@@ -46,6 +46,7 @@ type SnapshotEvaluation = {
   subject: RowAccessPolicySubject;
   depth: number;
   maps?: ReadabilityMaps;
+  isLegacyRecordAccessOpen?: boolean;
 };
 
 type SnapshotEvaluationInContext = SnapshotEvaluation & {
@@ -79,6 +80,11 @@ export class RecordAccessPolicyService {
         recordIds: events.map((event) => event.recordId),
       }));
 
+    let legacyRecordAccessOpenPromise: Promise<boolean> | undefined;
+    const fetchLegacyRecordAccessOpen = () =>
+      (legacyRecordAccessOpenPromise ??=
+        this.recordSharingFeatureService.isLegacyRecordAccessOpen(workspaceId));
+
     return {
       resolveAdmittedRecordIds: async (subject) => {
         const snapshots = await this.resolveSnapshotsReadableByRole({
@@ -100,6 +106,10 @@ export class RecordAccessPolicyService {
             snapshots,
             subject,
             depth: 0,
+            isLegacyRecordAccessOpen:
+              objectMetadata.readability !== MetadataReadability.SYSTEM &&
+              objectMetadata.readability !== MetadataReadability.OPEN &&
+              (await fetchLegacyRecordAccessOpen()),
           },
           fetchRecordShares,
         );
@@ -164,8 +174,7 @@ export class RecordAccessPolicyService {
   ): Promise<Set<string>> {
     const { objectMetadata, snapshots, subject } = evaluation;
     const legacyOpen =
-      objectMetadata.readability !== MetadataReadability.SYSTEM &&
-      objectMetadata.readability !== MetadataReadability.OPEN &&
+      evaluation.isLegacyRecordAccessOpen ??
       (await this.recordSharingFeatureService.isLegacyRecordAccessOpen(
         evaluation.workspaceId,
       ));
@@ -193,6 +202,7 @@ export class RecordAccessPolicyService {
           )),
           ...(await this.resolveSnapshotIdsReadableThroughParents({
             ...evaluation,
+            isLegacyRecordAccessOpen: legacyOpen,
           })),
         ]);
       default:
@@ -306,6 +316,7 @@ export class RecordAccessPolicyService {
     subject,
     depth,
     maps,
+    isLegacyRecordAccessOpen,
     parent,
   }: SnapshotEvaluationInContext & {
     parent: InheritedReadabilityChildrenParent;
@@ -369,6 +380,7 @@ export class RecordAccessPolicyService {
       subject,
       depth: depth + 1,
       maps,
+      isLegacyRecordAccessOpen,
     });
 
     for (const [

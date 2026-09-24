@@ -63,6 +63,29 @@ const subject = {
 };
 
 describe('mandatory event visibility', () => {
+  it('resolves rollout access once per batch across concurrent subscribers', async () => {
+    const { module, gate } = await setup({
+      rowCause: RecordShareRowCause.OWNER,
+    });
+    const eventGate = gate(MetadataReadability.PRIVATE);
+    const admitted = await Promise.all([
+      eventGate.resolveAdmittedRecordIds(subject),
+      eventGate.resolveAdmittedRecordIds({
+        ...subject,
+        principalIds: ['other-member'],
+      }),
+    ]);
+    expect(admitted).toEqual([new Set(['record']), new Set()]);
+    expect(
+      module.get(RecordSharingFeatureService).isLegacyRecordAccessOpen,
+    ).toHaveBeenCalledTimes(1);
+    await gate(MetadataReadability.PRIVATE).resolveAdmittedRecordIds(subject);
+    expect(
+      module.get(RecordSharingFeatureService).isLegacyRecordAccessOpen,
+    ).toHaveBeenCalledTimes(2);
+    await module.close();
+  });
+
   it.each([true, false])(
     'denies SYSTEM records with owning application=%s',
     async (isOwningApplication) => {

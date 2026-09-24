@@ -1,4 +1,3 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -87,7 +86,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
-        isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
+        isRecordSharingEnforced:
+          this.isRecordSharingEnforced(queryRunnerContext),
         shareWith: args.shareWith,
       });
     }
@@ -621,7 +621,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectMetadataId: flatObjectMetadata.id,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
-      isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
+      isRecordSharingEnforced: this.isRecordSharingEnforced(queryRunnerContext),
       shareWith,
       transactionScope,
     });
@@ -633,23 +633,21 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     switch (queryRunnerContext.flatObjectMetadata.readability) {
       case MetadataReadability.PRIVATE:
         return true;
-      // An inherited record gets its creator's share row like a PRIVATE one,
-      // but one created while the flag is off must keep following its parent
-      // once the flag turns on instead of becoming readable by everyone
+      // Legacy inherited records must keep following their parent after
+      // activation instead of receiving an EVERYONE compatibility grant.
       case MetadataReadability.INHERITED:
-        return this.isRecordSharingEnabled(queryRunnerContext);
+        return this.isRecordSharingEnforced(queryRunnerContext);
       default:
         return false;
     }
   }
 
-  private isRecordSharingEnabled(
+  private isRecordSharingEnforced(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
     return (
-      queryRunnerContext.isRecordSharingEnabled ||
-      queryRunnerContext.flatObjectMetadata.universalIdentifier ===
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      queryRunnerContext.repository.internalContext.isLegacyRecordAccessOpen !==
+      true
     );
   }
 
