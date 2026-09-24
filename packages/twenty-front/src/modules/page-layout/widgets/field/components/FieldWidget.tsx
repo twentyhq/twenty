@@ -212,7 +212,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   ) {
     return (
       <FieldWidgetFilesPreview
-        files={record.filter((file) => file.isDeleted !== true)}
+        files={record.filter((file) => !file.isDeleted)}
       />
     );
   }
