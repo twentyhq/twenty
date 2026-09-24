@@ -2,6 +2,7 @@ import { WorkspaceSetupChatSidePanelEffect } from '@/onboarding/effect-component
 import { CommandMenuForMobile } from '@/command-menu/components/CommandMenuForMobile';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
+import { LogConsole } from '@/log-console/components/LogConsole';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -25,6 +26,21 @@ const StyledRow = styled.div`
     > *:not(:first-child) {
       display: none;
     }
+  }
+`;
+
+const StyledMainColumn = styled.div`
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+
+  @media print {
+    display: block;
+    min-height: auto;
+    min-width: auto;
   }
 `;
 
@@ -52,9 +68,12 @@ export const MainAppLayoutWithSidePanel = () => {
       <RouteContextStoreProvider />
       <SidePanelPathUrlSyncEffect />
       <WorkspaceSetupChatSidePanelEffect />
-      <StyledContent>
-        <Outlet />
-      </StyledContent>
+      <StyledMainColumn>
+        <StyledContent>
+          <Outlet />
+        </StyledContent>
+        <LogConsole />
+      </StyledMainColumn>
       {isMobile ? <CommandMenuForMobile /> : <SidePanelForDesktop />}
     </StyledRow>
   );

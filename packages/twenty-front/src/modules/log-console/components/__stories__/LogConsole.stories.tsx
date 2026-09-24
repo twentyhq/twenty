@@ -1,10 +1,15 @@
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
 import { userEvent, within } from 'storybook/test';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { LogConsole } from '@/log-console/components/LogConsole';
+import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
@@ -14,7 +19,7 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { SettingsLogsPage } from '~/pages/settings/log-explorer/SettingsLogsPage';
+import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -28,31 +33,47 @@ import {
 } from '~/testing/mock-data/users';
 import { getOperationName } from '~/utils/getOperationName';
 
-const WORKSPACE_WITH_LOGS_SETTINGS_SECTION = {
+const WORKSPACE_WITH_LOGS_CONSOLE = {
   ...mockCurrentWorkspace,
   featureFlags: [
     { key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED, value: true },
   ],
+  billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
 
+const StyledPageWithLogConsole = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+`;
+
+const PageWithLogConsole = () => (
+  <StyledPageWithLogConsole>
+    <SettingsObjects />
+    <LogConsole />
+  </StyledPageWithLogConsole>
+);
+
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Logs/SettingsLogsPage',
-  component: SettingsLogsPage,
+  title: 'Modules/LogConsole/LogConsole',
+  component: LogConsole,
+  render: () => <PageWithLogConsole />,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/logs' },
+  args: { routePath: '/settings/objects' },
   beforeEach: () => {
-    jotaiStore.set(currentWorkspaceState.atom, {
-      ...WORKSPACE_WITH_LOGS_SETTINGS_SECTION,
-      billingEntitlements: [
-        { key: BillingEntitlementKey.AUDIT_LOGS, value: true },
-      ],
-    });
+    jotaiStore.set(currentWorkspaceState.atom, WORKSPACE_WITH_LOGS_CONSOLE);
     jotaiStore.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: Object.values(PermissionFlagType),
     });
+    jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+    jotaiStore.set(isLogConsoleFullScreenState.atom, false);
   },
   parameters: {
+    layout: 'fullscreen',
     mockingDate: new Date('2026-09-24T12:05:00Z'),
     msw: {
       handlers: [
@@ -92,34 +113,52 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-type Story = StoryObj<typeof SettingsLogsPage>;
+type Story = StoryObj<typeof LogConsole>;
 
-export const RecordChanges: Story = {};
+export const Collapsed: Story = {};
 
-export const AppLogs: Story = {
+export const AppLogsOpen: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('link', { name: 'App logs' }),
-    );
+    await userEvent.click(await canvas.findByRole('tab', { name: 'App logs' }));
     await canvas.findByText('scoreInboundLead');
   },
 };
 
-export const LockedSources: Story = {
+export const FullScreen: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(isLogConsoleFullScreenState.atom, true);
+  },
+};
+
+export const LockedTab: Story = {
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, {
-      ...WORKSPACE_WITH_LOGS_SETTINGS_SECTION,
+      ...WORKSPACE_WITH_LOGS_CONSOLE,
       billingEntitlements: [],
     });
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      await canvas.findByRole('link', { name: 'Record changes' }),
+      await canvas.findByRole('tab', { name: 'Record changes' }),
     );
     await canvas.findByText('Audit logs are part of the Organization plan');
+  },
+};
+
+export const ClickHouseMissing: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  parameters: {
+    msw: graphqlMocks,
   },
 };

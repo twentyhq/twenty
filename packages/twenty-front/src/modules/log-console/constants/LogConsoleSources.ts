@@ -1,15 +1,15 @@
 import { msg } from '@lingui/core/macro';
 import {
   IconAddressBook,
-  IconCoins,
   IconEye,
+  IconGauge,
   IconTerminal,
 } from 'twenty-ui/icon';
 
-import { type SettingsLogsSource } from '@/settings/log-explorer/types/SettingsLogsSource';
+import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { EventLogTable } from '~/generated-metadata/graphql';
 
-export const SETTINGS_LOGS_SOURCES: SettingsLogsSource[] = [
+export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'record-changes',
     label: msg`Record changes`,
@@ -34,7 +34,7 @@ export const SETTINGS_LOGS_SOURCES: SettingsLogsSource[] = [
   {
     id: 'usage',
     label: msg`Usage`,
-    Icon: IconCoins,
+    Icon: IconGauge,
     table: EventLogTable.USAGE_EVENT,
     requiresAuditLogs: true,
   },

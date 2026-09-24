@@ -1,3 +1,4 @@
+import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { MOBILE_NAVIGATION_BAR_CLEARANCE } from '@/navigation/constants/MobileNavigationBarClearance';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
@@ -6,6 +7,7 @@ import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-dr
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -34,6 +36,15 @@ export const SettingsNavigationDrawerContent = () => {
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useAtomState(
     isAdvancedModeEnabledState,
   );
+  const setLogConsoleDisplayMode = useSetAtomState(logConsoleDisplayModeState);
+
+  const handleAdvancedModeChange = (isEnabled: boolean) => {
+    setIsAdvancedModeEnabled(isEnabled);
+
+    if (isEnabled) {
+      setLogConsoleDisplayMode('collapsed');
+    }
+  };
 
   return (
     <>
@@ -46,7 +57,7 @@ export const SettingsNavigationDrawerContent = () => {
           <AdvancedSettingsSwitch
             className={advancedSettingsSwitchClassName}
             isAdvancedModeEnabled={isAdvancedModeEnabled}
-            setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
+            setIsAdvancedModeEnabled={handleAdvancedModeChange}
             label={t`Advanced`}
             isCompact={!isNavigationDrawerExpanded}
           />

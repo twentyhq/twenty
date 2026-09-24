@@ -67,7 +67,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     description: msg`Use a dedicated form when creating records.`,
   },
   [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
-    label: msg`Logs settings page`,
-    description: msg`Show logs as a full-width Settings page with one tab per source.`,
+    label: msg`Logs console`,
+    description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
   },
 };

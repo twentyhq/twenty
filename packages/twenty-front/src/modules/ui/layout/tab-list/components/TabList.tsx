@@ -72,6 +72,7 @@ export const TabList = ({
   className,
   componentInstanceId,
   onChangeTab,
+  onClickTab,
   rightComponent,
   centerTabs = false,
 }: TabListProps) => {
@@ -132,6 +133,8 @@ export const TabList = ({
 
   const handleTabSelect = useCallback(
     (tabId: string) => {
+      onClickTab?.(tabId);
+
       if (tabId === activeTabId) {
         return;
       }
@@ -139,7 +142,7 @@ export const TabList = ({
       setActiveTabId(tabId);
       onChangeTab?.(tabId);
     },
-    [activeTabId, setActiveTabId, onChangeTab],
+    [activeTabId, setActiveTabId, onChangeTab, onClickTab],
   );
 
   const handleTabSelectFromDropdown = useCallback(
