@@ -8,10 +8,17 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { TWO_FACTOR_AUTHENTICATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/two-factor-authentication/two-factor-authentication';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import {
+  TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
+  TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
+} from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-otp-rate-limit.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
@@ -38,6 +45,8 @@ export class TwoFactorAuthenticationService {
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly throttlerService: ThrottlerService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   private async decryptStoredSecret({
@@ -144,6 +153,13 @@ export class TwoFactorAuthenticationService {
       ['userWorkspaceId', 'strategy'],
     );
 
+    this.emitTwoFactorAuthenticationEvent({
+      workspaceId,
+      userId,
+      action: 'method_provisioned',
+      strategy: TwoFactorAuthenticationStrategy.TOTP,
+    });
+
     return uri;
   }
 
@@ -153,6 +169,15 @@ export class TwoFactorAuthenticationService {
     workspaceId: WorkspaceEntity['id'],
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
   ) {
+    // Counted per (user, workspace) and consumed before any lookup so that
+    // every guess, including ones against a missing method, spends a token.
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `two-factor-authentication-otp:${userId}:${workspaceId}`,
+      1,
+      TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
+      TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
+    );
+
     const userTwoFactorAuthenticationMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne(workspaceId, {
         where: {
@@ -193,6 +218,13 @@ export class TwoFactorAuthenticationService {
     ).validate(token, otpContext);
 
     if (!validationResult.isValid) {
+      this.emitTwoFactorAuthenticationEvent({
+        workspaceId,
+        userId,
+        action: 'otp_rejected',
+        strategy: twoFactorAuthenticationStrategy,
+      });
+
       throw new TwoFactorAuthenticationException(
         'Invalid OTP',
         TwoFactorAuthenticationExceptionCode.INVALID_OTP,
@@ -204,6 +236,85 @@ export class TwoFactorAuthenticationService {
       { id: userTwoFactorAuthenticationMethod.id },
       { status: OTPStatus.VERIFIED },
     );
+
+    if (userTwoFactorAuthenticationMethod.status !== OTPStatus.VERIFIED) {
+      this.emitTwoFactorAuthenticationEvent({
+        workspaceId,
+        userId,
+        action: 'method_verified',
+        strategy: twoFactorAuthenticationStrategy,
+      });
+    }
+  }
+
+  async deleteTwoFactorAuthenticationMethodForAuthenticatedUser({
+    userId,
+    workspaceId,
+    twoFactorAuthenticationMethodId,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+    twoFactorAuthenticationMethodId: TwoFactorAuthenticationMethodEntity['id'];
+  }) {
+    const twoFactorMethod =
+      await this.twoFactorAuthenticationMethodRepository.findOne(workspaceId, {
+        where: { id: twoFactorAuthenticationMethodId },
+        relations: ['userWorkspace'],
+      });
+
+    if (!isDefined(twoFactorMethod)) {
+      throw new AuthException(
+        'Two-factor authentication method not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (twoFactorMethod.userWorkspace.userId !== userId) {
+      throw new AuthException(
+        'You can only delete your own two-factor authentication methods',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    await this.twoFactorAuthenticationMethodRepository.delete(workspaceId, {
+      id: twoFactorAuthenticationMethodId,
+    });
+
+    this.emitTwoFactorAuthenticationEvent({
+      workspaceId,
+      userId,
+      action: 'method_deleted',
+      strategy: twoFactorMethod.strategy,
+    });
+
+    return { success: true };
+  }
+
+  private emitTwoFactorAuthenticationEvent({
+    workspaceId,
+    userId,
+    action,
+    strategy,
+  }: {
+    workspaceId: WorkspaceEntity['id'];
+    userId: UserEntity['id'];
+    action:
+      | 'method_provisioned'
+      | 'method_verified'
+      | 'method_deleted'
+      | 'otp_rejected';
+    strategy: TwoFactorAuthenticationStrategy;
+  }) {
+    const eventLogContext = this.eventLogEmitterService.createContext({
+      workspaceId,
+      userId,
+    });
+
+    void eventLogContext.insertWorkspaceEvent(TWO_FACTOR_AUTHENTICATION_EVENT, {
+      action,
+      strategy,
+      targetUserId: userId,
+    });
   }
 
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(

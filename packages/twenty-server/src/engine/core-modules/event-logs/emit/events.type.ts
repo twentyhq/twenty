@@ -39,6 +39,10 @@ import {
   type ServerAdminAccessChangedTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/server-admin/server-admin-access-changed';
 import {
+  type TWO_FACTOR_AUTHENTICATION_EVENT,
+  type TwoFactorAuthenticationTrackEvent,
+} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/two-factor-authentication/two-factor-authentication';
+import {
   type USER_SIGNUP_EVENT,
   type UserSignupTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
@@ -69,7 +73,8 @@ export type TrackEventName =
   | typeof USER_SIGNUP_EVENT
   | typeof WORKSPACE_CREATED_EVENT
   | typeof PAYMENT_RECEIVED_EVENT
-  | typeof SERVER_ADMIN_ACCESS_CHANGED_EVENT;
+  | typeof SERVER_ADMIN_ACCESS_CHANGED_EVENT
+  | typeof TWO_FACTOR_AUTHENTICATION_EVENT;
 
 export interface TrackEvents {
   [AUTH_SESSION_EVENT]: AuthSessionTrackEvent;
@@ -86,6 +91,7 @@ export interface TrackEvents {
   [WORKSPACE_CREATED_EVENT]: WorkspaceCreatedTrackEvent;
   [PAYMENT_RECEIVED_EVENT]: PaymentReceivedTrackEvent;
   [SERVER_ADMIN_ACCESS_CHANGED_EVENT]: ServerAdminAccessChangedTrackEvent;
+  [TWO_FACTOR_AUTHENTICATION_EVENT]: TwoFactorAuthenticationTrackEvent;
 }
 
 export type TrackEventProperties<T extends TrackEventName> =
