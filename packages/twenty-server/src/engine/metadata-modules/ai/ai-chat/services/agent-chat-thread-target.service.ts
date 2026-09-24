@@ -115,7 +115,7 @@ export class AgentChatThreadTargetService {
     });
   }
 
-  // Targets are written in system context because the object is SYSTEM-writable,
+  // Once the conversation is authorized, the link is written in system context,
   // so this lookup is the only point where the caller's own record grants are
   // consulted. It runs before the storage fence, which reserves a core pool
   // connection for the duration of the write.
