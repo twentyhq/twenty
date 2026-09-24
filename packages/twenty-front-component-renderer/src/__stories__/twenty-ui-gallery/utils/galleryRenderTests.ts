@@ -10,8 +10,9 @@ export const galleryRenderTest = createGalleryRenderTest({
   expectedFailedComponents: [],
 });
 
-// Unselected radios need Element.matches(':disabled'); React radio groups
-// also need compareDocumentPosition, which the sandbox DOM does not implement.
+// Unselected radios need the :disabled pseudo-class, which the worker selector
+// engine does not support; React radio groups also need compareDocumentPosition,
+// which the sandbox DOM does not implement.
 export const inputReactTest = createGalleryRenderTest({
   expectedFailedComponents: ['Radio', 'RadioGroup'],
 });

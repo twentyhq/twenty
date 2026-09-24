@@ -48,7 +48,10 @@ import {
   tabsReactTest,
 } from '@/__stories__/twenty-ui-gallery/utils/sandboxFailureTests';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
-import { createTooltipSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createTooltipSandboxFailureTest';
+import {
+  tooltipEscapeDismissalTest,
+  tooltipEscapeIgnoredTest,
+} from '@/__stories__/twenty-ui-gallery/utils/tooltipTests';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -284,13 +287,13 @@ export const PopoverPreact: Story = createGalleryStory({
 export const TooltipReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tooltip',
   runtime: 'react',
-  play: createTooltipSandboxFailureTest('react'),
+  play: tooltipEscapeIgnoredTest,
 });
 
 export const TooltipPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tooltip',
   runtime: 'preact',
-  play: createTooltipSandboxFailureTest('preact'),
+  play: tooltipEscapeDismissalTest,
 });
 
 export const MenuReact: Story = createGalleryStory({

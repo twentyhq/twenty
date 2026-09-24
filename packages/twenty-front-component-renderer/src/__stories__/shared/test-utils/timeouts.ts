@@ -3,3 +3,4 @@ export const INTERACTION_TIMEOUT = 5000;
 export const HOST_API_TIMEOUT = 10000;
 export const TYPING_TIMEOUT = 10000;
 export const TYPING_DELAY = 30;
+export const SANDBOX_ROUND_TRIP_SETTLE_DELAY = 1000;

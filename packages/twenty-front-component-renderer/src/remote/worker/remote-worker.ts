@@ -16,6 +16,7 @@ import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetCompute
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
+import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
@@ -51,6 +52,16 @@ installClassAttributeAccessors({
   remoteElementPrototypes: resolveRemoteElementPrototypes(),
 });
 installLocalStyleOnBaseElements(Element.prototype);
+
+installSelectorMethodsPolyfill({
+  elementPrototype: Element.prototype,
+  querySelectorTargets: [
+    Element.prototype,
+    DocumentFragment.prototype,
+    document,
+  ],
+  resolveActiveElement: () => null,
+});
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));
 

@@ -49,24 +49,20 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Popover, AlertDialog | Opening fails while reading unavailable viewport width data. |
 | Menu, Select | Opening fails on viewport data and/or missing `nativeEvent.pointerType`. |
 | Switch | Activation attempts to construct an unavailable `PointerEvent`. |
-| Tooltip | `TooltipReact` opens on hover but remains open after Escape because the SDK does not forward handlers added by `React.cloneElement`. `TooltipPreact` throws on hover because the sandbox lacks `Element.closest`. |
+| Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
 
-The tooltip stories assert these known failures and must be updated to assert
-successful interactions when compatibility is fixed. The surfaces gallery checks
-that the migrated tooltip mounts in both runtimes. Full tooltip interaction
-coverage remains in twenty-ui's own stories.
+The worker DOM now provides `Element.matches`, `closest`, and `querySelector`
+backed by a port of `css-what` and `css-select`. The selector engine handles
+custom element tags and relative selectors. `TooltipPreact` therefore covers
+hover opening and Escape dismissal. Pointer leave still needs the
+`Node.contains` fix and document-level `mousemove` delivery for the safe
+polygon, and the compound tooltip's title and description are not covered yet.
 
-SDK event handling and sandbox DOM fixes are deferred from the tooltip migration.
-Further gaps found while investigating include forwarded events without
-`nativeEvent` and a `Node.contains` ancestor traversal bug that can hang pointer
-leave handling. After fixing those gaps, cover Escape dismissal, pointer leave,
-and the compound tooltip's title and description in both renderer runtimes.
-
-Once those gaps are fixed, extend the stories to verify selection, disabled
-items, keyboard navigation, and overlay content, dismissal, and focus restoration.
-The fixtures already include the controlled state, compound parts, and callback
-output for those checks. Passing display, ListItem, and Toast stories verify
-rendering/CSS or interaction behavior directly.
+Once the remaining gaps are fixed, extend the stories to verify selection,
+disabled items, keyboard navigation, and overlay content, dismissal, and focus
+restoration. The fixtures already include the controlled state, compound parts,
+and callback output for those checks. Passing display, ListItem, and Toast
+stories verify rendering/CSS or interaction behavior directly.
 
 ## Run
 
