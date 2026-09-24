@@ -522,6 +522,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
+    description:
+      'Hostname sent in the SMTP EHLO greeting. Defaults to the machine hostname; set a fully qualified name if the relay rejects it',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  EMAIL_SMTP_NAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'SMTP port for sending emails',
     type: ConfigVariableType.NUMBER,
   })

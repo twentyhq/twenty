@@ -27,7 +27,6 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { enableValidationMetadataCache } from './utils/enable-validation-metadata-cache.util';
-import { generateFrontConfig } from './utils/generate-front-config';
 
 const bootstrap = async () => {
   enableValidationMetadataCache();
@@ -101,8 +100,6 @@ const bootstrap = async () => {
       maxFiles: 10,
     }),
   );
-
-  generateFrontConfig();
 
   const keepAliveTimeout = twentyConfigService.get(
     'SERVER_KEEP_ALIVE_TIMEOUT_MS',

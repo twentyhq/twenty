@@ -869,6 +869,7 @@ type Workspace {
   isMicrosoftAuthBypassEnabled: Boolean!
   isCustomDomainEnabled: Boolean!
   isInternalMessagesImportEnabled: Boolean!
+  allowedIframeOrigins: [String!]
   editableProfileFields: [String!]
   defaultRole: Role
   aiChatModelTier: AiModelTier!
@@ -4112,6 +4113,7 @@ type Mutation {
   deleteFrontComponent(id: UUID!): FrontComponent!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
+  updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
@@ -5002,6 +5004,11 @@ input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
   isInternalMessagesImportEnabled: Boolean
+}
+
+input UpdateWorkspaceAllowedIframeOriginsInput {
+  operation: String!
+  origin: String!
 }
 
 input CreateApplicationRegistrationInput {

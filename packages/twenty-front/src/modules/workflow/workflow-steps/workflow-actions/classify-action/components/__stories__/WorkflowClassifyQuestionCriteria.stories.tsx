@@ -3,10 +3,11 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { type WorkflowClassifyCriterion } from 'twenty-shared/workflow';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const INITIAL_CRITERIA: WorkflowClassifyCriterion[] = [
   {
@@ -24,7 +25,7 @@ const meta = {
   decorators: [
     WorkflowStepDecorator,
     ComponentDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     WorkspaceDecorator,
   ],
   parameters: { msw: graphqlMocks },
