@@ -16,11 +16,8 @@ import {
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
-import { getDeferredMigrationConflictMessage } from '@/cli/utilities/error/get-deferred-migration-conflict-message';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
-import { getSyncErrorSubCode } from '@/cli/utilities/error/get-sync-error-sub-code';
 import { type Manifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 
 export type SyncApplicationOrchestratorStepOutput = {
@@ -202,20 +199,11 @@ export class SyncApplicationOrchestratorStep {
   ): void {
     const step = this.state.steps.syncApplication;
 
-    const deferredMigrationConflictMessage =
-      getDeferredMigrationConflictMessage(result.error);
+    const errorEvents = this.verbose
+      ? null
+      : formatManifestValidationErrors(result.error);
 
-    const errorEvents =
-      this.verbose || isDefined(deferredMigrationConflictMessage)
-        ? null
-        : formatManifestValidationErrors(result.error);
-
-    if (isDefined(deferredMigrationConflictMessage)) {
-      events.push({
-        message: deferredMigrationConflictMessage,
-        status: 'error',
-      });
-    } else if (errorEvents) {
+    if (errorEvents) {
       events.push(...errorEvents);
       events.push({
         message: 'Add --verbose to see full error log',
@@ -228,18 +216,13 @@ export class SyncApplicationOrchestratorStep {
       });
     }
 
-    const recoveryHint = getSyncErrorRecoveryHint({
-      message: result.message,
-      subCode: getSyncErrorSubCode(result.error),
-    });
+    const recoveryHint = getSyncErrorRecoveryHint(result.message);
 
     if (recoveryHint) {
       events.push({ message: recoveryHint, status: 'info' });
     }
 
-    const summaryMessage =
-      deferredMigrationConflictMessage ??
-      (errorEvents ? errorEvents[0].message : 'Sync failed');
+    const summaryMessage = errorEvents ? errorEvents[0].message : 'Sync failed';
 
     step.output = { syncStatus: 'error', error: summaryMessage };
     step.status = 'error';

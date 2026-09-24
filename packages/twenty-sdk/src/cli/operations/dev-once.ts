@@ -20,9 +20,7 @@ import {
   hasDestructiveActions,
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
-import { getDeferredMigrationConflictMessage } from '@/cli/utilities/error/get-deferred-migration-conflict-message';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
-import { getSyncErrorSubCode } from '@/cli/utilities/error/get-sync-error-sub-code';
 import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
@@ -54,16 +52,11 @@ export type AppDevOnceResult = {
   applied: boolean;
 };
 
-const appendRecoveryHint = ({
-  message,
-  errorMessage,
-  subCode,
-}: {
-  message: string;
-  errorMessage: string | undefined;
-  subCode: string | undefined;
-}): string => {
-  const hint = getSyncErrorRecoveryHint({ message: errorMessage, subCode });
+const appendRecoveryHint = (
+  message: string,
+  errorMessage: string | undefined,
+): string => {
+  const hint = getSyncErrorRecoveryHint(errorMessage);
 
   return hint ? `${message}\n\n${hint}` : message;
 };
@@ -104,23 +97,13 @@ const buildSyncError = (
     ? null
     : formatManifestValidationErrors(result.error);
 
-  const deferredMigrationConflictMessage = getDeferredMigrationConflictMessage(
-    result.error,
-  );
-
-  const message =
-    deferredMigrationConflictMessage ??
-    (errorEvents
-      ? errorEvents.map((event) => event.message).join('\n')
-      : `Sync failed with error: ${result.message ?? 'Unknown error'}`);
+  const message = errorEvents
+    ? errorEvents.map((event) => event.message).join('\n')
+    : `Sync failed with error: ${result.message ?? 'Unknown error'}`;
 
   return {
     code: APP_ERROR_CODES.SYNC_FAILED,
-    message: appendRecoveryHint({
-      message,
-      errorMessage: result.message,
-      subCode: getSyncErrorSubCode(result.error),
-    }),
+    message: appendRecoveryHint(message, result.message),
   };
 };
 
