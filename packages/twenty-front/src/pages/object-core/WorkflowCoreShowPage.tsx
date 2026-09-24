@@ -1,15 +1,14 @@
 import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkflowEditor';
-import { CoreWorkflowShowToolbar } from '@/object-core/workflows/components/CoreWorkflowShowToolbar';
+import { CoreWorkflowIdentifierBar } from '@/object-core/workflows/components/CoreWorkflowIdentifierBar';
+import { CoreWorkflowShowPageBreadcrumb } from '@/object-core/workflows/components/CoreWorkflowShowPageBreadcrumb';
 import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
-import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCoreWorkflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { IconSettingsAutomation } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 
@@ -26,14 +25,11 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
-import { WorkflowVisibility } from '~/generated/graphql';
 import { getWorkflowCurrentVersion } from '@/workflow/utils/getWorkflowCurrentVersion';
 
 const StyledContainer = styled.div`
@@ -49,7 +45,6 @@ const CoreWorkflowShowContent = ({
   coreWorkflowId: string;
 }) => {
   const client = useApolloCoreClient();
-  const { closeSidePanelMenu } = useSidePanelMenu();
   const { record, coreWorkflow, loading, error, refetch } =
     useCoreWorkflowShowPageResource({
       coreWorkflowId,
@@ -67,8 +62,7 @@ const CoreWorkflowShowContent = ({
     refetch: refetchCoreWorkflowAndVersions,
   });
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [editedName, setEditedName] = useState<string>();
+  const [searchParams] = useSearchParams();
   const requestedVersionId = searchParams.get('version');
   const currentVersion = getWorkflowCurrentVersion({
     versions: versions.coreWorkflowVersions,
@@ -78,12 +72,6 @@ const CoreWorkflowShowContent = ({
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
   const isReadOnlyVersion = isDefined(requestedVersionId);
-  const isHistoricalVersion =
-    isDefined(requestedVersionId) && selectedVersion?.id !== currentVersion?.id;
-  const { renameWorkflow } = useRenameCoreWorkflow({
-    coreWorkflowId,
-    currentName: record?.name,
-  });
 
   const resource = (
     <RecordShowPageResourceEffect
@@ -139,22 +127,8 @@ const CoreWorkflowShowContent = ({
       <PageCardLayout
         header={
           <PageCardHeader
-            icon={<IconSettingsAutomation />}
-            title={
-              <TextInput
-                placeholder={t`Workflow name`}
-                value={editedName ?? record.name ?? ''}
-                onChange={setEditedName}
-                onBlur={async (event) => {
-                  const name = event.target.value;
-                  const didSave = await renameWorkflow(name);
-                  if (didSave) {
-                    setEditedName((currentName) =>
-                      currentName === name ? undefined : currentName,
-                    );
-                  }
-                }}
-              />
+            breadcrumb={
+              <CoreWorkflowShowPageBreadcrumb name={record.name ?? ''} />
             }
             actionButton={
               <>
@@ -166,21 +140,9 @@ const CoreWorkflowShowContent = ({
         }
       >
         <StyledContainer>
-          <CoreWorkflowShowToolbar
+          <CoreWorkflowIdentifierBar
             coreWorkflowId={coreWorkflowId}
-            versions={versions.coreWorkflowVersions}
-            selectedVersionId={selectedVersion?.id}
-            visibility={
-              coreWorkflow?.visibility ?? WorkflowVisibility.WORKSPACE
-            }
-            canChangeVisibility={coreWorkflow?.canChangeVisibility ?? false}
-            isHistoricalVersion={isHistoricalVersion}
-            onVersionChange={(versionId) => {
-              closeSidePanelMenu();
-              setSearchParams(
-                versionId === currentVersion?.id ? {} : { version: versionId },
-              );
-            }}
+            name={record.name}
           />
           {isDefined(selectedVersion) ? (
             <CoreWorkflowEditor
