@@ -21,7 +21,7 @@ it.each([
         },
       },
       wasRecordSharingEnabled: flag && entitlement,
-    } as never);
+    });
     expect(legacyOpen).toBe(expected);
     expect(
       resolveRecordShareGateKind({
