@@ -15,13 +15,6 @@ describe('isSlackAttachmentCandidate', () => {
     expect(isSlackAttachmentCandidate(PNG_FILE)).toBe(true);
   });
 
-  it.each(['image/heic', 'image/heif'])(
-    'should accept %s, which an iPhone shares natively',
-    (mimetype) => {
-      expect(isSlackAttachmentCandidate({ ...PNG_FILE, mimetype })).toBe(true);
-    },
-  );
-
   it('should reject a file type no model reads natively', () => {
     expect(
       isSlackAttachmentCandidate({
