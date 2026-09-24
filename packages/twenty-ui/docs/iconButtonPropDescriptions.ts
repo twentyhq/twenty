@@ -1,4 +1,4 @@
-import { type IconButtonProps } from '../src/components/IconButton/types/IconButtonProps';
+import { type IconButtonProps } from '../src/components/input/IconButton/types/IconButtonProps';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
 
 export const ICON_BUTTON_PROP_DESCRIPTIONS = {

@@ -1,5 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { Fragment, useMemo, useRef, useState, type MouseEvent } from 'react';
@@ -15,7 +15,7 @@ import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjec
 import { isAdvancedRelationTargetObjectMetadata } from '@/object-metadata/utils/isAdvancedRelationTargetObjectMetadata';
 import { isObjectMetadataEligibleAsRelationTarget } from '@/object-metadata/utils/isObjectMetadataEligibleAsRelationTarget';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -27,8 +27,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, type IconComponent } from 'twenty-ui/icon';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -234,7 +233,7 @@ export const SettingsMorphRelationMultiSelect = ({
             />
           }
           dropdownComponents={
-            <DropdownContent widthInPixels={dropDownMenuWidth}>
+            <LegacyDropdownContent widthInPixels={dropDownMenuWidth}>
               {!!withSearchInput && (
                 <DropdownMenuSearchInput
                   autoFocus
@@ -310,7 +309,7 @@ export const SettingsMorphRelationMultiSelect = ({
                               />
                             }
                           >
-                            <OverflowingTextWithTooltip text={option.label} />
+                            {option.label}
                           </ListItem>
                         </SelectableListItem>
                       </Fragment>
@@ -323,14 +322,17 @@ export const SettingsMorphRelationMultiSelect = ({
               )}
               {!!callToActionButton && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <MenuItem
+                  <ListItem
                     onClick={callToActionButton.onClick}
-                    LeftIcon={callToActionButton.Icon}
-                    text={callToActionButton.text}
-                  />
+                    startIcon={
+                      <SelectOptionIcon Icon={callToActionButton.Icon} />
+                    }
+                  >
+                    {callToActionButton.text}
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
         />
       )}

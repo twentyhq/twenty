@@ -2,6 +2,7 @@ import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
 import {
   buildPermissionSummaryFromRoleManifest,
   type PermissionSummaryItem,
@@ -13,13 +14,14 @@ import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
 import { LightButton } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
   modalInstanceId: string;
   appDisplayName: string;
   appLogoUrl?: string;
   defaultRole?: RoleManifest;
+  requestedCapabilities?: string[];
   onAuthorize: () => void;
   isInstalling?: boolean;
 };
@@ -94,18 +96,22 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   appDisplayName,
   appLogoUrl,
   defaultRole,
+  requestedCapabilities = [],
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
   const { closeDialog } = useDialog();
 
   const permissionItems: PermissionSummaryItem[] = useMemo(() => {
-    if (!defaultRole) {
-      return [];
-    }
+    const rolePermissionItems = defaultRole
+      ? buildPermissionSummaryFromRoleManifest(defaultRole)
+      : [];
 
-    return buildPermissionSummaryFromRoleManifest(defaultRole);
-  }, [defaultRole]);
+    return [
+      ...rolePermissionItems,
+      ...buildApplicationCapabilitySummary(requestedCapabilities),
+    ];
+  }, [requestedCapabilities, defaultRole]);
 
   const handleAuthorize = () => {
     closeDialog(modalInstanceId);

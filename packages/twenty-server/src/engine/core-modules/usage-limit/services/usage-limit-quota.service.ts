@@ -1,7 +1,6 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -15,10 +14,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/consume-quota-counters-script.constant';
-import {
-  UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
@@ -96,17 +92,17 @@ export class UsageLimitQuotaService implements OnModuleInit {
     );
   }
 
-  async assertQuotaNotExhausted(args: QuotaConsumeArgs): Promise<void> {
+  async findExhaustedScope(
+    args: QuotaConsumeArgs,
+  ): Promise<ExhaustedScope | null> {
     const exhaustedScopes =
       await this.findExhaustedScopesAdmittingOnFailure(args);
 
-    const exhaustedScope =
+    return (
       exhaustedScopes.find((scope) => scope.exhaustedKind === 'allowance') ??
-      exhaustedScopes[0];
-
-    if (isDefined(exhaustedScope)) {
-      this.throwQuotaExhausted(exhaustedScope);
-    }
+      exhaustedScopes[0] ??
+      null
+    );
   }
 
   async consumeQuota({
@@ -476,25 +472,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     );
   }
 
-  private throwQuotaExhausted(exhaustedScope: ExhaustedScope): never {
-    if (exhaustedScope.exhaustedKind === 'allowance') {
-      throw new UsageLimitException(
-        'Credit allowance exhausted for this billing period',
-        UsageLimitExceptionCode.QUOTA_EXHAUSTED,
-        {
-          userFriendlyMessage: msg`Credit allowance exhausted for this billing period.`,
-          exhaustedScope,
-        },
-      );
-    }
-
-    throw new UsageLimitException(
-      `Usage limit reached for ${exhaustedScope.spenderType}`,
-      UsageLimitExceptionCode.QUOTA_EXHAUSTED,
-      { exhaustedScope },
-    );
-  }
-
   private admitOnFailure<TAdmitted>({
     error,
     workspaceId,
@@ -596,11 +573,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
   private async buildAllowanceCounter(
     workspaceId: string,
   ): Promise<AllowanceQuotaCounter | null> {
-    if (
-      !(await this.creditAllowanceProvider.isCreditAllowanceEnabled(
-        workspaceId,
-      ))
-    ) {
+    if (!(await this.creditAllowanceProvider.isCreditAllowanceEnabled())) {
       return null;
     }
 
@@ -811,13 +784,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     counter: AllowanceQuotaCounter | undefined;
     now: number;
   }): Promise<{ key: string; value: number; ttl: number }[]> {
-    if (!isDefined(counter)) {
-      return [];
-    }
-
-    const ttl = counter.periodEnd.getTime() - now;
-
-    if (ttl <= 0) {
+    if (!isDefined(counter) || counter.periodEnd.getTime() <= now) {
       return [];
     }
 
@@ -828,6 +795,14 @@ export class UsageLimitQuotaService implements OnModuleInit {
       !isDefined(allowance) ||
       allowance.periodStart.getTime() !== counter.periodStart.getTime()
     ) {
+      return [];
+    }
+
+    const ttl =
+      Math.min(counter.periodEnd.getTime(), allowance.validUntil.getTime()) -
+      now;
+
+    if (ttl <= 0) {
       return [];
     }
 

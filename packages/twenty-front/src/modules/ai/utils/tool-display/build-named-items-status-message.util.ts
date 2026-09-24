@@ -1,4 +1,4 @@
-import { type ToolDisplayContext } from '@/ai/types/tool-display-context.type';
+import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 import { formatDisplayList } from '@/ai/utils/tool-display/format-display-list.util';
 import { getInnerToolName } from '@/ai/utils/tool-display/get-inner-tool-name.util';
 import { pickStatusLabel } from '@/ai/utils/tool-display/pick-status-label.util';

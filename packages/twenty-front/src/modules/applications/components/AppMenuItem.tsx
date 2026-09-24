@@ -1,7 +1,7 @@
-import { AppChip } from '@/applications/components/AppChip';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { type ReactNode } from 'react';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AppMenuItemProps = {
   applicationId?: string | null;
@@ -25,17 +25,15 @@ export const AppMenuItem = ({
   });
 
   return (
-    <MenuItem
-      withIconContainer={true}
-      LeftIcon={() => (
-        <AppChip applicationId={applicationId} size={'md'} chipOnly />
-      )}
-      text={text}
-      contextualText={applicationChipData.name}
+    <ListItem
+      startIcon={<AppMenuItemIcon applicationId={applicationId} />}
+      description={applicationChipData.name}
       onClick={onClick}
       focused={focused}
       disabled={disabled}
-      RightComponent={RightComponent}
-    />
+      endIcon={RightComponent}
+    >
+      {text}
+    </ListItem>
   );
 };

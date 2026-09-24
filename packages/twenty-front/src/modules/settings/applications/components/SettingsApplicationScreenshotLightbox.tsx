@@ -1,12 +1,12 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
+import { IconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconChevronRight, IconX } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationScreenshotLightboxProps = {
   modalInstanceId: string;
@@ -114,19 +114,25 @@ export const SettingsApplicationScreenshotLightbox = ({
         >
           <StyledContainer>
             <StyledCloseButton>
-              <FloatingIconButton
-                Icon={IconX}
-                ariaLabel={t`Close`}
+              <IconButton
+                elevated
+                size="sm"
+                aria-label={t`Close`}
                 onClick={onClose}
-              />
+              >
+                <IconX />
+              </IconButton>
             </StyledCloseButton>
             {hasSeveralScreenshots && (
               <StyledPreviousButton>
-                <FloatingIconButton
-                  Icon={IconChevronLeft}
-                  ariaLabel={t`Previous screenshot`}
+                <IconButton
+                  elevated
+                  size="sm"
+                  aria-label={t`Previous screenshot`}
                   onClick={showPrevious}
-                />
+                >
+                  <IconChevronLeft />
+                </IconButton>
               </StyledPreviousButton>
             )}
             <StyledImage
@@ -136,11 +142,14 @@ export const SettingsApplicationScreenshotLightbox = ({
             {hasSeveralScreenshots && (
               <>
                 <StyledNextButton>
-                  <FloatingIconButton
-                    Icon={IconChevronRight}
-                    ariaLabel={t`Next screenshot`}
+                  <IconButton
+                    elevated
+                    size="sm"
+                    aria-label={t`Next screenshot`}
                     onClick={showNext}
-                  />
+                  >
+                    <IconChevronRight />
+                  </IconButton>
                 </StyledNextButton>
                 <StyledCounter>
                   {selectedIndex + 1} / {screenshotCount}

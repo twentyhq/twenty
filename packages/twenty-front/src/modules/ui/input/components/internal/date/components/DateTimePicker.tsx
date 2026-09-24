@@ -17,14 +17,14 @@ import { getRelativeDatePickerCalendarRange } from '@/ui/input/components/intern
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { lazy, Suspense, useContext, type ComponentType } from 'react';
+import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { IconCalendarX } from 'twenty-ui/icon';
-import { MenuItemLeftContent } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
 
 import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -37,7 +37,7 @@ export {
 } from '@/ui/input/components/internal/date/components/DatePicker';
 export { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOuterWrapper = styled.div`
   align-items: flex-start;
@@ -148,7 +148,7 @@ export const DateTimePicker = ({
   hideHeaderInput,
   timeZone,
 }: DateTimePickerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
 
   const { userTimezone } = useUserTimezone();
@@ -378,7 +378,8 @@ export const DateTimePicker = ({
             <StyledSeparator />
             <StyledButtonContainer onClick={handleClear}>
               <StyledButtonContent>
-                <MenuItemLeftContent LeftIcon={IconCalendarX} text={t`Clear`} />
+                <IconCalendarX size={theme.icon.size.md} />
+                <Text>{t`Clear`}</Text>
               </StyledButtonContent>
             </StyledButtonContainer>
           </>

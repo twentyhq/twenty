@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -10,7 +11,7 @@ import { type RecordFilterOperand } from '@/object-record/record-filter/types/Re
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -21,7 +22,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { type ViewFilterOperand } from 'twenty-shared/types';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {
   recordFilterId: string;
@@ -87,7 +87,9 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
         />
       }
       dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+        <LegacyDropdownContent
+          widthInPixels={GenericDropdownContentWidth.Narrow}
+        >
           <DropdownMenuItemsContainer>
             <SelectableList
               focusId={dropdownId}
@@ -104,18 +106,19 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
                     handleOperandChange(filterOperand);
                   }}
                 >
-                  <MenuItem
+                  <ListItem
                     focused={selectedItemId === filterOperand}
                     onClick={() => {
                       handleOperandChange(filterOperand);
                     }}
-                    text={getOperandLabel(filterOperand, timeZoneAbbreviation)}
-                  />
+                  >
+                    {getOperandLabel(filterOperand, timeZoneAbbreviation)}
+                  </ListItem>
                 </SelectableListItem>
               ))}
             </SelectableList>
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
       dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
       dropdownPlacement="bottom-start"

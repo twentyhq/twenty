@@ -1,23 +1,19 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
-import {
-  InputLabel,
-  AnimatedLightIconButton,
-} from 'twenty-ui/primitives/input';
-import { LightIconButton } from 'twenty-ui/components';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
-import { IconChevronDown, IconPlus, IconVariable, IconX } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
+import { WorkflowOutputSchemaFieldHeader } from './WorkflowOutputSchemaFieldHeader';
 type WorkflowOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];
   onChange: (fields: OutputSchemaField[]) => void;
@@ -53,33 +49,6 @@ const StyledSettingsContent = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledSettingsHeader = styled.div<{
-  showRemoveFieldButton: boolean;
-  isExpanded: boolean;
-}>`
-  align-items: center;
-  border-bottom: ${({ isExpanded }) =>
-    isExpanded ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
-  cursor: pointer;
-  display: grid;
-  gap: ${themeCssVariables.spacing[1]};
-  grid-template-columns: ${({ showRemoveFieldButton }) =>
-    showRemoveFieldButton
-      ? `1fr ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[6]}`
-      : `1fr ${themeCssVariables.spacing[6]}`};
-  height: ${themeCssVariables.spacing[8]};
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledTitleContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
 const StyledAddFieldButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
@@ -103,7 +72,6 @@ export const WorkflowOutputSchemaBuilder = ({
   onChange,
   readonly,
 }: WorkflowOutputSchemaBuilderProps) => {
-  const { theme } = useContext(ThemeContext);
   const [expandedFieldIds, setExpandedFieldIds] = useState<Set<string>>(
     () => new Set(fields.map((field) => field.id)),
   );
@@ -172,7 +140,7 @@ export const WorkflowOutputSchemaBuilder = ({
         <StyledOutputSchemaFieldContainer>
           <StyledMessageContentContainer>
             <StyledMessageDescription data-testid="empty-output-schema-message-description">
-              {t`Click on "Add Output Field" below to define the structure of your AI agent's response. These fields will be used to format and validate the AI's output when the workflow is executed, and can be referenced by subsequent workflow steps.`}
+              {t`Click on "Add Output Field" below to define the structure of your agent's response. These fields will be used to format and validate the agent's output when the workflow is executed, and can be referenced by subsequent workflow steps.`}
             </StyledMessageDescription>
           </StyledMessageContentContainer>
         </StyledOutputSchemaFieldContainer>
@@ -185,33 +153,16 @@ export const WorkflowOutputSchemaBuilder = ({
 
             return (
               <StyledOutputSchemaFieldContainer key={field.id}>
-                <StyledSettingsHeader
-                  showRemoveFieldButton={showRemoveFieldButton}
-                  onClick={() => toggleField(field.id)}
+                <WorkflowOutputSchemaFieldHeader
+                  name={field.name}
                   isExpanded={isExpanded}
-                >
-                  <StyledTitleContainer>
-                    <IconVariable size={theme.icon.size.sm} />
-                    <span>{field.name || t`Untitled field`}</span>
-                  </StyledTitleContainer>
-                  <AnimatedLightIconButton
-                    Icon={IconChevronDown}
-                    size="small"
-                    rotate={isExpanded ? -180 : 0}
-                  />
-                  {showRemoveFieldButton && (
-                    <LightIconButton
-                      data-testid="remove-output-field-button"
-                      size="sm"
-                      onClick={() => {
-                        removeField(field.id);
-                      }}
-                      aria-label={t`Remove output field`}
-                    >
-                      <IconX />
-                    </LightIconButton>
-                  )}
-                </StyledSettingsHeader>
+                  onToggle={() => toggleField(field.id)}
+                  onRemove={
+                    showRemoveFieldButton
+                      ? () => removeField(field.id)
+                      : undefined
+                  }
+                />
                 <AnimatedExpandableContainer
                   isExpanded={isExpanded}
                   initial={false}
@@ -263,11 +214,10 @@ export const WorkflowOutputSchemaBuilder = ({
 
       {!readonly && (
         <StyledAddFieldButtonContainer>
-          <MenuItem
-            LeftIcon={IconPlus}
-            text={t`Add Output Field`}
+          <ListItem
+            startIcon={<IconPlus />}
             onClick={addField}
-          />
+          >{t`Add Output Field`}</ListItem>
         </StyledAddFieldButtonContainer>
       )}
     </StyledOutputSchemaContainer>

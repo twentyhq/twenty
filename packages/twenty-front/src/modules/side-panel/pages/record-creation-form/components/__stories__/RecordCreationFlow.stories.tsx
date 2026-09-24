@@ -41,20 +41,23 @@ import {
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import {
   EngineComponentKey,
+  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const createCompanyRequest = fn();
 const onRecordCreated = fn();
@@ -152,7 +155,15 @@ const RecordCreationFlow = ({ commandOrigin }: RecordCreationFlowProps) => {
       );
     }
     applyChanges();
-    store.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    store.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        {
+          key: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
+          value: true,
+        },
+      ],
+    });
     store.set(currentWorkspaceMemberState.atom, (member) =>
       isDefined(member)
         ? { ...member, openRecordIn: OpenRecordIn.SIDE_PANEL }
@@ -270,7 +281,7 @@ const meta = {
   decorators: [
     ObjectMetadataItemsDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     ComponentDecorator,
   ],
   parameters: {
@@ -340,15 +351,82 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
     expect.objectContaining({ name: 'Acme', employees: 10, position: 'first' }),
   );
   await expect(onRecordCreated).toHaveBeenCalledTimes(1);
-  await expect(onRecordCreated).toHaveBeenCalledWith(
-    expect.objectContaining({ name: 'Acme', employees: 10 }),
-    expect.objectContaining({ name: 'Acme', position: 'first' }),
-  );
+  await expect(onRecordCreated).toHaveBeenCalledWith({
+    record: expect.objectContaining({ name: 'Acme', employees: 10 }),
+    recordInput: expect.objectContaining({ name: 'Acme', position: 'first' }),
+  });
 };
 
 export const SubmitWithButton: Story = {
   play: ({ canvasElement }) => submitCompany(canvasElement),
 };
+
+const REJECTED_COMPANY_NAME = 'Taken name';
+
+export const RetryAfterFailedCreation: Story = {
+  decorators: [
+    (Story) => (
+      <ToastStoryContainer>
+        <Story />
+      </ToastStoryContainer>
+    ),
+  ],
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.mutation('CreateOneCompany', ({ variables }) => {
+          if (variables.input.name !== REJECTED_COMPANY_NAME) {
+            return;
+          }
+          createCompanyRequest(variables.input);
+          return HttpResponse.json({
+            errors: [
+              {
+                message: 'Duplicate company name',
+                extensions: {
+                  userFriendlyMessage: 'This company name is already taken',
+                },
+              },
+            ],
+          });
+        }),
+        ...meta.parameters.msw.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: /Create company/ }),
+    );
+    const nameInput = await canvas.findByRole('textbox');
+    await userEvent.click(nameInput);
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, REJECTED_COMPANY_NAME);
+    const createButton = canvas.getByTestId(
+      'record-creation-form-create-button',
+    );
+    await userEvent.click(createButton);
+
+    await expect(
+      await canvas.findByText('This company name is already taken'),
+    ).toBeVisible();
+    await waitFor(() => expect(createButton).toBeEnabled());
+    await expect(nameInput).toHaveTextContent(REJECTED_COMPANY_NAME);
+    await expect(onRecordCreated).not.toHaveBeenCalled();
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, 'Acme');
+    await userEvent.click(createButton);
+
+    await expect(
+      await canvas.findByText('Created Acme with 10 employees'),
+    ).toBeVisible();
+    await expect(createCompanyRequest).toHaveBeenCalledTimes(2);
+    await expect(onRecordCreated).toHaveBeenCalledTimes(1);
+  },
+};
+
 export const Cancel: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

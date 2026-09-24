@@ -10,14 +10,13 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledUserHeader = styled.div`
   align-items: center;
@@ -45,7 +44,7 @@ const StyledUserCredits = styled.span`
 export const SettingsUsageUserDetail = () => {
   const { t: tLingui } = useLingui();
   const { userWorkspaceId } = useParams<{ userWorkspaceId: string }>();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { formatUsageValue } = useUsageValueFormatter();
 
   const { analytics, isInitialLoading } = useUsageAnalyticsData({

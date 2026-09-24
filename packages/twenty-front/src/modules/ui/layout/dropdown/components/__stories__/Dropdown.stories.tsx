@@ -11,7 +11,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -22,7 +22,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof Dropdown> = {
@@ -76,9 +76,9 @@ const StyledEmptyDropdownContent = styled.div`
 export const Empty: Story = {
   args: {
     dropdownComponents: (
-      <DropdownContent>
+      <LegacyDropdownContent>
         <StyledEmptyDropdownContent data-testid="dropdown-content" />
-      </DropdownContent>
+      </LegacyDropdownContent>
     ),
   },
   play: async ({ canvasElement }) => {
@@ -201,7 +201,7 @@ const optionsMock = [
 ];
 
 //   return (
-//     <DropdownContent>
+//     <LegacyDropdownContent>
 //       <DropdownMenuItemsContainer hasMaxHeight>
 //         {optionsMock.map((item) => (
 //           <MenuItemSelectAvatar
@@ -222,7 +222,7 @@ const optionsMock = [
 //           />
 //         ))}
 //       </DropdownMenuItemsContainer>
-//     </DropdownContent>
+//     </LegacyDropdownContent>
 //   );
 // };
 
@@ -233,7 +233,7 @@ const optionsMock = [
 //   >({});
 
 //   return (
-//     <DropdownContent>
+//     <LegacyDropdownContent>
 //       <DropdownMenuItemsContainer hasMaxHeight>
 //         {optionsMock.map((item) => (
 //           <MenuItemMultiSelectAvatar
@@ -259,7 +259,7 @@ const optionsMock = [
 //           />
 //         ))}
 //       </DropdownMenuItemsContainer>
-//     </DropdownContent>
+//     </LegacyDropdownContent>
 //   );
 // };
 
@@ -278,7 +278,7 @@ export const WithHeaders: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     dropdownComponents: (
-      <DropdownContent>
+      <LegacyDropdownContent>
         <DropdownMenuHeader
           StartComponent={
             <DropdownMenuHeaderLeftComponent Icon={IconChevronLeft} />
@@ -290,7 +290,7 @@ export const WithHeaders: Story = {
         <DropdownMenuItemsContainer hasMaxHeight>
           <>
             {optionsMock.slice(0, 3).map((item) => (
-              <MenuItem key={item.id} text={item.name} />
+              <ListItem key={item.id}>{item.name}</ListItem>
             ))}
           </>
         </DropdownMenuItemsContainer>
@@ -298,10 +298,10 @@ export const WithHeaders: Story = {
         <StyledDropdownMenuSubheader>Subheader 2</StyledDropdownMenuSubheader>
         <DropdownMenuItemsContainer>
           {optionsMock.slice(3).map((item) => (
-            <MenuItem key={item.id} text={item.name} />
+            <ListItem key={item.id}>{item.name}</ListItem>
           ))}
         </DropdownMenuItemsContainer>
-      </DropdownContent>
+      </LegacyDropdownContent>
     ),
   },
   play: playInteraction,
@@ -311,13 +311,13 @@ export const SearchWithLoadingMenu: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     dropdownComponents: (
-      <DropdownContent>
+      <LegacyDropdownContent>
         <DropdownMenuSearchInput value="query" autoFocus />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           <DropdownMenuSkeletonItem />
         </DropdownMenuItemsContainer>
-      </DropdownContent>
+      </LegacyDropdownContent>
     ),
   },
   play: async ({ canvasElement }) => {
@@ -343,7 +343,7 @@ export const WithInput: Story = {
   decorators: [WithContentBelowDecorator],
   args: {
     dropdownComponents: (
-      <DropdownContent>
+      <LegacyDropdownContent>
         <DropdownMenuInput
           instanceId="dropdown-menu-input"
           value="Lorem ipsum"
@@ -352,10 +352,10 @@ export const WithInput: Story = {
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {optionsMock.map(({ name }) => (
-            <MenuItem key={name} text={name} />
+            <ListItem key={name}>{name}</ListItem>
           ))}
         </DropdownMenuItemsContainer>
-      </DropdownContent>
+      </LegacyDropdownContent>
     ),
   },
   play: playInteraction,

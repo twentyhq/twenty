@@ -1,6 +1,6 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useMemo, useRef, useState } from 'react';
 
@@ -12,7 +12,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
@@ -25,8 +25,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export type SelectSizeVariant = 'small' | 'default';
@@ -238,7 +237,7 @@ export const Select = <Value extends SelectValue>({
             />
           }
           dropdownComponents={
-            <DropdownContent widthInPixels={dropDownMenuWidth}>
+            <LegacyDropdownContent widthInPixels={dropDownMenuWidth}>
               {withSearchInput === true && (
                 <DropdownMenuSearchInput
                   autoFocus
@@ -277,7 +276,7 @@ export const Select = <Value extends SelectValue>({
                       </>
                     }
                   >
-                    <OverflowingTextWithTooltip text={pinnedOption.label} />
+                    {pinnedOption.label}
                   </ListItem>
                 </DropdownMenuItemsContainer>
               )}
@@ -349,7 +348,7 @@ export const Select = <Value extends SelectValue>({
                                 </>
                               }
                             >
-                              <OverflowingTextWithTooltip text={option.label} />
+                              {option.label}
                             </ListItem>
                           )}
                         </SelectableListItem>
@@ -362,14 +361,17 @@ export const Select = <Value extends SelectValue>({
                 isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
               {isDefined(callToActionButton) && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <MenuItem
+                  <ListItem
                     onClick={callToActionButton.onClick}
-                    LeftIcon={callToActionButton.Icon}
-                    text={callToActionButton.text}
-                  />
+                    startIcon={
+                      <SelectOptionIcon Icon={callToActionButton.Icon} />
+                    }
+                  >
+                    {callToActionButton.text}
+                  </ListItem>
                 </DropdownMenuItemsContainer>
               )}
-            </DropdownContent>
+            </LegacyDropdownContent>
           }
         />
       )}

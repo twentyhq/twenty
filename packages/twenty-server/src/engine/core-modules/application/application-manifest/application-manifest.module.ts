@@ -9,6 +9,7 @@ import { ApplicationManifestExportService } from 'src/engine/core-modules/applic
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationHealthModule } from 'src/engine/core-modules/application/application-health/application-health.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
@@ -27,6 +28,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   imports: [
     TypeOrmModule.forFeature([ApplicationEntity, FrontComponentEntity]),
     ApplicationModule,
+    ApplicationHealthModule,
     ApplicationRegistrationModule,
     ApplicationTranslationModule,
     ApplicationVariableEntityModule,

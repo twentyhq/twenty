@@ -1,14 +1,14 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { JsonTree } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp, IconTool } from 'twenty-ui/icon';
-import { JsonTree } from 'twenty-ui/primitives/json-visualizer';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
 import { getAdminToolDisplayName } from '@/settings/admin-panel/utils/getAdminToolDisplayName';

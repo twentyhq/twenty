@@ -35,6 +35,8 @@ import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.en
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
+import { ADDRESS_AUTOCOMPLETE_DRIVER_TYPE } from 'src/engine/core-modules/geo-map/constants/address-autocomplete-driver-type.constant';
+import { type AddressAutocompleteDriverType } from 'src/engine/core-modules/geo-map/types/address-autocomplete-driver-type.type';
 import {
   LoggerDriverType,
   type TwentyLogLevel,
@@ -519,6 +521,15 @@ export class ConfigVariables {
   })
   @IsOptional()
   EMAIL_SMTP_NO_TLS = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
+    description:
+      'Hostname sent in the SMTP EHLO greeting. Defaults to the machine hostname; set a fully qualified name if the relay rejects it',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  EMAIL_SMTP_NAME: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
@@ -1176,6 +1187,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Log one line per API request with the actor, the endpoint and the trace ids',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  API_ACCESS_LOG_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Driver used for handling exceptions (Console or Sentry)',
     type: ConfigVariableType.ENUM,
     options: Object.values(ExceptionHandlerDriver),
@@ -1208,6 +1229,17 @@ export class ConfigVariables {
   @CastToMeterDriverArray()
   @IsOptional()
   METER_DRIVER: MeterDriver[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Interval in milliseconds between two metric exports, for the drivers that push them: opentelemetry and console. The prometheus driver is scraped, so it is unaffected. Read before the config store is available, so it cannot be overridden from the database.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  METER_EXPORT_INTERVAL_MS = 30_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
@@ -1440,6 +1472,17 @@ export class ConfigVariables {
     allow_underscores: true,
   })
   REDIS_QUEUE_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Key prefix for BullMQ queue keys. Wrap it in curly braces (e.g. "{twenty}") so all keys of a queue share one hash slot when Redis is clustered (Redis Cluster, Redis Enterprise / Azure Managed Redis), otherwise multi-key Lua scripts fail with CROSSSLOT. Changing it orphans jobs stored under the previous prefix.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsString()
+  REDIS_QUEUE_PREFIX: string = 'bull';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -2196,7 +2239,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description: 'Enable or disable google map api usage',
+    description:
+      'Enable or disable address autocomplete (see ADDRESS_AUTOCOMPLETE_DRIVER)',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -2204,11 +2248,29 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Address autocomplete driver: GOOGLE_PLACES (worldwide, requires GOOGLE_MAP_API_KEY) or BASE_ADRESSE_NATIONALE (French national address database, France only, no key needed)',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(ADDRESS_AUTOCOMPLETE_DRIVER_TYPE),
+  })
+  @IsOptional()
+  @CastToUpperSnakeCase()
+  @IsIn(Object.values(ADDRESS_AUTOCOMPLETE_DRIVER_TYPE))
+  ADDRESS_AUTOCOMPLETE_DRIVER: AddressAutocompleteDriverType =
+    ADDRESS_AUTOCOMPLETE_DRIVER_TYPE.GOOGLE_PLACES;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description: 'Google map api key for places and map',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
+  @ValidateIf(
+    (env) =>
+      env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED &&
+      env.ADDRESS_AUTOCOMPLETE_DRIVER ===
+        ADDRESS_AUTOCOMPLETE_DRIVER_TYPE.GOOGLE_PLACES,
+  )
   GOOGLE_MAP_API_KEY: string;
 
   @ConfigVariablesMetadata({

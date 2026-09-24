@@ -1,23 +1,40 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  AnimatedIconCrossfade,
   IconButton,
-  LightIconButton,
   LightButton,
+  LightIconButton,
   MainButton,
+  MenuItem,
+  MenuItemDraggable,
 } from 'twenty-ui/components';
+import { IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/primitives/navigation';
-import { IconPlus } from 'twenty-ui/icon';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
 import 'twenty-ui/style.css';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 const ButtonControls = () => {
   const [activations, setActivations] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const handleClick = () => setActivations((count) => count + 1);
   return (
     <ThemeProvider colorScheme="light">
+      <Button
+        size="sm"
+        aria-expanded={isEditing ? 'true' : 'false'}
+        onClick={() => setIsEditing(!isEditing)}
+        startIcon={
+          <AnimatedIconCrossfade
+            isActive={isEditing}
+            ActiveIcon={IconX}
+            InactiveIcon={IconPencil}
+          />
+        }
+      >
+        Edit actions
+      </Button>
       <Button
         color="accent"
         variant="solid"

@@ -1,10 +1,12 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
@@ -17,7 +19,6 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type PageLayoutTabListNewTabDropdownContentProps = {
   onCreate: () => void;
@@ -72,14 +73,13 @@ export const PageLayoutTabListNewTabDropdownContent = ({
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader>{t`New tab`}</DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        <MenuItem
-          LeftIcon={IconPlus}
-          text={t`Empty tab`}
+        <ListItem
+          startIcon={<IconPlus />}
           onClick={handleCreateEmptyTab}
-        />
+        >{t`Empty tab`}</ListItem>
       </DropdownMenuItemsContainer>
       {inactiveTabs.length > 0 && (
         <>
@@ -87,16 +87,21 @@ export const PageLayoutTabListNewTabDropdownContent = ({
           <DropdownMenuSectionLabel label={t`Disabled`} />
           <DropdownMenuItemsContainer>
             {inactiveTabs.map((tab) => (
-              <MenuItem
+              <ListItem
                 key={tab.id}
-                LeftIcon={isDefined(tab.icon) ? getIcon(tab.icon) : undefined}
-                text={tab.title}
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={isDefined(tab.icon) ? getIcon(tab.icon) : undefined}
+                  />
+                }
                 onClick={() => handleReactivateTab(tab.id)}
-              />
+              >
+                {tab.title}
+              </ListItem>
             ))}
           </DropdownMenuItemsContainer>
         </>
       )}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

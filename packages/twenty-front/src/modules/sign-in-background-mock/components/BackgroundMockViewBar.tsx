@@ -1,10 +1,9 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
+import { TintedIconTile } from 'twenty-ui/components';
 import { IconBuildingSkyscraper, IconChevronDown } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledViewPicker = styled.div`
   align-items: center;
@@ -31,7 +30,7 @@ const StyledRightAction = styled.div`
 `;
 
 export const BackgroundMockViewBar = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <TopBar

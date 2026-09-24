@@ -11,7 +11,7 @@ import {
   IconTool,
   IconWorld,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
 import {
@@ -128,7 +128,7 @@ export const WorkflowRunStepLogsAiAgentDetail = ({
         <StyledSummaryHeader>
           <StyledHeaderLeft>
             <IconLego size={16} />
-            <StyledTitle>{t`AI agent run`}</StyledTitle>
+            <StyledTitle>{t`Agent run`}</StyledTitle>
           </StyledHeaderLeft>
           <StyledBadgeGroup>
             <StyledModelBadge>{modelId}</StyledModelBadge>

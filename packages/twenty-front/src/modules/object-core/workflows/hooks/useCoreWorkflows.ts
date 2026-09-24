@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useQuery } from '@apollo/client/react';
 
@@ -11,16 +11,20 @@ import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFi
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
   GetCoreWorkflowsDocument,
+  type GetCoreWorkflowsQuery,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 export const CORE_WORKFLOWS_TABLE_ID = 'workflowCore';
 export const CORE_WORKFLOWS_PAGE_SIZE = 60;
+
+// Mirrors the @Max on CoreWorkflowsInput.first
+const CORE_WORKFLOWS_MAX_PAGE_SIZE = 200;
 
 export const CORE_WORKFLOWS_INITIAL_SORT: TableSortValue = {
   fieldName: 'updatedAt',
@@ -30,6 +34,30 @@ export const CORE_WORKFLOWS_INITIAL_SORT: TableSortValue = {
 const ORDER_BY_FIELD_BY_FIELD_NAME: Record<string, CoreWorkflowOrderByField> = {
   name: CoreWorkflowOrderByField.NAME,
   updatedAt: CoreWorkflowOrderByField.UPDATED_AT,
+};
+
+// Two refreshes racing each other would otherwise append the same page twice,
+// and the ids are what make the merge idempotent.
+const mergeFetchedCoreWorkflowPage = (
+  previousResult: GetCoreWorkflowsQuery,
+  { fetchMoreResult }: { fetchMoreResult: GetCoreWorkflowsQuery },
+): GetCoreWorkflowsQuery => {
+  const alreadyLoadedIds = new Set(
+    previousResult.coreWorkflows.edges.map((edge) => edge.node.id),
+  );
+
+  return {
+    ...fetchMoreResult,
+    coreWorkflows: {
+      ...fetchMoreResult.coreWorkflows,
+      edges: [
+        ...previousResult.coreWorkflows.edges,
+        ...fetchMoreResult.coreWorkflows.edges.filter(
+          (edge) => !alreadyLoadedIds.has(edge.node.id),
+        ),
+      ],
+    },
+  };
 };
 
 export const useCoreWorkflows = ({
@@ -66,7 +94,7 @@ export const useCoreWorkflows = ({
 
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  const { data, previousData, loading, error, fetchMore } = useQuery(
+  const { data, previousData, loading, error, fetchMore, refetch } = useQuery(
     GetCoreWorkflowsDocument,
     {
       client: apolloCoreClient,
@@ -94,16 +122,7 @@ export const useCoreWorkflows = ({
     try {
       await fetchMore({
         variables: { after: connection.pageInfo.endCursor },
-        updateQuery: (previousResult, { fetchMoreResult }) => ({
-          ...fetchMoreResult,
-          coreWorkflows: {
-            ...fetchMoreResult.coreWorkflows,
-            edges: [
-              ...previousResult.coreWorkflows.edges,
-              ...fetchMoreResult.coreWorkflows.edges,
-            ],
-          },
-        }),
+        updateQuery: mergeFetchedCoreWorkflowPage,
       });
     } catch (fetchMoreError) {
       logError(`useCoreWorkflows fetchMore error : ${fetchMoreError}`);
@@ -113,11 +132,43 @@ export const useCoreWorkflows = ({
     }
   };
 
+  const loadedCount = connection?.edges.length ?? 0;
+
+  // A plain refetch re-runs the first page and drops what fetchMore accumulated,
+  // so ask for as many rows as are displayed and page back up to them when that
+  // is more than one request may return.
+  const refetchLoadedCoreWorkflows = useCallback(async () => {
+    const targetCount = Math.max(loadedCount, CORE_WORKFLOWS_PAGE_SIZE);
+
+    const refetched = await refetch({
+      first: Math.min(targetCount, CORE_WORKFLOWS_MAX_PAGE_SIZE),
+    });
+
+    let requestedCount = Math.min(targetCount, CORE_WORKFLOWS_MAX_PAGE_SIZE);
+    let pageInfo = refetched.data?.coreWorkflows.pageInfo;
+
+    while (requestedCount < targetCount && pageInfo?.hasNextPage) {
+      const nextPageSize = Math.min(
+        targetCount - requestedCount,
+        CORE_WORKFLOWS_MAX_PAGE_SIZE,
+      );
+
+      const nextPage = await fetchMore({
+        variables: { after: pageInfo.endCursor, first: nextPageSize },
+        updateQuery: mergeFetchedCoreWorkflowPage,
+      });
+
+      requestedCount += nextPageSize;
+      pageInfo = nextPage.data?.coreWorkflows.pageInfo;
+    }
+  }, [fetchMore, loadedCount, refetch]);
+
   return {
     coreWorkflows: connection?.edges.map((edge) => edge.node) ?? [],
     totalCount: connection?.totalCount ?? 0,
     hasNextPage: connection?.pageInfo.hasNextPage ?? false,
     fetchNextPage,
+    refetchLoadedCoreWorkflows,
     loading,
     error,
   };

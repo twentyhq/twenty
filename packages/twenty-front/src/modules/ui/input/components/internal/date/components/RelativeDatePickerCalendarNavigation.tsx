@@ -1,11 +1,11 @@
-import { t } from '@lingui/core/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;

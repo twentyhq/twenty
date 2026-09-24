@@ -19,6 +19,9 @@ import { useHorizontalDragScroll } from '@/platform/motion';
 import { type TablePageDefinition } from '../../types';
 
 const CELL_HORIZONTAL_PADDING = 8;
+// The product's row rule sits below the row, not inside it: the 32px row
+// height and the 1px separator stack into the table's pitch.
+const ROW_PITCH_PX = APP_PREVIEW_CHROME.recordTableRowHeightPx + 1;
 
 const TableShell = styled.div`
   display: flex;
@@ -90,7 +93,7 @@ const DataRow = styled.div<{ $rowIndex: number }>`
     }
     to {
       opacity: 1;
-      max-height: ${APP_PREVIEW_CHROME.recordTableRowHeightPx}px;
+      max-height: ${ROW_PITCH_PX}px;
     }
   }
 `;
@@ -120,7 +123,7 @@ const TableCell = styled.div<{
   box-sizing: border-box;
   display: flex;
   flex: 0 0 ${({ $width }) => `${$width}px`};
-  height: ${APP_PREVIEW_CHROME.recordTableRowHeightPx}px;
+  height: ${ROW_PITCH_PX}px;
   justify-content: ${({ $align }) =>
     $align === 'right' ? 'flex-end' : 'flex-start'};
   left: ${({ $sticky }) => ($sticky ? '0' : 'auto')};
@@ -264,19 +267,19 @@ export function TablePage({ page }: { page: TablePageDefinition }) {
                   {column.isFirstColumn ? (
                     <>
                       <TableCheckbox />
-                      {renderTableHeaderIcon(column.id)}
+                      {renderTableHeaderIcon(column)}
                       <HeaderLabel>{column.label}</HeaderLabel>
                       <EdgePlus aria-hidden>
                         <MiniIcon
                           icon={IconPlus}
                           color={THEME_LIGHT.font.color.tertiary}
-                          size={12}
+                          size={THEME_LIGHT.icon.size.sm}
                         />
                       </EdgePlus>
                     </>
                   ) : (
                     <>
-                      {renderTableHeaderIcon(column.id)}
+                      {renderTableHeaderIcon(column)}
                       <HeaderLabel>{column.label}</HeaderLabel>
                     </>
                   )}

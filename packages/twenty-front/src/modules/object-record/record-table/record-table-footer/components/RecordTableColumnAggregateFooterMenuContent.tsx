@@ -1,17 +1,16 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
-import { IconCheck } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
@@ -54,58 +53,48 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   } = useViewFieldAggregateOperation();
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuItemsContainer>
-        <MenuItem
+        <ListItem
           onClick={() => {
             onContentChange('countAggregateOperationsOptions');
           }}
-          text={t`Count`}
-          hasSubMenu
-        />
+          hasSubmenu
+        >{t`Count`}</ListItem>
         {!fieldIsRelation && (
-          <MenuItem
+          <ListItem
             onClick={() => {
               onContentChange('percentAggregateOperationsOptions');
             }}
-            text={t`Percent`}
-            hasSubMenu
-          />
+            hasSubmenu
+          >{t`Percent`}</ListItem>
         )}
         {fieldIsDateKind && (
-          <MenuItem
+          <ListItem
             onClick={() => {
               onContentChange('datesAggregateOperationsOptions');
             }}
-            text={t`Date`}
-            hasSubMenu
-          />
+            hasSubmenu
+          >{t`Date`}</ListItem>
         )}
         {nonStandardAvailableAggregateOperation.length > 0 ? (
-          <MenuItem
+          <ListItem
             onClick={() => {
               onContentChange('moreAggregateOperationOptions');
             }}
-            text={t`More options`}
-            hasSubMenu
-          />
+            hasSubmenu
+          >{t`More options`}</ListItem>
         ) : null}
-        <MenuItem
-          key="none"
+        <ListItem
           onClick={async () => {
             await updateViewFieldAggregateOperation(null);
             resetContent();
             closeDropdown(dropdownId);
           }}
-          text={t`None`}
-          RightIcon={
-            !isDefined(currentViewFieldAggregateOperation)
-              ? IconCheck
-              : undefined
-          }
-          aria-selected={!isDefined(currentViewFieldAggregateOperation)}
-        />
+          indicator="check"
+          selected={!isDefined(currentViewFieldAggregateOperation)}
+        >{t`None`}</ListItem>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

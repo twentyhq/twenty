@@ -237,6 +237,19 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
     expect(result.commandMenuItem?.flatEntityToDelete).toBeUndefined();
   });
 
+  it('does not delete a workflow trigger command that only carries its core pointer', () => {
+    const result = inferDeletionOf(
+      withCommandMenuItem({
+        ...COMMAND_MENU_ITEM,
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+        workflowVersionId: null,
+        coreWorkflowVersionId: 'a-core-workflow-version-id',
+      }),
+    );
+
+    expect(result.commandMenuItem?.flatEntityToDelete).toBeUndefined();
+  });
+
   it('does not delete a command without the front component its manifest requires', () => {
     const result = inferDeletionOf(withCommandMenuItem(COMMAND_MENU_ITEM));
 

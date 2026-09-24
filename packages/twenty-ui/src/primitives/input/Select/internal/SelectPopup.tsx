@@ -1,7 +1,7 @@
 import { useDirection } from '@base-ui/react/direction-provider';
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 
-import { useThemeContainer } from '@ui/theme-constants';
+import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '../Select.module.scss';

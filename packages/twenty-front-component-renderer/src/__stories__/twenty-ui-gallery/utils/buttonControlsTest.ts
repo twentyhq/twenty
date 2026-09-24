@@ -1,10 +1,28 @@
-import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
   context,
 ) => {
   const canvas = within(context.canvasElement);
+  const editActions = await canvas.findByRole(
+    'button',
+    { name: 'Edit actions' },
+    { timeout: 10000 },
+  );
+  await waitFor(() =>
+    expect(editActions.getBoundingClientRect().height).toBe(24),
+  );
+  await expect(editActions).toHaveAttribute('aria-expanded', 'false');
+  editActions.focus();
+  await userEvent.keyboard('{Enter}');
+  await waitFor(() =>
+    expect(editActions).toHaveAttribute('aria-expanded', 'true'),
+  );
+  await userEvent.keyboard(' ');
+  await waitFor(() =>
+    expect(editActions).toHaveAttribute('aria-expanded', 'false'),
+  );
   const button = await canvas.findByRole(
     'button',
     { name: 'Create record' },

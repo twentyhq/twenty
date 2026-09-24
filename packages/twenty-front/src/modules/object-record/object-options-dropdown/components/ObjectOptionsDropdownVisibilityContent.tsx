@@ -1,7 +1,7 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -23,11 +23,7 @@ import {
   IconCircleDashed,
   IconCopy,
 } from 'twenty-ui/icon';
-import {
-  Tooltip,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/primitives/surfaces';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
   ViewVisibility,
   PermissionFlagType,
@@ -73,7 +69,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   const currentVisibility = currentView?.visibility ?? ViewVisibility.WORKSPACE;
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
+    <LegacyDropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -116,10 +112,8 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                   selected={currentVisibility === ViewVisibility.WORKSPACE}
                   indicator="check"
                   description={t`Everyone`}
-                  startIcon={<SelectOptionIcon Icon={IconCircle} />}
-                >
-                  <OverflowingTextWithTooltip text={t`Workspace`} />
-                </ListItem>
+                  startIcon={<IconCircle />}
+                >{t`Workspace`}</ListItem>
               </div>
             </Tooltip>
           </SelectableListItem>
@@ -139,10 +133,8 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               selected={currentVisibility === ViewVisibility.UNLISTED}
               indicator="check"
               description={t`Visible to you`}
-              startIcon={<SelectOptionIcon Icon={IconCircleDashed} />}
-            >
-              <OverflowingTextWithTooltip text={t`Unlisted`} />
-            </ListItem>
+              startIcon={<IconCircleDashed />}
+            >{t`Unlisted`}</ListItem>
           </SelectableListItem>
           {currentVisibility === ViewVisibility.WORKSPACE && (
             <>
@@ -151,17 +143,16 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                 itemId="Copy view link"
                 onEnter={handleCopyLink}
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'Copy view link'}
                   onClick={handleCopyLink}
-                  LeftIcon={IconCopy}
-                  text={t`Copy view link`}
-                />
+                  startIcon={<IconCopy />}
+                >{t`Copy view link`}</ListItem>
               </SelectableListItem>
             </>
           )}
         </SelectableList>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

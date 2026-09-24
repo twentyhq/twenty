@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCallback, useRef, useState } from 'react';
 import { useStore } from 'jotai';
 
@@ -18,8 +19,7 @@ import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-
 import { upsertMorphItem } from '@/object-record/record-picker/multiple-record-picker/utils/upsertMorphItem';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -224,13 +224,12 @@ export const MultipleRecordPicker = ({
   const createNewButtonSection =
     creatableObjectMetadataItems.length > 0 ? (
       <DropdownMenuItemsContainer scrollable={false}>
-        <CreateNewButton
+        <ListItem
           onClick={handleCreateNewButtonClick}
           disabled={isCreatePending}
-          LeftIcon={IconPlus}
-          text={t`Add New`}
-          hasSubMenu={creatableObjectMetadataItems.length > 1}
-        />
+          startIcon={<IconPlus />}
+          hasSubmenu={creatableObjectMetadataItems.length > 1}
+        >{t`Add New`}</ListItem>
       </DropdownMenuItemsContainer>
     ) : null;
 
@@ -242,7 +241,7 @@ export const MultipleRecordPicker = ({
         containerRef={containerRef}
         onClickOutside={handleClickOutside}
       />
-      <DropdownContent ref={containerRef} widthInPixels={dropdownWidth}>
+      <LegacyDropdownContent ref={containerRef} widthInPixels={dropdownWidth}>
         {isSelectingCreateTarget ? (
           <MultipleRecordPickerCreateTargetSelect
             objectMetadataItems={creatableObjectMetadataItems}
@@ -277,7 +276,7 @@ export const MultipleRecordPicker = ({
             )}
           </>
         )}
-      </DropdownContent>
+      </LegacyDropdownContent>
     </MultipleRecordPickerComponentInstanceContext.Provider>
   );
 };

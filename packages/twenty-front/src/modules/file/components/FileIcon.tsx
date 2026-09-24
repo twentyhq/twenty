@@ -1,13 +1,13 @@
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { useFileIconColors } from '@/file/hooks/useFileIconColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { FILE_CATEGORIES, type FileCategory } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon } from 'twenty-ui/primitives/data-display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type FileIconSize = 'small' | 'medium';
 
@@ -48,7 +48,7 @@ export const FileIcon = ({
   size = 'medium',
   thumbnailUrl,
 }: FileIconProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const iconColors = useFileIconColors();
   const Icon = IconMapping[fileCategory];
   const [failedThumbnailUrl, setFailedThumbnailUrl] = useState<string>();

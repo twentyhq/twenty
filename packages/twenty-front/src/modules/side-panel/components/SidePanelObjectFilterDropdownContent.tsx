@@ -1,17 +1,8 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { SettingsRow } from 'twenty-ui/components';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
-import { IconCube } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -22,6 +13,12 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
+import { SettingsRow, TintedIconTile } from 'twenty-ui/components';
+import { IconCube } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 const ALL_OBJECTS_ITEM_ID = 'all-objects';
 
@@ -75,7 +72,7 @@ export const SidePanelObjectFilterDropdownContent = ({
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader>{t`Object`}</DropdownMenuHeader>
       <DropdownMenuSearchInput
         value={filterSearch}
@@ -101,9 +98,7 @@ export const SidePanelObjectFilterDropdownContent = ({
               selected={selectedObjectNameSingular === null}
               indicator="check"
               startIcon={<TintedIconTile Icon={IconCube} />}
-            >
-              <OverflowingTextWithTooltip text={t`All objects`} />
-            </ListItem>
+            >{t`All objects`}</ListItem>
           </SelectableListItem>
           {displayedObjects.map((objectMetadataItem) => {
             return (
@@ -131,9 +126,7 @@ export const SidePanelObjectFilterDropdownContent = ({
                     />
                   }
                 >
-                  <OverflowingTextWithTooltip
-                    text={objectMetadataItem.labelPlural}
-                  />
+                  {objectMetadataItem.labelPlural}
                 </ListItem>
               </SelectableListItem>
             );
@@ -150,6 +143,6 @@ export const SidePanelObjectFilterDropdownContent = ({
           checked={sidePanelShowHiddenObjects}
         >{t`Show hidden objects`}</SettingsRow>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

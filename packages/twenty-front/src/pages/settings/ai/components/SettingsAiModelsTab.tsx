@@ -1,21 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { Section } from 'twenty-ui/components';
-import {
-  IconListCheck,
-  IconMessage,
-  IconRobot,
-  IconWand,
-} from 'twenty-ui/icon';
+import { IconMessage, IconRobot, IconWand } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
 import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
@@ -32,7 +26,6 @@ import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSetting
 export const SettingsAiModelsTab = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
-  const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
   const tiers = useAiModelTiers();
   const { chatTier, agentTier } = useWorkspaceAiModelTiers();
   const {
@@ -40,7 +33,6 @@ export const SettingsAiModelsTab = () => {
     handleAgentTierChange,
     handleAutoModelSelectionToggle,
     handlePinnedModelChange,
-    handleEvaluationModelChange,
   } = useSettingsAiModelsActions();
 
   const isAutoModelSelectionEnabled =
@@ -53,24 +45,6 @@ export const SettingsAiModelsTab = () => {
     label: getAiModelTierLabel(tier),
     LeftComponent: <AiModelTierIndicator tier={tier} />,
   }));
-
-  const evaluationModelId = currentWorkspace?.aiEvaluationModelId ?? '';
-
-  // A deprecated model stays listed while it is the one chosen, so the select
-  // shows what is actually in effect rather than silently reading as Automatic.
-  const evaluationModelOptions = [
-    { value: '', label: t`Automatic` },
-    ...aiEvaluationModels
-      .filter(
-        (evaluationModel) =>
-          !evaluationModel.isDeprecated ||
-          evaluationModel.modelId === evaluationModelId,
-      )
-      .map((evaluationModel) => ({
-        value: evaluationModel.modelId,
-        label: evaluationModel.label,
-      })),
-  ];
 
   return (
     <>
@@ -148,38 +122,6 @@ export const SettingsAiModelsTab = () => {
           )}
         </Card>
       </Section.Root>
-
-      {aiEvaluationModels.length > 0 && (
-        <Section.Root>
-          <Section.Header
-            title={t`Classification`}
-            description={t`Choose the model that answers Classify steps`}
-          />
-          <Card
-            rounded
-            backgroundColor={themeCssVariables.background.secondary}
-          >
-            <StyledSettingsSelectGroup controlWidth={260}>
-              <SettingsOptionCardContentSelect
-                Icon={IconListCheck}
-                title={t`Evaluation model`}
-                description={t`Returns a calibrated probability for every answer`}
-              >
-                <Select
-                  dropdownId="models-tab-evaluation-model-select"
-                  value={evaluationModelId}
-                  onChange={(modelId) =>
-                    handleEvaluationModelChange(modelId === '' ? null : modelId)
-                  }
-                  options={evaluationModelOptions}
-                  selectSizeVariant="small"
-                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-                />
-              </SettingsOptionCardContentSelect>
-            </StyledSettingsSelectGroup>
-          </Card>
-        </Section.Root>
-      )}
 
       <SettingsAiModelTiersPreview />
     </>

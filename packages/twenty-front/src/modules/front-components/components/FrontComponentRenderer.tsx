@@ -4,18 +4,20 @@ import { FrontComponentRendererProvider } from '@/front-components/components/Fr
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { FrontComponentMediaSessionRegistrationEffect } from '@/front-components/media-session/components/FrontComponentMediaSessionRegistrationEffect';
+import { FrontComponentMediaPermissionModal } from '@/front-components/media-session/components/FrontComponentMediaPermissionModal';
 import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useCallback, useContext, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useToast } from 'twenty-ui/components';
+import { useThemeColorScheme } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   FindOneFrontComponentDocument,
@@ -74,6 +76,7 @@ export const FrontComponentRenderer = ({
         unavailableFallback}
       {!loading && isDefined(frontComponent) && !isDefined(error) && (
         <FrontComponentRendererContent
+          key={frontComponent.id}
           frontComponent={frontComponent}
           commandMenuItemId={commandMenuItemId}
           selectedRecordIds={selectedRecordIds}
@@ -94,13 +97,14 @@ const FrontComponentRendererContent = ({
   toolCall,
   loadingFallback,
 }: FrontComponentRendererContentProps) => {
-  const { colorScheme } = useContext(ThemeContext);
+  const colorScheme = useThemeColorScheme();
   const { enqueueToast } = useToast();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
   const {
     id: frontComponentId,
     applicationId,
+    applicationName,
     usesSdkClient,
     frontComponentSharedDependenciesChecksum,
   } = frontComponent;
@@ -119,7 +123,17 @@ const FrontComponentRendererContent = ({
     colorScheme,
   });
 
-  const { mediaSessionHost } = useFrontComponentMediaSession();
+  const resolvedApplicationName = applicationName ?? frontComponent.name;
+  const {
+    activeSessions,
+    mediaSessionHost,
+    pendingStartMediaTypes,
+    stopMediaSession,
+    permissionModalInstanceId,
+    permissionRequest,
+  } = useFrontComponentMediaSession({
+    frontComponentId,
+  });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -175,6 +189,21 @@ const FrontComponentRendererContent = ({
 
   return (
     <>
+      {isDefined(permissionRequest) && (
+        <FrontComponentMediaPermissionModal
+          applicationId={applicationId}
+          applicationName={resolvedApplicationName}
+          modalInstanceId={permissionModalInstanceId}
+          request={permissionRequest}
+        />
+      )}
+      <FrontComponentMediaSessionRegistrationEffect
+        activeSessions={activeSessions}
+        applicationId={applicationId}
+        applicationName={resolvedApplicationName}
+        pendingStartMediaTypes={pendingStartMediaTypes}
+        onStop={stopMediaSession}
+      />
       <FrontComponentApplicationTokenPairEffect
         frontComponentId={frontComponentId}
         applicationTokenPair={applicationTokenPair}

@@ -32,6 +32,8 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
+import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
 
 @Injectable()
 export class ConnectedAccountMetadataService {
@@ -48,6 +50,8 @@ export class ConnectedAccountMetadataService {
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly calendarWebhookSubscriptionService: CalendarWebhookSubscriptionService,
+    private readonly messagingWebhookSubscriptionService: MessagingWebhookSubscriptionService,
   ) {}
 
   async findMailboxesUsableByCaller({
@@ -412,6 +416,79 @@ export class ConnectedAccountMetadataService {
     }
   }
 
+  async disconnect({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity> {
+    const connectedAccount = await this.repository.findOneOrFail({
+      where: { id, workspaceId },
+    });
+
+    if (isDefined(connectedAccount.connectionProviderId)) {
+      await this.connectionProviderLifecycleHookService.runOnDisconnect({
+        connectionProviderId: connectedAccount.connectionProviderId,
+        workspaceId,
+        connectedAccountId: id,
+      });
+    }
+
+    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+
+    const [messageChannels, calendarChannels] = await Promise.all([
+      this.messageChannelRepository.find({
+        where: { connectedAccountId: id, workspaceId },
+        select: { id: true },
+      }),
+      this.calendarChannelRepository.find({
+        where: { connectedAccountId: id, workspaceId },
+        select: { id: true },
+      }),
+    ]);
+
+    await this.stopWebhookSubscriptions({
+      messageChannels,
+      calendarChannels,
+      workspaceId,
+    });
+
+    await this.repository.manager.transaction(async (entityManager) => {
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id, workspaceId },
+        {
+          accessToken: null,
+          refreshToken: null,
+          connectionParameters: null,
+          authFailedAt: null,
+          authFailedReason: null,
+        },
+      );
+
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id, workspaceId, archivedAt: IsNull() },
+        { archivedAt: new Date() },
+      );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        { connectedAccountId: id, workspaceId },
+        { isSyncEnabled: false },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        { connectedAccountId: id, workspaceId },
+        { isSyncEnabled: false },
+      );
+    });
+
+    return this.repository.findOneOrFail({ where: { id, workspaceId } });
+  }
+
   async delete({
     id,
     workspaceId,
@@ -445,6 +522,12 @@ export class ConnectedAccountMetadataService {
         connectedAccountId: id,
       });
     }
+
+    await this.stopWebhookSubscriptions({
+      messageChannels,
+      calendarChannels,
+      workspaceId,
+    });
 
     // The hook may have refreshed the tokens through getConnection, and an
     // overlapping delete may already have removed the row.
@@ -486,5 +569,30 @@ export class ConnectedAccountMetadataService {
     );
 
     return connectedAccount;
+  }
+
+  private async stopWebhookSubscriptions({
+    messageChannels,
+    calendarChannels,
+    workspaceId,
+  }: {
+    messageChannels: Pick<MessageChannelEntity, 'id'>[];
+    calendarChannels: Pick<CalendarChannelEntity, 'id'>[];
+    workspaceId: string;
+  }): Promise<void> {
+    await Promise.all([
+      ...messageChannels.map(({ id: messageChannelId }) =>
+        this.messagingWebhookSubscriptionService.deleteSubscription(
+          messageChannelId,
+          workspaceId,
+        ),
+      ),
+      ...calendarChannels.map(({ id: calendarChannelId }) =>
+        this.calendarWebhookSubscriptionService.deleteSubscription(
+          calendarChannelId,
+          workspaceId,
+        ),
+      ),
+    ]);
   }
 }

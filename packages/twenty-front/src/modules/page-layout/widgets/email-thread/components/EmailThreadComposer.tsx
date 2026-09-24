@@ -20,7 +20,7 @@ import {
   IconSend,
   IconX,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledReplyBar = styled.button`
