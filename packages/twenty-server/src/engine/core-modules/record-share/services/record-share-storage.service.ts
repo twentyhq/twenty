@@ -1,9 +1,12 @@
 /* @license Enterprise */
 
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, type EntityManager } from 'typeorm';
+import { RecordShareRowCause } from 'twenty-shared/types';
 
 import {
   RecordShareException,
@@ -21,8 +24,41 @@ const RECORD_SHARE_OBJECT_METADATA_NAME = 'recordShare';
 type RecordShareRepository = WorkspaceRepository<RecordShare>;
 
 @Injectable()
-export class RecordShareService {
+export class RecordShareStorageService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+
+  // Authorization and grant changes must share the caller's transaction.
+  // OWNER and APPLICATION grants are managed by their respective producers.
+  async setManualShare({
+    workspaceId,
+    share,
+    enabled,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    share: Omit<RecordShareInput, 'rowCause'>;
+    enabled: boolean;
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<void> {
+    await this.withRepository(
+      { workspaceId, transactionScope },
+      async (repository) => {
+        await repository.delete({
+          objectMetadataId: share.objectMetadataId,
+          recordId: share.recordId,
+          principalId: share.principalId,
+          principalType: share.principalType,
+          rowCause: RecordShareRowCause.MANUAL,
+        });
+        if (enabled) {
+          await repository.insert({
+            ...share,
+            rowCause: RecordShareRowCause.MANUAL,
+          });
+        }
+      },
+    );
+  }
 
   async insertMany({
     workspaceId,
@@ -62,6 +98,28 @@ export class RecordShareService {
     );
   }
 
+  async deleteByRecordIdsInTransaction({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+    manager,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordIds: string[];
+    manager: EntityManager;
+  }): Promise<void> {
+    if (recordIds.length === 0) {
+      return;
+    }
+    // History transactions can span core and workspace tables and must reuse
+    // their existing connection rather than open a separate ORM transaction.
+    await manager.query(
+      `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
+      [objectMetadataId, recordIds],
+    );
+  }
+
   async deleteBySourceId({
     workspaceId,
     sourceId,
@@ -80,19 +138,23 @@ export class RecordShareService {
     workspaceId,
     objectMetadataId,
     recordIds,
+    transactionScope,
   }: {
     workspaceId: string;
     objectMetadataId: string;
     recordIds: string[];
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<RecordShare[]> {
     if (recordIds.length === 0) {
       return [];
     }
 
-    return this.withRepository({ workspaceId }, (repository) =>
-      repository.find({
-        where: { objectMetadataId, recordId: In(recordIds) },
-      }),
+    return this.withRepository(
+      { workspaceId, transactionScope },
+      (repository) =>
+        repository.find({
+          where: { objectMetadataId, recordId: In(recordIds) },
+        }),
     );
   }
 
