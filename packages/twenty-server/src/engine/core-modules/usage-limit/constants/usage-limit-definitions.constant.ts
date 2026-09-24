@@ -11,13 +11,6 @@ export const USAGE_LIMIT_DEFINITIONS = {
         {
           spenderType: 'apiKey',
           counterScope: 'perWorkspace',
-          limitValueConfigVariable: 'API_RATE_LIMITING_SHORT_LIMIT',
-          windowMsConfigVariable: 'API_RATE_LIMITING_SHORT_TTL_IN_MS',
-          isOverridable: true,
-        },
-        {
-          spenderType: 'apiKey',
-          counterScope: 'perWorkspace',
           limitValueConfigVariable: 'API_RATE_LIMITING_LONG_LIMIT',
           windowMsConfigVariable: 'API_RATE_LIMITING_LONG_TTL_IN_MS',
           isOverridable: true,

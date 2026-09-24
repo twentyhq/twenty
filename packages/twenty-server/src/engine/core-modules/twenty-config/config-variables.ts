@@ -1644,23 +1644,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Time-to-live for short API rate limiting in milliseconds',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  API_RATE_LIMITING_SHORT_TTL_IN_MS = 1000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Maximum number of requests allowed in the short rate limiting window',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  API_RATE_LIMITING_SHORT_LIMIT = 100;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
     description: 'Time-to-live for long API rate limiting in milliseconds',
     type: ConfigVariableType.NUMBER,
   })

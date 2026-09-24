@@ -7,8 +7,8 @@ import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/bui
 
 const workspace = { id: 'workspace-1' };
 
-// The registry defaults, standing in for API_RATE_LIMITING_* and
-// APPLICATION_API_RATE_LIMITING_*.
+// Two overridable defaults on one spender type, which no resource declares today
+// but the builder still has to drop together behind a single workspace-wide row.
 const SPEED_LIMIT_DEFAULTS: SpeedLimitDefault[] = [
   {
     spenderType: 'apiKey',
