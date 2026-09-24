@@ -1,7 +1,4 @@
-// Aliases that Postgres rejects when built without tzdata-legacy (Debian 13
-// onwards). Abbreviations and POSIX TZ strings such as 'CET' and 'EST5EDT' are
-// excluded on purpose: Postgres parses those as fixed offsets, so remapping them
-// would move the buckets of charts that work today.
+// Keep PostgreSQL abbreviations and POSIX zones unchanged to preserve bucket boundaries.
 export const DEPRECATED_IANA_TIME_ZONE_ALIASES: Record<string, string> = {
   'Africa/Asmera': 'Africa/Asmara',
   'America/Argentina/ComodRivadavia': 'America/Argentina/Catamarca',

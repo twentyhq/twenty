@@ -71,10 +71,7 @@ export const getGroupByExpression = ({
     );
   }
 
-  // IANA_TIME_ZONES still lists deprecated aliases, so the check above accepts
-  // identifiers such as 'Asia/Calcutta' that Postgres builds without tzdata's
-  // backward links then reject at parse time. Resolve to the canonical name,
-  // which every build recognises and which denotes the same zone.
+  // PostgreSQL installations without tzdata-legacy reject these accepted aliases.
   const normalizedTimeZone = isNonEmptyString(groupByField.timeZone)
     ? (DEPRECATED_IANA_TIME_ZONE_ALIASES[groupByField.timeZone] ??
       groupByField.timeZone)
