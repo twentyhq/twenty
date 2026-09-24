@@ -172,7 +172,7 @@ export class AgentChatResolver {
   ) {
     assertValidChatThreadsForRecordPagination({ limit, offset });
 
-    const objectMetadataId =
+    const joinColumnName =
       await this.agentChatThreadTargetService.resolveAuthorizedRecordOrThrow({
         objectNameSingular,
         recordId,
@@ -180,7 +180,7 @@ export class AgentChatResolver {
       });
 
     return this.agentChatService.getThreadsAttachedToRecord({
-      objectMetadataId,
+      joinColumnName,
       recordId,
       userWorkspaceId,
       workspaceId,

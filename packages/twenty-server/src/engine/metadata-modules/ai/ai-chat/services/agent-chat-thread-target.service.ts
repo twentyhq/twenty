@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-import { type AgentChatThreadTarget } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-target.type';
+import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
@@ -25,13 +25,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME = 'agentChatThreadTarget';
-
-const throwHistoryNotMigrated = (): never => {
-  throw new AiException(
-    'AI history has not been migrated to this workspace yet',
-    AiExceptionCode.INVALID_AGENT_INPUT,
-  );
-};
 
 type RecordReference = {
   objectNameSingular: string;
@@ -55,25 +48,26 @@ export class AgentChatThreadTargetService {
   ) {}
 
   async attachThreadToRecord(args: ThreadRecordArgs): Promise<void> {
-    const objectMetadataId = await this.resolveObjectMetadataIdOrThrow(args);
+    const joinColumnName = await this.resolveJoinColumnNameOrThrow(args);
 
     await this.assertThreadIsReadableOrThrow(args);
     await this.assertRecordIsReadableOrThrow(args);
 
-    await this.withTargetRepository(args.workspaceId, (repository) =>
-      repository.insert(
-        {
-          threadId: args.threadId,
-          objectMetadataId,
-          recordId: args.recordId,
-        },
-        { onConflictDoNothing: true },
-      ),
-    );
+    const link = { threadId: args.threadId, [joinColumnName]: args.recordId };
+
+    await this.withTargetRepository(args.workspaceId, async (repository) => {
+      // As on noteTarget, only the standard legs carry a unique index, so a
+      // link to a custom object is deduplicated by looking for it first.
+      if (await repository.existsBy(link)) {
+        return;
+      }
+
+      await repository.insert(link, { onConflictDoNothing: true });
+    });
   }
 
   async detachThreadFromRecord(args: ThreadRecordArgs): Promise<void> {
-    const objectMetadataId = await this.resolveObjectMetadataIdOrThrow(args);
+    const joinColumnName = await this.resolveJoinColumnNameOrThrow(args);
 
     await this.assertThreadIsReadableOrThrow(args);
     await this.assertRecordIsReadableOrThrow(args);
@@ -81,58 +75,8 @@ export class AgentChatThreadTargetService {
     await this.withTargetRepository(args.workspaceId, (repository) =>
       repository.delete({
         threadId: args.threadId,
-        objectMetadataId,
-        recordId: args.recordId,
+        [joinColumnName]: args.recordId,
       }),
-    );
-  }
-
-  // A destroyed record leaves its links behind: the (objectMetadataId, recordId)
-  // pair carries no foreign key, so nothing cascades. Without this a record
-  // recreated with the same id would inherit the old record's conversations.
-  async deleteTargetsForDestroyedRecords({
-    workspaceId,
-    objectNameSingular,
-    recordIds,
-  }: {
-    workspaceId: string;
-    objectNameSingular: string;
-    recordIds: string[];
-  }): Promise<void> {
-    if (!isNonEmptyArray(recordIds)) {
-      return;
-    }
-
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
-
-    const objectMetadataId = getObjectMetadataIdByName({
-      flatObjectMetadataMaps,
-      objectName: objectNameSingular,
-    });
-
-    // The target object is provisioned per workspace by an upgrade command, so
-    // a workspace can destroy records before it has the table at all.
-    const isTargetObjectProvisioned = isDefined(
-      getObjectMetadataIdByName({
-        flatObjectMetadataMaps,
-        objectName: AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
-      }),
-    );
-
-    if (!isDefined(objectMetadataId) || !isTargetObjectProvisioned) {
-      return;
-    }
-
-    await this.withTargetRepository<void>(
-      workspaceId,
-      async (repository) => {
-        await repository.delete({ objectMetadataId, recordId: In(recordIds) });
-      },
-      // Nothing to clean up in a workspace whose history never left core.
-      () => undefined,
     );
   }
 
@@ -144,14 +88,14 @@ export class AgentChatThreadTargetService {
     objectNameSingular,
     recordId,
   }: RecordReference & { workspaceId: string }): Promise<string> {
-    const objectMetadataId = await this.resolveObjectMetadataIdOrThrow({
+    const joinColumnName = await this.resolveJoinColumnNameOrThrow({
       workspaceId,
       objectNameSingular,
     });
 
     await this.assertRecordIsReadableOrThrow({ objectNameSingular, recordId });
 
-    return objectMetadataId;
+    return joinColumnName;
   }
 
   private async assertThreadIsReadableOrThrow({
@@ -230,7 +174,7 @@ export class AgentChatThreadTargetService {
     }
   }
 
-  private async resolveObjectMetadataIdOrThrow({
+  private async resolveJoinColumnNameOrThrow({
     workspaceId,
     objectNameSingular,
   }: {
@@ -244,9 +188,10 @@ export class AgentChatThreadTargetService {
       );
     }
 
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
       ]);
 
     const objectMetadataId = getObjectMetadataIdByName({
@@ -261,28 +206,41 @@ export class AgentChatThreadTargetService {
       );
     }
 
-    return objectMetadataId;
+    const joinColumnName = findAgentChatThreadTargetJoinColumnName({
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectMetadataId,
+    });
+
+    if (!isDefined(joinColumnName)) {
+      throw new AiException(
+        `Conversations cannot be attached to ${objectNameSingular} records`,
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    return joinColumnName;
   }
 
   private withTargetRepository<TResult>(
     workspaceId: string,
-    work: (
-      repository: WorkspaceRepository<AgentChatThreadTarget>,
-    ) => Promise<TResult>,
-    onStorageIsCore: () => TResult = throwHistoryNotMigrated,
+    work: (repository: WorkspaceRepository<ObjectRecord>) => Promise<TResult>,
   ): Promise<TResult> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         // A target's foreign key points at the workspace-schema thread table, so
         // a workspace whose history still routes to core has nothing to attach
         // to. Holding the storage fence keeps the route from flipping mid-write.
-        this.agentHistoryStorageService.run(workspaceId, (context) => {
+        this.agentHistoryStorageService.run(workspaceId, async (context) => {
           if (context.storage !== 'workspace') {
-            return Promise.resolve(onStorageIsCore());
+            throw new AiException(
+              'AI history has not been migrated to this workspace yet',
+              AiExceptionCode.INVALID_AGENT_INPUT,
+            );
           }
 
           return work(
-            this.workspaceOrmManager.getRepository<AgentChatThreadTarget>(
+            this.workspaceOrmManager.getRepository(
               AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
               { shouldBypassPermissionChecks: true },
               { shouldSkipEventEmission: true },

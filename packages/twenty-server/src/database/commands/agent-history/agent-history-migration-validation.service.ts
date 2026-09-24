@@ -35,8 +35,18 @@ export class AgentHistoryMigrationValidationService {
       return;
     }
 
+    // A custom object leg is set to null when its record is destroyed, as on
+    // noteTarget, so such a row links nothing and there is no record left to
+    // detach it from. Every leg's column is target<Object>Id, whatever the
+    // object, which finds the legs without reading the metadata.
     const rows: { id: string }[] = await runner.query(
-      `SELECT id FROM ${table} WHERE "deletedAt" IS NULL LIMIT 1`,
+      `SELECT target.id FROM ${table} target
+       WHERE target."deletedAt" IS NULL
+         AND EXISTS (
+           SELECT 1 FROM jsonb_each(to_jsonb(target)) leg
+           WHERE leg.key LIKE 'target%Id' AND leg.value <> 'null'::jsonb
+         )
+       LIMIT 1`,
     );
 
     if (rows.length > 0) {
