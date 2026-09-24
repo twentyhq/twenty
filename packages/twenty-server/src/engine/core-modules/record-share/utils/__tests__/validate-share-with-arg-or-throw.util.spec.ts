@@ -27,13 +27,13 @@ const SHARE_WITH_REQUIRED_MESSAGE =
 
 describe('validateShareWithArgOrThrow', () => {
   describe('with record sharing enabled', () => {
-    const isRecordSharingEnabled = true;
+    const isRecordSharingEnforced = true;
 
     it('should accept a user without shareWith', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: userAuthContext,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
         }),
       ).not.toThrow();
     });
@@ -42,7 +42,7 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
         }),
       ).toThrow(SHARE_WITH_REQUIRED_MESSAGE);
     });
@@ -51,7 +51,7 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [],
         }),
       ).toThrow(SHARE_WITH_REQUIRED_MESSAGE);
@@ -61,7 +61,7 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: systemAuthContext,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
         }),
       ).toThrow(SHARE_WITH_REQUIRED_MESSAGE);
     });
@@ -70,7 +70,7 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
@@ -80,13 +80,13 @@ describe('validateShareWithArgOrThrow', () => {
   });
 
   describe('with record sharing disabled', () => {
-    const isRecordSharingEnabled = false;
+    const isRecordSharingEnforced = false;
 
     it('should accept an api key without shareWith', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
         }),
       ).not.toThrow();
     });
@@ -95,7 +95,7 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: systemAuthContext,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [],
         }),
       ).not.toThrow();
@@ -105,7 +105,7 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
-          isRecordSharingEnabled,
+          isRecordSharingEnforced,
           shareWith: [
             { everyone: false, accessLevel: RecordShareAccessLevel.READ },
           ],
@@ -120,7 +120,7 @@ describe('validateShareWithArgOrThrow', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnabled: true,
+        isRecordSharingEnforced: true,
         shareWith: null,
       }),
     ).not.toThrow();
@@ -130,7 +130,7 @@ describe('validateShareWithArgOrThrow', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnabled: true,
+        isRecordSharingEnforced: true,
         shareWith: [
           {
             workspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,
@@ -149,7 +149,7 @@ describe('validateShareWithArgOrThrow', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnabled: true,
+        isRecordSharingEnforced: true,
         shareWith: [
           { everyone: false, accessLevel: RecordShareAccessLevel.READ },
         ],
@@ -163,7 +163,7 @@ describe('validateShareWithArgOrThrow', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnabled: true,
+        isRecordSharingEnforced: true,
         shareWith: [
           {
             workspaceMemberId: 'not-a-uuid',
@@ -178,7 +178,7 @@ describe('validateShareWithArgOrThrow', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnabled: true,
+        isRecordSharingEnforced: true,
         shareWith: [
           {
             workspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,

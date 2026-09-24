@@ -1,4 +1,3 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -87,7 +86,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
-        isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
+        isRecordSharingEnforced:
+          this.isRecordSharingEnforced(queryRunnerContext),
         shareWith: args.shareWith,
       });
     }
@@ -619,7 +619,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
       objectMetadataId: flatObjectMetadata.id,
-      isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
+      isRecordSharingEnforced: this.isRecordSharingEnforced(queryRunnerContext),
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
       shareWith,
@@ -639,13 +639,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     }
   }
 
-  private isRecordSharingEnabled(
+  private isRecordSharingEnforced(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
     return (
-      queryRunnerContext.isRecordSharingEnabled ||
-      queryRunnerContext.flatObjectMetadata.universalIdentifier ===
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      queryRunnerContext.repository.internalContext.isLegacyRecordAccessOpen !==
+      true
     );
   }
 

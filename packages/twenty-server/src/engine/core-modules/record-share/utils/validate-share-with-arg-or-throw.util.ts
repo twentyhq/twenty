@@ -12,15 +12,15 @@ import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record
 
 export const validateShareWithArgOrThrow = ({
   authContext,
-  isRecordSharingEnabled,
+  isRecordSharingEnforced,
   shareWith,
 }: {
   authContext: WorkspaceAuthContext;
-  isRecordSharingEnabled: boolean;
+  isRecordSharingEnforced: boolean;
   shareWith?: ShareWithInput[] | null;
 }): void => {
   if (
-    isRecordSharingEnabled &&
+    isRecordSharingEnforced &&
     !isUserAuthContext(authContext) &&
     !isNonEmptyArray(shareWith)
   ) {

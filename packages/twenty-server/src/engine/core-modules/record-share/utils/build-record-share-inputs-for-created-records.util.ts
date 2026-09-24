@@ -111,14 +111,14 @@ export const buildRecordShareInputsForCreatedRecords = ({
   authContext,
   apiKeyRoleMap,
   shareWith,
-  isRecordSharingEnabled = true,
+  isRecordSharingEnforced = true,
 }: {
   recordIds: string[];
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
   shareWith?: ShareWithInput[] | null;
-  isRecordSharingEnabled?: boolean;
+  isRecordSharingEnforced?: boolean;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
@@ -132,7 +132,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
 
   return [
     ...recordIds.flatMap((recordId) => [
-      ...(!isRecordSharingEnabled && shareWithEntries.length === 0
+      ...(!isRecordSharingEnforced && shareWithEntries.length === 0
         ? [
             {
               recordId,

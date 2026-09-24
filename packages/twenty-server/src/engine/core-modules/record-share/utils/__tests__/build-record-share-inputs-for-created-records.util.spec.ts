@@ -359,7 +359,7 @@ it.each([
       objectMetadataId: OBJECT_METADATA_ID,
       authContext,
       apiKeyRoleMap,
-      isRecordSharingEnabled: false,
+      isRecordSharingEnforced: false,
     });
     expect(rows).toContainEqual({
       recordId: 'record',
