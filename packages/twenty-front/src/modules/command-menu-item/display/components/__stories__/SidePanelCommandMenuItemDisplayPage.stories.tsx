@@ -35,6 +35,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
@@ -184,9 +185,11 @@ const createDecorator = ({
   pathname = '/objects/companies',
   viewportWidth = 1280,
   colorScheme = 'System',
-  permissionFlags = [],
+  permissionFlags,
 }: CreateDecoratorParams): Decorator => {
-  const currentUserWorkspace = { permissionFlags, objectsPermissions: [] };
+  const currentUserWorkspace = isDefined(permissionFlags)
+    ? { permissionFlags, objectsPermissions: [] }
+    : null;
 
   return (Story) => {
     jotaiStore.set(sidePanelSearchState.atom, sidePanelSearch);
