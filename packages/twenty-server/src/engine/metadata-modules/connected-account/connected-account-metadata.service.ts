@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
-import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  EmailOperation,
+  WebhookSubscriptionStatus,
+} from 'twenty-shared/types';
 import {
   assertUnreachable,
   canConnectedAccountPerformEmailOperation,
@@ -430,6 +434,26 @@ export class ConnectedAccountMetadataService {
         CalendarChannelEntity,
         { connectedAccountId: In(connectedAccountIds), workspaceId },
         { isSyncEnabled: false },
+      );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        {
+          connectedAccountId: In(connectedAccountIds),
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        {
+          connectedAccountId: In(connectedAccountIds),
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
       );
     });
 
