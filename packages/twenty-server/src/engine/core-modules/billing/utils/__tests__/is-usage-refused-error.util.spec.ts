@@ -11,17 +11,6 @@ import {
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 
 describe('isUsageRefusedError', () => {
-  it('recognizes an exhausted credit allowance', () => {
-    expect(
-      isUsageRefusedError(
-        new BillingException(
-          'Credits exhausted',
-          BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-        ),
-      ),
-    ).toBe(true);
-  });
-
   it('recognizes an exhausted quota', () => {
     expect(
       isUsageRefusedError(

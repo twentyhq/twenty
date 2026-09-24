@@ -29,6 +29,7 @@ import {
   OnboardingService,
   OnboardingStepKeys,
 } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modules/two-factor-authentication/utils/two-factor-authentication-method.presenter';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -50,6 +51,7 @@ import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modul
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthAuthenticatedAt } from 'src/engine/decorators/auth/auth-authenticated-at.decorator';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
@@ -412,6 +414,8 @@ export class UserResolver {
     workspace: WorkspaceEntity,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthIsUserSession() isUserSession: boolean,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
   ) {
     if (!workspace) {
       throw new AuthException(
@@ -459,6 +463,7 @@ export class UserResolver {
         workspaceId: workspace.id,
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
+        applicationId: application?.id,
       }));
 
     if (!canDeleteUserFromWorkspace) {
@@ -488,6 +493,8 @@ export class UserResolver {
     @AuthApiKey() apiKey?: ApiKeyEntity,
     @AuthWorkspaceMemberId() authenticatedWorkspaceMemberId?: string,
     @AuthUser({ allowUndefined: true }) user?: AuthContextUser | null,
+    @AuthApplication({ allowUndefined: true })
+    application?: FlatApplication,
   ): Promise<boolean> {
     let isUpdatingSelf =
       isDefined(authenticatedWorkspaceMemberId) &&
@@ -511,6 +518,7 @@ export class UserResolver {
         workspaceId: workspace.id,
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
+        applicationId: application?.id,
       }));
 
     if (!canUpdateWorkspaceMember) {

@@ -281,10 +281,24 @@ export default defineLogicFunction({
 The endpoint is reachable at:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
 ```
 
-The identifier is the resolver's `universalIdentifier` from your manifest. Register that URL with the provider.
+The identifier is the resolver's `id`: the primary key the server assigns when the app is first synced into the owner workspace, not the `universalIdentifier` from your manifest. Read it back from the `/metadata` API of the owner workspace, then register that URL with the provider:
+
+```graphql
+query {
+  findManyLogicFunctions {
+    id
+    name
+    universalIdentifier
+  }
+}
+```
+
+<Note>
+A URL carrying the resolver's `universalIdentifier` still resolves for now, and the response carries a `Deprecation` header. A `universalIdentifier` is unique per workspace, not globally: if another registration owned by a different workspace declares the same one, the platform answers `404` for that URL instead of choosing between them. Move the URLs registered with your providers to the `id` form.
+</Note>
 
 **Answering a verification GET.** Some providers verify an endpoint before they deliver to it, by sending a `GET` carrying a challenge to the same URL they will later `POST` events to — Meta's WhatsApp Cloud API is one. A server route answers `POST` only unless you say otherwise, so declare both methods:
 
@@ -872,7 +886,7 @@ Twenty runs the check when the app's settings page opens and shows the result in
 
 A check that throws, times out or returns a shape Twenty cannot read is treated as **unknown**, never as an error, and no banner is shown. A third-party outage should not paint every installed app red — if it did, people would learn to ignore the signal.
 
-The location has to stay inside Twenty, so it starts with `/` or `#`: an external, protocol-relative or relative one loses its button rather than becoming a redirect somewhere else. The button is also dropped when the app reports no location and has no configuration tab to fall back to, so a check on an app with no variables and no custom settings tab shows its title without a dead button.
+The location has to stay inside Twenty, so it starts with `/` or `#`: an external, protocol-relative or relative one loses its button rather than becoming a redirect somewhere else. The button is also dropped when the app reports no location and has no configuration tab to fall back to, so a check on an app with no variables and no settings menu items shows its title without a dead button.
 
 Only one health check is allowed per app; declaring more than one fails the build.
 

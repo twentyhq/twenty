@@ -101,6 +101,11 @@ export const USAGE_LIMIT_DEFINITIONS = {
         },
       ],
     },
+    quota: {
+      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
+    },
   },
   [UsageResourceType.WEBHOOK]: {
     speed: {

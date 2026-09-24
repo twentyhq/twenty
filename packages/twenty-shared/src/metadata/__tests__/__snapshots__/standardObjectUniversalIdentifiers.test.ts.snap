@@ -98,6 +98,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "role": {
         "universalIdentifier": "5dc985f3-edad-4ebf-9844-b34ca686855b",
       },
+      "senderApplicationId": {
+        "universalIdentifier": "d204d45a-6ccc-40cb-8281-b6ed635c247b",
+      },
+      "senderUserWorkspaceId": {
+        "universalIdentifier": "f4184c3a-b85c-4cef-8181-b2fefdf98fda",
+      },
       "status": {
         "universalIdentifier": "3845ccfa-9394-4cb9-a75c-4ca704414b83",
       },

@@ -1,15 +1,15 @@
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { AnimatedCircleLoading } from '@/workflow/components/internal/AnimatedCircleLoading/AnimatedCircleLoading';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   IconLoader,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
 } from 'twenty-ui/icon';
-import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
-import { AnimatedCircleLoading } from 'twenty-ui/primitives/layout';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div`
   display: flex;
   flex: 1;
@@ -134,6 +134,7 @@ export const WorkflowStepExecutionResult = ({
       <StyledCodeEditorWrapper>
         <CodeEditor
           resizable={true}
+          resizeLabel={t`Resize output`}
           value={result}
           language={language}
           height={height}
