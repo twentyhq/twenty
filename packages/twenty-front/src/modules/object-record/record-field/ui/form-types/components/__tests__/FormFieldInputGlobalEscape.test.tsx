@@ -1,6 +1,6 @@
 import { FormDateFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
-import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { SidePanelTopBarEscapeHotkeyEffect } from '@/side-panel/components/SidePanelTopBarEscapeHotkeyEffect';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { i18n } from '@lingui/core';
@@ -108,12 +108,12 @@ it('keeps Escape for an input method that is composing text', async () => {
   expect(input).toBeInTheDocument();
 });
 
-it('gives Escape to an open dropdown before the side panel', async () => {
+it('gives Escape to a dropdown opened from a form field before the side panel', async () => {
   const user = userEvent.setup();
   const { onEscape } = renderInSidePanel(
-    <FormSelectFieldInput
-      label="Stage"
-      defaultValue="a"
+    <FormMultiSelectFieldInput
+      label="Tags"
+      defaultValue={['a']}
       onChange={jest.fn()}
       options={[
         { label: 'Option A', value: 'a' },
