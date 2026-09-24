@@ -87,8 +87,6 @@ export const verifyTeamsActivityTokenOrThrow = async ({
     },
   );
 
-  // Every published key lists the channels it signs for; a valid signature
-  // from a key endorsed for another channel is still not a Teams activity.
   if (!isTeamsEndorsedKey(signingKey)) {
     throw new Error(
       'Teams activity token is signed with a key not endorsed for Teams',

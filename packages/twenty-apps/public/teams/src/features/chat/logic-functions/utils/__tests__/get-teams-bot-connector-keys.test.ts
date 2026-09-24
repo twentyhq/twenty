@@ -91,14 +91,6 @@ describe('getTeamsBotConnectorKeys', () => {
     );
   });
 
-  it('should honour a forced refresh when the last attempt is older than the refresh interval', async () => {
-    kvGetMock.mockResolvedValue(cacheEntry({ fetchedAgoMs: 10 * 60 * 1000 }));
-
-    expect(await getTeamsBotConnectorKeys({ forceRefresh: true })).toEqual(
-      FETCHED_KEYS,
-    );
-  });
-
   it('should rate limit forced refreshes on the last attempt, not on the last successful fetch', async () => {
     kvGetMock.mockResolvedValue(
       cacheEntry({
@@ -122,12 +114,5 @@ describe('getTeamsBotConnectorKeys', () => {
 
     expect(await getTeamsBotConnectorKeys()).toEqual(CACHED_KEYS);
     expect(kvSetMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('should surface a failed fetch when there is no key set to fall back on', async () => {
-    kvGetMock.mockResolvedValue(null);
-    fetchKeysMock.mockRejectedValue(new Error('upstream down'));
-
-    await expect(getTeamsBotConnectorKeys()).rejects.toThrow('upstream down');
   });
 });

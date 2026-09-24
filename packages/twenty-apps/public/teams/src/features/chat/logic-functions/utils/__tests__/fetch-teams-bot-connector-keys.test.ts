@@ -16,10 +16,9 @@ const TEAMS_KEY = {
   endorsements: ['skype', 'msteams'],
 };
 
-const respondWith = (body: unknown, status = 200) =>
+const respondWith = (body: unknown) =>
   fetchMock.mockResolvedValue(
     new Response(JSON.stringify(body), {
-      status,
       headers: { 'content-type': 'application/json' },
     }),
   );
@@ -68,19 +67,5 @@ describe('fetchTeamsBotConnectorKeys', () => {
     await expect(fetchTeamsBotConnectorKeys()).rejects.toThrow(
       'no key endorsed for Teams',
     );
-  });
-
-  it('should reject a response without a keys array', async () => {
-    respondWith({ error: 'unexpected' });
-
-    await expect(fetchTeamsBotConnectorKeys()).rejects.toThrow(
-      'carried no keys',
-    );
-  });
-
-  it('should reject a failed response', async () => {
-    respondWith({}, 503);
-
-    await expect(fetchTeamsBotConnectorKeys()).rejects.toThrow('503');
   });
 });

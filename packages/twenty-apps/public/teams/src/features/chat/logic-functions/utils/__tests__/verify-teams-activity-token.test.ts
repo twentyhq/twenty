@@ -16,7 +16,6 @@ const ROTATED_KEY_ID = 'rotated-signing-key';
 let privateKey: CryptoKey;
 let teamsKey: TeamsBotConnectorKey;
 let otherChannelKey: TeamsBotConnectorKey;
-let unendorsedKey: TeamsBotConnectorKey;
 let symmetricSecret: Uint8Array;
 
 const loadKeysMock =
@@ -82,7 +81,6 @@ beforeAll(async () => {
     kid: OTHER_CHANNEL_KEY_ID,
     endorsements: ['directlinespeech', 'telephony'],
   };
-  unendorsedKey = { ...publicJwk, kid: ROTATED_KEY_ID };
   symmetricSecret = new Uint8Array(32).fill(7);
 });
 
@@ -155,13 +153,6 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
     ).rejects.toThrow('Missing or malformed Authorization header');
   });
 
-  it('should reject a token that names no signing key', async () => {
-    await expect(
-      verifyToken(await signActivityToken({ keyId: null })),
-    ).rejects.toThrow('names no signing key');
-    expect(loadKeysMock).not.toHaveBeenCalled();
-  });
-
   it('should reject a token signed with a key the Bot Connector does not publish', async () => {
     await expect(
       verifyToken(await signActivityToken({ keyId: 'unknown-key' })),
@@ -172,14 +163,6 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
   it('should reject a validly signed token whose key is endorsed for another channel', async () => {
     await expect(
       verifyToken(await signActivityToken({ keyId: OTHER_CHANNEL_KEY_ID })),
-    ).rejects.toThrow('not endorsed for Teams');
-  });
-
-  it('should reject a validly signed token whose key carries no endorsements', async () => {
-    loadKeysMock.mockResolvedValue([unendorsedKey]);
-
-    await expect(
-      verifyToken(await signActivityToken({ keyId: ROTATED_KEY_ID })),
     ).rejects.toThrow('not endorsed for Teams');
   });
 

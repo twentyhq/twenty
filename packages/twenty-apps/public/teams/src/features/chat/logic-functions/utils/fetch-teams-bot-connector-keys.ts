@@ -16,8 +16,6 @@ type TeamsBotConnectorKeysResponse = {
 const hasKeyId = (key: unknown): key is TeamsBotConnectorKey =>
   isObject(key) && 'kid' in key && isNonEmptyString(key.kid);
 
-// The published document carries a certificate chain per key and keys for
-// every Bot Framework channel, twenty times what verification reads.
 const toSigningKey = ({
   kty,
   kid,

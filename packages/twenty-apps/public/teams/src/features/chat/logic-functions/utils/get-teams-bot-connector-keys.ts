@@ -8,24 +8,31 @@ import { type TeamsBotConnectorKey } from 'src/features/chat/logic-functions/typ
 import { type TeamsBotConnectorKeysCacheEntry } from 'src/features/chat/logic-functions/types/teams-bot-connector-keys-cache-entry.type';
 import { fetchTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/utils/fetch-teams-bot-connector-keys';
 
-const isWithin = (timestampMs: number, maxAgeMs: number): boolean =>
-  timestampMs + maxAgeMs > Date.now();
+const isWithin = ({
+  timestampMs,
+  maxAgeMs,
+}: {
+  timestampMs: number;
+  maxAgeMs: number;
+}): boolean => timestampMs + maxAgeMs > Date.now();
 
-const canReuse = (
-  entry: TeamsBotConnectorKeysCacheEntry,
-  forceRefresh: boolean,
-): boolean =>
+const canReuse = ({
+  entry,
+  forceRefresh,
+}: {
+  entry: TeamsBotConnectorKeysCacheEntry;
+  forceRefresh: boolean;
+}): boolean =>
   forceRefresh
-    ? isWithin(
-        entry.refreshAttemptedAtMs,
-        TEAMS_BOT_CONNECTOR_KEYS_MIN_REFRESH_INTERVAL_MS,
-      )
-    : isWithin(entry.fetchedAtMs, TEAMS_BOT_CONNECTOR_KEYS_MAX_AGE_MS);
+    ? isWithin({
+        timestampMs: entry.refreshAttemptedAtMs,
+        maxAgeMs: TEAMS_BOT_CONNECTOR_KEYS_MIN_REFRESH_INTERVAL_MS,
+      })
+    : isWithin({
+        timestampMs: entry.fetchedAtMs,
+        maxAgeMs: TEAMS_BOT_CONNECTOR_KEYS_MAX_AGE_MS,
+      });
 
-// An unknown key id normally means Microsoft rotated the signing keys, but it
-// is also what a forged token carries. The refresh attempt is stamped before
-// the fetch so concurrent invocations back off on the stamp rather than each
-// racing the fetch, and a failed fetch keeps serving the last good key set.
 export const getTeamsBotConnectorKeys = async ({
   forceRefresh = false,
 }: {
@@ -35,7 +42,10 @@ export const getTeamsBotConnectorKeys = async ({
     TEAMS_BOT_CONNECTOR_KEYS_KV_KEY,
   );
 
-  if (isDefined(cachedEntry) && canReuse(cachedEntry, forceRefresh)) {
+  if (
+    isDefined(cachedEntry) &&
+    canReuse({ entry: cachedEntry, forceRefresh })
+  ) {
     return cachedEntry.keys;
   }
 
