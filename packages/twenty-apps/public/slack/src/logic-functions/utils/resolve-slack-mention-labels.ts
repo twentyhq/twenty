@@ -86,11 +86,13 @@ export const resolveSlackMentionLabels = async ({
   slackUserIds,
   client,
   slackClient,
+  slackConnectionId,
   assistantBotUserId,
 }: {
   slackUserIds: string[];
   client: CoreApiClient;
   slackClient: WebClient | undefined;
+  slackConnectionId: string | undefined;
   assistantBotUserId: string | undefined;
 }): Promise<Map<string, SlackMentionLabel>> => {
   const labelBySlackUserId = new Map<string, SlackMentionLabel>();
@@ -123,6 +125,7 @@ export const resolveSlackMentionLabels = async ({
     slackUserIds: mentionedUserIds,
     client,
     slackClient,
+    slackConnectionId,
   });
 
   const confirmedWorkspaceMemberIds = [

@@ -173,6 +173,27 @@ export const Highlighted: Story = {
   },
 };
 
+export const IconOnly: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 360 } },
+  args: {
+    'aria-label': 'Overview',
+    children: undefined,
+    startIcon: <IconInfoCircle />,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await expect(
+      canvas.getByRole('tabpanel', { name: 'Overview' }),
+    ).toHaveTextContent('Record overview');
+  },
+};
+
 export const Vertical: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },

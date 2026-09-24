@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import bytes from 'bytes';
+import { FileFolder } from 'twenty-shared/types';
 
 import { settings } from 'src/engine/constants/settings';
 import {
@@ -7,8 +8,19 @@ import {
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 
-export const assertValidDirectUploadSize = (size: number): void => {
-  const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
+export const assertValidDirectUploadSize = ({
+  size,
+  fileFolder,
+}: {
+  size: number;
+  fileFolder: FileFolder;
+}): void => {
+  const maxFileSize =
+    bytes(
+      fileFolder === FileFolder.CorePicture
+        ? settings.storage.maxCorePictureFileSize
+        : settings.storage.maxDirectUploadFileSize,
+    ) ?? 0;
 
   if (!Number.isInteger(size) || size <= 0 || size > maxFileSize) {
     throw new FileUploadException(
