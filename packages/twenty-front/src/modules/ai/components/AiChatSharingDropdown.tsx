@@ -18,7 +18,6 @@ export const AiChatSharingDropdown = ({
     <RecordSharingDropdown
       target={{ objectMetadataId: objectMetadataItem.id, recordId: threadId }}
       title={t`Share conversation`}
-      description={t`Viewers can read this conversation and future messages. Editors can also send messages. Full access also allows managing sharing, archiving, and deleting when permitted by the person’s role. AI actions use the sender’s own permissions.`}
       recordUrl={
         new URL(
           getAppPath(AppPath.AiChat, { threadId }),

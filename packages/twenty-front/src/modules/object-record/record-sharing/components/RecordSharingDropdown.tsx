@@ -14,14 +14,12 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 type RecordSharingDropdownProps = {
   target: RecordSharingTargetInput;
   title: string;
-  description: string;
   recordUrl: string;
 };
 
 export const RecordSharingDropdown = ({
   target,
   title,
-  description,
   recordUrl,
 }: RecordSharingDropdownProps) => {
   const { t } = useLingui();
@@ -38,7 +36,7 @@ export const RecordSharingDropdown = ({
       {sharingState.sharing?.isEnabled === true && (
         <DropdownRoot
           dropdownId={dropdownId}
-          type="panel"
+          type="menu"
           onOpenChange={(open) => {
             if (open) void sharingState.refetch().catch(() => {});
           }}
@@ -52,10 +50,9 @@ export const RecordSharingDropdown = ({
               >{t`Share`}</Button>
             }
           />
-          <Dropdown.Content align="end" aria-label={title}>
+          <Dropdown.Content width={320} align="end" aria-label={title}>
             <RecordSharingDropdownContent
               title={title}
-              description={description}
               recordUrl={recordUrl}
               sharingState={sharingState}
             />

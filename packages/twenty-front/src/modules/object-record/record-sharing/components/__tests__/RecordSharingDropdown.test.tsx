@@ -33,7 +33,6 @@ it('releases dropdown focus when sharing becomes unavailable and reopens closed'
         <RecordSharingDropdown
           target={{ objectMetadataId: 'object', recordId: 'record' }}
           title="Share record"
-          description="Access"
           recordUrl="/record"
         />
       </I18nProvider>

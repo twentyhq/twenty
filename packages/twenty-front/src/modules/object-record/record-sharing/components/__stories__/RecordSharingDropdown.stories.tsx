@@ -1,3 +1,5 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
@@ -20,7 +22,38 @@ const SharingStory = ({
   fails?: boolean;
   loading?: boolean;
 }) => {
-  const [store] = useState(createStore);
+  const [store] = useState(() => {
+    const store = createStore();
+    const members = [
+      {
+        id: 'owner',
+        name: { firstName: 'Alex', lastName: 'Morgan' },
+        userEmail: 'alex@example.com',
+      },
+      {
+        id: 'member',
+        name: { firstName: 'Phil', lastName: 'Schiler' },
+        userEmail: 'phil@example.com',
+      },
+      {
+        id: 'invite',
+        name: { firstName: 'Jane', lastName: 'Austen' },
+        userEmail: 'jane.austen@example.com',
+      },
+      {
+        id: 'long',
+        name: { firstName: 'Alexandra', lastName: 'Montgomery-Wellington' },
+        userEmail: 'alexandra.montgomery.wellington@example.com',
+      },
+    ];
+    store.set(currentWorkspaceMembersState.atom, members);
+    store.set(currentWorkspaceMemberState.atom, {
+      ...members[0],
+      colorScheme: 'Light',
+      locale: 'en',
+    });
+    return store;
+  });
   return (
     <Provider store={store}>
       <MockedProvider
@@ -49,8 +82,39 @@ const SharingStory = ({
                           canDelete: false,
                           canSoftDelete: false,
                         },
-                        shares: [],
-                        roles: [],
+                        shares: [
+                          {
+                            __typename: 'RecordSharingGrantDTO',
+                            id: 'owner-grant',
+                            principalId: 'owner',
+                            principalType: 'WORKSPACE_MEMBER',
+                            rowCause: 'OWNER',
+                            accessLevel: 'FULL',
+                          },
+                          {
+                            __typename: 'RecordSharingGrantDTO',
+                            id: 'member-grant',
+                            principalId: 'member',
+                            principalType: 'WORKSPACE_MEMBER',
+                            rowCause: 'MANUAL',
+                            accessLevel: 'READ_WRITE',
+                          },
+                          {
+                            __typename: 'RecordSharingGrantDTO',
+                            id: 'role-grant',
+                            principalId: 'sales',
+                            principalType: 'ROLE',
+                            rowCause: 'MANUAL',
+                            accessLevel: 'READ',
+                          },
+                        ],
+                        roles: [
+                          {
+                            __typename: 'RecordSharingRoleDTO',
+                            id: 'sales',
+                            label: 'Sales',
+                          },
+                        ],
                       },
                     },
                   },
@@ -61,7 +125,6 @@ const SharingStory = ({
         <RecordSharingDropdown
           target={TARGET}
           title="Share note"
-          description="Viewers can read this note. Editors can make changes and share it."
           recordUrl="https://example.com/note/shared-note"
         />
       </MockedProvider>
@@ -75,8 +138,6 @@ const meta = {
   args: {
     target: TARGET,
     title: 'Share note',
-    description:
-      'Viewers can read this note. Editors can make changes and share it.',
     recordUrl: 'https://example.com/note/shared-note',
   },
   decorators: [ComponentDecorator, ToastDecorator],
@@ -92,16 +153,26 @@ export const Enabled: Story = {
     await userEvent.click(
       await page.findByRole('button', { name: 'Share', expanded: false }),
     );
-    await expect(await page.findByText('Share note')).toBeVisible();
-    await expect(page.getByText('Everyone in the workspace')).toBeVisible();
+    await waitFor(() => expect(page.getByText('Share note')).toBeVisible());
+    await expect(
+      page.getByRole('menuitem', { name: 'Restricted' }),
+    ).toBeVisible();
     await expect(page.getByText('Copy link')).toBeVisible();
-    const invitation = within(
-      page.getByRole('group', { name: 'Invitation access' }),
+    await userEvent.click(
+      page.getByRole('menuitem', { name: 'Add people or roles' }),
     );
-    await userEvent.click(invitation.getByText('Viewer'));
-    await userEvent.click(await page.findByText('Editor'));
-    await expect(invitation.getByText('Editor')).toBeVisible();
+    await userEvent.click(
+      page.getByRole('button', { name: 'Invitation access' }),
+    );
+    await userEvent.click(
+      await page.findByRole('menuitemradio', { name: 'Editor' }),
+    );
+    await userEvent.keyboard('{Escape}');
+    await expect(
+      page.getByRole('button', { name: 'Invitation access' }),
+    ).toHaveTextContent('Editor');
     await expect(page.getByText('Share note')).toBeVisible();
+    await userEvent.keyboard('{Escape}');
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(page.queryByText('Share note')).not.toBeInTheDocument(),

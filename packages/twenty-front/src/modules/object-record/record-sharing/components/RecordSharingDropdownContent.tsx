@@ -1,5 +1,3 @@
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
-import { RecordSharingAccessSelect } from '@/object-record/record-sharing/components/RecordSharingAccessSelect';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -8,27 +6,17 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, MenuItem } from 'twenty-ui/components';
-import {
-  IconCheck,
-  IconLink,
-  IconLock,
-  IconUsers,
-  IconX,
-} from 'twenty-ui/icon';
+import { Dropdown } from 'twenty-ui/components';
+import { IconLink, IconLock, IconPlus, IconUsers } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { RecordSharingAction } from '@/object-record/record-sharing/components/RecordSharingAction';
-import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { RecordSharingAccessSelect } from '@/object-record/record-sharing/components/RecordSharingAccessSelect';
+import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledDescription = styled.div`
@@ -36,18 +24,22 @@ const StyledDescription = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
   line-height: 1.5;
   padding: ${themeCssVariables.spacing[2]};
+  white-space: normal;
+`;
+
+const StyledRecipients = styled.div`
+  max-height: 240px;
+  overflow-y: auto;
 `;
 
 type RecordSharingDropdownContentProps = {
   title: string;
-  description: string;
   recordUrl: string;
   sharingState: ReturnType<typeof useRecordSharing>;
 };
 
 export const RecordSharingDropdownContent = ({
   title,
-  description,
   recordUrl,
   sharingState,
 }: RecordSharingDropdownContentProps) => {
@@ -59,23 +51,25 @@ export const RecordSharingDropdownContent = ({
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { copyToClipboard } = useCopyToClipboard();
   const [search, setSearch] = useState('');
-  const [invitationAccessLevel, setInvitationAccessLevel] =
-    useState<RecordShareAccessLevel>(RecordShareAccessLevel.READ);
+  const [invitationAccessLevel, setInvitationAccessLevel] = useState(
+    RecordShareAccessLevel.READ,
+  );
   const matchesSearch = (text: string) =>
     text.toLowerCase().includes(search.trim().toLowerCase());
   const shares = sharing?.shares ?? [];
-  const isSharedWithEveryone = shares.some(
-    (share) => share.principalType === RecordSharePrincipalType.EVERYONE,
-  );
   const everyoneManualShare = shares.find(
     (share) =>
       share.principalType === RecordSharePrincipalType.EVERYONE &&
       share.rowCause === RecordShareRowCause.MANUAL,
   );
+  const hasManagedWorkspaceAccess = shares.some(
+    (share) =>
+      share.principalType === RecordSharePrincipalType.EVERYONE &&
+      share.rowCause !== RecordShareRowCause.MANUAL,
+  );
   const canChangeSharing =
     sharing?.viewerAccessLevel === RecordShareAccessLevel.FULL &&
     sharing.permissions.canUpdate;
-  const canAdd = canChangeSharing && !saving;
   const availableMembers = currentWorkspaceMembers.filter(
     (member) =>
       !shares.some((share) => share.principalId === member.id) &&
@@ -88,267 +82,272 @@ export const RecordSharingDropdownContent = ({
       !shares.some((share) => share.principalId === role.id) &&
       matchesSearch(role.label),
   );
+  const accessOptions = [
+    { value: RecordShareAccessLevel.READ, label: t`Viewer` },
+    { value: RecordShareAccessLevel.READ_WRITE, label: t`Editor` },
+    { value: RecordShareAccessLevel.FULL, label: t`Full access` },
+  ];
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+    <>
       <DropdownMenuHeader>{title}</DropdownMenuHeader>
       {loading ? (
-        <StyledDescription>{t`Loading…`}</StyledDescription>
+        <Dropdown.Loading>{t`Loading…`}</Dropdown.Loading>
       ) : error ? (
-        <>
+        <Dropdown.Section>
           <StyledDescription role="alert">{t`Sharing settings could not be loaded.`}</StyledDescription>
-          <RecordSharingAction
-            text={t`Try again`}
+          <Dropdown.ActionItem
             onClick={() => {
               void refetch().catch(() => {});
             }}
-          />
-        </>
+            closeOnClick={false}
+          >{t`Try again`}</Dropdown.ActionItem>
+        </Dropdown.Section>
       ) : (
         isDefined(sharing) && (
           <>
-            <StyledDescription>{description}</StyledDescription>
-            <StyledDescription>{t`Granted access is subject to role and field permissions. Removing a direct share does not remove access provided by roles or related records.`}</StyledDescription>
-            {sharing.hasInheritedAccess && (
-              <StyledDescription>{t`Access can also come from related records. Removing direct access does not remove inherited access.`}</StyledDescription>
-            )}
-            {shares.some(
-              (share) =>
-                share.principalType === RecordSharePrincipalType.EVERYONE &&
-                share.rowCause !== RecordShareRowCause.MANUAL,
-            ) && (
-              <StyledDescription>{t`An application also gives everyone access. Direct sharing changes do not remove that access.`}</StyledDescription>
-            )}
             {canChangeSharing ? (
               <>
-                <DropdownMenuSeparator />
-                <DropdownMenuHeader>{t`General access`}</DropdownMenuHeader>
-                <DropdownMenuItemsContainer>
-                  <RecordSharingAction
-                    text={t`Restricted`}
-                    contextualText={t`Only people with direct or inherited access`}
-                    LeftIcon={isSharedWithEveryone ? undefined : IconCheck}
-                    disabled={
-                      saving ||
-                      !shares.some(
-                        (share) =>
-                          share.principalType ===
-                            RecordSharePrincipalType.EVERYONE &&
-                          share.rowCause === RecordShareRowCause.MANUAL,
-                      )
-                    }
-                    onClick={() => {
-                      void setShare({
-                        principal: { everyone: true },
-                        enabled: false,
-                      });
-                    }}
-                  />
-                  {isDefined(everyoneManualShare) ? (
-                    <MenuItem
-                      text={t`Everyone in the workspace`}
-                      LeftIcon={IconUsers}
-                      RightComponent={
+                <Dropdown.Section>
+                  <Dropdown.Submenu type="picker">
+                    <Dropdown.SubmenuTrigger
+                      startIcon={<IconPlus />}
+                      disabled={saving}
+                      openOnHover={false}
+                    >{t`Add people or roles`}</Dropdown.SubmenuTrigger>
+                    <Dropdown.Content
+                      width={320}
+                      aria-label={t`Add people or roles`}
+                    >
+                      <Dropdown.Search
+                        value={search}
+                        onValueChange={setSearch}
+                        placeholder={t`Search people or roles`}
+                      />
+                      <Dropdown.Section>
                         <RecordSharingAccessSelect
-                          label={t`Everyone in the workspace access`}
-                          value={everyoneManualShare.accessLevel}
-                          disabled={!canAdd}
-                          onChange={(accessLevel) => {
+                          label={t`Invitation access`}
+                          text={t`Invite as`}
+                          value={invitationAccessLevel}
+                          disabled={saving}
+                          onChange={setInvitationAccessLevel}
+                          closeOnSelect={false}
+                        />
+                      </Dropdown.Section>
+                      <Dropdown.Separator />
+                      <StyledRecipients>
+                        <Dropdown.Section>
+                          {availableMembers.length === 0 &&
+                            availableRoles.length === 0 && (
+                              <Dropdown.Empty>{t`No matching people or roles`}</Dropdown.Empty>
+                            )}
+                          {availableMembers.map((member) => (
+                            <Dropdown.ActionItem
+                              key={member.id}
+                              startIcon={<IconUsers />}
+                              description={member.userEmail}
+                              disabled={saving}
+                              onClick={() => {
+                                void setShare({
+                                  principal: { workspaceMemberId: member.id },
+                                  enabled: true,
+                                  accessLevel: invitationAccessLevel,
+                                });
+                              }}
+                            >
+                              {`${member.name.firstName} ${member.name.lastName}`.trim() ||
+                                member.userEmail}
+                            </Dropdown.ActionItem>
+                          ))}
+                          {availableRoles.map((role) => (
+                            <Dropdown.ActionItem
+                              key={role.id}
+                              startIcon={<IconLock />}
+                              description={t`Role`}
+                              disabled={saving}
+                              onClick={() => {
+                                void setShare({
+                                  principal: { roleId: role.id },
+                                  enabled: true,
+                                  accessLevel: invitationAccessLevel,
+                                });
+                              }}
+                            >
+                              {role.label}
+                            </Dropdown.ActionItem>
+                          ))}
+                        </Dropdown.Section>
+                      </StyledRecipients>
+                    </Dropdown.Content>
+                  </Dropdown.Submenu>
+                </Dropdown.Section>
+                <Dropdown.Separator />
+                <Dropdown.Section label={t`General access`}>
+                  <Dropdown.Submenu>
+                    <Dropdown.SubmenuTrigger
+                      startIcon={
+                        isDefined(everyoneManualShare) ||
+                        hasManagedWorkspaceAccess ? (
+                          <IconUsers />
+                        ) : (
+                          <IconLock />
+                        )
+                      }
+                      disabled={saving}
+                      description={
+                        isDefined(everyoneManualShare)
+                          ? accessOptions.find(
+                              (option) =>
+                                option.value ===
+                                everyoneManualShare.accessLevel,
+                            )?.label
+                          : undefined
+                      }
+                    >
+                      {isDefined(everyoneManualShare) ||
+                      hasManagedWorkspaceAccess
+                        ? t`Everyone in the workspace`
+                        : t`Restricted`}
+                    </Dropdown.SubmenuTrigger>
+                    <Dropdown.Content
+                      width={240}
+                      aria-label={t`General access`}
+                    >
+                      <Dropdown.Section>
+                        <Dropdown.OptionItem
+                          selected={
+                            !isDefined(everyoneManualShare) &&
+                            !hasManagedWorkspaceAccess
+                          }
+                          disabled={!isDefined(everyoneManualShare) || saving}
+                          onSelect={() => {
                             void setShare({
                               principal: { everyone: true },
-                              enabled: true,
-                              accessLevel,
+                              enabled: false,
                             });
                           }}
-                        />
-                      }
-                    />
-                  ) : (
-                    <RecordSharingAction
-                      text={t`Everyone in the workspace`}
-                      contextualText={t`Viewer`}
-                      LeftIcon={isSharedWithEveryone ? IconCheck : IconUsers}
-                      disabled={!canAdd}
-                      onClick={() => {
-                        void setShare({
-                          principal: { everyone: true },
-                          enabled: true,
-                        });
-                      }}
-                    />
-                  )}
-                </DropdownMenuItemsContainer>
-                <DropdownMenuSeparator />
-                <DropdownMenuHeader>{t`Direct access`}</DropdownMenuHeader>
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  {shares
-                    .filter(
-                      (share) =>
-                        share.principalType !==
-                        RecordSharePrincipalType.EVERYONE,
-                    )
-                    .map((share) => {
-                      const member = currentWorkspaceMembers.find(
-                        (item) => item.id === share.principalId,
-                      );
-                      const role = sharing.roles.find(
-                        (item) => item.id === share.principalId,
-                      );
-                      const label =
-                        share.principalId === currentWorkspaceMember?.id
-                          ? t`You`
-                          : share.principalType ===
-                              RecordSharePrincipalType.ROLE
-                            ? (role?.label ?? t`Deleted role`)
-                            : isDefined(member)
-                              ? `${member.name.firstName} ${member.name.lastName}`.trim() ||
-                                member.userEmail
-                              : t`Deleted member`;
-                      return (
-                        <MenuItem
-                          key={share.id}
-                          text={label}
-                          contextualText={
-                            share.rowCause === RecordShareRowCause.OWNER
-                              ? t`Owner`
-                              : share.rowCause ===
-                                  RecordShareRowCause.APPLICATION
-                                ? t`Provided by application`
-                                : undefined
-                          }
-                          LeftIcon={
-                            share.principalType ===
-                            RecordSharePrincipalType.ROLE
-                              ? IconLock
-                              : IconUsers
-                          }
-                          RightComponent={
-                            share.rowCause === RecordShareRowCause.MANUAL ? (
-                              <RecordSharingAccessSelect
-                                label={t`${label} access`}
-                                value={share.accessLevel}
-                                disabled={!canAdd}
-                                onChange={(accessLevel) => {
-                                  void setShare({
-                                    principal:
-                                      share.principalType ===
-                                      RecordSharePrincipalType.ROLE
-                                        ? { roleId: share.principalId }
-                                        : {
-                                            workspaceMemberId:
-                                              share.principalId,
-                                          },
-                                    enabled: true,
-                                    accessLevel,
-                                  });
-                                }}
-                              />
-                            ) : undefined
-                          }
-                          iconButtons={
-                            share.rowCause === RecordShareRowCause.MANUAL ? (
-                              <LightIconButton
-                                aria-label={t`Remove direct access for ${label}`}
-                                disabled={saving}
-                                onClick={() => {
-                                  void setShare({
-                                    principal:
-                                      share.principalType ===
-                                      RecordSharePrincipalType.ROLE
-                                        ? { roleId: share.principalId }
-                                        : {
-                                            workspaceMemberId:
-                                              share.principalId,
-                                          },
-                                    enabled: false,
-                                  });
-                                }}
-                              >
-                                <IconX />
-                              </LightIconButton>
-                            ) : undefined
-                          }
-                        />
-                      );
-                    })}
-                </DropdownMenuItemsContainer>
-                <>
-                  <DropdownMenuSeparator />
-                  <MenuItem
-                    text={t`Invite as`}
-                    RightComponent={
-                      <RecordSharingAccessSelect
-                        label={t`Invitation access`}
-                        value={invitationAccessLevel}
-                        disabled={!canAdd}
-                        onChange={setInvitationAccessLevel}
-                      />
-                    }
-                  />
-                  <DropdownMenuSearchInput
-                    value={search}
-                    onChange={(event) => setSearch(event.target.value)}
-                    placeholder={t`Add people or roles`}
-                  />
-                  <DropdownMenuItemsContainer hasMaxHeight>
-                    {availableMembers.length === 0 &&
-                      availableRoles.length === 0 && (
-                        <StyledDescription>{t`No matching people or roles`}</StyledDescription>
-                      )}
-                    {availableMembers.map((member) => (
-                      <RecordSharingAction
-                        key={member.id}
-                        text={
-                          `${member.name.firstName} ${member.name.lastName}`.trim() ||
-                          member.userEmail
-                        }
-                        contextualText={member.userEmail}
-                        LeftIcon={IconUsers}
-                        disabled={!canAdd}
-                        onClick={() => {
-                          void setShare({
-                            principal: { workspaceMemberId: member.id },
-                            enabled: true,
-                            accessLevel: invitationAccessLevel,
-                          });
-                        }}
-                      />
-                    ))}
-                    {availableRoles.map((role) => (
-                      <RecordSharingAction
-                        key={role.id}
-                        text={role.label}
-                        contextualText={t`Role`}
-                        LeftIcon={IconLock}
-                        disabled={!canAdd}
-                        onClick={() => {
-                          void setShare({
-                            principal: { roleId: role.id },
-                            enabled: true,
-                            accessLevel: invitationAccessLevel,
-                          });
-                        }}
-                      />
-                    ))}
-                  </DropdownMenuItemsContainer>
-                </>
+                        >{t`Restricted`}</Dropdown.OptionItem>
+                      </Dropdown.Section>
+                      <Dropdown.Separator />
+                      <Dropdown.Section label={t`Everyone in the workspace`}>
+                        {accessOptions.map((option) => (
+                          <Dropdown.OptionItem
+                            key={option.value}
+                            selected={
+                              everyoneManualShare?.accessLevel === option.value
+                            }
+                            disabled={saving}
+                            onSelect={() => {
+                              void setShare({
+                                principal: { everyone: true },
+                                enabled: true,
+                                accessLevel: option.value,
+                              });
+                            }}
+                          >
+                            {option.label}
+                          </Dropdown.OptionItem>
+                        ))}
+                      </Dropdown.Section>
+                    </Dropdown.Content>
+                  </Dropdown.Submenu>
+                </Dropdown.Section>
+                <Dropdown.Separator />
+                <Dropdown.Section label={t`People and roles with access`}>
+                  <StyledRecipients>
+                    {shares
+                      .filter(
+                        (share) =>
+                          share.principalType !==
+                          RecordSharePrincipalType.EVERYONE,
+                      )
+                      .map((share) => {
+                        const member = currentWorkspaceMembers.find(
+                          (item) => item.id === share.principalId,
+                        );
+                        const role = sharing.roles.find(
+                          (item) => item.id === share.principalId,
+                        );
+                        const label =
+                          share.principalId === currentWorkspaceMember?.id
+                            ? t`You`
+                            : share.principalType ===
+                                RecordSharePrincipalType.ROLE
+                              ? (role?.label ?? t`Deleted role`)
+                              : isDefined(member)
+                                ? `${member.name.firstName} ${member.name.lastName}`.trim() ||
+                                  member.userEmail
+                                : t`Deleted member`;
+                        const startIcon =
+                          share.principalType ===
+                          RecordSharePrincipalType.ROLE ? (
+                            <IconLock />
+                          ) : (
+                            <IconUsers />
+                          );
+                        const principal =
+                          share.principalType === RecordSharePrincipalType.ROLE
+                            ? { roleId: share.principalId }
+                            : { workspaceMemberId: share.principalId };
+                        return share.rowCause === RecordShareRowCause.MANUAL ? (
+                          <RecordSharingAccessSelect
+                            key={share.id}
+                            label={t`${label} access`}
+                            text={label}
+                            startIcon={startIcon}
+                            value={share.accessLevel}
+                            disabled={saving}
+                            onChange={(accessLevel) => {
+                              void setShare({
+                                principal,
+                                enabled: true,
+                                accessLevel,
+                              });
+                            }}
+                            onRemove={() => {
+                              void setShare({ principal, enabled: false });
+                            }}
+                          />
+                        ) : (
+                          <Dropdown.ActionItem
+                            key={share.id}
+                            startIcon={startIcon}
+                            disabled
+                            description={
+                              share.rowCause === RecordShareRowCause.OWNER
+                                ? t`Owner`
+                                : t`Managed access`
+                            }
+                          >
+                            {label}
+                          </Dropdown.ActionItem>
+                        );
+                      })}
+                  </StyledRecipients>
+                </Dropdown.Section>
+                <StyledDescription>
+                  {hasManagedWorkspaceAccess
+                    ? t`Workspace access is also managed by an application.`
+                    : sharing.hasInheritedAccess
+                      ? t`Access is also inherited from related records.`
+                      : t`Role and field permissions still apply.`}
+                </StyledDescription>
               </>
             ) : (
-              <StyledDescription>{t`Changing sharing requires full access and permission to edit this record.`}</StyledDescription>
+              <StyledDescription>{t`Full access and edit permission are required to manage sharing.`}</StyledDescription>
             )}
-            <DropdownMenuSeparator />
-            <DropdownMenuItemsContainer>
-              <RecordSharingAction
-                text={t`Copy link`}
-                LeftIcon={IconLink}
+            <Dropdown.Separator />
+            <Dropdown.Section>
+              <Dropdown.ActionItem
+                startIcon={<IconLink />}
                 onClick={() => {
                   void copyToClipboard(recordUrl);
                 }}
-              />
-            </DropdownMenuItemsContainer>
+              >{t`Copy link`}</Dropdown.ActionItem>
+            </Dropdown.Section>
           </>
         )
       )}
-    </DropdownContent>
+    </>
   );
 };
