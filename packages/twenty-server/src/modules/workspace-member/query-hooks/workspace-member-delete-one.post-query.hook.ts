@@ -12,6 +12,9 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
+import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -30,6 +33,8 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
   ) {}
 
   async execute(
@@ -94,6 +99,10 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
             : undefined,
       },
     );
+
+    await this.agentChatThreadRepository.delete(workspace.id, {
+      userWorkspaceId: userWorkspace.id,
+    });
 
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId: userWorkspace.id,

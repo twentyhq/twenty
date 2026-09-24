@@ -15,6 +15,8 @@ import { AgentHistoryMigrationValidationService } from 'src/database/commands/ag
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
 import { AgentHistoryCleanupCommand } from 'src/database/commands/agent-history/agent-history-cleanup.command';
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { DropAgentHistoryCoreForeignKeysCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790258659725-drop-agent-history-core-foreign-keys.command';
 import { computeFlatIndexFieldColumnNames } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
@@ -347,7 +349,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       } finally {
         await runner.release();
       }
-      await lifecycle.prepareCoreReferences(WORKSPACE_ID);
       emitDatabaseBatchEvent.mockClear();
       await dataSource.query(
         `INSERT INTO core."agentChatThread" (id, "workspaceId", "userWorkspaceId", title, "totalInputCredits", "deletedAt") VALUES ($1, $2, $3, 'Private archived chat', 9007199254740993, '2026-01-01T00:00:00Z')`,
@@ -914,33 +915,65 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(insert()).resolves.toBeDefined();
     });
 
-    it('preserves owner deletion cascades and attachment restrictions', async () => {
+    it('does not create constraints referencing core tables', async () => {
+      await lifecycle.initializeWorkspace(WORKSPACE_ID);
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
-      await dataSource.query('INSERT INTO core.file VALUES ($1, $2)', [
-        MESSAGE_ID,
-        WORKSPACE_ID,
-      ]);
-      await dataSource.query(
-        `UPDATE "${SCHEMA}"."agentMessagePart" SET "fileId" = $1`,
-        [MESSAGE_ID],
+      const constraints = await dataSource.query(
+        `SELECT c.conname FROM pg_constraint c
+         JOIN pg_namespace child ON child.oid = c.connamespace
+         JOIN pg_class parent ON parent.oid = c.confrelid
+         JOIN pg_namespace parent_namespace ON parent_namespace.oid = parent.relnamespace
+         WHERE c.contype = 'f' AND child.nspname = $1 AND parent_namespace.nspname = 'core'`,
+        [SCHEMA],
       );
-      await expect(
-        dataSource.query('DELETE FROM core.file WHERE id = $1', [MESSAGE_ID]),
-      ).rejects.toThrow('foreign key');
-      await dataSource.query('DELETE FROM core."userWorkspace" WHERE id = $1', [
-        OWNER_ID,
-      ]);
-      for (const table of AGENT_HISTORY_TABLES)
-        expect(
-          (
-            await dataSource.query(
-              `SELECT count(*) FROM "${SCHEMA}"."${table.name}"`,
-            )
-          )[0].count,
-        ).toBe('0');
+      expect(constraints).toEqual([]);
+    });
+
+    it('drops core constraints created by earlier upgrade attempts', async () => {
+      await dataSource.query(
+        `ALTER TABLE "${SCHEMA}"."agentMessagePart" ADD CONSTRAINT "FK_agent_history_fileId" FOREIGN KEY ("fileId") REFERENCES core.file(id) ON DELETE RESTRICT`,
+      );
+      await dataSource.query(
+        `ALTER TABLE "${SCHEMA}"."agentChatThread" ADD CONSTRAINT "FK_agent_history_userWorkspaceId" FOREIGN KEY ("userWorkspaceId") REFERENCES core."userWorkspace"(id) ON DELETE CASCADE`,
+      );
+      const command = new DropAgentHistoryCoreForeignKeysCommand(
+        {} as WorkspaceIteratorService,
+      );
+      const args = {
+        workspaceId: WORKSPACE_ID,
+        options: {},
+        dataSource,
+        index: 0,
+        total: 1,
+      } as unknown as RunOnWorkspaceArgs;
+
+      await command.up({ ...args, options: { dryRun: true } });
+      expect(
+        await dataSource.query(
+          `SELECT c.conname FROM pg_constraint c
+         JOIN pg_namespace child ON child.oid = c.connamespace
+         JOIN pg_class parent ON parent.oid = c.confrelid
+         JOIN pg_namespace parent_namespace ON parent_namespace.oid = parent.relnamespace
+         WHERE c.contype = 'f' AND child.nspname = $1 AND parent_namespace.nspname = 'core'`,
+          [SCHEMA],
+        ),
+      ).toHaveLength(2);
+
+      await command.up(args);
+      await command.up(args);
+      expect(
+        await dataSource.query(
+          `SELECT c.conname FROM pg_constraint c
+         JOIN pg_namespace child ON child.oid = c.connamespace
+         JOIN pg_class parent ON parent.oid = c.confrelid
+         JOIN pg_namespace parent_namespace ON parent_namespace.oid = parent.relnamespace
+         WHERE c.contype = 'f' AND child.nspname = $1 AND parent_namespace.nspname = 'core'`,
+          [SCHEMA],
+        ),
+      ).toEqual([]);
     });
 
     it('rejects cross-workspace membership before changing the route', async () => {
@@ -1122,23 +1155,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(lifecycle.initializeWorkspace(WORKSPACE_ID)).rejects.toThrow(
         'route is missing',
       );
-    });
-
-    it('repairs missing core constraints and detects changed delete semantics', async () => {
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentMessagePart" DROP CONSTRAINT "FK_agent_history_fileId"`,
-      );
-      await lifecycle.prepareCoreReferences(WORKSPACE_ID);
-      await lifecycle.prepareCoreReferences(WORKSPACE_ID);
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentMessagePart" DROP CONSTRAINT "FK_agent_history_fileId"`,
-      );
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentMessagePart" ADD CONSTRAINT "FK_agent_history_fileId" FOREIGN KEY ("fileId") REFERENCES core.file(id) ON DELETE CASCADE`,
-      );
-      await expect(
-        lifecycle.prepareCoreReferences(WORKSPACE_ID),
-      ).rejects.toThrow('has drifted');
     });
 
     it('keeps a report snapshot stable across cutover and core cleanup', async () => {
