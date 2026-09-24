@@ -413,6 +413,21 @@ export class WorkflowVersionCoreSyncService {
     });
   }
 
+  async findWorkspaceVersionIdByCoreVersionId(
+    workspaceId: string,
+    coreWorkflowVersionId: string,
+  ): Promise<string | null> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersion = await this.workspaceOrmManager
+        .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+          shouldBypassPermissionChecks: true,
+        })
+        .findOne({ where: { coreWorkflowVersionId }, select: { id: true } });
+
+      return workflowVersion?.id ?? null;
+    }, buildSystemAuthContext(workspaceId));
+  }
+
   async mirrorWorkflowVersionWrite({
     workspaceId,
     transactionScope,
