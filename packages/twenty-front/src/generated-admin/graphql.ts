@@ -188,7 +188,6 @@ export type AdminPanelUsageLimitDefault = {
   isOverridable: Scalars['Boolean']['output'];
   limitKind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
-  limitValueConfigVariable: Scalars['String']['output'];
   meter: Scalars['String']['output'];
   operationType: UsageOperationType;
   overriddenByUsageLimitId?: Maybe<Scalars['UUID']['output']>;

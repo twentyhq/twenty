@@ -153,8 +153,6 @@ export const SettingsAdminWorkspaceBillingContent = ({
 
   const billing = data?.workspaceBillingAdminPanel ?? null;
 
-  // Limits are not billing data: they bind whether or not this workspace has a
-  // customer, so they render on both sides of this branch.
   if (!billing) {
     return (
       <StyledContainer>

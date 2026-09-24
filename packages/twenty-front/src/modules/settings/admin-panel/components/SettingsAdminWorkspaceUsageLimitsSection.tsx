@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton, Section } from 'twenty-ui/components';
 import { IconPencil } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';

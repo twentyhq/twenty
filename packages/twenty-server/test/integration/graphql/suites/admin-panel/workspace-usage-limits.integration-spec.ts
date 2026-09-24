@@ -25,7 +25,6 @@ const WORKSPACE_USAGE_LIMITS = gql`
         limitKind
         meter
         limitValue
-        limitValueConfigVariable
         isOverridable
         overriddenByUsageLimitId
       }
@@ -116,7 +115,6 @@ describe('Workspace usage limits from the admin panel', () => {
         resourceType: UsageResourceType.STORAGE,
         limitKind: 'stock',
         meter: 'bytes',
-        limitValueConfigVariable: 'WORKSPACE_STORAGE_LIMIT_BYTES',
         isOverridable: true,
         overriddenByUsageLimitId: null,
       }),
@@ -142,9 +140,16 @@ describe('Workspace usage limits from the admin panel', () => {
     expect(workspaceUsageLimits.limits).toHaveLength(1);
     expect(
       workspaceUsageLimits.defaults.find(
-        (usageLimitDefault: { limitValueConfigVariable: string }) =>
-          usageLimitDefault.limitValueConfigVariable ===
-          'WORKSPACE_STORAGE_LIMIT_BYTES',
+        (usageLimitDefault: {
+          resourceType: UsageResourceType;
+          operationType: UsageOperationType;
+          spenderType: string;
+          meter: string;
+        }) =>
+          usageLimitDefault.resourceType === UsageResourceType.STORAGE &&
+          usageLimitDefault.operationType === UsageOperationType.STORAGE_FILE &&
+          usageLimitDefault.spenderType === 'workspace' &&
+          usageLimitDefault.meter === 'bytes',
       ),
     ).toEqual(
       expect.objectContaining({ overriddenByUsageLimitId: usageLimitId }),

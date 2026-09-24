@@ -37,9 +37,6 @@ export class AdminPanelUsageLimitDefaultDTO {
   @Field(() => GraphQLBigInt)
   limitValue: number;
 
-  @Field(() => String)
-  limitValueConfigVariable: string;
-
   @Field(() => Boolean)
   isOverridable: boolean;
 

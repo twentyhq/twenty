@@ -7,7 +7,7 @@ import { type UsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 export type UsageLimitDefaultScope = UsageLimitScope &
-  Pick<UsageLimitDefault, 'isOverridable' | 'limitValueConfigVariable'> & {
+  Pick<UsageLimitDefault, 'isOverridable'> & {
     limitValue: number;
   };
 
@@ -53,6 +53,5 @@ export const buildUsageLimitDefaultScopes = ({
       ...buildPeriod({ usageLimitDefault, getConfigValue }),
       limitValue: getConfigValue(usageLimitDefault.limitValueConfigVariable),
       isOverridable: usageLimitDefault.isOverridable,
-      limitValueConfigVariable: usageLimitDefault.limitValueConfigVariable,
     })),
   );

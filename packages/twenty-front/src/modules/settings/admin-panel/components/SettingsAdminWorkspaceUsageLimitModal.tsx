@@ -3,8 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { Section, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -160,7 +159,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
 
       enqueueToast({
         variant: 'success',
-        children: t`Override removed. The instance default applies again.`,
+        children: t`Limit reset to the default.`,
       });
       handleClose();
     } catch (error) {
@@ -201,9 +200,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
             width: '360px',
           }}
         >
-          <Dialog.Title>
-            {row.isOverridden ? t`Edit limit` : t`Override limit`}
-          </Dialog.Title>
+          <Dialog.Title>{t`Set limit for this workspace`}</Dialog.Title>
           <StyledSectionContainer>
             <Section.Root align="center" color="primary">
               {t`${scopeLabel} — the instance default is ${defaultText}. Saving applies to this workspace only.`}
