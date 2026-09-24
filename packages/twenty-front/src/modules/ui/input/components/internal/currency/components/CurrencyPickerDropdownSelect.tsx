@@ -1,6 +1,5 @@
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
-import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -37,12 +36,7 @@ export const CurrencyPickerDropdownSelect = ({
         onValueChange={setSearchFilter}
       />
       <Dropdown.Separator />
-      <Dropdown.Section
-        style={{
-          maxHeight: DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT,
-          overflowY: 'auto',
-        }}
-      >
+      <Dropdown.Section scrollable>
         {!isNonEmptyArray(filteredCurrencies) ? (
           <Dropdown.Empty>{t`No results`}</Dropdown.Empty>
         ) : (

@@ -1,5 +1,4 @@
 import { type Country } from '@/ui/input/components/internal/types/Country';
-import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -54,12 +53,7 @@ export const PhoneCountryPickerDropdownSelect = ({
         onValueChange={setSearchFilter}
       />
       <Dropdown.Separator />
-      <Dropdown.Section
-        style={{
-          maxHeight: DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT,
-          overflowY: 'auto',
-        }}
-      >
+      <Dropdown.Section scrollable>
         {!isNonEmptyArray(filteredCountries) ? (
           <Dropdown.Empty>{t`No results`}</Dropdown.Empty>
         ) : (

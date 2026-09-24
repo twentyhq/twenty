@@ -1,7 +1,6 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
-import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -62,12 +61,7 @@ export const SidePanelObjectFilterDropdownContent = ({
         onValueChange={setFilterSearch}
       />
       <Dropdown.Separator />
-      <Dropdown.Section
-        style={{
-          maxHeight: DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT,
-          overflowY: 'auto',
-        }}
-      >
+      <Dropdown.Section scrollable>
         <Dropdown.OptionItem
           onSelect={() => onSelectObject(null)}
           selected={selectedObjectNameSingular === null}

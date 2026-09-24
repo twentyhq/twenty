@@ -17,6 +17,11 @@
 
 .section {
   padding: var(--t-spacing-1);
+
+  &[data-scrollable] {
+    max-block-size: 176px;
+    overflow-y: auto;
+  }
 }
 
 .separator[data-dropdown-separator] {

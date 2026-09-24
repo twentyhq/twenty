@@ -2,7 +2,6 @@ import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type SelectProps } from '@/ui/input/types/SelectProps';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -235,12 +234,7 @@ export const Select = <TValue extends SelectValue>({
               <Dropdown.Separator />
             )}
             {isNonEmptyArray(filteredOptions) && (
-              <Dropdown.Section
-                style={{
-                  maxHeight: DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT,
-                  overflowY: 'auto',
-                }}
-              >
+              <Dropdown.Section scrollable>
                 {filteredOptions.map((option) => (
                   <Dropdown.OptionItem
                     key={`${option.value}-${option.label}`}
