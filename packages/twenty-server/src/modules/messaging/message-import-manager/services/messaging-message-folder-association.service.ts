@@ -37,6 +37,7 @@ export class MessagingMessageFolderAssociationService {
         const repository =
           transactionScope.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
             'messageChannelMessageAssociationMessageFolder',
+            { shouldBypassPermissionChecks: true },
           );
 
         const existingRecords = await repository.find({

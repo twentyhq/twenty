@@ -12,7 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatUpgradeCommandName, getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import {
   IconAlertTriangle,
   IconCalendar,
@@ -20,7 +20,6 @@ import {
   IconStatusChange,
 } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {

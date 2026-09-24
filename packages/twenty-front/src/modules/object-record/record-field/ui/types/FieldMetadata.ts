@@ -244,6 +244,14 @@ export type FieldLinksValue = {
   primaryLinkUrl: string | null;
   secondaryLinks?: { label: string | null; url: string | null }[] | null;
 };
+export type FormFieldLinksValue = {
+  primaryLinkLabel: string | null;
+  primaryLinkUrl: string | null;
+  secondaryLinks?:
+    | { label: string | null; url: string | null }[]
+    | string
+    | null;
+};
 
 export const fieldMetadataCurrencyFormat = ['short', 'full'] as const;
 export type FieldCurrencyFormat = (typeof fieldMetadataCurrencyFormat)[number];
@@ -337,11 +345,17 @@ export type PhoneRecord = {
   countryCode: string;
 };
 
+export type PhoneRecordNullable = {
+  number: string | null;
+  callingCode: string | null;
+  countryCode: string | null;
+};
+
 export type FieldPhonesValue = {
-  primaryPhoneNumber: string;
-  primaryPhoneCountryCode: string;
-  primaryPhoneCallingCode?: string;
-  additionalPhones?: PhoneRecord[] | null;
+  primaryPhoneNumber: string | null;
+  primaryPhoneCountryCode: string | null;
+  primaryPhoneCallingCode?: string | null;
+  additionalPhones?: PhoneRecordNullable[] | null;
 };
 
 export type FieldFilesValue = {

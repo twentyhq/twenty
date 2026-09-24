@@ -1,5 +1,6 @@
 import { aiEvaluationModelsState } from '@/client-config/states/aiEvaluationModelsState';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -7,24 +8,25 @@ import { type WorkflowClassifyAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowClassifyQuestionCriteria } from '@/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowClassifyQuestionCriteria';
+import { useClassifyForm } from '@/workflow/workflow-steps/workflow-actions/classify-action/hooks/useClassifyForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
   type AiEvaluationQuestionType,
   AI_EVALUATION_QUESTION_TYPES,
+  JEV_MODEL_ID,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowClassifyQuestion } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 import {
-  IconChartBar,
-  IconCheckbox,
-  IconCircleDot,
+  IconListCheck,
+  IconPercentage,
   IconPlus,
+  IconStairs,
   IconTrash,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button, Field } from 'twenty-ui/primitives/input';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -34,14 +36,15 @@ const StyledQuestion = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledQuestionHeader = styled.div`
-  align-items: flex-end;
+const StyledNameRow = styled.div`
+  align-items: end;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+`;
 
-  & > *:first-child {
-    flex: 1;
-  }
+const StyledGrowingField = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 type WorkflowEditActionClassifyProps = {
@@ -54,28 +57,13 @@ type WorkflowEditActionClassifyProps = {
       };
 };
 
-// The settings schema requires an answer name, so a blank one makes the whole
-// step unsaveable the moment a question is added. New questions get a unique
-// placeholder the author can rename.
-const buildEmptyQuestion = (
-  existingQuestions: WorkflowClassifyQuestion[],
-): WorkflowClassifyQuestion => {
-  const takenNames = new Set(existingQuestions.map(({ name }) => name));
-
-  let suffix = existingQuestions.length + 1;
-
-  while (takenNames.has(`question_${suffix}`)) {
-    suffix += 1;
-  }
-
-  return {
-    id: v4(),
-    name: `question_${suffix}`,
-    type: 'choice',
-    instructions: '',
-    criteria: [],
-  };
-};
+const buildEmptyQuestion = (): WorkflowClassifyQuestion => ({
+  id: v4(),
+  name: '',
+  type: 'choice',
+  instructions: '',
+  criteria: [],
+});
 
 export const WorkflowEditActionClassify = ({
   action,
@@ -84,7 +72,15 @@ export const WorkflowEditActionClassify = ({
   const { t } = useLingui();
 
   const readonly = actionOptions.readonly === true;
-  const questions = action.settings.input.questions;
+  const { input, updateInput } = useClassifyForm({
+    action,
+    onActionUpdate:
+      actionOptions.readonly === true
+        ? undefined
+        : actionOptions.onActionUpdate,
+    readonly,
+  });
+  const questions = input.questions;
 
   const questionTypeLabels: Record<AiEvaluationQuestionType, string> = {
     choice: t`Pick one option`,
@@ -93,95 +89,34 @@ export const WorkflowEditActionClassify = ({
   };
 
   const questionTypeIcons = {
-    choice: IconCircleDot,
-    score: IconChartBar,
-    boolean: IconCheckbox,
+    choice: IconListCheck,
+    score: IconStairs,
+    boolean: IconPercentage,
   };
 
-  const aiEvaluationModels = useAtomStateValue(aiEvaluationModelsState);
+  const namePlaceholders: Record<AiEvaluationQuestionType, string> = {
+    choice: t`profession`,
+    score: t`customer_satisfaction`,
+    boolean: t`would_recommend`,
+  };
 
-  const selectedModelId = action.settings.input.modelId;
+  const questionHints: Record<AiEvaluationQuestionType, string> = {
+    choice: t`For example: What is this person's current profession?`,
+    score: t`For example: How satisfied is the customer based on their feedback? Grade from dissatisfied to satisfied.`,
+    boolean: t`For example: Would this customer recommend the service based on their feedback?`,
+  };
 
-  // The workspace default is the point of the node: a workflow built before an
-  // evaluation provider existed starts using one the moment it is configured,
-  // with no edit. Naming a model pins that choice instead.
-  const modelOptions = [
-    {
-      label: t`Workspace default`,
-      value: '',
-    },
-    ...aiEvaluationModels
-      .filter(
-        (evaluationModel) =>
-          !evaluationModel.isDeprecated ||
-          evaluationModel.modelId === selectedModelId,
-      )
-      .map((evaluationModel) => ({
-        label: evaluationModel.label,
-        value: evaluationModel.modelId,
-      })),
-  ];
-
-  const selectedModel = aiEvaluationModels.find(
-    (evaluationModel) => evaluationModel.modelId === selectedModelId,
+  const jevModel = useAtomStateValue(aiEvaluationModelsState).find(
+    (model) => model.modelId === JEV_MODEL_ID,
   );
 
-  const getModelDescription = () => {
-    if (!isDefined(selectedModel)) {
-      return t`Runs on the workspace's evaluation model, or its language model when none is configured. Probabilities are only returned by an evaluation model.`;
-    }
-
-    if (!selectedModel.isAvailable) {
-      return t`This model is in the catalog but its provider is not configured, so runs will fail until someone sets its API key.`;
-    }
-
-    return t`Returns a calibrated probability for every answer.`;
-  };
-
-  // Only an evaluation model can answer a question whose answer IS a
-  // probability, so offering one where none would take the run builds a step
-  // that activates and then fails. choice and score survive the language-model
-  // fallback, which answers them without a distribution.
-  const modelsThatCouldRun = isDefined(selectedModel)
-    ? [selectedModel]
-    : aiEvaluationModels.filter(
-        (evaluationModel) => evaluationModel.isAvailable,
-      );
-
-  const runnableQuestionTypes = new Set(
-    modelsThatCouldRun.flatMap(
-      (evaluationModel) => evaluationModel.supportedQuestionTypes,
-    ),
+  const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.map(
+    (questionType) => ({
+      label: questionTypeLabels[questionType],
+      value: questionType,
+      Icon: questionTypeIcons[questionType],
+    }),
   );
-
-  const questionTypeOptions = AI_EVALUATION_QUESTION_TYPES.filter(
-    (questionType) =>
-      questionType !== 'boolean' ||
-      runnableQuestionTypes.has('boolean') ||
-      // A step that already asks one keeps the option, so opening it does not
-      // silently rewrite the question to another type.
-      questions.some((question) => question.type === 'boolean'),
-  ).map((questionType) => ({
-    label: questionTypeLabels[questionType],
-    value: questionType,
-    Icon: questionTypeIcons[questionType],
-  }));
-
-  const updateInput = (
-    input: Partial<WorkflowClassifyAction['settings']['input']>,
-  ) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: { ...action.settings.input, ...input },
-      },
-    });
-  };
 
   const updateQuestion = (
     questionId: string,
@@ -198,32 +133,18 @@ export const WorkflowEditActionClassify = ({
     questionId: string,
     questionType: AiEvaluationQuestionType,
   ) => {
-    // Criteria mean different things per type — named options, ordered levels,
-    // nothing at all — so switching type starts them over rather than carrying
-    // a list the new type would misread.
     updateQuestion(questionId, { type: questionType, criteria: [] });
   };
 
   return (
     <>
       <WorkflowStepBody>
-        <Select
-          dropdownId={`classify-model-${action.id}`}
-          label={t`Model`}
-          value={selectedModelId ?? ''}
-          options={modelOptions}
-          onChange={(modelId) =>
-            updateInput({ modelId: modelId === '' ? undefined : modelId })
-          }
-          disabled={actionOptions.readonly}
-          description={getModelDescription()}
-          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-        />
         <FormTextFieldInput
-          label={t`State`}
+          label={t`Context`}
           multiline
-          defaultValue={action.settings.input.state}
-          placeholder={t`What the model should read`}
+          defaultValue={input.state}
+          placeholder={t`What should be classified?`}
+          hint={t`For example: Alex is a software engineer with three years of React experience.`}
           readonly={readonly}
           VariablePicker={WorkflowVariablePicker}
           onChange={(state) => updateInput({ state })}
@@ -233,32 +154,40 @@ export const WorkflowEditActionClassify = ({
           <StyledQuestion key={question.id}>
             <HorizontalSeparator noMargin />
 
-            <StyledQuestionHeader>
-              <FormTextFieldInput
-                label={t`Answer name`}
-                defaultValue={question.name}
-                placeholder={t`category`}
-                readonly={readonly}
-                onChange={(name) => updateQuestion(question.id, { name })}
-              />
-              {!readonly && questions.length > 1 && (
-                <Button
-                  startIcon={<IconTrash />}
-                  aria-label={t`Delete`}
-                  onClick={() =>
-                    updateInput({
-                      questions: questions.filter(
-                        (candidate) => candidate.id !== question.id,
-                      ),
-                    })
-                  }
-                />
-              )}
-            </StyledQuestionHeader>
+            <FormFieldInputContainer>
+              <StyledNameRow>
+                <StyledGrowingField>
+                  <FormTextFieldInput
+                    key={question.type}
+                    label={t`Name`}
+                    defaultValue={question.name}
+                    placeholder={namePlaceholders[question.type]}
+                    readonly={readonly}
+                    onChange={(name) => updateQuestion(question.id, { name })}
+                  />
+                </StyledGrowingField>
+                {!readonly && questions.length > 1 && (
+                  <Button
+                    startIcon={<IconTrash />}
+                    aria-label={t`Delete`}
+                    onClick={() =>
+                      updateInput({
+                        questions: questions.filter(
+                          (candidate) => candidate.id !== question.id,
+                        ),
+                      })
+                    }
+                  />
+                )}
+              </StyledNameRow>
+              <Field.Description>
+                {t`Use this name to find the answer in later workflow steps.`}
+              </Field.Description>
+            </FormFieldInputContainer>
 
             <Select
               dropdownId={`workflow-classify-question-type-${question.id}`}
-              label={t`Decision`}
+              label={t`Type`}
               options={questionTypeOptions}
               dropdownWidth={GenericDropdownContentWidth.Large}
               value={question.type}
@@ -269,10 +198,11 @@ export const WorkflowEditActionClassify = ({
             />
 
             <FormTextFieldInput
-              label={t`Instructions`}
+              label={t`Question`}
               multiline
               defaultValue={question.instructions}
               placeholder={t`What should the model decide?`}
+              hint={questionHints[question.type]}
               readonly={readonly}
               VariablePicker={WorkflowVariablePicker}
               onChange={(instructions) =>
@@ -282,7 +212,13 @@ export const WorkflowEditActionClassify = ({
 
             {question.type !== 'boolean' && (
               <WorkflowClassifyQuestionCriteria
+                key={question.type}
                 criteria={question.criteria}
+                maxCriteria={
+                  question.type === 'score'
+                    ? (jevModel?.maxScoreLevels ?? undefined)
+                    : (jevModel?.maxCriteriaPerQuestion ?? undefined)
+                }
                 variant={question.type === 'choice' ? 'options' : 'levels'}
                 readonly={readonly}
                 onChange={(criteria) =>
@@ -294,16 +230,19 @@ export const WorkflowEditActionClassify = ({
         ))}
 
         {!readonly && (
-          <Button
-            startIcon={<IconPlus />}
-            onClick={() =>
-              updateInput({
-                questions: [...questions, buildEmptyQuestion(questions)],
-              })
-            }
-          >
-            {t`Add question`}
-          </Button>
+          <>
+            <HorizontalSeparator noMargin />
+            <Button
+              startIcon={<IconPlus />}
+              onClick={() =>
+                updateInput({
+                  questions: [...questions, buildEmptyQuestion()],
+                })
+              }
+            >
+              {t`Add question`}
+            </Button>
+          </>
         )}
       </WorkflowStepBody>
 

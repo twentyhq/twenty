@@ -2,6 +2,8 @@ import { useStore } from 'jotai';
 
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
+import { recordIndexGroupLoadLimitSaveComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitSaveComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
@@ -16,6 +18,14 @@ export const useRecordGroupVisibility = () => {
     useAtomComponentStateCallbackState(
       recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
+
+  const recordIndexGroupLoadLimit = useAtomComponentStateCallbackState(
+    recordIndexGroupLoadLimitComponentState,
+  );
+
+  const recordIndexGroupLoadLimitSave = useAtomComponentStateCallbackState(
+    recordIndexGroupLoadLimitSaveComponentState,
+  );
 
   const { saveViewGroup } = useSaveCurrentViewGroups();
   const { updateCurrentView } = useUpdateCurrentView();
@@ -44,8 +54,63 @@ export const useRecordGroupVisibility = () => {
     });
   }, [store, recordIndexShouldHideEmptyRecordGroups, updateCurrentView]);
 
+  // A failed save restores the last saved limit, since it drives what groups fetch.
+  // Only the latest request may roll back: the menu stays open during a save.
+  const handleGroupLoadLimitChange = useCallback(
+    async (limit: number) => {
+      const { latestRequestId, pendingRequestCount, savedGroupLoadLimit } =
+        store.get(recordIndexGroupLoadLimitSave);
+
+      const requestId = latestRequestId + 1;
+
+      store.set(recordIndexGroupLoadLimitSave, {
+        latestRequestId: requestId,
+        pendingRequestCount: pendingRequestCount + 1,
+        // With nothing in flight the atom holds a saved value, possibly re-hydrated
+        // from another view; mid-save it can hold an optimistic one that may fail too
+        savedGroupLoadLimit:
+          pendingRequestCount === 0
+            ? store.get(recordIndexGroupLoadLimit)
+            : savedGroupLoadLimit,
+      });
+
+      store.set(recordIndexGroupLoadLimit, limit);
+
+      try {
+        await updateCurrentView({
+          groupLoadLimit: limit,
+        });
+
+        store.set(recordIndexGroupLoadLimitSave, (save) => ({
+          ...save,
+          savedGroupLoadLimit: limit,
+        }));
+      } catch (error) {
+        const save = store.get(recordIndexGroupLoadLimitSave);
+
+        if (save.latestRequestId === requestId) {
+          store.set(recordIndexGroupLoadLimit, save.savedGroupLoadLimit);
+        }
+
+        throw error;
+      } finally {
+        store.set(recordIndexGroupLoadLimitSave, (save) => ({
+          ...save,
+          pendingRequestCount: save.pendingRequestCount - 1,
+        }));
+      }
+    },
+    [
+      store,
+      recordIndexGroupLoadLimit,
+      recordIndexGroupLoadLimitSave,
+      updateCurrentView,
+    ],
+  );
+
   return {
     handleVisibilityChange,
     handleHideEmptyRecordGroupChange,
+    handleGroupLoadLimitChange,
   };
 };

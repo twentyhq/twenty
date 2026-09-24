@@ -8,6 +8,7 @@ Every app must have exactly one `defineApplication` call. It declares:
 
 - **Identity** — universal identifier, display name, description.
 - **Permissions** — which role its logic functions and front components run under.
+- **Media capabilities** *(optional)*: microphone or camera access requested by front components, approved separately from role permissions.
 - **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
 - **Pre-install / post-install / uninstall hooks** *(optional)* — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
 - **Billing** *(optional)* — `billing.recurring` for subscription fees the platform raises automatically, `billing.operations` for what your app charges credits for, and `billing.description` for the marketplace; see [Charging Credits](/developers/extend/apps/logic/credits).
@@ -44,12 +45,34 @@ Notes:
 - `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables.
 - Your app can also read and update its own variable values at runtime, which is how a custom settings component saves what the user typed: see [Reading and updating variables at runtime](/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime). An application only ever reaches its own variables, in its own workspace.
 - The default role is detected automatically from the role file marked with [`defineApplicationRole()`](/developers/extend/apps/config/roles) — you do not need to reference it from `defineApplication()`.
-- Pre-install, post-install, and uninstall functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+- Pre-install, post-install, and uninstall functions, and the health check, are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
 - Passing `defaultRoleUniversalIdentifier` explicitly is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.
 - `serverVariables` are instance-scoped configuration and secrets (e.g. API keys). Unlike `applicationVariables`, they declare no value in the manifest — the workspace operator fills them in from the app's settings, and they are injected into logic functions only once set.
+- An app can report its own configuration state with [`defineHealthCheck()`](/developers/extend/apps/logic/logic-functions#health-check), for what only the app can know — a key that is present but revoked, a third-party account on the wrong plan. `isRequired` covers what Twenty can see by itself; the health check covers the rest.
 - Both kinds of variable accept `isRequired: true`. A required variable the workspace has not filled in yet leaves the app unconfigured: its settings page shows a banner naming the missing variables, with a button that jumps to the tab where they are set. Mark as required only what the app genuinely cannot run without — an optional variable with a sensible default should stay optional.
 - Both kinds of variable accept `isDeprecated: true`. Use it to retire a variable instead of deleting it: keeping the key declared preserves the stored value (deleting it destroys the value the operator entered), and the variable is still injected, so your code can fall back to it — `process.env.NEW_API_KEY ?? process.env.API_KEY`. A deprecated variable disappears from the app's settings once it has no value, and never counts toward the app's configuration check, so `isDeprecated` beats `isRequired`.
-- To render a custom configuration UI as the app's **Settings** tab (in place of the default **Variables** tab), declare a front component with [`defineSettingsFrontComponent()`](/developers/extend/apps/layout/front-components#custom-settings-component) in its own file. Only one is allowed per app. System-managed sections (auto-upgrade, App URL, connections) stay in the app's **General** tab, where App URL only shows with **Advanced mode** on.
+- To add your own entries to the app's settings menu (in place of the generated **Variables** page), declare a front component and point a [`defineSettingsMenuItem()`](/developers/extend/apps/layout/front-components#settings-menu-items) at it, in its own file. Declare as many as you need and order them with `position`; `scope` puts an item under the workspace settings or under each member's own settings. The system-managed **General** item (auto-upgrade, App URL, connections) always comes first, and App URL only shows with **Advanced mode** on.
+
+## Requested media capabilities
+
+Set `requestedCapabilities` when a front component uses `navigator.mediaDevices.getUserMedia()`. The optional array accepts `'microphone'`, `'camera'`, or both. Omit it or use an empty array when the app does not need media capture.
+
+```ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'Media recorder',
+  description: 'Record audio and video in your workspace',
+  requestedCapabilities: ['microphone', 'camera'],
+});
+```
+
+Declared capabilities appear during installation. Approval requires a workspace member who can manage apps and applies to the whole workspace. These grants are separate from the app's role permissions and do not replace browser or operating system permissions.
+
+An installed app without the required grant pauses capture and shows an approval dialog on first use, including older apps without capability declarations. Declining leaves capture blocked before browser permissions are requested. Package updates do not automatically grant additional access. Locally synced development apps receive the capabilities declared in their manifest.
+
+See [Media capture](/developers/extend/apps/layout/front-components#media-capture) for capture behavior and recording indicators.
 
 ## Variable types
 

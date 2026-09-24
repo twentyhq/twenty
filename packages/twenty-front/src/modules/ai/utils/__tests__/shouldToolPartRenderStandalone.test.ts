@@ -1,6 +1,6 @@
 import { type ToolUIPart } from 'ai';
 
-import { type ToolWidget } from '@/ai/types/tool-widget.type';
+import { type ToolWidget } from '@/ai/types/ToolWidget';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
 
 const buildToolPart = (state: string): ToolUIPart =>

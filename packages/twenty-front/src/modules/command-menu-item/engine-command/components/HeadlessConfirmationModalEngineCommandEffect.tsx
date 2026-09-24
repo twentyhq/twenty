@@ -1,15 +1,15 @@
 import { useIsHeadlessEngineCommandEffectInitialized } from '@/command-menu-item/engine-command/hooks/useIsHeadlessEngineCommandEffectInitialized';
 import { type ReactNode, useEffect } from 'react';
 
-import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from 'twenty-shared/constants';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { type CommandMenuItemConfirmationModalLinkButton } from '@/command-menu-item/confirmation-modal/states/commandMenuItemConfirmationModalState';
-import { type CommandMenuConfirmationModalResultBrowserEventDetail } from 'twenty-shared/types';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from 'twenty-shared/constants';
+import { type CommandMenuConfirmationModalResultBrowserEventDetail } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/components';
 import { type ButtonColor } from 'twenty-ui/primitives/input';
 
 export type HeadlessConfirmationModalEngineCommandEffectProps = {

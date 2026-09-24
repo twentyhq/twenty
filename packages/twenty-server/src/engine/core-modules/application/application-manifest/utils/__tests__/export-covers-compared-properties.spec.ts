@@ -156,6 +156,7 @@ const VIEW_MANIFEST: ViewManifest = {
   openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
   mainGroupByFieldMetadataUniversalIdentifier: FIELD_UID,
   shouldHideEmptyGroups: true,
+  groupLoadLimit: 25,
   anyFieldFilterValue: 'acme',
   kanbanColumnWidth: 240,
   kanbanAggregateOperation: AggregateOperations.SUM,

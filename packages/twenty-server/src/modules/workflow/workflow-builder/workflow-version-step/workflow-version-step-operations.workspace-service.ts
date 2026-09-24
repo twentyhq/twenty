@@ -569,7 +569,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: 'AI Agent',
+            name: 'Agent',
             type: WorkflowActionType.AI_AGENT,
             settings: {
               ...BASE_STEP_DEFINITION,
@@ -594,10 +594,16 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 questions: [
                   {
                     id: v4(),
-                    name: 'category',
+                    name: '',
                     type: 'choice',
                     instructions: '',
-                    criteria: [],
+                    criteria: [
+                      {
+                        id: v4(),
+                        name: 'Lawyer',
+                        description: 'Advises clients on legal matters',
+                      },
+                    ],
                   },
                 ],
               },

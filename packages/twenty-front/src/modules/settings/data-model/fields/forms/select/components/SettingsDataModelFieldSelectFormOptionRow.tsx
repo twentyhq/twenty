@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
@@ -8,9 +7,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { useContext } from 'react';
+import { LightIconButton, type ColorLabels } from 'twenty-ui/components';
 import {
   IconCheck,
   IconDotsVertical,
@@ -18,15 +17,11 @@ import {
   IconTrash,
   IconX,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
-import {
-  type ColorLabels,
-  MenuItem,
-  ListItem,
-} from 'twenty-ui/primitives/navigation';
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 
 const useColorLabels = (): ColorLabels => ({
   gray: t`Gray`,
@@ -185,7 +180,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
                   indicator="check"
                   startIcon={<ColorSample colorName={colorName} />}
                 >
-                  <OverflowingTextWithTooltip text={colorLabels[colorName]} />
+                  {colorLabels[colorName]}
                 </ListItem>
               ))}
             </DropdownMenuItemsContainer>
@@ -234,34 +229,31 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
             <DropdownContent>
               <DropdownMenuItemsContainer>
                 {isDefault ? (
-                  <MenuItem
-                    LeftIcon={IconX}
-                    text={t`Remove as default`}
+                  <ListItem
+                    startIcon={<IconX />}
                     onClick={() => {
                       onRemoveAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                     }}
-                  />
+                  >{t`Remove as default`}</ListItem>
                 ) : (
-                  <MenuItem
-                    LeftIcon={IconCheck}
-                    text={t`Set as default`}
+                  <ListItem
+                    startIcon={<IconCheck />}
                     onClick={() => {
                       onSetAsDefault?.();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                     }}
-                  />
+                  >{t`Set as default`}</ListItem>
                 )}
                 {!!onRemove && !isDefault && (
-                  <MenuItem
-                    accent="danger"
-                    LeftIcon={IconTrash}
-                    text={t`Remove option`}
+                  <ListItem
+                    color="danger"
+                    startIcon={<IconTrash />}
                     onClick={() => {
                       onRemove();
                       closeActionsDropdown(SELECT_ACTIONS_DROPDOWN_ID);
                     }}
-                  />
+                  >{t`Remove option`}</ListItem>
                 )}
               </DropdownMenuItemsContainer>
             </DropdownContent>

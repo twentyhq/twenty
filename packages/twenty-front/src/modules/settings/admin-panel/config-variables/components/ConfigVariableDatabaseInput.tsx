@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -149,7 +148,7 @@ export const ConfigVariableDatabaseInput = ({
                         indicator="checkbox"
                         onClick={() => handleMultiSelectChange(option.value)}
                       >
-                        <OverflowingTextWithTooltip text={option.label} />
+                        {option.label}
                       </ListItem>
                     ))}
                   </DropdownMenuItemsContainer>

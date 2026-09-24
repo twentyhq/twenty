@@ -1,5 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { EmailRecipientSuggestionMenuItem } from '@/activities/emails/recipients/components/EmailRecipientSuggestionMenuItem';
 import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
@@ -27,7 +27,7 @@ export const EmailRecipientSuggestionsDropdownContent = ({
       <DropdownContent widthInPixels={340}>
         <DropdownMenuItemsContainer hasMaxHeight>
           {suggestions.length === 0 ? (
-            <MenuItem text={t`No results`} />
+            <ListItem disabled>{t`No results`}</ListItem>
           ) : (
             <SelectableList
               selectableListInstanceId={selectableListInstanceId}

@@ -1,5 +1,5 @@
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
+import { type RequestContext } from 'src/engine/api/rest/types/request-context.type';
 
 export const parseStartingAfterRestRequest = (
   request: AuthenticatedRequest | RequestContext,

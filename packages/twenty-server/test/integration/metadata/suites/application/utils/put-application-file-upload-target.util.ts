@@ -6,7 +6,7 @@ export const putApplicationFileUploadTarget = ({
   uploadTarget,
   body,
 }: {
-  uploadTarget: ApplicationFileUploadTarget;
+  uploadTarget: Pick<ApplicationFileUploadTarget, 'uploadUrl' | 'contentType'>;
   body: Buffer;
 }) => {
   const { pathname, search } = new URL(uploadTarget.uploadUrl);

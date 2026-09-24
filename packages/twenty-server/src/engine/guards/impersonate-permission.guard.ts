@@ -46,6 +46,7 @@ export class ImpersonatePermissionGuard implements CanActivate {
         userWorkspaceId,
         setting: PermissionFlagType.IMPERSONATE,
         workspaceId,
+        applicationId: undefined,
       });
 
     if (hasPermission === true) return true;

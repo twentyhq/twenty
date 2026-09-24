@@ -7,7 +7,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-@Processor(MessageQueue.workspaceQueue)
+@Processor(MessageQueue.applicationUpgradeQueue)
 export class UpgradeApplicationsJob {
   constructor(
     private readonly applicationUpgradeService: ApplicationUpgradeService,
@@ -15,7 +15,7 @@ export class UpgradeApplicationsJob {
 
   @Process(UPGRADE_APPLICATIONS_JOB_NAME)
   async handle(data: UpgradeApplicationsJobData): Promise<void> {
-    await this.applicationUpgradeService.upgradeAllApplications({
+    await this.applicationUpgradeService.enqueueApplicationUpgrades({
       applicationRegistrationId: data.applicationRegistrationId,
       onlyAutoUpgrade: data.onlyAutoUpgrade,
     });

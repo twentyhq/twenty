@@ -358,6 +358,18 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
   }
 
+  public async evictWorkspaceFromLocalCache(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.memoizer.clearKeys(`${workspaceId}-`);
+
+    for (const localKey of this.localCache.keys()) {
+      if (localKey.endsWith(`:${workspaceId}`)) {
+        this.localCache.delete(localKey);
+      }
+    }
+  }
+
   private assertValidCacheParameters(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],

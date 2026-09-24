@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -43,7 +44,6 @@ import {
 } from 'twenty-ui/icon';
 
 import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
@@ -380,11 +380,8 @@ export const SettingsDataModelFieldSelectForm = ({
                           widthInPixels={GenericDropdownContentWidth.Narrow}
                         >
                           <DropdownMenuItemsContainer>
-                            <MenuItem
-                              text={
-                                isBulkInputMode ? t`Single edit` : t`Bulk edit`
-                              }
-                              LeftIcon={IconPencil}
+                            <ListItem
+                              startIcon={<IconPencil />}
                               onClick={() => {
                                 if (!isBulkInputMode) {
                                   setBulkInputText(
@@ -396,16 +393,17 @@ export const SettingsDataModelFieldSelectForm = ({
                                 );
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                               }}
-                            />
-                            <MenuItem
-                              text={t`Remove all`}
-                              accent="danger"
-                              LeftIcon={IconTrash}
+                            >
+                              {isBulkInputMode ? t`Single edit` : t`Bulk edit`}
+                            </ListItem>
+                            <ListItem
+                              color="danger"
+                              startIcon={<IconTrash />}
                               onClick={() => {
                                 onChange([]);
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                               }}
-                            />
+                            >{t`Remove all`}</ListItem>
                           </DropdownMenuItemsContainer>
                         </DropdownContent>
                       }

@@ -9,6 +9,7 @@ const WORKSPACE_BOUND_PROPERTIES = [
   'userWorkspaceId',
   'apiKeyId',
   'workflowVersionId',
+  'coreWorkflowVersionId',
   'targetRecordId',
 ] as const;
 

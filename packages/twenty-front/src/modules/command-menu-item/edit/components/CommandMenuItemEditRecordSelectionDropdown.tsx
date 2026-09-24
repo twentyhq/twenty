@@ -1,5 +1,4 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { useSelectFirstRecordForEditMode } from '@/command-menu-item/edit/hooks/useSelectFirstRecordForEditMode';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -120,9 +119,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
                 selected={isNoneSelected}
                 indicator="check"
                 startIcon={<SelectOptionIcon Icon={IconSquareX} />}
-              >
-                <OverflowingTextWithTooltip text={t`No record selected`} />
-              </ListItem>
+              >{t`No record selected`}</ListItem>
               <ListItem
                 onClick={() => handleSelectMode('selection')}
                 role="option"
@@ -130,9 +127,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
                 selected={!isNoneSelected}
                 indicator="check"
                 startIcon={<SelectOptionIcon Icon={IconSquareCheck} />}
-              >
-                <OverflowingTextWithTooltip text={t`Records selected`} />
-              </ListItem>
+              >{t`Records selected`}</ListItem>
             </DropdownMenuItemsContainer>
           </StyledDropdownMenuContainer>
         </DropdownContent>
