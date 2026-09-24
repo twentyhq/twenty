@@ -17,10 +17,15 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'record-changes',
     label: msg`Record changes`,
+    entryLabel: msg`Record change`,
     Icon: IconAddressBook,
     table: EventLogTable.OBJECT_EVENT,
     requiresAuditLogs: true,
     columns: LOG_CONSOLE_EVENT_COLUMNS,
+    idFields: [
+      { label: msg`Record ID`, getId: (entry) => entry.recordId },
+      { label: msg`User ID`, getId: (entry) => entry.userId },
+    ],
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} change`,
@@ -30,10 +35,25 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'app-logs',
     label: msg`App logs`,
+    entryLabel: msg`App log`,
     Icon: IconTerminal,
     table: EventLogTable.APPLICATION_LOG,
     requiresAuditLogs: false,
     columns: LOG_CONSOLE_APPLICATION_LOG_COLUMNS,
+    idFields: [
+      {
+        label: msg`Execution ID`,
+        getId: (entry) => entry.properties?.executionId,
+      },
+      {
+        label: msg`Function ID`,
+        getId: (entry) => entry.properties?.logicFunctionId,
+      },
+      {
+        label: msg`App ID`,
+        getId: (entry) => entry.properties?.applicationId,
+      },
+    ],
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} log`,
@@ -45,10 +65,18 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'page-views',
     label: msg`Page views`,
+    entryLabel: msg`Page view`,
     Icon: IconEye,
     table: EventLogTable.PAGEVIEW,
     requiresAuditLogs: true,
     columns: LOG_CONSOLE_EVENT_COLUMNS,
+    idFields: [
+      { label: msg`User ID`, getId: (entry) => entry.userId },
+      {
+        label: msg`Session ID`,
+        getId: (entry) => entry.properties?.sessionId,
+      },
+    ],
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} page view`,
@@ -58,10 +86,14 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
   {
     id: 'usage',
     label: msg`Usage`,
+    entryLabel: msg`Usage event`,
     Icon: IconGauge,
     table: EventLogTable.USAGE_EVENT,
     requiresAuditLogs: true,
     columns: LOG_CONSOLE_USAGE_EVENT_COLUMNS,
+    idFields: [
+      { label: msg`User workspace ID`, getId: (entry) => entry.userId },
+    ],
     getCountLabel: ({ count, formattedCount }) =>
       plural(count, {
         one: `${formattedCount} usage event`,

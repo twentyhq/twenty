@@ -8,13 +8,16 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const SKELETON_ROW_COUNT = 8;
 
@@ -26,6 +29,7 @@ const SEVERITY_STRIPE_COLORS: Record<LogConsoleSeverity, string> = {
 const StyledHeaderRow = styled(TableRow)`
   background-color: ${themeCssVariables.background.primary};
   border-radius: 0;
+  box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.light};
   position: sticky;
   top: 0;
   z-index: 1;
@@ -48,17 +52,22 @@ type LogConsoleTableProps = {
   source: LogConsoleSource;
   entries: EventLogRecord[];
   loading: boolean;
+  selectedEntry?: EventLogRecord;
   onLoadMore: () => void;
+  onEntryClick: (entry: EventLogRecord) => void;
 };
 
 export const LogConsoleTable = ({
   source,
   entries,
   loading,
+  selectedEntry,
   onLoadMore,
+  onEntryClick,
 }: LogConsoleTableProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
     LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
@@ -74,7 +83,11 @@ export const LogConsoleTable = ({
     },
   });
 
-  const gridTemplateColumns = source.columns
+  const columns = isSidePanelOpened
+    ? source.columns.filter((column) => !column.hiddenWhenPanelOpen)
+    : source.columns;
+
+  const gridTemplateColumns = columns
     .map((column) => column.gridTrack)
     .join(' ');
 
@@ -87,7 +100,7 @@ export const LogConsoleTable = ({
           gridTemplateColumns={gridTemplateColumns}
           hoverBackgroundColor={themeCssVariables.background.primary}
         >
-          {source.columns.map((column) => (
+          {columns.map((column) => (
             <TableHeader key={column.id}>{t(column.label)}</TableHeader>
           ))}
         </StyledHeaderRow>
@@ -102,7 +115,7 @@ export const LogConsoleTable = ({
                 key={rowIndex}
                 gridTemplateColumns={gridTemplateColumns}
               >
-                {source.columns.map((column) => (
+                {columns.map((column) => (
                   <TableCell key={column.id}>
                     <Skeleton width={80} height={16} />
                   </TableCell>
@@ -115,12 +128,13 @@ export const LogConsoleTable = ({
             <StyledEntryRow
               key={entryIndex}
               gridTemplateColumns={gridTemplateColumns}
-              hoverBackgroundColor={
-                themeCssVariables.background.transparent.light
-              }
               severity={source.getSeverity?.(entry)}
+              isSelected={
+                isDefined(selectedEntry) && isDeeplyEqual(entry, selectedEntry)
+              }
+              onClick={() => onEntryClick(entry)}
             >
-              {source.columns.map((column) => (
+              {columns.map((column) => (
                 <TableCell
                   key={column.id}
                   gap={themeCssVariables.spacing[2]}

@@ -12,6 +12,7 @@ import { LogConsole } from '@/log-console/components/LogConsole';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
+import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -47,6 +48,13 @@ const WORKSPACE_WITH_LOGS_CONSOLE = {
   billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
 
+const StyledPageWithSidePanel = styled.div`
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+`;
+
 const StyledPageWithLogConsole = styled.div`
   display: flex;
   flex: 1;
@@ -56,10 +64,13 @@ const StyledPageWithLogConsole = styled.div`
 `;
 
 const PageWithLogConsole = () => (
-  <StyledPageWithLogConsole>
-    <SettingsObjects />
-    <LogConsole />
-  </StyledPageWithLogConsole>
+  <StyledPageWithSidePanel>
+    <StyledPageWithLogConsole>
+      <SettingsObjects />
+      <LogConsole />
+    </StyledPageWithLogConsole>
+    <SidePanelForDesktop />
+  </StyledPageWithSidePanel>
 );
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -166,6 +177,25 @@ export const AppLogsOpen: Story = {
   },
 };
 
+export const AppLogDetail: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByRole('tab', { name: 'App logs' }));
+
+    const [typeErrorMessage] = await canvas.findAllByText(
+      "TypeError: Cannot read properties of undefined (reading 'amount_due')",
+    );
+
+    await userEvent.click(typeErrorMessage);
+
+    await canvas.findByText(/at mapInvoiceToOpportunity/, { selector: 'pre' });
+  },
+};
+
 export const PageViewsOpen: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
@@ -177,6 +207,22 @@ export const PageViewsOpen: Story = {
       await canvas.findByRole('tab', { name: 'Page views' }),
     );
     await canvas.findByText('Priya Nair');
+  },
+};
+
+export const PageViewDetail: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('tab', { name: 'Page views' }),
+    );
+    await userEvent.click(await canvas.findByText('Priya Nair'));
+
+    await canvas.findByText('Session ID');
   },
 };
 

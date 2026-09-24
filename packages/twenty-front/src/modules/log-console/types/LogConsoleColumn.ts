@@ -8,4 +8,6 @@ export type LogConsoleColumn = {
   label: MessageDescriptor;
   gridTrack: string;
   renderCell: (entry: EventLogRecord) => ReactNode;
+  hiddenWhenPanelOpen?: boolean;
+  hiddenInDetails?: boolean;
 };

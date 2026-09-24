@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
 import { IconRefresh } from 'twenty-ui/icon';
@@ -8,12 +9,18 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LogConsoleTable } from '@/log-console/components/LogConsoleTable';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
+import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
+import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type EventLogRecord } from '~/generated-metadata/graphql';
 
 const RECORDS_PER_PAGE = 100;
 
@@ -45,6 +52,14 @@ type LogConsoleResultsProps = {
 export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
+  const { navigateSidePanel } = useNavigateSidePanel();
+
+  const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
+    logConsoleSelectedLogState,
+  );
+  const isLogConsoleSelectedLogOpened = useAtomStateValue(
+    isLogConsoleSelectedLogOpenedSelector,
+  );
 
   const { records, totalCount, loading, error, loadMore, refetch } =
     useEventLogs({
@@ -59,6 +74,16 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const refreshLogs = () => {
     getScrollWrapperElement().scrollWrapperElement?.scrollTo({ top: 0 });
     void refetch();
+  };
+
+  const openLog = (entry: EventLogRecord) => {
+    setLogConsoleSelectedLog({ source, entry });
+    navigateSidePanel({
+      page: SidePanelPages.LogDetail,
+      pageTitle: t(source.entryLabel),
+      pageIcon: source.Icon,
+      resetNavigationStack: true,
+    });
   };
 
   const renderLogs = () => {
@@ -94,7 +119,13 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         source={source}
         entries={records}
         loading={loading}
+        selectedEntry={
+          isLogConsoleSelectedLogOpened
+            ? logConsoleSelectedLog?.entry
+            : undefined
+        }
         onLoadMore={loadMore}
+        onEntryClick={openLog}
       />
     );
   };

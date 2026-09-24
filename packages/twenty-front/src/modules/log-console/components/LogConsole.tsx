@@ -24,10 +24,12 @@ import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { useLogConsoleHotKeys } from '@/log-console/hooks/useLogConsoleHotKeys';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { type LogConsoleSourceId } from '@/log-console/types/LogConsoleSourceId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
@@ -101,6 +103,7 @@ export const LogConsole = () => {
   const theme = useTheme();
   const { enqueueToast } = useToast();
   const isMobile = useIsMobile();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const isLogsSettingsSectionEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED,
@@ -123,6 +126,9 @@ export const LogConsole = () => {
   const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
     LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+  );
+  const isLogConsoleSelectedLogOpened = useAtomStateValue(
+    isLogConsoleSelectedLogOpenedSelector,
   );
 
   const isLogConsoleAllowed =
@@ -194,7 +200,14 @@ export const LogConsole = () => {
     setIsLogConsoleFullScreen(!isFullScreen);
   };
 
+  const closeSelectedLog = () => {
+    if (isLogConsoleSelectedLogOpened) {
+      void closeSidePanelMenu();
+    }
+  };
+
   const closeLogConsole = () => {
+    closeSelectedLog();
     setLogConsoleDisplayMode('closed');
     setIsLogConsoleFullScreen(false);
     enqueueToast({
@@ -269,6 +282,7 @@ export const LogConsole = () => {
           centerTabs
           componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}
           onClickTab={openLogConsole}
+          onChangeTab={closeSelectedLog}
           rightComponent={
             <StyledBarActions>
               <IconButton

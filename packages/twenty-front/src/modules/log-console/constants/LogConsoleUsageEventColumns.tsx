@@ -10,13 +10,13 @@ export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
   {
     id: 'event',
     label: msg`Event`,
-    gridTrack: '216px',
+    gridTrack: 'minmax(0, 216px)',
     renderCell: (entry) => <Text truncate>{entry.event}</Text>,
   },
   {
     id: 'member',
     label: msg`Member`,
-    gridTrack: '200px',
+    gridTrack: 'minmax(0, 200px)',
     renderCell: (entry) => (
       <LogConsoleMemberCell userWorkspaceId={entry.userId} />
     ),
@@ -28,5 +28,7 @@ export const LOG_CONSOLE_USAGE_EVENT_COLUMNS: LogConsoleColumn[] = [
     renderCell: (entry) => (
       <Text truncate>{JSON.stringify(entry.properties)}</Text>
     ),
+    hiddenWhenPanelOpen: true,
+    hiddenInDetails: true,
   },
 ];

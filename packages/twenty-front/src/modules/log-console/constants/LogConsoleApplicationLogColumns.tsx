@@ -45,6 +45,7 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
         {entry.event}
       </Chip>
     ),
+    hiddenWhenPanelOpen: true,
   },
   {
     id: 'message',
@@ -74,6 +75,7 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
         </>
       );
     },
+    hiddenInDetails: true,
   },
   {
     id: 'execution',
@@ -81,5 +83,7 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
     gridTrack: '104px',
     renderCell: (entry) =>
       entry.properties?.executionId?.slice(0, EXECUTION_ID_DISPLAYED_LENGTH),
+    hiddenWhenPanelOpen: true,
+    hiddenInDetails: true,
   },
 ];
