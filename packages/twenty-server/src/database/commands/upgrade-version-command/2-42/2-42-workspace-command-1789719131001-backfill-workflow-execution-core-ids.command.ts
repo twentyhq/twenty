@@ -51,6 +51,34 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
 
       await queryRunner.startTransaction();
 
+      const [, createdCoreWorkflowCount] = await queryRunner.query(
+        `WITH "createdCoreWorkflows" AS (
+           INSERT INTO core."workflow"
+             (id, "workspaceId", "universalIdentifier", "applicationId", name, "lastPublishedVersionId", "workspaceWorkflowId")
+           SELECT gen_random_uuid(), $1, gen_random_uuid(), workspace."workspaceCustomApplicationId",
+             w.name, NULLIF(w."lastPublishedVersionId", '')::uuid, w.id
+           FROM "${schema}"."workflow" w
+           JOIN core."workspace" workspace ON workspace.id = $1
+           WHERE w."deletedAt" IS NULL AND w."coreWorkflowId" IS NULL
+             AND NOT EXISTS (
+               SELECT 1 FROM core."workflow" existing
+               WHERE existing."workspaceId" = $1 AND existing."workspaceWorkflowId" = w.id
+             )
+           RETURNING id, "workspaceWorkflowId"
+         )
+         UPDATE "${schema}"."workflow" w
+         SET "coreWorkflowId" = "createdCoreWorkflows".id
+         FROM "createdCoreWorkflows"
+         WHERE w.id = "createdCoreWorkflows"."workspaceWorkflowId"`,
+        [workspaceId],
+      );
+
+      if (createdCoreWorkflowCount > 0) {
+        this.logger.log(
+          `${options.dryRun ? '[DRY RUN] Would create' : 'Created'} ${createdCoreWorkflowCount} missing core workflow(s) in workspace ${workspaceId}`,
+        );
+      }
+
       const [, createdCoreVersionCount] = await queryRunner.query(
         `WITH "createdCoreVersions" AS (
            INSERT INTO core."workflowVersion"

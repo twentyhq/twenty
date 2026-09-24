@@ -522,6 +522,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
+    description:
+      'Hostname sent in the SMTP EHLO greeting. Defaults to the machine hostname; set a fully qualified name if the relay rejects it',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  EMAIL_SMTP_NAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'SMTP port for sending emails',
     type: ConfigVariableType.NUMBER,
   })
@@ -1222,7 +1231,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description:
-      'Interval in milliseconds between two metric exports, for every meter driver. Read before the config store is available, so it cannot be overridden from the database.',
+      'Interval in milliseconds between two metric exports, for the drivers that push them: opentelemetry and console. The prometheus driver is scraped, so it is unaffected. Read before the config store is available, so it cannot be overridden from the database.',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
   })
@@ -1461,6 +1470,17 @@ export class ConfigVariables {
     allow_underscores: true,
   })
   REDIS_QUEUE_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Key prefix for BullMQ queue keys. Wrap it in curly braces (e.g. "{twenty}") so all keys of a queue share one hash slot when Redis is clustered (Redis Cluster, Redis Enterprise / Azure Managed Redis), otherwise multi-key Lua scripts fail with CROSSSLOT. Changing it orphans jobs stored under the previous prefix.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsString()
+  REDIS_QUEUE_PREFIX: string = 'bull';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
