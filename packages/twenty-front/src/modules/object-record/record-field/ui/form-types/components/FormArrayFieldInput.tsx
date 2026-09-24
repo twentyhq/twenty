@@ -9,7 +9,7 @@ import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/i
 import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
@@ -25,8 +25,16 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { useContext, useId, useRef, useState } from 'react';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import {
+  type FocusEvent,
+  type KeyboardEvent,
+  useContext,
+  useId,
+  useRef,
+  useState,
+} from 'react';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -156,19 +164,51 @@ export const FormArrayFieldInput = ({
     setNewItemDraftValue(value);
   };
 
-  const handleFirstItemInputEnter = () => {
-    if (isLimitReached) {
-      return;
+  const commitFirstItemDraft = () => {
+    if (
+      isLimitReached ||
+      draftValue.type !== 'static' ||
+      !isNonEmptyString(newItemDraftValue.trim())
+    ) {
+      return false;
     }
+
+    const updatedItems = [...draftValue.value, newItemDraftValue.trim()];
 
     setDraftValue({
       type: 'static',
-      value: [...draftValue.value, newItemDraftValue],
+      value: updatedItems,
     });
 
-    onChange([...draftValue.value, newItemDraftValue]);
+    onChange(updatedItems);
 
     setNewItemDraftValue('');
+
+    return true;
+  };
+
+  const handleRowBlur = (event: FocusEvent<HTMLDivElement>) => {
+    const isFocusMovingOutsideRow =
+      event.relatedTarget instanceof Node &&
+      !event.currentTarget.contains(event.relatedTarget);
+
+    if (isFocusMovingOutsideRow) {
+      commitFirstItemDraft();
+    }
+  };
+
+  const handleFirstItemInputKeyDown = (
+    event: KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key !== Key.Enter || event.nativeEvent.isComposing) {
+      return;
+    }
+
+    event.stopPropagation();
+
+    if (!commitFirstItemDraft()) {
+      return;
+    }
 
     openDropdown({
       dropdownComponentInstanceIdFromProps: dropdownId,
@@ -217,7 +257,18 @@ export const FormArrayFieldInput = ({
     });
   };
 
-  const handleNewItemInputBlur = () => {
+  const handleNewItemInputBlur = (event: FocusEvent<HTMLInputElement>) => {
+    const isFocusMovingToAnotherElement = event.relatedTarget instanceof Node;
+
+    if (
+      isAddingNewItem &&
+      isFocusMovingToAnotherElement &&
+      isNonEmptyString(inputValue.trim())
+    ) {
+      handleNewItemInputSubmit();
+      return;
+    }
+
     removeFocusItemFromFocusStackById({
       focusId: newItemInputInstanceId,
     });
@@ -313,7 +364,7 @@ export const FormArrayFieldInput = ({
     <FormFieldInputContainer data-testid={testId}>
       {label ? <Field.Label>{label}</Field.Label> : null}
 
-      <FormFieldInputRowContainer>
+      <FormFieldInputRowContainer onBlur={handleRowBlur}>
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
@@ -332,14 +383,14 @@ export const FormArrayFieldInput = ({
               </StyledDisplayModeReadonlyContainer>
             ) : draftValue.value.length === 0 ? (
               <StyledInputContainer>
-                <TextInput
-                  instanceId={formFieldInputInstanceId}
+                <StyledTextInput
+                  autoComplete="off"
                   placeholder={t`Enter an item`}
                   value={newItemDraftValue}
-                  copyButton={false}
-                  onChange={handleFirstItemInputChange}
-                  onEnter={handleFirstItemInputEnter}
-                  shouldTrim={false}
+                  onChange={(event) =>
+                    handleFirstItemInputChange(event.target.value)
+                  }
+                  onKeyDown={handleFirstItemInputKeyDown}
                 />
               </StyledInputContainer>
             ) : (
