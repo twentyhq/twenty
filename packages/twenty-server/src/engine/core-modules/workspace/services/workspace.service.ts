@@ -472,6 +472,10 @@ export class WorkspaceService {
       workspace.id,
     );
 
+    if (updatedWorkspace.subdomain !== workspace.subdomain) {
+      await this.billingService.registerPaymentMethodDomain(updatedWorkspace);
+    }
+
     if (payload.logo === null && isDefined(workspace.logoFileId)) {
       await this.fileCorePictureService.deleteCorePicture({
         fileId: workspace.logoFileId,

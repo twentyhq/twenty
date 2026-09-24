@@ -870,6 +870,7 @@ export class SignInUpService {
           workspaceId: workspace.id,
           workspaceDisplayName: workspace.displayName,
         });
+        await this.billingService.registerPaymentMethodDomain(workspace);
       }
 
       return { user, workspace };

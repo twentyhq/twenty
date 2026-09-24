@@ -8,6 +8,7 @@ import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stri
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeEntitlementService } from 'src/engine/core-modules/billing/stripe/services/stripe-entitlement.service';
+import { StripePaymentMethodDomainService } from 'src/engine/core-modules/billing/stripe/services/stripe-payment-method-domain.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
@@ -35,6 +36,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripeBillingMeterService,
     StripeCustomerService,
     StripeEntitlementService,
+    StripePaymentMethodDomainService,
     StripePriceService,
     StripeProductService,
     StripeInvoiceService,
@@ -46,6 +48,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripeBillingMeterService,
     StripeCustomerService,
     StripeEntitlementService,
+    StripePaymentMethodDomainService,
     StripePriceService,
     StripeCheckoutService,
     StripeSubscriptionItemService,
