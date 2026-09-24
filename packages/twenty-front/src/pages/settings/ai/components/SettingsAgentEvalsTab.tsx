@@ -5,6 +5,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useMutation } from '@apollo/client/react';
@@ -27,7 +28,6 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { v4 as uuidv4 } from 'uuid';
 import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
 import { getOperationName } from '~/utils/getOperationName';
 
@@ -91,8 +91,8 @@ export const SettingsAgentEvalsTab = ({
     awaitRefetchQueries: false,
   });
 
-  const evalInputs: EvalInput[] = evaluationInputs.map((text) => ({
-    id: uuidv4(),
+  const evalInputs: EvalInput[] = evaluationInputs.map((text, index) => ({
+    id: index.toString(),
     text,
   }));
 
@@ -175,7 +175,7 @@ export const SettingsAgentEvalsTab = ({
                     </LightIconButton>
                   }
                 />
-                <Dropdown.Content side="right">
+                <DropdownRootContent side="right">
                   <Dropdown.Section>
                     <Dropdown.ActionItem
                       startIcon={<IconPlayerPlay />}
@@ -187,7 +187,7 @@ export const SettingsAgentEvalsTab = ({
                       onClick={() => openDeleteModal(item.id)}
                     >{t`Delete`}</Dropdown.ActionItem>
                   </Dropdown.Section>
-                </Dropdown.Content>
+                </DropdownRootContent>
               </DropdownRoot>
             )}
             hasFooter={false}

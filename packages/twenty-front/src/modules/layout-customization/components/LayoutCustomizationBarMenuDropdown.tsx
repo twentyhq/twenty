@@ -1,10 +1,9 @@
 import { LAYOUT_CUSTOMIZATION_BAR_DROPDOWN_ID } from '@/layout-customization/constants/LayoutCustomizationBarDropdownId';
-import { useContext } from 'react';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
@@ -27,7 +26,6 @@ const StyledInvertedIconButtonWrapper = styled.span`
 `;
 
 export const LayoutCustomizationBarMenuDropdown = () => {
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
   const { t } = useLingui();
   const { openDialog } = useDialog();
 
@@ -49,10 +47,7 @@ export const LayoutCustomizationBarMenuDropdown = () => {
           }
         />
       </StyledInvertedIconButtonWrapper>
-      <Dropdown.Content
-        data-click-outside-id={parentClickOutsideId}
-        width={GenericDropdownContentWidth.Large}
-      >
+      <DropdownRootContent width={GenericDropdownContentWidth.Large}>
         <Dropdown.Section>
           <Dropdown.ActionItem
             startIcon={<IconReload />}
@@ -61,7 +56,7 @@ export const LayoutCustomizationBarMenuDropdown = () => {
             {t`Reset record page layout`}
           </Dropdown.ActionItem>
         </Dropdown.Section>
-      </Dropdown.Content>
+      </DropdownRootContent>
     </DropdownRoot>
   );
 };

@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconDotsVertical,
@@ -8,6 +6,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
@@ -26,7 +25,6 @@ export const AttachmentDropdown = ({
   onRename,
   hasDownloadPermission,
 }: AttachmentDropdownProps) => {
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
   const { t } = useLingui();
 
   return (
@@ -41,8 +39,7 @@ export const AttachmentDropdown = ({
           </LightIconButton>
         }
       />
-      <Dropdown.Content
-        data-click-outside-id={parentClickOutsideId}
+      <DropdownRootContent
         align="end"
         width={GenericDropdownContentWidth.Narrow}
       >
@@ -66,7 +63,7 @@ export const AttachmentDropdown = ({
             {t`Delete`}
           </Dropdown.ActionItem>
         </Dropdown.Section>
-      </Dropdown.Content>
+      </DropdownRootContent>
     </DropdownRoot>
   );
 };

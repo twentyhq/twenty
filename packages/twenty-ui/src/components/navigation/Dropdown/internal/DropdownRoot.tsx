@@ -8,6 +8,7 @@ import { type DropdownType } from '../types/DropdownType';
 import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
+import { preventDismissingClickActivation } from './preventDismissingClickActivation';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -116,6 +117,13 @@ export const DropdownRoot = ({
     <Popover.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
+        if (
+          eventDetails.reason === 'outside-press' ||
+          eventDetails.reason === 'focus-out'
+        ) {
+          preventDismissingClickActivation(eventDetails.event);
+        }
+
         setFocusOnOpen(eventDetails.reason !== 'trigger-hover');
         setOpen(nextOpen);
       }}

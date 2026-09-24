@@ -1,11 +1,22 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Dropdown } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
+
+const onModifierShortcut = fn();
+
+const ModifierShortcutListener = () => {
+  useGlobalHotkeys({
+    keys: ['ctrl+k'],
+    callback: onModifierShortcut,
+    containsModifier: true,
+  });
+
+  return null;
+};
 
 const meta: Meta<typeof DropdownRoot> = {
   title: 'UI/Layout/Dropdown/DropdownRoot',
@@ -16,13 +27,19 @@ const meta: Meta<typeof DropdownRoot> = {
     type: 'menu',
     globalHotkeysConfig: { enableGlobalHotkeysWithModifiers: true },
   },
+  beforeEach: () => {
+    onModifierShortcut.mockClear();
+  },
   render: (args) => (
-    <DropdownRoot {...args}>
-      <Dropdown.Trigger render={<Button>Options</Button>} />
-      <Dropdown.Content>
-        <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
-      </Dropdown.Content>
-    </DropdownRoot>
+    <>
+      <ModifierShortcutListener />
+      <DropdownRoot {...args}>
+        <Dropdown.Trigger render={<Button>Options</Button>} />
+        <Dropdown.Content>
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </DropdownRoot>
+    </>
   ),
 };
 
@@ -34,15 +51,14 @@ export const PreservesModifierShortcuts: Story = {
     const canvas = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(canvas.getByRole('button', { name: 'Options' }));
-    await expect(
-      await canvas.findByRole('menuitem', { name: 'Duplicate' }),
-    ).toBeVisible();
-    await expect(
-      jotaiStore.get(currentGlobalHotkeysConfigSelector.atom),
-    ).toEqual({
-      enableGlobalHotkeysConflictingWithKeyboard: false,
-      enableGlobalHotkeysWithModifiers: true,
+    const duplicateAction = await canvas.findByRole('menuitem', {
+      name: 'Duplicate',
     });
+    await waitFor(() => expect(duplicateAction).toHaveFocus());
+
+    await userEvent.keyboard('{Control>}k{/Control}');
+
+    await expect(onModifierShortcut).toHaveBeenCalledTimes(1);
     await userEvent.keyboard('{Escape}');
   },
 };

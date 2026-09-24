@@ -1,5 +1,5 @@
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -17,7 +17,6 @@ export const SettingPublicDomainRowDropdownMenu = ({
   publicDomain: PublicDomain;
 }) => {
   const dropdownId = `settings-public-domain-row-${publicDomain.id}`;
-  const { closeDropdown } = useCloseDropdown();
   const { t } = useLingui();
 
   const { enqueueToast } = useToast();
@@ -29,17 +28,22 @@ export const SettingPublicDomainRowDropdownMenu = ({
   const [deletePublicDomain] = useMutation(DeletePublicDomainDocument);
 
   const handleDeletePublicDomain = async () => {
-    await deletePublicDomain({
-      variables: {
-        domain: publicDomain.domain,
-      },
-      onCompleted: () =>
-        enqueueToast({
-          variant: 'success',
-          children: t`Custom domain successfully deleted`,
-        }),
-      onError: (error) => enqueueToast(getToastOptionsFromError({ error })),
-    });
+    try {
+      await deletePublicDomain({
+        variables: {
+          domain: publicDomain.domain,
+        },
+      });
+
+      enqueueToast({
+        variant: 'success',
+        children: t`Custom domain successfully deleted`,
+      });
+
+      await refetchPublicDomains();
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
+    }
   };
 
   return (
@@ -51,20 +55,15 @@ export const SettingPublicDomainRowDropdownMenu = ({
           </LightIconButton>
         }
       />
-      <Dropdown.Content side="right" align="start">
+      <DropdownRootContent side="right" align="start">
         <Dropdown.Section>
           <Dropdown.ActionItem
-            closeOnClick={false}
             color="danger"
             startIcon={<IconTrash />}
-            onClick={async () => {
-              await handleDeletePublicDomain();
-              closeDropdown(dropdownId);
-              await refetchPublicDomains();
-            }}
+            onClick={handleDeletePublicDomain}
           >{t`Delete`}</Dropdown.ActionItem>
         </Dropdown.Section>
-      </Dropdown.Content>
+      </DropdownRootContent>
     </DropdownRoot>
   );
 };

@@ -1,4 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
@@ -43,7 +44,7 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
           </LightIconButton>
         }
       />
-      <Dropdown.Content side="bottom" align="end">
+      <DropdownRootContent side="bottom" align="end">
         <Dropdown.Section>
           <Dropdown.ActionItem
             color="danger"
@@ -51,7 +52,7 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
             onClick={handleRevokeSession}
           >{t`Log out`}</Dropdown.ActionItem>
         </Dropdown.Section>
-      </Dropdown.Content>
+      </DropdownRootContent>
     </DropdownRoot>
   );
 };

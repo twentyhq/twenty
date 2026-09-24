@@ -11,6 +11,7 @@ import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { styled } from '@linaria/react';
@@ -39,9 +40,11 @@ const BackgroundSelection = ({ children }: { children: ReactNode }) => {
   });
 
   return (
-    <StyledFooter data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}>
-      {children}
-    </StyledFooter>
+    <ParentClickOutsideIdContext.Provider value={SIDE_PANEL_CLICK_OUTSIDE_ID}>
+      <StyledFooter data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}>
+        {children}
+      </StyledFooter>
+    </ParentClickOutsideIdContext.Provider>
   );
 };
 

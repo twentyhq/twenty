@@ -1,4 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
@@ -163,7 +164,7 @@ export const SettingsAdminServerAdminAccess = ({
               </LightIconButton>
             }
           />
-          <Dropdown.Content side="right" align="start">
+          <DropdownRootContent side="right" align="start">
             <Dropdown.Section>
               <Dropdown.ActionItem
                 disabled={isLastFullAdmin}
@@ -209,7 +210,7 @@ export const SettingsAdminServerAdminAccess = ({
                 >{t`Grant full access`}</Dropdown.ActionItem>
               )}
             </Dropdown.Section>
-          </Dropdown.Content>
+          </DropdownRootContent>
         </DropdownRoot>
       </StyledValue>
       <ConfirmationDialog

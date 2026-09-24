@@ -84,6 +84,26 @@ export const RunWhilePending: Story = {
   },
 };
 
+export const DeleteInput: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'More options' }));
+    await userEvent.click(canvas.getByRole('menuitem', { name: 'Delete' }));
+
+    const dialog = await canvas.findByRole('dialog', {
+      name: 'Delete Evaluation Input',
+    });
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: 'Delete' }),
+    );
+
+    await waitFor(() =>
+      expect(args.onEvaluationInputsChange).toHaveBeenCalledWith([]),
+    );
+  },
+};
+
 export const Disabled: Story = {
   args: { disabled: true },
   play: async ({ canvasElement }) => {

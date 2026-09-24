@@ -1,8 +1,7 @@
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
-import { useContext } from 'react';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { Dropdown } from 'twenty-ui/components';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks/useAddStepFilterToGroup';
@@ -22,7 +21,6 @@ type WorkflowStepFilterAddFilterRuleSelectProps = {
 export const WorkflowStepFilterAddFilterRuleSelect = ({
   stepFilterGroup,
 }: WorkflowStepFilterAddFilterRuleSelectProps) => {
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
   const { lastChildPosition } = useChildStepFiltersAndChildStepFilterGroups({
@@ -92,7 +90,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
           </NavigationButton>
         }
       />
-      <Dropdown.Content data-click-outside-id={parentClickOutsideId}>
+      <DropdownRootContent>
         <Dropdown.Section>
           <Dropdown.ActionItem
             startIcon={<IconPlus />}
@@ -107,7 +105,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
             {t`Add rule group`}
           </Dropdown.ActionItem>
         </Dropdown.Section>
-      </Dropdown.Content>
+      </DropdownRootContent>
     </DropdownRoot>
   );
 };

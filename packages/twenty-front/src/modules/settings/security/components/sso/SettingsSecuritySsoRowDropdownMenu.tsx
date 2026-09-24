@@ -1,4 +1,5 @@
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
 import { useDeleteSsoIdentityProvider } from '@/settings/security/hooks/useDeleteSsoIdentityProvider';
 import { useUpdateSsoIdentityProvider } from '@/settings/security/hooks/useUpdateSsoIdentityProvider';
 import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
@@ -66,7 +67,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
           </LightIconButton>
         }
       />
-      <Dropdown.Content side="right" align="start">
+      <DropdownRootContent side="right" align="start">
         <Dropdown.Section>
           <Dropdown.ActionItem
             startIcon={<IconArchive />}
@@ -84,7 +85,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
             }}
           >{t`Delete`}</Dropdown.ActionItem>
         </Dropdown.Section>
-      </Dropdown.Content>
+      </DropdownRootContent>
     </DropdownRoot>
   );
 };

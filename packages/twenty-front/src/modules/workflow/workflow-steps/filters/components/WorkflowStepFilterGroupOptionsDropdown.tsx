@@ -1,11 +1,11 @@
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useRemoveStepFilterGroup } from '@/workflow/workflow-steps/filters/hooks/useRemoveStepFilterGroup';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownRootContent } from '@/ui/layout/dropdown/components/DropdownRootContent';
 import { Dropdown, IconButton } from 'twenty-ui/components';
 
 type WorkflowStepFilterGroupOptionsDropdownProps = {
@@ -15,7 +15,6 @@ type WorkflowStepFilterGroupOptionsDropdownProps = {
 export const WorkflowStepFilterGroupOptionsDropdown = ({
   stepFilterGroupId,
 }: WorkflowStepFilterGroupOptionsDropdownProps) => {
-  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { removeStepFilterGroup } = useRemoveStepFilterGroup();
@@ -37,8 +36,7 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
           </IconButton>
         }
       />
-      <Dropdown.Content
-        data-click-outside-id={parentClickOutsideId}
+      <DropdownRootContent
         align="end"
         sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET.y}
       >
@@ -51,7 +49,7 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
             {t`Delete group`}
           </Dropdown.ActionItem>
         </Dropdown.Section>
-      </Dropdown.Content>
+      </DropdownRootContent>
     </DropdownRoot>
   );
 };
