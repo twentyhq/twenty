@@ -5,6 +5,7 @@ import {
   access,
   cp,
   mkdir,
+  open,
   readFile,
   readdir,
   rename as fsRename,
@@ -13,6 +14,10 @@ import {
 } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+
+const PRIVATE_DIRECTORY_MODE = 0o700;
+
+const PRIVATE_FILE_MODE = 0o600;
 
 export const pathExists = async (filePath: string): Promise<boolean> => {
   try {
@@ -29,13 +34,32 @@ export const pathExistsSync = (filePath: string): boolean =>
 export const ensureDir = (dirPath: string) =>
   mkdir(dirPath, { recursive: true });
 
-export const ensureFile = async (filePath: string): Promise<void> => {
-  await mkdir(dirname(filePath), { recursive: true });
+export const ensurePrivateDir = (dirPath: string) =>
+  mkdir(dirPath, { recursive: true, mode: PRIVATE_DIRECTORY_MODE });
+
+export const ensurePrivateFile = async (filePath: string): Promise<void> => {
+  await ensurePrivateDir(dirname(filePath));
 
   try {
     await access(filePath);
   } catch {
-    await writeFile(filePath, '');
+    await writeFile(filePath, '', { mode: PRIVATE_FILE_MODE });
+  }
+};
+
+export const writePrivateFile = async (
+  filePath: string,
+  content: string,
+): Promise<void> => {
+  await ensurePrivateDir(dirname(filePath));
+
+  const fileHandle = await open(filePath, 'w', PRIVATE_FILE_MODE);
+
+  try {
+    await fileHandle.chmod(PRIVATE_FILE_MODE).catch(() => undefined);
+    await fileHandle.writeFile(content);
+  } finally {
+    await fileHandle.close();
   }
 };
 

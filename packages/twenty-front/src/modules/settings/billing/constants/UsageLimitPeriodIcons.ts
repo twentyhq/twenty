@@ -8,9 +8,8 @@ import {
 
 import { type UsageLimitPeriodUnit } from '@/settings/billing/types/UsageLimitPeriodUnit';
 
-export const USAGE_LIMIT_PERIOD_ICONS: Record<
-  UsageLimitPeriodUnit,
-  IconComponent
+export const USAGE_LIMIT_PERIOD_ICONS: Partial<
+  Record<UsageLimitPeriodUnit, IconComponent>
 > = {
   day: IconSun,
   week: IconCalendarWeek,

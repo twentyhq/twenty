@@ -1,3 +1,4 @@
+import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -11,6 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const AiChatLastMessageWithStreamingState = () => {
   const { retryChatMessage } = useRetryChatMessage();
+  const canRetry = useCanRetryCurrentAiChatTurn();
   const lastMessageId = useAtomComponentSelectorValue(
     agentChatLastMessageIdComponentSelector,
   );
@@ -36,7 +38,7 @@ export const AiChatLastMessageWithStreamingState = () => {
       messageId={lastMessageId}
       isLastMessageStreaming={agentChatIsStreaming}
       error={agentChatError ?? undefined}
-      onRetry={retryChatMessage}
+      onRetry={canRetry ? retryChatMessage : undefined}
     />
   );
 };

@@ -312,6 +312,17 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.createQueryBuilder(alias);
   }
 
+  createScopedQueryBuilder(
+    workspaceId: string,
+    alias: string,
+  ): SelectQueryBuilder<T> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository
+      .createQueryBuilder(alias)
+      .where(`${alias}.workspaceId = :workspaceId`, { workspaceId });
+  }
+
   withManager(manager: EntityManager): WorkspaceScopedRepository<T> {
     return new WorkspaceScopedRepository<T>(
       manager.getRepository(this.repository.target),
