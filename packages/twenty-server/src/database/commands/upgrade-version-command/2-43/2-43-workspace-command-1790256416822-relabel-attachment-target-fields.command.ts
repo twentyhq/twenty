@@ -38,6 +38,26 @@ const PREVIOUS_STANDARD_LABEL_BY_FIELD_UNIVERSAL_IDENTIFIER: Record<
 
 const ATTACHED_TO_LABEL = 'Attached to';
 
+const getPreviousLabel = ({
+  fieldMetadata,
+  standardApplicationId,
+}: {
+  fieldMetadata: FieldMetadataEntity;
+  standardApplicationId: string;
+}): string | undefined => {
+  if (fieldMetadata.applicationId === standardApplicationId) {
+    return PREVIOUS_STANDARD_LABEL_BY_FIELD_UNIVERSAL_IDENTIFIER[
+      fieldMetadata.universalIdentifier
+    ];
+  }
+
+  if (!isDefined(fieldMetadata.relationTargetObjectMetadata)) {
+    return undefined;
+  }
+
+  return capitalize(fieldMetadata.relationTargetObjectMetadata.nameSingular);
+};
+
 @RegisteredWorkspaceCommand('2.43.0', 1790256416822)
 @Command({
   name: 'upgrade:2-43:relabel-attachment-target-fields',
@@ -77,16 +97,10 @@ export class RelabelAttachmentTargetFieldsCommand extends ProvisionedWorkspaceCo
     // A label someone already changed is theirs to keep. Siblings added for
     // custom objects were labelled after their object's singular name.
     const fieldMetadatasToRelabel = fieldMetadatas.filter((fieldMetadata) => {
-      const previousLabel =
-        fieldMetadata.applicationId === twentyStandardFlatApplication.id
-          ? PREVIOUS_STANDARD_LABEL_BY_FIELD_UNIVERSAL_IDENTIFIER[
-              fieldMetadata.universalIdentifier
-            ]
-          : isDefined(fieldMetadata.relationTargetObjectMetadata)
-            ? capitalize(
-                fieldMetadata.relationTargetObjectMetadata.nameSingular,
-              )
-            : undefined;
+      const previousLabel = getPreviousLabel({
+        fieldMetadata,
+        standardApplicationId: twentyStandardFlatApplication.id,
+      });
 
       return isDefined(previousLabel) && fieldMetadata.label === previousLabel;
     });

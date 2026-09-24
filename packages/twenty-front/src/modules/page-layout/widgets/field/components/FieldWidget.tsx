@@ -4,6 +4,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
+import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
@@ -34,7 +35,7 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -206,15 +207,18 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   if (
     isFieldFiles(fieldDefinition) &&
     fieldDisplayMode === FieldDisplayMode.CARD &&
-    isAttachmentPreviewEnabled &&
-    isFieldFilesValue(record) &&
-    isNonEmptyArray(record)
+    isAttachmentPreviewEnabled
   ) {
-    return (
-      <FieldWidgetFilesPreview
-        files={record.filter((file) => !file.isDeleted)}
-      />
-    );
+    const previewableFile = isFieldFilesValue(record)
+      ? record.find(
+          (file): file is FieldFilesValue & { url: string } =>
+            !file.isDeleted && isNonEmptyString(file.url),
+        )
+      : undefined;
+
+    if (isDefined(previewableFile)) {
+      return <FieldWidgetFilesPreview file={previewableFile} />;
+    }
   }
 
   if (
