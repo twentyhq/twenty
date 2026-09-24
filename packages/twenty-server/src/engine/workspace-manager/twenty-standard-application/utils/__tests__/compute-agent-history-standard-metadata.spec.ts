@@ -13,6 +13,7 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 
 const OBJECT_NAMES = [
   'agentChatThread',
+  'agentChatThreadTarget',
   'agentMessage',
   'agentMessagePart',
   'agentTurn',
