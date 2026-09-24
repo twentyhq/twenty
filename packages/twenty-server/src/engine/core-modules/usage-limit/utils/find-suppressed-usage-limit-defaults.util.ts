@@ -3,8 +3,6 @@ import { buildUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/uti
 import { type UsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 
-// A scope can face several declared defaults at once, so this answers with every
-// one it replaces rather than the first match.
 export const findSuppressedUsageLimitDefaults = (
   scope: UsageLimitScope,
 ): UsageLimitDefault[] =>

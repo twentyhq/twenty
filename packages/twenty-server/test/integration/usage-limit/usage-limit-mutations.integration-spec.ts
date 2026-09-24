@@ -248,8 +248,6 @@ describe('Usage limit mutations', () => {
     });
   });
 
-  // A row on a meter no default covers, so the default gate never fires and the
-  // only thing that can refuse the tenant is the row's provenance.
   describe('rows an operator set', () => {
     const OPERATOR_ROW_MESSAGE = 'only an operator can change it';
 

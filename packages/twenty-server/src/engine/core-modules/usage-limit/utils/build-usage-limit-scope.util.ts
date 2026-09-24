@@ -12,8 +12,6 @@ export type UsageLimitScope = Pick<
   | 'meter'
 >;
 
-// Takes a create input or a stored row: both name a scope, and only the input
-// leaves spenderId open.
 type UsageLimitScopeSource = Omit<UsageLimitScope, 'spenderId'> & {
   spenderId?: string | null;
 };

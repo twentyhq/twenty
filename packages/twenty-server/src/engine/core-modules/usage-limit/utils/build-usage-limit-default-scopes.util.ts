@@ -23,8 +23,6 @@ const buildPeriod = ({
     isDefined(usageLimitDefault.windowMsConfigVariable)
   ) {
     return {
-      // buildDefaultSpeedBucket rounds the same way, so the scope an operator
-      // overrides is the one the bucket is actually keyed on.
       periodCount: Math.ceil(
         getConfigValue(usageLimitDefault.windowMsConfigVariable) / 1000,
       ),
@@ -35,8 +33,6 @@ const buildPeriod = ({
   return { periodCount: 1, periodUnit: 'lifetime' };
 };
 
-// Every declared default as the row that would replace it, so overriding one is
-// a matter of copying the scope and typing a new value.
 export const buildUsageLimitDefaultScopes = ({
   getConfigValue,
 }: {
