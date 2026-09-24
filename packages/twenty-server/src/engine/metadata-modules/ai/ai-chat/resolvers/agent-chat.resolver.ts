@@ -198,7 +198,7 @@ export class AgentChatResolver {
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
-    const thread = await this.agentChatService.getThreadById({
+    const thread = await this.agentChatService.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId: workspace.id,
@@ -307,7 +307,7 @@ export class AgentChatResolver {
       getChatModelId({ requestedModelId: modelId, workspace }),
     );
 
-    await this.agentChatService.getThreadById({
+    await this.agentChatService.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId: workspace.id,
@@ -370,7 +370,7 @@ export class AgentChatResolver {
 
     this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
 
-    await this.agentChatService.getThreadById({
+    await this.agentChatService.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId: workspace.id,
@@ -381,17 +381,6 @@ export class AgentChatResolver {
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
     });
-
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId },
-    });
-
-    if (!isDefined(thread)) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
 
     const { streamId, turnId } =
       await this.agentChatStreamingService.answerPendingQuestionAndResumeStream(
@@ -422,7 +411,7 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    const thread = await this.agentChatService.getThreadById({
+    const thread = await this.agentChatService.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId,
@@ -557,7 +546,7 @@ export class AgentChatResolver {
       );
     }
 
-    await this.agentChatService.getThreadById({
+    await this.agentChatService.getWritableThread({
       threadId: message.threadId,
       userWorkspaceId,
       workspaceId: workspace.id,

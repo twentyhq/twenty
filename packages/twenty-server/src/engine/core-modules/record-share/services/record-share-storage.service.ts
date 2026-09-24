@@ -36,46 +36,25 @@ export class RecordShareStorageService {
     workspaceId: string;
     share: Omit<RecordShareInput, 'rowCause'>;
     enabled: boolean;
-    transactionScope?: WorkspaceTransactionScope;
+    transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
-    const write = async (scope: WorkspaceTransactionScope) => {
-      if (scope.workspaceId !== workspaceId) {
-        throw new RecordShareException(
-          'Transaction belongs to another workspace',
-          RecordShareExceptionCode.TRANSACTION_SCOPE_WORKSPACE_MISMATCH,
-        );
-      }
-      await scope.executeRawQuery(
-        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-        [
-          `record-share:${workspaceId}:${share.objectMetadataId}:${share.recordId}`,
-        ],
-      );
-      await this.withRepository(
-        { workspaceId, transactionScope: scope },
-        async (repository) => {
-          await repository.delete({
-            objectMetadataId: share.objectMetadataId,
-            recordId: share.recordId,
-            principalId: share.principalId,
-            principalType: share.principalType,
+    await this.withRepository(
+      { workspaceId, transactionScope },
+      async (repository) => {
+        await repository.delete({
+          objectMetadataId: share.objectMetadataId,
+          recordId: share.recordId,
+          principalId: share.principalId,
+          principalType: share.principalType,
+          rowCause: RecordShareRowCause.MANUAL,
+        });
+        if (enabled) {
+          await repository.insert({
+            ...share,
             rowCause: RecordShareRowCause.MANUAL,
           });
-          if (enabled) {
-            await repository.insert({
-              ...share,
-              rowCause: RecordShareRowCause.MANUAL,
-            });
-          }
-        },
-      );
-    };
-    if (isDefined(transactionScope)) {
-      return write(transactionScope);
-    }
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () => this.workspaceOrmManager.runInWorkspaceTransaction(write),
-      buildSystemAuthContext(workspaceId),
+        }
+      },
     );
   }
 

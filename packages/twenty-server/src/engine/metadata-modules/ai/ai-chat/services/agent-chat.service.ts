@@ -103,7 +103,7 @@ export class AgentChatService {
     return savedThread;
   }
 
-  async findThreadById({
+  async findWritableThread({
     threadId,
     userWorkspaceId,
     workspaceId,
@@ -130,7 +130,7 @@ export class AgentChatService {
     }
   }
 
-  async getThreadById(args: {
+  async getWritableThread(args: {
     threadId: string;
     userWorkspaceId: string;
     workspaceId: string;
@@ -441,7 +441,7 @@ export class AgentChatService {
     includeHidden?: boolean;
   }) {
     if (includeHidden) {
-      await this.getThreadById({ threadId, userWorkspaceId, workspaceId });
+      await this.getWritableThread({ threadId, userWorkspaceId, workspaceId });
     } else {
       await this.sharingService.getReadableThread({
         threadId,
@@ -1089,7 +1089,7 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const thread = await this.getThreadById({
+    const thread = await this.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId,
@@ -1111,7 +1111,7 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const thread = await this.getThreadById({
+    const thread = await this.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId,

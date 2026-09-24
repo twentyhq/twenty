@@ -262,7 +262,7 @@ describe('Shared conversation API boundaries', () => {
       new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
     );
     await expect(
-      chatService.getThreadById({
+      chatService.getWritableThread({
         threadId: THREAD_ID,
         userWorkspaceId: 'owner',
         workspaceId: WORKSPACE_ID,

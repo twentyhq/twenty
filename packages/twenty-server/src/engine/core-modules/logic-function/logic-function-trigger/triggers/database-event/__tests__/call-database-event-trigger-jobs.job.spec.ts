@@ -200,7 +200,10 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         {
           provide: WorkspaceCacheService,
           useValue: {
-            getOrRecompute: jest.fn().mockImplementation(async () => cacheData),
+            getOrRecompute: jest.fn().mockImplementation(async () => ({
+              flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+              ...cacheData,
+            })),
           },
         },
         {

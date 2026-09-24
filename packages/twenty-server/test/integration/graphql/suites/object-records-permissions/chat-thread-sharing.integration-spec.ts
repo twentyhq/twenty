@@ -1,3 +1,4 @@
+import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
@@ -473,7 +474,7 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(retried.updatedAt).toEqual(archived.updatedAt);
       }
       expect(archived.deletedAt?.toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-      expect((await chatService.getThreadById(owner)).deletedAt).toEqual(
+      expect((await chatService.getWritableThread(owner)).deletedAt).toEqual(
         archived.deletedAt,
       );
       expect(
@@ -497,9 +498,6 @@ describe('Conversation sharing through the authenticated API', () => {
     const workspaceId = SEED_APPLE_WORKSPACE_ID;
     const chat =
       getAppProviderByClassName<AgentChatService>('AgentChatService');
-    const shareService = getAppProviderByClassName<RecordShareStorageService>(
-      'RecordShareStorageService',
-    );
     const cache = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
@@ -532,7 +530,7 @@ describe('Conversation sharing through the authenticated API', () => {
       accessLevel: RecordShareAccessLevel.READ_WRITE,
     };
     try {
-      await shareService.setManualShare({ workspaceId, share, enabled: true });
+      await setManualRecordShare({ workspaceId, share, enabled: true });
       expect(
         await chat.updateThreadTitle({
           ...writer,
@@ -550,14 +548,14 @@ describe('Conversation sharing through the authenticated API', () => {
       expect(writerView.body.data.recordPermissions[0]).toMatchObject({
         permissions: { canUpdate: true },
       });
-      await expect(chat.getThreadById(writer)).resolves.toMatchObject({
+      await expect(chat.getWritableThread(writer)).resolves.toMatchObject({
         id: owner.threadId,
       });
-      await shareService.setManualShare({ workspaceId, share, enabled: false });
+      await setManualRecordShare({ workspaceId, share, enabled: false });
       await expect(
         chat.updateThreadTitle({ ...writer, title: 'Revoked rename' }),
       ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
-      expect(await chat.getThreadById(owner)).toMatchObject({
+      expect(await chat.getWritableThread(owner)).toMatchObject({
         title: 'Collaborative rename',
       });
     } finally {
@@ -586,7 +584,7 @@ describe('Conversation sharing through the authenticated API', () => {
     } finally {
       cleanup.mockRestore();
     }
-    await expect(chat.getThreadById(owner)).rejects.toMatchObject({
+    await expect(chat.getWritableThread(owner)).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
     });
   });

@@ -59,6 +59,7 @@ module.exports = {
       plugins: ['typescript', 'typescript-operations', 'typed-document-node'],
       config: {
         skipTypename: false,
+        useTypeImports: true,
         defaultScalarType: 'any',
         scalars: {
           DateTime: 'string',

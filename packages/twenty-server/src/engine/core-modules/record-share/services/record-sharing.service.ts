@@ -1,3 +1,4 @@
+import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { Injectable } from '@nestjs/common';
 
@@ -163,7 +164,11 @@ export class RecordSharingService {
             await transactionScope.executeRawQuery(
               'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
               [
-                `record-share:${workspaceId}:${args.objectMetadataId}:${args.recordId}`,
+                buildRecordShareLockKey({
+                  workspaceId,
+                  objectMetadataId: args.objectMetadataId,
+                  recordId: args.recordId,
+                }),
               ],
             );
             // Lock the target as well as its grants, so deletion cannot leave an orphan grant.

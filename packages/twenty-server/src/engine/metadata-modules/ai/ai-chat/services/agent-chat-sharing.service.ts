@@ -1,3 +1,4 @@
+import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
 import { In } from 'typeorm';
 import { mapAgentHistoryFieldNameToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-field-name-to-workspace.util';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
@@ -336,7 +337,11 @@ export class AgentChatSharingService {
           await manager.query(
             'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
             [
-              `record-share:${args.workspaceId}:${objectMetadata.id}:${args.threadId}`,
+              buildRecordShareLockKey({
+                workspaceId: args.workspaceId,
+                objectMetadataId: objectMetadata.id,
+                recordId: args.threadId,
+              }),
             ],
           );
           const records = await manager.query<AgentChatThreadEntity[]>(

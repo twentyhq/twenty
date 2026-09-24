@@ -1,3 +1,4 @@
+import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 /* @license Enterprise */
 
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -94,7 +95,7 @@ describe('recordShare object', () => {
     try {
       await Promise.all(
         Array.from({ length: 8 }, () =>
-          recordShareStorageService.setManualShare({
+          setManualRecordShare({
             workspaceId,
             share,
             enabled: true,
@@ -119,7 +120,7 @@ describe('recordShare object', () => {
         );
       try {
         await expect(
-          recordShareStorageService.setManualShare({
+          setManualRecordShare({
             workspaceId,
             share,
             enabled: false,
@@ -129,13 +130,13 @@ describe('recordShare object', () => {
         transactionSpy.mockRestore();
       }
       expect(await readShares()).toHaveLength(3);
-      await recordShareStorageService.setManualShare({
+      await setManualRecordShare({
         workspaceId,
         share: { ...share, sourceId: randomUUID() },
         enabled: false,
       });
       expect(await readShares()).toHaveLength(2);
-      await recordShareStorageService.setManualShare({
+      await setManualRecordShare({
         workspaceId,
         share,
         enabled: false,
@@ -178,7 +179,7 @@ describe('recordShare object', () => {
       id: args.threadId,
       title: 'Sharing transaction test',
     });
-    await recordShareStorageService.setManualShare({
+    await setManualRecordShare({
       workspaceId: args.workspaceId,
       enabled: true,
       share: {
@@ -214,9 +215,11 @@ describe('recordShare object', () => {
         'grant cleanup failed',
       );
       querySpy.mockRestore();
-      await expect(chatService.findThreadById(args)).resolves.toMatchObject({
-        id: args.threadId,
-      });
+      await expect(chatService.findWritableThread(args)).resolves.toMatchObject(
+        {
+          id: args.threadId,
+        },
+      );
       await expect(
         recordShareStorageService.findByRecordIds({
           workspaceId: args.workspaceId,
@@ -225,7 +228,7 @@ describe('recordShare object', () => {
         }),
       ).resolves.toHaveLength(2);
       await chatService.hardDeleteThread(args);
-      await expect(chatService.findThreadById(args)).resolves.toBeNull();
+      await expect(chatService.findWritableThread(args)).resolves.toBeNull();
       await expect(
         recordShareStorageService.findByRecordIds({
           workspaceId: args.workspaceId,
@@ -235,7 +238,7 @@ describe('recordShare object', () => {
       ).resolves.toEqual([]);
     } finally {
       querySpy.mockRestore();
-      if (await chatService.findThreadById(args)) {
+      if (await chatService.findWritableThread(args)) {
         await sharingService.deleteThreadWithShares(args);
       }
     }

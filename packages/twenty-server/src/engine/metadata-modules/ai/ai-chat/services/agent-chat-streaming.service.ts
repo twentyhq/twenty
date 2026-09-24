@@ -137,23 +137,11 @@ export class AgentChatStreamingService {
       }
     | { queued: true; messageId: string }
   > {
-    await this.agentChatService.getThreadById({
+    const thread = await this.agentChatService.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId: workspace.id,
     });
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: {
-        id: threadId,
-      },
-    });
-
-    if (!thread) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
 
     const hasQueuedBacklog = await this.agentChatService.hasQueuedMessages({
       threadId,
@@ -388,21 +376,11 @@ export class AgentChatStreamingService {
     workspace: WorkspaceEntity;
     modelId?: string;
   }): Promise<{ streamId: string; messageId: string; turnId: string }> {
-    await this.agentChatService.getThreadById({
+    const thread = await this.agentChatService.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId: workspace.id,
     });
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId },
-    });
-
-    if (!thread) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
 
     if (
       !isDefined(thread.lastStreamError) ||
@@ -554,7 +532,7 @@ export class AgentChatStreamingService {
     modelId?: string;
     fileAttachments?: AiChatFileAttachment[];
   }): Promise<{ streamId: string; turnId: string | null }> {
-    await this.agentChatService.getThreadById({
+    const thread = await this.agentChatService.getWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId: workspace.id,
@@ -577,14 +555,7 @@ export class AgentChatStreamingService {
       threadId,
       messageId,
     });
-    const thread = await this.threadRepository.findOne(workspace.id, {
-      where: { id: threadId },
-      select: ['id', 'activeStreamId'],
-    });
-
-    if (isDefined(thread)) {
-      await this.reapDeadStream({ thread, workspaceId: workspace.id });
-    }
+    await this.reapDeadStream({ thread, workspaceId: workspace.id });
 
     const streamId = generateId();
 

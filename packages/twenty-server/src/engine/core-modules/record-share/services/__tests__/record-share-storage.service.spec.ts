@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/types';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 
 const share = {
@@ -61,8 +62,19 @@ const buildService = () => {
         }
       }),
   };
+  const service = new RecordShareStorageService(manager as never);
+  const setManualShare = (
+    args: Omit<
+      Parameters<RecordShareStorageService['setManualShare']>[0],
+      'transactionScope'
+    >,
+  ) =>
+    manager.runInWorkspaceTransaction(
+      (transactionScope: WorkspaceTransactionScope) =>
+        service.setManualShare({ ...args, transactionScope }),
+    );
   return {
-    service: new RecordShareStorageService(manager as never),
+    setManualShare,
     repository,
     rows: () => rows,
     scope,
@@ -71,19 +83,19 @@ const buildService = () => {
 
 describe('Manual record share management', () => {
   it('is idempotent and preserves owner and application grants', async () => {
-    const { service, rows } = buildService();
-    await service.setManualShare({
+    const { setManualShare, rows } = buildService();
+    await setManualShare({
       workspaceId: 'workspace',
       share,
       enabled: true,
     });
-    await service.setManualShare({
+    await setManualShare({
       workspaceId: 'workspace',
       share,
       enabled: true,
     });
     expect(rows()).toHaveLength(3);
-    await service.setManualShare({
+    await setManualShare({
       workspaceId: 'workspace',
       share,
       enabled: false,
@@ -95,18 +107,18 @@ describe('Manual record share management', () => {
   });
 
   it('revokes manual grants regardless of their author without touching another record', async () => {
-    const { service, rows } = buildService();
-    await service.setManualShare({
+    const { setManualShare, rows } = buildService();
+    await setManualShare({
       workspaceId: 'workspace',
       share,
       enabled: true,
     });
-    await service.setManualShare({
+    await setManualShare({
       workspaceId: 'workspace',
       share: { ...share, recordId: 'another-record' },
       enabled: true,
     });
-    await service.setManualShare({
+    await setManualShare({
       workspaceId: 'workspace',
       share: { ...share, sourceId: 'another-source' },
       enabled: false,
@@ -115,15 +127,15 @@ describe('Manual record share management', () => {
   });
 
   it('rolls back replacement if the insert fails', async () => {
-    const { service, rows, repository } = buildService();
-    await service.setManualShare({
+    const { setManualShare, rows, repository } = buildService();
+    await setManualShare({
       workspaceId: 'workspace',
       share,
       enabled: true,
     });
     repository.insert.mockRejectedValueOnce(new Error('write failed'));
     await expect(
-      service.setManualShare({
+      setManualShare({
         workspaceId: 'workspace',
         share,
         enabled: true,

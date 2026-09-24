@@ -217,31 +217,34 @@ describe('buildRowAccessPolicy', () => {
       build({ ...readEverything, isOwningApplication: () => true }, attachment),
     ).toEqual({ kind: 'open' });
   });
-  it('does not inherit write access through a read-only system parent', () => {
-    jest.mocked(resolveInheritedReadabilityParents).mockReturnValue([
-      {
-        kind: 'column',
-        fieldMetadataId: 'target-note-field-id',
-        joinColumnName: 'targetNoteId',
-        parentFlatObjectMetadata: {
-          ...note,
-          writability: MetadataWritability.SYSTEM,
+  it.each([MetadataWritability.SYSTEM, MetadataWritability.APPLICATION])(
+    'does not inherit write access through a %s parent',
+    (writability) => {
+      jest.mocked(resolveInheritedReadabilityParents).mockReturnValue([
+        {
+          kind: 'column',
+          fieldMetadataId: 'target-note-field-id',
+          joinColumnName: 'targetNoteId',
+          parentFlatObjectMetadata: {
+            ...note,
+            writability,
+          },
         },
-      },
-    ]);
-    const policy = buildRowAccessPolicy({
-      subject: readEverything,
-      environment,
-      tableAlias: 'attachment',
-      flatObjectMetadata: attachment,
-      operationType: 'update',
-      depth: 0,
-    });
-    expect(policy.kind).toBe('gated');
-    if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
-    expect(policy.condition.sql).not.toContain('targetNoteId');
-    expect(policy.condition.sql).toContain('recordShare');
-  });
+      ]);
+      const policy = buildRowAccessPolicy({
+        subject: readEverything,
+        environment,
+        tableAlias: 'attachment',
+        flatObjectMetadata: attachment,
+        operationType: 'update',
+        depth: 0,
+      });
+      expect(policy.kind).toBe('gated');
+      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      expect(policy.condition.sql).not.toContain('targetNoteId');
+      expect(policy.condition.sql).toContain('recordShare');
+    },
+  );
 
   it('keeps private records gated regardless of the sharing UI flag', () => {
     const policy = buildRowAccessPolicy({
