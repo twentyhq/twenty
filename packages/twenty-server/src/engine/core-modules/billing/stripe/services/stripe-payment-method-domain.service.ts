@@ -27,6 +27,11 @@ export class StripePaymentMethodDomainService {
   // A domain that already exists is left as is, so one disabled from the
   // Stripe dashboard stays disabled.
   async registerDomain(domainName: string): Promise<void> {
+    // A job queued before billing was turned off still reaches this worker
+    if (!isDefined(this.stripe)) {
+      return;
+    }
+
     const {
       data: [existingPaymentMethodDomain],
     } = await this.stripe.paymentMethodDomains.list({

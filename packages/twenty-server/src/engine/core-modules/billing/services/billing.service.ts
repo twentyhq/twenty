@@ -17,6 +17,7 @@ import {
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
+import { getPaymentMethodDomainName } from 'src/engine/core-modules/billing/utils/get-payment-method-domain-name.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -73,6 +74,8 @@ export class BillingService {
 
   // Stripe only shows Apple Pay, Google Pay and the Link button on registered
   // domains, and each workspace subdomain has to be registered on its own.
+  // Callers have already committed the workspace, so a failure here must not
+  // reach them.
   async registerPaymentMethodDomain(
     workspace: WorkspaceDomainConfig,
   ): Promise<void> {
@@ -80,20 +83,25 @@ export class BillingService {
       return;
     }
 
-    const { hostname, protocol } = new URL(
+    const domainName = getPaymentMethodDomainName(
       this.workspaceDomainsService.getWorkspaceUrls(workspace).subdomainUrl,
     );
 
-    // Wallets only show on HTTPS pages, so local setups have nothing to register
-    if (protocol !== 'https:') {
+    if (!isDefined(domainName)) {
       return;
     }
 
-    await this.messageQueueService.add<RegisterPaymentMethodDomainJobData>(
-      RegisterPaymentMethodDomainJob.name,
-      { domainName: hostname },
-      { retryLimit: REGISTER_PAYMENT_METHOD_DOMAIN_JOB_RETRY_LIMIT },
-    );
+    try {
+      await this.messageQueueService.add<RegisterPaymentMethodDomainJobData>(
+        RegisterPaymentMethodDomainJob.name,
+        { domainName },
+        { retryLimit: REGISTER_PAYMENT_METHOD_DOMAIN_JOB_RETRY_LIMIT },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Could not queue payment method domain registration for ${domainName}: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
+    }
   }
 
   async hasWorkspaceAnySubscription(workspaceId: string) {
