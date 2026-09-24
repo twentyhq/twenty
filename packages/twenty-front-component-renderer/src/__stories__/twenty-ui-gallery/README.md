@@ -59,10 +59,10 @@ The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 so React and Preact forward `true`/`false` instead of empty strings and remove
 the attribute when the prop is cleared. `getAttribute` and the selector engine
 read the remote properties React and Preact set. The selector engine handles
-custom element tags and relative selectors. `TooltipPreact` therefore covers
-hover opening and Escape dismissal. Pointer leave still needs document-level
-`mousemove` delivery for the safe polygon, and the compound tooltip's title and
-description are not covered yet.
+custom element tags, live control properties, and relative selectors.
+`TooltipPreact` therefore covers hover opening and Escape dismissal. Pointer
+leave still needs document-level `mousemove` delivery for the safe polygon, and
+the compound tooltip's title and description are not covered yet.
 
 Once the remaining gaps are fixed, extend the stories to verify selection,
 disabled items, keyboard navigation, and overlay content, dismissal, and focus

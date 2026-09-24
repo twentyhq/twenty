@@ -10,12 +10,6 @@ export const galleryRenderTest = createGalleryRenderTest({
   expectedFailedComponents: [],
 });
 
-// Unselected radios need the :disabled pseudo-class, which the worker selector
-// engine does not support.
-export const inputTest = createGalleryRenderTest({
-  expectedFailedComponents: ['Radio'],
-});
-
 // Monaco cannot load scripts inside the sandbox worker, so the wrapper mounts
 // but the editor's onMount never fires.
 export const codeEditorTest: TwentyUiGalleryPlayFunction = async ({

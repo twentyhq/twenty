@@ -13,8 +13,6 @@ export const SANDBOX_ERROR_PATTERNS = {
   ELEMENT_REF_FOCUS:
     /^(?:Uncaught TypeError: )?\w+\.current\?\.focus is not a function$/,
   ELEMENT_FOCUS: /^(?:Uncaught TypeError: )?\w+\?\.focus is not a function$/,
-  DISABLED_PSEUDO_CLASS:
-    "Uncaught SyntaxError: ':disabled' is not a valid selector.",
   POINTER_EVENT_CONSTRUCTOR:
     /^Uncaught TypeError: .+\.PointerEvent is not a constructor$/,
 };

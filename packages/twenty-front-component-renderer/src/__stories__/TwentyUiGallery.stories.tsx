@@ -35,7 +35,6 @@ import {
   codeEditorTest,
   displayHelpersTest,
   galleryRenderTest,
-  inputTest,
   themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import {
@@ -100,12 +99,12 @@ export const IconPreact: Story = createGalleryStory({
 export const InputReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-input-gallery',
   runtime: 'react',
-  play: inputTest,
+  play: galleryRenderTest,
 });
 export const InputPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-input-gallery',
   runtime: 'preact',
-  play: inputTest,
+  play: galleryRenderTest,
 });
 
 export const JsonVisualizerReact: Story = createGalleryStory({
