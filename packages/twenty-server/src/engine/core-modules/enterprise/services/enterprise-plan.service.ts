@@ -105,8 +105,6 @@ export class EnterprisePlanService implements OnModuleInit {
 
       this.didLastValidityTokenLoadFail = false;
 
-      // A revocation that landed while this read was in flight would otherwise
-      // be undone by the row the read saw before it.
       if (revocationCountAtLoadStart !== this.validityTokenRevocationCount) {
         return;
       }
@@ -173,9 +171,6 @@ export class EnterprisePlanService implements OnModuleInit {
     return isDefined(this.cachedKeyPayload);
   }
 
-  // The token is renewed by the cron running in the worker process, which
-  // writes it to the database. Without this reload the server process would
-  // keep the copy it read at boot
   private reloadValidityTokenIfStale(): void {
     const isReloadDue = isValidityTokenReloadDue({
       lastLoadStartedAt: this.lastValidityTokenLoadStartedAt,
@@ -204,8 +199,6 @@ export class EnterprisePlanService implements OnModuleInit {
     return this.isCachedValidityPayloadValid();
   }
 
-  // Sign-in waits for a due reload rather than turning a first sign-in away on
-  // a copy that has just aged out.
   async isValidWithFreshToken(): Promise<boolean> {
     if (this.isCachedValidityPayloadValid()) {
       return true;

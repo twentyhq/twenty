@@ -28,8 +28,6 @@ describe('isValidityTokenReloadDue', () => {
     ).toBe(false);
   });
 
-  // The worker renews the token in the database, so a server process that never
-  // re-read it would serve its boot-time copy until that copy expired.
   it('is due once the interval has elapsed', () => {
     expect(
       isValidityTokenReloadDue({
