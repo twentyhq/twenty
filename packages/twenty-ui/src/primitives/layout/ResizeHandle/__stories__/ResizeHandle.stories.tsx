@@ -1,35 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useResizeHandle } from '@ui/primitives/layout/ResizeHandle/hooks/useResizeHandle';
 import { ComponentDecorator } from '@ui/testing';
-import { themeCssVariables } from '@ui/theme';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
 
-const INITIAL_HEIGHT = 150;
-
-const ResizableDemo = () => {
-  const { size, handleResizeStart, handleResizeMove, handleResizeEnd } =
-    useResizeHandle({ initialSize: INITIAL_HEIGHT });
-
-  return (
-    <div>
-      <div
-        data-testid="resizable-area"
-        style={{
-          background: themeCssVariables.background.secondary,
-          height: size,
-          width: 300,
-        }}
-      />
-      <ResizeHandle
-        onPointerDown={handleResizeStart}
-        onPointerMove={handleResizeMove}
-        onPointerUp={handleResizeEnd}
-      />
-    </div>
-  );
-};
+import { ResizableDemo } from './ResizableDemo';
 
 const meta: Meta<typeof ResizeHandle> = {
   title: 'UI/Layout/ResizeHandle',
@@ -45,22 +20,28 @@ export const Resizable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const resizableArea = canvas.getByTestId('resizable-area');
-    const handle = resizableArea.nextElementSibling as HTMLElement;
+    const handle = canvas.getByRole('separator', { name: 'Resize height' });
 
-    await expect(resizableArea).toHaveStyle({ height: `${INITIAL_HEIGHT}px` });
+    handle.focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(canvas.getByText('160 pixels')).toBeVisible();
+    await expect(handle).toHaveAttribute('aria-valuenow', '160');
+    await userEvent.keyboard('{Home}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '50');
+    await userEvent.keyboard('{End}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '500');
+  },
+};
 
-    // Split pointer calls so React flushes state between pointerdown and pointermove
-    await userEvent.pointer({
-      keys: '[MouseLeft>]',
-      target: handle,
-      coords: { x: 0, y: 100 },
-    });
-    await userEvent.pointer({ target: handle, coords: { x: 0, y: 200 } });
-    await userEvent.pointer({ keys: '[/MouseLeft]' });
+export const Horizontal: Story = {
+  render: () => <ResizableDemo axis="x" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const handle = canvas.getByRole('separator', { name: 'Resize width' });
 
-    await expect(resizableArea).toHaveStyle({
-      height: `${INITIAL_HEIGHT + 100}px`,
-    });
+    handle.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '160');
+    await expect(handle).toHaveAttribute('aria-orientation', 'vertical');
   },
 };

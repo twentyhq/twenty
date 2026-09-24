@@ -172,6 +172,7 @@ export const SettingsLogicFunctionTestTab = ({
             onChange={onChange}
             variant="with-header"
             resizable
+            resizeLabel={t`Resize input`}
           />
         </StyledCodeEditorContainer>
         <LogicFunctionExecutionResult
