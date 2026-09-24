@@ -1,13 +1,17 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { settings } from 'src/engine/constants/settings';
 
 export const buildMcpServerInstructions = ({
   objectNames,
   actionToolNames,
   skillNames,
+  workspaceInstructions,
 }: {
   objectNames: string;
   actionToolNames: string[];
   skillNames?: string;
+  workspaceInstructions?: string;
 }): string => {
   const availableActionTools = new Set(actionToolNames);
 
@@ -93,5 +97,15 @@ export const buildMcpServerInstructions = ({
     `On tool failure: read the error message, do not retry silently, report to user.`,
     `Present results as readable summaries, not raw JSON.`,
     `For large result sets, show count + first N records and offer to paginate.`,
+    ...(isNonEmptyString(workspaceInstructions)
+      ? [
+          ``,
+          `## Workspace Instructions`,
+          ``,
+          `The following are custom instructions provided by the workspace administrator:`,
+          ``,
+          workspaceInstructions,
+        ]
+      : []),
   ].join('\n');
 };

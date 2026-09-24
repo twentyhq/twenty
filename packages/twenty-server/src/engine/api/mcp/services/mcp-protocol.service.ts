@@ -107,10 +107,12 @@ export class McpProtocolService {
       workspaceId,
       roleId,
       rolePermissionConfig,
+      workspaceInstructions,
     }: {
       workspaceId: string;
       roleId: string;
       rolePermissionConfig: RolePermissionConfig;
+      workspaceInstructions?: string;
     },
   ) {
     const instructions =
@@ -118,6 +120,7 @@ export class McpProtocolService {
         workspaceId,
         roleId,
         rolePermissionConfig,
+        workspaceInstructions,
       });
 
     return wrapJsonRpcResponse(requestId, {
@@ -351,6 +354,8 @@ export class McpProtocolService {
           workspaceId: workspace.id,
           roleId,
           rolePermissionConfig,
+          workspaceInstructions:
+            workspace.aiAdditionalInstructions ?? undefined,
         });
       }
 

@@ -57,4 +57,27 @@ describe('buildMcpServerInstructions', () => {
 
     expect(instructions).not.toContain('Available skills');
   });
+
+  it('should append workspace instructions when provided', () => {
+    const instructions = buildMcpServerInstructions({
+      objectNames: 'companies',
+      actionToolNames: ['send_email'],
+      workspaceInstructions: 'Always assign a due date to tasks.',
+    });
+
+    expect(instructions).toContain('## Workspace Instructions');
+    expect(instructions).toContain(
+      'The following are custom instructions provided by the workspace administrator:',
+    );
+    expect(instructions).toContain('Always assign a due date to tasks.');
+  });
+
+  it('should omit workspace instructions when not provided', () => {
+    const instructions = buildMcpServerInstructions({
+      objectNames: 'companies',
+      actionToolNames: ['send_email'],
+    });
+
+    expect(instructions).not.toContain('## Workspace Instructions');
+  });
 });
