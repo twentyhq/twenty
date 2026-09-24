@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { custom, Issuer } from 'openid-client';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -25,6 +26,7 @@ import {
   type SamlConfiguration,
   type SsoConfiguration,
 } from 'src/engine/core-modules/sso/types/sso-configurations.type';
+import { resolveIdTokenSigningAlgorithm } from 'src/engine/core-modules/sso/utils/resolve-id-token-signing-algorithm.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -216,11 +218,18 @@ export class SsoService {
 
     issuer[custom.http_options] = this.oidcHttpOptions;
 
+    const idTokenSigningAlgorithm = resolveIdTokenSigningAlgorithm(
+      issuer.metadata,
+    );
+
     const client = new issuer.Client({
       client_id: identityProvider.clientID,
       client_secret: identityProvider.clientSecret,
       redirect_uris: [this.buildCallbackUrl(identityProvider)],
       response_types: [OidcResponseType.CODE],
+      ...(isDefined(idTokenSigningAlgorithm) && {
+        id_token_signed_response_alg: idTokenSigningAlgorithm,
+      }),
     });
 
     client[custom.http_options] = this.oidcHttpOptions;

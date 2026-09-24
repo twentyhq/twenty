@@ -62,4 +62,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Execution quotas`,
     description: msg`Enforce usage quotas on workflow node runs and logic function executions.`,
   },
+  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
+    label: msg`Record creation form`,
+    description: msg`Use a dedicated form when creating records.`,
+  },
 };

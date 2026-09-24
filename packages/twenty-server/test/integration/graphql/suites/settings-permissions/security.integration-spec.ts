@@ -1,5 +1,6 @@
 import { gql } from 'graphql-tag';
 import request from 'supertest';
+import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import {
   completeWorkspaceLogoUploadMutation,
   uploadWorkspaceLogoWithDirectUpload,
@@ -21,6 +22,35 @@ const uploadWorkspaceLogoMutation = gql`
 
 const client = request(`http://localhost:${APP_PORT}`);
 
+const embeddingMutation = `
+  mutation UpdateEmbeddingOrigins($data: UpdateWorkspaceAllowedIframeOriginsInput!) {
+    updateWorkspaceAllowedIframeOrigins(data: $data) { id allowedIframeOrigins }
+  }
+`;
+
+const editOrigin = (
+  operation: 'add' | 'remove',
+  origin: string,
+  token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+) =>
+  client
+    .post('/metadata')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
+      query: embeddingMutation,
+      variables: { data: { operation, origin } },
+    });
+
+const readOrigins = async () => {
+  const response = await client
+    .post('/metadata')
+    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .send({ query: '{ currentWorkspace { allowedIframeOrigins } }' })
+    .expect(200);
+  expect(response.body.errors).toBeUndefined();
+  return response.body.data.currentWorkspace.allowedIframeOrigins as string[];
+};
+
 describe('Security permissions', () => {
   let originalWorkspaceState: Record<string, unknown>;
 
@@ -36,6 +66,7 @@ describe('Security permissions', () => {
           isPublicInviteLinkEnabled
           subdomain
           isCustomDomainEnabled
+          allowedIframeOrigins
         }
       }
     `;
@@ -63,9 +94,107 @@ describe('Security permissions', () => {
       `;
 
     await makeMetadataAPIRequest({ query: restoreQuery });
+    for (const origin of await readOrigins())
+      await editOrigin('remove', origin);
+    for (const origin of (originalWorkspaceState.allowedIframeOrigins ??
+      []) as string[])
+      await editOrigin('add', origin);
   });
 
   describe('security permissions', () => {
+    describe('iframe embedding', () => {
+      beforeEach(async () => {
+        for (const origin of await readOrigins())
+          await editOrigin('remove', origin);
+      });
+
+      it('normalizes origins, avoids duplicates and refreshes the cached workspace after revocation', async () => {
+        await editOrigin('add', 'https://PORTAL.example.com:443/').expect(200);
+        const duplicate = await editOrigin(
+          'add',
+          'https://portal.example.com',
+        ).expect(200);
+        expect(duplicate.body.errors).toBeUndefined();
+        expect(
+          duplicate.body.data.updateWorkspaceAllowedIframeOrigins
+            .allowedIframeOrigins,
+        ).toEqual(['https://portal.example.com']);
+        const readCached = () =>
+          client
+            .post('/metadata')
+            .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+            .send({
+              query:
+                '{ currentUser { currentWorkspace { allowedIframeOrigins } } }',
+            });
+        const before = await readCached().expect(200);
+        expect(
+          before.body.data.currentUser.currentWorkspace.allowedIframeOrigins,
+        ).toEqual(['https://portal.example.com']);
+        await editOrigin('remove', 'https://portal.example.com').expect(200);
+        const after = await readCached().expect(200);
+        expect(
+          after.body.data.currentUser.currentWorkspace.allowedIframeOrigins,
+        ).toEqual([]);
+      });
+
+      it('does not restore an origin revoked by another administrator', async () => {
+        await editOrigin('add', 'https://partner.example.com');
+        await readOrigins();
+        await editOrigin('remove', 'https://partner.example.com');
+        await editOrigin('add', 'https://portal.example.com');
+        expect(await readOrigins()).toEqual(['https://portal.example.com']);
+      });
+
+      it('preserves concurrent additions', async () => {
+        const origins = ['https://one.example.com', 'https://two.example.com'];
+        const responses = await Promise.all(
+          origins.map((origin) => editOrigin('add', origin)),
+        );
+        for (const response of responses)
+          expect(response.body.errors).toBeUndefined();
+        expect((await readOrigins()).sort()).toEqual(origins.sort());
+      });
+
+      it('enforces the origin limit during concurrent additions', async () => {
+        for (let index = 0; index < MAX_ALLOWED_IFRAME_ORIGINS - 1; index++) {
+          const response = await editOrigin(
+            'add',
+            `https://portal-${index}.example.com`,
+          );
+          expect(response.body.errors).toBeUndefined();
+        }
+        const responses = await Promise.all([
+          editOrigin('add', 'https://one.example.com'),
+          editOrigin('add', 'https://two.example.com'),
+        ]);
+        expect(
+          responses.filter((response) => response.body.errors),
+        ).toHaveLength(1);
+        expect(await readOrigins()).toHaveLength(MAX_ALLOWED_IFRAME_ORIGINS);
+      });
+
+      it('supports HTTP origins for self-hosted portals', async () => {
+        const response = await editOrigin(
+          'add',
+          'http://portal.corp.lan',
+        ).expect(200);
+        expect(response.body.errors).toBeUndefined();
+        expect(await readOrigins()).toEqual(['http://portal.corp.lan']);
+      });
+
+      it('rejects updates without Security permission', async () => {
+        const response = await editOrigin(
+          'add',
+          'https://portal.example.com',
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        ).expect(200);
+        expect(response.body.errors[0].extensions.code).toBe(
+          ErrorCode.FORBIDDEN,
+        );
+      });
+    });
+
     describe('microsoft auth', () => {
       it('should update workspace when user has permission (admin role)', async () => {
         const queryData = {

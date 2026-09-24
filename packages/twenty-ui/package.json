@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "2.42.0",
+  "version": "2.43.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -69,8 +69,7 @@
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-sass-dts": "^1.3.31",
     "vite-plugin-svgr": "^4.3.0",
-    "vitest": "^4.1.0",
-    "react-router-dom": "^7.18.4"
+    "vitest": "^4.1.0"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -86,8 +85,7 @@
     "@monaco-editor/react": "^4.7.0",
     "monaco-editor": ">= 0.25.0 < 1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.18.4"
+    "react-dom": "^19.0.0"
   },
   "scripts": {
     "build": "npx vite build"
@@ -263,9 +261,6 @@
       "optional": true
     },
     "monaco-editor": {
-      "optional": true
-    },
-    "react-router-dom": {
       "optional": true
     }
   }

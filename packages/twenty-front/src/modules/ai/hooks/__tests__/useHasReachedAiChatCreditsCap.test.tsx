@@ -1,4 +1,4 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -7,6 +7,8 @@ import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatCompon
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
+import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   jotaiStore,
@@ -61,18 +63,10 @@ const setWorkspaceWithoutBillingSubscription = () => {
 };
 
 const creditsExhaustedError = () =>
-  new CombinedGraphQLErrors({
-    errors: [
-      {
-        message: 'Credits exhausted',
-        extensions: {
-          code: 'FORBIDDEN',
-          subCode: 'BILLING_CREDITS_EXHAUSTED',
-        },
-      },
-    ],
-    data: null,
-  });
+  createAiChatCodedError(
+    'Chat stopped: no more available credits.',
+    AiChatErrorCode.CREDITS_EXHAUSTED,
+  );
 
 const renderHasReachedAiChatCreditsCap = () =>
   renderHook(() => useHasReachedAiChatCreditsCap(), { wrapper: Wrapper });
