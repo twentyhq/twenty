@@ -55,8 +55,6 @@ export const getUsageLimitFormOptions = ({
 
   const operationTypes = getUsageLimitOperationTypes(definition);
 
-  // Only quota definitions reach this query, and a quota's allowedMeters never
-  // holds 'bytes', so this is a have-we-a-label check rather than an allowlist.
   const meters = definition.allowedMeters
     .filter((meter) => isKeyOfRecord(USAGE_LIMIT_METER_LABELS, meter))
     .filter(

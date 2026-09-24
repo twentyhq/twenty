@@ -67,9 +67,6 @@ export class AdminPanelUsageLimitService {
 
     return buildUsageLimitDefaultScopes({ getConfigValue }).map(
       (usageLimitDefault) => {
-        // Period-blind, like the builders: a row on another period still drops
-        // this default, so naming it here is what keeps the table's claim and
-        // what actually caps the workspace the same statement.
         const overridingUsageLimit = usageLimits.find((usageLimit) =>
           doesUsageLimitRowSuppressDefault({
             scope: buildUsageLimitScope(usageLimit),
@@ -124,9 +121,6 @@ export class AdminPanelUsageLimitService {
     };
   }
 
-  // findEnforceableLimits drops an intra-workspace row on a workspace without the
-  // entitlement. It never touches declared defaults, so the instance default is
-  // what applies instead and this only means anything about a stored override.
   private isEnforcedOnCurrentPlan({
     spenderType,
     isIntraWorkspaceLimitEntitled,

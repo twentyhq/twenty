@@ -135,10 +135,6 @@ export class UsageLimitService {
       allowedUsageLimitId: usageLimit.id,
     });
 
-    // Conditioned on the scope the gate just cleared, not on the id alone: an
-    // operator moving this row onto a protected default between the read and
-    // the write would otherwise have its override rewritten by a tenant whose
-    // request was authorized against the older scope.
     const { affected } = await this.usageLimitRepository.update(
       workspaceId,
       { id: usageLimit.id, ...authorizedScope },
@@ -266,8 +262,6 @@ export class UsageLimitService {
       isOperator,
     });
 
-    // Same scope condition as update: a row an operator moved onto a protected
-    // default after the gate ran must not be deleted by this request.
     const { affected } = await this.usageLimitRepository.delete(workspaceId, {
       id: usageLimitId,
       ...buildUsageLimitScope(usageLimit),

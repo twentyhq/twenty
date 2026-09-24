@@ -20,8 +20,5 @@ export type AdminUsageLimitRow = {
   burstValue: number | null;
   usageLimitId: string | null;
   isOverridden: boolean;
-  // The entitlement gate drops an intra-workspace override at read time and the
-  // instance default applies instead, so this only says anything once
-  // isOverridden is true.
   isOverrideEnforced: boolean;
 };

@@ -178,18 +178,12 @@ describe('Workspace usage limits from the admin panel', () => {
     ).toBe(0);
   });
 
-  // The guest above is refused by the class-level SettingsPermissionGuard, so it
-  // says nothing about AdminPanelGuard. Jane keeps the SECURITY permission and
-  // loses only her operator rights, which leaves AdminPanelGuard as the one
-  // thing that can still refuse her.
   describe('a workspace admin who is not an operator', () => {
     const setJaneIsOperator = async (canAccessFullAdminPanel: boolean) => {
       await getCoreRepository<UserEntity>(UserEntity).update(
         { id: USER_DATA_SEED_IDS.JANE },
         { canAccessFullAdminPanel },
       );
-      // The auth strategy reads the user through this cache, so the column
-      // alone would not reach the guard.
       await getAppProviderByClassName<CoreEntityCacheService>(
         'CoreEntityCacheService',
       ).invalidate('user', USER_DATA_SEED_IDS.JANE);

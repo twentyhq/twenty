@@ -103,9 +103,6 @@ describe('findSuppressedUsageLimitDefaults', () => {
     ).toEqual([]);
   });
 
-  // The admin panel shows one editable row per overridable default and names the
-  // single row standing in for it. A second overridable default on one scope
-  // would make both rows point at the same row and report the same value.
   it('declares at most one overridable default per suppressible scope', () => {
     const suppressionKeysWithTwoDefaults = Object.values(UsageResourceType)
       .flatMap((resourceType) => buildUsageLimitDefaults({ resourceType }))

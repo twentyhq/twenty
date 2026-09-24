@@ -37,8 +37,6 @@ export class AdminPanelUsageLimitDefaultDTO {
   @Field(() => GraphQLBigInt)
   limitValue: number;
 
-  // Not rendered: it is the only stable identity a default has, so the
-  // integration suite names rows by it.
   @Field(() => String)
   limitValueConfigVariable: string;
 
@@ -51,8 +49,6 @@ export class AdminPanelUsageLimitDefaultDTO {
 
 @ObjectType('AdminPanelUsageLimit')
 export class AdminPanelUsageLimitDTO extends UsageLimitDTO {
-  // findEnforceableLimits drops an intra-workspace row on a workspace without
-  // the entitlement, and the instance default takes back over.
   @Field(() => Boolean)
   isEnforcedOnCurrentPlan: boolean;
 }

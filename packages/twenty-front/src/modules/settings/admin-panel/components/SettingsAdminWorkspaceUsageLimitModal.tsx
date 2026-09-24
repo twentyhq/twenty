@@ -178,7 +178,6 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     value: row.defaultValue,
     meter: row.meter,
   });
-  // 'quantity' renders as the number already typed, so echoing it says nothing.
   const limitValueAdornment =
     isDefined(parsedLimitValue) && row.meter !== 'quantity'
       ? formatUsageLimitValue({ value: parsedLimitValue, meter: row.meter })

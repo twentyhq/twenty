@@ -24,9 +24,6 @@ export const doesUsageLimitRowSuppressDefault = ({
   scope.spenderId === '' &&
   scope.limitKind === usageLimitDefault.limitKind &&
   scope.resourceType === usageLimitDefault.resourceType &&
-  // findLimitsForSpender lets a row's ALL stand in for every operation, but the
-  // kind rules keep ALL out of speed and stock, the only kinds declaring a
-  // default. A kind that both allows ALL and declares one has to widen this.
   scope.operationType === usageLimitDefault.operationType &&
   scope.spenderType === usageLimitDefault.spenderType &&
   scope.meter === usageLimitDefault.meter;

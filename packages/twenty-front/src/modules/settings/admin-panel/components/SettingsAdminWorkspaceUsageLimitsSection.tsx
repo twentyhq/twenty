@@ -43,8 +43,6 @@ const getStatus = (
     return { label: msg`Default`, color: 'green' };
   }
 
-  // Stored, but findEnforceableLimits drops it at read time and the instance
-  // default is what actually caps the workspace.
   if (!row.isOverrideEnforced) {
     return { label: msg`Inactive`, color: 'gray' };
   }
@@ -64,8 +62,6 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
 
-  // The sequence is what makes every pencil click a fresh dialog: keying on the
-  // row alone would hand the operator back the number they abandoned last time.
   const [editedRowOpening, setEditedRowOpening] = useState<{
     rowId: string;
     sequence: number;
@@ -88,8 +84,6 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
     ? buildAdminUsageLimitRows(data.workspaceUsageLimits)
     : [];
 
-  // Held by id, so a save that refetches hands the dialog the stored row rather
-  // than the snapshot taken when it was opened.
   const editedRow = isDefined(editedRowOpening)
     ? rows.find((row) => row.id === editedRowOpening.rowId)
     : undefined;

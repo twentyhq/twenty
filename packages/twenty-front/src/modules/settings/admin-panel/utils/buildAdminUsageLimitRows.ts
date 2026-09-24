@@ -35,9 +35,6 @@ export const buildAdminUsageLimitRows = (
         operationType: usageLimitDefault.operationType,
         spenderType: usageLimitDefault.spenderType,
         limitKind: usageLimitDefault.limitKind,
-        // A row on another period still drops this default, and it is the one
-        // Edit and Reset act on, so the table names its period rather than the
-        // one the config variable currently implies.
         periodCount: override?.periodCount ?? usageLimitDefault.periodCount,
         periodUnit: override?.periodUnit ?? usageLimitDefault.periodUnit,
         meter: usageLimitDefault.meter,
