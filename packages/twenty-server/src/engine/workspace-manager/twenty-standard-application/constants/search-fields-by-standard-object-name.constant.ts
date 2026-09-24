@@ -19,6 +19,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   calendarEventTarget: [{ name: 'id', type: FieldMetadataType.UUID }],
   calendarEventParticipant: [{ name: 'handle', type: FieldMetadataType.TEXT }],
   callRecording: [{ name: 'title', type: FieldMetadataType.TEXT }],
+  campaignDelivery: [],
   company: [
     { name: 'name', type: FieldMetadataType.TEXT },
     { name: 'domainName', type: FieldMetadataType.LINKS },
@@ -36,6 +37,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   messageList: [{ name: 'name', type: FieldMetadataType.TEXT }],
   messageListMember: [{ name: 'id', type: FieldMetadataType.UUID }],
   messageParticipant: [{ name: 'handle', type: FieldMetadataType.TEXT }],
+  messageSuppression: [],
   messageThread: [{ name: 'subject', type: FieldMetadataType.TEXT }],
   messageThreadTarget: [{ name: 'id', type: FieldMetadataType.UUID }],
   note: [

@@ -1,4 +1,4 @@
-import { type QueryRunner } from 'typeorm';
+import { type EntityManager } from 'typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -132,23 +132,22 @@ const MESSAGE_SUPPRESSION_SEEDS: MessageSuppressionSeed[] = [
 ];
 
 type SeedMessageSuppressionsArgs = {
-  queryRunner: QueryRunner;
+  entityManager: EntityManager;
   schemaName: string;
   workspaceId: string;
 };
 
 export const seedMessageSuppressions = async ({
-  queryRunner,
+  entityManager,
   schemaName,
   workspaceId,
 }: SeedMessageSuppressionsArgs) => {
   const topicIds = getSeededUnsubscribeTopicIds(workspaceId);
 
-  await queryRunner.manager
+  await entityManager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [
-      'workspaceId',
       'emailAddress',
       'reason',
       'source',
@@ -159,7 +158,6 @@ export const seedMessageSuppressions = async ({
     .values(
       MESSAGE_SUPPRESSION_SEEDS.map(
         ({ emailAddress, reason, source, providerEventId, topicSeedName }) => ({
-          workspaceId,
           emailAddress,
           reason,
           source,
