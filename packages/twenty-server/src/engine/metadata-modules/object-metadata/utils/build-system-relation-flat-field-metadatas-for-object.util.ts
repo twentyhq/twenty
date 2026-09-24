@@ -4,11 +4,12 @@ import {
   STANDARD_OBJECTS,
 } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
+import { OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from 'src/engine/metadata-modules/object-metadata/constants/optional-default-relations-object-standard-ids.constant';
 import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
@@ -19,13 +20,33 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 type DefaultRelationStandardObjectNameSingular =
   (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number];
 
+type OptionalDefaultRelationStandardObjectNameSingular =
+  (typeof OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number];
+
+export type DefaultRelationTargetFlatObjectMetadataByNameSingular = Record<
+  DefaultRelationStandardObjectNameSingular,
+  UniversalFlatObjectMetadata
+> &
+  Partial<
+    Record<
+      OptionalDefaultRelationStandardObjectNameSingular,
+      UniversalFlatObjectMetadata
+    >
+  >;
+
 const MORPH_ID_BY_STANDARD_OBJECT_NAME_SINGULAR = {
   timelineActivity:
     STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
   attachment: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
   noteTarget: STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
   taskTarget: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
-} satisfies Record<DefaultRelationStandardObjectNameSingular, string | null>;
+  agentChatThreadTarget:
+    STANDARD_OBJECTS.agentChatThreadTarget.morphIds.targetMorphId.morphId,
+} satisfies Record<
+  | DefaultRelationStandardObjectNameSingular
+  | OptionalDefaultRelationStandardObjectNameSingular,
+  string | null
+>;
 
 export type SystemRelationFlatFieldMetadataBundle = {
   forwardFlatFieldMetadata: UniversalFlatFieldMetadata;
@@ -35,10 +56,7 @@ export type SystemRelationFlatFieldMetadataBundle = {
 
 type BuildSystemRelationFlatFieldMetadatasForObjectArgs = {
   sourceFlatObjectMetadata: UniversalFlatObjectMetadata;
-  standardTargetFlatObjectMetadataByNameSingular: Record<
-    DefaultRelationStandardObjectNameSingular,
-    UniversalFlatObjectMetadata
-  >;
+  standardTargetFlatObjectMetadataByNameSingular: DefaultRelationTargetFlatObjectMetadataByNameSingular;
   applicationUniversalIdentifier: string;
 };
 
@@ -47,11 +65,18 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
   standardTargetFlatObjectMetadataByNameSingular,
   applicationUniversalIdentifier,
 }: BuildSystemRelationFlatFieldMetadatasForObjectArgs): SystemRelationFlatFieldMetadataBundle[] =>
-  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map((standardObjectNameSingular) => {
+  [
+    ...DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+    ...OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+  ].flatMap((standardObjectNameSingular) => {
     const targetFlatObjectMetadata =
       standardTargetFlatObjectMetadataByNameSingular[
         standardObjectNameSingular
       ];
+
+    if (!isDefined(targetFlatObjectMetadata)) {
+      return [];
+    }
 
     const reverseFieldName = `target${capitalize(
       sourceFlatObjectMetadata.nameSingular,
@@ -116,9 +141,11 @@ export const buildSystemRelationFlatFieldMetadatasForObject = ({
     const [forwardFlatFieldMetadata, reverseFlatFieldMetadata] =
       flatFieldMetadatas;
 
-    return {
-      forwardFlatFieldMetadata,
-      reverseFlatFieldMetadata,
-      flatIndexMetadata: indexMetadatas[0],
-    };
+    return [
+      {
+        forwardFlatFieldMetadata,
+        reverseFlatFieldMetadata,
+        flatIndexMetadata: indexMetadatas[0],
+      },
+    ];
   });

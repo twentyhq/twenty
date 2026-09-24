@@ -74,10 +74,36 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
     ),
     thread: { universalIdentifier: '54664c16-3c3d-4d5e-904c-59e1b3707cfb' },
-    objectMetadataId: {
-      universalIdentifier: '33dbe909-cae0-494e-be29-1946ffe55482',
+    targetPerson: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+      }),
     },
-    recordId: { universalIdentifier: '8387849c-d308-4fe4-8ceb-6d8cb14f2244' },
+    targetCompany: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+      }),
+    },
+    targetOpportunity: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+      }),
+    },
   },
   agentTurn: {
     ...buildStandardObjectBaseFields(
@@ -676,6 +702,16 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
       }),
     },
+    agentChatThreadTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+      }),
+    },
     calendarEventTargets: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -1088,6 +1124,16 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
       }),
     },
+    agentChatThreadTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+      }),
+    },
     calendarEventTargets: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -1166,6 +1212,15 @@ export const STANDARD_OBJECT_FIELDS = {
         objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
         relationTargetObjectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
+      }),
+    },
+    agentChatThreadTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
       }),
     },
     calendarEventTargets: {

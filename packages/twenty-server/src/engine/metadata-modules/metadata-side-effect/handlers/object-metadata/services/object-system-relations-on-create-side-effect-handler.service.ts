@@ -18,11 +18,11 @@ import {
   type MetadataSideEffectFailure,
   type MetadataSideEffectResult,
 } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { buildSystemRelationFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-
-type DefaultRelationStandardObjectNameSingular =
-  (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number];
+import { OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from 'src/engine/metadata-modules/object-metadata/constants/optional-default-relations-object-standard-ids.constant';
+import {
+  buildSystemRelationFlatFieldMetadatasForObject,
+  type DefaultRelationTargetFlatObjectMetadataByNameSingular,
+} from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
 
 @Injectable()
 export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -31,17 +31,15 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
     metadataName: 'objectMetadata',
     name: 'objectSystemRelationsOnCreate',
     description:
-      'When an object is created, provision its default relations to the four standard relation objects (timelineActivity, attachment, noteTarget, taskTarget): the forward RELATION field on the new object, the reverse MORPH_RELATION field on the standard object (name-free deterministic identifier so an object rename is a lossless update), and the reverse join-column index. All emitted entities are isSystemSideEffect, so the engine owns their lifecycle. twenty-standard authors these fields itself and never reaches this handler (it syncs via the FromTo path). The handler always emits its bundles: a caller-provided field colliding on universal identifier hard-fails at merge time (RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER), and a caller field colliding on name hard-fails in the field validator (NOT_AVAILABLE).',
+      'When an object is created, provision its default relations to the four standard relation objects (timelineActivity, attachment, noteTarget, taskTarget), plus agentChatThreadTarget when the workspace has it: the forward RELATION field on the new object, the reverse MORPH_RELATION field on the standard object (name-free deterministic identifier so an object rename is a lossless update), and the reverse join-column index. All emitted entities are isSystemSideEffect, so the engine owns their lifecycle. twenty-standard authors these fields itself and never reaches this handler (it syncs via the FromTo path). The handler always emits its bundles: a caller-provided field colliding on universal identifier hard-fails at merge time (RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER), and a caller field colliding on name hard-fails in the field validator (NOT_AVAILABLE).',
   },
 ) {
   buildSideEffects({
     flatEntity: sourceFlatObjectMetadata,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    const standardTargetFlatObjectMetadataByNameSingular = {} as Record<
-      DefaultRelationStandardObjectNameSingular,
-      UniversalFlatObjectMetadata
-    >;
+    const standardTargetFlatObjectMetadataByNameSingular =
+      {} as DefaultRelationTargetFlatObjectMetadataByNameSingular;
 
     const missingStandardObjectErrors: MetadataSideEffectFailure['errors'] = [];
 
@@ -63,6 +61,22 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
       standardTargetFlatObjectMetadataByNameSingular[
         standardObjectNameSingular
       ] = standardTargetFlatObjectMetadata;
+    }
+
+    // An optional relation object is provisioned by its own upgrade command,
+    // which also backfills the objects created before it ran, so its absence
+    // must not block object creation.
+    for (const standardObjectNameSingular of OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
+      const standardTargetFlatObjectMetadata =
+        relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS[standardObjectNameSingular].universalIdentifier
+        ];
+
+      if (isDefined(standardTargetFlatObjectMetadata)) {
+        standardTargetFlatObjectMetadataByNameSingular[
+          standardObjectNameSingular
+        ] = standardTargetFlatObjectMetadata;
+      }
     }
 
     if (isNonEmptyArray(missingStandardObjectErrors)) {
