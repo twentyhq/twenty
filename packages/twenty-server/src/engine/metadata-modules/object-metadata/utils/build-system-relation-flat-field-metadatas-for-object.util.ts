@@ -23,16 +23,15 @@ type DefaultRelationStandardObjectNameSingular =
 type OptionalDefaultRelationStandardObjectNameSingular =
   (typeof OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number];
 
-export type DefaultRelationTargetFlatObjectMetadataByNameSingular = Record<
-  DefaultRelationStandardObjectNameSingular,
-  UniversalFlatObjectMetadata
-> &
-  Partial<
-    Record<
-      OptionalDefaultRelationStandardObjectNameSingular,
-      UniversalFlatObjectMetadata
-    >
-  >;
+// A pair is minted per target passed: object creation insists on the default
+// targets itself, while a backfill passes only the target it provisions.
+export type StandardTargetFlatObjectMetadataByNameSingular = Partial<
+  Record<
+    | DefaultRelationStandardObjectNameSingular
+    | OptionalDefaultRelationStandardObjectNameSingular,
+    UniversalFlatObjectMetadata
+  >
+>;
 
 const MORPH_ID_BY_STANDARD_OBJECT_NAME_SINGULAR = {
   timelineActivity:
@@ -56,7 +55,7 @@ export type SystemRelationFlatFieldMetadataBundle = {
 
 type BuildSystemRelationFlatFieldMetadatasForObjectArgs = {
   sourceFlatObjectMetadata: UniversalFlatObjectMetadata;
-  standardTargetFlatObjectMetadataByNameSingular: DefaultRelationTargetFlatObjectMetadataByNameSingular;
+  standardTargetFlatObjectMetadataByNameSingular: StandardTargetFlatObjectMetadataByNameSingular;
   applicationUniversalIdentifier: string;
 };
 

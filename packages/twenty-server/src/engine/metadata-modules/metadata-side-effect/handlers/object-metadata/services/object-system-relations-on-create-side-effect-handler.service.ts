@@ -21,7 +21,7 @@ import {
 import { OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from 'src/engine/metadata-modules/object-metadata/constants/optional-default-relations-object-standard-ids.constant';
 import {
   buildSystemRelationFlatFieldMetadatasForObject,
-  type DefaultRelationTargetFlatObjectMetadataByNameSingular,
+  type StandardTargetFlatObjectMetadataByNameSingular,
 } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
 
 @Injectable()
@@ -38,8 +38,8 @@ export class ObjectSystemRelationsOnCreateSideEffectHandlerService extends Metad
     flatEntity: sourceFlatObjectMetadata,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    const standardTargetFlatObjectMetadataByNameSingular =
-      {} as DefaultRelationTargetFlatObjectMetadataByNameSingular;
+    const standardTargetFlatObjectMetadataByNameSingular: StandardTargetFlatObjectMetadataByNameSingular =
+      {};
 
     const missingStandardObjectErrors: MetadataSideEffectFailure['errors'] = [];
 
