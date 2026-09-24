@@ -430,7 +430,7 @@ msgstr ""
 #. js-lingui-id: HzFjBR
 #: src/modules/settings/admin-panel/utils/formatUsageLimitValue.ts
 msgid "{credits} credits"
-msgstr ""
+msgstr "{credits} קרדיטים"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -658,7 +658,7 @@ msgstr "{scopeCount} תחומי הרשאה"
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — ברירת המחדל של המופע היא {defaultText}. השמירה חלה על סביבת עבודה זו בלבד."
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -3778,7 +3778,7 @@ msgstr "מגיע בחבילה עם {applicationName}"
 #. js-lingui-id: /blpUq
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Burst"
-msgstr ""
+msgstr "פרץ"
 
 #. js-lingui-id: yjeERL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -3810,7 +3810,7 @@ msgstr "עקיפת SSO"
 #. js-lingui-id: 9z+1OD
 #: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 msgid "Bytes"
-msgstr ""
+msgstr "בתים"
 
 #. js-lingui-id: ZPnTAU
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -9538,7 +9538,7 @@ msgstr "טעינת היישום נכשלה."
 #. js-lingui-id: JU81x+
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Failed to load usage limits."
-msgstr ""
+msgstr "טעינת מגבלות השימוש נכשלה."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -12674,7 +12674,7 @@ msgstr "בעל הרישיון"
 #. js-lingui-id: yOGTbg
 #: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 msgid "Lifetime"
-msgstr ""
+msgstr "לכל החיים"
 
 #. js-lingui-id: 1njn7W
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
@@ -12730,12 +12730,12 @@ msgstr ""
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit reset to the default."
-msgstr ""
+msgstr "המגבלה אופסה לברירת המחדל."
 
 #. js-lingui-id: x2/DSY
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit saved for this workspace."
-msgstr ""
+msgstr "המגבלה נשמרה עבור סביבת עבודה זו."
 
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16128,7 +16128,7 @@ msgstr "אסימוני פלט"
 #. js-lingui-id: iCOVQO
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Override"
-msgstr ""
+msgstr "דריסה"
 
 #. js-lingui-id: in6CUw
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
@@ -16402,7 +16402,7 @@ msgstr "אנשים ששלחתי אליהם דוא\"ל."
 #. js-lingui-id: VloFYI
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Per"
-msgstr ""
+msgstr "לכל"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -18389,7 +18389,7 @@ msgstr "מכירות"
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Same as the limit"
-msgstr ""
+msgstr "זהה למגבלה"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -19483,7 +19483,7 @@ msgstr "הגדרת העדפות גלובליות במרחב העבודה"
 #. js-lingui-id: 1VGWc8
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Set limit for this workspace"
-msgstr ""
+msgstr "הגדר מגבלה עבור סביבת עבודה זו"
 
 #. js-lingui-id: 2gHjVM
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -21532,7 +21532,7 @@ msgstr "מפתח ארגון זה משויך כעת למופע שרת אחר. ה�
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "This override no longer exists. Reload to see the current limit."
-msgstr ""
+msgstr "דריסה זו אינה קיימת עוד. טען מחדש כדי לראות את המגבלה הנוכחית."
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -24006,7 +24006,7 @@ msgstr "מה אתה יכול לעשות?"
 #. js-lingui-id: 9Y4G6f
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr ""
+msgstr "מה מגביל את סביבת העבודה הזו. ברירות המחדל של המופע מגיעות ממשתני תצורה, ורק מפעיל יכול להחליף אחת מהן."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

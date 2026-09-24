@@ -1561,13 +1561,13 @@ msgstr "Բում"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Bounced At"
-msgstr ""
+msgstr "Վերադարձված է՝"
 
 #. js-lingui-id: Ju2edC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Bounced At"
-msgstr ""
+msgstr "Վերադարձված է՝"
 
 #. js-lingui-id: MUk11c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -1979,31 +1979,31 @@ msgstr "Արշավ"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Campaign deliveries"
-msgstr ""
+msgstr "Արշավի առաքումներ"
 
 #. js-lingui-id: 9CLy+1
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Campaign delivery"
-msgstr ""
+msgstr "Արշավի առաքում"
 
 #. js-lingui-id: TXz220
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Campaign delivery"
-msgstr ""
+msgstr "Արշավի առաքում"
 
 #. js-lingui-id: rghNQY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Campaign ID"
-msgstr ""
+msgstr "Արշավի ID"
 
 #. js-lingui-id: fSWDKd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Campaign ID"
-msgstr ""
+msgstr "Արշավի ID"
 
 #. js-lingui-id: BeCo7/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -2338,25 +2338,25 @@ msgstr "Տեսքի ֆիլտրի խմբի հիերարխիայում հայտնա
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Claim Expires At"
-msgstr ""
+msgstr "Պահանջի ժամկետի ավարտ"
 
 #. js-lingui-id: bj3jul
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Claim Expires At"
-msgstr ""
+msgstr "Պահանջի ժամկետի ավարտ"
 
 #. js-lingui-id: H+dfXj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Claim Token"
-msgstr ""
+msgstr "Պահանջի տոկեն"
 
 #. js-lingui-id: S8cDJf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Claim Token"
-msgstr ""
+msgstr "Պահանջի տոկեն"
 
 #. js-lingui-id: fDGNL3
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -2487,13 +2487,13 @@ msgstr "Կազմակերպության գրառման դիրք"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Complained At"
-msgstr ""
+msgstr "Բողոքել է"
 
 #. js-lingui-id: 9bCz2D
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Complained At"
-msgstr ""
+msgstr "Բողոքել է"
 
 #. js-lingui-id: UdSbpW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3584,13 +3584,13 @@ msgstr "Ջնջման ամսաթիվ"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Delivered At"
-msgstr ""
+msgstr "Առաքվել է"
 
 #. js-lingui-id: LswjjG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Delivered At"
-msgstr ""
+msgstr "Առաքվել է"
 
 #. js-lingui-id: bMSh++
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3827,13 +3827,13 @@ msgstr "Էլ. փոստ"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Email Address"
-msgstr ""
+msgstr "Էլփոստի հասցե"
 
 #. js-lingui-id: NH74YE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Email Address"
-msgstr ""
+msgstr "Էլփոստի հասցե"
 
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
@@ -4381,13 +4381,13 @@ msgstr "Չհաջողվեց ավելացնել կամ թարմացնել գրառ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Failure Reason"
-msgstr ""
+msgstr "Ձախողման պատճառ"
 
 #. js-lingui-id: vFgy1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Failure Reason"
-msgstr ""
+msgstr "Ձախողման պատճառ"
 
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -7226,19 +7226,19 @@ msgstr "Հաղորդագրության գրառման դիրք"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Message suppression"
-msgstr ""
+msgstr "Հաղորդագրության ճնշում"
 
 #. js-lingui-id: mIsdys
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Message suppression"
-msgstr ""
+msgstr "Հաղորդագրության ճնշում"
 
 #. js-lingui-id: 7KgWx1
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Message suppressions"
-msgstr ""
+msgstr "Հաղորդագրությունների ճնշումներ"
 
 #. js-lingui-id: IyZnrr
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8166,7 +8166,7 @@ msgstr "Միայն ադմինիստրատորները կարող են նմանա
 #. js-lingui-id: ApQ2Kw
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Only an operator can replace an instance default."
-msgstr ""
+msgstr "Միայն օպերատորը կարող է փոխարինել օրինակի լռելյայնը."
 
 #. js-lingui-id: JzXn58
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -8819,13 +8819,13 @@ msgstr "Անձ"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Person ID"
-msgstr ""
+msgstr "Անձի նույնացուցիչ"
 
 #. js-lingui-id: Ojc/oN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Person ID"
-msgstr ""
+msgstr "Անձի նույնացուցիչ"
 
 #. js-lingui-id: qAQDfe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -9115,13 +9115,13 @@ msgstr "Տրված հեռախոսահամարը անվավեր է {number}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Event ID"
-msgstr ""
+msgstr "Մատակարարի իրադարձության ID"
 
 #. js-lingui-id: g/4oFF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Event ID"
-msgstr ""
+msgstr "Մատակարարի իրադարձության ID"
 
 #. js-lingui-id: XRbtVv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -9139,13 +9139,13 @@ msgstr "Մատակարարը կատարեց"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Provider Message ID"
-msgstr ""
+msgstr "Մատակարարի հաղորդագրության ID"
 
 #. js-lingui-id: bJgvow
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Provider Message ID"
-msgstr ""
+msgstr "Մատակարարի հաղորդագրության ID"
 
 #. js-lingui-id: ApKRV5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -9221,13 +9221,13 @@ msgstr "Կարդալ և գրել"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reason"
-msgstr ""
+msgstr "Պատճառ"
 
 #. js-lingui-id: QHL400
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reason"
-msgstr ""
+msgstr "Պատճառ"
 
 #. js-lingui-id: UkccBI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -9251,13 +9251,13 @@ msgstr "Ստացվել է"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Recipient Email"
-msgstr ""
+msgstr "Ստացողի էլ. փոստ"
 
 #. js-lingui-id: jtaUxI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Recipient Email"
-msgstr ""
+msgstr "Ստացողի էլ. փոստ"
 
 #. js-lingui-id: ND12UB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9380,13 +9380,13 @@ msgstr "Գրանցված է մեկ այլ աշխատանքային տարածք�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Rejected At"
-msgstr ""
+msgstr "Մերժվել է"
 
 #. js-lingui-id: d3PF7k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Rejected At"
-msgstr ""
+msgstr "Մերժվել է"
 
 #. js-lingui-id: 2dNwZB
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -9492,13 +9492,13 @@ msgstr "հեռացրել է կցված ֆայլը"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Rendering Failed At"
-msgstr ""
+msgstr "Արտապատկերումը ձախողվել է"
 
 #. js-lingui-id: L9MGVo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Rendering Failed At"
-msgstr ""
+msgstr "Արտապատկերումը ձախողվել է"
 
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10257,13 +10257,13 @@ msgstr "Ուղարկվել է"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Sent At"
-msgstr ""
+msgstr "Ուղարկվել է"
 
 #. js-lingui-id: Ac1/Xj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Sent At"
-msgstr ""
+msgstr "Ուղարկվել է"
 
 #. js-lingui-id: M8jvbm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10438,13 +10438,13 @@ msgstr "\"{name}\" անունով հմտությունն արդեն գոյութ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Skip Reason"
-msgstr ""
+msgstr "Բաց թողնելու պատճառ"
 
 #. js-lingui-id: OgTx4x
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Skip Reason"
-msgstr ""
+msgstr "Բաց թողնելու պատճառ"
 
 #. js-lingui-id: 9KFM/B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10497,13 +10497,13 @@ msgstr "Ինչ-որ բան սխալ գնաց։ Խնդրում ենք փորձե�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Source"
-msgstr ""
+msgstr "Աղբյուր"
 
 #. js-lingui-id: H7M9xQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source"
-msgstr ""
+msgstr "Աղբյուր"
 
 #. js-lingui-id: SoRH5/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -12113,7 +12113,7 @@ msgstr "Այս սահմանաչափը չի կարող պահպանվել։"
 #. js-lingui-id: 1MfZ0Y
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "This limit changed while you were editing it. Reload and try again."
-msgstr ""
+msgstr "Այս սահմանաչափը փոխվել է, մինչ դուք այն խմբագրում էիք։ Վերբեռնեք מחדש և կրկին փորձեք."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -13012,13 +13012,13 @@ msgstr "Բաժանորդագրությունից հրաժարվելու թեմա
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Unsubscribe Topic ID"
-msgstr ""
+msgstr "Բաժանորդագրությունից հրաժարվելու թեմայի ID"
 
 #. js-lingui-id: z2qMOH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Unsubscribe Topic ID"
-msgstr ""
+msgstr "Բաժանորդագրությունից հրաժարվելու թեմայի ID"
 
 #. js-lingui-id: Md/2jb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

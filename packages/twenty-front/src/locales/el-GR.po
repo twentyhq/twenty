@@ -430,7 +430,7 @@ msgstr "{count, plural, one {Π.χ. {example} για # δεκαδικό ψηφί
 #. js-lingui-id: HzFjBR
 #: src/modules/settings/admin-panel/utils/formatUsageLimitValue.ts
 msgid "{credits} credits"
-msgstr ""
+msgstr "{credits} πιστώσεις"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -658,7 +658,7 @@ msgstr "{scopeCount} δικαιώματα πρόσβασης"
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — η προεπιλογή του στιγμιότυπου είναι {defaultText}. Η αποθήκευση ισχύει μόνο για αυτόν τον χώρο εργασίας."
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -3778,7 +3778,7 @@ msgstr "Συμπεριλαμβάνεται με το {applicationName}"
 #. js-lingui-id: /blpUq
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Burst"
-msgstr ""
+msgstr "Αιχμή"
 
 #. js-lingui-id: yjeERL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -3810,7 +3810,7 @@ msgstr "Παράκαμψη SSO"
 #. js-lingui-id: 9z+1OD
 #: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 msgid "Bytes"
-msgstr ""
+msgstr "Byte"
 
 #. js-lingui-id: ZPnTAU
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -9538,7 +9538,7 @@ msgstr "Αποτυχία φόρτωσης της εφαρμογής."
 #. js-lingui-id: JU81x+
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Failed to load usage limits."
-msgstr ""
+msgstr "Αποτυχία φόρτωσης ορίων χρήσης."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -12674,7 +12674,7 @@ msgstr "Αδειούχος"
 #. js-lingui-id: yOGTbg
 #: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 msgid "Lifetime"
-msgstr ""
+msgstr "Διάρκεια ζωής"
 
 #. js-lingui-id: 1njn7W
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
@@ -12730,12 +12730,12 @@ msgstr ""
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit reset to the default."
-msgstr ""
+msgstr "Το όριο επαναφέρθηκε στην προεπιλογή."
 
 #. js-lingui-id: x2/DSY
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit saved for this workspace."
-msgstr ""
+msgstr "Το όριο αποθηκεύτηκε για αυτόν τον χώρο εργασίας."
 
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16128,7 +16128,7 @@ msgstr "Διακριτικά εξόδου"
 #. js-lingui-id: iCOVQO
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Override"
-msgstr ""
+msgstr "Παράκαμψη"
 
 #. js-lingui-id: in6CUw
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
@@ -16402,7 +16402,7 @@ msgstr "Άτομα στα οποία έχω στείλει emails."
 #. js-lingui-id: VloFYI
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Per"
-msgstr ""
+msgstr "Ανά"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -18389,7 +18389,7 @@ msgstr "Πωλήσεις"
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Same as the limit"
-msgstr ""
+msgstr "Ίδιο με το όριο"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -19483,7 +19483,7 @@ msgstr "Ορισμός προτιμήσεων καθολικού χώρου ερ
 #. js-lingui-id: 1VGWc8
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Set limit for this workspace"
-msgstr ""
+msgstr "Ορισμός ορίου για αυτόν τον χώρο εργασίας"
 
 #. js-lingui-id: 2gHjVM
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -21534,7 +21534,7 @@ msgstr "Αυτό το κλειδί Οργανισμού είναι προς το
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "This override no longer exists. Reload to see the current limit."
-msgstr ""
+msgstr "Αυτή η παράκαμψη δεν υπάρχει πλέον. Επαναφορτώστε για να δείτε το τρέχον όριο."
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -24008,7 +24008,7 @@ msgstr "Τι μπορείτε να κάνετε;"
 #. js-lingui-id: 9Y4G6f
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr ""
+msgstr "Τι περιορίζει αυτόν τον χώρο εργασίας. Οι προεπιλογές παρουσίας προέρχονται από μεταβλητές διαμόρφωσης και μόνο ένας διαχειριστής μπορεί να αντικαταστήσει μία."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

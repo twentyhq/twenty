@@ -430,7 +430,7 @@ msgstr "{count, plural, one {P. ex. {example} per a # decimal} other {P. ex. {ex
 #. js-lingui-id: HzFjBR
 #: src/modules/settings/admin-panel/utils/formatUsageLimitValue.ts
 msgid "{credits} credits"
-msgstr ""
+msgstr "{credits} crèdits"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -658,7 +658,7 @@ msgstr "{scopeCount} àmbits"
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — el valor predeterminat de la instància és {defaultText}. El desament s'aplica només a aquest espai de treball."
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -3778,7 +3778,7 @@ msgstr "Inclòs amb {applicationName}"
 #. js-lingui-id: /blpUq
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Burst"
-msgstr ""
+msgstr "Ràfega"
 
 #. js-lingui-id: yjeERL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -3810,7 +3810,7 @@ msgstr "Saltar SSO"
 #. js-lingui-id: 9z+1OD
 #: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 msgid "Bytes"
-msgstr ""
+msgstr "Bytes"
 
 #. js-lingui-id: ZPnTAU
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -9538,7 +9538,7 @@ msgstr "No s'ha pogut carregar l'aplicació."
 #. js-lingui-id: JU81x+
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Failed to load usage limits."
-msgstr ""
+msgstr "No s'han pogut carregar els límits d'ús."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -12674,7 +12674,7 @@ msgstr "Titular de la llicència"
 #. js-lingui-id: yOGTbg
 #: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 msgid "Lifetime"
-msgstr ""
+msgstr "De per vida"
 
 #. js-lingui-id: 1njn7W
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
@@ -12730,12 +12730,12 @@ msgstr ""
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit reset to the default."
-msgstr ""
+msgstr "S'ha restablert el límit al valor predeterminat."
 
 #. js-lingui-id: x2/DSY
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit saved for this workspace."
-msgstr ""
+msgstr "S'ha desat el límit per a aquest espai de treball."
 
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16128,7 +16128,7 @@ msgstr "Tokens de sortida"
 #. js-lingui-id: iCOVQO
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Override"
-msgstr ""
+msgstr "Substitució"
 
 #. js-lingui-id: in6CUw
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
@@ -16402,7 +16402,7 @@ msgstr "Persones a qui he enviat correus electrònics."
 #. js-lingui-id: VloFYI
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Per"
-msgstr ""
+msgstr "Per"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -18389,7 +18389,7 @@ msgstr "Vendes"
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Same as the limit"
-msgstr ""
+msgstr "Igual que el límit"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -19483,7 +19483,7 @@ msgstr "Definir preferències globals de l'espai de treball"
 #. js-lingui-id: 1VGWc8
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Set limit for this workspace"
-msgstr ""
+msgstr "Estableix un límit per a aquest espai de treball"
 
 #. js-lingui-id: 2gHjVM
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -21532,7 +21532,7 @@ msgstr "Aquesta clau d'Organització està actualment vinculada a una instància
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "This override no longer exists. Reload to see the current limit."
-msgstr ""
+msgstr "Aquesta substitució ja no existeix. Torna a carregar per veure el límit actual."
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -24006,7 +24006,7 @@ msgstr "Què pots fer?"
 #. js-lingui-id: 9Y4G6f
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr ""
+msgstr "Què limita aquest espai de treball. Els valors predeterminats de la instància provenen de variables de configuració i només un operador en pot substituir un."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

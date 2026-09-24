@@ -430,7 +430,7 @@ msgstr "{count, plural, one {Ej. {example} para # decimal} other {Ej. {example} 
 #. js-lingui-id: HzFjBR
 #: src/modules/settings/admin-panel/utils/formatUsageLimitValue.ts
 msgid "{credits} credits"
-msgstr ""
+msgstr "{credits} créditos"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -658,7 +658,7 @@ msgstr "{scopeCount} ámbitos"
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — el valor predeterminado de la instancia es {defaultText}. Al guardar, se aplica solo a este espacio de trabajo."
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -3778,7 +3778,7 @@ msgstr "Incluido con {applicationName}"
 #. js-lingui-id: /blpUq
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Burst"
-msgstr ""
+msgstr "Ráfaga"
 
 #. js-lingui-id: yjeERL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -3810,7 +3810,7 @@ msgstr "Omitir SSO"
 #. js-lingui-id: 9z+1OD
 #: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 msgid "Bytes"
-msgstr ""
+msgstr "Bytes"
 
 #. js-lingui-id: ZPnTAU
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -9538,7 +9538,7 @@ msgstr "No se pudo cargar la aplicación."
 #. js-lingui-id: JU81x+
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Failed to load usage limits."
-msgstr ""
+msgstr "No se pudieron cargar los límites de uso."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -12674,7 +12674,7 @@ msgstr "Titular de la licencia"
 #. js-lingui-id: yOGTbg
 #: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 msgid "Lifetime"
-msgstr ""
+msgstr "De por vida"
 
 #. js-lingui-id: 1njn7W
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
@@ -12730,12 +12730,12 @@ msgstr "El límite debe ser mayor que 0."
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit reset to the default."
-msgstr ""
+msgstr "El límite se restableció al valor predeterminado."
 
 #. js-lingui-id: x2/DSY
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit saved for this workspace."
-msgstr ""
+msgstr "Límite guardado para este espacio de trabajo."
 
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16128,7 +16128,7 @@ msgstr "Tokens de salida"
 #. js-lingui-id: iCOVQO
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Override"
-msgstr ""
+msgstr "Anulación"
 
 #. js-lingui-id: in6CUw
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
@@ -16402,7 +16402,7 @@ msgstr "Personas a las que he enviado correos electrónicos."
 #. js-lingui-id: VloFYI
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Per"
-msgstr ""
+msgstr "Por"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -18389,7 +18389,7 @@ msgstr "Ventas"
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Same as the limit"
-msgstr ""
+msgstr "Igual que el límite"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -19483,7 +19483,7 @@ msgstr "Configurar preferencias globales del espacio de trabajo"
 #. js-lingui-id: 1VGWc8
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Set limit for this workspace"
-msgstr ""
+msgstr "Establecer límite para este espacio de trabajo"
 
 #. js-lingui-id: 2gHjVM
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -21534,7 +21534,7 @@ msgstr "Esta clave de Organización está actualmente vinculada a una instancia 
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "This override no longer exists. Reload to see the current limit."
-msgstr ""
+msgstr "Esta anulación ya no existe. Recarga para ver el límite actual."
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -24008,7 +24008,7 @@ msgstr "¿Qué puedes hacer?"
 #. js-lingui-id: 9Y4G6f
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr ""
+msgstr "Lo que limita este espacio de trabajo. Los valores predeterminados de la instancia provienen de variables de configuración y solo un operador puede reemplazar uno."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

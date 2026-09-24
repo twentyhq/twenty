@@ -430,7 +430,7 @@ msgstr "{count, plural, one {F.eks. {example} for # decimal} other {F.eks. {exam
 #. js-lingui-id: HzFjBR
 #: src/modules/settings/admin-panel/utils/formatUsageLimitValue.ts
 msgid "{credits} credits"
-msgstr ""
+msgstr "{credits} kreditter"
 
 #. js-lingui-id: LZWC7x
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
@@ -658,7 +658,7 @@ msgstr "{scopeCount} tilladelsesområder"
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — standardindstillingen for instansen er {defaultText}. Lagring gælder kun for dette arbejdsområde."
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -3778,7 +3778,7 @@ msgstr "Leveres sammen med {applicationName}"
 #. js-lingui-id: /blpUq
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Burst"
-msgstr ""
+msgstr "Spidsbelastning"
 
 #. js-lingui-id: yjeERL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -3810,7 +3810,7 @@ msgstr "Omgå SSO"
 #. js-lingui-id: 9z+1OD
 #: src/modules/settings/billing/constants/UsageLimitMeterLabels.ts
 msgid "Bytes"
-msgstr ""
+msgstr "Byte"
 
 #. js-lingui-id: ZPnTAU
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -9538,7 +9538,7 @@ msgstr "Kunne ikke indlæse applikationen."
 #. js-lingui-id: JU81x+
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Failed to load usage limits."
-msgstr ""
+msgstr "Kunne ikke indlæse forbrugsgrænser."
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -12674,7 +12674,7 @@ msgstr "Licenstager"
 #. js-lingui-id: yOGTbg
 #: src/modules/settings/billing/constants/UsageLimitPeriodUnitLabels.ts
 msgid "Lifetime"
-msgstr ""
+msgstr "Livstid"
 
 #. js-lingui-id: 1njn7W
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
@@ -12730,12 +12730,12 @@ msgstr ""
 #. js-lingui-id: nvECeF
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit reset to the default."
-msgstr ""
+msgstr "Grænsen er nulstillet til standardværdien."
 
 #. js-lingui-id: x2/DSY
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Limit saved for this workspace."
-msgstr ""
+msgstr "Grænsen er gemt for dette arbejdsområde."
 
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -16128,7 +16128,7 @@ msgstr "Outputtokens"
 #. js-lingui-id: iCOVQO
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Override"
-msgstr ""
+msgstr "Tilsidesæt"
 
 #. js-lingui-id: in6CUw
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
@@ -16402,7 +16402,7 @@ msgstr "Folk jeg har sendt e-mails til."
 #. js-lingui-id: VloFYI
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Per"
-msgstr ""
+msgstr "Pr."
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -18389,7 +18389,7 @@ msgstr "Salg"
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Same as the limit"
-msgstr ""
+msgstr "Samme som grænsen"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -19483,7 +19483,7 @@ msgstr "Sæt globale arbejdsområdepræferencer"
 #. js-lingui-id: 1VGWc8
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Set limit for this workspace"
-msgstr ""
+msgstr "Angiv grænse for dette arbejdsområde"
 
 #. js-lingui-id: 2gHjVM
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -21534,7 +21534,7 @@ msgstr "Denne organisationsnøgle er i øjeblikket bundet til en anden serverins
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "This override no longer exists. Reload to see the current limit."
-msgstr ""
+msgstr "Denne tilsidesættelse findes ikke længere. Genindlæs for at se den aktuelle grænse."
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -24008,7 +24008,7 @@ msgstr "Hvad kan du gøre?"
 #. js-lingui-id: 9Y4G6f
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr ""
+msgstr "Det, der begrænser dette arbejdsområde. Instansstandarder kommer fra konfigurationsvariabler, og kun en operatør kan erstatte en."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
