@@ -12,6 +12,7 @@ describe('buildQuotaDefinitions', () => {
       [UsageResourceType.AI, 'quota'],
       [UsageResourceType.WORKFLOW, 'quota'],
       [UsageResourceType.LOGIC_FUNCTION, 'quota'],
+      [UsageResourceType.EMAIL, 'quota'],
     ]);
   });
 

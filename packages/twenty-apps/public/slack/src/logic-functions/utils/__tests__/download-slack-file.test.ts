@@ -92,6 +92,23 @@ describe('downloadSlackFile', () => {
     expect(result).toMatchObject({ success: false, reason: 'missing-scope' });
   });
 
+  it('should name a mismatched content type a download failure, not a missing scope', async () => {
+    mockFetchResponse({
+      headers: new Headers({ 'content-type': 'application/octet-stream' }),
+    });
+
+    const result = await downloadPngFile();
+
+    expect(result).toMatchObject({
+      success: false,
+      reason: 'download-failed',
+    });
+    expect(result).toHaveProperty(
+      'error',
+      expect.not.stringContaining('files:read'),
+    );
+  });
+
   it('should name a transport failure as a download failure', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('socket hang up')));
 

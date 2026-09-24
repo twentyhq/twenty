@@ -30,7 +30,7 @@ import { SKIP_EVENT_EMISSION } from 'src/modules/emailing/constants/skip-event-e
 import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
-import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
+import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
@@ -85,10 +85,12 @@ export class MessageCampaignDeliveryService {
         return;
       }
 
-      const creditContext =
-        await this.emailBillingService.getEmailCreditContext(workspaceId);
+      const sendRefusal = await this.emailBillingService.findEmailSendRefusal({
+        workspaceId,
+        spenders: { userWorkspaceId: data.userWorkspaceId },
+      });
 
-      if (creditContext.hasCredits) {
+      if (!isDefined(sendRefusal)) {
         const refusal = await this.campaignSendSlotService.findSendSlotRefusal({
           workspaceId,
         });
@@ -125,7 +127,7 @@ export class MessageCampaignDeliveryService {
         data,
         messageRepository,
         sendContext,
-        creditContext,
+        sendRefusal,
       });
 
       await this.messageCampaignStatisticsService
@@ -270,12 +272,12 @@ export class MessageCampaignDeliveryService {
     data,
     messageRepository,
     sendContext: { campaign, person, claimToken },
-    creditContext: { hasCredits },
+    sendRefusal,
   }: {
     data: SendCampaignEmailJobData;
     messageRepository: WorkspaceRepository<MessageWorkspaceEntity>;
     sendContext: SendContext;
-    creditContext: EmailCreditContext;
+    sendRefusal: UsageRefusal | null;
   }): Promise<void> {
     const {
       workspaceId,
@@ -286,7 +288,7 @@ export class MessageCampaignDeliveryService {
       userWorkspaceId,
     } = data;
 
-    if (!hasCredits) {
+    if (isDefined(sendRefusal)) {
       await this.settleClaimedDelivery({
         workspaceId,
         messageId,
@@ -370,7 +372,7 @@ export class MessageCampaignDeliveryService {
       .billSentEmails({
         workspaceId,
         sentEmailCount: 1,
-        userWorkspaceId,
+        spenders: { userWorkspaceId },
       })
       .catch((error) => {
         this.logger.error(

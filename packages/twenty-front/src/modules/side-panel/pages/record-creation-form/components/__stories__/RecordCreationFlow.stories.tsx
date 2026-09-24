@@ -41,10 +41,11 @@ import {
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import {
   EngineComponentKey,
+  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
@@ -56,6 +57,7 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const createCompanyRequest = fn();
 const onRecordCreated = fn();
@@ -153,7 +155,15 @@ const RecordCreationFlow = ({ commandOrigin }: RecordCreationFlowProps) => {
       );
     }
     applyChanges();
-    store.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    store.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        {
+          key: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
+          value: true,
+        },
+      ],
+    });
     store.set(currentWorkspaceMemberState.atom, (member) =>
       isDefined(member)
         ? { ...member, openRecordIn: OpenRecordIn.SIDE_PANEL }
@@ -271,7 +281,7 @@ const meta = {
   decorators: [
     ObjectMetadataItemsDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     ComponentDecorator,
   ],
   parameters: {

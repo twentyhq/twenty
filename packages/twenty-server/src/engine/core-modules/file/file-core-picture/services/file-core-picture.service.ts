@@ -3,11 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { buffer as streamToBuffer } from 'node:stream/consumers';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Like, type QueryRunner, Repository } from 'typeorm';
+import {
+  type EntityManager,
+  Like,
+  type QueryRunner,
+  Repository,
+} from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -18,14 +24,27 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
+import {
+  type PendingActivationUserWorkspaceAuthContext,
+  type WorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildPendingActivationUserAuthContext } from 'src/engine/core-modules/auth/utils/build-pending-activation-user-auth-context.util';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import {
+  FileUploadException,
+  FileUploadExceptionCode,
+} from 'src/engine/core-modules/file/file-upload/file-upload.exception';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -45,6 +64,8 @@ export class FileCorePictureService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly fileUploadService: FileUploadService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   private async findCustomApplicationUniversalIdentifier(
@@ -72,12 +93,14 @@ export class FileCorePictureService {
     workspaceId,
     applicationUniversalIdentifier,
     queryRunner,
+    isTemporaryFile = false,
   }: {
     file: Buffer;
     filename: string;
     workspaceId: string;
     applicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
+    isTemporaryFile?: boolean;
   }): Promise<FileEntity> {
     const { ext } = await extractFileInfoOrThrow({ file, filename });
 
@@ -96,13 +119,211 @@ export class FileCorePictureService {
       workspaceId,
       fileId,
       settings: {
-        isTemporaryFile: false,
+        isTemporaryFile,
         toDelete: false,
       },
       queryRunner,
     });
 
     return savedFile;
+  }
+
+  private async toFileWithSignedUrl({
+    file,
+    workspaceId,
+  }: {
+    file: FileEntity;
+    workspaceId: string;
+  }): Promise<FileWithSignedUrlDTO> {
+    return {
+      ...file,
+      url: await this.fileUrlService.signFileByIdUrl({
+        fileId: file.id,
+        fileFolder: FileFolder.CorePicture,
+        workspaceId,
+      }),
+    };
+  }
+
+  private async findCorePictureFileOrThrow({
+    workspaceId,
+    fileId,
+  }: {
+    workspaceId: string;
+    fileId: string;
+  }): Promise<FileEntity> {
+    const file = await this.fileRepository.findOne(workspaceId, {
+      where: {
+        id: fileId,
+        path: Like(`${FileFolder.CorePicture}/%`),
+      },
+    });
+
+    if (!isDefined(file)) {
+      throw new FileUploadException(
+        `File not found: ${fileId}`,
+        FileUploadExceptionCode.FILE_NOT_FOUND,
+        { userFriendlyMessage: msg`File not found.` },
+      );
+    }
+
+    return file;
+  }
+
+  private async findCurrentLogoFileId(
+    workspaceId: string,
+  ): Promise<string | null> {
+    const workspace = await this.workspaceRepository.findOneOrFail({
+      where: { id: workspaceId },
+      select: ['id', 'logoFileId'],
+    });
+
+    return workspace.logoFileId;
+  }
+
+  private async claimTemporaryFile({
+    manager,
+    workspaceId,
+    fileId,
+  }: {
+    manager: EntityManager;
+    workspaceId: string;
+    fileId: string;
+  }): Promise<void> {
+    const transactionalFileRepository =
+      this.fileRepository.withManager(manager);
+
+    const file = await transactionalFileRepository.findOne(workspaceId, {
+      where: { id: fileId },
+      lock: { mode: 'pessimistic_write' },
+    });
+
+    if (!isDefined(file)) {
+      throw new FileUploadException(
+        `File not found: ${fileId}`,
+        FileUploadExceptionCode.FILE_NOT_FOUND,
+        { userFriendlyMessage: msg`File not found.` },
+      );
+    }
+
+    if (file.settings?.isTemporaryFile !== true) {
+      throw new FileUploadException(
+        `File ${fileId} was already finalized`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`This file upload has already been finalized.`,
+        },
+      );
+    }
+
+    await transactionalFileRepository.update(
+      workspaceId,
+      { id: fileId },
+      { settings: { isTemporaryFile: false, toDelete: false } },
+    );
+  }
+
+  private async claimFileAsWorkspaceLogo({
+    workspaceId,
+    fileId,
+  }: {
+    workspaceId: string;
+    fileId: string;
+  }): Promise<string | null> {
+    return this.workspaceRepository.manager.transaction(async (manager) => {
+      const workspace = await manager.findOneOrFail(WorkspaceEntity, {
+        where: { id: workspaceId },
+        select: ['id', 'logoFileId'],
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (workspace.logoFileId === fileId) {
+        return null;
+      }
+
+      await this.claimTemporaryFile({ manager, workspaceId, fileId });
+
+      await manager.update(WorkspaceEntity, workspaceId, {
+        logoFileId: fileId,
+      });
+
+      return workspace.logoFileId;
+    });
+  }
+
+  private async bindWorkspaceLogo({
+    workspaceId,
+    fileId,
+  }: {
+    workspaceId: string;
+    fileId: string;
+  }): Promise<void> {
+    const replacedLogoFileId = await this.claimFileAsWorkspaceLogo({
+      workspaceId,
+      fileId,
+    });
+
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    if (isDefined(replacedLogoFileId)) {
+      await this.deleteCorePicture({ fileId: replacedLogoFileId, workspaceId });
+    }
+  }
+
+  async completeWorkspaceLogoUpload({
+    workspaceId,
+    fileId,
+    authContext,
+  }: {
+    workspaceId: string;
+    fileId: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<FileWithSignedUrlDTO> {
+    const file = await this.findCorePictureFileOrThrow({ workspaceId, fileId });
+    const currentLogoFileId = await this.findCurrentLogoFileId(workspaceId);
+
+    if (currentLogoFileId === file.id) {
+      return this.toFileWithSignedUrl({ file, workspaceId });
+    }
+
+    const completedFile = await this.fileUploadService.completeFileUpload({
+      workspaceId,
+      fileId,
+      dedicatedFileFolder: FileFolder.CorePicture,
+      authContext,
+    });
+
+    await this.bindWorkspaceLogo({ workspaceId, fileId });
+
+    return completedFile;
+  }
+
+  async completeWorkspaceMemberProfilePictureUpload({
+    workspaceId,
+    fileId,
+    authContext,
+  }: {
+    workspaceId: string;
+    fileId: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<FileWithSignedUrlDTO> {
+    await this.findCorePictureFileOrThrow({ workspaceId, fileId });
+
+    const completedFile = await this.fileUploadService.completeFileUpload({
+      workspaceId,
+      fileId,
+      dedicatedFileFolder: FileFolder.CorePicture,
+      authContext,
+    });
+
+    await this.workspaceRepository.manager.transaction((manager) =>
+      this.claimTemporaryFile({ manager, workspaceId, fileId }),
+    );
+
+    return completedFile;
   }
 
   async uploadWorkspacePicture({
@@ -118,29 +339,18 @@ export class FileCorePictureService {
       file,
       filename,
       workspaceId: workspace.id,
+      isTemporaryFile: true,
     });
 
-    await this.workspaceRepository.update(workspace.id, {
-      logoFileId: savedFile.id,
-    });
-
-    if (isDefined(workspace.logoFileId)) {
-      await this.deleteCorePicture({
-        fileId: workspace.logoFileId,
-        workspaceId: workspace.id,
-      });
-    }
-
-    const url = await this.fileUrlService.signFileByIdUrl({
+    await this.bindWorkspaceLogo({
+      workspaceId: workspace.id,
       fileId: savedFile.id,
-      fileFolder: FileFolder.CorePicture,
+    });
+
+    return this.toFileWithSignedUrl({
+      file: savedFile,
       workspaceId: workspace.id,
     });
-
-    return {
-      ...savedFile,
-      url,
-    };
   }
 
   async getPendingWorkspaceForLogoUploadOrThrow({
@@ -150,6 +360,45 @@ export class FileCorePictureService {
     userId: string;
     workspaceId: string;
   }): Promise<WorkspaceEntity> {
+    const { workspace } =
+      await this.findPendingWorkspaceWithUserWorkspaceOrThrow({
+        userId,
+        workspaceId,
+      });
+
+    return workspace;
+  }
+
+  async buildPendingWorkspaceLogoUploadAuthContextOrThrow({
+    user,
+    workspaceId,
+  }: {
+    user: FlatAuthContextUser;
+    workspaceId: string;
+  }): Promise<PendingActivationUserWorkspaceAuthContext> {
+    const { workspace, userWorkspace } =
+      await this.findPendingWorkspaceWithUserWorkspaceOrThrow({
+        userId: user.id,
+        workspaceId,
+      });
+
+    return buildPendingActivationUserAuthContext({
+      workspace: fromWorkspaceEntityToFlat(workspace),
+      userWorkspaceId: userWorkspace.id,
+      user,
+    });
+  }
+
+  private async findPendingWorkspaceWithUserWorkspaceOrThrow({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<{
+    workspace: WorkspaceEntity;
+    userWorkspace: UserWorkspaceEntity;
+  }> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
@@ -169,7 +418,7 @@ export class FileCorePictureService {
       );
     }
 
-    return workspace;
+    return { workspace, userWorkspace };
   }
 
   async uploadWorkspaceMemberProfilePicture({

@@ -10,7 +10,6 @@ import {
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 
 const BILLING_REFUSAL_EXCEPTION_CODES = [
-  BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
   BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
 ];
 

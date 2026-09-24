@@ -2,7 +2,7 @@ import { type TypedDocumentNode } from '@apollo/client';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { uploadFileThroughUploadTarget } from '@/file/utils/uploadFileThroughUploadTarget';
+import { putFileToUploadTarget } from '@/file/utils/putFileToUploadTarget';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { isUnauthenticatedMetadataGraphqlResponse } from '@/front-components/utils/isUnauthenticatedMetadataGraphqlResponse';
@@ -71,34 +71,29 @@ export const useFrontComponentFileUpload = ({
     );
   };
 
-  const uploadFileToFilesField = (
+  const uploadFileToFilesField = async (
     file: File,
     { fieldMetadataId }: { fieldMetadataId: string },
-  ): Promise<FileWithSignedUrl> =>
-    uploadFileThroughUploadTarget({
-      file,
-      createFileUpload: async () => {
-        const { createFileUpload } = await executeAsApplication({
-          document: CreateFileUploadDocument,
-          variables: {
-            filename: file.name,
-            size: file.size,
-            fileFolder: FileFolder.FilesField,
-            fieldMetadataId,
-          },
-        });
-
-        return createFileUpload;
-      },
-      completeFileUpload: async (fileId) => {
-        const { completeFileUpload } = await executeAsApplication({
-          document: CompleteFileUploadDocument,
-          variables: { fileId },
-        });
-
-        return completeFileUpload;
+  ): Promise<FileWithSignedUrl> => {
+    const { createFileUpload: uploadTarget } = await executeAsApplication({
+      document: CreateFileUploadDocument,
+      variables: {
+        filename: file.name,
+        size: file.size,
+        fileFolder: FileFolder.FilesField,
+        fieldMetadataId,
       },
     });
+
+    await putFileToUploadTarget({ file, uploadTarget });
+
+    const { completeFileUpload: uploadedFile } = await executeAsApplication({
+      document: CompleteFileUploadDocument,
+      variables: { fileId: uploadTarget.fileId },
+    });
+
+    return uploadedFile;
+  };
 
   return { uploadFileToFilesField };
 };

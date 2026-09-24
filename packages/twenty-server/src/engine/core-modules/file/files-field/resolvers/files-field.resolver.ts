@@ -35,7 +35,10 @@ import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usa
 export class FilesFieldResolver {
   constructor(private readonly filesFieldService: FilesFieldService) {}
 
-  @Mutation(() => FileWithSignedUrlDTO)
+  @Mutation(() => FileWithSignedUrlDTO, {
+    deprecationReason:
+      'Use createFileUpload with the FilesField folder and the fieldMetadataUniversalIdentifier, then completeFileUpload, which send the file straight to file storage.',
+  })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadFilesFieldFileByUniversalIdentifier(
     @AuthWorkspace()
@@ -52,7 +55,7 @@ export class FilesFieldResolver {
     const stream = createReadStream();
     const buffer = await streamToBuffer(
       stream,
-      bytes(settings.storage.maxFileSize) ?? undefined,
+      bytes(settings.storage.maxMultipartFileSize) ?? undefined,
     );
 
     return await this.filesFieldService.uploadFile({

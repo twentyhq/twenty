@@ -12,7 +12,10 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -36,6 +39,7 @@ import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-inf
 import { findFilesFieldMetadataOrThrow } from 'src/engine/core-modules/file/utils/find-files-field-metadata-or-throw.utils';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   PermissionsException,
@@ -53,6 +57,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.AgentChat,
   FileFolder.EmailImage,
   FileFolder.AppTarball,
+  FileFolder.CorePicture,
 ] as const;
 
 // A tarball leaves quarantine through completeAppTarballUpload only, behind
@@ -60,6 +65,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
 // allowed to upload files, must not persist bytes in that folder.
 export const DEDICATED_COMPLETION_FILE_FOLDERS = [
   FileFolder.AppTarball,
+  FileFolder.CorePicture,
 ] as const;
 
 @Injectable()
@@ -71,9 +77,10 @@ export class FileUploadService {
     private readonly fileUrlService: FileUrlService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
-    private readonly applicationService: ApplicationService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -112,7 +119,7 @@ export class FileUploadService {
       );
     }
 
-    assertValidDirectUploadSize(size);
+    assertValidDirectUploadSize({ size, fileFolder });
 
     const { ext } = buildFileInfo(filename);
 
@@ -258,10 +265,12 @@ export class FileUploadService {
   async completeFileUpload({
     workspaceId,
     fileId,
+    dedicatedFileFolder,
     authContext,
   }: {
     workspaceId: string;
     fileId: string;
+    dedicatedFileFolder?: FileFolder;
     authContext: WorkspaceAuthContext;
   }): Promise<CompletedFileUpload> {
     const file = await this.findFileOrThrow({ workspaceId, fileId });
@@ -282,6 +291,7 @@ export class FileUploadService {
     }
 
     if (
+      fileFolder !== dedicatedFileFolder &&
       DEDICATED_COMPLETION_FILE_FOLDERS.includes(
         fileFolder as (typeof DEDICATED_COMPLETION_FILE_FOLDERS)[number],
       )
@@ -421,16 +431,35 @@ export class FileUploadService {
       };
     }
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
+    const workspace = await this.workspaceRepository.findOne({
+      select: ['id', 'workspaceCustomApplicationId'],
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
+
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
+    }
+
+    const workspaceCustomApplication = await this.applicationRepository.findOne(
+      {
+        where: { id: workspace.workspaceCustomApplicationId, workspaceId },
+      },
+    );
+
+    if (!isDefined(workspaceCustomApplication)) {
+      throw new ApplicationException(
+        `Could not find workspace custom application ${workspace.workspaceCustomApplicationId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
     return {
       applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplication.universalIdentifier,
       resourcePath: name,
     };
   }

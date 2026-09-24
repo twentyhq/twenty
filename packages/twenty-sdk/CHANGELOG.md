@@ -28,6 +28,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - **Uploading into a files field with an application token needs the same access as attaching the file to a record.** This covers `uploadFile` in `twenty-sdk/front-component`, which now runs as the application acting for the viewer instead of with the viewer's session alone, as well as `MetadataApiClient.uploadFile` in logic functions and direct `createFileUpload` or `uploadFilesFieldFileByUniversalIdentifier` calls. The application's role needs `UPLOAD_FILE` and must be able to update the object owning the field, intersected with the viewer's role when the application acts for one. System objects such as `attachment` and `callRecording` are updatable unless the role explicitly denies them, as when attaching. A direct upload started by an application can only be completed by that application. Apps whose role lacks either grant now get their uploads refused: add `UPLOAD_FILE` and the object permission to the role.
 
+### Removed
+
+- **The per-file multipart fallback in `twenty app deploy` and `twenty app dev`.** Application files are only uploaded straight to file storage now (`createApplicationFileUploads`, PUT, `completeApplicationFileUploads`). The CLI no longer falls back to the `uploadApplicationFile` mutation on a server that lacks the batch mutations, so deploying to a server older than the direct upload fails instead of degrading.
+
 ### Added
 
 - **`uploadFile` in `twenty-sdk/front-component` can fail with `permission-denied`.** The result's `reason` is `permission-denied` when the server refuses the upload because the application or the viewer lacks access, so a component can tell it apart from `upload-failed`.
