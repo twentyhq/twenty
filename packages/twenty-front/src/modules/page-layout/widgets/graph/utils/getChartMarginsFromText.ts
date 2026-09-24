@@ -2,6 +2,7 @@ import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/Co
 import { TEXT_MARGIN_EXTRAS } from '@/page-layout/widgets/graph/constants/TextMarginExtras';
 import { TEXT_MARGIN_LIMITS } from '@/page-layout/widgets/graph/constants/TextMarginLimits';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
+import { computeLeftAxisTitleWidth } from '@/page-layout/widgets/graph/utils/computeLeftAxisTitleWidth';
 import { estimateLineHeight } from '@/page-layout/widgets/graph/utils/estimateLineHeight';
 import { estimateRotatedHeight } from '@/page-layout/widgets/graph/utils/estimateRotatedHeight';
 import { getMaxLabelLength } from '@/page-layout/widgets/graph/utils/getMaxLabelLength';
@@ -86,9 +87,10 @@ export const getChartMarginsFromText = ({
         COMMON_CHART_CONSTANTS.TICK_PADDING +
         TEXT_MARGIN_EXTRAS.tickPaddingExtra
       : 0;
-  const leftLabelBlock = yAxisLabel
-    ? normalizedLegendFontSize + TEXT_MARGIN_EXTRAS.tickPaddingExtra
-    : 0;
+  const leftLabelBlock = computeLeftAxisTitleWidth({
+    yAxisLabel,
+    legendFontSize: normalizedLegendFontSize,
+  });
   const left = clamp(
     Math.ceil(leftTicksBlock + leftLabelBlock),
     TEXT_MARGIN_LIMITS.min.left,

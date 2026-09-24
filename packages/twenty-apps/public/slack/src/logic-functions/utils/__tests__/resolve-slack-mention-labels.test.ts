@@ -21,6 +21,7 @@ vi.mock('src/logic-functions/data/find-workspace-member-names-by-ids', () => ({
 }));
 
 const client = {} as CoreApiClient;
+const SLACK_CONNECTION_ID = 'connection-1';
 const slackClient = {} as WebClient;
 
 const identity = (displayName: string | undefined): SlackUserIdentity => ({
@@ -50,6 +51,7 @@ const labelFor = async (slackUserId = 'U04ABC') =>
       slackUserIds: [slackUserId],
       client,
       slackClient,
+      slackConnectionId: SLACK_CONNECTION_ID,
       assistantBotUserId: 'UBOT',
     })
   ).get(slackUserId)?.label;
@@ -141,6 +143,7 @@ describe('resolveSlackMentionLabels', () => {
       slackUserIds: ['UBOT'],
       client,
       slackClient,
+      slackConnectionId: SLACK_CONNECTION_ID,
       assistantBotUserId: 'UBOT',
     });
 
@@ -153,6 +156,7 @@ describe('resolveSlackMentionLabels', () => {
       slackUserIds: Array.from({ length: 30 }, (_unused, index) => `U${index}`),
       client,
       slackClient,
+      slackConnectionId: SLACK_CONNECTION_ID,
       assistantBotUserId: 'UBOT',
     });
 
@@ -181,6 +185,7 @@ describe('resolveSlackMentionLabels', () => {
       slackUserIds: ['U04ABC', 'U05DEF'],
       client,
       slackClient,
+      slackConnectionId: SLACK_CONNECTION_ID,
       assistantBotUserId: 'UBOT',
     });
 

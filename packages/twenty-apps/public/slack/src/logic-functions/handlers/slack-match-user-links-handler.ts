@@ -33,7 +33,10 @@ export const slackMatchUserLinksHandler =
 
     const slackClient = slackClientResult.client;
 
-    const installedTeamId = await getInstalledSlackTeamId(slackClient);
+    const installedTeamId = await getInstalledSlackTeamId({
+      slackClient,
+      slackConnectionId: slackClientResult.connectionId,
+    });
 
     if (!isDefined(installedTeamId)) {
       return {
