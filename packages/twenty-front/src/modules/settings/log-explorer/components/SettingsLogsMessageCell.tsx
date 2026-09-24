@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { Pill } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledMessage = styled.span`
   align-items: center;

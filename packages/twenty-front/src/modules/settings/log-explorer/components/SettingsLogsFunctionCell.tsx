@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconBrandTypescript } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFunction = styled.span`
   align-items: center;
@@ -25,7 +24,7 @@ type SettingsLogsFunctionCellProps = {
 export const SettingsLogsFunctionCell = ({
   name,
 }: SettingsLogsFunctionCellProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledFunction>

@@ -1,10 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { type SettingsLogsSeverity } from '@/settings/log-explorer/types/SettingsLogsSeverity';
 import { type SettingsLogsSource } from '@/settings/log-explorer/types/SettingsLogsSource';
@@ -65,7 +64,7 @@ export const SettingsLogsTable = ({
   onLoadMore,
 }: SettingsLogsTableProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
     SETTINGS_LOGS_TABLE_SCROLL_WRAPPER_ID,

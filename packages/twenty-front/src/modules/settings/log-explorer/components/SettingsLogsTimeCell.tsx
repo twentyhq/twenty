@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { formatInTimeZone } from 'date-fns-tz';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
