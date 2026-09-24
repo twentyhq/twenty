@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import bytes from 'bytes';
-import { type FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -135,8 +134,8 @@ export class ApplicationFileUploadService {
     const files = applicationFiles.filter((file) => {
       const [fileFolder] = file.path.split('/');
 
-      return ALLOWED_APPLICATION_FILE_FOLDERS.includes(
-        fileFolder as FileFolder,
+      return ALLOWED_APPLICATION_FILE_FOLDERS.some(
+        (allowedFileFolder) => allowedFileFolder === fileFolder,
       );
     });
 
