@@ -189,7 +189,14 @@ export const FormAdvancedTextFieldInput = ({
       );
     }
 
-    editor.commands.insertVariableTag(variableName);
+    const focusedHtmlEditor = editor.storage.html?.focusedHtmlEditor;
+
+    const variableTargetEditor =
+      isDefined(focusedHtmlEditor) && !focusedHtmlEditor.isDestroyed
+        ? focusedHtmlEditor
+        : editor;
+
+    variableTargetEditor.commands.insertVariableTag(variableName);
   };
 
   const defaultBreadcrumbs: BreadcrumbProps['links'] = [

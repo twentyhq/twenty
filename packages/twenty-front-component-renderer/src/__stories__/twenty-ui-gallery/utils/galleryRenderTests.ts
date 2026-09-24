@@ -10,15 +10,6 @@ export const galleryRenderTest = createGalleryRenderTest({
   expectedFailedComponents: [],
 });
 
-// Unselected radios need Element.matches(':disabled'); React radio groups
-// also need compareDocumentPosition, which the sandbox DOM does not implement.
-export const inputReactTest = createGalleryRenderTest({
-  expectedFailedComponents: ['Radio', 'RadioGroup'],
-});
-export const inputPreactTest = createGalleryRenderTest({
-  expectedFailedComponents: ['Radio'],
-});
-
 // Monaco cannot load scripts inside the sandbox worker, so the wrapper mounts
 // but the editor's onMount never fires.
 export const codeEditorTest: TwentyUiGalleryPlayFunction = async ({
