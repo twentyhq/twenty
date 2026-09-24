@@ -351,6 +351,7 @@ export class ApplicationUpgradeService {
     } catch (error) {
       const appName =
         appRegistration.sourcePackage ?? appRegistration.universalIdentifier;
+
       if (!isUpgradeRoleGrantsApprovalError(error)) {
         this.logger.error(`Upgrade failed for ${appName}`, error);
       }

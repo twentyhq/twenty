@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -20,6 +21,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       ApplicationRegistrationEntity,
     ]),
     ApplicationInstallModule,
+    ApplicationManifestModule,
     // Nothing here injects from these two modules any more, but the generated
     // metadata GraphQL schema follows Nest's module registration order, so
     // dropping them reorders the checked-in client schema.

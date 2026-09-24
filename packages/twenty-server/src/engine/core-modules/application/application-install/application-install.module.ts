@@ -53,10 +53,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationUninstallRunnerService,
     InstallApplicationCommand,
   ],
-  exports: [
-    ApplicationInstallService,
-    ApplicationUninstallRunnerService,
-    ApplicationManifestModule,
-  ],
+  exports: [ApplicationInstallService, ApplicationUninstallRunnerService],
 })
 export class ApplicationInstallModule {}

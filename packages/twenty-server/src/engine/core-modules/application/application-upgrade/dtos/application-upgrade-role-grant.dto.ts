@@ -1,7 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { type RoleManifestGrant } from 'twenty-shared/application';
-
 export enum ApplicationUpgradeRoleGrantType {
   ALL_OBJECT_RECORDS = 'ALL_OBJECT_RECORDS',
   ALL_SETTINGS = 'ALL_SETTINGS',
@@ -33,20 +31,3 @@ export class ApplicationUpgradeRoleGrantDTO {
   @Field(() => String, { nullable: true })
   permissionFlagUniversalIdentifier: string | null;
 }
-
-export const fromRoleManifestGrantToApplicationUpgradeRoleGrantDTO = (
-  grant: RoleManifestGrant,
-): ApplicationUpgradeRoleGrantDTO => ({
-  type: ApplicationUpgradeRoleGrantType[grant.type],
-  action: 'action' in grant ? grant.action : null,
-  objectUniversalIdentifier:
-    'objectUniversalIdentifier' in grant
-      ? grant.objectUniversalIdentifier
-      : null,
-  fieldUniversalIdentifier:
-    'fieldUniversalIdentifier' in grant ? grant.fieldUniversalIdentifier : null,
-  permissionFlagUniversalIdentifier:
-    'permissionFlagUniversalIdentifier' in grant
-      ? grant.permissionFlagUniversalIdentifier
-      : null,
-});

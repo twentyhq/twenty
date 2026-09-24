@@ -5,10 +5,8 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
-import {
-  ApplicationUpgradeRoleGrantDTO,
-  fromRoleManifestGrantToApplicationUpgradeRoleGrantDTO,
-} from 'src/engine/core-modules/application/application-upgrade/dtos/application-upgrade-role-grant.dto';
+import { ApplicationUpgradeRoleGrantDTO } from 'src/engine/core-modules/application/application-upgrade/dtos/application-upgrade-role-grant.dto';
+import { fromRoleManifestGrantToApplicationUpgradeRoleGrantDTO } from 'src/engine/core-modules/application/application-upgrade/utils/from-role-manifest-grant-to-application-upgrade-role-grant-dto.util';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -58,7 +56,7 @@ export class ApplicationUpgradeResolver {
       appRegistrationId,
       targetVersion,
       workspaceId: workspace.id,
-      hasUserApprovedRoleGrants: hasUserApprovedRoleGrants ?? false,
+      hasUserApprovedRoleGrants,
     });
   }
 }
