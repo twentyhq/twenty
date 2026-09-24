@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
-  MetadataWritability,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -44,7 +43,6 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
         defaultValue: 'uuid',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
   thread: {
@@ -72,7 +70,6 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
   targetPerson: {
@@ -105,7 +102,6 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
   targetCompany: {
@@ -138,7 +134,6 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
   targetOpportunity: {
@@ -171,7 +166,6 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
   createdAt: {
@@ -193,7 +187,6 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
         defaultValue: 'now',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
   updatedAt: {
@@ -215,7 +208,6 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
         defaultValue: 'now',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
   deletedAt: {
@@ -236,7 +228,6 @@ export const buildAgentChatThreadTargetStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
 });

@@ -96,10 +96,12 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        // A link is exactly as private as the thread it points at, so it stays
-        // out of the generic record API and is authorized by the chat layer.
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
+        // A link is exactly as private as the conversation it files, as a
+        // messageThreadTarget is for its thread, so it inherits from the thread
+        // rather than from the record. It stays writable because merging
+        // records re-points its legs under the caller, as for noteTarget.
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['thread'],
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
