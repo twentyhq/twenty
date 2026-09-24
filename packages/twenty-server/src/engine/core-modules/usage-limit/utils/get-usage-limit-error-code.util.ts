@@ -3,21 +3,8 @@ import { UsageLimitExceptionCode } from 'src/engine/core-modules/usage-limit/exc
 
 export const getUsageLimitErrorCode = (
   code: UsageLimitExceptionCode,
-): ErrorCode => {
-  if (
-    code === UsageLimitExceptionCode.QUOTA_EXHAUSTED ||
-    code === UsageLimitExceptionCode.STOCK_EXHAUSTED
-  ) {
-    return ErrorCode.QUOTA_EXHAUSTED;
-  }
-
-  if (code === UsageLimitExceptionCode.LIMIT_FORBIDDEN) {
-    return ErrorCode.FORBIDDEN;
-  }
-
-  if (code === UsageLimitExceptionCode.LIMIT_CONFLICT) {
-    return ErrorCode.CONFLICT;
-  }
-
-  return ErrorCode.RATE_LIMITED;
-};
+): ErrorCode =>
+  code === UsageLimitExceptionCode.QUOTA_EXHAUSTED ||
+  code === UsageLimitExceptionCode.STOCK_EXHAUSTED
+    ? ErrorCode.QUOTA_EXHAUSTED
+    : ErrorCode.RATE_LIMITED;

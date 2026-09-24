@@ -123,8 +123,6 @@ export class UsageLimitService {
 
     assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
 
-    // An update rewrites the whole scope, so moving a row off a default is a
-    // deletion in disguise and needs the gate the leaving scope would get.
     assertUsageLimitDefaultOverrideIsAllowed({
       scope: authorizedScope,
       isOperator,
