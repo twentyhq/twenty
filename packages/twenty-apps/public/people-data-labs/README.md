@@ -24,8 +24,6 @@ Command menu items use these settings. Single-record and bulk workflow nodes exp
 - **Minimum likelihood (1-10)** applies to every match, including name-based ones.
 - **Minimum likelihood for name-based matches (1-10)** applies to name-based matches only, and takes precedence over **Minimum likelihood** for them.
 
-Invalid settings or inputs stop the run before any record is sent to People Data Labs.
-
 ## 💳 Billing
 
 Pay only for matches, in Twenty credits — **not found and skipped records are free.**
