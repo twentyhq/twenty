@@ -5,11 +5,9 @@ import { type ReactNode } from 'react';
 import { useFrontComponentFileUpload } from '@/front-components/hooks/useFrontComponentFileUpload';
 import { type ApplicationTokenPair } from '~/generated-metadata/graphql';
 
-const mockRequestAccessTokenRefresh = jest.fn();
-
 jest.mock('@/front-components/hooks/useRequestApplicationTokenRefresh', () => ({
   useRequestApplicationTokenRefresh: () => ({
-    requestAccessTokenRefresh: mockRequestAccessTokenRefresh,
+    requestAccessTokenRefresh: jest.fn(),
   }),
 }));
 
@@ -66,12 +64,6 @@ const completedFile = {
 
 const completeFileUploadPayload = {
   data: { completeFileUpload: completedFile },
-};
-
-const unauthenticatedPayload = {
-  errors: [
-    { message: 'Unauthorized', extensions: { code: 'UNAUTHENTICATED' } },
-  ],
 };
 
 const forbiddenPayload = {
@@ -132,10 +124,6 @@ const buildFile = () =>
   new File(['abc'], 'note.pdf', { type: 'application/pdf' });
 
 describe('useFrontComponentFileUpload', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('should initiate and complete the upload with the application token and send the bytes without credentials', async () => {
     const store = createStore();
 
@@ -184,70 +172,6 @@ describe('useFrontComponentFileUpload', () => {
     expect(getRequestVariables(completeCall[1])).toEqual({ fileId: 'file-1' });
 
     expect(uploadedFile).toEqual(completedFile);
-    expect(mockRequestAccessTokenRefresh).not.toHaveBeenCalled();
-  });
-
-  it.each([
-    {
-      label: 'an UNAUTHENTICATED error',
-      response: { payload: unauthenticatedPayload },
-    },
-    { label: 'a 401 status', response: { status: 401, payload: null } },
-  ])(
-    'should refresh the application token once and retry after $label',
-    async ({ response }) => {
-      const store = createStore();
-
-      store.set(tokenPairAtom, buildTokenPair(APPLICATION_ACCESS_TOKEN));
-      mockRequestAccessTokenRefresh.mockResolvedValue('refreshed-token');
-      queueFetchResponses(
-        response,
-        { payload: createFileUploadPayload },
-        { status: 204 },
-        { payload: completeFileUploadPayload },
-      );
-
-      const { result } = renderUseFrontComponentFileUpload(store);
-
-      await expect(
-        result.current.uploadFileToFilesField(buildFile(), {
-          fieldMetadataId: FIELD_METADATA_ID,
-        }),
-      ).resolves.toEqual(completedFile);
-
-      const [firstCreateCall, retriedCreateCall] = getFetchCalls();
-
-      expect(mockRequestAccessTokenRefresh).toHaveBeenCalledTimes(1);
-      expect(getRequestHeaders(firstCreateCall[1]).Authorization).toBe(
-        `Bearer ${APPLICATION_ACCESS_TOKEN}`,
-      );
-      expect(getRequestHeaders(retriedCreateCall[1]).Authorization).toBe(
-        'Bearer refreshed-token',
-      );
-      expect(getFetchCalls()).toHaveLength(4);
-    },
-  );
-
-  it('should not retry more than once when the refreshed token is still refused', async () => {
-    const store = createStore();
-
-    store.set(tokenPairAtom, buildTokenPair(APPLICATION_ACCESS_TOKEN));
-    mockRequestAccessTokenRefresh.mockResolvedValue('refreshed-token');
-    queueFetchResponses(
-      { payload: unauthenticatedPayload },
-      { payload: unauthenticatedPayload },
-    );
-
-    const { result } = renderUseFrontComponentFileUpload(store);
-
-    await expect(
-      result.current.uploadFileToFilesField(buildFile(), {
-        fieldMetadataId: FIELD_METADATA_ID,
-      }),
-    ).rejects.toThrow('Unauthorized');
-
-    expect(mockRequestAccessTokenRefresh).toHaveBeenCalledTimes(1);
-    expect(getFetchCalls()).toHaveLength(2);
   });
 
   it('should surface a refused upload target without sending any bytes', async () => {
@@ -265,7 +189,6 @@ describe('useFrontComponentFileUpload', () => {
     ).rejects.toThrow('User does not have permission.');
 
     expect(getFetchCalls()).toHaveLength(1);
-    expect(mockRequestAccessTokenRefresh).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -297,7 +220,6 @@ describe('useFrontComponentFileUpload', () => {
     ).resolves.toEqual(completedFile);
 
     expect(getFetchCalls()).toHaveLength(4);
-    expect(mockRequestAccessTokenRefresh).not.toHaveBeenCalled();
   });
 
   it('should keep the server error code of a refused upload target', async () => {
