@@ -1,12 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ToolRecordsWidget } from '@/ai/components/ToolRecordsWidget';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof ToolRecordsWidget> = {
   title: 'Modules/AI/ToolRecordsWidget',
@@ -15,7 +16,7 @@ const meta: Meta<typeof ToolRecordsWidget> = {
     IconsProviderDecorator,
     WorkspaceDecorator,
     ObjectMetadataItemsDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     ComponentDecorator,
   ],
   parameters: {

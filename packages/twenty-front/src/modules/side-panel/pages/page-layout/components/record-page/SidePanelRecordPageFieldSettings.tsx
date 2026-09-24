@@ -29,7 +29,7 @@ import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWid
 import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
 import { getWidgetViewLayoutSettingsItemIds } from '@/side-panel/pages/page-layout/utils/getWidgetViewLayoutSettingsItemIds';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -217,9 +217,9 @@ export const SidePanelRecordPageFieldSettings = () => {
                 Icon={IconListDetails}
                 dropdownId="field"
                 dropdownComponents={
-                  <DropdownContent>
+                  <LegacyDropdownContent>
                     <FieldWidgetFieldDropdownContent />
-                  </DropdownContent>
+                  </LegacyDropdownContent>
                 }
                 dropdownPlacement="bottom-end"
                 description={fieldLabel}
@@ -233,9 +233,9 @@ export const SidePanelRecordPageFieldSettings = () => {
                 Icon={layoutRowIcon}
                 dropdownId="layout"
                 dropdownComponents={
-                  <DropdownContent>
+                  <LegacyDropdownContent>
                     <FieldWidgetLayoutDropdownContent />
-                  </DropdownContent>
+                  </LegacyDropdownContent>
                 }
                 dropdownPlacement="bottom-end"
                 description={layoutLabel}

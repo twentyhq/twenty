@@ -3,7 +3,7 @@ import { WorkflowEditActionCode } from '@/workflow/workflow-steps/workflow-actio
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { fn } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -12,6 +12,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const DEFAULT_ACTION: WorkflowCodeAction = {
   id: getWorkflowNodeIdMock(),
@@ -131,7 +132,7 @@ const meta: Meta<typeof WorkflowEditActionCode> = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     WorkspaceDecorator,
   ],
 };

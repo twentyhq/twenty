@@ -95,6 +95,69 @@ describe('getGroupByExpression', () => {
     });
   });
 
+  describe('deprecated timezone alias normalization', () => {
+    it.each([
+      ['Asia/Calcutta', 'Asia/Kolkata'],
+      ['Europe/Kiev', 'Europe/Kyiv'],
+      ['Asia/Saigon', 'Asia/Ho_Chi_Minh'],
+      ['America/Buenos_Aires', 'America/Argentina/Buenos_Aires'],
+      ['US/Eastern', 'America/New_York'],
+      ['Japan', 'Asia/Tokyo'],
+    ])(
+      'should normalize the deprecated alias %s to %s',
+      (deprecatedAlias, canonicalTimeZone) => {
+        const groupByField = buildGroupByDateField({
+          timeZone: deprecatedAlias,
+        });
+
+        const result = getGroupByExpression({
+          groupByField,
+          columnNameWithQuotes,
+        });
+
+        expect(result).toContain(`'${canonicalTimeZone}'`);
+        expect(result).not.toContain(`'${deprecatedAlias}'`);
+      },
+    );
+
+    it.each([
+      'Asia/Kolkata',
+      'UTC',
+      'GMT',
+      'CET',
+      'MET',
+      'WET',
+      'EET',
+      'EST5EDT',
+      'Zulu',
+    ])('should leave supported timezone %s unchanged', (timeZone) => {
+      const groupByField = buildGroupByDateField({ timeZone });
+
+      const result = getGroupByExpression({
+        groupByField,
+        columnNameWithQuotes,
+      });
+
+      expect(result).toContain(`'${timeZone}'`);
+    });
+
+    it('should normalize both interpolations of the timezone in the WEEK expression', () => {
+      const groupByField = buildGroupByDateField({
+        dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
+        timeZone: 'Asia/Calcutta',
+      });
+
+      const result = getGroupByExpression({
+        groupByField,
+        columnNameWithQuotes,
+      });
+
+      expect(result).not.toContain('Asia/Calcutta');
+      expect(result).toContain("'Asia/Kolkata')");
+      expect(result).toContain("AT TIME ZONE 'Asia/Kolkata'");
+    });
+  });
+
   describe('missing timezone handling', () => {
     it('should throw when timezone is required but not provided', () => {
       const groupByField = buildGroupByDateField({

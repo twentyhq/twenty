@@ -6,7 +6,7 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { themeCssVariables } from '@ui/theme-constants';
+import { themeCssVariables } from '@ui/theme';
 
 import { Switch } from '../Switch';
 import { type SwitchProps } from '../types/SwitchProps';

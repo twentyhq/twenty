@@ -4,9 +4,8 @@ import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 const StyledIconWrapper = styled.div<{
   withIconBackground?: boolean;
   borderColor: string;
@@ -34,7 +33,7 @@ export const SidePanelContextRecordChipAvatars = ({
   record: ObjectRecord;
   borderColor?: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { recordChipData } = useRecordChipData({
     objectNameSingular: objectMetadataItem.nameSingular,
     record,

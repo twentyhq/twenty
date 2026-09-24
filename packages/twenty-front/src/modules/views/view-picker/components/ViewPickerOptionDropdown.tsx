@@ -3,7 +3,7 @@ import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
@@ -131,7 +131,7 @@ export const ViewPickerOptionDropdown = ({
         dropdownId={`view-picker-options-${view.id}`}
         selected={isCurrentView}
         dropdownContent={
-          <DropdownContent>
+          <LegacyDropdownContent>
             <DropdownMenuItemsContainer>
               <ListItem
                 startIcon={isFavorite ? <IconHeartOff /> : <IconHeart />}
@@ -158,7 +158,7 @@ export const ViewPickerOptionDropdown = ({
                 </>
               )}
             </DropdownMenuItemsContainer>
-          </DropdownContent>
+          </LegacyDropdownContent>
         }
       />
     </>

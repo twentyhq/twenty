@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -54,7 +54,7 @@ export const CommandMenuItemSelectionRecordStack = ({
   objectMetadataItem,
   records,
 }: CommandMenuItemSelectionRecordStackProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const [recordIdsShownOnOpen] = useState(() =>
     records.map((record) => record.id),

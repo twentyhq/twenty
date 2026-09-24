@@ -4,7 +4,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { forwardRef, type HTMLAttributes, type Ref } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type FormFieldInputInnerContainerProps = {
   hasRightElement: boolean;

@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import React, { type ReactNode, useContext } from 'react';
+import React, { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 
@@ -71,7 +71,7 @@ export const CommandMenuItemSectionGroup = ({
   context,
   children,
 }: CommandMenuItemSectionGroupProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   if (!isDefined(children) || !React.Children.count(children)) {
     return null;

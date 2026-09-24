@@ -16,7 +16,7 @@ import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingC
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
 import { MainButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledBackDrop = styled.div`
   align-items: center;

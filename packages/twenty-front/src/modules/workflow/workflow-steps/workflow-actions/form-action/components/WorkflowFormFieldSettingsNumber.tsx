@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type WorkflowFormFieldSettingsNumberProps = {
   field: WorkflowFormActionField;

@@ -14,8 +14,7 @@ import {
 import { type MenuItemDraggableGripMode } from '@ui/components/navigation/MenuItem/types/MenuItemDraggableGripMode';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { IconGripVertical, type IconComponent } from '@ui/icon';
-import { type ThemeColor } from '@ui/theme';
-import { themeCssVariables, useTheme } from '@ui/theme-constants';
+import { type ThemeColor, themeCssVariables, useTheme } from '@ui/theme';
 
 import styles from './MenuItemLeftContent.module.scss';
 

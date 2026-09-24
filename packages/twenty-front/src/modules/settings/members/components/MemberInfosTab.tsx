@@ -8,7 +8,7 @@ import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type MemberInfosTabProps = {
   member: WorkspaceMember;

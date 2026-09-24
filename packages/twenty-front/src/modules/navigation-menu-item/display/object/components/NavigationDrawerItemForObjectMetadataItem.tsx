@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { Fragment, type ReactNode, useContext } from 'react';
+import { Fragment, type ReactNode } from 'react';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
@@ -31,7 +31,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconLock, useIcons } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -58,7 +58,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     isLayoutCustomizationModeEnabledState,
   );
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );

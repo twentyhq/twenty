@@ -18,7 +18,7 @@ import { useMemo, useState } from 'react';
 import { Section, useToast } from 'twenty-ui/components';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTreeList = styled.ul`
   list-style: none;

@@ -35,7 +35,7 @@ For Twenty apps, follow [Using Twenty UI components](https://docs.twenty.com/dev
 For a standalone React application, import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
 
 ```tsx
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 import { Button } from 'twenty-ui/primitives/input';
 
 import 'twenty-ui/style.css';
@@ -73,8 +73,7 @@ import { Button } from 'twenty-ui/primitives/input';
 | `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                         |
 | `twenty-ui/primitives/typography`    | Text and headings                                                     |
 | `twenty-ui/testing`                  | Storybook and test decorators                                         |
-| `twenty-ui/theme`                    | Theme types and helpers                                               |
-| `twenty-ui/theme-constants`          | Design tokens, `ThemeProvider`, and `useTheme`                        |
+| `twenty-ui/theme`          | Design tokens, `ThemeProvider`, and `useTheme`                        |
 | `twenty-ui/utilities`                | Hooks and shared utilities                                            |
 
 # Theming
@@ -118,8 +117,8 @@ twenty-ui is released under the [MIT](https://github.com/twentyhq/twenty/blob/ma
 
 Primitives provide foundational interaction and presentation. Shared components compose primitives into reusable presets, pickers, menu rows, notifications, and the JSON viewer. Both layers accept data, labels, and callbacks from their host.
 
-Routing adapters, record formatting, product illustrations, and feature-specific animation belong to `twenty-front`. Implementation parts live in `internal` or `parts` directories and are excluded from published barrels.
+Record formatting, product illustrations, and feature-specific animation belong to `twenty-front`. Implementation parts live in `internal` or `parts` directories and are excluded from published barrels.
 
 Run `node --import tsx scripts/checkModuleOwnership.ts` from this package after changing the public interface. When intentionally adding or removing a public React component, regenerate `docs/module-ownership.json` with `node --import tsx scripts/checkModuleOwnership.ts --write` and review the snapshot diff. CI checks the committed snapshot and the dependency boundaries without updating them.
 
-`twenty-ui/testing` includes routing decorators and requires the optional `react-router-dom` peer. The package check verifies each published entry point, allowing that peer only in testing and the Monaco peers only in `twenty-ui/components/code-editor`.
+The package check allows the optional Monaco peers only in `twenty-ui/components/code-editor`.

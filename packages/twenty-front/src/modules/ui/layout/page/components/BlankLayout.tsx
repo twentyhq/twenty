@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';

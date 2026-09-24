@@ -1,6 +1,5 @@
-import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
@@ -9,7 +8,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 export const useCommandMenuItemObjectSectionContext = ():
   | CommandMenuItemSectionContext
   | undefined => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { objectMetadataItem } = useContextStoreObjectMetadataItem();
 
   if (!isDefined(objectMetadataItem)) {

@@ -1,4 +1,4 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const getUsageLimitRingColor = ({
   consumedPercentage,

@@ -13,12 +13,14 @@ export const resolveSlackAccessDecision = async ({
   accessMode,
   client,
   slackClient,
+  slackConnectionId,
   identity,
   runAsWorkspaceMemberId,
 }: {
   accessMode: SlackAccessMode;
   client: CoreApiClient;
   slackClient: WebClient | undefined;
+  slackConnectionId: string | undefined;
   identity: SlackUserIdentity | undefined;
   runAsWorkspaceMemberId: string | undefined;
 }): Promise<SlackAccessDecision> => {
@@ -41,6 +43,7 @@ export const resolveSlackAccessDecision = async ({
     knownIdentities: [identity],
     client,
     slackClient,
+    slackConnectionId,
   }).catch(() => undefined);
 
   const resolution = resolutionBySlackUserId?.get(slackUserId);

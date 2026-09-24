@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { IconLock } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -21,7 +20,7 @@ const StyledContainer = styled.div`
 `;
 
 export const CalendarEventNotSharedContent = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledContainer>

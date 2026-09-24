@@ -12,7 +12,7 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 
 import { useLingui } from '@lingui/react/macro';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type WorkBook } from 'xlsx-ugnis';
 
 const StyledRadioContainer = styled.div`

@@ -36,7 +36,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`

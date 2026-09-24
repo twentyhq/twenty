@@ -17,7 +17,7 @@ import {
   type MockInstance,
 } from 'vitest';
 
-import { ThemeProvider } from '@ui/theme-constants';
+import { ThemeProvider } from '@ui/theme';
 import { isDefined } from '@ui/utilities';
 
 import { type ComponentConformanceCase } from './types/ComponentConformanceCase';

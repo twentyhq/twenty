@@ -1,7 +1,6 @@
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -12,7 +11,7 @@ import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromV
 export const useCommandMenuItemCurrentViewSectionContext = ():
   | CommandMenuItemSectionContext
   | undefined => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { getIcon } = useIcons();
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
