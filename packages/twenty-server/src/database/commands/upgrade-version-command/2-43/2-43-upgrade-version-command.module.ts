@@ -8,6 +8,7 @@ import { AttributeChatMessageSendersCommand } from 'src/database/commands/upgrad
 import { RelabelAttachmentTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790256416822-relabel-attachment-target-fields.command';
 import { SyncAttachmentRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790256416821-sync-attachment-record-page.command';
 import { DeleteSystemReadableObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790180964414-delete-system-readable-object-navigation-command-menu-items.command';
+import { MoveCampaignSendingTablesToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790203235337-move-campaign-sending-tables-to-workspace.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -28,6 +29,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     AttributeChatMessageSendersCommand,
     DeleteSystemReadableObjectNavigationCommandMenuItemsCommand,
+    MoveCampaignSendingTablesToWorkspaceCommand,
     SyncAttachmentRecordPageCommand,
     RelabelAttachmentTargetFieldsCommand,
   ],
