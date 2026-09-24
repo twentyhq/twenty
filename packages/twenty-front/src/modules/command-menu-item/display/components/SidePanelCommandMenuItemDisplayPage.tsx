@@ -5,6 +5,7 @@ import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/compone
 import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useCommandMenuAppActions';
 import { useCommandMenuItemCurrentViewSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemCurrentViewSectionContext';
 import { useCommandMenuItemObjectSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemObjectSectionContext';
+import { useCommandMenuItemWorkspaceSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemWorkspaceSectionContext';
 import { useCommandMenuItemSelectionSectionContext } from '@/command-menu-item/display/hooks/useCommandMenuItemSelectionSectionContext';
 import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMenuItemSection';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
@@ -61,6 +62,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const currentViewSectionContext =
     useCommandMenuItemCurrentViewSectionContext();
   const objectSectionContext = useCommandMenuItemObjectSectionContext();
+  const workspaceSectionContext = useCommandMenuItemWorkspaceSectionContext();
 
   const { filterCommandMenuItemsWithSidePanelSearch } =
     useFilterCommandMenuItemsWithSidePanelSearch({
@@ -131,6 +133,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         return currentViewSectionContext;
       case 'THIS_OBJECT':
         return objectSectionContext;
+      case 'WORKSPACE':
+        return workspaceSectionContext;
       default:
         return undefined;
     }
