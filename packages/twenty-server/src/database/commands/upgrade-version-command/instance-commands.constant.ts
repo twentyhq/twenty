@@ -207,7 +207,7 @@ import { AddSettingsMenuItemFastInstanceCommand } from 'src/database/commands/up
 import { BackfillSettingsMenuItemSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1790165870000-backfill-settings-menu-item';
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { AddWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790232481570-add-workspace-allowed-iframe-origins';
-import { AddChatThreadsWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790181840000-add-chat-threads-widget-type';
+import { AddChatThreadsWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790255760000-add-chat-threads-widget-type';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
