@@ -10,6 +10,7 @@ import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuCont
 import { CommandMenuItemSelectionRecordStack } from '@/command-menu-item/display/components/CommandMenuItemSelectionRecordStack';
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
+import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
@@ -24,6 +25,9 @@ export const useCommandMenuItemSelectionSectionContext = ():
   | undefined => {
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const { objectMetadataItem } = useContextStoreObjectMetadataItem();
+  const { identifierChipGeneratorPerObject } = useContext(
+    PreComputedChipGeneratorsContext,
+  );
 
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
@@ -70,14 +74,21 @@ export const useCommandMenuItemSelectionSectionContext = ():
         numberOfSelectedRecords,
       })}`;
 
+  // Record avatars come from the object's identifier chip, which objects
+  // without a label identifier field do not have.
+  const canShowRecordAvatars =
+    records.length > 0 &&
+    isDefined(
+      identifierChipGeneratorPerObject[objectMetadataItem.nameSingular],
+    );
+
   return {
-    icon:
-      records.length > 0 ? (
-        <CommandMenuItemSelectionRecordStack
-          objectMetadataItem={objectMetadataItem}
-          records={records}
-        />
-      ) : undefined,
+    icon: canShowRecordAvatars ? (
+      <CommandMenuItemSelectionRecordStack
+        objectMetadataItem={objectMetadataItem}
+        records={records}
+      />
+    ) : undefined,
     label,
   };
 };
