@@ -13,6 +13,8 @@ import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/m
 
 import { WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-chat-thread-id-namespace.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { getAgentChatThreadOwnerColumn } from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-column.util';
+import { resolveAgentChatThreadOwners } from 'src/engine/metadata-modules/ai/ai-history/utils/resolve-agent-chat-thread-owners.util';
 
 const GET_ADMIN_CHAT_THREADS = gql`
   query GetAdminChatThreads(
@@ -121,6 +123,26 @@ describe('Admin panel global chat threads (integration)', () => {
     await storage.run(SEED_APPLE_WORKSPACE_ID, async (context) => {
       const scopedColumns = [...columns];
       const scopedValues = [...values];
+      const ownerIndex = scopedColumns.indexOf('userWorkspaceId');
+      if (
+        ownerIndex !== -1 &&
+        (await getAgentChatThreadOwnerColumn({
+          manager: context.manager,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          storage: context.storage,
+        })) === 'workspaceMemberId'
+      ) {
+        const ownerUserWorkspaceId = scopedValues[ownerIndex] as string;
+        scopedColumns[ownerIndex] = 'workspaceMemberId';
+        scopedValues[ownerIndex] = (
+          await resolveAgentChatThreadOwners({
+            manager: context.manager,
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            from: 'userWorkspaceId',
+            ids: [ownerUserWorkspaceId],
+          })
+        ).get(ownerUserWorkspaceId);
+      }
       if (context.storage === 'core') {
         scopedColumns.push('workspaceId');
         scopedValues.push(SEED_APPLE_WORKSPACE_ID);

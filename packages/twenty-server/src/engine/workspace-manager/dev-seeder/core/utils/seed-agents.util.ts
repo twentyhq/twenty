@@ -10,6 +10,7 @@ import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { resolveAgentChatThreadOwners } from 'src/engine/metadata-modules/ai/ai-history/utils/resolve-agent-chat-thread-owners.util';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 
@@ -67,6 +68,21 @@ const seedChatThreads = async ({
     );
   }
 
+  const owner =
+    schemaName === 'core'
+      ? { column: 'userWorkspaceId', value: userWorkspaceId }
+      : {
+          column: 'workspaceMemberId',
+          value: (
+            await resolveAgentChatThreadOwners({
+              manager: queryRunner.manager,
+              workspaceId,
+              from: 'userWorkspaceId',
+              ids: [userWorkspaceId],
+            })
+          ).get(userWorkspaceId),
+        };
+
   const now = new Date();
   const title =
     workspaceId === SEED_APPLE_WORKSPACE_ID
@@ -79,7 +95,7 @@ const seedChatThreads = async ({
     .into(`${schemaName}.${agentChatThreadTableName}`, [
       'id',
       ...(schemaName === 'core' ? ['workspaceId'] : []),
-      'userWorkspaceId',
+      owner.column,
       'title',
       'createdAt',
       'updatedAt',
@@ -89,7 +105,7 @@ const seedChatThreads = async ({
       {
         id: threadId,
         ...(schemaName === 'core' ? { workspaceId } : {}),
-        userWorkspaceId,
+        [owner.column]: owner.value,
         title,
         createdAt: now,
         updatedAt: now,
@@ -120,7 +136,7 @@ const seedChatThreads = async ({
       .into(`${schemaName}.${agentChatThreadTableName}`, [
         'id',
         ...(schemaName === 'core' ? ['workspaceId'] : []),
-        'userWorkspaceId',
+        owner.column,
         'title',
         'createdAt',
         'updatedAt',
@@ -139,7 +155,7 @@ const seedChatThreads = async ({
         ].map((thread) => ({
           id: thread.id,
           ...(schemaName === 'core' ? { workspaceId } : {}),
-          userWorkspaceId,
+          [owner.column]: owner.value,
           title: thread.title,
           createdAt: now,
           updatedAt: now,

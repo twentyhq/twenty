@@ -38,7 +38,7 @@ import { capitalize } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -110,15 +110,17 @@ const setRecordSharingEnabled = (value: boolean) =>
   });
 
 describe('readabilityObjectRecordsPermissions', () => {
-  let recordShareService: RecordShareService;
+  let recordShareStorageService: RecordShareStorageService;
   let objectMetadataId: string;
   let personRelationFieldMetadataId: string;
 
   const sourceId = randomUUID();
 
   beforeAll(async () => {
-    recordShareService =
-      getAppProviderByClassName<RecordShareService>('RecordShareService');
+    recordShareStorageService =
+      getAppProviderByClassName<RecordShareStorageService>(
+        'RecordShareStorageService',
+      );
 
     const { data } = await createOneObjectMetadata({
       input: {
@@ -219,7 +221,7 @@ describe('readabilityObjectRecordsPermissions', () => {
       sourceId,
     });
 
-    await recordShareService.insertMany({
+    await recordShareStorageService.insertMany({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       recordShares: [
         buildRecordShare({
@@ -252,7 +254,7 @@ describe('readabilityObjectRecordsPermissions', () => {
 
   afterAll(async () => {
     await setRecordSharingEnabled(false);
-    await recordShareService.deleteBySourceId({
+    await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
     });
@@ -585,12 +587,15 @@ describe('readabilityObjectRecordsPermissions', () => {
       expect(response.body.errors).toBeUndefined();
     });
 
-    it('should return every record', async () => {
+    it('keeps grants enforced with the sharing UI disabled', async () => {
       const response = await makeGraphqlAPIRequest(findManyOperation);
 
       expect(response.body.errors).toBeUndefined();
       expect(collectIds(response.body.data[OBJECT_PLURAL].edges)).toEqual(
-        Object.values(RECORD_IDS).sort(),
+        [
+          RECORD_IDS.SHARED_FULL_WITH_EVERYONE,
+          RECORD_IDS.SHARED_FULL_WITH_ADMIN_ROLE,
+        ].sort(),
       );
     });
   });

@@ -1,8 +1,7 @@
 import { type EntityManager } from 'typeorm';
 
 import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { getAgentChatThreadOwnerColumns } from 'src/engine/metadata-modules/ai/ai-history/utils/get-agent-chat-thread-owner-columns.util';
 
 export type AgentChatThreadOwnerColumn =
   | 'userWorkspaceId'
@@ -23,17 +22,10 @@ export const getAgentChatThreadOwnerColumn = async ({
     return 'userWorkspaceId';
   }
 
-  const [{ hasUserWorkspaceIdColumn }]: {
-    hasUserWorkspaceIdColumn: boolean;
-  }[] = await manager.query(
-    `SELECT EXISTS (
-       SELECT 1 FROM pg_attribute
-       WHERE attrelid = to_regclass($1) AND attname = 'userWorkspaceId' AND NOT attisdropped
-     ) AS "hasUserWorkspaceIdColumn"`,
-    [
-      `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThread"`,
-    ],
-  );
+  const { hasUserWorkspaceIdColumn } = await getAgentChatThreadOwnerColumns({
+    manager,
+    workspaceId,
+  });
 
   return hasUserWorkspaceIdColumn ? 'userWorkspaceId' : 'workspaceMemberId';
 };

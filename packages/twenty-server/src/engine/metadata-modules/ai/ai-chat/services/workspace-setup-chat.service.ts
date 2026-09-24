@@ -103,7 +103,7 @@ export class WorkspaceSetupChatService {
       userWorkspaceId,
     });
 
-    let thread = await this.agentChatService.findThreadById({
+    let thread = await this.agentChatService.findWritableThread({
       threadId,
       userWorkspaceId,
       workspaceId: workspace.id,
@@ -218,7 +218,7 @@ export class WorkspaceSetupChatService {
     } catch (error) {
       if (this.isUniqueViolation(error)) {
         const concurrentlyCreatedThread =
-          await this.agentChatService.findThreadById({
+          await this.agentChatService.findWritableThread({
             threadId,
             userWorkspaceId,
             workspaceId,

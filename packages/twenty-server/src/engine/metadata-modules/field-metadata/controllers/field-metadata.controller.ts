@@ -14,11 +14,9 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath, FeatureFlagKey } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
 
 import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
 import { paginateByIdCursor } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
@@ -57,6 +55,8 @@ import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-module
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Controller(`${ApiPath.Rest}/metadata/fields`)
 @UseGuards(
@@ -74,8 +74,8 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 @UsePipes(new ValidationPipe())
 export class FieldMetadataController {
   constructor(
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly derivedFieldMetadataIdsService: DerivedFieldMetadataIdsService,
@@ -151,8 +151,8 @@ export class FieldMetadataController {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
-    const field = await this.fieldMetadataRepository.findOne({
-      where: { id, workspaceId },
+    const field = await this.fieldMetadataRepository.findOne(workspaceId, {
+      where: { id },
     });
 
     if (!field) {
