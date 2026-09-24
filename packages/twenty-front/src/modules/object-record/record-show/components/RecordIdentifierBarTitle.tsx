@@ -3,11 +3,11 @@ import { useRecordIdentifierTitle } from '@/object-record/record-show/hooks/useR
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { styled } from '@linaria/react';
 import { useRef, type ChangeEvent, type MouseEvent } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

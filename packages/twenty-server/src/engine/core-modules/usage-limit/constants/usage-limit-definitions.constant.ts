@@ -48,7 +48,13 @@ export const USAGE_LIMIT_DEFINITIONS = {
       allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
   },
-  [UsageResourceType.WORKFLOW]: {},
+  [UsageResourceType.WORKFLOW]: {
+    quota: {
+      allowedOperationTypes: [UsageOperationType.WORKFLOW_EXECUTION],
+      allowedSpenderTypes: ['workspace', 'application'],
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
+    },
+  },
   [UsageResourceType.APP]: {},
   [UsageResourceType.STORAGE]: {
     stock: {
@@ -65,10 +71,19 @@ export const USAGE_LIMIT_DEFINITIONS = {
       ],
     },
   },
-  [UsageResourceType.LOGIC_FUNCTION]: {},
+  [UsageResourceType.LOGIC_FUNCTION]: {
+    quota: {
+      allowedOperationTypes: [UsageOperationType.CODE_EXECUTION],
+      allowedSpenderTypes: ['workspace', 'application', 'logicFunction'],
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
+    },
+  },
   [UsageResourceType.EMAIL]: {
     speed: {
-      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedOperationTypes: [
+        UsageOperationType.EMAIL_SEND,
+        UsageOperationType.MESSAGE_CAMPAIGN_SEND,
+      ],
       allowedSpenderTypes: ['workspace'],
       // Two buckets, and a send has to fit both. The workspace one keeps a
       // single tenant's campaign from spending the whole instance budget; the
@@ -92,6 +107,11 @@ export const USAGE_LIMIT_DEFINITIONS = {
           isOverridable: false,
         },
       ],
+    },
+    quota: {
+      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
   },
   [UsageResourceType.WEBHOOK]: {

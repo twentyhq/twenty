@@ -3,7 +3,6 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
-import { isExemptFromObjectPermissions } from 'src/engine/twenty-orm/utils/is-exempt-from-object-permissions.util';
 
 export const isObjectOperationPermitted = ({
   objectMetadata,
@@ -14,10 +13,6 @@ export const isObjectOperationPermitted = ({
   operationType: OperationType;
   objectsPermissions: ObjectsPermissions;
 }): boolean => {
-  if (isExemptFromObjectPermissions(objectMetadata)) {
-    return true;
-  }
-
   const objectPermissions = objectsPermissions[objectMetadata.id];
 
   switch (operationType) {

@@ -1,8 +1,3 @@
-import { t } from '@lingui/core/macro';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Key } from 'ts-key-enum';
-import { useDebounce } from 'use-debounce';
-
 import {
   MultiItemBaseInput,
   type MultiItemBaseInputProps,
@@ -21,11 +16,16 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { IconCheck, IconPlus } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { useDebounce } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
@@ -379,11 +379,11 @@ export const MultiItemFieldInput = <T,>({
         />
       ) : !isLimitReached ? (
         <DropdownMenuItemsContainer>
-          <MenuItem
-            onClick={handleAddButtonClick}
-            LeftIcon={IconPlus}
-            text={newItemLabel || `Add ${placeholder}`}
-          />
+          <ListItem onClick={handleAddButtonClick} startIcon={<IconPlus />}>
+            <OverflowingTextWithTooltip
+              text={newItemLabel || `Add ${placeholder}`}
+            />
+          </ListItem>
         </DropdownMenuItemsContainer>
       ) : null}
     </DropdownContent>

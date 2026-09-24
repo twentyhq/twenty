@@ -1,6 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { MEDIA_RECORDER_CANDIDATE_MIME_TYPES } from '@/host/media/constants/MediaRecorderCandidateMimeTypes';
+import { MEDIA_SESSION_MEDIA_TYPES } from '@/host/media/constants/MediaSessionMediaTypes';
+import { toMediaSessionMediaTypes } from '@/host/media/utils/toMediaSessionMediaTypes';
 import { generateRandomId } from '@/utils/generateRandomId';
 import {
   type CreateFrontComponentMediaSessionHostInput,
@@ -17,7 +19,6 @@ import {
 
 type HostStreamSession = {
   streamId: string;
-  mediaType: MediaSessionMediaType;
   startedAt: number;
   mediaStream: MediaStream;
 };
@@ -28,16 +29,45 @@ type HostRecorderSession = {
   mediaRecorder: MediaRecorder;
 };
 
-// One capture at a time across every session host on the page. The
-// reservation is scoped to the mediaStartStream call itself (released in
-// its finally), so no callback ordering can leak or double-release it.
-let isCaptureSlotReserved = false;
-let liveCaptureSessionCount = 0;
+type MediaStreamStartFailure = Extract<
+  StartMediaStreamResult,
+  { status: 'failed' }
+>;
+
+type MediaStreamStartOutcome =
+  | { status: 'resolved'; mediaStream: MediaStream }
+  | { status: 'rejected'; error: unknown };
+
+const MEDIA_START_TIMEOUT_MS = 60_000;
 
 const CAPTURE_SLOT_BUSY_FAILURE = {
   status: 'failed',
   errorName: 'NotReadableError',
-  errorMessage: 'A recording is already in progress',
+  errorMessage: 'This component already has a pending or active capture',
+} as const;
+
+const MEDIA_POLICY_REQUIRED_FAILURE = {
+  status: 'failed',
+  errorName: 'NotAllowedError',
+  errorMessage: 'Media capture is not authorized by the host application',
+} as const;
+
+const EMPTY_MEDIA_REQUEST_FAILURE = {
+  status: 'failed',
+  errorName: 'TypeError',
+  errorMessage: 'At least one media type must be requested',
+} as const;
+
+const MEDIA_START_TIMEOUT_FAILURE = {
+  status: 'failed',
+  errorName: 'TimeoutError',
+  errorMessage: 'The media capture request timed out',
+} as const;
+
+const MEDIA_START_CANCELLED_FAILURE = {
+  status: 'failed',
+  errorName: 'AbortError',
+  errorMessage: 'The media capture request was cancelled',
 } as const;
 
 const toFailure = (
@@ -48,17 +78,59 @@ const toFailure = (
   errorMessage: error instanceof Error ? error.message : String(error),
 });
 
+const notifyListener = (notify: () => void): void => {
+  try {
+    notify();
+  } catch {
+    console.warn('A front component media session listener failed');
+  }
+};
+
+const stopLateMediaStream = (
+  mediaStreamPromise: Promise<MediaStreamStartOutcome>,
+): void => {
+  void mediaStreamPromise.then((lateOutcome) => {
+    if (lateOutcome.status !== 'resolved') {
+      return;
+    }
+
+    for (const track of lateOutcome.mediaStream.getTracks()) {
+      track.stop();
+    }
+  });
+};
+
+const getLiveMediaTypes = (
+  mediaStream: MediaStream,
+): MediaSessionMediaType[] => {
+  const liveMediaTypes = new Set(
+    mediaStream
+      .getTracks()
+      .filter((track) => track.readyState === 'live')
+      .map((track) => (track.kind === 'video' ? 'video' : 'audio')),
+  );
+
+  return MEDIA_SESSION_MEDIA_TYPES.filter((mediaType) =>
+    liveMediaTypes.has(mediaType),
+  );
+};
+
 export const createFrontComponentMediaSessionHost = ({
   beforeStartStream,
   onActiveSessionsChange,
+  onPendingStartChange,
 }: CreateFrontComponentMediaSessionHostInput = {}): FrontComponentMediaSessionHost => {
   const streamSessions = new Map<string, HostStreamSession>();
   const recorderSessions = new Map<string, HostRecorderSession>();
 
+  let isCaptureSlotReserved = false;
+  let isMediaPolicyRequestPending = false;
+  let liveCaptureSessionCount = 0;
   let transport: MediaSessionEventTransport | null = null;
   // Bumped by stopAllSessions so a getUserMedia still pending at teardown
   // cannot register a stream nobody owns anymore.
   let teardownGeneration = 0;
+  let cancelPendingStart: (() => void) | null = null;
   // Recorder chunks must survive the window before the worker transport is
   // connected, so events buffer instead of dropping.
   let bufferedEvents: MediaSessionEvent[] = [];
@@ -99,16 +171,16 @@ export const createFrontComponentMediaSessionHost = ({
       )
       .map((session) => ({
         streamId: session.streamId,
-        mediaType: session.mediaType,
+        mediaTypes: getLiveMediaTypes(session.mediaStream),
         startedAt: session.startedAt,
         getLiveMediaStream: () =>
           streamSessions.has(session.streamId) ? session.mediaStream : null,
       }));
 
-    onActiveSessionsChange(activeSessions);
+    notifyListener(() => onActiveSessionsChange(activeSessions));
   };
 
-  const cleanUpStreamSessionIfEnded = (streamId: string): void => {
+  const refreshStreamSessionLiveness = (streamId: string): void => {
     const session = streamSessions.get(streamId);
 
     if (!isDefined(session)) {
@@ -119,12 +191,11 @@ export const createFrontComponentMediaSessionHost = ({
       .getTracks()
       .some((track) => track.readyState === 'live');
 
-    if (hasLiveTrack) {
-      return;
+    if (!hasLiveTrack) {
+      streamSessions.delete(streamId);
+      liveCaptureSessionCount = Math.max(0, liveCaptureSessionCount - 1);
     }
 
-    streamSessions.delete(streamId);
-    liveCaptureSessionCount = Math.max(0, liveCaptureSessionCount - 1);
     notifyActiveSessionsChange();
   };
 
@@ -135,6 +206,83 @@ export const createFrontComponentMediaSessionHost = ({
     audio: boolean;
     video: boolean;
   }): Promise<StartMediaStreamResult> => {
+    const mediaTypes = toMediaSessionMediaTypes({ audio, video });
+
+    if (mediaTypes.length === 0) {
+      return EMPTY_MEDIA_REQUEST_FAILURE;
+    }
+
+    if (!isDefined(beforeStartStream)) {
+      return MEDIA_POLICY_REQUIRED_FAILURE;
+    }
+
+    if (
+      isMediaPolicyRequestPending ||
+      isCaptureSlotReserved ||
+      liveCaptureSessionCount > 0
+    ) {
+      return CAPTURE_SLOT_BUSY_FAILURE;
+    }
+
+    isMediaPolicyRequestPending = true;
+    let resolveInterruptedPolicy: (
+      failure: MediaStreamStartFailure,
+    ) => void = () => undefined;
+    const interruptedPolicyPromise = new Promise<MediaStreamStartFailure>(
+      (resolve) => {
+        resolveInterruptedPolicy = resolve;
+      },
+    );
+    const policyAbortController = new AbortController();
+    const policyPromise = Promise.resolve()
+      .then(() =>
+        beforeStartStream({
+          mediaTypes,
+          abortSignal: policyAbortController.signal,
+        }),
+      )
+      .then(
+        (veto) => ({ status: 'resolved', veto }) as const,
+        (error: unknown) => ({ status: 'rejected', error }) as const,
+      );
+
+    let policyOutcome: Awaited<typeof policyPromise> | MediaStreamStartFailure;
+    let policyTimeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    try {
+      cancelPendingStart = () => {
+        resolveInterruptedPolicy(MEDIA_START_CANCELLED_FAILURE);
+        policyAbortController.abort();
+      };
+      notifyListener(() => onPendingStartChange?.(mediaTypes));
+      policyTimeoutId = setTimeout(() => {
+        resolveInterruptedPolicy(MEDIA_START_TIMEOUT_FAILURE);
+        policyAbortController.abort();
+      }, MEDIA_START_TIMEOUT_MS);
+
+      policyOutcome = await Promise.race([
+        policyPromise,
+        interruptedPolicyPromise,
+      ]);
+    } finally {
+      clearTimeout(policyTimeoutId);
+      cancelPendingStart = null;
+      isMediaPolicyRequestPending = false;
+      notifyListener(() => onPendingStartChange?.(null));
+    }
+
+    if ('errorName' in policyOutcome) {
+      return policyOutcome;
+    }
+
+    if (policyOutcome.status === 'rejected') {
+      return toFailure(policyOutcome.error);
+    }
+
+    if (isDefined(policyOutcome.veto)) {
+      return { status: 'failed', ...policyOutcome.veto };
+    }
+
     if (isCaptureSlotReserved || liveCaptureSessionCount > 0) {
       return CAPTURE_SLOT_BUSY_FAILURE;
     }
@@ -142,26 +290,17 @@ export const createFrontComponentMediaSessionHost = ({
     isCaptureSlotReserved = true;
 
     try {
-      return await startStreamWithReservedSlot({ audio, video });
+      return await startStreamWithReservedSlot({ mediaTypes });
     } finally {
       isCaptureSlotReserved = false;
     }
   };
 
   const startStreamWithReservedSlot = async ({
-    audio,
-    video,
+    mediaTypes,
   }: {
-    audio: boolean;
-    video: boolean;
+    mediaTypes: MediaSessionMediaType[];
   }): Promise<StartMediaStreamResult> => {
-    const mediaType: MediaSessionMediaType = video ? 'video' : 'audio';
-    const veto = beforeStartStream?.(mediaType) ?? null;
-
-    if (isDefined(veto)) {
-      return { status: 'failed', ...veto };
-    }
-
     if (typeof navigator === 'undefined' || !navigator.mediaDevices) {
       return {
         status: 'failed',
@@ -171,17 +310,72 @@ export const createFrontComponentMediaSessionHost = ({
     }
 
     const startGeneration = teardownGeneration;
-
-    let mediaStream: MediaStream;
+    let resolveInterruptedStart: (
+      failure: MediaStreamStartFailure,
+    ) => void = () => undefined;
+    const interruptedStartPromise = new Promise<MediaStreamStartFailure>(
+      (resolve) => {
+        resolveInterruptedStart = resolve;
+      },
+    );
+    let mediaStreamPromise: Promise<MediaStreamStartOutcome>;
 
     try {
-      mediaStream = await navigator.mediaDevices.getUserMedia({
-        audio,
-        video,
-      });
+      mediaStreamPromise = navigator.mediaDevices
+        .getUserMedia({
+          audio: mediaTypes.includes('audio'),
+          video: mediaTypes.includes('video'),
+        })
+        .then(
+          (mediaStream) => ({ status: 'resolved', mediaStream }) as const,
+          (error: unknown) => ({ status: 'rejected', error }) as const,
+        );
     } catch (error) {
       return toFailure(error);
     }
+
+    let startTimeoutId: ReturnType<typeof setTimeout> | undefined;
+    let startOutcome:
+      | MediaStreamStartOutcome
+      | MediaStreamStartFailure
+      | undefined;
+
+    try {
+      cancelPendingStart = () => {
+        resolveInterruptedStart(MEDIA_START_CANCELLED_FAILURE);
+      };
+      notifyListener(() => onPendingStartChange?.(mediaTypes));
+
+      startTimeoutId = setTimeout(() => {
+        resolveInterruptedStart(MEDIA_START_TIMEOUT_FAILURE);
+      }, MEDIA_START_TIMEOUT_MS);
+
+      startOutcome = await Promise.race([
+        mediaStreamPromise,
+        interruptedStartPromise,
+      ]);
+    } finally {
+      clearTimeout(startTimeoutId);
+      cancelPendingStart = null;
+
+      if (!isDefined(startOutcome)) {
+        stopLateMediaStream(mediaStreamPromise);
+      }
+
+      notifyListener(() => onPendingStartChange?.(null));
+    }
+
+    if ('errorName' in startOutcome) {
+      stopLateMediaStream(mediaStreamPromise);
+
+      return startOutcome;
+    }
+
+    if (startOutcome.status === 'rejected') {
+      return toFailure(startOutcome.error);
+    }
+
+    const { mediaStream } = startOutcome;
 
     if (startGeneration !== teardownGeneration) {
       for (const track of mediaStream.getTracks()) {
@@ -199,7 +393,6 @@ export const createFrontComponentMediaSessionHost = ({
 
     streamSessions.set(streamId, {
       streamId,
-      mediaType,
       startedAt: Date.now(),
       mediaStream,
     });
@@ -210,7 +403,7 @@ export const createFrontComponentMediaSessionHost = ({
       // not for stop() calls: those are reported to the worker explicitly.
       track.addEventListener('ended', () => {
         pushEvents([{ type: 'track-ended', streamId, trackId: track.id }]);
-        cleanUpStreamSessionIfEnded(streamId);
+        refreshStreamSessionLiveness(streamId);
       });
     }
 
@@ -244,7 +437,7 @@ export const createFrontComponentMediaSessionHost = ({
       .find((sessionTrack) => sessionTrack.id === trackId);
 
     track?.stop();
-    cleanUpStreamSessionIfEnded(streamId);
+    refreshStreamSessionLiveness(streamId);
   };
 
   const mediaSetTrackEnabled = async ({
@@ -390,6 +583,7 @@ export const createFrontComponentMediaSessionHost = ({
 
   const stopAllSessions = (): void => {
     teardownGeneration += 1;
+    cancelPendingStart?.();
 
     for (const recorderSession of recorderSessions.values()) {
       if (recorderSession.mediaRecorder.state !== 'inactive') {

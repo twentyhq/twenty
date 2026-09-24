@@ -513,6 +513,109 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(true);
       });
 
+      it('should return false when the selected value is a substring of an option (IS)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'INVALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when the selected value matches an option exactly (IS)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'VALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when the selected value is a substring of an option (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'INVALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when the selected value matches an option exactly (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'VALID',
+          '["VALID"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should match scalar option values that are valid JSON (IS)', () => {
+        const filter = createFilter(ViewFilterOperand.IS, '1', '1', 'SELECT');
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should match scalar option values that are valid JSON (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT,
+          '1',
+          '1',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should match any of several selected options (IS)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'PENDING',
+          '["VALID","PENDING"]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should treat an empty option as a null value match (IS)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          null,
+          '[""]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should not match a non-null value against an empty option (IS)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'VALID',
+          '[""]',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
       it('should return true when there are no values (IsEmpty)', () => {
         const filter = createFilter(
           ViewFilterOperand.IS_EMPTY,
@@ -612,6 +715,50 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
+      });
+
+      it('should not treat an empty value as zero', () => {
+        const nullLessThanOrEqual = createFilter(
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
+          null,
+          100,
+          'NUMBER',
+        );
+        const emptyStringGreaterThanOrEqual = createFilter(
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+          '',
+          -1,
+          'NUMBER',
+        );
+        const undefinedIsZero = createFilter(
+          ViewFilterOperand.IS,
+          undefined,
+          0,
+          'NUMBER',
+        );
+        const nullIsNotZero = createFilter(
+          ViewFilterOperand.IS_NOT,
+          null,
+          0,
+          'NUMBER',
+        );
+        const zeroIsZero = createFilter(ViewFilterOperand.IS, 0, 0, 'NUMBER');
+
+        expect(
+          evaluateFilterConditions({ filters: [nullLessThanOrEqual] }),
+        ).toBe(false);
+        expect(
+          evaluateFilterConditions({
+            filters: [emptyStringGreaterThanOrEqual],
+          }),
+        ).toBe(false);
+        expect(evaluateFilterConditions({ filters: [undefinedIsZero] })).toBe(
+          false,
+        );
+        expect(evaluateFilterConditions({ filters: [nullIsNotZero] })).toBe(
+          true,
+        );
+        expect(evaluateFilterConditions({ filters: [zeroIsZero] })).toBe(true);
       });
 
       it('should handle LessThanOrEqual operand correctly', () => {
@@ -776,6 +923,37 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
+      });
+
+      it('should handle Contains operand with array values that look like JSON scalars', () => {
+        const numericValue = createFilter(
+          ViewFilterOperand.CONTAINS,
+          ['2024', '2025'],
+          '2024',
+          'ARRAY',
+        );
+        const booleanValue = createFilter(
+          ViewFilterOperand.CONTAINS,
+          ['true', 'false'],
+          'true',
+          'ARRAY',
+        );
+        const missingNumericValue = createFilter(
+          ViewFilterOperand.DOES_NOT_CONTAIN,
+          ['2024', '2025'],
+          '2026',
+          'ARRAY',
+        );
+
+        expect(evaluateFilterConditions({ filters: [numericValue] })).toBe(
+          true,
+        );
+        expect(evaluateFilterConditions({ filters: [booleanValue] })).toBe(
+          true,
+        );
+        expect(
+          evaluateFilterConditions({ filters: [missingNumericValue] }),
+        ).toBe(true);
       });
 
       it('should handle DoesNotContain operand with arrays', () => {

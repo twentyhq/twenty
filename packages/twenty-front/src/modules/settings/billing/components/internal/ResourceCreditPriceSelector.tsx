@@ -1,4 +1,3 @@
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPackagePickerModal } from '@/settings/billing/components/internal/ResourceCreditPackagePickerModal';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
@@ -14,6 +13,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 import {
   IconAdjustments,
   IconArrowUp,

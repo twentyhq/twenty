@@ -1,4 +1,3 @@
-import { AnimatedIconCrossfade } from 'twenty-ui/primitives/layout';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -7,6 +6,7 @@ import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfo
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
+import { AnimatedIconCrossfade } from 'twenty-ui/components';
 import { IconPencil, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 

@@ -5,10 +5,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { LightIconButton, useToast } from 'twenty-ui/components';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type PublicDomain,
   DeletePublicDomainDocument,
@@ -59,16 +58,15 @@ export const SettingPublicDomainRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Delete`}
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={async () => {
                 await handleDeletePublicDomain();
                 closeDropdown(dropdownId);
                 await refetchPublicDomains();
               }}
-            />
+            >{t`Delete`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

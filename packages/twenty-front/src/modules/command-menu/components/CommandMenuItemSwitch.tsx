@@ -1,10 +1,10 @@
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
-import { SettingsRow, type SettingsRowProps } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
+import { SettingsRow, type SettingsRowProps } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type CommandMenuItemSwitchProps = {
   id: string;

@@ -15,15 +15,13 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconEye, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID = 'delete-unsubscribe-topic-modal';
 

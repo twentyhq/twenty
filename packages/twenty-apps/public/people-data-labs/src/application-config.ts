@@ -6,10 +6,14 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'People Data Labs',
   description: 'Enrich People and Companies with People Data Labs data.',
-  logoUrl: 'public/people-data-labs-icon.png',
+  logo: 'public/people-data-labs-icon.png',
   category: 'Enrichment',
   author: 'Twenty',
-  screenshots: ['public/gallery/cover.png'],
+  galleryImages: ['public/gallery/cover.png'],
+  billing: {
+    description:
+      '$0.336 per person match and $0.12 per company match. Not found and skipped records are free. Billed to your Twenty credits.',
+  },
   serverVariables: {
     PDL_API_KEY: {
       description: 'People Data Labs API key',

@@ -9,7 +9,6 @@ export const PDL_LOGIC_FUNCTION_CONSTANTS = {
   enrichPerson: { universalIdentifier:'864ad69b-ff9f-4635-9aed-16fd0c2ad210', path: '/people-data-labs/enrich-person' },
   enrichCompanies: { universalIdentifier:'c769fb49-d495-469f-a58f-1a69ab90ec24', path: '/people-data-labs/enrich-companies' },
   enrichCompany: { universalIdentifier:'560bbfd9-1107-4f7f-8398-ea835e7e5bbe', path: '/people-data-labs/enrich-company' },
-  postInstall: { universalIdentifier:'9de46f15-05ec-4314-84c1-b9919b545269'},
 } as const;
 
 export const PDL_FIELD_UNIVERSAL_IDENTIFIERS = {

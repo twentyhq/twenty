@@ -38,7 +38,6 @@ import {
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import {
   validateRoleDeletionDoesNotLockOutActorOrThrow,
@@ -46,8 +45,6 @@ import {
 } from 'src/engine/metadata-modules/role/utils/validate-role-mutation-does-not-lock-out-actor.util';
 import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -58,8 +55,6 @@ export class RoleService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectWorkspaceScopedRepository(RoleEntity)
-    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly applicationService: ApplicationService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
@@ -133,20 +128,30 @@ export class RoleService {
   public async getRoleById(
     id: string,
     workspaceId: string,
-  ): Promise<RoleEntity | null> {
-    return this.roleRepository.findOne(workspaceId, {
-      where: {
-        id,
-      },
-      relations: {
-        roleTargets: true,
-        rolePermissionFlags: {
-          permissionFlag: true,
+  ): Promise<RoleDTO | null> {
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRoleMaps'],
         },
-        objectPermissions: true,
-        fieldPermissions: true,
-      },
+      );
+
+    const flatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatRoleMaps,
     });
+
+    if (!isDefined(flatRole)) {
+      return null;
+    }
+
+    const [roleDto] = await this.findManyWithRelationsFromCache(
+      [flatRole],
+      workspaceId,
+    );
+
+    return roleDto;
   }
 
   public async getRoleByUniversalIdentifier({

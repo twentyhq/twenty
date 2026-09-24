@@ -7,9 +7,10 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { RouterDecorator } from 'twenty-ui/testing';
+
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof CommandMenuItemEditButton> = {
   title: 'Modules/CommandMenu/CommandMenuItemEditButton',
@@ -29,7 +30,7 @@ const meta: Meta<typeof CommandMenuItemEditButton> = {
     },
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
   ],
 };
 

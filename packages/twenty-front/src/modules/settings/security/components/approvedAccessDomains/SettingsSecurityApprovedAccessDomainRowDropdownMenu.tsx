@@ -7,10 +7,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton, useToast } from 'twenty-ui/components';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   type ApprovedAccessDomain,
   DeleteApprovedAccessDomainDocument,
@@ -71,15 +70,16 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text="Delete"
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={() => {
                 handleDeleteApprovedAccessDomain();
                 closeDropdown(dropdownId);
               }}
-            />
+            >
+              {'Delete'}
+            </ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

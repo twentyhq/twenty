@@ -1,16 +1,14 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { useMemo, useState } from 'react';
-
 import { type Country } from '@/ui/input/components/internal/types/Country';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
 import 'react-phone-number-input/style.css';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.div`
@@ -59,7 +57,7 @@ export const PhoneCountryPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCountries?.length === 0 ? (
-          <MenuItem text={t`No results`} />
+          <ListItem disabled>{t`No results`}</ListItem>
         ) : (
           <>
             {selectedCountry && (

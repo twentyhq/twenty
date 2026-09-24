@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { CardPicker, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { CardPicker } from 'twenty-ui/components';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 

@@ -1,15 +1,14 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { UndecoratedLink, ListItem } from 'twenty-ui/primitives/navigation';
-import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { type AvailableWorkspace } from '~/generated-metadata/graphql';
+import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
+import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { t } from '@lingui/core/macro';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
-import { t } from '@lingui/core/macro';
-import React from 'react';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 
 export const AvailableWorkspaceItem = ({
   availableWorkspace,
@@ -60,9 +59,7 @@ export const AvailableWorkspaceItem = ({
           />
         }
       >
-        <OverflowingTextWithTooltip
-          text={availableWorkspace.displayName ?? t`(No name)`}
-        />
+        {availableWorkspace.displayName ?? t`(No name)`}
       </ListItem>
     </UndecoratedLink>
   );

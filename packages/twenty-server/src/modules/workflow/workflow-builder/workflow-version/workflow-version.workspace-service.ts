@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import {
-  buildWorkflowGraph,
-  computeWorkflowLayout,
-  TRIGGER_STEP_ID,
-  WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
-} from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
@@ -30,6 +25,7 @@ import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { computeWorkflowStepPositions } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-step-positions.util';
 import { remapDuplicatedStepDestinations } from 'src/modules/workflow/workflow-builder/utils/remap-duplicated-step-destinations.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
@@ -417,35 +413,12 @@ export class WorkflowVersionWorkspaceService {
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
-    const steps = workflowVersion.steps ?? [];
-
-    const { childrenByStepId } = buildWorkflowGraph({
-      trigger: workflowVersion.trigger,
-      steps,
-    });
-
-    const nodes = [
-      {
-        id: TRIGGER_STEP_ID,
-        ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
-      },
-      ...steps.map((step) => ({
-        id: step.id,
-        ...WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS,
-      })),
-    ];
-
-    const edges = [...childrenByStepId.entries()].flatMap(([source, targets]) =>
-      targets.map((target) => ({ source, target })),
-    );
-
-    const positions = computeWorkflowLayout({ nodes, edges }).map(
-      ({ id, centerPosition }) => ({ id, position: centerPosition }),
-    );
-
     await this.updateWorkflowVersionPositions({
       workflowVersionId,
-      positions,
+      positions: computeWorkflowStepPositions({
+        trigger: workflowVersion.trigger,
+        steps: workflowVersion.steps ?? [],
+      }),
       workspaceId,
     });
   }

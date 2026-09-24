@@ -6,10 +6,13 @@ import { SESSION_SANDBOX_METADATA_KEY } from 'src/engine/core-modules/code-inter
 
 type SandboxApi = typeof Sandbox;
 
+const SESSION_ACTOR_METADATA_KEY = 'twentySessionActor';
+
 type GetOrCreateSessionSandboxArgs = {
   sandboxApi: SandboxApi;
   apiKey: string;
   sessionId: string;
+  actorKey?: string;
   timeoutMs: number;
   idleTimeoutMs: number;
 };
@@ -77,12 +80,18 @@ const createSessionSandbox = (
   apiKey: string,
   sessionId: string,
   timeoutMs: number,
+  actorKey?: string,
 ) =>
   sandboxApi.create({
     apiKey,
     timeoutMs,
     lifecycle: { onTimeout: 'pause', autoResume: true },
-    metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId },
+    metadata: {
+      [SESSION_SANDBOX_METADATA_KEY]: sessionId,
+      ...(isDefined(actorKey)
+        ? { [SESSION_ACTOR_METADATA_KEY]: actorKey }
+        : {}),
+    },
   });
 
 export const getOrCreateSessionSandbox = async ({
@@ -91,6 +100,7 @@ export const getOrCreateSessionSandbox = async ({
   sessionId,
   timeoutMs,
   idleTimeoutMs,
+  actorKey,
 }: GetOrCreateSessionSandboxArgs): Promise<{
   sandbox: Sandbox;
   isReused: boolean;
@@ -108,7 +118,11 @@ export const getOrCreateSessionSandbox = async ({
   let reusedSandbox: Sandbox | undefined;
   let reusedSandboxId: string | undefined;
 
-  for (const { sandboxId } of sessionSandboxes) {
+  for (const { sandboxId, metadata } of sessionSandboxes) {
+    if (metadata?.[SESSION_ACTOR_METADATA_KEY] !== actorKey) {
+      await killSandboxById(sandboxApi, apiKey, sandboxId);
+      continue;
+    }
     const sandbox = await connectAndKeepAlive(
       sandboxApi,
       apiKey,
@@ -138,6 +152,7 @@ export const getOrCreateSessionSandbox = async ({
     apiKey,
     sessionId,
     aliveTimeoutMs,
+    actorKey,
   );
 
   return { sandbox, isReused: false };
