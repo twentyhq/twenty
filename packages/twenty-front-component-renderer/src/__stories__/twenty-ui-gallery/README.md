@@ -44,19 +44,23 @@ No stories are skipped or marked as expected-to-fail by the runner.
 
 | Component | Current limitation |
 | --- | --- |
-| Field controls | Forwarded events lack the native event used for `composedPath`. React serializes boolean `aria-invalid` as an empty string; Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
+| Field controls | Forwarded events lack the `nativeEvent` Base UI reads for `composedPath`. Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
 | Tabs | React cannot mount without `compareDocumentPosition`; Preact activation fails on the missing native event for `composedPath`. |
 | Popover, AlertDialog | Opening fails while reading unavailable viewport width data. |
 | Menu, Select | Opening fails on viewport data and/or missing `nativeEvent.pointerType`. |
 | Switch | Activation attempts to construct an unavailable `PointerEvent`. |
 | Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
 
-The worker DOM now provides `Element.matches`, `closest`, and `querySelector`
-backed by a port of `css-what` and `css-select`. The selector engine handles
-custom element tags and relative selectors. `TooltipPreact` therefore covers
-hover opening and Escape dismissal. Pointer leave still needs the
-`Node.contains` fix and document-level `mousemove` delivery for the safe
-polygon, and the compound tooltip's title and description are not covered yet.
+The worker DOM now provides `Element.matches`, `closest`, `querySelector` backed
+by a port of `css-what` and `css-select`, and property accessors for boolean
+ARIA attributes so React and Preact forward `true`/`false` instead of empty
+strings and remove the attribute when the prop is cleared. `getAttribute` and
+the selector engine read the remote properties React and Preact set. The
+selector engine handles custom element tags and relative selectors.
+`TooltipPreact` therefore covers hover opening and Escape dismissal. Pointer
+leave still needs the `Node.contains` fix and document-level `mousemove`
+delivery for the safe polygon, and the compound tooltip's title and description
+are not covered yet.
 
 Once the remaining gaps are fixed, extend the stories to verify selection,
 disabled items, keyboard navigation, and overlay content, dismissal, and focus

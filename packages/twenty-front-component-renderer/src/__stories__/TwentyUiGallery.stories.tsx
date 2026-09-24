@@ -14,7 +14,7 @@ import {
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
 import {
-  createCheckboxTest,
+  checkboxTest,
   createFieldControlsTest,
   createRadioGroupPreactTest,
   sliderTest,
@@ -200,10 +200,7 @@ export const ThemeTokensPreact: Story = createGalleryStory({
 export const FieldControlsReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-field-controls',
   runtime: 'react',
-  // React serializes boolean ARIA as empty strings and loses Textarea's
-  // change handler.
   play: createFieldControlsTest({
-    expectedAriaInvalid: '',
     expectedReportedValues: /^Email: alice; Notes:$/,
   }),
 });
@@ -211,7 +208,6 @@ export const FieldControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-field-controls',
   runtime: 'preact',
   play: createFieldControlsTest({
-    expectedAriaInvalid: 'true',
     expectedReportedValues: 'Email: alice; Notes: Follow up',
   }),
 });
@@ -366,12 +362,12 @@ export const SwitchPreact: Story = createGalleryStory({
 export const CheckboxReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-checkbox',
   runtime: 'react',
-  play: createCheckboxTest({ expectedAriaTrue: '' }),
+  play: checkboxTest,
 });
 export const CheckboxPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-checkbox',
   runtime: 'preact',
-  play: createCheckboxTest({ expectedAriaTrue: 'true' }),
+  play: checkboxTest,
 });
 
 export const SliderReact: Story = createGalleryStory({
