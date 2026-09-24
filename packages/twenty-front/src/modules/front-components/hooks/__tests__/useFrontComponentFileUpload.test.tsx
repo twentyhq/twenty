@@ -87,7 +87,7 @@ const queueFetchResponses = (...responses: QueuedResponse[]) => {
   global.fetch = jest.fn(() => {
     const { status = 200, payload, isNetworkError } = queue.shift() ?? {};
 
-    if (isNetworkError === true) {
+    if (isNetworkError) {
       return Promise.reject(new TypeError('Failed to fetch'));
     }
 
