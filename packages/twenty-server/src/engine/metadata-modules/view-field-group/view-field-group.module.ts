@@ -1,3 +1,4 @@
+import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -16,6 +17,7 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
 
 @Module({
   imports: [
+    ViewPermissionsModule,
     ApplicationTranslationCatalogModule,
     TypeOrmModule.forFeature([ViewFieldGroupEntity, ViewEntity]),
     WorkspaceCacheStorageModule,

@@ -1,3 +1,5 @@
+import { createViewFieldGroupQueryFactory } from 'test/integration/metadata/suites/view-field-group/utils/create-view-field-group-query-factory.util';
+import { createManyViewFieldGroupsQueryFactory } from 'test/integration/metadata/suites/view-field-group/utils/create-many-view-field-groups-query-factory.util';
 import crypto from 'crypto';
 
 import bcrypt from 'bcrypt';
@@ -242,6 +244,45 @@ describe('application principal view access (integration)', () => {
         deniedApplication.applicationUniversalIdentifier,
     });
   }, 120000);
+
+  it('allows field group creation for an application with VIEWS permission', async () => {
+    const response = await makeMetadataAPIRequest(
+      createViewFieldGroupQueryFactory({
+        input: { viewId: groupedViewId, name: 'Allowed group' },
+      }),
+      authorizedApplication.accessToken,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.createViewFieldGroup.id).toBeDefined();
+  });
+
+  it('denies field group creation for an application without VIEWS permission', async () => {
+    const response = await makeMetadataAPIRequest(
+      createViewFieldGroupQueryFactory({
+        input: { viewId: groupedViewId, name: 'Denied group' },
+      }),
+      deniedApplication.accessToken,
+    );
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    expect(response.body.data?.createViewFieldGroup).toBeFalsy();
+  });
+
+  it('checks every view in a batch, including one after a missing view', async () => {
+    const response = await makeMetadataAPIRequest(
+      createManyViewFieldGroupsQueryFactory({
+        inputs: [
+          { viewId: crypto.randomUUID(), name: 'Missing view' },
+          { viewId: groupedViewId, name: 'Forbidden view' },
+        ],
+      }),
+      deniedApplication.accessToken,
+    );
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    expect(response.body.data?.createManyViewFieldGroups).toBeFalsy();
+  });
 
   describe('an application whose role grants the VIEWS permission', () => {
     it('creates a view', async () => {

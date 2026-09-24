@@ -1,7 +1,5 @@
-import {
-  resolveViewChildEntityViewId,
-  resolveViewChildEntityViewIds,
-} from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-child-entity-view-id.util';
+import { resolveViewChildEntityViewId } from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-child-entity-view-id.util';
+import { resolveViewChildEntityViewIds } from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-child-entity-view-ids.util';
 
 describe('resolveViewChildEntityViewId', () => {
   it('reads the view named by the input', () => {
@@ -64,11 +62,7 @@ describe('resolveViewChildEntityViewIds', () => {
     expect(
       resolveViewChildEntityViewIds({
         args: {
-          inputs: [
-            { viewId: '' },
-            { viewId: 123 as any },
-            { viewId: 'view-valid' },
-          ],
+          inputs: [{ viewId: '' }, { viewId: 123 }, { viewId: 'view-valid' }],
         },
         body: undefined,
       }),
