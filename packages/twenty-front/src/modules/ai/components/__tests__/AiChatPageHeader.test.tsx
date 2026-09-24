@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render, screen, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -220,6 +220,7 @@ describe('AiChatPageHeader', () => {
     await user.click(screen.getByRole('button', { name: 'Chat actions' }));
     await user.click(screen.getByText('Rename'));
     expect(screen.getByRole('textbox')).toHaveValue('Generated title');
+    await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
     await user.keyboard('{Enter}');
     expect(renameChatThread).not.toHaveBeenCalled();
 

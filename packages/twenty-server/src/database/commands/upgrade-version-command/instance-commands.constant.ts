@@ -203,8 +203,10 @@ import { AddDeferredWorkspaceMigrationActionTableFastInstanceCommand } from 'src
 import { AddHealthCheckToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088275000-add-health-check-to-application';
 import { AddApplicationGrantedCapabilitiesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088525621-add-application-granted-capabilities';
 import { AddViewGroupLoadLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088647379-add-view-group-load-limit';
-import { AddWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790169773751-add-workspace-allowed-iframe-origins';
-import { RequireWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790173916519-require-workspace-allowed-iframe-origins';
+import { AddSettingsMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790165860000-add-settings-menu-item';
+import { BackfillSettingsMenuItemSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1790165870000-backfill-settings-menu-item';
+import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
+import { AddWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790232481570-add-workspace-allowed-iframe-origins';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -410,6 +412,8 @@ export const INSTANCE_COMMANDS = [
   AddHealthCheckToApplicationFastInstanceCommand,
   AddApplicationGrantedCapabilitiesFastInstanceCommand,
   AddViewGroupLoadLimitFastInstanceCommand,
+  AddSettingsMenuItemFastInstanceCommand,
+  BackfillSettingsMenuItemSlowInstanceCommand,
+  AddChatMessageSenderFastInstanceCommand,
   AddWorkspaceAllowedIframeOriginsFastInstanceCommand,
-  RequireWorkspaceAllowedIframeOriginsFastInstanceCommand,
 ];

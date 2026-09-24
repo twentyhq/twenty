@@ -70,6 +70,18 @@ export { AnimatedIconCrossfade } from './layout/AnimatedIconCrossfade/AnimatedIc
 export { Section } from './layout/Section/Section';
 export type { SectionHeaderProps } from './layout/Section/types/SectionHeaderProps';
 export type { SectionRootProps } from './layout/Section/types/SectionRootProps';
+export { Dropdown } from './navigation/Dropdown/Dropdown';
+export type { DropdownActionItemProps } from './navigation/Dropdown/types/DropdownActionItemProps';
+export type { DropdownContentProps } from './navigation/Dropdown/types/DropdownContentProps';
+export type { DropdownOptionItemProps } from './navigation/Dropdown/types/DropdownOptionItemProps';
+export type { DropdownPageProps } from './navigation/Dropdown/types/DropdownPageProps';
+export type { DropdownRootProps } from './navigation/Dropdown/types/DropdownRootProps';
+export type { DropdownSearchProps } from './navigation/Dropdown/types/DropdownSearchProps';
+export type { DropdownSectionProps } from './navigation/Dropdown/types/DropdownSectionProps';
+export type { DropdownSubmenuProps } from './navigation/Dropdown/types/DropdownSubmenuProps';
+export type { DropdownSubmenuTriggerProps } from './navigation/Dropdown/types/DropdownSubmenuTriggerProps';
+export type { DropdownTriggerProps } from './navigation/Dropdown/types/DropdownTriggerProps';
+export type { DropdownType } from './navigation/Dropdown/types/DropdownType';
 export { DEFAULT_COLOR_LABELS } from './navigation/MenuItem/constants/DefaultColorLabels';
 export { MenuItem } from './navigation/MenuItem/MenuItem';
 export type { ColorLabels } from './navigation/MenuItem/types/ColorLabels';

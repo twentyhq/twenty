@@ -4,6 +4,7 @@ import { type QueryRunner } from 'typeorm';
 
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils/get-agent-history-column.util';
+import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
 import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -52,7 +53,7 @@ export class AgentHistoryMigrationDataService {
     lastId: string | null;
     batchSize: number;
   }): Promise<string[]> {
-    const columns: readonly string[] = table.columns;
+    const columns = await getAgentHistoryMigrationColumns({ runner, table });
     const targetColumns = [
       ...columns.map((column) =>
         getAgentHistoryColumn({

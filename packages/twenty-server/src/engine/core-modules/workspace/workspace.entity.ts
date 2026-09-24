@@ -302,6 +302,10 @@ export class WorkspaceEntity {
 
   // Cached auth contexts from older replicas can omit this field during upgrades.
   @Field(() => [String], { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.43.0_AddWorkspaceAllowedIframeOriginsFastInstanceCommand_1790232481570',
+  })
   @Column({ type: 'varchar', array: true, default: '{}' })
   allowedIframeOrigins: string[];
 
