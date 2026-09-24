@@ -14,7 +14,3 @@ Pay only for matches, in Twenty credits — **not found and skipped records are 
 
 - **Person match:** $0.336
 - **Company match:** $0.12
-
-## 📌 Heads up
-
-**Self-hosting?** Your server admin sets the People Data Labs API key first: see the [setup guide](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/people-data-labs/SETUP.md).
