@@ -8,8 +8,8 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { type Manifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -242,7 +242,7 @@ describe('application files field upload', () => {
     fieldMetadataUniversalIdentifier: string;
     token?: string;
   }) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       {
         query: createFileUploadMutation,
         variables: {
@@ -262,7 +262,7 @@ describe('application files field upload', () => {
     fileId: string;
     token?: string;
   }) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       { query: completeFileUploadMutation, variables: { fileId } },
       token,
     );
@@ -274,7 +274,7 @@ describe('application files field upload', () => {
     fieldMetadataUniversalIdentifier: string;
     token?: string;
   }) =>
-    makeMetadataAPIRequestWithFileUpload(
+    makeMetadataApiRequestWithFileUpload(
       {
         query: uploadFilesFieldFileMutation,
         variables: { file: null, fieldMetadataUniversalIdentifier },
@@ -332,7 +332,13 @@ describe('application files field upload', () => {
     });
   };
 
-  const expectCompleted = (response: request.Response, fileId: string) => {
+  const expectCompleted = ({
+    response,
+    fileId,
+  }: {
+    response: request.Response;
+    fileId: string;
+  }) => {
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.completeFileUpload.id).toBe(fileId);
   };
@@ -418,13 +424,13 @@ describe('application files field upload', () => {
       token: uploadingApplicationOwnToken,
     });
 
-    expectCompleted(
-      await completeFileUpload({
+    expectCompleted({
+      response: await completeFileUpload({
         fileId: uploadTarget.fileId,
         token: uploadingApplicationOwnToken,
       }),
-      uploadTarget.fileId,
-    );
+      fileId: uploadTarget.fileId,
+    });
   });
 
   it('should let an application upload into a standard files field its role can update', async () => {
@@ -467,21 +473,21 @@ describe('application files field upload', () => {
       token: uploadingApplicationToken,
     });
 
-    expectCompleted(
-      await completeFileUpload({
+    expectCompleted({
+      response: await completeFileUpload({
         fileId: uploadTarget.fileId,
         token: uploadingApplicationOtherMemberToken,
       }),
-      uploadTarget.fileId,
-    );
+      fileId: uploadTarget.fileId,
+    });
 
-    expectCompleted(
-      await completeFileUpload({
+    expectCompleted({
+      response: await completeFileUpload({
         fileId: uploadTarget.fileId,
         token: uploadingApplicationOwnToken,
       }),
-      uploadTarget.fileId,
-    );
+      fileId: uploadTarget.fileId,
+    });
   });
 
   it('should refuse to let another principal complete an upload', async () => {
@@ -501,13 +507,13 @@ describe('application files field upload', () => {
       }),
     );
 
-    expectCompleted(
-      await completeFileUpload({
+    expectCompleted({
+      response: await completeFileUpload({
         fileId: uploadTarget.fileId,
         token: uploadingApplicationToken,
       }),
-      uploadTarget.fileId,
-    );
+      fileId: uploadTarget.fileId,
+    });
 
     expectPermissionDenied(
       await completeFileUpload({ fileId: uploadTarget.fileId }),
@@ -520,10 +526,10 @@ describe('application files field upload', () => {
         UPLOADING_APPLICATION.filesFieldUniversalIdentifier,
     });
 
-    expectCompleted(
-      await completeFileUpload({ fileId: uploadTarget.fileId }),
-      uploadTarget.fileId,
-    );
+    expectCompleted({
+      response: await completeFileUpload({ fileId: uploadTarget.fileId }),
+      fileId: uploadTarget.fileId,
+    });
 
     await global.testDataSource.query(
       `UPDATE core."file" SET settings = settings - 'uploadPrincipal' WHERE id = $1`,
@@ -551,13 +557,13 @@ describe('application files field upload', () => {
 
     expectPermissionDenied(await completeFileUpload({ fileId }));
 
-    expectCompleted(
-      await completeFileUpload({
+    expectCompleted({
+      response: await completeFileUpload({
         fileId,
         token: uploadingApplicationToken,
       }),
-      fileId,
-    );
+      fileId: fileId,
+    });
   });
 
   it('should refuse a multipart upload into a files field on an object the application cannot update', async () => {
@@ -621,9 +627,9 @@ describe('application files field upload', () => {
         UPLOADING_APPLICATION.filesFieldUniversalIdentifier,
     });
 
-    expectCompleted(
-      await completeFileUpload({ fileId: uploadTarget.fileId }),
-      uploadTarget.fileId,
-    );
+    expectCompleted({
+      response: await completeFileUpload({ fileId: uploadTarget.fileId }),
+      fileId: uploadTarget.fileId,
+    });
   });
 });
