@@ -36,6 +36,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
 import {
   type DeferredWorkspaceMigrationAction,
+  type DeferredWorkspaceMigrationActionNameByHandlerKey,
   type DeferredWorkspaceMigrationActionPayload,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
@@ -156,7 +157,9 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   ):
     | Extract<
         DeferredWorkspaceMigrationAction,
-        { actionHandlerKey: `${TActionType}_${TMetadataName}` }
+        {
+          name: DeferredWorkspaceMigrationActionNameByHandlerKey<`${TActionType}_${TMetadataName}`>;
+        }
       >
     | undefined {
     return undefined;
@@ -164,7 +167,9 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
   executeDeferredAction(
     _args: DeferredWorkspaceMigrationActionExecutionArgs<
-      DeferredWorkspaceMigrationActionPayload<`${TActionType}_${TMetadataName}`>
+      DeferredWorkspaceMigrationActionPayload<
+        DeferredWorkspaceMigrationActionNameByHandlerKey<`${TActionType}_${TMetadataName}`>
+      >
     >,
   ): Promise<void> {
     throw new DeferredWorkspaceMigrationActionException(

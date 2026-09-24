@@ -23,8 +23,9 @@ import {
   DeferredWorkspaceMigrationActionException,
   DeferredWorkspaceMigrationActionExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
+import { DEFERRED_WORKSPACE_MIGRATION_ACTION_HANDLER_KEY_BY_NAME } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-handler-key-by-name.constant';
 import {
-  type DeferrableWorkspaceMigrationActionHandlerKey,
+  type DeferredWorkspaceMigrationActionName,
   type PersistedDeferredWorkspaceMigrationAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -110,9 +111,9 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService implements OnM
   }
 
   getDeferredActionMetadataName(
-    actionHandlerKey: DeferrableWorkspaceMigrationActionHandlerKey,
+    name: DeferredWorkspaceMigrationActionName,
   ): AllMetadataName {
-    return this.getDeferredActionHandler(actionHandlerKey).metadataName;
+    return this.getDeferredActionHandler(name).metadataName;
   }
 
   async executeDeferredActionHandler({
@@ -131,7 +132,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService implements OnM
     queryRunner: QueryRunner;
   }): Promise<void> {
     await this.getDeferredActionHandler(
-      deferredAction.actionHandlerKey,
+      deferredAction.name,
     ).executeDeferredAction({
       workspaceId,
       applicationUniversalIdentifier,
@@ -142,14 +143,14 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService implements OnM
     });
   }
 
-  private getDeferredActionHandler(
-    actionHandlerKey: DeferrableWorkspaceMigrationActionHandlerKey,
-  ) {
+  private getDeferredActionHandler(name: DeferredWorkspaceMigrationActionName) {
+    const actionHandlerKey =
+      DEFERRED_WORKSPACE_MIGRATION_ACTION_HANDLER_KEY_BY_NAME[name];
     const handler = this.actionHandlers.get(actionHandlerKey);
 
     if (!handler) {
       throw new DeferredWorkspaceMigrationActionException(
-        `No migration runner action handler found for deferred action: ${actionHandlerKey}`,
+        `No migration runner action handler found for deferred action: ${name}`,
         DeferredWorkspaceMigrationActionExceptionCode.HANDLER_NOT_FOUND,
       );
     }

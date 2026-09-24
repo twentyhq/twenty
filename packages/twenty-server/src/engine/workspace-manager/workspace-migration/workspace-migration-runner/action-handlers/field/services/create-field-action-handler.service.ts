@@ -215,7 +215,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     allFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
     queryRunner,
   }: DeferredWorkspaceMigrationActionExecutionArgs<
-    DeferredWorkspaceMigrationActionPayload<'create_fieldMetadata'>
+    DeferredWorkspaceMigrationActionPayload<'validateForeignKey'>
   >): Promise<void> {
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: flatFieldMetadataMaps,
@@ -254,8 +254,8 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     featureFlagsMap,
   }: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>):
     | {
-        actionHandlerKey: 'create_fieldMetadata';
-        payload: DeferredWorkspaceMigrationActionPayload<'create_fieldMetadata'>;
+        name: 'validateForeignKey';
+        payload: DeferredWorkspaceMigrationActionPayload<'validateForeignKey'>;
       }
     | undefined {
     if (
@@ -305,7 +305,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     return {
-      actionHandlerKey: 'create_fieldMetadata' as const,
+      name: 'validateForeignKey' as const,
       payload: {
         fieldMetadataId: flatFieldMetadata.id,
         tableName,

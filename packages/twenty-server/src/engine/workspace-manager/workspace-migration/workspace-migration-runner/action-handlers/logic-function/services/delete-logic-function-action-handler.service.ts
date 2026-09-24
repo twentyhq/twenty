@@ -63,7 +63,7 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
     allFlatEntityMaps,
   }: WorkspaceMigrationActionRunnerContext<FlatDeleteLogicFunctionAction>) {
     return {
-      actionHandlerKey: 'delete_logicFunction' as const,
+      name: 'deleteLogicFunctionResources' as const,
       payload: {
         flatLogicFunction: findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
@@ -78,7 +78,7 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
     applicationUniversalIdentifier,
     payload: { flatLogicFunction },
   }: DeferredWorkspaceMigrationActionExecutionArgs<
-    DeferredWorkspaceMigrationActionPayload<'delete_logicFunction'>
+    DeferredWorkspaceMigrationActionPayload<'deleteLogicFunctionResources'>
   >): Promise<void> {
     const results = await Promise.allSettled([
       this.fileStorageService.deleteFolder({

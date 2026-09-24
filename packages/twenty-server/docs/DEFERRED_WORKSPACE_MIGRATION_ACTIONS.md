@@ -47,19 +47,19 @@ Non-goals (this doc and PR 1):
 
 ### Deferrable actions
 
-`DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS` lists the action handler keys (`<actionType>_<metadataName>`, the key the runner registry already uses) that may defer work. Each declares its payload type; adding a key without a payload fails to compile.
+A deferred action is named after the work it performs, not after the migration action that produced it. `DEFERRED_WORKSPACE_MIGRATION_ACTION_HANDLER_KEY_BY_NAME` maps each name to the action handler that executes it, and each name declares its payload type; adding one without a payload fails to compile.
 
-| Action | Deferred work | Payload |
-| --- | --- | --- |
-| `create_index` | `CREATE INDEX CONCURRENTLY` for a non-unique, non-partial index covering only `MANY_TO_ONE` join columns | `{ indexMetadataId }`, a reference: the index metadata still exists after commit |
-| `create_fieldMetadata` | `VALIDATE CONSTRAINT` for the foreign key of a `MANY_TO_ONE` join column, created `NOT VALID` in the transaction | `{ fieldMetadataId, tableName, foreignKeyName }`: the field is the reference, the constraint name is a snapshot since it is derived from the naming strategy |
-| `delete_logicFunction` | delete the source folder and built handler from storage, delete the runtime resource | `{ flatLogicFunction }`, a snapshot: the metadata is gone after commit |
+| Name | Handler | Deferred work | Payload |
+| --- | --- | --- | --- |
+| `buildIndex` | `create_index` | `CREATE INDEX CONCURRENTLY` for a non-unique, non-partial index covering only `MANY_TO_ONE` join columns | `{ indexMetadataId }`, a reference: the index metadata still exists after commit |
+| `validateForeignKey` | `create_fieldMetadata` | `VALIDATE CONSTRAINT` for the foreign key of a `MANY_TO_ONE` join column, created `NOT VALID` in the transaction | `{ fieldMetadataId, tableName, foreignKeyName }`: the field is the reference, the constraint name is a snapshot since it is derived from the naming strategy |
+| `deleteLogicFunctionResources` | `delete_logicFunction` | delete the source folder and built handler from storage, delete the runtime resource | `{ flatLogicFunction }`, a snapshot: the metadata is gone after commit |
 
 ### Action handler contract
 
 `BaseWorkspaceMigrationRunnerActionHandlerService` gets two methods next to `executeForMetadata` and `executeForWorkspaceSchema`:
 
-- `getDeferredAction(context)` returns the deferred action of this action instance, typed so a handler can only return its own key, or `undefined` (default). The handler owns the decision and skips the matching inline work. `create_index` defers only when `IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED` is on in the `featureFlagsMap` the runner passes in the context; `delete_logicFunction` always returns its cleanup.
+- `getDeferredAction(context)` returns the deferred action of this action instance, typed so a handler can only return the deferred actions it owns, or `undefined` (default). The handler owns the decision and skips the matching inline work. `buildIndex` is deferred only when `IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED` is on in the `featureFlagsMap` the runner passes in the context; `deleteLogicFunctionResources` is always returned.
 - `executeDeferredAction({ workspaceId, applicationUniversalIdentifier, payload, allFlatEntityMaps, attempt, queryRunner })` performs the deferred work outside any transaction. Like transactional actions, it receives the flat entity maps it needs and never reads or recomputes the workspace cache itself. It must be idempotent and treats metadata that no longer exists as an obsolete action rather than a failure.
 
 `execute()` returns `deferredActions` next to `partialOptimisticCache` and `metadataEvents`. `afterCommitSideEffects` is removed.
@@ -98,7 +98,7 @@ sequenceDiagram
 The runner delegates both steps to `DeferredWorkspaceMigrationActionRunnerService`:
 
 - **Flag on:** `persist` inserts the collected deferred actions inside the migration transaction (`workspace-migration-runner.service.ts:417`), and after commit `dispatchAfterCommit` (`:556`) enqueues one job for the workspace.
-- **Flag off:** nothing is persisted. `create_index` does not defer, so only the logic function cleanup produces a deferred action, and `dispatchAfterCommit` executes it in process right after commit, which is the previous `afterCommitSideEffects` behavior.
+- **Flag off:** nothing is persisted. the index build does not defer, so only the logic function cleanup produces a deferred action, and `dispatchAfterCommit` executes it in process right after commit, which is the previous `afterCommitSideEffects` behavior.
 
 ### Storage: `core.deferredWorkspaceMigrationAction`
 
@@ -106,7 +106,7 @@ The runner delegates both steps to `DeferredWorkspaceMigrationActionRunnerServic
 | --- | --- |
 | `workspaceId` | owning workspace, `ON DELETE CASCADE` |
 | `applicationUniversalIdentifier` | application of the migration, passed back to the handler |
-| `actionHandlerKey` | one of the deferrable actions, used to find the handler |
+| `name` | the deferred action, which resolves to the handler that runs it |
 | `payload` | `jsonb`, the handler payload |
 | `position` | order of the action within its migration |
 | `runByVersion` | `APP_VERSION` of the server that ran the migration |
@@ -125,7 +125,7 @@ Index on `(workspaceId, status)`. A row is deleted once its action succeeds. The
 4. deletes the row on success, or sets it back to `PENDING` (`FAILED` after the last attempt) with `lastError`, both scoped to the claim it took (`IN_PROGRESS` with its own attempt number) so a worker resuming after its row was recovered cannot overwrite the newer run;
 5. stops at the first failure and fails the job, so the queue retries it and the remaining actions keep running in order.
 
-`create_index` reads the index from the maps it receives and completes as obsolete if it is absent. The maps are fresh because the runner invalidates the cache after commit, before enqueueing the job. On a retry it runs `DROP INDEX CONCURRENTLY IF EXISTS` first, since a failed concurrent build leaves an invalid index behind.
+`buildIndex` reads the index from the maps it receives and completes as obsolete if it is absent. The maps are fresh because the runner invalidates the cache after commit, before enqueueing the job. On a retry it runs `DROP INDEX CONCURRENTLY IF EXISTS` first, since a failed concurrent build leaves an invalid index behind.
 
 Each execution records `deferred-workspace-migration-action/duration-ms` with `actionHandlerKey` and `status`, and `twenty_deferred_workspace_migration_actions` gauges the rows by status across workspaces.
 
@@ -142,7 +142,7 @@ Each execution records `deferred-workspace-migration-action/duration-ms` with `a
 
 A migration and a concurrent index build on the same table deadlock: Postgres cancels one of them, and the loser can be the migration a user is waiting on. `InFlightDeferredWorkspaceMigrationActionsService`, called from `WorkspaceMigrationRunnerService.run` for workspaces with the flag on and migrations carrying at least one `objectMetadata`, `fieldMetadata` or `index` action (`SCHEMA_AFFECTING_WORKSPACE_MIGRATION_METADATA_NAMES`), refuses the migration with `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` while the workspace has `PENDING` or `IN_PROGRESS` rows for a deferred action that builds workspace schema objects.
 
-`SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS` lists which ones those are, today `create_index` and not `delete_logicFunction`. `FAILED` rows do not block, since they need a manual retry and would otherwise freeze the data model.
+`SCHEMA_AFFECTING_DEFERRED_WORKSPACE_MIGRATION_ACTIONS` lists which ones those are, today `buildIndex` and `validateForeignKey`, not `deleteLogicFunctionResources`. `FAILED` rows do not block, since they need a manual retry and would otherwise freeze the data model.
 
 The deferred action table is the whole state: an in-flight build is exactly a row in it, so nothing else has to be stored. Migrations that leave the workspace schema alone (views, dashboards, logic functions, page layouts, workflow sync) are not refused, which matters for the ones that write a workspace record first and sync it afterwards: a refusal there would leave the two copies out of sync with nothing retrying.
 
@@ -162,11 +162,11 @@ Delivery, each PR merged on its own behind the flag:
 
 | PR | Scope |
 | --- | --- |
-| 1 | Table, `DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS`, handler contract, runner persistence, deferred action runner and job with retries and timeout; `create_index` and `delete_logicFunction`; `afterCommitSideEffects` removed. |
+| 1 | Table, the deferred action names, handler contract, runner persistence, deferred action runner and job with retries and timeout; `buildIndex` and `deleteLogicFunctionResources`; `afterCommitSideEffects` removed. |
 | 2 | Recovery: cron resetting `IN_PROGRESS` rows past the timeout and enqueueing workspaces with `PENDING` rows; CLI retry of `FAILED` rows; job deduplication per workspace and retry backoff; metrics on duration and on rows by status. |
 | 3 | Refuse schema-affecting migrations while the workspace has in-flight deferred builds: see above. |
 | 4 | Error surfacing: the object, field and index exception handlers map `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` to a `ConflictError` carrying `subCode` and `userFriendlyMessage`; the SDK CLI shows that message with a wait-and-retry hint. |
-| 5 | Foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns, plus a deferrable `create_fieldMetadata` action running `VALIDATE CONSTRAINT`. |
+| 5 | Foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns, plus a deferred `validateForeignKey` action. |
 | 5b | Admin retry of `FAILED` rows from the admin panel, on top of the `workspace:retry-failed-deferred-migration-actions` command. |
 | 6 | Enable the flag for the affected self-hosted workspace, then cloud, then default on and remove the flag. |
 
@@ -192,6 +192,6 @@ The front needs nothing of its own: `getToastOptionsFromError` already reads `us
 
 ## Open questions
 
-1. **Should deferral be decided by the runner at step level instead of by each handler?** Today `create_index` defers its `executeForWorkspaceSchema` step while `delete_logicFunction` defers work that was never a runner step, each handler builds its own payload, and the handler has to remember to skip its own inline work. A more consistent shape: the runner skips the step for deferrable actions and persists the flat action itself (plus the pre-delete flat entity for deletes), and the worker replays the same step with a rebuilt context. Logic function cleanup would then need a real step, either (a) its currently empty `executeForWorkspaceSchema`, or (b) a new `executeForExternalResources` step that always runs after commit. Recommendation: runner-owned deferral with option (b), done in PR 1 before merge.
+1. **Should deferral be decided by the runner at step level instead of by each handler?** Today `buildIndex` defers the `executeForWorkspaceSchema` step of `create_index` while `deleteLogicFunctionResources` defers work that was never a runner step, each handler builds its own payload, and the handler has to remember to skip its own inline work. A more consistent shape: the runner skips the step for deferrable actions and persists the flat action itself (plus the pre-delete flat entity for deletes), and the worker replays the same step with a rebuilt context. Logic function cleanup would then need a real step, either (a) its currently empty `executeForWorkspaceSchema`, or (b) a new `executeForExternalResources` step that always runs after commit. Recommendation: runner-owned deferral with option (b), done in PR 1 before merge.
 2. **Should logic function cleanup be durable for everyone now, not only behind the flag?** It is low risk and fixes silent orphans in storage. Recommendation: keep it behind the flag until PR 2 (recovery) lands.
 3. **Should the one-hour statement timeout be a config variable?** Recommendation: constant for now, config variable if a self-hosted instance needs more.
