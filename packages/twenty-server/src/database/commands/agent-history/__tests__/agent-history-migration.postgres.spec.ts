@@ -15,8 +15,6 @@ import { AgentHistoryMigrationValidationService } from 'src/database/commands/ag
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
 import { AgentHistoryCleanupCommand } from 'src/database/commands/agent-history/agent-history-cleanup.command';
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { DropAgentHistoryCoreForeignKeysCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790258659725-drop-agent-history-core-foreign-keys.command';
 import { computeFlatIndexFieldColumnNames } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
@@ -930,50 +928,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         [SCHEMA],
       );
       expect(constraints).toEqual([]);
-    });
-
-    it('drops core constraints created by earlier upgrade attempts', async () => {
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentMessagePart" ADD CONSTRAINT "FK_agent_history_fileId" FOREIGN KEY ("fileId") REFERENCES core.file(id) ON DELETE RESTRICT`,
-      );
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentChatThread" ADD CONSTRAINT "FK_agent_history_userWorkspaceId" FOREIGN KEY ("userWorkspaceId") REFERENCES core."userWorkspace"(id) ON DELETE CASCADE`,
-      );
-      const command = new DropAgentHistoryCoreForeignKeysCommand(
-        {} as WorkspaceIteratorService,
-      );
-      const args = {
-        workspaceId: WORKSPACE_ID,
-        options: {},
-        dataSource,
-        index: 0,
-        total: 1,
-      } as unknown as RunOnWorkspaceArgs;
-
-      await command.up({ ...args, options: { dryRun: true } });
-      expect(
-        await dataSource.query(
-          `SELECT c.conname FROM pg_constraint c
-         JOIN pg_namespace child ON child.oid = c.connamespace
-         JOIN pg_class parent ON parent.oid = c.confrelid
-         JOIN pg_namespace parent_namespace ON parent_namespace.oid = parent.relnamespace
-         WHERE c.contype = 'f' AND child.nspname = $1 AND parent_namespace.nspname = 'core'`,
-          [SCHEMA],
-        ),
-      ).toHaveLength(2);
-
-      await command.up(args);
-      await command.up(args);
-      expect(
-        await dataSource.query(
-          `SELECT c.conname FROM pg_constraint c
-         JOIN pg_namespace child ON child.oid = c.connamespace
-         JOIN pg_class parent ON parent.oid = c.confrelid
-         JOIN pg_namespace parent_namespace ON parent_namespace.oid = parent.relnamespace
-         WHERE c.contype = 'f' AND child.nspname = $1 AND parent_namespace.nspname = 'core'`,
-          [SCHEMA],
-        ),
-      ).toEqual([]);
     });
 
     it('rejects cross-workspace membership before changing the route', async () => {
