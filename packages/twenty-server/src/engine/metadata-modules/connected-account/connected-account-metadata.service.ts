@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
-import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  EmailOperation,
+  WebhookSubscriptionStatus,
+} from 'twenty-shared/types';
 import {
   assertUnreachable,
   canConnectedAccountPerformEmailOperation,
@@ -452,7 +456,12 @@ export class ConnectedAccountMetadataService {
       messageChannels,
       calendarChannels,
       workspaceId,
-    });
+    }).catch((error) =>
+      this.logger.warn(
+        `WorkspaceId: ${workspaceId} Failed to stop webhook subscriptions while disconnecting connected account ${id}`,
+        error,
+      ),
+    );
 
     await this.repository.manager.transaction(async (entityManager) => {
       await entityManager.update(
@@ -483,6 +492,26 @@ export class ConnectedAccountMetadataService {
         CalendarChannelEntity,
         { connectedAccountId: id, workspaceId },
         { isSyncEnabled: false },
+      );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        {
+          connectedAccountId: id,
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        {
+          connectedAccountId: id,
+          workspaceId,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.PENDING,
+        },
+        { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
       );
     });
 
