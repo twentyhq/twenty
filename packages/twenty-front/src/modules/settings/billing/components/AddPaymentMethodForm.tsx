@@ -1,8 +1,11 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { PAYMENT_METHOD_SETUP_ELEMENTS_OPTIONS } from '@/settings/billing/constants/PaymentMethodSetupElementsOptions';
 import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
+import { StripeWalletButtons } from '@/settings/billing/payment-frame/components/StripeWalletButtons';
+import { buildStripeConfirmationOptions } from '@/settings/billing/utils/buildStripeConfirmationOptions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -35,6 +38,11 @@ const StyledFormContainer = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
   width: 100%;
+`;
+
+const StyledPaymentDetails = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const AddPaymentMethodFormContent = ({
@@ -71,7 +79,7 @@ const AddPaymentMethodFormContent = ({
     return returnUrl.toString();
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (walletConfirmationTokenId?: string) => {
     if (!isStripeReady) {
       return;
     }
@@ -79,16 +87,18 @@ const AddPaymentMethodFormContent = ({
     setIsSubmitting(true);
 
     try {
-      const { error: submitError } = await elements.submit();
-      if (isDefined(submitError)) {
-        enqueueToast({
-          variant: 'error',
-          children:
-            submitError.message ??
-            t`Your payment details are incomplete. Please review and retry.`,
-        });
-        setIsSubmitting(false);
-        return;
+      if (!isDefined(walletConfirmationTokenId)) {
+        const { error: submitError } = await elements.submit();
+        if (isDefined(submitError)) {
+          enqueueToast({
+            variant: 'error',
+            children:
+              submitError.message ??
+              t`Your payment details are incomplete. Please review and retry.`,
+          });
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       const { data } = await createBillingPaymentMethodSetupIntent();
@@ -105,9 +115,12 @@ const AddPaymentMethodFormContent = ({
       }
 
       const { error, setupIntent } = await stripe.confirmSetup({
-        elements,
+        ...buildStripeConfirmationOptions({
+          elements,
+          walletConfirmationTokenId,
+          returnUrl: buildReturnUrl(),
+        }),
         clientSecret,
-        confirmParams: { return_url: buildReturnUrl() },
         redirect: 'if_required',
       });
 
@@ -140,15 +153,24 @@ const AddPaymentMethodFormContent = ({
 
   return (
     <StyledFormContainer>
-      <PaymentElement
-        options={{
-          defaultValues: isDefined(customerEmail)
-            ? { billingDetails: { email: customerEmail } }
-            : undefined,
-        }}
-      />
+      <StyledPaymentDetails>
+        <StripeWalletButtons
+          elementsOptions={PAYMENT_METHOD_SETUP_ELEMENTS_OPTIONS}
+          onConfirmationToken={(confirmationTokenId) =>
+            void handleSubmit(confirmationTokenId)
+          }
+        />
+        <PaymentElement
+          options={{
+            defaultValues: isDefined(customerEmail)
+              ? { billingDetails: { email: customerEmail } }
+              : undefined,
+            wallets: { applePay: 'never', googlePay: 'never' },
+          }}
+        />
+      </StyledPaymentDetails>
       <Button
-        onClick={handleSubmit}
+        onClick={() => void handleSubmit()}
         fullWidth
         loading={isSubmitting}
         disabled={!isStripeReady || isSubmitting}
@@ -181,7 +203,7 @@ export const AddPaymentMethodForm = ({
   return (
     <Elements
       stripe={stripePromise}
-      options={{ mode: 'setup', currency: 'usd', appearance }}
+      options={{ ...PAYMENT_METHOD_SETUP_ELEMENTS_OPTIONS, appearance }}
     >
       <AddPaymentMethodFormContent
         finalRedirectPath={finalRedirectPath}

@@ -70,6 +70,10 @@ describe('frontend HTML delivery', () => {
       join(directory, 'index.html'),
       '<html><head><!-- BEGIN: Twenty Config --><script>window._env_={REACT_APP_SERVER_BASE_URL:"wrong"}</script><!-- END: Twenty Config --></head><body><div id="root"></div></body></html>',
     );
+    writeFileSync(
+      join(directory, 'payment-frame.html'),
+      '<html><body>payment frame</body></html>',
+    );
     const service = new FrontendService(
       { getClientConfig } as unknown as ClientConfigService,
       { resolveWorkspaceAndPublicDomain } as unknown as WorkspaceDomainsService,
@@ -317,6 +321,46 @@ describe('frontend HTML delivery', () => {
 
   it('does not serve HTML for POST requests', async () => {
     await request(app.getHttpServer()).post('/objects/people').expect(404);
+  });
+
+  it('lets workspace subdomains frame the payment frame', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/payment-frame.html')
+      .set('Accept', 'text/html')
+      .set('Host', 'app.twenty.test')
+      .set('X-Forwarded-Proto', 'https')
+      .expect(200);
+    expect(response.headers['content-security-policy']).toBe(
+      "frame-ancestors 'self' https://*.twenty.test; object-src 'none'; base-uri 'self'",
+    );
+    expect(response.headers['x-frame-options']).toBeUndefined();
+    expect(response.headers['cache-control']).toBe('no-store');
+    expect(response.text).toBe('<html><body>payment frame</body></html>');
+  });
+
+  it('keeps the payment frame same-origin on a single workspace server', async () => {
+    getClientConfig.mockResolvedValue({
+      ...config,
+      isMultiWorkspaceEnabled: false,
+    });
+    const response = await request(app.getHttpServer())
+      .get('/payment-frame.html')
+      .set('Accept', 'text/html')
+      .expect(200);
+    expect(response.headers['content-security-policy']).toBe(
+      "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+    );
+  });
+
+  it('refuses to frame the payment frame when configuration fails', async () => {
+    getClientConfig.mockRejectedValue(new Error('Database unavailable'));
+    const response = await request(app.getHttpServer())
+      .get('/payment-frame.html')
+      .set('Accept', 'text/html')
+      .expect(503);
+    expect(response.headers['content-security-policy']).toContain(
+      "frame-ancestors 'none';",
+    );
   });
 
   it('returns the policy for HEAD requests without a response body', async () => {

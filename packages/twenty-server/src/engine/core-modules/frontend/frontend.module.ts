@@ -7,6 +7,7 @@ import express, {
   type NextFunction,
 } from 'express';
 import { join } from 'path';
+import { PAYMENT_FRAME_PATH } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ClientConfigModule } from 'src/engine/core-modules/client-config/client-config.module';
@@ -53,6 +54,12 @@ export class FrontendModule implements OnModuleInit {
     adapter.use((request: Request, response: Response, next: NextFunction) => {
       if (request.path === '/index.html') {
         next();
+
+        return;
+      }
+
+      if (request.path === PAYMENT_FRAME_PATH) {
+        void this.frontendService.servePaymentFrame(request, response, next);
 
         return;
       }

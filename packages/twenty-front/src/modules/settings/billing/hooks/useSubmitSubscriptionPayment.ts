@@ -1,4 +1,5 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { buildStripeConfirmationOptions } from '@/settings/billing/utils/buildStripeConfirmationOptions';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -33,7 +34,7 @@ export const useSubmitSubscriptionPayment = ({
 
   const isStripeReady = isDefined(stripe) && isDefined(elements);
 
-  const submit = async () => {
+  const submit = async (walletConfirmationTokenId?: string) => {
     if (!isDefined(stripe) || !isDefined(elements)) {
       return;
     }
@@ -41,16 +42,18 @@ export const useSubmitSubscriptionPayment = ({
     setIsSubmitting(true);
 
     try {
-      const { error: submitError } = await elements.submit();
-      if (isDefined(submitError)) {
-        enqueueToast({
-          variant: 'error',
-          children:
-            submitError.message ??
-            t`Your payment details are incomplete. Please review and retry.`,
-        });
-        setIsSubmitting(false);
-        return;
+      if (!isDefined(walletConfirmationTokenId)) {
+        const { error: submitError } = await elements.submit();
+        if (isDefined(submitError)) {
+          enqueueToast({
+            variant: 'error',
+            children:
+              submitError.message ??
+              t`Your payment details are incomplete. Please review and retry.`,
+          });
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       const idempotencyKey = crypto.randomUUID();
@@ -73,17 +76,21 @@ export const useSubmitSubscriptionPayment = ({
         window.location.origin,
       ).toString();
 
+      const confirmationOptions = buildStripeConfirmationOptions({
+        elements,
+        walletConfirmationTokenId,
+        returnUrl,
+      });
+
       const { error } =
         paymentIntent.paymentIntentType === 'setup'
           ? await stripe.confirmSetup({
-              elements,
+              ...confirmationOptions,
               clientSecret: paymentIntent.clientSecret,
-              confirmParams: { return_url: returnUrl },
             })
           : await stripe.confirmPayment({
-              elements,
+              ...confirmationOptions,
               clientSecret: paymentIntent.clientSecret,
-              confirmParams: { return_url: returnUrl },
             });
 
       if (isDefined(error)) {

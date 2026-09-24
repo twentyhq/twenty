@@ -19,12 +19,14 @@ import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleChec
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { useSubmitSubscriptionPayment } from '@/settings/billing/hooks/useSubmitSubscriptionPayment';
+import { StripeWalletButtons } from '@/settings/billing/payment-frame/components/StripeWalletButtons';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
+import { type StripeElementsOptionsMode } from '@stripe/stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, MainButton } from 'twenty-ui/components';
@@ -32,11 +34,7 @@ import { Loader } from 'twenty-ui/primitives/feedback';
 import { RadioGroup } from 'twenty-ui/primitives/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/primitives/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
-import {
-  type Billing,
-  type BillingPlanKey,
-  type SubscriptionInterval,
-} from '~/generated-metadata/graphql';
+import { type Billing } from '~/generated-metadata/graphql';
 
 const StyledPage = styled(StyledOnboardingStepPage)`
   gap: ${themeCssVariables.spacing[5]};
@@ -76,49 +74,20 @@ type UpgradeFreeTrialProps = {
   creditsReward?: number;
 };
 
-type UpgradeFreeTrialSubmitButtonProps = {
-  plan: BillingPlanKey;
-  recurringInterval: SubscriptionInterval;
-};
-
-const UpgradeFreeTrialSubmitButton = ({
-  plan,
-  recurringInterval,
-}: UpgradeFreeTrialSubmitButtonProps) => {
-  const { t } = useLingui();
-
-  const { submit, isSubmitting, isStripeReady } = useSubmitSubscriptionPayment({
-    plan,
-    recurringInterval,
-  });
-
-  const setIsOnboardingCheckoutPending = useSetAtomState(
-    isOnboardingCheckoutPendingState,
-  );
-
-  const handleSubmit = () => {
-    setIsOnboardingCheckoutPending(true);
-    void submit();
-  };
-
-  return (
-    <MainButton
-      onClick={handleSubmit}
-      fullWidth
-      startIcon={isSubmitting ? <Loader /> : null}
-      disabled={!isStripeReady || isSubmitting}
-    >{t`Continue`}</MainButton>
-  );
+type UpgradeFreeTrialPayment = ReturnType<
+  typeof useSubmitSubscriptionPayment
+> & {
+  elementsOptions: StripeElementsOptionsMode;
 };
 
 type UpgradeFreeTrialContentProps = {
   billing: Billing;
-  isPaymentAvailable: boolean;
+  payment?: UpgradeFreeTrialPayment;
 };
 
 const UpgradeFreeTrialContent = ({
   billing,
-  isPaymentAvailable,
+  payment,
 }: UpgradeFreeTrialContentProps) => {
   const { t } = useLingui();
 
@@ -162,6 +131,15 @@ const UpgradeFreeTrialContent = ({
     void handleCheckoutSession();
   };
 
+  const submitPayment = (walletConfirmationTokenId?: string) => {
+    if (!isDefined(payment)) {
+      return;
+    }
+
+    setIsOnboardingCheckoutPending(true);
+    void payment.submit(walletConfirmationTokenId);
+  };
+
   const selectTrialPeriod = (withCreditCard: boolean) => {
     if (
       isDefined(baseProductPrice) &&
@@ -176,6 +154,8 @@ const UpgradeFreeTrialContent = ({
   };
 
   const requirePaymentMethod = billingCheckoutSession.requirePaymentMethod;
+  const isPaymentReady =
+    isDefined(payment) && payment.isStripeReady && !payment.isSubmitting;
 
   return (
     <>
@@ -193,16 +173,23 @@ const UpgradeFreeTrialContent = ({
             value={true}
           >
             {requirePaymentMethod &&
-              (isPaymentAvailable ? (
-                <PaymentElement
-                  options={{
-                    layout: 'tabs',
-                    defaultValues: isDefined(customerEmail)
-                      ? { billingDetails: { email: customerEmail } }
-                      : undefined,
-                    terms: { card: 'never' },
-                  }}
-                />
+              (isDefined(payment) ? (
+                <>
+                  <StripeWalletButtons
+                    elementsOptions={payment.elementsOptions}
+                    onConfirmationToken={submitPayment}
+                  />
+                  <PaymentElement
+                    options={{
+                      layout: 'tabs',
+                      defaultValues: isDefined(customerEmail)
+                        ? { billingDetails: { email: customerEmail } }
+                        : undefined,
+                      terms: { card: 'never' },
+                      wallets: { applePay: 'never', googlePay: 'never' },
+                    }}
+                  />
+                </>
               ) : (
                 <Info
                   accent="danger"
@@ -225,14 +212,12 @@ const UpgradeFreeTrialContent = ({
       <OnboardingStepAnimatedItem index={4}>
         <StyledFooter>
           {requirePaymentMethod ? (
-            isPaymentAvailable ? (
-              <UpgradeFreeTrialSubmitButton
-                plan={billingCheckoutSession.plan}
-                recurringInterval={billingCheckoutSession.interval}
-              />
-            ) : (
-              <MainButton fullWidth disabled>{t`Continue`}</MainButton>
-            )
+            <MainButton
+              onClick={() => submitPayment()}
+              fullWidth
+              startIcon={payment?.isSubmitting ? <Loader /> : null}
+              disabled={!isPaymentReady}
+            >{t`Continue`}</MainButton>
           ) : (
             <MainButton
               onClick={handleCheckoutSessionClick}
@@ -257,6 +242,30 @@ const UpgradeFreeTrialContent = ({
         </StyledFooter>
       </OnboardingStepAnimatedItem>
     </>
+  );
+};
+
+type UpgradeFreeTrialPaymentContentProps = {
+  billing: Billing;
+  elementsOptions: StripeElementsOptionsMode;
+};
+
+const UpgradeFreeTrialPaymentContent = ({
+  billing,
+  elementsOptions,
+}: UpgradeFreeTrialPaymentContentProps) => {
+  const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
+
+  const subscriptionPayment = useSubmitSubscriptionPayment({
+    plan: billingCheckoutSession.plan,
+    recurringInterval: billingCheckoutSession.interval,
+  });
+
+  return (
+    <UpgradeFreeTrialContent
+      billing={billing}
+      payment={{ ...subscriptionPayment, elementsOptions }}
+    />
   );
 };
 
@@ -291,6 +300,17 @@ export const UpgradeFreeTrial = ({
   );
   const trialDuration = withCreditCardTrialPeriod?.duration;
 
+  const elementsOptions: StripeElementsOptionsMode | undefined = isDefined(
+    baseProductPrice,
+  )
+    ? {
+        mode: 'subscription',
+        amount: baseProductPrice.unitAmount,
+        currency: 'usd',
+        paymentMethodTypes: ['card', 'link'],
+      }
+    : undefined;
+
   return (
     <StyledPage>
       <StyledOnboardingStepHeading>
@@ -316,21 +336,18 @@ export const UpgradeFreeTrial = ({
         </OnboardingStepAnimatedItem>
       </StyledOnboardingStepHeading>
 
-      {isDefined(stripePromise) && isDefined(baseProductPrice) ? (
+      {isDefined(stripePromise) && isDefined(elementsOptions) ? (
         <Elements
           stripe={stripePromise}
-          options={{
-            mode: 'subscription',
-            amount: baseProductPrice.unitAmount,
-            currency: 'usd',
-            paymentMethodTypes: ['card', 'link'],
-            appearance,
-          }}
+          options={{ ...elementsOptions, appearance }}
         >
-          <UpgradeFreeTrialContent billing={billing} isPaymentAvailable />
+          <UpgradeFreeTrialPaymentContent
+            billing={billing}
+            elementsOptions={elementsOptions}
+          />
         </Elements>
       ) : (
-        <UpgradeFreeTrialContent billing={billing} isPaymentAvailable={false} />
+        <UpgradeFreeTrialContent billing={billing} />
       )}
     </StyledPage>
   );

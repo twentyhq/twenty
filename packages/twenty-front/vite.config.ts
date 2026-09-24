@@ -177,6 +177,10 @@ export default defineConfig(({ mode }) => {
       sourcemap: VITE_BUILD_SOURCEMAP === 'true' ? 'hidden' : false,
       chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
       rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          paymentFrame: path.resolve(__dirname, 'payment-frame.html'),
+        },
         //  Don't use manual chunks as it causes many issue
         // including this one we wasted a lot of time on:
         // https://github.com/rollup/rollup/issues/2793
