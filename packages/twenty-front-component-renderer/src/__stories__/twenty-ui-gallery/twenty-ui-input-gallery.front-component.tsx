@@ -142,9 +142,8 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     name: 'SegmentedControl',
     node: (
       <SegmentedControl
-        ariaLabel="Choose"
-        value="left"
-        onChange={() => {}}
+        aria-label="Choose"
+        defaultValue="left"
         options={[
           { value: 'left', label: 'Left' },
           { value: 'right', label: 'Right' },

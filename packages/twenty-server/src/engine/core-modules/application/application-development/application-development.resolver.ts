@@ -89,7 +89,10 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
-  @Mutation(() => FileDTO)
+  @Mutation(() => FileDTO, {
+    deprecationReason:
+      'Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage.',
+  })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -110,7 +113,7 @@ export class ApplicationDevelopmentResolver {
       getFileBuffer: () =>
         streamToBuffer(
           createReadStream(),
-          bytes(settings.storage.maxFileSize) ?? undefined,
+          bytes(settings.storage.maxMultipartFileSize) ?? undefined,
         ),
     });
   }

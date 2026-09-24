@@ -134,6 +134,7 @@ export const WorkflowStepExecutionResult = ({
       <StyledCodeEditorWrapper>
         <CodeEditor
           resizable={true}
+          resizeLabel={t`Resize output`}
           value={result}
           language={language}
           height={height}
