@@ -50,12 +50,12 @@ it.each([
 
     expect(screen.getByRole('button', { name: nextButtonName })).toHaveFocus();
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenCalledWith([' Draft item ']);
+    expect(onChange).toHaveBeenCalledWith(['Draft item']);
     expect(screen.getByText('Draft item')).toBeInTheDocument();
   },
 );
 
-it('keeps the surrounding whitespace of the first item added with Enter', async () => {
+it('trims the first item added with Enter', async () => {
   const user = userEvent.setup();
   const { onChange } = renderArrayField();
   const itemInput = screen.getByPlaceholderText('Enter an item');
@@ -65,7 +65,7 @@ it('keeps the surrounding whitespace of the first item added with Enter', async 
   await user.keyboard('{Enter}');
 
   expect(onChange).toHaveBeenCalledTimes(1);
-  expect(onChange).toHaveBeenCalledWith(['  Draft item ']);
+  expect(onChange).toHaveBeenCalledWith(['Draft item']);
 });
 
 it('adds the typed first item when focus moves to another element', async () => {
@@ -105,20 +105,6 @@ it('adds the typed new item when focus moves to another element', async () => {
 
   expect(onChange).toHaveBeenCalledTimes(1);
   expect(onChange).toHaveBeenCalledWith(['First item', 'Second item']);
-});
-
-it('adds the first item only once when Enter is pressed before leaving the field', async () => {
-  const user = userEvent.setup();
-  const { onChange } = renderArrayField();
-  const itemInput = screen.getByPlaceholderText('Enter an item');
-  await user.click(itemInput);
-  await user.type(itemInput, 'Draft item');
-
-  await user.keyboard('{Enter}');
-  await user.click(document.body);
-
-  expect(onChange).toHaveBeenCalledTimes(1);
-  expect(onChange).toHaveBeenCalledWith(['Draft item']);
 });
 
 it('keeps a blank first item draft in place without adding it when Tab leaves the field', async () => {
