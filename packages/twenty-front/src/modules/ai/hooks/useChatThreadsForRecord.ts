@@ -8,7 +8,7 @@ const EMPTY_THREADS: GetChatThreadsForRecordQuery['chatThreadsForRecord'] = [];
 
 // The widget shows the most recent conversations in a card rather than a
 // browsable list, so it asks for one page and never pages further.
-export const CHAT_THREADS_FOR_RECORD_PAGE_SIZE = 20;
+const CHAT_THREADS_FOR_RECORD_PAGE_SIZE = 20;
 
 export const useChatThreadsForRecord = ({
   id,

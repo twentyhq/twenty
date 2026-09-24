@@ -85,6 +85,18 @@ describe('validateWidgetConfigurationInput', () => {
     });
   });
 
+  describe('CHAT_THREADS widget', () => {
+    it('should not throw for valid chat threads configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.CHAT_THREADS,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
   describe('IFRAME widget', () => {
     it('should not throw for valid iframe configuration', () => {
       expect(() =>
