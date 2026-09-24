@@ -1,4 +1,26 @@
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+
+// The record check resolves the caller's role out of the ORM workspace context,
+// which is AsyncLocalStorage the unit under test never enters. jest.mock is
+// hoisted, so the ids are inlined rather than read from the constants below.
+jest.mock(
+  'src/engine/twenty-orm/storage/orm-workspace-context.storage',
+  () => ({
+    getWorkspaceContext: () => ({
+      authContext: { type: 'user', userWorkspaceId: 'owner' },
+      userWorkspaceRoleMap: {
+        owner: '20202020-0000-4000-8000-000000000009',
+      },
+      apiKeyRoleMap: {},
+    }),
+  }),
+);
+
+const ROLE_ID = '20202020-0000-4000-8000-000000000009';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const THREAD_ID = '20202020-0000-4000-8000-000000000002';
@@ -115,6 +137,7 @@ const buildService = () => {
     recordRepository,
     readableRecordIds,
     workspaceCacheService,
+    workspaceOrmManager,
     storage,
     threads,
   };
@@ -264,15 +287,37 @@ describe('Authorizing the record a conversation is attached to', () => {
   });
 
   it('reads the record through the caller permissions, not the system context', async () => {
-    const { service, recordRepository } = buildService();
+    const { service, recordRepository, workspaceOrmManager } = buildService();
 
     await service.attachThreadToRecord(args);
 
-    // A bypassing read would let a member link a conversation to a record they
-    // are not allowed to see.
+    // Asserting the findOne arguments proves nothing about permissions: the
+    // repository has to be built for the caller's role. With no config the ORM
+    // resolves an empty permission map and denies every object, and a bypass
+    // would let a member link a conversation to a record they cannot see.
+    expect(workspaceOrmManager.getRepository).toHaveBeenCalledWith('company', {
+      intersectionOf: [ROLE_ID],
+    });
     expect(recordRepository.findOne).toHaveBeenCalledWith({
       where: { id: RECORD_ID },
       select: { id: true },
+    });
+  });
+
+  it('treats a permission denial as a record that does not exist', async () => {
+    const { service, recordRepository } = buildService();
+
+    recordRepository.findOne.mockRejectedValueOnce(
+      new PermissionsException(
+        'denied',
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      ),
+    );
+
+    // Surfacing the denial would both leak that the record exists and reach the
+    // caller as an untyped 500 rather than the not-found the API promises.
+    await expect(service.attachThreadToRecord(args)).rejects.toMatchObject({
+      code: 'RECORD_NOT_FOUND',
     });
   });
 });
