@@ -5,8 +5,6 @@ import { toCoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/ut
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
-import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -27,7 +25,6 @@ import {
   CoreWorkflowMetadataExceptionCode,
 } from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { buildMirroredWorkflowVersionMetadataEvents } from 'src/engine/core-modules/workflow/utils/build-mirrored-workflow-version-metadata-events.util';
 import { hasCoreWorkflowWorkspaceVersionIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-version-id-column.util';
 import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
 import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
@@ -66,7 +63,6 @@ export class WorkflowVersionCoreSyncService {
     private readonly applicationService: ApplicationService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
-    private readonly metadataEventEmitter: MetadataEventEmitter,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -498,12 +494,6 @@ export class WorkflowVersionCoreSyncService {
       transactionScope,
     });
 
-    const [coreWorkflowVersionRowBeforeWrite] =
-      await transactionScope.executeRawQuery(
-        `SELECT * FROM core."workflowVersion" WHERE "id" = $1 AND "workspaceId" = $2`,
-        [coreWorkflowVersionId, workspaceId],
-      );
-
     // The conflict target is the primary key alone, so without the workspaceId
     // predicate a core row owned by another workspace would have its triggers
     // and steps overwritten.
@@ -516,9 +506,8 @@ export class WorkflowVersionCoreSyncService {
          "triggers" = EXCLUDED."triggers",
          "steps" = EXCLUDED."steps",
          "status" = EXCLUDED."status",
-         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId"),
-         "updatedAt" = now()
-       WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId" RETURNING *`,
+         "coreWorkflowId" = COALESCE(EXCLUDED."coreWorkflowId", core."workflowVersion"."coreWorkflowId")
+       WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId" RETURNING id`,
       [
         coreWorkflowVersionId,
         workspaceId,
@@ -559,16 +548,6 @@ export class WorkflowVersionCoreSyncService {
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,
         flatMapsKeys: ['flatWorkflowVersionMaps'],
-      });
-
-      this.metadataEventEmitter.emitMetadataEvents({
-        workspaceId,
-        metadataEvents: buildMirroredWorkflowVersionMetadataEvents({
-          previousFlatWorkflowVersion: coreWorkflowVersionRowBeforeWrite as
-            | FlatWorkflowVersion
-            | undefined,
-          flatWorkflowVersion: mirroredRows[0] as FlatWorkflowVersion,
-        }),
       });
     });
 
