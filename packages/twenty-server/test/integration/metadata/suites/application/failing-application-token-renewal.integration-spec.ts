@@ -1,16 +1,16 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { type ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { renewApplicationToken } from 'test/integration/metadata/suites/application/utils/renew-application-token.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
 
+import { type ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -135,6 +135,10 @@ describe('Application token renewal should fail', () => {
     };
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it.each(eachTestingContextFilter(failingApplicationTokenRenewalTestCases))(
     '$title',
     async ({ context }) => {
@@ -150,10 +154,6 @@ describe('Application token renewal should fail', () => {
     },
   );
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should consume session rate limit bucket on failed renewal attempts', async () => {
     const tokenBucketThrottleOrThrowSpy = jest.spyOn(
       getAppProviderByClassName<ThrottlerService>('ThrottlerService'),
@@ -167,6 +167,7 @@ describe('Application token renewal should fail', () => {
       expectToFail: true,
     });
 
+    expect(tokenBucketThrottleOrThrowSpy).toHaveBeenCalledTimes(1);
     expect(tokenBucketThrottleOrThrowSpy).toHaveBeenCalledWith(
       `app-renew:${SEED_APPLE_WORKSPACE_ID}:${USER_WORKSPACE_DATA_SEED_IDS.JANE}`,
       1,

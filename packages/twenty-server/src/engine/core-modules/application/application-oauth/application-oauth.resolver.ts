@@ -60,13 +60,6 @@ export class ApplicationOAuthResolver {
         },
       );
 
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      `app-renew:${workspaceId}:${userWorkspaceId}:${applicationRefreshTokenPayload.applicationId}`,
-      1,
-      APPLICATION_TOKEN_RATE_LIMIT_MAX,
-      APPLICATION_TOKEN_RATE_LIMIT_WINDOW_MS,
-    );
-
     return this.applicationTokenService.renewApplicationTokens(
       applicationRefreshTokenPayload,
     );
