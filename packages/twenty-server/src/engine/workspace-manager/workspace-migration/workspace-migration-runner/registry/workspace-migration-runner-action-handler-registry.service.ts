@@ -1,11 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { type AllMetadataName } from 'twenty-shared/metadata';
-import { type QueryRunner } from 'typeorm';
-
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-
 import { BaseWorkspaceMigrationRunnerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import {
@@ -19,15 +14,6 @@ import {
   WorkspaceMigrationActionExecutionException,
   WorkspaceMigrationActionExecutionExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
-import {
-  DeferredWorkspaceMigrationActionException,
-  DeferredWorkspaceMigrationActionExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-migration-action.exception';
-import { DEFERRED_WORKSPACE_MIGRATION_ACTION_HANDLER_KEY_BY_NAME } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-migration-action-handler-key-by-name.constant';
-import {
-  type DeferredWorkspaceMigrationActionName,
-  type PersistedDeferredWorkspaceMigrationAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -108,53 +94,5 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService implements OnM
     const handler = this.getActionHandler(action);
 
     await handler.rollback(context);
-  }
-
-  getDeferredActionMetadataName(
-    name: DeferredWorkspaceMigrationActionName,
-  ): AllMetadataName {
-    return this.getDeferredActionHandler(name).metadataName;
-  }
-
-  async executeDeferredActionHandler({
-    deferredAction,
-    workspaceId,
-    applicationUniversalIdentifier,
-    allFlatEntityMaps,
-    attempt,
-    queryRunner,
-  }: {
-    deferredAction: PersistedDeferredWorkspaceMigrationAction;
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-    allFlatEntityMaps: AllFlatEntityMaps;
-    attempt: number;
-    queryRunner: QueryRunner;
-  }): Promise<void> {
-    await this.getDeferredActionHandler(
-      deferredAction.name,
-    ).executeDeferredAction({
-      workspaceId,
-      applicationUniversalIdentifier,
-      payload: deferredAction.payload,
-      allFlatEntityMaps,
-      attempt,
-      queryRunner,
-    });
-  }
-
-  private getDeferredActionHandler(name: DeferredWorkspaceMigrationActionName) {
-    const actionHandlerKey =
-      DEFERRED_WORKSPACE_MIGRATION_ACTION_HANDLER_KEY_BY_NAME[name];
-    const handler = this.actionHandlers.get(actionHandlerKey);
-
-    if (!handler) {
-      throw new DeferredWorkspaceMigrationActionException(
-        `No migration runner action handler found for deferred action: ${name}`,
-        DeferredWorkspaceMigrationActionExceptionCode.HANDLER_NOT_FOUND,
-      );
-    }
-
-    return handler;
   }
 }

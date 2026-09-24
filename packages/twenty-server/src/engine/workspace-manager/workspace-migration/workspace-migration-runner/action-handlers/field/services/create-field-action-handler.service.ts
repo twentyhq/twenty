@@ -5,11 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildManyToOneForeignKeyDefinition } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/build-many-to-one-foreign-key-definition.util';
 import { getDeferredForeignKeyValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-foreign-key-validation.util';
-import { type DeferredWorkspaceMigrationActionExecutionArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-execution-args.type';
-import { type DeferredWorkspaceMigrationActionPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -204,50 +201,6 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>,
   ) {
     return getDeferredForeignKeyValidation(context);
-  }
-
-  override async executeDeferredAction({
-    workspaceId,
-    payload: { fieldMetadataId },
-    allFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
-    queryRunner,
-  }: DeferredWorkspaceMigrationActionExecutionArgs<
-    DeferredWorkspaceMigrationActionPayload<'validate_foreignKey'>
-  >): Promise<void> {
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: fieldMetadataId,
-    });
-
-    if (!isDefined(flatFieldMetadata)) {
-      return;
-    }
-
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: flatFieldMetadata.objectMetadataId,
-    });
-
-    if (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-      return;
-    }
-
-    const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
-      workspaceId,
-      objectMetadata: flatObjectMetadata,
-    });
-
-    await this.workspaceSchemaManagerService.foreignKeyManager.validateForeignKey(
-      {
-        queryRunner,
-        schemaName,
-        foreignKey: buildManyToOneForeignKeyDefinition({
-          flatFieldMetadata,
-          flatObjectMetadataMaps,
-          tableName,
-        }),
-      },
-    );
   }
 
   private async executeSingleFieldMetadataWorkspaceSchema({
