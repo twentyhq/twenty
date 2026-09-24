@@ -121,6 +121,8 @@ export class AdminPanelUsageLimitService {
     };
   }
 
+  // findEnforceableLimits drops intra-workspace limits on a workspace without the
+  // entitlement, so a row can be stored and still never refuse anything.
   private isEnforcedOnCurrentPlan({
     spenderType,
     isIntraWorkspaceLimitEntitled,

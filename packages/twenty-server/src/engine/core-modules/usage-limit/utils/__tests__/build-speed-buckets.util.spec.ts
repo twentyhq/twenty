@@ -7,6 +7,8 @@ import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/bui
 
 const workspace = { id: 'workspace-1' };
 
+// The registry defaults, standing in for API_RATE_LIMITING_* and
+// APPLICATION_API_RATE_LIMITING_*.
 const SPEED_LIMIT_DEFAULTS: SpeedLimitDefault[] = [
   {
     spenderType: 'apiKey',
