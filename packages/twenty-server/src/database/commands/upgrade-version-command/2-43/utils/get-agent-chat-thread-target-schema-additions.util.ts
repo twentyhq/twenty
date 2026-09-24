@@ -14,10 +14,14 @@ type AgentChatThreadTargetSchemaMaps = Pick<
 const OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier;
 
-// The relation's other leg lives on agentChatThread, so selecting additions by
-// owning object alone would provision half a relation and fail validation.
+// Every relation of the target has its other leg on another object: the thread,
+// and each standard object a target leg points at. Selecting additions by owning
+// object alone would provision half relations and fail validation.
 const EXTERNAL_FIELD_UNIVERSAL_IDENTIFIERS = new Set([
   STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier,
+  STANDARD_OBJECT_FIELDS.person.agentChatThreadTargets.universalIdentifier,
+  STANDARD_OBJECT_FIELDS.company.agentChatThreadTargets.universalIdentifier,
+  STANDARD_OBJECT_FIELDS.opportunity.agentChatThreadTargets.universalIdentifier,
 ]);
 
 export const getAgentChatThreadTargetSchemaAdditions = ({
