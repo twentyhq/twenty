@@ -3,6 +3,7 @@ import { buildPersonMatchedData } from 'src/logic-functions/utils/build-person-m
 import { enrichPeople } from 'src/logic-functions/utils/enrich-people';
 import { extractPersonMatchParams } from 'src/logic-functions/utils/extract-person-match-params';
 import { readPeople } from 'src/logic-functions/utils/read-people';
+import { resolvePersonMinLikelihoods } from 'src/logic-functions/utils/resolve-person-min-likelihoods';
 import { updatePeopleStatus } from 'src/logic-functions/utils/update-people-status';
 import { updatePersonRecord } from 'src/logic-functions/utils/update-person-record';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
@@ -19,6 +20,7 @@ export const personEnrichmentAdapter: BatchEnrichmentAdapter<
   noIdentifierMessage:
     'No usable identifier (email, LinkedIn, PDL id, or name paired with a company) to match against PDL.',
   costPerMatchDollars: PERSON_MATCH_COST_DOLLARS,
+  resolveMinLikelihoods: resolvePersonMinLikelihoods,
   readRecords: readPeople,
   getNodeId: (node) => node.id,
   extractParams: extractPersonMatchParams,

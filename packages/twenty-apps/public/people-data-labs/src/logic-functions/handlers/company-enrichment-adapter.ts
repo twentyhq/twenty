@@ -3,6 +3,7 @@ import { buildCompanyMatchedData } from 'src/logic-functions/utils/build-company
 import { enrichCompanies } from 'src/logic-functions/utils/enrich-companies';
 import { extractCompanyMatchParams } from 'src/logic-functions/utils/extract-company-match-params';
 import { readCompanies } from 'src/logic-functions/utils/read-companies';
+import { resolveCompanyMinLikelihoods } from 'src/logic-functions/utils/resolve-company-min-likelihoods';
 import { updateCompaniesStatus } from 'src/logic-functions/utils/update-companies-status';
 import { updateCompanyRecord } from 'src/logic-functions/utils/update-company-record';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
@@ -19,6 +20,7 @@ export const companyEnrichmentAdapter: BatchEnrichmentAdapter<
   noIdentifierMessage:
     'No usable identifier (domain, LinkedIn, or name) to match against PDL.',
   costPerMatchDollars: COMPANY_MATCH_COST_DOLLARS,
+  resolveMinLikelihoods: resolveCompanyMinLikelihoods,
   readRecords: readCompanies,
   getNodeId: (node) => node.id,
   extractParams: extractCompanyMatchParams,

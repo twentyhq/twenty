@@ -26,6 +26,7 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
   input: BulkEnrichInput;
   adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
 }): Promise<BulkEnrichResult> => {
+  const minLikelihoods = adapter.resolveMinLikelihoods({ input });
   const recordIds = Array.from(new Set(extractRecordIds(input.records)));
   const resultById = new Map<string, EnrichResult>();
   const companyIdByMatchKeyCache: CompanyIdByMatchKeyCache = new Map();
@@ -36,6 +37,7 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
       client,
       recordIds: recordIdsChunk,
       input,
+      minLikelihoods,
       adapter,
       resultById,
       companyIdByMatchKeyCache,

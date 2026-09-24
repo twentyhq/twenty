@@ -1,30 +1,24 @@
 import { normalizeDomain } from 'src/logic-functions/utils/normalize-domain';
 import { normalizeLinkedinUrl } from 'src/logic-functions/utils/normalize-linkedin-url';
-import { resolveMinLikelihood } from 'src/logic-functions/utils/resolve-min-likelihood';
 import { toText } from 'src/logic-functions/utils/to-text';
-import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 import { type CompanyNode } from 'src/types/company-node';
+import { type MinLikelihoods } from 'src/types/min-likelihoods';
 import { type PdlCompanyEnrichParams } from 'src/types/pdl-company-enrich-params';
 import { isDefined } from 'src/utils/is-defined';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 export const extractCompanyMatchParams = ({
   node,
-  input,
+  minLikelihoods,
 }: {
   node: CompanyNode;
-  input: BulkEnrichInput;
+  minLikelihoods: MinLikelihoods;
 }): PdlCompanyEnrichParams | undefined => {
   const existingPdlId = toText(node.pdlId);
   if (isDefined(existingPdlId)) {
     return {
       pdlId: existingPdlId,
-      minLikelihood: resolveMinLikelihood({
-        inputMinLikelihood: input.minLikelihood,
-        inputWeakIdentifierMinLikelihood: input.weakIdentifierMinLikelihood,
-        minLikelihoodVariableName: 'PDL_COMPANY_MIN_LIKELIHOOD',
-        hasStrongIdentifier: true,
-      }),
+      minLikelihood: minLikelihoods.strongIdentifierMinLikelihood,
     };
   }
 
@@ -46,11 +40,8 @@ export const extractCompanyMatchParams = ({
 
   return {
     ...companyMatchParams,
-    minLikelihood: resolveMinLikelihood({
-      inputMinLikelihood: input.minLikelihood,
-      inputWeakIdentifierMinLikelihood: input.weakIdentifierMinLikelihood,
-      minLikelihoodVariableName: 'PDL_COMPANY_MIN_LIKELIHOOD',
-      hasStrongIdentifier,
-    }),
+    minLikelihood: hasStrongIdentifier
+      ? minLikelihoods.strongIdentifierMinLikelihood
+      : minLikelihoods.weakIdentifierMinLikelihood,
   };
 };

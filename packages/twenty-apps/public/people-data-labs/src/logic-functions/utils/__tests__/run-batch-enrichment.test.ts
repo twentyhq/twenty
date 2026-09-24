@@ -1,12 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { chargeCredits } from 'twenty-sdk/billing';
 
+import { MIN_LIKELIHOOD_SETTINGS } from 'src/constants/min-likelihood-settings';
 import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
 import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
+import { resolveCompanyMinLikelihoods } from 'src/logic-functions/utils/resolve-company-min-likelihoods';
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
+import { type MinLikelihoods } from 'src/types/min-likelihoods';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 
 vi.mock('twenty-sdk/billing', () => ({
@@ -88,6 +91,11 @@ const buildHarness = (configs: RecordConfig[]) => {
 
   const updateManyStatus = vi.fn(async () => undefined);
 
+  const extractParams = vi.fn(
+    ({ node }: { node: FakeNode; minLikelihoods: MinLikelihoods }) =>
+      node.hasIdentifier ? { id: node.id } : undefined,
+  );
+
   const buildMatchedData = vi.fn(
     async ({
       node,
@@ -107,10 +115,10 @@ const buildHarness = (configs: RecordConfig[]) => {
     objectNameSingular: 'Test',
     noIdentifierMessage: 'no identifier',
     costPerMatchDollars: FAKE_COST_PER_MATCH_DOLLARS,
+    resolveMinLikelihoods: resolveCompanyMinLikelihoods,
     readRecords,
     getNodeId: (node) => node.id,
-    extractParams: ({ node }) =>
-      node.hasIdentifier ? { id: node.id } : undefined,
+    extractParams,
     enrichBatch,
     buildMatchedData,
     updateOne,
@@ -120,6 +128,7 @@ const buildHarness = (configs: RecordConfig[]) => {
   return {
     adapter,
     readRecords,
+    extractParams,
     enrichBatch,
     updateOne,
     updateManyStatus,
@@ -144,6 +153,64 @@ const INVALID_API_KEY_OUTCOME: PdlEnrichResult<FakeData> = {
 describe('runBatchEnrichment', () => {
   beforeEach(() => {
     vi.mocked(chargeCredits).mockClear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('resolves the likelihoods once and passes them to every chunk', async () => {
+    vi.stubEnv(
+      MIN_LIKELIHOOD_SETTINGS.company.strongIdentifier.variableName,
+      '4',
+    );
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: {
+        records: ids.map((id) => ({ id })),
+        weakIdentifierMinLikelihood: 9,
+      },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.readRecords).toHaveBeenCalledTimes(2);
+    expect(harness.extractParams).toHaveBeenCalledTimes(150);
+    for (const [extractParamsArgs] of harness.extractParams.mock.calls) {
+      expect(extractParamsArgs.minLikelihoods).toEqual({
+        strongIdentifierMinLikelihood: 4,
+        weakIdentifierMinLikelihood: 9,
+      });
+    }
+  });
+
+  it('rejects an invalid setting before reading records or calling PDL', async () => {
+    vi.stubEnv(
+      MIN_LIKELIHOOD_SETTINGS.company.weakIdentifier.variableName,
+      'invalid',
+    );
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+
+    await expect(
+      runBatchEnrichment({
+        client: CLIENT,
+        input: { records: ids.map((id) => ({ id })) },
+        adapter: harness.adapter,
+      }),
+    ).rejects.toThrow(
+      new PdlConfigError(
+        'Minimum likelihood for name-based company matches must be an integer between 1 and 10.',
+      ),
+    );
+
+    expect(harness.readRecords).not.toHaveBeenCalled();
+    expect(harness.enrichBatch).not.toHaveBeenCalled();
+    expect(harness.updateOne).not.toHaveBeenCalled();
+    expect(harness.updateManyStatus).not.toHaveBeenCalled();
+    expect(chargeCredits).not.toHaveBeenCalled();
   });
 
   it('reads every id in one call and enriches the set in one batch', async () => {
