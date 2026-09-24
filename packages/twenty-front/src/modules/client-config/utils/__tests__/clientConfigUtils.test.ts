@@ -1,15 +1,6 @@
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
 
-let mockClientConfigCacheKey: string | undefined;
-
-jest.mock('~/config', () => ({
-  ...jest.requireActual('~/config'),
-  get REACT_APP_CLIENT_CONFIG_CACHE_KEY() {
-    return mockClientConfigCacheKey;
-  },
-}));
-
 global.fetch = jest.fn();
 
 const mockClientConfig = {
@@ -61,7 +52,6 @@ const mockClientConfig = {
 describe('getClientConfig', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockClientConfigCacheKey = undefined;
   });
 
   it('should fetch client config from API', async () => {
@@ -73,23 +63,9 @@ describe('getClientConfig', () => {
     const result = await getClientConfig();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${REACT_APP_SERVER_BASE_URL}/client-config`,
+      `${REACT_APP_SERVER_BASE_URL}/client-config?v=v1`,
     );
     expect(result).toEqual(mockClientConfig);
-  });
-
-  it('should append the cache key to the client config url', async () => {
-    mockClientConfigCacheKey = 'ai catalog/2';
-    (fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockClientConfig,
-    });
-
-    await getClientConfig();
-
-    expect(fetch).toHaveBeenCalledWith(
-      `${REACT_APP_SERVER_BASE_URL}/client-config?cacheKey=ai%20catalog%2F2`,
-    );
   });
 
   it('should handle fetch errors', async () => {
