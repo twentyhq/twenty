@@ -95,11 +95,12 @@ describe('RelabelAttachmentTargetFieldsCommand', () => {
     await runOnWorkspace();
 
     expect(updateMock).toHaveBeenCalledTimes(1);
-    expect(updateMock.mock.calls[0][0].id.value).toEqual([
+    expect(updateMock.mock.calls[0][0]).toBe(WORKSPACE_ID);
+    expect(updateMock.mock.calls[0][1].id.value).toEqual([
       'standard-task',
       'custom-pet',
     ]);
-    expect(updateMock.mock.calls[0][1]).toEqual({ label: 'Attached to' });
+    expect(updateMock.mock.calls[0][2]).toEqual({ label: 'Attached to' });
     expect(invalidateCacheMock).toHaveBeenCalledTimes(1);
   });
 

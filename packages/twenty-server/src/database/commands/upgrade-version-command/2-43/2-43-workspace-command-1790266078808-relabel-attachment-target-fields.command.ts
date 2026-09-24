@@ -1,9 +1,7 @@
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -14,6 +12,8 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 const ATTACHMENT = STANDARD_OBJECTS.attachment;
@@ -69,8 +69,8 @@ export class RelabelAttachmentTargetFieldsCommand extends ProvisionedWorkspaceCo
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectWorkspaceScopedRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
   ) {
     super(workspaceIteratorService);
   }
@@ -86,13 +86,15 @@ export class RelabelAttachmentTargetFieldsCommand extends ProvisionedWorkspaceCo
         { workspaceId },
       );
 
-    const fieldMetadatas = await this.fieldMetadataRepository.find({
-      where: {
-        workspaceId,
-        morphId: ATTACHMENT.morphIds.targetMorphId.morphId,
+    const fieldMetadatas = await this.fieldMetadataRepository.find(
+      workspaceId,
+      {
+        where: {
+          morphId: ATTACHMENT.morphIds.targetMorphId.morphId,
+        },
+        relations: { relationTargetObjectMetadata: true },
       },
-      relations: { relationTargetObjectMetadata: true },
-    });
+    );
 
     // A label someone already changed is theirs to keep. Siblings added for
     // custom objects were labelled after their object's singular name.
@@ -125,8 +127,8 @@ export class RelabelAttachmentTargetFieldsCommand extends ProvisionedWorkspaceCo
     // rather than through a workspace migration, as the 2.41 acronym casing
     // command does.
     await this.fieldMetadataRepository.update(
+      workspaceId,
       {
-        workspaceId,
         id: In(fieldMetadatasToRelabel.map(({ id }) => id)),
       },
       { label: ATTACHED_TO_LABEL },

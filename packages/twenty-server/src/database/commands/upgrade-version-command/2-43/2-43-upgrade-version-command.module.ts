@@ -20,11 +20,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FieldMetadataEntity]),
     ApplicationModule,
     AgentHistoryMigrationModule,
     AgentHistoryModule,
-    TypeOrmModule.forFeature([FileEntity]),
+    TypeOrmModule.forFeature([FieldMetadataEntity, FileEntity]),
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
@@ -37,6 +36,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillLogicFunctionFileRowsCommand,
     SyncAttachmentRecordPageCommand,
     RelabelAttachmentTargetFieldsCommand,
+    provideWorkspaceScopedRepository(FieldMetadataEntity),
     provideWorkspaceScopedRepository(FileEntity),
   ],
 })
