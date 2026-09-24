@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 

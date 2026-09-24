@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';

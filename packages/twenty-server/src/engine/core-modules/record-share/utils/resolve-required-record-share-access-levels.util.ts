@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';

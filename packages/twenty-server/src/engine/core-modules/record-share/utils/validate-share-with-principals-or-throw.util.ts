@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';

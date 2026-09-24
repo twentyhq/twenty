@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 

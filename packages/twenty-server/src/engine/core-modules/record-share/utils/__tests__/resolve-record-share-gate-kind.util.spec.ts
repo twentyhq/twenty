@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { MetadataReadability } from 'twenty-shared/types';
 
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';

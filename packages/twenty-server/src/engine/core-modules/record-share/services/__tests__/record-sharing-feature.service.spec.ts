@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Test } from '@nestjs/testing';
 import { DiscoveryService } from '@nestjs/core';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';

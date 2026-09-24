@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
