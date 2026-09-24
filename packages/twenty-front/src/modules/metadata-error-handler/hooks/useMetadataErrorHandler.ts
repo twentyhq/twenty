@@ -1,8 +1,5 @@
 import { type CombinedGraphQLErrors } from '@apollo/client/errors';
-import { isString } from '@sniptt/guards';
-import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { classifyMetadataError } from '@/metadata-error-handler/utils/classifyMetadataError';
@@ -10,22 +7,8 @@ import {
   type AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
-import { CrudOperationType, type Nullable } from 'twenty-shared/types';
+import { CrudOperationType } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components';
-
-const getConflictMessage = (
-  userFriendlyMessage: Nullable<MessageDescriptor | string>,
-): string => {
-  if (!isDefined(userFriendlyMessage)) {
-    return t`A previous data model change is still being applied in the background. Please try again in a moment.`;
-  }
-
-  if (isString(userFriendlyMessage)) {
-    return userFriendlyMessage;
-  }
-
-  return t(userFriendlyMessage);
-};
 
 export const useMetadataErrorHandler = () => {
   const { enqueueToast } = useToast();
@@ -140,14 +123,6 @@ export const useMetadataErrorHandler = () => {
             children: t`Failed to ${translatedOperationType} ${translatedMetadataName}. Please try again.`,
           });
         }
-        break;
-      }
-
-      case 'v2-conflict': {
-        enqueueToast({
-          variant: 'error',
-          children: getConflictMessage(classification.userFriendlyMessage),
-        });
         break;
       }
 

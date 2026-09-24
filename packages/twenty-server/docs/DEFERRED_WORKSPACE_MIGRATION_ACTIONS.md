@@ -162,7 +162,7 @@ Delivery, each PR merged on its own behind the flag:
 | 1 | Table, `DEFERRABLE_WORKSPACE_MIGRATION_ACTIONS`, handler contract, runner persistence, deferred action runner and job with retries and timeout; `create_index` and `delete_logicFunction`; `afterCommitSideEffects` removed. |
 | 2 | Recovery: cron resetting `IN_PROGRESS` rows past the timeout and enqueueing workspaces with `PENDING` rows; CLI retry of `FAILED` rows; job deduplication per workspace and retry backoff; metrics on duration and on rows by status. |
 | 3 | Refuse schema-affecting migrations while the workspace has in-flight deferred builds: see above. |
-| 4 | Error surfacing: the object, field and index exception handlers map `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` to a `ConflictError` carrying `subCode` and `userFriendlyMessage`, the front classifies it and shows that message, the SDK CLI adds a wait-and-retry hint. |
+| 4 | Error surfacing: the object, field and index exception handlers map `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` to a `ConflictError` carrying `subCode` and `userFriendlyMessage`; the SDK CLI shows that message with a wait-and-retry hint. |
 | 5 | Admin retry of `FAILED` rows from the admin panel, then foreign keys: `ADD CONSTRAINT ... NOT VALID` for join columns created in the same action, plus a deferrable `create_fieldMetadata` action running `VALIDATE CONSTRAINT` with the constraint name in its payload. |
 | 6 | Enable the flag for the affected self-hosted workspace, then cloud, then default on and remove the flag. |
 
@@ -182,7 +182,7 @@ Tested in PR 3, manually on the same data: a second object creation is refused w
 
 A refused migration reaches the client as a `ConflictError`: `extensions.code` is `CONFLICT`, `extensions.subCode` is `DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS` and `extensions.userFriendlyMessage` explains the wait. The object, field and index GraphQL exception handlers produce it, since those resolvers catch the runner exception before the workspace migration interceptor sees it.
 
-`classifyMetadataError` returns a `v2-conflict` classification for that `subCode` and `useMetadataErrorHandler` shows the message as a toast, instead of the generic internal error text. The SDK CLI adds a hint telling the user to wait for the background change to finish and sync again.
+The front needs nothing of its own: `getToastOptionsFromError` already reads `userFriendlyMessage` off the extensions, so the settings toast shows that sentence. The SDK CLI shows it in place of the server message, which names a workspace by uuid, and adds a hint telling the user to wait for the background change to finish and sync again.
 
 ## Open questions
 
