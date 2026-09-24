@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import {
   isDefined,
   isNonEmptyArray,
@@ -10,10 +10,11 @@ import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowReq
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemSelectionRecordStack } from '@/command-menu-item/display/components/CommandMenuItemSelectionRecordStack';
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
-import { orderRecordIdsBySelection } from '@/command-menu-item/utils/orderRecordIdsBySelection';
 import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
+import { contextStoreRecordIdsInSelectionOrderComponentState } from '@/context-store/states/contextStoreRecordIdsInSelectionOrderComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -46,24 +47,15 @@ export const useCommandMenuItemSelectionSectionContext = ():
       ? contextStoreTargetedRecordsRule.selectedRecordIds
       : [];
 
-  // The store lists selected records in view order, so the order they were
-  // selected in is tracked here to put the latest selections on the stack.
-  const [recordIdsInSelectionOrder, setRecordIdsInSelectionOrder] =
-    useState(selectedRecordIds);
-  const [previousSelectionKey, setPreviousSelectionKey] = useState(
-    selectedRecordIds.join(','),
+  const contextStoreRecordIdsInSelectionOrder = useAtomComponentStateValue(
+    contextStoreRecordIdsInSelectionOrderComponentState,
   );
-  const selectionKey = selectedRecordIds.join(',');
 
-  if (selectionKey !== previousSelectionKey) {
-    setPreviousSelectionKey(selectionKey);
-    setRecordIdsInSelectionOrder(
-      orderRecordIdsBySelection({
-        previousRecordIdsInSelectionOrder: recordIdsInSelectionOrder,
-        selectedRecordIds,
-      }),
-    );
-  }
+  // Pages that do not track the selection order fall back on view order.
+  const recordIdsInSelectionOrder = orderRecordIdsBySelection({
+    previousRecordIdsInSelectionOrder: contextStoreRecordIdsInSelectionOrder,
+    selectedRecordIds,
+  });
 
   const recordIdsWithAvatar =
     recordIdsInSelectionOrder.slice(-MAX_STACKED_RECORDS);

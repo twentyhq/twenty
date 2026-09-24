@@ -1,4 +1,4 @@
-import { orderRecordIdsBySelection } from '@/command-menu-item/utils/orderRecordIdsBySelection';
+import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
 
 describe('orderRecordIdsBySelection', () => {
   it('puts a new selection last even when it comes first in the view', () => {
