@@ -13,6 +13,13 @@ const TARGET_IDENTIFIER =
 const RECORD_TARGETS_IDENTIFIER =
   STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier;
 
+// The reverse side of each standard leg, owned by the object the leg points at.
+const STANDARD_REVERSE_FIELD_IDENTIFIERS = [
+  STANDARD_OBJECT_FIELDS.person.agentChatThreadTargets.universalIdentifier,
+  STANDARD_OBJECT_FIELDS.company.agentChatThreadTargets.universalIdentifier,
+  STANDARD_OBJECT_FIELDS.opportunity.agentChatThreadTargets.universalIdentifier,
+];
+
 const createStandardMetadata = () =>
   computeTwentyStandardApplicationAllFlatEntityMaps({
     now: '2026-01-01T00:00:00Z',
@@ -49,7 +56,8 @@ const createExistingWithoutTarget = () => {
         standard.flatFieldMetadataMaps.byUniversalIdentifier,
         (identifier, field) =>
           field.objectMetadataUniversalIdentifier !== TARGET_IDENTIFIER &&
-          identifier !== RECORD_TARGETS_IDENTIFIER,
+          identifier !== RECORD_TARGETS_IDENTIFIER &&
+          !STANDARD_REVERSE_FIELD_IDENTIFIERS.includes(identifier),
       ),
     },
     flatIndexMaps: {
@@ -64,7 +72,7 @@ const createExistingWithoutTarget = () => {
 };
 
 describe('getAgentChatThreadTargetSchemaAdditions', () => {
-  it('provisions the object with both legs of its relation', () => {
+  it('provisions the object with both sides of every relation', () => {
     const additions = getAgentChatThreadTargetSchemaAdditions({
       existing: createExistingWithoutTarget(),
       standard: createStandardMetadata(),
@@ -78,16 +86,20 @@ describe('getAgentChatThreadTargetSchemaAdditions', () => {
       (field) => field.universalIdentifier,
     );
 
-    // The far leg lives on agentChatThread, so selecting by owning object alone
-    // would emit half a relation — but a filter that emitted ONLY the far leg
-    // would satisfy that on its own, so assert the near side too.
-    expect(fieldIdentifiers).toContain(RECORD_TARGETS_IDENTIFIER);
+    // The far sides live on agentChatThread and on the objects the legs point
+    // at, so selecting by owning object alone would emit half relations — but a
+    // filter that emitted ONLY the far sides would satisfy that on its own, so
+    // assert the near side too.
     expect(fieldIdentifiers).toEqual(
       expect.arrayContaining([
+        RECORD_TARGETS_IDENTIFIER,
+        ...STANDARD_REVERSE_FIELD_IDENTIFIERS,
         STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread.universalIdentifier,
-        STANDARD_OBJECT_FIELDS.agentChatThreadTarget.objectMetadataId
+        STANDARD_OBJECT_FIELDS.agentChatThreadTarget.targetPerson
           .universalIdentifier,
-        STANDARD_OBJECT_FIELDS.agentChatThreadTarget.recordId
+        STANDARD_OBJECT_FIELDS.agentChatThreadTarget.targetCompany
+          .universalIdentifier,
+        STANDARD_OBJECT_FIELDS.agentChatThreadTarget.targetOpportunity
           .universalIdentifier,
       ]),
     );
@@ -103,8 +115,8 @@ describe('getAgentChatThreadTargetSchemaAdditions', () => {
   });
 
   // Whether the workspace is ready for this is the command's question, not this
-  // util's: it only ever proposes the target's own schema plus the leg on
-  // agentChatThread, so a workspace missing everything gets the same set as one
+  // util's: it only ever proposes the target's own schema plus the far sides of
+  // its relations, so a workspace missing everything gets the same set as one
   // missing only the target.
   it('proposes only the target schema even when the workspace has nothing', () => {
     const standard = createStandardMetadata();
