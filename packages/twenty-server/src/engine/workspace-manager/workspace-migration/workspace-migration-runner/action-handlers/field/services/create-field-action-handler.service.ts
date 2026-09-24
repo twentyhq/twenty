@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';

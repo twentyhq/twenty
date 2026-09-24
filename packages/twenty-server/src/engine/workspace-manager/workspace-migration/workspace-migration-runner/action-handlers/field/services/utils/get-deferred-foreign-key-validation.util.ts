@@ -11,7 +11,7 @@ export const getDeferredForeignKeyValidation = ({
   featureFlagsMap,
 }: {
   flatAction: FlatCreateFieldAction;
-  featureFlagsMap?: FeatureFlagMap;
+  featureFlagsMap?: Partial<FeatureFlagMap>;
 }):
   | {
       name: 'validateForeignKey';
