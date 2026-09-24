@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import React, { type ReactNode } from 'react';
+import React, { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type IconComponent } from 'twenty-ui/icon';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
 
@@ -56,15 +57,19 @@ const StyledGroup = styled.div`
 
 type CommandMenuItemSectionGroupProps = {
   heading: string;
+  Icon?: IconComponent;
   context?: CommandMenuItemSectionContext;
   children: ReactNode;
 };
 
 export const CommandMenuItemSectionGroup = ({
   heading,
+  Icon,
   context,
   children,
 }: CommandMenuItemSectionGroupProps) => {
+  const { theme } = useContext(ThemeContext);
+
   if (!isDefined(children) || !React.Children.count(children)) {
     return null;
   }
@@ -74,8 +79,14 @@ export const CommandMenuItemSectionGroup = ({
   return (
     <StyledSection>
       <StyledHeading>
-        {isDefined(context?.icon) && (
+        {isDefined(context?.icon) ? (
           <StyledHeadingIcon>{context.icon}</StyledHeadingIcon>
+        ) : (
+          isDefined(Icon) && (
+            <StyledHeadingIcon>
+              <Icon size={theme.icon.size.sm} />
+            </StyledHeadingIcon>
+          )
         )}
         <StyledHeadingText>
           {isDefined(contextLabel) ? t`${heading}: ${contextLabel}` : heading}

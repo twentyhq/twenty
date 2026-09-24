@@ -22,7 +22,28 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  IconApps,
+  IconArrowUpRight,
+  IconBox,
+  IconCheckbox,
+  IconPlus,
+  IconSearch,
+  IconTable,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+
+const SECTION_ICONS: Record<CommandMenuItemSection, IconComponent> = {
+  SELECTION: IconCheckbox,
+  CURRENT_VIEW: IconTable,
+  THIS_OBJECT: IconBox,
+  ASK_AND_FIND: IconSearch,
+  CREATE_RECORD: IconPlus,
+  WORKSPACE: IconApps,
+  GO_TO: IconArrowUpRight,
+  FALLBACK: IconSearch,
+};
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
   const { t } = useLingui();
@@ -165,6 +186,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         return (
           <CommandMenuItemSectionGroup
             heading={getSectionHeading(section)}
+            Icon={SECTION_ICONS[section]}
             context={getSectionContext(section)}
             key={section}
           >
@@ -198,7 +220,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         );
       })}
       {shouldDisplayFallbackItems && (
-        <CommandMenuItemSectionGroup heading={t`Fallback`}>
+        <CommandMenuItemSectionGroup heading={t`Fallback`} Icon={IconSearch}>
           {fallbackCommandMenuItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
           ))}
