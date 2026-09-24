@@ -110,7 +110,6 @@ export const USER_QUERY_FRAGMENT = gql`
       trashRetentionDays
       eventLogRetentionDays
       editableProfileFields
-      allowedIframeOrigins
       isInternalMessagesImportEnabled
     }
     availableWorkspaces {
