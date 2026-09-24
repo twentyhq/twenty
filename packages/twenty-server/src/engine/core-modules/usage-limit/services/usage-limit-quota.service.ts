@@ -33,14 +33,16 @@ import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/ut
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
 import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-limit-warmed-entries.util';
+import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-overridden-quota-default-counter-keys.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
+import { buildQuotaDefaultActiveValueEntries } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-active-value-entries.util';
 import { buildQuotaDefaultActiveValueKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-active-value-key.util';
-import { buildQuotaDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-counter-key.util';
+import { buildQuotaDefaultKeyScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-default-key-scope.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
-import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-overridden-quota-default-counter-keys.util';
+import { buildSupersededQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-superseded-quota-default-counter-keys.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
@@ -493,9 +495,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     args: QuotaConsumeArgs;
     counters: QuotaCounter[];
     remainings: (number | null)[];
-    // Only the assert path names one: after a consume the remaining already
-    // carries the debit, and charging it again would refuse the caller that
-    // just paid.
     cost?: QuotaCost;
   }): Promise<ExhaustedScope[]> {
     const exhaustedCounters = findExhaustedCounters({
@@ -590,65 +589,35 @@ export class UsageLimitQuotaService implements OnModuleInit {
       return;
     }
 
+    const now = Date.now();
+
     const activeValueKeys = defaultCounters.map((counter) =>
-      buildQuotaDefaultActiveValueKey({
-        workspaceId,
-        resourceType: counter.resourceType,
-        operationType: counter.operationType,
-        spenderType: counter.spenderType,
-        meter: counter.meter,
-        periodUnit: counter.periodUnit,
-        periodStart: counter.periodStart,
-      }),
+      buildQuotaDefaultActiveValueKey(
+        buildQuotaDefaultKeyScope({ workspaceId, counter }),
+      ),
     );
 
     const activeValues = await this.cacheStorage.mget<number>(activeValueKeys);
 
-    const supersededDefaults = defaultCounters.flatMap((counter, index) => {
-      const activeValue = activeValues[index];
-
-      return isDefined(activeValue) && activeValue !== counter.limitValue
-        ? [{ counter, activeValue }]
-        : [];
+    const supersededCounterKeys = buildSupersededQuotaDefaultCounterKeys({
+      workspaceId,
+      defaultCounters,
+      activeValues,
     });
 
-    if (supersededDefaults.length > 0) {
+    if (supersededCounterKeys.length > 0) {
       await this.delUnderWarmLock({
         workspaceId,
-        keys: supersededDefaults.flatMap(({ counter, activeValue }) => [
-          counter.key,
-          buildQuotaDefaultCounterKey({
-            workspaceId,
-            resourceType: counter.resourceType,
-            operationType: counter.operationType,
-            spenderType: counter.spenderType,
-            meter: counter.meter,
-            periodUnit: counter.periodUnit,
-            periodStart: counter.periodStart,
-            limitValue: activeValue,
-          }),
-        ]),
+        keys: supersededCounterKeys,
       });
     }
 
-    const now = Date.now();
-
-    // A pointer that is merely absent says nothing about the counter beside it,
-    // so a first read only records the value. Dropping on absence would re-warm
-    // every workspace at once the first time this ships and lose whatever the
-    // counters hold that ClickHouse has not ingested yet.
-    const activeValueEntries = defaultCounters.flatMap((counter, index) =>
-      activeValues[index] === counter.limitValue ||
-      counter.periodEnd.getTime() <= now
-        ? []
-        : [
-            {
-              key: activeValueKeys[index],
-              value: counter.limitValue,
-              ttl: counter.periodEnd.getTime() - now,
-            },
-          ],
-    );
+    const activeValueEntries = buildQuotaDefaultActiveValueEntries({
+      defaultCounters,
+      activeValueKeys,
+      activeValues,
+      now,
+    });
 
     if (activeValueEntries.length > 0) {
       await this.cacheStorage.mset(activeValueEntries);

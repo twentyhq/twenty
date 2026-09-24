@@ -1,27 +1,8 @@
-import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
-import { type QuotaMeter } from 'src/engine/core-modules/usage-limit/types/quota-meter.type';
-import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
+import { type QuotaDefaultKeyScope } from 'src/engine/core-modules/usage-limit/types/quota-default-key-scope.type';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 export const buildQuotaDefaultCounterKey = ({
-  workspaceId,
-  resourceType,
-  operationType,
-  spenderType,
-  meter,
-  periodUnit,
-  periodStart,
   limitValue,
-}: {
-  workspaceId: string;
-  resourceType: UsageResourceType;
-  operationType: UsageOperationType;
-  spenderType: SpenderType;
-  meter: QuotaMeter;
-  periodUnit: PeriodUnit;
-  periodStart: Date;
-  limitValue: number;
-}): string =>
-  `${buildQuotaCounterKey({ workspaceId, resourceType, operationType, spenderType, meter, periodUnit, periodStart })}:default:${limitValue}`;
+  ...scope
+}: QuotaDefaultKeyScope & { limitValue: number }): string =>
+  `${buildQuotaCounterKey(scope)}:default:${limitValue}`;

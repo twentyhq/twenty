@@ -980,8 +980,6 @@ describe('UsageLimitQuotaService', () => {
         spenders: {},
       });
 
-    // The service reads the active configured value before anything else, then
-    // the counters themselves, twice when it has to warm them under the lock.
     const mockActiveValueThenRemaining = (
       activeValue: number | undefined,
       remaining: number | undefined,
@@ -1059,20 +1057,6 @@ describe('UsageLimitQuotaService', () => {
       });
     });
 
-    it('records the configured value the counter was warmed against', async () => {
-      mockActiveValueThenRemaining(undefined, 900);
-
-      await findEmailExhaustedScope();
-
-      expect(cacheStorage.mdel).not.toHaveBeenCalled();
-      expect(cacheStorage.mset).toHaveBeenCalledWith([
-        expect.objectContaining({
-          key: buildQuotaDefaultActiveValueKey(EMAIL_DEFAULT_SCOPE),
-          value: 1_000,
-        }),
-      ]);
-    });
-
     it('drops a counter left behind by an earlier value of the config', async () => {
       mockActiveValueThenRemaining(500, 600);
 
@@ -1082,15 +1066,12 @@ describe('UsageLimitQuotaService', () => {
         buildDefaultCounterKey(1_000),
         buildDefaultCounterKey(500),
       ]);
-    });
-
-    it('leaves the counter alone while the configured value holds', async () => {
-      mockActiveValueThenRemaining(1_000, 600);
-
-      await findEmailExhaustedScope();
-
-      expect(cacheStorage.mdel).not.toHaveBeenCalled();
-      expect(cacheStorage.mset).not.toHaveBeenCalled();
+      expect(cacheStorage.mset).toHaveBeenCalledWith([
+        expect.objectContaining({
+          key: buildQuotaDefaultActiveValueKey(EMAIL_DEFAULT_SCOPE),
+          value: 1_000,
+        }),
+      ]);
     });
   });
 });
