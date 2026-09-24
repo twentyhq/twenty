@@ -11,7 +11,6 @@ export const getInitialClientConfig = async (): Promise<ClientConfig> => {
   if (isDefined(element)) {
     const serializedConfig = element.textContent;
 
-    // A later refresh must fetch current settings, rather than replay this document.
     element.remove();
 
     try {
@@ -26,9 +25,7 @@ export const getInitialClientConfig = async (): Promise<ClientConfig> => {
       ) {
         return config as ClientConfig;
       }
-    } catch {
-      // Old/static deployments and Vite still use the compatibility endpoint.
-    }
+    } catch {}
   }
 
   return getClientConfig();

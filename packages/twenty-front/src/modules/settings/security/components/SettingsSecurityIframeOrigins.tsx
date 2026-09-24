@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import { isDefined, normalizeAllowedIframeOrigin } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconPlus, IconTrash } from 'twenty-ui/icon';
@@ -51,7 +50,6 @@ export const SettingsSecurityIframeOrigins = () => {
   );
   const origins = data?.currentWorkspace.allowedIframeOrigins ?? [];
   const isPolicyLoaded = isDefined(data?.currentWorkspace.allowedIframeOrigins);
-  const hasReachedOriginLimit = origins.length >= MAX_ALLOWED_IFRAME_ORIGINS;
   const isDisabled = loading || isLoadingPolicy || !isPolicyLoaded;
 
   const saveOrigin = async (
@@ -80,18 +78,6 @@ export const SettingsSecurityIframeOrigins = () => {
       setError(
         t`Enter an HTTP or HTTPS origin without a path or wildcard, such as https://portal.example.com.`,
       );
-
-      return;
-    }
-
-    if (origins.includes(origin)) {
-      setError(t`This origin is already allowed.`);
-
-      return;
-    }
-
-    if (hasReachedOriginLimit) {
-      setError(t`You can allow up to ${MAX_ALLOWED_IFRAME_ORIGINS} origins.`);
 
       return;
     }
@@ -135,7 +121,7 @@ export const SettingsSecurityIframeOrigins = () => {
           label={t`Allowed origin`}
           placeholder="https://portal.example.com"
           value={originInput}
-          disabled={isDisabled || hasReachedOriginLimit}
+          disabled={isDisabled}
           onChange={(value) => {
             setOriginInput(value);
             setError(undefined);
@@ -147,9 +133,7 @@ export const SettingsSecurityIframeOrigins = () => {
           <Button
             variant="outline"
             size="sm"
-            disabled={
-              isDisabled || originInput.trim() === '' || hasReachedOriginLimit
-            }
+            disabled={isDisabled || originInput.trim() === ''}
             startIcon={<IconPlus size={16} />}
             onClick={handleAddOrigin}
           >

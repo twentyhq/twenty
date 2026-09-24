@@ -293,7 +293,6 @@ export class WorkspaceService {
     const updatedWorkspace = await this.workspaceRepository.manager.transaction(
       async (manager) => {
         const repository = manager.getRepository(WorkspaceEntity);
-        // Serialize edits so stale tabs cannot restore revoked origins or exceed the cap.
         const workspace = await repository.findOne({
           where: { id: workspaceId },
           lock: { mode: 'pessimistic_write' },

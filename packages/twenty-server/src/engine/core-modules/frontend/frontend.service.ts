@@ -66,7 +66,6 @@ export class FrontendService {
           this.workspaceDomainsService
             .resolveWorkspaceAndPublicDomain(getRequestBaseUrl(request))
             .catch((error: unknown) => {
-              // A new single-workspace installation has no workspace until signup.
               if (error === WorkspaceNotFoundDefaultError) {
                 return { workspace: undefined, isIsolatedOrigin: false };
               }
@@ -76,7 +75,6 @@ export class FrontendService {
         ],
       );
 
-      // Public application domains must never serve the authenticated CRM shell.
       if (isIsolatedOrigin) {
         response.status(404).end();
 
@@ -95,7 +93,6 @@ export class FrontendService {
         response.removeHeader('X-Frame-Options');
       }
 
-      // A matching HTML body must not produce a 304 with an outdated framing policy.
       response
         .type('html')
         .end(renderFrontendHtml(this.template, clientConfig));

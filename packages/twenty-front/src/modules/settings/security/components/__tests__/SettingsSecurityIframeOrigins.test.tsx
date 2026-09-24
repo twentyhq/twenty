@@ -155,20 +155,70 @@ it('keeps saved origins when the server rejects an update', async () => {
   ).toBeInTheDocument();
 });
 
-it('prevents adding more than the allowed number of origins', async () => {
-  renderSettings(
-    Array.from(
-      { length: MAX_ALLOWED_IFRAME_ORIGINS },
-      (_, index) => `https://portal${index}.example.com`,
-    ),
+it('allows an addition when another administrator frees a slot in a full list', async () => {
+  const staleOrigins = Array.from(
+    { length: MAX_ALLOWED_IFRAME_ORIGINS },
+    (_, index) => `https://portal${index}.example.com`,
   );
-  await screen.findByRole('button', {
-    name: 'Remove https://portal0.example.com',
-  });
+  const newOrigin = 'https://new.example.com';
+  const updatedOrigins = [...staleOrigins.slice(1), newOrigin];
+  const saved = jest.fn(() => ({
+    data: { updateWorkspaceAllowedIframeOrigins: workspace(updatedOrigins) },
+  }));
+  renderSettings(staleOrigins, [
+    {
+      request: {
+        query: UpdateWorkspaceAllowedIframeOriginsDocument,
+        variables: { input: { operation: 'add', origin: newOrigin } },
+      },
+      result: saved,
+    },
+  ]);
+  const user = userEvent.setup();
+  await user.type(await editableInput(), newOrigin);
+  await user.click(screen.getByRole('button', { name: 'Add origin' }));
   expect(
-    screen.getByRole('textbox', { name: 'Allowed origin' }),
-  ).toBeDisabled();
-  expect(screen.getByRole('button', { name: 'Add origin' })).toBeDisabled();
+    await screen.findByRole('button', { name: `Remove ${newOrigin}` }),
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByRole('button', { name: `Remove ${staleOrigins[0]}` }),
+  ).not.toBeInTheDocument();
+  expect(screen.getAllByRole('button', { name: /^Remove / })).toHaveLength(
+    MAX_ALLOWED_IFRAME_ORIGINS,
+  );
+  expect(saved).toHaveBeenCalledTimes(1);
+});
+
+it('keeps the saved list and input when the server rejects an addition at the limit', async () => {
+  const origins = Array.from(
+    { length: MAX_ALLOWED_IFRAME_ORIGINS },
+    (_, index) => `https://portal${index}.example.com`,
+  );
+  const newOrigin = 'https://new.example.com';
+  renderSettings(origins, [
+    {
+      request: {
+        query: UpdateWorkspaceAllowedIframeOriginsDocument,
+        variables: { input: { operation: 'add', origin: newOrigin } },
+      },
+      error: new Error(
+        `You can allow up to ${MAX_ALLOWED_IFRAME_ORIGINS} origins.`,
+      ),
+    },
+  ]);
+  const user = userEvent.setup();
+  const input = await editableInput();
+  await user.type(input, newOrigin);
+  await user.click(screen.getByRole('button', { name: 'Add origin' }));
+  await waitFor(() => expect(enqueueToast).toHaveBeenCalled());
+  expect(input).toHaveValue(newOrigin);
+  expect(input).toBeEnabled();
+  expect(screen.getAllByRole('button', { name: /^Remove / })).toHaveLength(
+    MAX_ALLOWED_IFRAME_ORIGINS,
+  );
+  expect(
+    screen.queryByRole('button', { name: `Remove ${newOrigin}` }),
+  ).not.toBeInTheDocument();
 });
 
 it('disables edits while the saved policy is unknown', () => {

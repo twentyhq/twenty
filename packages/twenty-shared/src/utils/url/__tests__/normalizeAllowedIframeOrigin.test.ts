@@ -12,6 +12,13 @@ describe('normalizeAllowedIframeOrigin', () => {
     expect(normalizeAllowedIframeOrigin(value)).toBe(expected);
   });
 
+  it.each(['http://[::1]:3000', 'https://[2001:db8::1]'])(
+    'rejects IPv6 literals unsupported by CSP host sources: %s',
+    (value) => {
+      expect(normalizeAllowedIframeOrigin(value)).toBeUndefined();
+    },
+  );
+
   it.each([
     '*',
     'null',

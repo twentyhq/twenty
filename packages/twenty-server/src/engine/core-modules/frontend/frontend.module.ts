@@ -29,17 +29,14 @@ export class FrontendModule implements OnModuleInit {
   onModuleInit() {
     const adapter = this.httpAdapterHost.httpAdapter;
 
-    // CLI commands initialize this module without an HTTP server.
     if (!this.frontendService.isEnabled || !isDefined(adapter)) {
       return;
     }
 
-    // Register after API controllers, before Nest's not-found handler.
     const serveStatic = express.static(this.frontendService.frontPath, {
       index: false,
       redirect: false,
       setHeaders: (response, filePath) => {
-        // Never let an alternate spelling of index.html bypass its dynamic policy.
         if (filePath.toLowerCase().endsWith('.html')) {
           response.setHeader('Cache-Control', 'no-store');
           response.setHeader('CDN-Cache-Control', 'no-store');
@@ -54,7 +51,6 @@ export class FrontendModule implements OnModuleInit {
     });
 
     adapter.use((request: Request, response: Response, next: NextFunction) => {
-      // The canonical document needs request-specific configuration and headers.
       if (request.path === '/index.html') {
         next();
 

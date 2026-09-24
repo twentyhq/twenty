@@ -33,7 +33,6 @@ jest.mock(
 
 @Controller('healthz')
 class HealthController {
-  // This unauthenticated test controller verifies API routing precedence.
   // oxlint-disable-next-line twenty/rest-api-methods-should-be-guarded
   @Get()
   health() {

@@ -5,7 +5,6 @@ import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ClientConfigProviderEffect = () => {
-  // This latch protects a one-shot side effect; it does not drive rendering.
   // oxlint-disable-next-line twenty/no-state-useref
   const isInitializationStarted = useRef(false);
   const [clientConfigApiStatus, setClientConfigApiStatus] = useAtomState(
@@ -20,7 +19,6 @@ export const ClientConfigProviderEffect = () => {
       !clientConfigApiStatus.isLoading &&
       !isInitializationStarted.current
     ) {
-      // StrictMode replays effects before the loading state has been committed.
       isInitializationStarted.current = true;
       initializeClientConfig();
     }

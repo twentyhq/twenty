@@ -300,7 +300,6 @@ export class WorkspaceEntity {
   @Column({ default: false })
   isInternalMessagesImportEnabled: boolean;
 
-  // Cached auth contexts from older replicas can omit this field during upgrades.
   @Field(() => [String], { nullable: true })
   @WasIntroducedInUpgrade({
     upgradeCommandName:

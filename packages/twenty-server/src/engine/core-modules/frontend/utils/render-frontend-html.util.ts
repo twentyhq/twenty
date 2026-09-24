@@ -6,7 +6,6 @@ export const renderFrontendHtml = (
   template: string,
   clientConfig: ClientConfig,
 ): string => {
-  // JSON is embedded in HTML, where even a non-executable script ends at </script>.
   const serializedConfig = JSON.stringify(clientConfig)
     .replace(/</g, '\\u003c')
     .replace(/>/g, '\\u003e')
