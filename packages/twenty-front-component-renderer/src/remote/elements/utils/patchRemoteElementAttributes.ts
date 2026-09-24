@@ -11,6 +11,13 @@ const PROPERTY_MAPPED_ATTRIBUTES = [
   { attributeName: 'srcdoc', elementPropertyName: 'srcDoc' },
 ];
 
+const UNREFLECTED_REMOTE_PROPERTY_NAMES = new Set([
+  'className',
+  ...PROPERTY_MAPPED_ATTRIBUTES.map(
+    ({ elementPropertyName }) => elementPropertyName,
+  ),
+]);
+
 const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>(
   PROPERTY_MAPPED_ATTRIBUTES.flatMap(
     ({ attributeName, elementPropertyName }): [string, string][] => [
@@ -42,16 +49,28 @@ const readRemotePropertyAsAttributeValue = ({
   element,
   attributeName,
   remotePropertyDefinition,
+  readStoredAttributeValue,
 }: {
   element: RemoteElementWithAttributeUpdater;
   attributeName: string;
   remotePropertyDefinition: RemotePropertyDefinition;
-}): string | null =>
-  serializeRemotePropertyAsAttributeValue({
+  readStoredAttributeValue: (attributeName: string) => string | null;
+}): string | null => {
+  const propertyValue = element[remotePropertyDefinition.name];
+  const serializedValue = serializeRemotePropertyAsAttributeValue({
     attributeName,
-    propertyValue: element[remotePropertyDefinition.name],
+    propertyValue,
     isBooleanTypedProperty: remotePropertyDefinition.type === Boolean,
   });
+
+  if (isDefined(serializedValue) || propertyValue !== false) {
+    return serializedValue;
+  }
+
+  // setAttribute keeps the written string, which tells an explicit "false"
+  // apart from the false remote-dom seeds into Boolean-typed properties.
+  return readStoredAttributeValue(attributeName) === 'false' ? 'false' : null;
+};
 
 export const patchRemoteElementAttributes = (): void => {
   for (const allowedHtmlElement of ALLOWED_HTML_ELEMENTS) {
@@ -99,7 +118,10 @@ export const patchRemoteElementAttributes = (): void => {
 
     for (const remotePropertyDefinition of elementConstructor.remotePropertyDefinitions?.values() ??
       []) {
-      if (isDefined(remotePropertyDefinition.attribute)) {
+      if (
+        isDefined(remotePropertyDefinition.attribute) &&
+        !UNREFLECTED_REMOTE_PROPERTY_NAMES.has(remotePropertyDefinition.name)
+      ) {
         remotePropertyDefinitionByAttributeName.set(
           remotePropertyDefinition.attribute,
           remotePropertyDefinition,
@@ -133,6 +155,8 @@ export const patchRemoteElementAttributes = (): void => {
           element: this,
           attributeName,
           remotePropertyDefinition,
+          readStoredAttributeValue: (storedAttributeName) =>
+            originalGetAttribute.call(this, storedAttributeName),
         });
       }
 
@@ -157,13 +181,7 @@ export const patchRemoteElementAttributes = (): void => {
         remotePropertyDefinitionByAttributeName.get(attributeName);
 
       if (isDefined(remotePropertyDefinition)) {
-        return isDefined(
-          readRemotePropertyAsAttributeValue({
-            element: this,
-            attributeName,
-            remotePropertyDefinition,
-          }),
-        );
+        return isDefined(this.getAttribute(attributeName));
       }
 
       return originalHasAttribute.call(this, attributeName);
@@ -175,11 +193,31 @@ export const patchRemoteElementAttributes = (): void => {
     elementConstructor.prototype.getAttributeNames = function (
       this: RemoteElementWithAttributeUpdater,
     ) {
+      const isReflectedAttributePresent = (attributeName: string): boolean =>
+        isDefined(this.getAttribute(attributeName));
+      const storedAttributeNames = originalGetAttributeNames
+        .call(this)
+        .filter(
+          (attributeName: string) =>
+            !remotePropertyDefinitionByAttributeName.has(attributeName) ||
+            isReflectedAttributePresent(attributeName),
+        );
+      const reflectedAttributeNames = [
+        ...remotePropertyDefinitionByAttributeName.keys(),
+      ].filter(
+        (attributeName) =>
+          !storedAttributeNames.includes(attributeName) &&
+          isReflectedAttributePresent(attributeName),
+      );
       const mappedAttributeNames = PROPERTY_MAPPED_ATTRIBUTES.filter(
         ({ elementPropertyName }) => isDefined(this[elementPropertyName]),
       ).map(({ attributeName }) => attributeName);
 
-      return [...originalGetAttributeNames.call(this), ...mappedAttributeNames];
+      return [
+        ...storedAttributeNames,
+        ...reflectedAttributeNames,
+        ...mappedAttributeNames,
+      ];
     };
 
     const originalSetAttribute = elementConstructor.prototype.setAttribute;

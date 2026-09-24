@@ -295,6 +295,38 @@ describe('patchRemoteElementAttributes', () => {
       expect(element.hasAttribute('aria-hidden')).toBe(false);
     });
 
+    it('should read back an aria-hidden attribute written as false', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('aria-hidden', 'false');
+
+      expect(element.getAttribute('aria-hidden')).toBe('false');
+      expect(element.hasAttribute('aria-hidden')).toBe(true);
+    });
+
+    it('should drop a stale aria-hidden attribute once the property is false', () => {
+      const element =
+        createHtmlDivElement() as RemoteElementWithPropertyUpdater &
+          Record<string, unknown>;
+
+      element.setAttribute('aria-hidden', 'true');
+      element['aria-hidden'] = false;
+
+      expect(element.getAttribute('aria-hidden')).toBeNull();
+      expect(element.getAttributeNames()).not.toContain('aria-hidden');
+    });
+
+    it('should list properties assigned directly among the attribute names', () => {
+      const element =
+        createHtmlDivElement() as RemoteElementWithPropertyUpdater &
+          Record<string, unknown>;
+
+      element.role = 'combobox';
+      element['aria-label'] = 'Account';
+
+      expect(element.getAttributeNames()).toEqual(['role', 'aria-label']);
+    });
+
     it('should serialize boolean draggable values as true and false', () => {
       const draggableElement = createHtmlDivElement();
       const fixedElement = createHtmlDivElement();

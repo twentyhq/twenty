@@ -48,7 +48,7 @@ describe('installSelectorMethodsPolyfill on remote elements', () => {
     expect(input.getAttribute('role')).toBe('combobox');
   });
 
-  it('should serialize boolean aria-hidden and draggable values the way the page renders them', () => {
+  it('should match boolean aria-hidden and draggable properties', () => {
     const hiddenIcon = createRemoteElement('html-span');
     const visibleIcon = createRemoteElement('html-span');
     const draggableCard = createRemoteElement('html-div');
