@@ -9,8 +9,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { LogConsole } from '@/log-console/components/LogConsole';
+import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
+import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -99,6 +101,10 @@ const meta: Meta<PageDecoratorArgs> = {
     );
     jotaiStore.set(isAdvancedModeEnabledState.atom, true);
     jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+    jotaiStore.set(
+      logConsoleHeightState.atom,
+      LOG_CONSOLE_HEIGHT_CONSTRAINTS.default,
+    );
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
   },
   parameters: {
@@ -293,6 +299,18 @@ export const LoadError: Story = {
 
     await canvas.findByText("Couldn't load logs", {}, { timeout: 5000 });
     await canvas.findByRole('button', { name: 'Try again' });
+  },
+};
+
+export const Resized: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(logConsoleHeightState.atom, 560);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Sarah Chen', {}, { timeout: 5000 });
   },
 };
 

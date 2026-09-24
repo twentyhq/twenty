@@ -14,9 +14,11 @@ type StyledEdgeProps = {
 
 const StyledEdge = styled.div<StyledEdgeProps>`
   align-items: center;
-  bottom: 0;
-  cursor: col-resize;
+  bottom: ${({ side }) => (side === 'top' ? 'auto' : '0')};
+  cursor: ${({ side }) => (side === 'top' ? 'row-resize' : 'col-resize')};
   display: flex;
+  height: ${({ side }) =>
+    side === 'top' ? `${RESIZE_EDGE_WIDTH_PX}px` : 'auto'};
   justify-content: center;
   left: ${({ side }) =>
     side === 'left' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto'};
@@ -25,10 +27,15 @@ const StyledEdge = styled.div<StyledEdgeProps>`
   right: ${({ side }) =>
     side === 'right' ? `-${RESIZE_EDGE_WIDTH_PX / 2}px` : 'auto'};
   top: 0;
-  width: ${RESIZE_EDGE_WIDTH_PX}px;
+  width: ${({ side }) =>
+    side === 'top' ? '100%' : `${RESIZE_EDGE_WIDTH_PX}px`};
 `;
 
-const StyledHandle = styled.div<{ isActive: boolean; isHovered: boolean }>`
+const StyledHandle = styled.div<{
+  isActive: boolean;
+  isHovered: boolean;
+  side: ResizablePanelSide;
+}>`
   background-color: ${({ isActive, isHovered }) =>
     isActive
       ? themeCssVariables.color.blue
@@ -37,31 +44,34 @@ const StyledHandle = styled.div<{ isActive: boolean; isHovered: boolean }>`
         : themeCssVariables.background.quaternary};
   border-radius: ${themeCssVariables.border.radius.pill};
   corner-shape: round;
-  height: 48px;
-  transform: ${({ isHovered, isActive }) =>
-    isHovered || isActive ? 'scaleY(1.2)' : 'scaleY(1)'};
+  height: ${({ side }) => (side === 'top' ? '3px' : '48px')};
+  transform: ${({ isHovered, isActive, side }) => {
+    const scale = isHovered || isActive ? 1.2 : 1;
+
+    return side === 'top' ? `scaleX(${scale})` : `scaleY(${scale})`;
+  }};
   transition:
     background-color ${themeCssVariables.animation.duration.fast}s,
     transform ${themeCssVariables.animation.duration.fast}s;
-  width: 4px;
+  width: ${({ side }) => (side === 'top' ? '48px' : '4px')};
 `;
 
 type ResizablePanelEdgeProps = {
   side: ResizablePanelSide;
   constraints: ResizablePanelConstraints;
-  currentWidth: number;
-  onWidthChange: (width: number) => void;
+  currentSize: number;
+  onSizeChange: (size: number) => void;
   onCollapse: () => void;
   showHandle?: boolean;
   cssVariableName?: string;
-  onResizeStart?: () => void;
+  onResizeStart?: (size: number) => void;
 };
 
 export const ResizablePanelEdge = ({
   side,
   constraints,
-  currentWidth,
-  onWidthChange,
+  currentSize,
+  onSizeChange,
   onCollapse,
   showHandle = true,
   cssVariableName,
@@ -76,8 +86,8 @@ export const ResizablePanelEdge = ({
   } = useResizablePanel({
     side,
     constraints,
-    currentWidth,
-    onWidthChange,
+    currentSize,
+    onSizeChange,
     onCollapse,
     cssVariableName,
     onResizeStart,
@@ -93,7 +103,7 @@ export const ResizablePanelEdge = ({
       onMouseLeave={handleMouseLeave}
     >
       {showHandle && (
-        <StyledHandle isActive={isResizing} isHovered={isHovered} />
+        <StyledHandle side={side} isActive={isResizing} isHovered={isHovered} />
       )}
     </StyledEdge>
   );

@@ -22,8 +22,8 @@ const StyledGap = styled.div<{ gapWidth: number }>`
 type ResizablePanelGapProps = {
   side: ResizablePanelSide;
   constraints: ResizablePanelConstraints;
-  currentWidth: number;
-  onWidthChange: (width: number) => void;
+  currentSize: number;
+  onSizeChange: (size: number) => void;
   onCollapse: () => void;
   gapWidth: number;
   cssVariableName?: string;
@@ -33,8 +33,8 @@ type ResizablePanelGapProps = {
 export const ResizablePanelGap = ({
   side,
   constraints,
-  currentWidth,
-  onWidthChange,
+  currentSize,
+  onSizeChange,
   onCollapse,
   gapWidth,
   cssVariableName,
@@ -44,8 +44,8 @@ export const ResizablePanelGap = ({
     useResizablePanel({
       side,
       constraints,
-      currentWidth,
-      onWidthChange,
+      currentSize,
+      onSizeChange,
       onCollapse,
       cssVariableName,
       onResizeStart,

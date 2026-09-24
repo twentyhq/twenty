@@ -15,17 +15,20 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useScreenSize } from 'twenty-ui/utilities';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
+import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { useLogConsoleHotKeys } from '@/log-console/hooks/useLogConsoleHotKeys';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
+import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { type LogConsoleSourceId } from '@/log-console/types/LogConsoleSourceId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -33,10 +36,13 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
+import { RESIZE_EDGE_WIDTH_PX } from '@/ui/layout/resizable-panel/constants/ResizeEdgeWidthPx';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -50,7 +56,13 @@ import {
 
 const LOG_CONSOLE_TAB_LIST_INSTANCE_ID = 'log-console-tab-list';
 
-const LOG_CONSOLE_BODY_HEIGHT = 360;
+const LOG_CONSOLE_BAR_HEIGHT = 48;
+
+const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
+
+const LOG_CONSOLE_BAR_ACTIONS_WIDTH = themeCssVariables.spacing[22];
+
+const LOG_CONSOLE_MIN_PAGE_HEIGHT = 120;
 
 const StyledContainer = styled.div<{ isFullScreen: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -69,23 +81,31 @@ const StyledContainer = styled.div<{ isFullScreen: boolean }>`
 
 const StyledTabList = styled(TabList)`
   && {
-    height: ${themeCssVariables.spacing[12]};
+    height: ${LOG_CONSOLE_BAR_HEIGHT}px;
+    padding-left: ${LOG_CONSOLE_BAR_ACTIONS_WIDTH};
+    padding-top: ${RESIZE_EDGE_WIDTH_PX}px;
   }
 `;
 
 const StyledBarActions = styled.div`
+  box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  justify-content: flex-end;
   padding-right: ${themeCssVariables.spacing[2]};
+  width: ${LOG_CONSOLE_BAR_ACTIONS_WIDTH};
 `;
 
-const StyledBody = styled.div<{ isFullScreen: boolean }>`
+const StyledBody = styled.div<{ bodyHeight: number; isFullScreen: boolean }>`
   box-sizing: border-box;
   display: flex;
   flex: ${({ isFullScreen }) => (isFullScreen ? '1' : 'none')};
   flex-direction: column;
-  height: ${LOG_CONSOLE_BODY_HEIGHT}px;
-  min-height: 0;
+  height: var(
+    ${LOG_CONSOLE_HEIGHT_CSS_VARIABLE},
+    ${({ bodyHeight }) => bodyHeight}px
+  );
+  min-height: ${LOG_CONSOLE_HEIGHT_CONSTRAINTS.min}px;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
@@ -130,6 +150,10 @@ export const LogConsole = () => {
   const isLogConsoleSelectedLogOpened = useAtomStateValue(
     isLogConsoleSelectedLogOpenedSelector,
   );
+  const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
+    logConsoleHeightState,
+  );
+  const { height: windowHeight } = useScreenSize();
 
   const isLogConsoleAllowed =
     isLogsSettingsSectionEnabled &&
@@ -137,6 +161,19 @@ export const LogConsole = () => {
     hasSecurityPermission;
 
   useLogConsoleHotKeys({ isLogConsoleAllowed });
+
+  const logConsoleResizeConstraints = {
+    ...LOG_CONSOLE_HEIGHT_CONSTRAINTS,
+    min: 0,
+    max:
+      windowHeight / getUiZoom() -
+      LOG_CONSOLE_BAR_HEIGHT -
+      LOG_CONSOLE_MIN_PAGE_HEIGHT,
+  };
+  const logConsoleBodyHeight = Math.min(
+    logConsoleHeight,
+    logConsoleResizeConstraints.max,
+  );
 
   if (!isLogConsoleAllowed || isMobile || logConsoleDisplayMode === 'closed') {
     return null;
@@ -188,6 +225,26 @@ export const LogConsole = () => {
       setLogConsoleDisplayMode('open');
       setIsLogConsoleFullScreen(false);
     }
+  };
+
+  const handleResizeStart = (height: number) => {
+    if (height > 0) {
+      openLogConsole();
+    }
+  };
+
+  const handleHeightChange = (height: number) => {
+    document.documentElement.style.removeProperty(
+      LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
+    );
+
+    if (height === 0) {
+      setLogConsoleDisplayMode('collapsed');
+      return;
+    }
+
+    setLogConsoleHeight(Math.max(height, LOG_CONSOLE_HEIGHT_CONSTRAINTS.min));
+    openLogConsole();
   };
 
   const toggleLogConsoleOpen = () => {
@@ -316,11 +373,25 @@ export const LogConsole = () => {
           }
         />
         {isOpen && (
-          <StyledBody isFullScreen={isFullScreen}>
+          <StyledBody
+            bodyHeight={logConsoleBodyHeight}
+            isFullScreen={isFullScreen}
+          >
             {renderActiveSource()}
           </StyledBody>
         )}
       </TabListRoot>
+      {!isFullScreen && (
+        <ResizablePanelEdge
+          side="top"
+          constraints={logConsoleResizeConstraints}
+          currentSize={isOpen ? logConsoleBodyHeight : 0}
+          onSizeChange={handleHeightChange}
+          onCollapse={toggleLogConsoleOpen}
+          cssVariableName={LOG_CONSOLE_HEIGHT_CSS_VARIABLE}
+          onResizeStart={handleResizeStart}
+        />
+      )}
     </StyledContainer>
   );
 };

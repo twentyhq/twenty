@@ -11,29 +11,31 @@ import { type ResizablePanelSide } from '@/ui/layout/resizable-panel/types/Resiz
 type UseResizablePanelProps = {
   side: ResizablePanelSide;
   constraints: ResizablePanelConstraints;
-  currentWidth: number;
-  onWidthChange: (width: number) => void;
+  currentSize: number;
+  onSizeChange: (size: number) => void;
   onCollapse: () => void;
   cssVariableName?: string;
-  onResizeStart?: () => void;
+  onResizeStart?: (size: number) => void;
 };
 
-const clampWidth = (width: number, min: number, max: number): number =>
-  Math.min(max, Math.max(min, width));
+const clampSize = (size: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, size));
 
 export const useResizablePanel = ({
   side,
   constraints,
-  currentWidth,
-  onWidthChange,
+  currentSize,
+  onSizeChange,
   onCollapse,
   cssVariableName,
   onResizeStart,
 }: UseResizablePanelProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const [startX, setStartX] = useState<number | null>(null);
-  const [startWidth, setStartWidth] = useState<number>(0);
+  const [startPointerPosition, setStartPointerPosition] = useState<
+    number | null
+  >(null);
+  const [startSize, setStartSize] = useState<number>(0);
   const [hasDragged, setHasDragged] = useState(false);
 
   // captured once per drag: reading computed style on every move would
@@ -41,36 +43,37 @@ export const useResizablePanel = ({
   const [dragUiZoom, setDragUiZoom] = useState(1);
 
   const handleResizeMove = useCallback<PointerEventListener>(
-    ({ x }) => {
-      if (startX === null) return;
+    ({ x, y }) => {
+      if (startPointerPosition === null) return;
 
-      const deltaX = (x - startX) / dragUiZoom;
+      const pointerDelta =
+        ((side === 'top' ? y : x) - startPointerPosition) / dragUiZoom;
 
-      if (!hasDragged && Math.abs(deltaX) > RESIZE_DRAG_THRESHOLD_PX) {
+      if (Math.abs(pointerDelta) <= RESIZE_DRAG_THRESHOLD_PX) return;
+
+      const sizeDelta = side === 'right' ? pointerDelta : -pointerDelta;
+      const clampedSize = clampSize(
+        startSize + sizeDelta,
+        constraints.min,
+        constraints.max,
+      );
+
+      if (!hasDragged) {
         setHasDragged(true);
-        onResizeStart?.();
+        onResizeStart?.(clampedSize);
       }
 
-      if (Math.abs(deltaX) > RESIZE_DRAG_THRESHOLD_PX) {
-        const widthDelta = side === 'right' ? deltaX : -deltaX;
-        const clampedWidth = clampWidth(
-          startWidth + widthDelta,
-          constraints.min,
-          constraints.max,
+      if (cssVariableName !== undefined) {
+        document.documentElement.style.setProperty(
+          cssVariableName,
+          `${clampedSize}px`,
         );
-
-        if (cssVariableName !== undefined) {
-          document.documentElement.style.setProperty(
-            cssVariableName,
-            `${clampedWidth}px`,
-          );
-        }
       }
     },
     [
       dragUiZoom,
-      startX,
-      startWidth,
+      startPointerPosition,
+      startSize,
       hasDragged,
       side,
       constraints.min,
@@ -81,39 +84,40 @@ export const useResizablePanel = ({
   );
 
   const handleResizeEnd = useCallback<PointerEventListener>(
-    ({ x }) => {
-      if (startX === null) {
+    ({ x, y }) => {
+      if (startPointerPosition === null) {
         setIsResizing(false);
         return;
       }
 
-      const deltaX = (x - startX) / dragUiZoom;
+      const pointerDelta =
+        ((side === 'top' ? y : x) - startPointerPosition) / dragUiZoom;
 
       if (!hasDragged) {
         onCollapse();
       } else {
-        const widthDelta = side === 'right' ? deltaX : -deltaX;
-        const finalWidth = clampWidth(
-          startWidth + widthDelta,
+        const sizeDelta = side === 'right' ? pointerDelta : -pointerDelta;
+        const finalSize = clampSize(
+          startSize + sizeDelta,
           constraints.min,
           constraints.max,
         );
-        onWidthChange(finalWidth);
+        onSizeChange(finalSize);
       }
 
-      setStartX(null);
+      setStartPointerPosition(null);
       setIsResizing(false);
     },
     [
       dragUiZoom,
-      startX,
-      startWidth,
+      startPointerPosition,
+      startSize,
       hasDragged,
       side,
       constraints.min,
       constraints.max,
       onCollapse,
-      onWidthChange,
+      onSizeChange,
     ],
   );
 
@@ -127,12 +131,12 @@ export const useResizablePanel = ({
     (event: React.MouseEvent) => {
       event.preventDefault();
       setDragUiZoom(getUiZoom());
-      setStartX(event.clientX);
-      setStartWidth(currentWidth);
+      setStartPointerPosition(side === 'top' ? event.clientY : event.clientX);
+      setStartSize(currentSize);
       setHasDragged(false);
       setIsResizing(true);
     },
-    [currentWidth],
+    [side, currentSize],
   );
 
   const handleMouseEnter = useCallback(() => {
