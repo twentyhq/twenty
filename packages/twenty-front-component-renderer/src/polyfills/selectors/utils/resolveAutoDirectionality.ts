@@ -7,6 +7,7 @@ import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorEl
 import { collectChildNodes } from '@/polyfills/selectors/utils/collectChildNodes';
 import { isSelectorElementNode } from '@/polyfills/selectors/utils/isSelectorElementNode';
 import { readElementAttributeIgnoringCase } from '@/polyfills/selectors/utils/readElementAttributeIgnoringCase';
+import { readElementValue } from '@/polyfills/selectors/utils/readElementValue';
 import { resolveHtmlTagNameOfElement } from '@/polyfills/selectors/utils/resolveHtmlTagNameOfElement';
 import { resolveTextDirectionality } from '@/polyfills/selectors/utils/resolveTextDirectionality';
 
@@ -61,18 +62,13 @@ const resolveDescendantTextDirectionality = (
   return null;
 };
 
-const readTextEntryValue = (element: SelectorElementLike): string =>
-  isString(element.value)
-    ? element.value
-    : (readElementAttributeIgnoringCase(element, 'value') ?? '');
-
 export const resolveAutoDirectionality = (
   element: SelectorElementLike,
 ): Directionality => {
   const textDirectionality = TEXT_ENTRY_TAG_NAMES.has(
     resolveHtmlTagNameOfElement(element),
   )
-    ? resolveTextDirectionality(readTextEntryValue(element))
+    ? resolveTextDirectionality(readElementValue(element) ?? '')
     : resolveDescendantTextDirectionality(element);
 
   return textDirectionality ?? 'ltr';

@@ -1,7 +1,8 @@
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 import { readElementAttributeIgnoringCase } from '@/polyfills/selectors/utils/readElementAttributeIgnoringCase';
+import { readElementValue } from '@/polyfills/selectors/utils/readElementValue';
 import { resolveHtmlTagNameOfElement } from '@/polyfills/selectors/utils/resolveHtmlTagNameOfElement';
 import { resolveInputTypeOfElement } from '@/polyfills/selectors/utils/resolveInputTypeOfElement';
 
@@ -44,9 +45,5 @@ export const isElementPlaceholderShown = (
     return false;
   }
 
-  const value = isString(element.value)
-    ? element.value
-    : readElementAttributeIgnoringCase(element, 'value');
-
-  return !isNonEmptyString(value);
+  return !isNonEmptyString(readElementValue(element));
 };
