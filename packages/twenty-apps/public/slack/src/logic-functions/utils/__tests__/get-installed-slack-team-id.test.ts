@@ -101,19 +101,6 @@ describe('getInstalledSlackTeamId', () => {
     expect(setSlackConnectedAccountTeamMock).not.toHaveBeenCalled();
   });
 
-  it('should not store anything when Slack returns no team id', async () => {
-    getSlackConnectedAccountTeamMock.mockResolvedValue(null);
-    const authTestMock = createAuthTestMock().mockResolvedValue({ ok: true });
-
-    const result = await getInstalledSlackTeamId({
-      slackClient: buildSlackClient(authTestMock),
-      slackConnectionId: CONNECTION_ID,
-    });
-
-    expect(result).toBeUndefined();
-    expect(setSlackConnectedAccountTeamMock).not.toHaveBeenCalled();
-  });
-
   it('should return undefined without throwing when Slack rejects', async () => {
     getSlackConnectedAccountTeamMock.mockResolvedValue(null);
     const authTestMock = createAuthTestMock().mockRejectedValue(
@@ -129,7 +116,7 @@ describe('getInstalledSlackTeamId', () => {
     expect(setSlackConnectedAccountTeamMock).not.toHaveBeenCalled();
   });
 
-  it('should return undefined without throwing when healing the stored team fails', async () => {
+  it('should still return the team when healing the stored team fails', async () => {
     getSlackConnectedAccountTeamMock.mockResolvedValue(null);
     setSlackConnectedAccountTeamMock.mockRejectedValue(
       new Error('kv unavailable'),

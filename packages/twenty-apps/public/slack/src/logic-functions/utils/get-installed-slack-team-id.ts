@@ -32,7 +32,6 @@ export const getInstalledSlackTeamId = async ({
     return undefined;
   }
 
-  // installs predating this read path have no stored team, so heal it here
   if (isNonEmptyString(slackConnectionId)) {
     await setSlackConnectedAccountTeam({
       connectedAccountId: slackConnectionId,
