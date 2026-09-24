@@ -1,3 +1,4 @@
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import {
   type EventLogRecord,
   EventLogTable,
@@ -67,20 +68,55 @@ const buildApplicationLogRecord = ({
   },
 });
 
-const SARAH_CHEN_USER_ID = '7f49f132-56c7-4beb-8ea6-f336fe487c7d';
+const SARAH_CHEN: PartialWorkspaceMember = {
+  id: 'dc0f5751-afb7-43de-86c1-8bd150934d5f',
+  userId: '7f49f132-56c7-4beb-8ea6-f336fe487c7d',
+  userWorkspaceId: '13b99c62-ed19-402a-b341-e5e3c5f818c0',
+  name: { firstName: 'Sarah', lastName: 'Chen' },
+  userEmail: 'sarah.chen@acme.com',
+};
 
-const MARC_DUBOIS_USER_ID = 'cefec196-1610-4e82-95db-99ed5856117b';
+const MARC_DUBOIS: PartialWorkspaceMember = {
+  id: '7112c4f4-d9c7-4eaf-b52f-84f2bd9c1b7c',
+  userId: 'cefec196-1610-4e82-95db-99ed5856117b',
+  userWorkspaceId: '76a92f7c-4d6f-451c-890f-b94a65ccda58',
+  name: { firstName: 'Marc', lastName: 'Dubois' },
+  userEmail: 'marc.dubois@acme.com',
+};
+
+const PRIYA_NAIR: PartialWorkspaceMember = {
+  id: '0ff394ad-264b-4761-a583-f1d74ef00e3d',
+  userId: 'f5dc04b7-90b8-46e9-82bb-4d9798fe6588',
+  userWorkspaceId: 'd7d9c043-9e04-4210-ad58-3208f322b833',
+  name: { firstName: 'Priya', lastName: 'Nair' },
+  userEmail: 'priya.nair@acme.com',
+};
+
+const JONAS_WEBER: PartialWorkspaceMember = {
+  id: '927db2a7-dd99-4004-8cd5-b9ff216c0a0b',
+  userId: 'e64aa8bd-6a2d-4348-993f-0b0328e5f5ec',
+  userWorkspaceId: '3a6e65ea-f0a6-482d-bded-40d81e1bb92b',
+  name: { firstName: 'Jonas', lastName: 'Weber' },
+  userEmail: 'jonas.weber@acme.com',
+};
+
+export const mockedEventLogWorkspaceMembers: PartialWorkspaceMember[] = [
+  SARAH_CHEN,
+  MARC_DUBOIS,
+  PRIYA_NAIR,
+  JONAS_WEBER,
+];
 
 const SARAH_CHEN_ACTOR = {
   source: 'MANUAL',
-  workspaceMemberId: 'dc0f5751-afb7-43de-86c1-8bd150934d5f',
+  workspaceMemberId: SARAH_CHEN.id,
   name: 'Sarah Chen',
   context: {},
 };
 
 const MARC_DUBOIS_ACTOR = {
   source: 'MANUAL',
-  workspaceMemberId: '7112c4f4-d9c7-4eaf-b52f-84f2bd9c1b7c',
+  workspaceMemberId: MARC_DUBOIS.id,
   name: 'Marc Dubois',
   context: {},
 };
@@ -117,6 +153,9 @@ const ETHAN_BROOKS_AFTER_CREATION = {
   updatedBy: MARC_DUBOIS_ACTOR,
 };
 
+const CHROME_ON_MAC_USER_AGENT =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
+
 export const mockedEventLogRecordsByTable: Partial<
   Record<EventLogTable, EventLogRecord[]>
 > = {
@@ -125,7 +164,7 @@ export const mockedEventLogRecordsByTable: Partial<
       __typename: 'EventLogRecord',
       event: 'Object Record Updated',
       timestamp: '2026-09-24T11:57:48.203Z',
-      userId: SARAH_CHEN_USER_ID,
+      userId: SARAH_CHEN.userId,
       recordId: LUMEN_HEALTH_PILOT_BEFORE_UPDATE.id,
       objectMetadataId: getMockObjectMetadataItemOrThrow('opportunity').id,
       properties: {
@@ -168,7 +207,7 @@ export const mockedEventLogRecordsByTable: Partial<
       __typename: 'EventLogRecord',
       event: 'Object Record Created',
       timestamp: '2026-09-24T11:30:12.004Z',
-      userId: MARC_DUBOIS_USER_ID,
+      userId: MARC_DUBOIS.userId,
       recordId: ETHAN_BROOKS_AFTER_CREATION.id,
       objectMetadataId: getMockObjectMetadataItemOrThrow('person').id,
       properties: { after: ETHAN_BROOKS_AFTER_CREATION },
@@ -189,6 +228,13 @@ export const mockedEventLogRecordsByTable: Partial<
       executionId: SYNC_STRIPE_INVOICES_EXECUTION_ID,
       level: 'ERROR',
       message: 'Sync failed: 9 of 9 invoices could not be mapped',
+    }),
+    buildApplicationLogRecord({
+      timestamp: '2026-09-24T12:00:07.555Z',
+      logicFunction: SYNC_STRIPE_INVOICES,
+      executionId: SYNC_STRIPE_INVOICES_EXECUTION_ID,
+      level: 'ERROR',
+      message: AMOUNT_DUE_TYPE_ERROR,
     }),
     buildApplicationLogRecord({
       timestamp: '2026-09-24T12:00:07.555Z',
@@ -226,5 +272,37 @@ export const mockedEventLogRecordsByTable: Partial<
       level: 'INFO',
       message: 'Fetched firmographics for halcyon-robotics.com in 819 ms',
     }),
+  ],
+  [EventLogTable.PAGEVIEW]: [
+    {
+      __typename: 'EventLogRecord',
+      event: 'Twenty',
+      timestamp: '2026-09-24T11:59:02.114Z',
+      userId: PRIYA_NAIR.userId,
+      recordId: null,
+      objectMetadataId: null,
+      properties: {
+        href: 'https://acme.twenty.com/objects/opportunities',
+        pathname: '/objects/opportunities',
+        sessionId: '000aec5a-6c6c-4d91-aac9-a52397b439e2',
+        locale: 'en-US',
+        userAgent: CHROME_ON_MAC_USER_AGENT,
+      },
+    },
+    {
+      __typename: 'EventLogRecord',
+      event: 'Twenty',
+      timestamp: '2026-09-24T11:52:40.870Z',
+      userId: SARAH_CHEN.userId,
+      recordId: null,
+      objectMetadataId: null,
+      properties: {
+        href: `https://acme.twenty.com/object/company/${OAKRIDGE_FOODS_BEFORE_UPDATE.id}`,
+        pathname: `/object/company/${OAKRIDGE_FOODS_BEFORE_UPDATE.id}`,
+        sessionId: 'fe8766d8-3323-44ac-ad66-42d2d3dcda9b',
+        locale: 'fr-FR',
+        userAgent: CHROME_ON_MAC_USER_AGENT,
+      },
+    },
   ],
 };

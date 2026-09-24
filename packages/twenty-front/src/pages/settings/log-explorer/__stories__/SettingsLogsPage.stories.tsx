@@ -1,9 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -21,7 +24,10 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import { mockedEventLogRecordsByTable } from '~/testing/mock-data/event-logs';
+import {
+  mockedEventLogRecordsByTable,
+  mockedEventLogWorkspaceMembers,
+} from '~/testing/mock-data/event-logs';
 import {
   mockCurrentWorkspace,
   mockedUserData,
@@ -51,6 +57,18 @@ const meta: Meta<PageDecoratorArgs> = {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: Object.values(PermissionFlagType),
     });
+    jotaiStore.set(
+      currentWorkspaceMembersState.atom,
+      mockedEventLogWorkspaceMembers,
+    );
+    jotaiStore.set(
+      workspaceMemberFormatPreferencesState.atom,
+      (formatPreferences) => ({
+        ...formatPreferences,
+        timeZone: 'Europe/Paris',
+        timeFormat: TimeFormat.HOUR_24,
+      }),
+    );
   },
   parameters: {
     mockingDate: new Date('2026-09-24T12:05:00Z'),
@@ -103,7 +121,75 @@ export const AppLogs: Story = {
     await userEvent.click(
       await canvas.findByRole('link', { name: 'App logs' }),
     );
-    await canvas.findByText('scoreInboundLead');
+
+    expect(
+      await canvas.findAllByText(
+        "TypeError: Cannot read properties of undefined (reading 'amount_due')",
+      ),
+    ).toHaveLength(2);
+  },
+};
+
+export const PageViews: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('link', { name: 'Page views' }),
+    );
+    await canvas.findByText('Priya Nair');
+  },
+};
+
+export const LoadError: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query(getOperationName(GET_EVENT_LOGS) ?? '', () =>
+          HttpResponse.json({
+            errors: [{ message: 'ClickHouse is unavailable' }],
+          }),
+        ),
+        ...(meta.parameters?.msw.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText("Couldn't load logs");
+    await canvas.findByRole('button', { name: 'Try again' });
+  },
+};
+
+export const NoLogs: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query(getOperationName(GET_EVENT_LOGS) ?? '', () =>
+          HttpResponse.json({
+            data: {
+              eventLogs: {
+                __typename: 'EventLogQueryResult',
+                records: [],
+                totalCount: 0,
+                pageInfo: {
+                  __typename: 'EventLogPageInfo',
+                  endCursor: null,
+                  hasNextPage: false,
+                },
+              },
+            },
+          }),
+        ),
+        ...(meta.parameters?.msw.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('No logs yet');
   },
 };
 
