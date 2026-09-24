@@ -45,10 +45,7 @@ export class AdminPanelUsageLimitDefaultDTO {
 }
 
 @ObjectType('AdminPanelUsageLimit')
-export class AdminPanelUsageLimitDTO extends UsageLimitDTO {
-  @Field(() => Boolean)
-  isEnforcedOnCurrentPlan: boolean;
-}
+export class AdminPanelUsageLimitDTO extends UsageLimitDTO {}
 
 @ObjectType('AdminPanelWorkspaceUsageLimits')
 export class AdminPanelWorkspaceUsageLimitsDTO {

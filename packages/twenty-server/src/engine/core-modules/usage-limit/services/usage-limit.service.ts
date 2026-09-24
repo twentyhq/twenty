@@ -18,6 +18,7 @@ import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { assertUsageLimitDefaultOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-default-override-is-allowed.util';
+import { assertUsageLimitInstanceOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-instance-override-is-allowed.util';
 import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
@@ -78,6 +79,7 @@ export class UsageLimitService {
       ...scope,
       limitValue: input.limitValue,
       burstValue: input.burstValue ?? null,
+      isInstanceOverride: isOperator,
     });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
@@ -116,6 +118,8 @@ export class UsageLimitService {
 
     const authorizedScope = buildUsageLimitScope(usageLimit);
 
+    assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
+
     // An update rewrites the whole scope, so moving a row off a default is a
     // deletion in disguise and needs the gate the leaving scope would get.
     assertUsageLimitDefaultOverrideIsAllowed({
@@ -142,6 +146,7 @@ export class UsageLimitService {
         ...scope,
         limitValue: input.payload.limitValue,
         burstValue: input.payload.burstValue ?? null,
+        isInstanceOverride: isOperator,
       },
     );
 
@@ -255,6 +260,8 @@ export class UsageLimitService {
     if (!isDefined(usageLimit)) {
       return false;
     }
+
+    assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
 
     // Deleting an override hands the scope back to the looser config default.
     assertUsageLimitDefaultOverrideIsAllowed({

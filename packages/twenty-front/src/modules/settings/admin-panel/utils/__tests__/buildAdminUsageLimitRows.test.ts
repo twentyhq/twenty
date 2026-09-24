@@ -33,7 +33,6 @@ const buildLimit = (
   periodUnit: 'lifetime',
   limitValue: 50,
   burstValue: null,
-  isEnforcedOnCurrentPlan: true,
   ...overrides,
 });
 
@@ -70,7 +69,6 @@ describe('buildAdminUsageLimitRows', () => {
     );
 
     expect(row.isOverridden).toBe(true);
-    expect(row.isOverrideEnforced).toBe(true);
     expect(row.usageLimitId).toBe('limit-1');
     expect(row.limitValue).toBe(50);
     expect(row.defaultValue).toBe(100);
@@ -82,21 +80,8 @@ describe('buildAdminUsageLimitRows', () => {
     );
 
     expect(row.isOverridden).toBe(false);
-    expect(row.isOverrideEnforced).toBe(false);
     expect(row.usageLimitId).toBeNull();
     expect(row.limitValue).toBe(100);
-  });
-
-  it('marks an override the current plan does not enforce', () => {
-    const [row] = buildAdminUsageLimitRows(
-      buildWorkspaceUsageLimits({
-        defaults: [buildDefault({ overriddenByUsageLimitId: 'limit-1' })],
-        limits: [buildLimit({ isEnforcedOnCurrentPlan: false })],
-      }),
-    );
-
-    expect(row.isOverridden).toBe(true);
-    expect(row.isOverrideEnforced).toBe(false);
   });
 
   it('leaves a default writable when the server named no row for it', () => {

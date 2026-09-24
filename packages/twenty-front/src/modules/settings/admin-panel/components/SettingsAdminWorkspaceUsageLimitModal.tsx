@@ -169,10 +169,6 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
 
   const meterLabel = getUsageLimitLabel(USAGE_LIMIT_METER_LABELS, row.meter);
   const scopeLabel = getAdminUsageLimitScopeLabel(row);
-  const unenforcedNotice =
-    row.isOverridden && !row.isOverrideEnforced
-      ? t`This override is stored but the workspace's plan does not enforce it, so the instance default still caps this scope.`
-      : null;
   const defaultText = formatUsageLimitValue({
     value: row.defaultValue,
     meter: row.meter,
@@ -205,11 +201,6 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
             <Section.Root align="center" color="primary">
               {t`${scopeLabel} — the instance default is ${defaultText}. Saving applies to this workspace only.`}
             </Section.Root>
-            {isDefined(unenforcedNotice) && (
-              <Section.Root align="center" color="primary">
-                {unenforcedNotice}
-              </Section.Root>
-            )}
           </StyledSectionContainer>
 
           <StyledFields>

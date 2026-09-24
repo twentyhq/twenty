@@ -26,8 +26,6 @@ export const buildAdminUsageLimitRows = (
         ? usageLimitById.get(usageLimitDefault.overriddenByUsageLimitId)
         : undefined;
       const defaultValue = Number(usageLimitDefault.limitValue);
-      const isOverrideEnforced =
-        isDefined(override) && override.isEnforcedOnCurrentPlan;
 
       return {
         id: `usage-limit-default-${index}`,
@@ -48,7 +46,6 @@ export const buildAdminUsageLimitRows = (
             : null,
         usageLimitId: override?.id ?? null,
         isOverridden: isDefined(override),
-        isOverrideEnforced,
       };
     })
     .sort((rowA, rowB) => buildSortKey(rowA).localeCompare(buildSortKey(rowB)));

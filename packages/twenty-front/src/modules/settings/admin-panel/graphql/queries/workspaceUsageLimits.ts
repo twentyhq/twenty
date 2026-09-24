@@ -21,7 +21,6 @@ export const WORKSPACE_USAGE_LIMITS = gql`
         periodUnit
         limitValue
         burstValue
-        isEnforcedOnCurrentPlan
       }
     }
   }

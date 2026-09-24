@@ -20,5 +20,4 @@ export type AdminUsageLimitRow = {
   burstValue: number | null;
   usageLimitId: string | null;
   isOverridden: boolean;
-  isOverrideEnforced: boolean;
 };

@@ -15,6 +15,7 @@ import {
   AdminPanelWorkspaceUsageLimitsDTO,
 } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-usage-limits.dto';
 import { AdminPanelUsageLimitService } from 'src/engine/core-modules/admin-panel/services/admin-panel-usage-limit.service';
+import { fromUsageLimitEntityToAdminPanelDto } from 'src/engine/core-modules/admin-panel/utils/from-usage-limit-entity-to-admin-panel-dto.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -66,10 +67,7 @@ export class AdminPanelUsageLimitResolver {
       isOperator: true,
     });
 
-    return this.adminPanelUsageLimitService.buildAdminPanelUsageLimit({
-      workspaceId,
-      usageLimit,
-    });
+    return fromUsageLimitEntityToAdminPanelDto(usageLimit);
   }
 
   @UseGuards(AdminPanelGuard)
@@ -83,10 +81,7 @@ export class AdminPanelUsageLimitResolver {
       isOperator: true,
     });
 
-    return this.adminPanelUsageLimitService.buildAdminPanelUsageLimit({
-      workspaceId,
-      usageLimit,
-    });
+    return fromUsageLimitEntityToAdminPanelDto(usageLimit);
   }
 
   @UseGuards(AdminPanelGuard)

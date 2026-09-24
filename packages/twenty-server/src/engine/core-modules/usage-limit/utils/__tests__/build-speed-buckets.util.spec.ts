@@ -45,6 +45,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   meter: 'quantity',
   limitValue: 100,
   burstValue: null,
+  isInstanceOverride: false,
   ...overrides,
 });
 

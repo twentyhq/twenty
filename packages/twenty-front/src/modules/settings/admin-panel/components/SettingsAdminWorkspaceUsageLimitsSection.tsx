@@ -38,22 +38,10 @@ const USAGE_LIMITS_GRID_AUTO_COLUMNS = '1fr 120px 120px 110px 100px 36px';
 
 const getStatus = (
   row: AdminUsageLimitRow,
-): { label: MessageDescriptor; color: ThemeColor } => {
-  if (!row.isOverridden) {
-    return { label: msg`Default`, color: 'green' };
-  }
-
-  if (!row.isOverrideEnforced) {
-    return { label: msg`Inactive`, color: 'gray' };
-  }
-
-  return { label: msg`Override`, color: 'blue' };
-};
-
-const getEnforcedValue = (row: AdminUsageLimitRow): number =>
-  row.isOverridden && row.isOverrideEnforced
-    ? row.limitValue
-    : row.defaultValue;
+): { label: MessageDescriptor; color: ThemeColor } =>
+  row.isOverridden
+    ? { label: msg`Override`, color: 'blue' }
+    : { label: msg`Default`, color: 'green' };
 
 export const SettingsAdminWorkspaceUsageLimitsSection = ({
   workspaceId,
@@ -126,7 +114,7 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
             Cell: ({ item }) => (
               <>
                 {formatUsageLimitValue({
-                  value: getEnforcedValue(item),
+                  value: item.limitValue,
                   meter: item.meter,
                 })}
               </>
