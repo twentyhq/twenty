@@ -15,7 +15,7 @@ import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';

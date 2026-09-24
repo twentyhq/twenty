@@ -14,7 +14,7 @@ import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavig
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 // Expanded, the row is sized off the page card header beside it so the rules
 // read as one line across both columns.

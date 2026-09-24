@@ -22,7 +22,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

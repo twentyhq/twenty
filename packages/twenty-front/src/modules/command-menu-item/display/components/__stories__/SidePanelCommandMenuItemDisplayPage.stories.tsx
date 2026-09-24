@@ -6,7 +6,7 @@ import {
 } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
 import { HttpResponse, graphql } from 'msw';
-import { Context as ResponsiveContext } from 'react-responsive';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -107,7 +107,6 @@ type CreateDecoratorParams = {
   isNavigationDrawerExpanded?: boolean;
   isInPreviewMode?: boolean;
   pathname?: string;
-  viewportWidth?: number;
   colorScheme?: ColorScheme;
 };
 
@@ -119,7 +118,6 @@ const createDecorator =
     isNavigationDrawerExpanded = true,
     isInPreviewMode = false,
     pathname = '/objects/companies',
-    viewportWidth = 1280,
     colorScheme = 'System',
   }: CreateDecoratorParams): Decorator =>
   (Story) => {
@@ -163,29 +161,27 @@ const createDecorator =
 
     return (
       <JotaiProvider store={jotaiStore}>
-        <ResponsiveContext.Provider value={{ width: viewportWidth }}>
-          <MemoryRouter initialEntries={[pathname]}>
-            <CommandMenuComponentInstanceContext.Provider
-              value={{ instanceId: 'story-command-menu' }}
+        <MemoryRouter initialEntries={[pathname]}>
+          <CommandMenuComponentInstanceContext.Provider
+            value={{ instanceId: 'story-command-menu' }}
+          >
+            <CommandMenuContext.Provider
+              value={{
+                displayType: 'listItem',
+                containerType: CommandMenuItemContainerType.CommandMenuList,
+                commandMenuItems,
+                commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+                isInPreviewMode,
+              }}
             >
-              <CommandMenuContext.Provider
-                value={{
-                  displayType: 'listItem',
-                  containerType: CommandMenuItemContainerType.CommandMenuList,
-                  commandMenuItems,
-                  commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
-                  isInPreviewMode,
-                }}
-              >
-                <BaseThemeProvider>
-                  <ToastStoryContainer>
-                    <Story />
-                  </ToastStoryContainer>
-                </BaseThemeProvider>
-              </CommandMenuContext.Provider>
-            </CommandMenuComponentInstanceContext.Provider>
-          </MemoryRouter>
-        </ResponsiveContext.Provider>
+              <BaseThemeProvider>
+                <ToastStoryContainer>
+                  <Story />
+                </ToastStoryContainer>
+              </BaseThemeProvider>
+            </CommandMenuContext.Provider>
+          </CommandMenuComponentInstanceContext.Provider>
+        </MemoryRouter>
       </JotaiProvider>
     );
   };
@@ -193,6 +189,18 @@ const createDecorator =
 const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
   title: 'Modules/CommandMenu/SidePanelCommandMenuItemDisplayPage',
   component: SidePanelCommandMenuItemDisplayPage,
+  beforeEach: ({ parameters }) => {
+    const matchMedia = window.matchMedia.bind(window);
+    spyOn(window, 'matchMedia').mockImplementation((query) => {
+      const mediaQueryList = matchMedia(query);
+      if (query === `(max-width: ${MOBILE_VIEWPORT}px)`) {
+        Object.defineProperty(mediaQueryList, 'matches', {
+          value: parameters.isMobile === true,
+        });
+      }
+      return mediaQueryList;
+    });
+  },
   decorators: [
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
@@ -427,11 +435,11 @@ export const SearchSidebarWithCaseAndWhitespace: Story = {
 };
 
 export const HiddenOnMobile: Story = {
+  parameters: { isMobile: true },
   decorators: [
     createDecorator({
       commandMenuItems: [OTHER_ITEM],
       sidePanelSearch: 'sidebar',
-      viewportWidth: 375,
     }),
   ],
   play: SearchWithoutMatchingItemsAndWithoutFallback.play,

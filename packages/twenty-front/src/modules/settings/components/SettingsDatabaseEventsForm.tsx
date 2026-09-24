@@ -1,6 +1,6 @@
 import { WebhookEntitySelect } from '@/settings/developers/components/WebhookEntitySelect';
 import { Select } from '@/ui/input/components/Select';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';

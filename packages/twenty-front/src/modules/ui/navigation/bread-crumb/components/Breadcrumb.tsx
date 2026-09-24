@@ -1,5 +1,5 @@
 import { MobileBreadcrumb } from '@/ui/navigation/bread-crumb/components/MobileBreadcrumb';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { Fragment, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';

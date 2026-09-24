@@ -1,5 +1,5 @@
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import React, { useContext } from 'react';
