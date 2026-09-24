@@ -102,7 +102,9 @@ const bootstrap = async () => {
     }),
   );
 
-  generateFrontConfig();
+  generateFrontConfig({
+    clientConfigCacheKey: twentyConfigService.get('CLIENT_CONFIG_CACHE_KEY'),
+  });
 
   const keepAliveTimeout = twentyConfigService.get(
     'SERVER_KEEP_ALIVE_TIMEOUT_MS',

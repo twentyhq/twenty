@@ -1559,6 +1559,18 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'Appended as a query parameter to the frontend client-config request. ' +
+      'Change it to bypass client-config responses cached by a CDN or by ' +
+      'browsers. Only applies when the server serves the frontend.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  CLIENT_CONFIG_CACHE_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Express "trust proxy" setting. Controls whether X-Forwarded-* ' +
       'headers are honored — required for request.protocol to return ' +
       '"https" when TLS is terminated upstream (reverse proxy, ingress, ' +

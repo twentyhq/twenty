@@ -49,4 +49,18 @@ describe('generateFrontConfig', () => {
 
     expect(getInjectedEnv()).toBe('{}');
   });
+
+  it('should expose the client config cache key to the front', () => {
+    generateFrontConfig({ clientConfigCacheKey: '2026-09-24' });
+
+    expect(getInjectedEnv()).toBe(
+      '{"REACT_APP_CLIENT_CONFIG_CACHE_KEY":"2026-09-24"}',
+    );
+  });
+
+  it('should not expose an empty client config cache key', () => {
+    generateFrontConfig({ clientConfigCacheKey: '' });
+
+    expect(getInjectedEnv()).toBe('{}');
+  });
 });
