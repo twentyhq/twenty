@@ -126,6 +126,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
   const sourceId = randomUUID();
 
   beforeAll(async () => {
+    await setRecordSharingEnabled(true);
     recordShareStorageService =
       getAppProviderByClassName<RecordShareStorageService>(
         'RecordShareStorageService',
@@ -214,7 +215,6 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       noteObjectMetadataId,
       MetadataReadability.PRIVATE,
     );
-    await setRecordSharingEnabled(true);
   });
 
   afterAll(async () => {

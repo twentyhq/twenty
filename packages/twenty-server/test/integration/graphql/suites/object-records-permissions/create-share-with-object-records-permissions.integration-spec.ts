@@ -674,7 +674,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       await setRecordSharingEnabled(false);
     });
 
-    it('keeps an API-created record restricted to the creating role with the flag off', async () => {
+    it('preserves workspace access for an API-created record with the flag off', async () => {
       const recordId = trackRecordId();
 
       const response = await makeGraphqlAPIRequestWithApiKey(
@@ -686,19 +686,30 @@ describe('createShareWithObjectRecordsPermissions', () => {
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.createShareWithTestObject.id).toBe(recordId);
 
-      expect(await findRecordShares(recordId)).toEqual([
-        expect.objectContaining({
-          recordId,
-          principalId: adminRoleId,
-          principalType: RecordSharePrincipalType.ROLE,
-          accessLevel: RecordShareAccessLevel.FULL,
-          rowCause: RecordShareRowCause.MANUAL,
-          sourceId: recordId,
-        }),
-      ]);
+      expect(await findRecordShares(recordId)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            recordId,
+            principalId: adminRoleId,
+            principalType: RecordSharePrincipalType.ROLE,
+            accessLevel: RecordShareAccessLevel.FULL,
+            rowCause: RecordShareRowCause.MANUAL,
+            sourceId: recordId,
+          }),
+          expect.objectContaining({
+            recordId,
+            principalId: EVERYONE_PRINCIPAL_ID,
+            principalType: RecordSharePrincipalType.EVERYONE,
+            accessLevel: RecordShareAccessLevel.FULL,
+            rowCause: RecordShareRowCause.APPLICATION,
+            sourceId: objectMetadataId,
+          }),
+        ]),
+      );
+      expect(await findRecordShares(recordId)).toHaveLength(2);
     });
 
-    it('keeps a user-created private record owner-only with the flag off', async () => {
+    it('preserves workspace access and ownership for a user-created record with the flag off', async () => {
       const recordId = trackRecordId();
 
       const response = await makeGraphqlAPIRequest(
@@ -714,9 +725,17 @@ describe('createShareWithObjectRecordsPermissions', () => {
           expect.objectContaining(
             ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
           ),
+          expect.objectContaining({
+            recordId,
+            principalId: EVERYONE_PRINCIPAL_ID,
+            principalType: RecordSharePrincipalType.EVERYONE,
+            accessLevel: RecordShareAccessLevel.FULL,
+            rowCause: RecordShareRowCause.APPLICATION,
+            sourceId: objectMetadataId,
+          }),
         ]),
       );
-      expect(await findRecordShares(recordId)).toHaveLength(1);
+      expect(await findRecordShares(recordId)).toHaveLength(2);
     });
   });
 
