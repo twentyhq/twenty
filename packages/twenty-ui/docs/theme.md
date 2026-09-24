@@ -11,23 +11,18 @@ Contexts initialize when a provider or hook is used, so importing static tokens 
 For consumers that need concrete JavaScript values in a worker, pass the theme explicitly:
 
 ```tsx
-import {
-  THEME_DARK,
-  THEME_LIGHT,
-  ThemeProvider,
-  type ThemeType,
-} from 'twenty-ui/theme';
+import { THEME_DARK, THEME_LIGHT, ThemeProvider } from 'twenty-ui/theme';
 
 <ThemeProvider
   colorScheme={colorScheme}
   applyToRoot={false}
-  theme={(colorScheme === 'dark' ? THEME_DARK : THEME_LIGHT) as unknown as ThemeType}
+  theme={colorScheme === 'dark' ? THEME_DARK : THEME_LIGHT}
 >
   {children}
 </ThemeProvider>;
 ```
 
-The explicit `theme` supplies hook values and updates when the prop changes. CSS classes, overrides, scaling, and portal scope retain their existing behavior. CSS overrides do not modify an explicitly supplied theme object. Static theme constants retain their callable spacing helper, while `ThemeType` describes resolved CSS spacing entries, so the existing static-theme assertion remains necessary.
+The explicit `theme` supplies hook values and updates when the prop changes. CSS classes, overrides, scaling, and portal scope retain their existing behavior. CSS overrides do not modify an explicitly supplied theme object. `THEME_LIGHT` and `THEME_DARK` keep their callable spacing helper; the provider resolves it into the same spacing entries that `useTheme()` returns from CSS variables, so `theme.spacing[3]` works with either source.
 
 Raw contexts and their implementation types are private. Replace a direct context read with the corresponding hook, including separate hook calls when reading both the theme and color scheme. The React and Preact theme-token gallery stories demonstrate the public provider configuration used to replace the call-recorder and Granola context providers.
 

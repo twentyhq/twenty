@@ -10,7 +10,6 @@ import {
   THEME_LIGHT,
   ThemeProvider,
   themeCssVariables,
-  type ThemeType,
   useTheme,
   useThemeColorScheme,
   useThemeContainer,
@@ -201,6 +200,7 @@ const ThemeReadout = () => {
       <output aria-label="Theme color">{theme.font.color.primary}</output>
       <output aria-label="Theme scope">{container?.className ?? 'root'}</output>
       <output aria-label="Icon size">{theme.icon.size.md}</output>
+      <output aria-label="Spacing">{theme.spacing[3]}</output>
     </>
   );
 };
@@ -217,7 +217,7 @@ const ChangingTheme = ({
     <ThemeProvider
       colorScheme={colorScheme}
       applyToRoot={false}
-      theme={staticValues ? (staticTheme as unknown as ThemeType) : undefined}
+      theme={staticValues ? staticTheme : undefined}
     >
       <div
         style={{
@@ -242,6 +242,7 @@ export const ColorSchemeChanges: Story = {
         THEME_LIGHT.font.color.primary,
       ),
     );
+    await expect(canvas.getByLabelText('Spacing')).toHaveTextContent('12px');
     await userEvent.click(
       canvas.getByRole('button', { name: 'Use dark theme' }),
     );

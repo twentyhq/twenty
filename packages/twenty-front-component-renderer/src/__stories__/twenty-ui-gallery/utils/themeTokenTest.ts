@@ -23,6 +23,7 @@ export const themeTokenTest: TwentyUiGalleryPlayFunction = async ({
   expect(canvas.getByLabelText('Static theme color')).toHaveTextContent(
     THEME_LIGHT.font.color.primary,
   );
+  expect(canvas.getByLabelText('Static spacing')).toHaveTextContent('12px');
   await userEvent.click(
     canvas.getByRole('button', { name: 'Use dark values' }),
   );

@@ -6,7 +6,6 @@ import {
   THEME_DARK,
   THEME_LIGHT,
   ThemeProvider,
-  type ThemeType,
   useTheme,
   useThemeColorScheme,
 } from 'twenty-ui/theme';
@@ -27,6 +26,7 @@ const TokenSizedIcon = () => {
         {theme.font.color.primary}
       </output>
       <output aria-label="Static color scheme">{colorScheme}</output>
+      <output aria-label="Static spacing">{theme.spacing[3]}</output>
     </>
   );
 };
@@ -54,7 +54,7 @@ const ThemeTokensComponent = () => {
       <ThemeProvider
         colorScheme={colorScheme}
         applyToRoot={false}
-        theme={theme as unknown as ThemeType}
+        theme={theme}
       >
         <TokenSizedIcon />
         <Button onClick={() => setColorScheme('dark')}>Use dark values</Button>

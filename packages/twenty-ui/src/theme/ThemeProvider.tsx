@@ -6,6 +6,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { computeThemeFromCss } from './internal/computeThemeFromCss';
 import { getThemeContext } from './internal/getThemeContext';
 import { getThemeScopeContext } from './internal/getThemeScopeContext';
+import { resolveExplicitTheme } from './internal/resolveExplicitTheme';
 import { type ThemeProviderProps } from './ThemeProviderProps';
 import { type ThemeType } from './themeTypes';
 
@@ -77,7 +78,15 @@ export const ThemeProvider = ({
     };
   }, [scale, isScoped]);
 
-  const contextValue = { theme: providedTheme ?? theme, colorScheme };
+  const explicitTheme = React.useMemo(
+    () =>
+      isDefined(providedTheme)
+        ? resolveExplicitTheme(providedTheme)
+        : undefined,
+    [providedTheme],
+  );
+
+  const contextValue = { theme: explicitTheme ?? theme, colorScheme };
 
   if (!isScoped) {
     return (
