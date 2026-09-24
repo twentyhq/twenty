@@ -51,6 +51,12 @@ describe('installCompareDocumentPositionPolyfill', () => {
     expect(() =>
       element.compareDocumentPosition(null as unknown as Node),
     ).toThrow(TypeError);
+    expect(() => element.compareDocumentPosition({} as Node)).toThrow(
+      TypeError,
+    );
+    expect(() =>
+      element.compareDocumentPosition({ parentNode: null } as unknown as Node),
+    ).toThrow(TypeError);
   });
 
   it('should keep disconnected ordering stable and reverse it when arguments reverse', () => {
