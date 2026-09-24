@@ -129,6 +129,10 @@ export class ApiService {
     return this.fileApi.installTarballApp(...args);
   }
 
+  uploadFile(...args: Parameters<FileApi['uploadFile']>) {
+    return this.fileApi.uploadFile(...args);
+  }
+
   createApplicationFileUploads(
     ...args: Parameters<FileApi['createApplicationFileUploads']>
   ) {
