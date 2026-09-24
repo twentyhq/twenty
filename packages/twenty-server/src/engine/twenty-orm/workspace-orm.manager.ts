@@ -145,10 +145,6 @@ export class WorkspaceOrmManager {
         await this.recordSharingFeatureService.isLegacyRecordAccessOpen(
           workspaceId,
         ),
-      isRecordSharingEnabled:
-        await this.recordSharingFeatureService.isRecordSharingEnabled(
-          workspaceId,
-        ),
       permissionsPerRoleId,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -195,7 +191,6 @@ export class WorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
-      isRecordSharingEnabled: false,
       permissionsPerRoleId: {},
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
