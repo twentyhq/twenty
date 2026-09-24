@@ -1,11 +1,16 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
-import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 export const isLegacyRecordAccessOpen = ({
   flatObjectMetadataMaps,
   wasRecordSharingEnabled,
-}: Pick<WorkspaceInternalContext, 'flatObjectMetadataMaps'> & {
+}: {
+  flatObjectMetadataMaps: {
+    byUniversalIdentifier: Record<
+      string,
+      { readability: MetadataReadability } | undefined
+    >;
+  };
   wasRecordSharingEnabled: boolean;
 }): boolean => {
   const thread =
