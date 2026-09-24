@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
@@ -20,5 +20,5 @@ export const computeSystemMorphTargetFieldLabel = ({
   morphId: string | null | undefined;
   targetObjectNameSingular: string;
 }): string =>
-  (morphId ? SHARED_LABEL_BY_MORPH_ID[morphId] : undefined) ??
+  (isDefined(morphId) ? SHARED_LABEL_BY_MORPH_ID[morphId] : undefined) ??
   capitalize(targetObjectNameSingular);
