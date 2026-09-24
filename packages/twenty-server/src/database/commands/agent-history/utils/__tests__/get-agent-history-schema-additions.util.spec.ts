@@ -83,6 +83,23 @@ describe('getAgentHistorySchemaAdditions', () => {
     );
   });
 
+  it('repairs a missing attachment index whose chat thread field already exists', () => {
+    const standard = createStandardMetadata();
+    const existing = structuredClone(standard);
+    const indexIdentifier =
+      STANDARD_OBJECTS.attachment.indexes.agentChatThreadIdIndex
+        .universalIdentifier;
+
+    delete existing.flatIndexMaps.byUniversalIdentifier[indexIdentifier];
+
+    const additions = getAgentHistorySchemaAdditions({ existing, standard });
+
+    expect(additions.fields).toEqual([]);
+    expect(additions.indexes.map((index) => index.universalIdentifier)).toEqual(
+      [indexIdentifier],
+    );
+  });
+
   it('adds nothing when all history metadata already exists', () => {
     const standard = createStandardMetadata();
     expect(

@@ -56,25 +56,28 @@ export const getAgentHistorySchemaAdditions = ({
   // Relations from other standard objects into history objects (e.g. the
   // attachment morph target) must be provisioned with the history objects,
   // otherwise only the history-side half of the relation gets created.
-  const fields = Object.values(
+  const historyFields = Object.values(
     standard.flatFieldMetadataMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
     .filter(
       (field) =>
-        (objectIdentifiers.has(field.objectMetadataUniversalIdentifier) ||
-          (isDefined(field.relationTargetObjectMetadataUniversalIdentifier) &&
-            objectIdentifiers.has(
-              field.relationTargetObjectMetadataUniversalIdentifier,
-            ))) &&
-        !isDefined(
-          existing.flatFieldMetadataMaps.byUniversalIdentifier[
-            field.universalIdentifier
-          ],
-        ),
+        objectIdentifiers.has(field.objectMetadataUniversalIdentifier) ||
+        (isDefined(field.relationTargetObjectMetadataUniversalIdentifier) &&
+          objectIdentifiers.has(
+            field.relationTargetObjectMetadataUniversalIdentifier,
+          )),
     );
-  const fieldIdentifiers = new Set<string>(
-    fields.map(({ universalIdentifier }) => universalIdentifier),
+  const fields = historyFields.filter(
+    (field) =>
+      !isDefined(
+        existing.flatFieldMetadataMaps.byUniversalIdentifier[
+          field.universalIdentifier
+        ],
+      ),
+  );
+  const historyFieldIdentifiers = new Set<string>(
+    historyFields.map(({ universalIdentifier }) => universalIdentifier),
   );
   const indexes = Object.values(standard.flatIndexMaps.byUniversalIdentifier)
     .filter(isDefined)
@@ -84,7 +87,7 @@ export const getAgentHistorySchemaAdditions = ({
           (isNonEmptyArray(index.universalFlatIndexFieldMetadatas) &&
             index.universalFlatIndexFieldMetadatas.every(
               ({ fieldMetadataUniversalIdentifier }) =>
-                fieldIdentifiers.has(fieldMetadataUniversalIdentifier),
+                historyFieldIdentifiers.has(fieldMetadataUniversalIdentifier),
             ))) &&
         !isDefined(
           existing.flatIndexMaps.byUniversalIdentifier[
