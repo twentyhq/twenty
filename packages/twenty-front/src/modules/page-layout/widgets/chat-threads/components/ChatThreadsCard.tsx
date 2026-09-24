@@ -1,14 +1,16 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatThreadsForRecord } from '@/ai/hooks/useChatThreadsForRecord';
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 
+type ChatThreadsCardProps = {
+  widgetId: string;
+};
+
 // No WidgetHeaderCountEffect: one page is fetched, so the rows in hand cap at
 // the page size and cannot stand in for the record's total.
-export const ChatThreadsCard = () => {
+export const ChatThreadsCard = ({ widgetId }: ChatThreadsCardProps) => {
   const targetRecord = useTargetRecord();
   const { threads, loading, error, refetch } =
     useChatThreadsForRecord(targetRecord);
@@ -17,7 +19,8 @@ export const ChatThreadsCard = () => {
     <>
       <ChatThreadsCardContent
         loading={loading}
-        hasError={isDefined(error)}
+        error={error}
+        widgetId={widgetId}
         onRetry={() => void refetch()}
         threads={threads}
       />

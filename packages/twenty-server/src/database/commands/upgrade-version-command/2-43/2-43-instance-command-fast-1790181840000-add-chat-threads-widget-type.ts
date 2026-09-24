@@ -6,23 +6,13 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.43.0', 1790181840000)
 export class AddChatThreadsWidgetTypeFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Recreating the type would cast every row of the instance-wide
+    // pageLayoutWidget table under ACCESS EXCLUSIVE, blocking layout loads and
+    // field creation in every workspace until this transaction commits.
+    // Appending a label is a catalog-only change, as the view_type_enum
+    // commands in 2-23 and 2-30 already do.
     await queryRunner.query(
-      'ALTER TYPE "core"."pageLayoutWidget_type_enum" RENAME TO "pageLayoutWidget_type_enum_old"',
-    );
-    await queryRunner.query(
-      "CREATE TYPE \"core\".\"pageLayoutWidget_type_enum\" AS ENUM('VIEW', 'IFRAME', 'FIELD', 'FIELDS', 'GRAPH', 'STANDALONE_RICH_TEXT', 'TIMELINE', 'TASKS', 'NOTES', 'FILES', 'EMAILS', 'CALENDAR', 'FIELD_RICH_TEXT', 'WORKFLOW', 'WORKFLOW_VERSION', 'WORKFLOW_RUN', 'FRONT_COMPONENT', 'RECORD_TABLE', 'EMAIL_THREAD', 'CALL_RECORDING_SUMMARY', 'CALL_RECORDING_TRANSCRIPT', 'MESSAGE_CAMPAIGN_BODY', 'MESSAGE_CAMPAIGN_DETAILS', 'FORM_FIELD', 'CHAT_THREADS')",
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "type" DROP DEFAULT',
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "type" TYPE "core"."pageLayoutWidget_type_enum" USING "type"::"text"::"core"."pageLayoutWidget_type_enum"',
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "type" SET DEFAULT \'VIEW\'',
-    );
-    await queryRunner.query(
-      'DROP TYPE "core"."pageLayoutWidget_type_enum_old"',
+      `ALTER TYPE "core"."pageLayoutWidget_type_enum" ADD VALUE IF NOT EXISTS 'CHAT_THREADS'`,
     );
   }
 

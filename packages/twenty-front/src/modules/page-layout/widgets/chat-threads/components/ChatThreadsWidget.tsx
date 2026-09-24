@@ -1,8 +1,13 @@
 import { ChatThreadsCard } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCard';
 import { WidgetContentShell } from '@/page-layout/widgets/components/WidgetContentShell';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 
-export const ChatThreadsWidget = () => (
+type ChatThreadsWidgetProps = {
+  widget: PageLayoutWidget;
+};
+
+export const ChatThreadsWidget = ({ widget }: ChatThreadsWidgetProps) => (
   <WidgetContentShell>
-    <ChatThreadsCard />
+    <ChatThreadsCard widgetId={widget.id} />
   </WidgetContentShell>
 );
