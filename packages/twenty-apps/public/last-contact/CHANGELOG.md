@@ -2,7 +2,7 @@
 
 ## 1.6.0
 
-- Run the backfill inside the post-install function instead of enqueuing one job per record batch. The batch jobs ran on the logic function queue, which runs many jobs at once, so their API calls competed for the same rate limit. Post-install hooks run on the application lifecycle queue, one at a time, and the backfill now pages through people, then opportunities, then companies, one batch after the other, within a single 900-second run. The per-batch logic functions and the `LAST_CONTACT_BACKFILL_SLEEP_MS` server variable are removed.
+- Run the backfill inside the post-install function instead of enqueuing one job per record batch. The batch jobs ran on the logic function queue, which runs many jobs at once, so their API calls competed for the same rate limit. Post-install hooks run on the application lifecycle queue, one at a time, and the backfill now pages through people, then opportunities, then companies, one batch after the other, within a single 900-second run. Upgrading from 1.5.0 or earlier runs it once. The per-batch logic functions and the `LAST_CONTACT_BACKFILL_SLEEP_MS` server variable are removed.
 - Add a health check that shows a warning on the app's settings page when the workspace has no synced emails or meetings, with a button to connect an account.
 - Enqueue the manual backfill from the settings page with `enqueueJobs` instead of the deprecated `enqueueJob`.
 - Replace deprecated SDK usages: the settings page is a front component pointed at by `defineSettingsMenuItem` instead of a `defineSettingsFrontComponent`, and the application uses `logo` and `galleryImages` instead of `logoUrl` and `screenshots`.

@@ -15,7 +15,7 @@ const shouldRunPostInstall = ({
     return true;
   }
 
-  if (compare(previousVersion, "1.4.1") <= 0 && compare(newVersion, "1.5.0") >= 1) { // Rate limitation fix
+  if (compare(previousVersion, "1.5.0") <= 0 && compare(newVersion, "1.6.0") >= 0) { // Rate limitation fix
     return true;
   }
 

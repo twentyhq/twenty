@@ -123,4 +123,21 @@ describe('backfill-last-contact', () => {
       { id: 'opportunity-1', pointOfContactId: 'person-1' },
     ]);
   });
+
+  it.each(['1.4.1', '1.5.0'])(
+    'should backfill on an upgrade from %s to 1.6.0',
+    async (previousVersion) => {
+      await expect(
+        handler({ previousVersion, newVersion: '1.6.0' }),
+      ).resolves.toMatchObject({ outcome: 'completed' });
+    },
+  );
+
+  it('should skip the backfill on an upgrade from 1.6.0', async () => {
+    await expect(
+      handler({ previousVersion: '1.6.0', newVersion: '1.6.1' }),
+    ).resolves.toEqual({});
+
+    expect(queryMock).not.toHaveBeenCalled();
+  });
 });
