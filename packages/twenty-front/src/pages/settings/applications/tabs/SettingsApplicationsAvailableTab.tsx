@@ -5,11 +5,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { InlineBanner } from 'twenty-ui/feedback';
+import {
+  InlineBanner,
+  SearchInput,
+  Section,
+  SettingsRow,
+} from 'twenty-ui/components';
 import { IconSparkles } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
@@ -77,9 +79,9 @@ export const SettingsApplicationsAvailableTab = () => {
 
   if (isLoading) {
     return (
-      <Section>
+      <Section.Root>
         <SettingsEmptyPlaceholder padding="4">{t`Loading applications...`}</SettingsEmptyPlaceholder>
-      </Section>
+      </Section.Root>
     );
   }
 
@@ -91,7 +93,7 @@ export const SettingsApplicationsAvailableTab = () => {
   const hasNoApplications = textFilteredApplications.length === 0;
 
   return (
-    <Section>
+    <Section.Root>
       <StyledSearchInputContainer>
         <SearchInput
           placeholder={t`Search an application`}
@@ -106,13 +108,11 @@ export const SettingsApplicationsAvailableTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
-                      LeftIcon={IconSparkles}
-                      onToggleChange={() => setShowVettedOnly(!showVettedOnly)}
-                      toggled={showVettedOnly}
-                      text={t`Vetted only`}
-                      toggleSize="small"
-                    />
+                    <SettingsRow
+                      startIcon={<IconSparkles />}
+                      onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
+                      checked={showVettedOnly}
+                    >{t`Vetted only`}</SettingsRow>
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
@@ -164,6 +164,6 @@ export const SettingsApplicationsAvailableTab = () => {
           )}
         </StyledContentContainer>
       )}
-    </Section>
+    </Section.Root>
   );
 };

@@ -1,6 +1,7 @@
 import {
   AggregateOperations,
   FieldMetadataType,
+  PageLayoutTabLayoutMode,
   ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
@@ -53,7 +54,13 @@ const buildAggregateWidget = (
 ): WidgetIdentifiersInput => ({
   title: 'KPI',
   type: WidgetType.GRAPH,
-  gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 4 },
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.GRID,
+    row: 0,
+    column: 0,
+    rowSpan: 2,
+    columnSpan: 4,
+  },
   objectName: 'opportunity',
   configuration: {
     configurationType: WidgetConfigurationType.AGGREGATE_CHART,

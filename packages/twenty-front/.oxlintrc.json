@@ -127,6 +127,8 @@
     "twenty/no-jotai-store-in-selector": "error",
     "twenty/no-direct-atom-family-in-selector": "error",
     "twenty/folder-structure": "error",
+    "twenty/no-icu-escaping-apostrophe": "error",
+    "twenty/no-miscased-acronym-in-message": "error",
     "twenty/enforce-module-boundaries": [
       "error",
       {
@@ -140,6 +142,15 @@
     ]
   },
   "overrides": [
+    {
+      "files": [
+        "src/modules/ui/input/components/NavigationButton.tsx",
+        "src/modules/ui/navigation/link/components/LinkChip/LinkChip.tsx"
+      ],
+      "rules": {
+        "react/jsx-props-no-spreading": "off"
+      }
+    },
     {
       "files": ["**/constants/*.ts", "**/*.constants.ts"],
       "rules": {

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
@@ -6,7 +6,9 @@ import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RECORD_TABLE_HEADER_DROPPABLE_ID } from '@/object-record/record-table/record-table-header/dnd/constants/RecordTableHeaderDroppableId';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
@@ -38,37 +40,22 @@ export const useRecordTableHeaderDndKit = (): {
     number | null
   >(null);
 
-  // The pointer can leave every sortable (sticky pinned column, table body,
-  // trailing empty space); the last resolved boundary is kept so the drop
-  // always lands where the insertion indicator was last shown. A ref because
-  // it is gesture-scoped bookkeeping read back inside drag callbacks.
-  // oxlint-disable-next-line twenty/no-state-useref
-  const lastDropTargetIndexRef = useRef<number | null>(null);
-
   const lastIndex = visibleRecordFields.length - 1;
 
   const handleDragStart = (_event: DragStartPayload) => {
-    lastDropTargetIndexRef.current = null;
     setActiveDropTargetIndex(null);
   };
 
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const resolvedDropTargetIndex =
+    const dropTargetIndex =
       resolveDropFromPointer({
         target,
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
       })?.dropTargetIndex ?? null;
-
-    if (isDefined(resolvedDropTargetIndex)) {
-      lastDropTargetIndexRef.current = resolvedDropTargetIndex;
-    }
-
-    const dropTargetIndex =
-      resolvedDropTargetIndex ?? lastDropTargetIndexRef.current;
 
     setActiveDropTargetIndex((currentActiveDropTargetIndex) =>
       currentActiveDropTargetIndex === dropTargetIndex
@@ -80,9 +67,6 @@ export const useRecordTableHeaderDndKit = (): {
   const handleDragEnd = (event: DragEndPayload) => {
     const { source, target, position } = event.operation;
 
-    const lastDropTargetIndex = lastDropTargetIndexRef.current;
-    lastDropTargetIndexRef.current = null;
-
     setActiveDropTargetIndex(null);
     setDragSelectionStartEnabled(true);
 
@@ -92,26 +76,29 @@ export const useRecordTableHeaderDndKit = (): {
 
     const sourceIndex = source.data.index;
 
-    const dropTargetIndex =
-      resolveDropFromPointer({
-        target,
-        pointer: position.current,
-        defaultOrientation: 'vertical',
-        getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ?? lastDropTargetIndex;
+    const dropTargetIndex = resolveDropFromPointer({
+      target,
+      pointer: position.current,
+      defaultOrientation: 'vertical',
+      getDroppableItemCount: () => lastIndex,
+    })?.dropTargetIndex;
 
     if (!isDefined(dropTargetIndex)) {
       return;
     }
 
-    const destinationIndex =
-      dropTargetIndex <= sourceIndex ? dropTargetIndex + 1 : dropTargetIndex;
+    const sortableRecordFields = visibleRecordFields.slice(1);
 
-    // Sortable indices exclude the pinned label-identifier column at visibleRecordFields[0],
-    // so shift by one to address the full visible field list.
+    const destinationIndex = getDestinationIndex({
+      dropTargetIndex,
+      sourceIndex,
+      sourceDroppableId: RECORD_TABLE_HEADER_DROPPABLE_ID,
+      destinationDroppableId: RECORD_TABLE_HEADER_DROPPABLE_ID,
+    });
+
     const updatedRecordField = reorderVisibleRecordFields({
-      fromIndex: sourceIndex + 1,
-      toIndex: destinationIndex,
+      recordFieldToMove: sortableRecordFields[sourceIndex],
+      targetRecordField: sortableRecordFields[destinationIndex],
     });
 
     saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);

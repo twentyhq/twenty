@@ -53,7 +53,13 @@ export default definePageLayout({
           title: 'Portfolio value',
           type: 'GRAPH',
           objectUniversalIdentifier: PROPERTY_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 0,
+            rowSpan: 2,
+            columnSpan: 3,
+          },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -69,7 +75,13 @@ export default definePageLayout({
           title: 'Pipeline value',
           type: 'GRAPH',
           objectUniversalIdentifier: opportunityObjectId,
-          gridPosition: { row: 0, column: 3, rowSpan: 2, columnSpan: 3 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 3,
+            rowSpan: 2,
+            columnSpan: 3,
+          },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -85,7 +97,13 @@ export default definePageLayout({
           title: 'Properties sold',
           type: 'GRAPH',
           objectUniversalIdentifier: PROPERTY_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, column: 6, rowSpan: 2, columnSpan: 3 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 6,
+            rowSpan: 2,
+            columnSpan: 3,
+          },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -111,7 +129,13 @@ export default definePageLayout({
           title: 'Showings',
           type: 'GRAPH',
           objectUniversalIdentifier: SHOWING_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, column: 9, rowSpan: 2, columnSpan: 3 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 0,
+            column: 9,
+            rowSpan: 2,
+            columnSpan: 3,
+          },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -127,7 +151,13 @@ export default definePageLayout({
           title: 'Properties by status',
           type: 'GRAPH',
           objectUniversalIdentifier: PROPERTY_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 2, column: 0, rowSpan: 5, columnSpan: 6 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 2,
+            column: 0,
+            rowSpan: 5,
+            columnSpan: 6,
+          },
           configuration: {
             configurationType: 'PIE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -145,7 +175,13 @@ export default definePageLayout({
           title: 'Pipeline by stage',
           type: 'GRAPH',
           objectUniversalIdentifier: opportunityObjectId,
-          gridPosition: { row: 2, column: 6, rowSpan: 5, columnSpan: 6 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 2,
+            column: 6,
+            rowSpan: 5,
+            columnSpan: 6,
+          },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -161,7 +197,13 @@ export default definePageLayout({
           title: 'Listings by agent',
           type: 'GRAPH',
           objectUniversalIdentifier: PROPERTY_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 7, column: 0, rowSpan: 5, columnSpan: 6 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 7,
+            column: 0,
+            rowSpan: 5,
+            columnSpan: 6,
+          },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -178,7 +220,13 @@ export default definePageLayout({
           title: 'Showings by agent',
           type: 'GRAPH',
           objectUniversalIdentifier: SHOWING_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 7, column: 6, rowSpan: 5, columnSpan: 6 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 7,
+            column: 6,
+            rowSpan: 5,
+            columnSpan: 6,
+          },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:

@@ -1,6 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
+import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
@@ -10,10 +10,10 @@ import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconAppWindow,
   IconFrame,
   IconLayoutDashboard,
-  IconList,
+  IconListDetails,
+  IconPerspective,
   IconPlus,
   IconTable,
   type IconComponent,
@@ -110,10 +110,10 @@ export const usePageLayoutHeaderInfo = ({
 
       const resolvedTabIcon = isDefined(tab.icon)
         ? getIcon(tab.icon)
-        : IconAppWindow;
+        : IconPerspective;
 
       return {
-        headerIcon: resolvedTabIcon ?? IconAppWindow,
+        headerIcon: resolvedTabIcon ?? IconPerspective,
         headerIconColor: iconColor,
         headerType: t`Tab`,
         title,
@@ -134,7 +134,7 @@ export const usePageLayoutHeaderInfo = ({
         editedTitle,
         headerIcon: IconLayoutDashboard,
         headerIconColor: iconColor,
-        headerType: isViewportFillingWidgetType(widgetInEditMode.type)
+        headerType: isViewportFillingWidget(widgetInEditMode)
           ? t`Full-height Widget`
           : t`Widget`,
         widgetInEditMode,
@@ -185,7 +185,7 @@ export const usePageLayoutHeaderInfo = ({
 
       return getPageLayoutWidgetHeaderInfo({
         editedTitle,
-        headerIcon: IconList,
+        headerIcon: IconListDetails,
         headerIconColor: iconColor,
         headerType: t`Fields Widget`,
         widgetInEditMode,
@@ -199,7 +199,7 @@ export const usePageLayoutHeaderInfo = ({
 
       return getPageLayoutWidgetHeaderInfo({
         editedTitle,
-        headerIcon: IconList,
+        headerIcon: IconListDetails,
         headerIconColor: iconColor,
         headerType: t`Field Widget`,
         widgetInEditMode,

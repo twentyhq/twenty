@@ -1,24 +1,23 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SetOrChangePassword } from '@/settings/profile/components/SetOrChangePassword';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
-import { SettingsProfileDevicesSection } from '@/settings/profile/devices/components/SettingsProfileDevicesSection';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
-import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
+import { SetOrChangePassword } from '@/settings/profile/components/SetOrChangePassword';
+import { SettingsProfileDevicesSection } from '@/settings/profile/devices/components/SettingsProfileDevicesSection';
 import { useCanChangePassword } from '@/settings/profile/hooks/useCanChangePassword';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
 import { IconShield } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { Status } from 'twenty-ui/primitives/data-display';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();
@@ -49,28 +48,28 @@ export const SettingsProfile = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title title={t`Picture`} />
+        <Section.Root>
+          <Section.Header title={t`Picture`} />
           <WorkspaceMemberPictureUploader
             workspaceMemberId={currentWorkspaceMember.id}
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Name`}
             description={t`Your name as it will be displayed`}
           />
           <NameFields key={currentWorkspaceMember.id} />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Email`}
             description={t`The email associated to your account`}
           />
           <EmailField />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Two Factor Authentication`}
             description={t`Enhances security by requiring a code along with your password`}
           />
@@ -85,23 +84,23 @@ export const SettingsProfile = () => {
               Icon={<IconShield />}
               Status={
                 has2FAMethod ? (
-                  <Status text={t`Active`} color="turquoise" />
+                  <Status color="turquoise">{t`Active`}</Status>
                 ) : (
-                  <Status text={t`Deactivated`} color="gray" />
+                  <Status color="gray">{t`Deactivated`}</Status>
                 )
               }
             />
           </UndecoratedLink>
-        </Section>
+        </Section.Root>
         {canChangePassword && (
-          <Section>
+          <Section.Root>
             <SetOrChangePassword />
-          </Section>
+          </Section.Root>
         )}
         <SettingsProfileDevicesSection />
-        <Section>
+        <Section.Root>
           <DeleteAccount />
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

@@ -10,6 +10,7 @@ import {
   type FieldRichTextConfiguration,
   type FieldsConfiguration,
   type FilesConfiguration,
+  type FormFieldConfiguration,
   type FrontComponentConfiguration,
   type IframeConfiguration,
   type LineChartConfiguration,
@@ -93,6 +94,9 @@ type WidgetConfigurationTypenameMap = {
   FieldsConfiguration: Omit<FieldsConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.FIELDS;
   };
+  FormFieldConfiguration: Omit<FormFieldConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.FORM_FIELD;
+  };
   FilesConfiguration: Omit<FilesConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.FILES;
   };
@@ -147,9 +151,6 @@ type WidgetConfigurationTypenameMap = {
 };
 
 type WidgetConfigurationTypename = keyof WidgetConfigurationTypenameMap;
-
-export type WidgetConfigurationOfType<T extends WidgetConfigurationTypename> =
-  WidgetConfigurationTypenameMap[T];
 
 export const isWidgetConfigurationOfType = <
   T extends WidgetConfigurationTypename,

@@ -11,9 +11,10 @@ import { RecordBoardComponentInstanceContext } from '@/object-record/record-boar
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
-import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
 
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialogOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -55,9 +56,11 @@ export const RecordBoardContainer = ({
       ...args,
     });
 
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
-    RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
+  const isDialogOpened = useAtomComponentStateValue(
+    isDialogOpenedComponentState,
+    getRecordIndexRemoveSortingModalId(recordIndexId),
   );
 
   if (!isDefined(recordIndexGroupFieldMetadataItem)) {
@@ -80,7 +83,7 @@ export const RecordBoardContainer = ({
         value={{ instanceId: recordBoardId }}
       >
         <RecordBoard />
-        {isModalOpened && <RecordIndexRemoveSortingModal />}
+        {isDialogOpened && <RecordIndexRemoveSortingModal />}
         <RecordBoardHotkeyEffect />
         <RecordBoardBodyEscapeHotkeyEffect />
       </RecordBoardComponentInstanceContext.Provider>

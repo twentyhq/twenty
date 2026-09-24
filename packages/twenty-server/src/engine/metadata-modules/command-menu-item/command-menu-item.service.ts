@@ -13,12 +13,11 @@ import {
 } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
-import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-create-command-menu-item-input-to-flat-command-menu-item-to-create.util';
 import { fromDeleteCommandMenuItemInputToFlatCommandMenuItemOrThrow } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-delete-command-menu-item-input-to-flat-command-menu-item-or-throw.util';
@@ -28,10 +27,12 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/reset-authored-overrides.util';
 
 @Injectable()
 export class CommandMenuItemService {
@@ -285,10 +286,15 @@ export class CommandMenuItemService {
     }
 
     const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
-      ...existingFlatCommandMenuItem,
+      ...resetAuthoredOverrides({
+        metadataName: 'commandMenuItem',
+        flatEntity: existingFlatCommandMenuItem,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       isActive: true,
-      overrides: null,
-      universalOverrides: null,
       updatedAt: new Date().toISOString(),
     };
 
@@ -363,8 +369,15 @@ export class CommandMenuItemService {
     });
 
     const deactivatedFlatCommandMenuItem = {
-      ...flatCommandMenuItemToDelete,
-      isActive: false,
+      ...dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'commandMenuItem',
+        flatEntity: flatCommandMenuItemToDelete,
+        isActive: false,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
       updatedAt: new Date().toISOString(),
     };
 
@@ -433,13 +446,13 @@ export class CommandMenuItemService {
   }): Promise<ObjectMetadataDTO | null> {
     if (
       commandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
-      !isObjectMetadataCommandMenuItemPayload(commandMenuItem.payload)
+      !isDefined(commandMenuItem.navigationTargetObjectMetadataId)
     ) {
       return null;
     }
 
     return objectMetadataLoader.load({
-      objectMetadataId: commandMenuItem.payload.objectMetadataItemId,
+      objectMetadataId: commandMenuItem.navigationTargetObjectMetadataId,
       workspaceId,
     });
   }
@@ -520,28 +533,43 @@ export class CommandMenuItemService {
     });
   }
 
+  async findByCoreWorkflowVersionId(
+    coreWorkflowVersionId: string,
+    workspaceId: string,
+  ): Promise<CommandMenuItemDTO | null> {
+    return this.findByWorkflowVersionReference(
+      coreWorkflowVersionId,
+      workspaceId,
+      'coreWorkflowVersionId',
+    );
+  }
+
   async findByWorkflowVersionId(
     workflowVersionId: string,
     workspaceId: string,
   ): Promise<CommandMenuItemDTO | null> {
+    return this.findByWorkflowVersionReference(
+      workflowVersionId,
+      workspaceId,
+      'workflowVersionId',
+    );
+  }
+
+  private async findByWorkflowVersionReference(
+    versionId: string,
+    workspaceId: string,
+    reference: 'workflowVersionId' | 'coreWorkflowVersionId',
+  ): Promise<CommandMenuItemDTO | null> {
     const { flatCommandMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatCommandMenuItemMaps'],
-        },
+        { workspaceId, flatMapsKeys: ['flatCommandMenuItemMaps'] },
       );
-
     const flatCommandMenuItem = Object.values(
       flatCommandMenuItemMaps.byUniversalIdentifier,
-    ).find(
-      (item) => isDefined(item) && item.workflowVersionId === workflowVersionId,
-    );
+    ).find((item) => isDefined(item) && item[reference] === versionId);
 
-    if (!isDefined(flatCommandMenuItem)) {
-      return null;
-    }
-
-    return fromFlatCommandMenuItemToCommandMenuItemDto(flatCommandMenuItem);
+    return isDefined(flatCommandMenuItem)
+      ? fromFlatCommandMenuItemToCommandMenuItemDto(flatCommandMenuItem)
+      : null;
   }
 }

@@ -2,7 +2,8 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import {
   IconBox,
   IconCalendarEvent,
@@ -17,22 +18,24 @@ import {
   IconTag,
   IconUsers,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { formatSubscriptionItemValue } from '@/settings/admin-panel/utils/formatSubscriptionItemValue';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { beautifyExactDate } from '~/utils/date-utils';
-import { BillingPlanKey } from '~/generated-metadata/graphql';
+import {
+  BillingPlanKey,
+  BillingProductKey,
+} from '~/generated-metadata/graphql';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
@@ -40,8 +43,6 @@ import {
 } from '~/generated-admin/graphql';
 
 const STRIPE_DASHBOARD_BASE_URL = 'https://dashboard.stripe.com';
-const BASE_PRODUCT_KEY = 'BASE_PRODUCT';
-const RESOURCE_CREDIT_KEY = 'RESOURCE_CREDIT';
 const EM_DASH = '\u2014';
 const GRANT_CREDITS_MODAL_ID = 'settings-admin-grant-workspace-credits';
 
@@ -100,19 +101,6 @@ const STATUS_LABELS: Record<SubscriptionStatus, string> = {
   [SubscriptionStatus.IncompleteExpired]: 'Incomplete Expired',
 };
 
-const formatCurrency = (amountMinor: number, currency: string): string => {
-  const normalizedCurrency = currency.toUpperCase();
-
-  try {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: normalizedCurrency,
-    }).format(amountMinor / 100);
-  } catch {
-    return `${(amountMinor / 100).toFixed(2)} ${normalizedCurrency}`;
-  }
-};
-
 const toBillingPlanKey = (planKey: string): BillingPlanKey | null =>
   planKey === BillingPlanKey.PRO
     ? BillingPlanKey.PRO
@@ -142,7 +130,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
 }: SettingsAdminWorkspaceBillingContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const apolloAdminClient = useApolloAdminClient();
 
   const { data, loading } = useQuery<WorkspaceBillingAdminPanelQuery>(
@@ -167,12 +155,12 @@ export const SettingsAdminWorkspaceBillingContent = ({
   if (!billing) {
     return (
       <StyledContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Billing`}
             description={t`No billing data is available for this workspace.`}
           />
-        </Section>
+        </Section.Root>
       </StyledContainer>
     );
   }
@@ -252,23 +240,12 @@ export const SettingsAdminWorkspaceBillingContent = ({
 
   const formatItemValue = (
     item: NonNullable<typeof subscription>['items'][number],
-  ): string => {
-    const parts: string[] = [];
-
-    if (isDefined(item.quantity)) {
-      parts.push(`${formatNumber(item.quantity)} ${t`seats`}`);
-    }
-    if (isDefined(item.includedCredits)) {
-      parts.push(
-        `${formatNumber(item.includedCredits, { abbreviate: true, decimals: 2 })} ${t`credits/period`}`,
-      );
-    }
-    if (isDefined(item.unitAmount) && isDefined(subscription)) {
-      parts.push(formatCurrency(item.unitAmount, subscription.currency));
-    }
-
-    return parts.length > 0 ? parts.join(' · ') : EM_DASH;
-  };
+  ): string =>
+    formatSubscriptionItemValue({
+      item,
+      currency: subscription?.currency ?? '',
+      formatNumber,
+    });
 
   const subscriptionItems = subscription
     ? [
@@ -286,10 +263,9 @@ export const SettingsAdminWorkspaceBillingContent = ({
           Icon: IconStatusChange,
           label: t`Status`,
           value: (
-            <Tag
-              color={STATUS_COLORS[subscription.status]}
-              text={STATUS_LABELS[subscription.status]}
-            />
+            <Tag color={STATUS_COLORS[subscription.status]}>
+              {STATUS_LABELS[subscription.status]}
+            </Tag>
           ),
         },
         ...(isDefined(planKey)
@@ -360,9 +336,9 @@ export const SettingsAdminWorkspaceBillingContent = ({
           : []),
         ...subscription.items.map((item) => ({
           Icon:
-            item.productKey === BASE_PRODUCT_KEY
+            item.productKey === BillingProductKey.BASE_PRODUCT
               ? IconUsers
-              : item.productKey === RESOURCE_CREDIT_KEY
+              : item.productKey === BillingProductKey.RESOURCE_CREDIT
                 ? IconCoins
                 : IconBox,
           label: item.productName || t`Unnamed product`,
@@ -370,7 +346,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
             <StyledItemValue>
               <span>{formatItemValue(item)}</span>
               {isDefined(item.productKey) && (
-                <Tag color="gray" text={item.productKey} />
+                <Tag color="gray">{item.productKey}</Tag>
               )}
             </StyledItemValue>
           ),
@@ -380,8 +356,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
 
   return (
     <StyledContainer>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Customer`}
           description={t`Stripe customer linked to this workspace`}
         />
@@ -390,10 +366,10 @@ export const SettingsAdminWorkspaceBillingContent = ({
           items={customerItems}
           gridAutoColumns="3fr 8fr"
         />
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Usage`}
           description={
             isDefined(usage)
@@ -408,10 +384,10 @@ export const SettingsAdminWorkspaceBillingContent = ({
             gridAutoColumns="3fr 8fr"
           />
         )}
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Subscription`}
           description={
             subscription
@@ -426,12 +402,12 @@ export const SettingsAdminWorkspaceBillingContent = ({
             gridAutoColumns="3fr 8fr"
           />
         )}
-      </Section>
+      </Section.Root>
 
       <SettingsAdminWorkspaceCreditGrantsTable
         workspaceId={workspaceId}
         creditGrants={creditGrants}
-        onGrantCreditsClick={() => openModal(GRANT_CREDITS_MODAL_ID)}
+        onGrantCreditsClick={() => openDialog(GRANT_CREDITS_MODAL_ID)}
       />
 
       <SettingsAdminWorkspaceCreditGrantModal

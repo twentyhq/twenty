@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
 } from 'twenty-shared/types';
@@ -30,6 +31,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     universalIdentifier: 'test-object-id',
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
+    navigationMenuItemIds: [],
     commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
@@ -46,6 +48,8 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     isUIEditable: true,
     isUICreatable: true,
     writability: MetadataWritability.OPEN,
+    readability: MetadataReadability.OPEN,
+    readabilityParentFieldUniversalIdentifiers: null,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
@@ -58,6 +62,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     pageLayoutUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    navigationMenuItemUniversalIdentifiers: [],
     commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier: null,
     imageIdentifierFieldMetadataUniversalIdentifier: null,

@@ -36,6 +36,7 @@ export type ViewFilterManifest = SyncableEntityOptions & {
   operand: ViewFilterOperand;
   value: ViewManifestFilterValue;
   subFieldName?: string;
+  relationTargetFieldMetadataUniversalIdentifier?: string;
   viewFilterGroupUniversalIdentifier?: string;
   positionInViewFilterGroup?: number;
 };
@@ -82,6 +83,7 @@ export type ViewManifest = SyncableEntityOptions & {
   openRecordIn?: ViewOpenRecordIn;
   mainGroupByFieldMetadataUniversalIdentifier?: string;
   shouldHideEmptyGroups?: boolean;
+  groupLoadLimit?: number;
   anyFieldFilterValue?: string | null;
   kanbanColumnWidth?: number | null;
   kanbanAggregateOperation?: AggregateOperations;

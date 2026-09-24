@@ -2,8 +2,8 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { type AppLocale } from 'twenty-shared/translations';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -34,19 +34,17 @@ const mockRequestAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
 const mockNavigateSidePanel = jest.fn();
 const mockOpenRecordInSidePanel = jest.fn();
+const mockOpenRoutedPageInSidePanel = jest.fn(() => 'routed-page-id');
 const mockOpenRichTextInSidePanel = jest.fn();
 const mockOpenComposeEmailInSidePanel = jest.fn();
 const mockOpenFrontComponentInSidePanel = jest.fn();
 const mockSetSidePanelSearch = jest.fn();
 const mockGetIcon = jest.fn((name: string) => `icon-${name}`);
 const mockUnmountEngineCommand = jest.fn();
-const mockEnqueueSuccessSnackBar = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
-const mockEnqueueInfoSnackBar = jest.fn();
-const mockEnqueueWarningSnackBar = jest.fn();
+
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
-const mockCopyToClipboard = jest.fn();
+const mockCopyToClipboardWithoutSuccessToast = jest.fn();
 const mockDirectUploadFile = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
 const mockStorageSet = jest.fn();
@@ -87,6 +85,12 @@ jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
   }),
 }));
 
+jest.mock('@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel', () => ({
+  useOpenRoutedPageInSidePanel: () => ({
+    openRoutedPageInSidePanel: mockOpenRoutedPageInSidePanel,
+  }),
+}));
+
 jest.mock('@/side-panel/hooks/useOpenRichTextInSidePanel', () => ({
   useOpenRichTextInSidePanel: () => ({
     openRichTextInSidePanel: mockOpenRichTextInSidePanel,
@@ -112,13 +116,11 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
-    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-    enqueueInfoSnackBar: mockEnqueueInfoSnackBar,
-    enqueueWarningSnackBar: mockEnqueueWarningSnackBar,
-  }),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -151,7 +153,7 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState', () => ({
 
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
-    copyToClipboard: mockCopyToClipboard,
+    copyToClipboardWithoutSuccessToast: mockCopyToClipboardWithoutSuccessToast,
   }),
 }));
 
@@ -429,6 +431,109 @@ describe('useFrontComponentExecutionContext', () => {
     });
   });
 
+  describe('openSidePanelPage with a routed page', () => {
+    it('should open a canonical app path in the secondary surface', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            to: AppPath.RecordIndexPage,
+            params: { objectNamePlural: 'companies' },
+            queryParams: { viewId: 'view-id' },
+            hash: 'table',
+            pageTitle: 'Companies',
+            resetNavigationStack: true,
+          },
+        );
+      });
+
+      expect(mockOpenRoutedPageInSidePanel).toHaveBeenCalledWith({
+        path: '/objects/companies?viewId=view-id#table',
+        pageTitle: 'Companies',
+        resetNavigationStack: true,
+      });
+    });
+
+    it('should reject a path the secondary route tree cannot render', async () => {
+      mockOpenRoutedPageInSidePanel.mockReturnValueOnce(null as never);
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          to: AppPath.Home,
+        } as never),
+      ).rejects.toThrow('Unsupported side-panel route: /home');
+    });
+
+    it('lets the workspace route registry decide whether a settings route can render', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            to: AppPath.SettingsCatchAll,
+            params: { '*': 'objects/companies/name' },
+          },
+        );
+      });
+
+      expect(mockOpenRoutedPageInSidePanel).toHaveBeenCalledWith({
+        path: '/settings/objects/companies/name',
+        pageTitle: undefined,
+        resetNavigationStack: undefined,
+      });
+    });
+
+    it('rejects legacy ViewRecords because it has no canonical route params', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          page: SidePanelPages.ViewRecords,
+          pageTitle: 'Legacy records',
+        } as never),
+      ).rejects.toThrow(
+        'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
+      );
+
+      expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    });
+
+    it('maps legacy Copilot calls to AskAI', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.Copilot,
+            pageTitle: 'Legacy AI',
+            pageIcon: 'IconSparkles',
+            shouldResetSearchState: true,
+          } as never,
+        );
+      });
+
+      expect(mockNavigateSidePanel).toHaveBeenCalledWith({
+        page: SidePanelPages.AskAI,
+        pageTitle: 'Legacy AI',
+        pageIcon: 'icon-IconSparkles',
+      });
+      expect(mockSetSidePanelSearch).toHaveBeenCalledWith('');
+    });
+  });
+
   describe('openSidePanelPage with a record context', () => {
     it('should open the record in the side panel when the object is supported', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
@@ -647,33 +752,43 @@ describe('useFrontComponentExecutionContext', () => {
   });
 
   describe('openCommandConfirmationModal', () => {
-    it('should call openConfirmationModal with frontComponent caller', async () => {
-      const { result } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.openCommandConfirmationModal(
-          {
-            title: 'Confirm?',
-            subtitle: 'Are you sure?',
-            confirmButtonText: 'Yes',
-            confirmButtonAccent: 'danger',
-          },
-        );
-      });
-
-      expect(mockOpenConfirmationModal).toHaveBeenCalledWith({
-        caller: {
-          type: 'frontComponent',
+    it.each([
+      { confirmButtonAccent: 'danger' as const, confirmButtonColor: 'danger' },
+      { confirmButtonAccent: 'blue' as const, confirmButtonColor: 'accent' },
+      {
+        confirmButtonAccent: 'default' as const,
+        confirmButtonColor: 'neutral',
+      },
+    ])(
+      'maps the $confirmButtonAccent SDK confirmation accent',
+      async ({ confirmButtonAccent, confirmButtonColor }) => {
+        const { result } = renderUseFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,
-        },
-        title: 'Confirm?',
-        subtitle: 'Are you sure?',
-        confirmButtonText: 'Yes',
-        confirmButtonAccent: 'danger',
-      });
-    });
+        });
+
+        await act(async () => {
+          await result.current.frontComponentHostCommunicationApi.openCommandConfirmationModal(
+            {
+              title: 'Confirm?',
+              subtitle: 'Are you sure?',
+              confirmButtonText: 'Yes',
+              confirmButtonAccent,
+            },
+          );
+        });
+
+        expect(mockOpenConfirmationModal).toHaveBeenCalledWith({
+          caller: {
+            type: 'frontComponent',
+            frontComponentId: FRONT_COMPONENT_ID,
+          },
+          title: 'Confirm?',
+          subtitle: 'Are you sure?',
+          confirmButtonText: 'Yes',
+          confirmButtonColor,
+        });
+      },
+    );
 
     it('should preserve danger as the default confirmation accent', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
@@ -697,20 +812,20 @@ describe('useFrontComponentExecutionContext', () => {
         title: 'Confirm?',
         subtitle: 'Are you sure?',
         confirmButtonText: undefined,
-        confirmButtonAccent: 'danger',
+        confirmButtonColor: 'danger',
       });
     });
   });
 
   describe('enqueueSnackbar', () => {
     it.each([
-      { variant: 'success' as const, mock: () => mockEnqueueSuccessSnackBar },
-      { variant: 'error' as const, mock: () => mockEnqueueErrorSnackBar },
-      { variant: 'info' as const, mock: () => mockEnqueueInfoSnackBar },
-      { variant: 'warning' as const, mock: () => mockEnqueueWarningSnackBar },
+      'success' as const,
+      'error' as const,
+      'info' as const,
+      'warning' as const,
     ])(
-      'should route $variant snackbar to the correct handler',
-      async ({ variant, mock }) => {
+      'should forward the %s SDK notification to the toaster',
+      async (variant) => {
         const { result } = renderUseFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,
         });
@@ -727,13 +842,12 @@ describe('useFrontComponentExecutionContext', () => {
           );
         });
 
-        expect(mock()).toHaveBeenCalledWith({
-          message: `${variant} message`,
-          options: {
-            duration: 3000,
-            detailedMessage: 'details',
-            dedupeKey: 'key-1',
-          },
+        expect(mockEnqueueToast).toHaveBeenCalledWith({
+          children: `${variant} message`,
+          variant,
+          duration: 3000,
+          description: 'details',
+          dedupeKey: 'key-1',
         });
       },
     );
@@ -980,7 +1094,7 @@ describe('useFrontComponentExecutionContext', () => {
   });
 
   describe('copyToClipboard', () => {
-    it('should call useCopyToClipboard with the provided text and a preview message', async () => {
+    it('should copy the provided text through the silent clipboard helper', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
@@ -991,28 +1105,8 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).toHaveBeenCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenCalledWith(
         'hello clipboard',
-        'Application copied "hello clipboard" to your clipboard',
-      );
-    });
-
-    it('should truncate the preview when the text is longer than the preview length', async () => {
-      const { result } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      const longText = 'a'.repeat(50);
-
-      await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
-          longText,
-        );
-      });
-
-      expect(mockCopyToClipboard).toHaveBeenCalledWith(
-        longText,
-        `Application copied "${'a'.repeat(30)}…" to your clipboard`,
       );
     });
 
@@ -1033,7 +1127,7 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).not.toHaveBeenCalled();
+      expect(mockCopyToClipboardWithoutSuccessToast).not.toHaveBeenCalled();
     });
 
     it('should silently drop payloads exceeding the maximum length', async () => {
@@ -1049,7 +1143,7 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).not.toHaveBeenCalled();
+      expect(mockCopyToClipboardWithoutSuccessToast).not.toHaveBeenCalled();
     });
 
     it('should rate-limit consecutive calls within one second', async () => {
@@ -1066,10 +1160,9 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).toHaveBeenCalledTimes(1);
-      expect(mockCopyToClipboard).toHaveBeenCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenCalledTimes(1);
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenCalledWith(
         'first',
-        expect.stringContaining('first'),
       );
     });
 
@@ -1097,16 +1190,14 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).toHaveBeenCalledTimes(2);
-      expect(mockCopyToClipboard).toHaveBeenNthCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenCalledTimes(2);
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenNthCalledWith(
         1,
         'first',
-        expect.stringContaining('first'),
       );
-      expect(mockCopyToClipboard).toHaveBeenNthCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessToast).toHaveBeenNthCalledWith(
         2,
         'second',
-        expect.stringContaining('second'),
       );
 
       dateNowSpy.mockRestore();

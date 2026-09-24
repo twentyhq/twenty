@@ -1,6 +1,6 @@
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 import { AppPath } from 'twenty-shared/types';
 
 const extractPathPrefix = (appPath: string): string => appPath.split('/:')[0];
@@ -12,11 +12,9 @@ const EXCLUDED_PATH_PREFIXES = [
 ].map(extractPathPrefix);
 
 export const isValidReturnToPath = (path: string): boolean => {
-  if (!isNonEmptyString(path) || path === '/') {
-    return false;
-  }
-
-  if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) {
+  // Redirecting after login needs a page to land on, so the hash-only paths
+  // isSafeInternalPath allows are not valid here.
+  if (!isSafeInternalPath(path) || !path.startsWith('/') || path === '/') {
     return false;
   }
 

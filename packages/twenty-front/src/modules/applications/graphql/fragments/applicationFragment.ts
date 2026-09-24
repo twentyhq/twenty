@@ -25,6 +25,7 @@ export const APPLICATION_FRAGMENT = gql`
     autoUpgrade
     defaultRoleId
     settingsCustomTabFrontComponentId
+    healthCheckLogicFunctionId
     availablePackages
     applicationVariables {
       id
@@ -34,6 +35,7 @@ export const APPLICATION_FRAGMENT = gql`
       label
       isSecret
       isDeprecated
+      isRequired
       type
       options
     }
@@ -67,6 +69,16 @@ export const APPLICATION_FRAGMENT = gql`
       applicationId
       createdAt
       updatedAt
+    }
+    settingsMenuItems {
+      id
+      universalIdentifier
+      applicationId
+      frontComponentId
+      title
+      icon
+      position
+      scope
     }
     objects {
       ...ObjectMetadataFields

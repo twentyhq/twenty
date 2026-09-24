@@ -9,9 +9,7 @@ import { DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES } from '@/settings/data-model/f
 import { useAddressSettingsFormInitialValues } from '@/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Select } from '@/ui/input/components/Select';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent } from 'react';
 import {
   IconCircleOff,
   IconList,
@@ -19,7 +17,7 @@ import {
   IconRefresh,
   type IconComponentProps,
 } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -65,12 +63,6 @@ export const SettingsDataModelFieldAddressForm = ({
     initialDefaultValue,
     resetDefaultValueField,
   } = useAddressSettingsFormInitialValues({ existingFieldMetadataId });
-
-  const { closeDropdown } = useCloseDropdown();
-  const reset = () => {
-    resetDefaultValueField();
-    closeDropdown('addressSubFieldsId');
-  };
 
   return (
     <>
@@ -119,6 +111,7 @@ export const SettingsDataModelFieldAddressForm = ({
               description={t`Decide which Sub-address fields you want to display`}
             >
               <MultiSelectAddressFields<string>
+                dropdownId="addressSubFieldsId"
                 options={DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES.map(
                   (option) => ({
                     ...option,
@@ -126,14 +119,10 @@ export const SettingsDataModelFieldAddressForm = ({
                   }),
                 )}
                 values={values}
-                dropdownId="addressSubFieldsId"
                 onChange={onChange}
                 callToActionButton={{
                   text: t`Reset to default`,
-                  onClick: (event: MouseEvent<HTMLDivElement>) => {
-                    event.preventDefault();
-                    reset();
-                  },
+                  onClick: resetDefaultValueField,
                   Icon: IconRefresh,
                 }}
                 selectSizeVariant="small"

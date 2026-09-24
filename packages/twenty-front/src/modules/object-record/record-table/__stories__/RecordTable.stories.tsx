@@ -1,7 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
-import { type RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
 import { fireEvent, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -9,7 +8,7 @@ import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
@@ -26,7 +25,7 @@ const meta: Meta = {
     FileUploadDecorator,
     RecordTableDecorator,
     ContextStoreDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     ObjectMetadataItemsDecorator,
   ],
   args: {
@@ -41,7 +40,7 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<typeof RecordTableEmptyStateNoGroupNoRecordAtAll>;
+type Story = StoryObj<typeof RecordTableWithWrappers>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {

@@ -32,7 +32,7 @@ function isSecretValid(providedSecret: string): boolean {
 export async function POST(request: Request) {
   const configError = getEnterpriseConfigError({
     route: 'enterprise-reissue',
-    feature: 'Enterprise key reissue',
+    feature: 'Organization key reissue',
     requiredEnvVars: [
       'STRIPE_SECRET_KEY',
       'ENTERPRISE_JWT_PRIVATE_KEY',
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error: unknown) {
-    console.error('Enterprise key reissue failed', error);
+    console.error('Organization key reissue failed', error);
 
     return NextResponse.json(
       { error: 'Internal server error' },

@@ -1,13 +1,19 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { ViewKey } from '@/views/types/ViewKey';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
   const store = useStore();
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+  );
   const setLastVisitedViewForObjectMetadataNamePlural = useCallback(
     async ({
       objectNamePlural,
@@ -34,6 +40,10 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
         return;
       }
 
+      if (isInitialObjectViewEnabled && view.key === ViewKey.INDEX) {
+        return;
+      }
+
       const lastVisitedViewPerObjectMetadataItem = store.get(
         lastVisitedViewPerObjectMetadataItemState.atom,
       );
@@ -48,7 +58,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
         });
       }
     },
-    [store],
+    [store, isInitialObjectViewEnabled],
   );
 
   return {

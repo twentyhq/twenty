@@ -32,6 +32,34 @@ describe('isCallRecordingImportComplete', () => {
     ).toBe(false);
   });
 
+  it('is complete when the transcript came back empty', () => {
+    expect(
+      isCallRecordingImportComplete({
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'EMPTY',
+        },
+        audio: AUDIO_VALUE,
+        video: VIDEO_VALUE,
+        callRecorderFailureReason: undefined,
+      }),
+    ).toBe(true);
+  });
+
+  it('is incomplete when the transcript failed', () => {
+    expect(
+      isCallRecordingImportComplete({
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'FAILED',
+        },
+        audio: AUDIO_VALUE,
+        video: VIDEO_VALUE,
+        callRecorderFailureReason: undefined,
+      }),
+    ).toBe(false);
+  });
+
   it('is incomplete when the transcript is unset', () => {
     expect(
       isCallRecordingImportComplete({
@@ -85,6 +113,17 @@ describe('isCallRecordingImportComplete', () => {
         audio: undefined,
         video: undefined,
         callRecorderFailureReason: 'video_file_too_large,audio_file_too_large',
+      }),
+    ).toBe(true);
+  });
+
+  it('treats a media file whose import expired as resolved', () => {
+    expect(
+      isCallRecordingImportComplete({
+        transcript: TRANSCRIPT_CONTENT,
+        audio: AUDIO_VALUE,
+        video: undefined,
+        callRecorderFailureReason: 'video_import_expired',
       }),
     ).toBe(true);
   });

@@ -4,6 +4,7 @@ import { useContext, type ReactNode } from 'react';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-types/display/utils/isFieldIdentifierDisplay';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
+import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
@@ -74,6 +75,7 @@ export const RecordTableCellBaseContainer = ({
 
   return (
     <StyledBaseContainer
+      className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       onClick={handleContainerClick}
       backgroundColorSecondary={theme.background.secondary}
       fontColorSecondary={theme.font.color.secondary}

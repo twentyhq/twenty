@@ -89,27 +89,26 @@ jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
     updateCurrentView: mockUpdateCurrentView,
   })),
 }));
-jest.mock('twenty-ui/data-display', () => ({
+jest.mock('twenty-ui/primitives/data-display', () => ({
   Pill: ({ label }: { label: string }) => <span>{label}</span>,
 }));
-jest.mock('twenty-ui/navigation', () => ({
-  MenuItem: ({ text }: { text: string }) => <span>{text}</span>,
-  MenuItemSelect: ({
-    contextualText,
+jest.mock('twenty-ui/primitives/navigation', () => ({
+  ListItem: ({
+    description,
     disabled,
     onClick,
     selected,
-    text,
+    children,
   }: {
-    contextualText?: React.ReactNode;
+    description?: React.ReactNode;
     disabled?: boolean;
     onClick?: () => void;
     selected: boolean;
-    text: string;
+    children: React.ReactNode;
   }) => (
     <button data-selected={selected} disabled={disabled} onClick={onClick}>
-      <span>{text}</span>
-      {contextualText}
+      <span>{children}</span>
+      {description}
     </button>
   ),
 }));

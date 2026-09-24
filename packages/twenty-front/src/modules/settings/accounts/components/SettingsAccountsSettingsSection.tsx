@@ -2,13 +2,12 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconCalendarEvent, IconMailCog } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -34,8 +33,8 @@ export const SettingsAccountsSettingsSection = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Settings`}
         description={t`Configure your emails and calendar settings.`}
       />
@@ -69,6 +68,6 @@ export const SettingsAccountsSettingsSection = () => {
           </UndecoratedLink>
         </StyledCardLinkSlot>
       </StyledCardsContainer>
-    </Section>
+    </Section.Root>
   );
 };

@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, Repository } from 'typeorm';
+import { IsNull, Not } from 'typeorm';
 import { HTTPMethod } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -33,6 +33,8 @@ import {
   LogicFunctionExecutionExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CustomException } from 'src/utils/custom-exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 type RouteTriggerWorkspace = Pick<
   WorkspaceEntity,
@@ -55,8 +57,8 @@ export class RouteTriggerService {
     private readonly logicFunctionTriggerService: LogicFunctionTriggerService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectWorkspaceScopedRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
   ) {}
 
   private async resolveAuthenticationContextForWorkspaceFallback({
@@ -262,9 +264,8 @@ export class RouteTriggerService {
     } = await this.resolveRouteTriggerRequestContextOrFail(request);
 
     const logicFunctionsWithHttpRouteTrigger =
-      await this.logicFunctionRepository.find({
+      await this.logicFunctionRepository.find(workspace.id, {
         where: {
-          workspaceId: workspace.id,
           httpRouteTriggerSettings: Not(IsNull()),
           ...(isDefined(applicationId) ? { applicationId } : {}),
         },
@@ -325,7 +326,10 @@ export class RouteTriggerService {
         userWorkspaceId,
       });
     } catch (error) {
-      if (error instanceof RouteTriggerException) {
+      if (
+        error instanceof RouteTriggerException ||
+        isUsageRefusedError(error)
+      ) {
         throw error;
       }
 

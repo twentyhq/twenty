@@ -29,10 +29,12 @@ import { PRESIGNED_URL_NO_STORE_CACHE_CONTROL } from 'src/engine/core-modules/fi
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller(`${ApiPath.Rest}/front-component-shared-dependencies`)
+@AllowSuspendedWorkspace()
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(ApplicationRestApiExceptionFilter)
 export class FrontComponentSharedDependenciesController {
@@ -101,6 +103,7 @@ export class FrontComponentSharedDependenciesController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
+      fileResponse.stream.destroy();
       this.logger.error(
         'Shared dependencies bundle stream failed mid-transfer',
         { error },

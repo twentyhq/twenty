@@ -1,10 +1,11 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
-import { type SearchRecord } from '~/generated/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { MenuItemAvatar } from 'twenty-ui/components';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { type SearchRecord } from '~/generated/graphql';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
@@ -28,7 +29,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
   }
 
   if (!filteredWorkspaceMembers.length && searchFilter.length > 0) {
-    return <MenuItem disabled text={t`No Results`} />;
+    return <ListItem disabled>{t`No Results`}</ListItem>;
   }
 
   const enrichedWorkspaceMembers = filteredWorkspaceMembers
@@ -49,11 +50,11 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
             key={workspaceMember.id}
             onClick={() => onSelect(workspaceMember)}
             avatar={{
-              type: 'rounded',
+              shape: 'circle',
               size: 'md',
-              placeholder: workspaceMemberFullName,
-              placeholderColorSeed: workspaceMember.id,
-              avatarUrl: workspaceMember.avatarUrl,
+              name: workspaceMemberFullName,
+              colorSeed: workspaceMember.id,
+              src: workspaceMember.avatarUrl,
             }}
             text={workspaceMemberFullName}
             contextualText={workspaceMember.userEmail}

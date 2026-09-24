@@ -7,7 +7,7 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { BookCallOnboardingStepActions } from '@/onboarding/components/BookCallOnboardingStepActions';
 
 const mockCompleteBookCallOnboardingStep = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
+
 const mockCalApi = jest.fn();
 
 jest.mock('@calcom/embed-react', () => ({
@@ -18,8 +18,11 @@ jest.mock('@/onboarding/hooks/useCompleteBookCallOnboardingStep', () => ({
   useCompleteBookCallOnboardingStep: () => mockCompleteBookCallOnboardingStep,
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueErrorSnackBar: mockEnqueueErrorSnackBar }),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 dynamicActivate(SOURCE_LOCALE);
@@ -109,7 +112,9 @@ describe('BookCallOnboardingStepActions', () => {
     });
 
     expect(skipButton).not.toBeDisabled();
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalled();
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'error', children: 'network error' }),
+    );
   });
 
   it('should complete the step once even when the embed emits repeatedly', async () => {

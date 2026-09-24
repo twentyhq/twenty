@@ -2,13 +2,14 @@
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { getRestrictingRowLevelPermissionPredicates } from '@/object-record/record-field/ui/meta-types/utils/getRestrictingRowLevelPermissionPredicates';
 import { useMemo } from 'react';
 import {
   type RowLevelPermissionPredicate,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
 // Predicate values for select fields can be:
 // - an actual array: ["BIRD", "DOG"]
@@ -127,27 +128,36 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
         (predicate) => predicate.fieldMetadataId === fieldMetadataId,
       );
 
-    if (selectPredicates.length === 0) {
+    const restrictingPredicates = getRestrictingRowLevelPermissionPredicates({
+      predicates: selectPredicates,
+      predicateGroups: objectPermissions.rowLevelPermissionPredicateGroups,
+    });
+
+    if (restrictingPredicates.length === 0) {
       return { filteredOptions: options, canSelectEmpty: true };
     }
 
-    const hasIsEmptyPredicate = selectPredicates.some(
+    const hasIsEmptyPredicate = restrictingPredicates.some(
       (predicate) =>
         predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY,
     );
 
-    const hasIsNotEmptyPredicate = selectPredicates.some(
+    const hasIsNotEmptyPredicate = restrictingPredicates.some(
       (predicate) =>
         predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
     );
 
     return {
-      filteredOptions: filterOptionsByPredicates(options, selectPredicates),
+      filteredOptions: filterOptionsByPredicates(
+        options,
+        restrictingPredicates,
+      ),
       canSelectEmpty: hasIsEmptyPredicate && !hasIsNotEmptyPredicate,
     };
   }, [
     objectMetadataId,
     objectPermissions.rowLevelPermissionPredicates,
+    objectPermissions.rowLevelPermissionPredicateGroups,
     fieldMetadataId,
     options,
   ]);

@@ -1,5 +1,8 @@
 import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+
+const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
@@ -22,10 +25,27 @@ const companyOpportunitiesField = companyObjectMetadataItem.fields.find(
   (field) => field.name === 'opportunities',
 );
 
+const personPreviousCompaniesField = personObjectMetadataItem.fields.find(
+  (field) => field.name === 'previousCompanies',
+);
+
+const companyPreviousEmployeesField = companyObjectMetadataItem.fields.find(
+  (field) => field.name === 'previousEmployees',
+);
+
+const employmentHistoryObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('employmentHistory');
+
+const employmentHistoryPersonField =
+  employmentHistoryObjectMetadataItem.fields.find(
+    (field) => field.name === 'person',
+  );
+
 describe('getFieldWidgetRelationTraversal', () => {
   it('should scope a direct widget through the relation own inverse', () => {
     const traversal = getFieldWidgetRelationTraversal({
       sourceFieldMetadataItem: companyPeopleField,
+      objectMetadataItems,
     });
 
     expect(traversal.targetObjectMetadataId).toBe(personObjectMetadataItem.id);
@@ -39,6 +59,7 @@ describe('getFieldWidgetRelationTraversal', () => {
     const traversal = getFieldWidgetRelationTraversal({
       sourceFieldMetadataItem: companyPeopleField,
       nestedRelationFieldMetadataItem: personOpportunitiesField,
+      objectMetadataItems,
     });
 
     // The embedded view lists the terminal object...
@@ -60,6 +81,7 @@ describe('getFieldWidgetRelationTraversal', () => {
     const traversal = getFieldWidgetRelationTraversal({
       sourceFieldMetadataItem: companyPeopleField,
       nestedRelationFieldMetadataItem: personOpportunitiesField,
+      objectMetadataItems,
     });
 
     expect(traversal.inverseFieldMetadataId).not.toBe(
@@ -74,6 +96,7 @@ describe('getFieldWidgetRelationTraversal', () => {
     const traversal = getFieldWidgetRelationTraversal({
       sourceFieldMetadataItem: personCompanyField,
       nestedRelationFieldMetadataItem: companyOpportunitiesField,
+      objectMetadataItems,
     });
 
     expect(traversal.targetObjectMetadataId).toBe(
@@ -87,9 +110,33 @@ describe('getFieldWidgetRelationTraversal', () => {
     expect(traversal.relationTargetFieldMetadataId).toBeNull();
   });
 
+  it('should scope a junction widget on the junction target, traversing the junction', () => {
+    const traversal = getFieldWidgetRelationTraversal({
+      sourceFieldMetadataItem: personPreviousCompaniesField,
+      objectMetadataItems,
+    });
+
+    // The embedded view lists the records behind the junction (companies),
+    // not the junction records (employment histories)...
+    expect(traversal.targetObjectMetadataId).toBe(companyObjectMetadataItem.id);
+    // ...scoped by the target's own junction relation (company -> employment
+    // histories)...
+    expect(traversal.inverseFieldMetadataId).toBe(
+      companyPreviousEmployeesField?.id,
+    );
+    // ...traversed to the junction field pointing at the current record
+    // (employment history -> person).
+    expect(traversal.relationTargetFieldMetadataId).toBe(
+      employmentHistoryPersonField?.id,
+    );
+  });
+
   it('should return an empty traversal without a source field', () => {
     expect(
-      getFieldWidgetRelationTraversal({ sourceFieldMetadataItem: undefined }),
+      getFieldWidgetRelationTraversal({
+        sourceFieldMetadataItem: undefined,
+        objectMetadataItems,
+      }),
     ).toEqual({
       targetObjectMetadataId: undefined,
       inverseFieldMetadataId: undefined,

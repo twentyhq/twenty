@@ -4,11 +4,7 @@ import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
-import {
-  ensureAppAccessTokenIsValidOrRefresh,
-  ensureAppRegistration,
-} from '@/cli/utilities/auth';
-import { buildAppTokenPairFetcher } from '@/cli/utilities/auth/build-app-token-pair-fetcher';
+import { ensureAppRegistration } from '@/cli/utilities/auth';
 import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
@@ -25,8 +21,10 @@ import {
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
+import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
+import { formatUploadFailures } from '@/cli/utilities/file/format-upload-failures';
 import { runSafe } from '@/cli/utilities/run-safe';
 import {
   APP_ERROR_CODES,
@@ -40,6 +38,7 @@ export type AppDevOnceOptions = {
   verbose?: boolean;
   apply?: boolean;
   force?: boolean;
+  inferDeletionFromMissingEntities?: boolean;
   onProgress?: (message: string) => void;
   onPlan?: (text: string) => void;
   confirmApply?: (deleteCount: number) => Promise<boolean>;
@@ -119,6 +118,7 @@ const innerAppDevOnce = async (
     verbose = false,
     apply = true,
     force = false,
+    inferDeletionFromMissingEntities = true,
   } = options;
 
   onProgress?.('Checking server...');
@@ -230,13 +230,18 @@ const innerAppDevOnce = async (
 
     const planResult = await apiService.syncApplication(manifest, {
       dryRun: true,
+      inferDeletionFromMissingEntities,
     });
 
     if (!planResult.success) {
       return { success: false, error: buildSyncError(planResult, verbose) };
     }
 
-    onPlan?.(formatSyncActionsPlan(planResult.data.actions));
+    onPlan?.(
+      formatSyncActionsPlan(planResult.data.actions, {
+        showNoDeleteHint: inferDeletionFromMissingEntities,
+      }),
+    );
 
     return { success: true, data: makeData() };
   }
@@ -248,10 +253,15 @@ const innerAppDevOnce = async (
 
     const planResult = await apiService.syncApplication(manifest, {
       dryRun: true,
+      inferDeletionFromMissingEntities,
     });
 
     if (planResult.success) {
-      onPlan?.(formatSyncActionsPlan(planResult.data.actions));
+      onPlan?.(
+        formatSyncActionsPlan(planResult.data.actions, {
+          showNoDeleteHint: inferDeletionFromMissingEntities,
+        }),
+      );
       planRendered = true;
 
       if (hasDestructiveActions(planResult.data.actions)) {
@@ -278,14 +288,10 @@ const innerAppDevOnce = async (
 
   const configService = new ConfigService();
 
-  const { clientId, clientSecret } = await ensureAppRegistration(
-    apiService,
-    configService,
-    {
-      name: manifest.application.displayName,
-      universalIdentifier: manifest.application.universalIdentifier,
-    },
-  );
+  await ensureAppRegistration(apiService, configService, {
+    name: manifest.application.displayName,
+    universalIdentifier: manifest.application.universalIdentifier,
+  });
 
   const createDevAppResult = await apiService.createDevelopmentApplication({
     universalIdentifier: manifest.application.universalIdentifier,
@@ -297,7 +303,9 @@ const innerAppDevOnce = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
+        message:
+          getGraphQLErrorMessage(createDevAppResult.error) ??
+          `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
       },
     };
   }
@@ -323,19 +331,16 @@ const innerAppDevOnce = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: uploadFailures
-          .map(
-            (failure) =>
-              `Failed to upload ${failure.builtPath}: ${failure.error}`,
-          )
-          .join('\n'),
+        message: formatUploadFailures(uploadFailures).join('\n'),
       },
     };
   }
 
   onProgress?.('Syncing manifest...');
 
-  const syncResult = await apiService.syncApplication(manifest);
+  const syncResult = await apiService.syncApplication(manifest, {
+    inferDeletionFromMissingEntities,
+  });
 
   if (!syncResult.success) {
     return { success: false, error: buildSyncError(syncResult, verbose) };
@@ -348,22 +353,11 @@ const innerAppDevOnce = async (
   onProgress?.('Generating API client...');
 
   try {
-    const appAccessToken = await ensureAppAccessTokenIsValidOrRefresh(
-      configService,
-      {
-        credentials: clientSecret ? { clientId, clientSecret } : undefined,
-        fetchTokenPair: buildAppTokenPairFetcher(
-          apiService,
-          createDevAppResult.data.id,
-        ),
-      },
-    );
-
     const clientService = new ClientService();
 
     await clientService.generateCoreClient({
       appPath,
-      appAccessToken,
+      applicationUniversalIdentifier: manifest.application.universalIdentifier,
     });
   } catch (error) {
     return {

@@ -1,3 +1,4 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
 
@@ -9,9 +10,8 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 
-import { ModalContent } from 'twenty-ui/surfaces';
 import { useLingui } from '@lingui/react/macro';
-import { Radio } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WorkBook } from 'xlsx-ugnis';
 
@@ -99,23 +99,31 @@ export const SelectSheetStep = ({
 
   return (
     <>
-      <ModalContent isVerticallyCentered isHorizontallyCentered gap={8}>
+      <Dialog.Body
+        style={{
+          display: 'flex',
+          flex: '1 1 0%',
+          flexDirection: 'column',
+          padding: 'var(--t-spacing-10)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 'var(--t-spacing-8)',
+        }}
+      >
         <Heading title={t`Select the sheet to use`} />
-        <StyledRadioContainer>
+        <RadioGroup
+          render={<StyledRadioContainer />}
+          aria-label={t`Select the sheet to use`}
+          value={value}
+          onValueChange={setValue}
+        >
           {sheetNames.map((sheetName) => (
             <StyledRadioItemContainer key={sheetName}>
-              <Radio
-                value={sheetName}
-                label={sheetName}
-                checked={value === sheetName}
-                onCheckedChange={(checked) => {
-                  if (checked) setValue(sheetName);
-                }}
-              />
+              <Radio value={sheetName}>{sheetName}</Radio>
             </StyledRadioItemContainer>
           ))}
-        </StyledRadioContainer>
-      </ModalContent>
+        </RadioGroup>
+      </Dialog.Body>
       <StepNavigationButton
         onContinue={() => handleOnContinue(value)}
         onBack={onBack}

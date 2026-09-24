@@ -1,4 +1,4 @@
-import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -10,20 +10,20 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useLingui } from '@lingui/react/macro';
-import { createPortal } from 'react-dom';
+import { createPath, useLocation } from 'react-router-dom';
 import {
   IconChevronLeft,
   IconCircle,
   IconCircleDashed,
   IconCopy,
 } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
   ViewVisibility,
   PermissionFlagType,
@@ -32,7 +32,8 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownVisibilityContent = () => {
   const { t } = useLingui();
-  const { resetContent } = useObjectOptionsDropdown();
+  const location = useLocation();
+  const { resetContent, dropdownId } = useObjectOptionsDropdown();
   const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
   const { copyToClipboard } = useCopyToClipboard();
@@ -41,7 +42,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    dropdownId,
   );
 
   const selectableItemIdArray = [
@@ -58,8 +59,11 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   };
 
   const handleCopyLink = async () => {
-    const currentUrl = window.location.href;
-    await copyToClipboard(currentUrl, t`Link copied to clipboard`);
+    const canonicalViewUrl = new URL(
+      createPath(location),
+      window.location.origin,
+    ).toString();
+    await copyToClipboard(canonicalViewUrl, t`Link copied to clipboard`);
   };
 
   const currentVisibility = currentView?.visibility ?? ViewVisibility.WORKSPACE;
@@ -78,8 +82,8 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
-          selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+          selectableListInstanceId={dropdownId}
+          focusId={dropdownId}
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem
@@ -90,30 +94,28 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               handleVisibilityChange(ViewVisibility.WORKSPACE)
             }
           >
-            <>
+            <Tooltip
+              content={t`Workspace views require manage views permission`}
+              positionMethod="fixed"
+              delay={TooltipDelay.mediumDelay}
+              disabled={!!hasViewsPermission}
+            >
               <div id="workspace-visibility-option">
-                <MenuItemSelect
-                  LeftIcon={IconCircle}
-                  text={t`Workspace`}
-                  contextualText={t`Everyone`}
-                  selected={currentVisibility === ViewVisibility.WORKSPACE}
+                <ListItem
                   focused={selectedItemId === ViewVisibility.WORKSPACE}
                   onClick={() =>
                     handleVisibilityChange(ViewVisibility.WORKSPACE)
                   }
                   disabled={!hasViewsPermission || !canPersistChanges}
-                />
+                  role="option"
+                  aria-selected={currentVisibility === ViewVisibility.WORKSPACE}
+                  selected={currentVisibility === ViewVisibility.WORKSPACE}
+                  indicator="check"
+                  description={t`Everyone`}
+                  startIcon={<IconCircle />}
+                >{t`Workspace`}</ListItem>
               </div>
-              {!hasViewsPermission &&
-                createPortal(
-                  <AppTooltip
-                    anchorSelect="#workspace-visibility-option"
-                    content={t`Workspace views require manage views permission`}
-                    positionStrategy="fixed"
-                  />,
-                  document.body,
-                )}
-            </>
+            </Tooltip>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewVisibility.UNLISTED}
@@ -122,15 +124,17 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               handleVisibilityChange(ViewVisibility.UNLISTED)
             }
           >
-            <MenuItemSelect
-              LeftIcon={IconCircleDashed}
-              text={t`Unlisted`}
-              contextualText={t`Visible to you`}
-              selected={currentVisibility === ViewVisibility.UNLISTED}
+            <ListItem
               focused={selectedItemId === ViewVisibility.UNLISTED}
               onClick={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
               disabled={!canPersistChanges}
-            />
+              role="option"
+              aria-selected={currentVisibility === ViewVisibility.UNLISTED}
+              selected={currentVisibility === ViewVisibility.UNLISTED}
+              indicator="check"
+              description={t`Visible to you`}
+              startIcon={<IconCircleDashed />}
+            >{t`Unlisted`}</ListItem>
           </SelectableListItem>
           {currentVisibility === ViewVisibility.WORKSPACE && (
             <>
@@ -139,12 +143,11 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                 itemId="Copy view link"
                 onEnter={handleCopyLink}
               >
-                <MenuItem
+                <ListItem
                   focused={selectedItemId === 'Copy view link'}
                   onClick={handleCopyLink}
-                  LeftIcon={IconCopy}
-                  text={t`Copy view link`}
-                />
+                  startIcon={<IconCopy />}
+                >{t`Copy view link`}</ListItem>
               </SelectableListItem>
             </>
           )}

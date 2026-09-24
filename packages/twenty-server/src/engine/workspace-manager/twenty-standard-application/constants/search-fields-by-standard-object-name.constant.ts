@@ -4,6 +4,11 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 
 export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
+  agentChatThread: [],
+  agentTurn: [],
+  agentMessage: [],
+  agentMessagePart: [],
+  agentTurnEvaluation: [],
   attachment: [{ name: 'name', type: FieldMetadataType.TEXT }],
   blocklist: [{ name: 'handle', type: FieldMetadataType.TEXT }],
   calendarChannelEventAssociation: [
@@ -44,6 +49,7 @@ export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
     { name: 'phones', type: FieldMetadataType.PHONES },
     { name: 'jobTitle', type: FieldMetadataType.TEXT },
   ],
+  recordShare: [],
   task: [
     { name: 'title', type: FieldMetadataType.TEXT },
     { name: 'bodyV2', type: FieldMetadataType.RICH_TEXT },

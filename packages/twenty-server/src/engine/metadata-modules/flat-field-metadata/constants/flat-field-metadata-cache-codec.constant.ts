@@ -13,6 +13,7 @@ export const FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY = {
   icon: '$b',
   id: '$c',
   isActive: '$d',
+  isAuditLogged: '$O',
   isLabelSyncedWithName: '$e',
   isNullable: '$f',
   isSystem: '$g',

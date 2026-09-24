@@ -11,15 +11,14 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useLocation, useParams } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { isDefined, getAppPath } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   FindOnePageLayoutTypeDocument,
@@ -50,16 +49,17 @@ export const usePageChangeEffectNavigateLocation = () => {
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
 
-  const params = useParams();
-
-  const objectNamePlural = params.objectNamePlural ?? '';
+  const objectNamePlural =
+    matchPath(AppPath.RecordIndexPage, location.pathname)?.params
+      .objectNamePlural ?? '';
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
   const isMinimalMetadataReady = useAtomStateValue(isMinimalMetadataReadyState);
 
-  const pageLayoutId = params.pageLayoutId;
+  const pageLayoutId = matchPath(AppPath.PageLayoutPage, location.pathname)
+    ?.params.pageLayoutId;
   const isOnPageLayoutPage = isMatchingLocation(
     location,
     AppPath.PageLayoutPage,
@@ -80,13 +80,6 @@ export const usePageChangeEffectNavigateLocation = () => {
   const resolvedReturnToPath = isNonEmptyString(returnToPath)
     ? returnToPath
     : readReturnToPathFromUrlSearchParams();
-
-  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
-    shouldOpenAiChatAfterOnboardingState,
-  );
-  const onboardingCompletedPath = shouldOpenAiChatAfterOnboarding
-    ? getAppPath(AppPath.AiChat, { threadId: null })
-    : defaultHomePagePath;
 
   const isOnboardingCheckoutPending = useAtomStateValue(
     isOnboardingCheckoutPendingState,
@@ -197,7 +190,7 @@ export const usePageChangeEffectNavigateLocation = () => {
       return;
     }
 
-    return resolvedReturnToPath ?? onboardingCompletedPath;
+    return resolvedReturnToPath ?? defaultHomePagePath;
   }
 
   if (isMatchingLocation(location, AppPath.Index) && isLogged) {

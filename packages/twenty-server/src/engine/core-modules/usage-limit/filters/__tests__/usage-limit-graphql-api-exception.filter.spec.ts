@@ -21,11 +21,11 @@ const catchAsGraphQLError = (exception: UsageLimitException) => {
 };
 
 describe('UsageLimitGraphqlApiExceptionFilter', () => {
-  it('surfaces an invalid limit rule as a user input error rather than a server error', () => {
+  it('surfaces an invalid limit as a user input error rather than a server error', () => {
     const graphqlError = catchAsGraphQLError(
       new UsageLimitException(
         'API speed limits cannot target the EMAIL_SEND operation',
-        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        UsageLimitExceptionCode.LIMIT_INVALID,
       ),
     );
 
@@ -33,6 +33,17 @@ describe('UsageLimitGraphqlApiExceptionFilter', () => {
     expect(graphqlError.message).toBe(
       'API speed limits cannot target the EMAIL_SEND operation',
     );
+  });
+
+  it('surfaces a not-entitled limit as a forbidden error', () => {
+    const graphqlError = catchAsGraphQLError(
+      new UsageLimitException(
+        'Intra-workspace usage limits require the Organization plan',
+        UsageLimitExceptionCode.LIMIT_NOT_ENTITLED,
+      ),
+    );
+
+    expect(graphqlError.extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
   it('surfaces an exhausted quota through the shared enforcement mapping', () => {

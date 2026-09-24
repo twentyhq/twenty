@@ -1,13 +1,9 @@
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
 import { useLingui } from '@lingui/react/macro';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderErrorContainer,
-  AnimatedPlaceholderErrorSubTitle,
-  AnimatedPlaceholderErrorTextContainer,
-  AnimatedPlaceholderErrorTitle,
-} from 'twenty-ui/feedback';
+
 import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsBillingPlansErrorStateProps = {
   onRetry: () => void;
@@ -19,22 +15,19 @@ export const SettingsBillingPlansErrorState = ({
   const { t } = useLingui();
 
   return (
-    <AnimatedPlaceholderErrorContainer>
+    <ErrorState.Root>
       <AnimatedPlaceholder type="errorIndex" />
-      <AnimatedPlaceholderErrorTextContainer>
-        <AnimatedPlaceholderErrorTitle>
-          {t`We couldn't load the plans`}
-        </AnimatedPlaceholderErrorTitle>
-        <AnimatedPlaceholderErrorSubTitle>
+      <ErrorState.Content>
+        <ErrorState.Title>{t`We couldn't load the plans`}</ErrorState.Title>
+        <ErrorState.Description>
           {t`Something went wrong while contacting our billing service.`}
-        </AnimatedPlaceholderErrorSubTitle>
-      </AnimatedPlaceholderErrorTextContainer>
+        </ErrorState.Description>
+      </ErrorState.Content>
       <Button
-        Icon={IconRefresh}
-        title={t`Try again`}
-        variant="secondary"
+        startIcon={<IconRefresh />}
         onClick={onRetry}
-      />
-    </AnimatedPlaceholderErrorContainer>
+        variant="outline"
+      >{t`Try again`}</Button>
+    </ErrorState.Root>
   );
 };

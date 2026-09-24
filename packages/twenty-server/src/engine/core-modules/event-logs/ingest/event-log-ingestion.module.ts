@@ -14,6 +14,7 @@ import {
   EVENT_SINKS,
   type EventSink,
 } from 'src/engine/core-modules/event-logs/ingest/event-sink';
+import { ForwardEventLogFromEntityEventsToDbQueue } from 'src/engine/core-modules/event-logs/ingest/forward-event-log-from-entity-events-to-db-queue';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -59,6 +60,7 @@ const eventSinksProvider = {
     eventSinksProvider,
     WorkspaceEventSinkService,
     CreateEventLogFromInternalEvent,
+    ForwardEventLogFromEntityEventsToDbQueue,
   ],
   exports: [WorkspaceEventSinkService],
 })

@@ -27,7 +27,7 @@ describe('InstallOnboardingAppsJob', () => {
         {
           provide: ApplicationRegistrationService,
           useValue: {
-            findOneByUniversalIdentifier: jest.fn(),
+            findOneByUniversalIdentifierGlobal: jest.fn(),
           },
         },
         {
@@ -62,7 +62,10 @@ describe('InstallOnboardingAppsJob', () => {
 
   it('should credit the reward for every requested app and install them', async () => {
     jest
-      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .spyOn(
+        applicationRegistrationService,
+        'findOneByUniversalIdentifierGlobal',
+      )
       .mockImplementation(async (universalIdentifier) =>
         buildRegistration(`registration-${universalIdentifier}`),
       );
@@ -86,7 +89,10 @@ describe('InstallOnboardingAppsJob', () => {
 
   it('should credit only once an install has succeeded', async () => {
     jest
-      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .spyOn(
+        applicationRegistrationService,
+        'findOneByUniversalIdentifierGlobal',
+      )
       .mockImplementation(async (universalIdentifier) =>
         buildRegistration(`registration-${universalIdentifier}`),
       );
@@ -110,7 +116,10 @@ describe('InstallOnboardingAppsJob', () => {
 
   it('should not credit again when a failed run is relaunched', async () => {
     jest
-      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .spyOn(
+        applicationRegistrationService,
+        'findOneByUniversalIdentifierGlobal',
+      )
       .mockResolvedValue(null);
 
     await job.handle({
@@ -129,7 +138,10 @@ describe('InstallOnboardingAppsJob', () => {
 
   it('should not credit when every install fails', async () => {
     jest
-      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .spyOn(
+        applicationRegistrationService,
+        'findOneByUniversalIdentifierGlobal',
+      )
       .mockImplementation(async (universalIdentifier) =>
         buildRegistration(`registration-${universalIdentifier}`),
       );
@@ -150,7 +162,10 @@ describe('InstallOnboardingAppsJob', () => {
 
   it('should credit only the apps that were actually installed when a registration cannot be found', async () => {
     jest
-      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .spyOn(
+        applicationRegistrationService,
+        'findOneByUniversalIdentifierGlobal',
+      )
       .mockImplementation(async (universalIdentifier) =>
         universalIdentifier === callRecorderId
           ? null
@@ -176,7 +191,10 @@ describe('InstallOnboardingAppsJob', () => {
 
   it('should clear every step to go back to once the apps are scheduled', async () => {
     jest
-      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .spyOn(
+        applicationRegistrationService,
+        'findOneByUniversalIdentifierGlobal',
+      )
       .mockResolvedValue(buildRegistration('registration-id'));
     jest
       .spyOn(applicationInstallService, 'installApplication')
@@ -195,7 +213,10 @@ describe('InstallOnboardingAppsJob', () => {
 
   it('should keep the steps to go back to when every install failed', async () => {
     jest
-      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .spyOn(
+        applicationRegistrationService,
+        'findOneByUniversalIdentifierGlobal',
+      )
       .mockResolvedValue(null);
 
     await job.handle({
@@ -211,7 +232,10 @@ describe('InstallOnboardingAppsJob', () => {
 
   it('should clear the steps to go back to when only some installs succeeded', async () => {
     jest
-      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .spyOn(
+        applicationRegistrationService,
+        'findOneByUniversalIdentifierGlobal',
+      )
       .mockImplementation(async (universalIdentifier) =>
         universalIdentifier === callRecorderId
           ? buildRegistration('registration-id')
@@ -234,7 +258,10 @@ describe('InstallOnboardingAppsJob', () => {
 
   it('should still install when the job was enqueued before it carried a user', async () => {
     jest
-      .spyOn(applicationRegistrationService, 'findOneByUniversalIdentifier')
+      .spyOn(
+        applicationRegistrationService,
+        'findOneByUniversalIdentifierGlobal',
+      )
       .mockResolvedValue(buildRegistration('registration-id'));
     jest
       .spyOn(applicationInstallService, 'installApplication')

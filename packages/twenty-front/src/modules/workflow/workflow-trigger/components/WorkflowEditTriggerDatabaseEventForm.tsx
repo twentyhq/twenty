@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -25,8 +27,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`
@@ -242,12 +243,15 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                             itemId={option.value}
                             onEnter={() => handleOptionClick(option.value)}
                           >
-                            <MenuItem
+                            <ListItem
                               focused={selectedItemId === option.value}
-                              LeftIcon={option.Icon}
-                              text={option.label}
+                              startIcon={
+                                <SelectOptionIcon Icon={option.Icon} />
+                              }
                               onClick={() => handleOptionClick(option.value)}
-                            />
+                            >
+                              {option.label}
+                            </ListItem>
                           </SelectableListItem>
                         ))}
                       </SelectableList>

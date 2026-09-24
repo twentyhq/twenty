@@ -5,7 +5,7 @@ exports[`successful find view with all sub-relations (e2e) Company View Structur
   "anyFieldFilterValue": null,
   "createdAt": Any<String>,
   "deletedAt": null,
-  "icon": "IconList",
+  "icon": "IconTable",
   "id": Any<String>,
   "isCompact": false,
   "key": "INDEX",

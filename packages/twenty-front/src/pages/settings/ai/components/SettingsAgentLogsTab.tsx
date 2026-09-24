@@ -1,27 +1,23 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { Status } from 'twenty-ui/primitives/data-display';
+
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
+import { LightIconButton, useToast } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation, useQuery } from '@apollo/client/react';
 import {
   EvaluateAgentTurnDocument,
   GetAgentTurnsDocument,
@@ -42,7 +38,7 @@ type SettingsAgentLogsTabProps = {
 export const SettingsAgentLogsTab = ({
   agentId,
 }: SettingsAgentLogsTabProps) => {
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [evaluatingTurnIds, setEvaluatingTurnIds] = useState<Set<string>>(
     new Set(),
   );
@@ -108,8 +104,9 @@ export const SettingsAgentLogsTab = ({
             return next;
           });
         }
-        enqueueSuccessSnackBar({
-          message: t`Turn evaluated successfully`,
+        enqueueToast({
+          variant: 'success',
+          children: t`Turn evaluated successfully`,
         });
         refetch();
       },
@@ -124,9 +121,7 @@ export const SettingsAgentLogsTab = ({
         next.delete(turnId);
         return next;
       });
-      enqueueErrorSnackBar({
-        message: t`Failed to evaluate turn`,
-      });
+      enqueueToast({ variant: 'error', children: t`Failed to evaluate turn` });
     });
   };
 
@@ -169,17 +164,15 @@ export const SettingsAgentLogsTab = ({
 
   if (turns.length === 0) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
+      <EmptyState.Root>
         <AnimatedPlaceholder type="emptyTimeline" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`No logs yet`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
+        <EmptyState.Content>
+          <EmptyState.Title>{t`No logs yet`}</EmptyState.Title>
+          <EmptyState.Description>
             {t`Agent interactions will appear here once the agent is used in conversations`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+          </EmptyState.Description>
+        </EmptyState.Content>
+      </EmptyState.Root>
     );
   }
 
@@ -212,19 +205,17 @@ export const SettingsAgentLogsTab = ({
                 {latestEvaluation ? (
                   <Status
                     color={getScoreColor(latestEvaluation.score)}
-                    text={`${latestEvaluation.score}`}
-                  />
+                  >{`${latestEvaluation.score}`}</Status>
                 ) : evaluatingTurnIds.has(turn.id) ||
                   backgroundEvaluatingTurnIds.has(turn.id) ? (
-                  <Status color="blue" text={t`Evaluating`} isLoaderVisible />
+                  <Status color="blue" loading>{t`Evaluating`}</Status>
                 ) : (
                   <Button
-                    size="small"
-                    variant="secondary"
+                    size="sm"
                     onClick={() => handleEvaluateTurn(turn.id)}
                     disabled={evaluating}
-                    title={t`Evaluate`}
-                  />
+                    variant="outline"
+                  >{t`Evaluate`}</Button>
                 )}
               </TableCell>
               <TableCell
@@ -245,10 +236,12 @@ export const SettingsAgentLogsTab = ({
                       .replace(':turnId', turn.id)}
                   >
                     <LightIconButton
-                      Icon={IconChevronRight}
                       title={t`View all evaluations`}
-                      accent="tertiary"
-                    />
+                      emphasis="subtle"
+                      aria-label={t`View all evaluations`}
+                    >
+                      <IconChevronRight />
+                    </LightIconButton>
                   </UndecoratedLink>
                 )}
               </TableCell>

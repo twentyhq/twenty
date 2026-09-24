@@ -1,8 +1,8 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
-import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
+import { type BillingCheckoutSession } from '@/auth/types/BillingCheckoutSession';
+import { type SocialSsoSignInUpActionType } from '@/auth/types/SocialSsoSignInUpActionType';
 import {
   BillingPlanKey,
   SubscriptionInterval,
@@ -22,7 +22,7 @@ export const useSignInWithGoogle = () => {
   const { signInWithGoogle } = useAuth();
 
   return {
-    signInWithGoogle: ({ action }: { action: SocialSSOSignInUpActionType }) =>
+    signInWithGoogle: ({ action }: { action: SocialSsoSignInUpActionType }) =>
       signInWithGoogle({
         workspaceInviteHash,
         workspacePersonalInviteToken,

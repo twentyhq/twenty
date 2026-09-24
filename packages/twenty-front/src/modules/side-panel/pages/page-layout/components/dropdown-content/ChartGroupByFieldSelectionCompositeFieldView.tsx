@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
@@ -13,7 +14,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type ChartGroupByFieldSelectionCompositeFieldViewProps = {
   compositeField: FieldMetadataItem;
@@ -71,20 +72,26 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
                 onSelectSubField(subFieldName);
               }}
             >
-              <MenuItemSelect
-                text={getCompositeSubFieldLabel(
-                  compositeFieldType,
-                  subFieldName,
-                )}
-                selected={currentSubFieldName === subFieldName}
+              <ListItem
                 focused={selectedItemId === subFieldName}
                 onClick={() => {
                   onSelectSubField(subFieldName);
                 }}
-                LeftIcon={getIcon(
-                  ICON_NAME_BY_SUB_FIELD[subFieldName] ?? compositeField.icon,
-                )}
-              />
+                role="option"
+                aria-selected={currentSubFieldName === subFieldName}
+                selected={currentSubFieldName === subFieldName}
+                indicator="check"
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={getIcon(
+                      ICON_NAME_BY_SUB_FIELD[subFieldName] ??
+                        compositeField.icon,
+                    )}
+                  />
+                }
+              >
+                {getCompositeSubFieldLabel(compositeFieldType, subFieldName)}
+              </ListItem>
             </SelectableListItem>
           ))}
         </SelectableList>

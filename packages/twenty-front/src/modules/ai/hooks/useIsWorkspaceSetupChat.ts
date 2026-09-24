@@ -1,14 +1,14 @@
-import { useLocation } from 'react-router-dom';
-
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isAiChatPath } from '~/utils/isAiChatPath';
 
 export const useIsWorkspaceSetupChat = () => {
-  const { pathname } = useLocation();
+  const surface = useContext(AiChatSurfaceContext);
   const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
     shouldOpenAiChatAfterOnboardingState,
   );
 
-  return shouldOpenAiChatAfterOnboarding && isAiChatPath(pathname);
+  return shouldOpenAiChatAfterOnboarding && isDefined(surface);
 };

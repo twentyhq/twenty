@@ -1,3 +1,4 @@
+import { LightIconButton } from 'twenty-ui/components';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
@@ -36,11 +37,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   data,
   deletable,
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
-  const { i18n } = useLingui();
+  const { i18n, t } = useLingui();
 
   const { isEdgeHovered } = useEdgeState();
-
-  const isEditable = deletable !== false;
 
   const {
     segments,
@@ -55,15 +54,20 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     markerStart,
     markerEnd,
     strategy: data?.edgePathStrategy,
+    parallelEdgeOffset: data?.parallelEdgeOffset,
   });
 
   const { deleteEdge } = useDeleteEdge();
 
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
+  const sourceConnectionOptions =
+    data?.sourceConnectionOptions ??
+    getConnectionOptionsForSourceHandle({ sourceHandleId });
 
   const nodeCreationStarted = isNodeCreationStarted({
     parentStepId: source,
     nextStepId: target,
+    connectionOptions: sourceConnectionOptions,
   });
 
   const handleNodeButtonClick = () => {
@@ -71,9 +75,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
       parentStepId: source,
       nextStepId: target,
       position: { x: labelX, y: labelY },
-      connectionOptions: getConnectionOptionsForSourceHandle({
-        sourceHandleId,
-      }),
+      connectionOptions: sourceConnectionOptions,
     });
   };
 
@@ -83,9 +85,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     await deleteEdge({
       source,
       target,
-      sourceConnectionOptions: getConnectionOptionsForSourceHandle({
-        sourceHandleId,
-      }),
+      sourceConnectionOptions,
     });
   };
 
@@ -120,41 +120,44 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
           </WorkflowDiagramEdgeLabelContainer>
         )}
 
-        {isEditable && (
-          <WorkflowDiagramEdgeV2Container
-            data-click-outside-id={
-              WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID
+        <WorkflowDiagramEdgeV2Container
+          data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
+          labelX={labelX}
+          labelY={labelY}
+        >
+          <WorkflowDiagramEdgeV2VisibilityContainer
+            shouldDisplay={
+              nodeCreationStarted ||
+              isEdgeHovered({
+                source,
+                target,
+                sourceHandle: sourceHandleId,
+                targetHandle: targetHandleId,
+              })
             }
-            labelX={labelX}
-            labelY={labelY}
           >
-            <WorkflowDiagramEdgeV2VisibilityContainer
-              shouldDisplay={
-                nodeCreationStarted ||
-                isEdgeHovered({
-                  source,
-                  target,
-                  sourceHandle: sourceHandleId,
-                  targetHandle: targetHandleId,
-                })
-              }
-            >
-              <WorkflowDiagramEdgeButtonGroup
-                iconButtons={[
-                  {
-                    Icon: IconPlus,
-                    onClick: handleNodeButtonClick,
-                  },
-                  {
-                    Icon: IconTrash,
-                    onClick: handleDeleteBranch,
-                  },
-                ]}
-                selected={nodeCreationStarted}
-              />
-            </WorkflowDiagramEdgeV2VisibilityContainer>
-          </WorkflowDiagramEdgeV2Container>
-        )}
+            <WorkflowDiagramEdgeButtonGroup selected={nodeCreationStarted}>
+              <LightIconButton
+                size="xs"
+                emphasis="subtle"
+                aria-label={t`Insert action`}
+                onClick={handleNodeButtonClick}
+              >
+                <IconPlus />
+              </LightIconButton>
+              {deletable !== false && (
+                <LightIconButton
+                  size="xs"
+                  emphasis="subtle"
+                  aria-label={t`Delete connection`}
+                  onClick={handleDeleteBranch}
+                >
+                  <IconTrash />
+                </LightIconButton>
+              )}
+            </WorkflowDiagramEdgeButtonGroup>
+          </WorkflowDiagramEdgeV2VisibilityContainer>
+        </WorkflowDiagramEdgeV2Container>
       </EdgeLabelRenderer>
     </>
   );

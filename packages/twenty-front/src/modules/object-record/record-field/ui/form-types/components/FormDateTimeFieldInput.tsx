@@ -3,7 +3,7 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { Field } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/primitives/input';
 import {
   DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
   DateTimePicker,
@@ -108,6 +108,7 @@ export const FormDateTimeFieldInput = ({
   const { refs, floatingStyles } = useFloating({
     open: displayDatePicker,
     placement: 'bottom-start',
+    strategy: 'fixed',
     middleware: [offset(4), flip()],
     whileElementsMounted: autoUpdate,
   });
@@ -297,6 +298,7 @@ export const FormDateTimeFieldInput = ({
         {draftValue.type === 'static' && draftValue.mode === 'edit' ? (
           <FloatingPortal>
             <div
+              data-floating-ui-viewport
               ref={refs.setFloating}
               style={floatingStyles}
               data-click-outside-id={

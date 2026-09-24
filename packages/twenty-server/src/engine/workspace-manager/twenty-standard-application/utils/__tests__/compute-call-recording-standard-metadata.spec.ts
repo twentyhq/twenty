@@ -11,10 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import {
-  GRID_POSITIONS,
-  VERTICAL_LIST_LAYOUT_POSITIONS,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
+import { VERTICAL_LIST_LAYOUT_POSITIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
@@ -175,7 +172,6 @@ describe('CallRecording standard metadata build', () => {
       title: 'Summary',
       type: WidgetType.CALL_RECORDING_SUMMARY,
       pageLayoutTabUniversalIdentifier: summaryTabUniversalIdentifier,
-      gridPosition: GRID_POSITIONS.FULL_WIDTH,
       position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       universalConfiguration: {
         configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY,
@@ -209,7 +205,6 @@ describe('CallRecording standard metadata build', () => {
       title: 'Transcript',
       type: WidgetType.CALL_RECORDING_TRANSCRIPT,
       pageLayoutTabUniversalIdentifier: callRecordingTabUniversalIdentifier,
-      gridPosition: GRID_POSITIONS.FULL_WIDTH,
       position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       universalConfiguration: {
         configurationType: WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,

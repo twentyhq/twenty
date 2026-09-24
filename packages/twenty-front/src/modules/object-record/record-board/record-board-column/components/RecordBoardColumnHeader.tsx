@@ -3,38 +3,40 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
-import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnResizeHandler';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
+import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { RecordGroupAggregateDropdown } from '@/object-record/record-group/components/RecordGroupAggregateDropdown';
 import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
-import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
-import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
-import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
+import { useIsRecordTableWidgetAggregateNonInteractive } from '@/object-record/record-table-widget/hooks/useIsRecordTableWidgetAggregateNonInteractive';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
+import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 
-const StyledHeader = styled.div`
+const StyledHeader = styled.div<{ isReadOnly: boolean }>`
   align-items: center;
-  cursor: pointer;
+  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -146,18 +148,32 @@ export const RecordBoardColumnHeader = () => {
     objectMetadataItem.id,
   );
 
-  // Creating in a nested relation widget requires picking the related record
-  // to create through, which only the table layout offers today.
-  const nestedRelationCreateThrough = useContext(
-    RecordTableWidgetContext,
-  )?.nestedRelationCreateThrough;
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
+
+  // Creating in a nested relation or junction widget requires picking the
+  // related record, which only the table layout offers today.
+  const isCreateThroughRelationWidget =
+    isDefined(recordTableWidgetContext?.nestedRelationCreateThrough) ||
+    isDefined(recordTableWidgetContext?.junctionCreateThrough);
+
+  const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
+    isRecordBoardCellsNonEditableComponentState,
+  );
 
   const canCreateRecords =
-    !isDefined(nestedRelationCreateThrough) &&
+    !isCreateThroughRelationWidget &&
+    !isRecordBoardCellsNonEditable &&
     canCreateRecordsForObjectMetadataItem({
       objectPermissions,
       objectMetadataItem,
     });
+
+  const isAggregateDropdownNonInteractive =
+    useIsRecordTableWidgetAggregateNonInteractive() ?? false;
+
+  const isColumnResizable = isDefined(recordTableWidgetContext)
+    ? recordTableWidgetContext.isPageLayoutInEditMode
+    : !isRecordBoardViewSettingsReadOnly;
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
@@ -196,8 +212,12 @@ export const RecordBoardColumnHeader = () => {
 
   return (
     <StyledColumn data-has-left-border={columnIndex > 0 ? 'true' : undefined}>
-      <DragDropItemSortableHandle fill>
+      <DragDropItemSortableHandle
+        fill
+        disabled={isRecordBoardViewSettingsReadOnly}
+      >
         <StyledHeader
+          isReadOnly={isRecordBoardViewSettingsReadOnly}
           onPointerCancel={handlePointerCancel}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
@@ -234,8 +254,8 @@ export const RecordBoardColumnHeader = () => {
               </StyledDropdownContainer>
 
               <StyledAggregateDropdownContainer
-                isNonInteractive={isRecordBoardViewSettingsReadOnly}
-                inert={isRecordBoardViewSettingsReadOnly || undefined}
+                isNonInteractive={isAggregateDropdownNonInteractive}
+                inert={isAggregateDropdownNonInteractive || undefined}
               >
                 <RecordGroupAggregateDropdown
                   aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
@@ -250,29 +270,31 @@ export const RecordBoardColumnHeader = () => {
                 data-dropdown-open={isDropdownOpen ? 'true' : undefined}
               >
                 <LightIconButton
-                  accent="tertiary"
+                  emphasis="subtle"
                   aria-label={t`More options`}
-                  Icon={IconDotsVertical}
                   onClick={() => {
                     toggleDropdown({
                       dropdownComponentInstanceIdFromProps: dropdownId,
                     });
                   }}
-                />
+                >
+                  <IconDotsVertical />
+                </LightIconButton>
                 {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
                   <LightIconButton
-                    accent="tertiary"
+                    emphasis="subtle"
                     aria-label={t`Add new`}
-                    Icon={IconPlus}
                     onClick={handleCreateNewRecordClick}
-                  />
+                  >
+                    <IconPlus />
+                  </LightIconButton>
                 )}
               </StyledHeaderActions>
             )}
           </StyledHeaderContainer>
         </StyledHeader>
       </DragDropItemSortableHandle>
-      {!isRecordBoardViewSettingsReadOnly && <RecordBoardColumnResizeHandler />}
+      {isColumnResizable && <RecordBoardColumnResizeHandler />}
     </StyledColumn>
   );
 };

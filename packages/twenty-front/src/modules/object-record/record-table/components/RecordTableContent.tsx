@@ -77,8 +77,6 @@ export const RecordTableContent = ({
     [isRowSelectedFamilyState, store],
   );
 
-  const recordTableScrollWrapperId = `record-table-scroll-${recordTableId}`;
-
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const recordTableHoverPositionCallbackState =
@@ -171,7 +169,6 @@ export const RecordTableContent = ({
         onDragSelectionStart={handleDragStart}
         onDragSelectionChange={handleDragSelectionChange}
         onDragSelectionEnd={handleDragEnd}
-        scrollWrapperComponentInstanceId={recordTableScrollWrapperId}
         selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
       />
     </StyledTableContainer>

@@ -5,6 +5,7 @@ import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record
 import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/record-table/utils/buildDraftViewGroupsForFieldMetadataItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
@@ -26,30 +27,33 @@ export const useRecordTableWidgetLayoutCallbacks = ({
 
   // Returning the received snapshot unchanged from the updater leaves the
   // whole draft map untouched (no state update is published).
-  const setWidgetViewDraft = (
-    updater: (
-      widgetViewDraft: RecordTableWidgetViewSnapshot,
-    ) => RecordTableWidgetViewSnapshot,
-  ) => {
-    store.set(recordTableWidgetViewDraftState, (prev) => {
-      const widgetViewDraft = prev[widgetId];
+  const setWidgetViewDraft = useCallback(
+    (
+      updater: (
+        widgetViewDraft: RecordTableWidgetViewSnapshot,
+      ) => RecordTableWidgetViewSnapshot,
+    ) => {
+      store.set(recordTableWidgetViewDraftState, (prev) => {
+        const widgetViewDraft = prev[widgetId];
 
-      if (!isDefined(widgetViewDraft)) {
-        return prev;
-      }
+        if (!isDefined(widgetViewDraft)) {
+          return prev;
+        }
 
-      const updatedWidgetViewDraft = updater(widgetViewDraft);
+        const updatedWidgetViewDraft = updater(widgetViewDraft);
 
-      if (updatedWidgetViewDraft === widgetViewDraft) {
-        return prev;
-      }
+        if (updatedWidgetViewDraft === widgetViewDraft) {
+          return prev;
+        }
 
-      return {
-        ...prev,
-        [widgetId]: updatedWidgetViewDraft,
-      };
-    });
-  };
+        return {
+          ...prev,
+          [widgetId]: updatedWidgetViewDraft,
+        };
+      });
+    },
+    [recordTableWidgetViewDraftState, store, widgetId],
+  );
 
   const handleGroupByFieldChange = (
     fieldMetadataItem: FieldMetadataItem | null,

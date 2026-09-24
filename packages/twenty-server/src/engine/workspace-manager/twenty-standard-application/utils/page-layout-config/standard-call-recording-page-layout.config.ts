@@ -9,7 +9,6 @@ import {
 } from 'twenty-shared/types';
 
 import {
-  GRID_POSITIONS,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -63,7 +62,6 @@ const CALL_RECORDING_PAGE_TABS = {
             .tabs.summary.widgets.summary.universalIdentifier,
         title: 'Summary',
         type: WidgetType.CALL_RECORDING_SUMMARY,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       },
     },
@@ -83,7 +81,6 @@ const CALL_RECORDING_PAGE_TABS = {
             .tabs.callRecording.widgets.transcript.universalIdentifier,
         title: 'Transcript',
         type: WidgetType.CALL_RECORDING_TRANSCRIPT,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       },
     },

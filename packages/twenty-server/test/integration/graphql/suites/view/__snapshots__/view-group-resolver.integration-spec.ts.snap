@@ -6,7 +6,7 @@ exports[`View Group Resolver deleteViewGroup should throw an error when deleting
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View group to delete not found",
+  "message": "View group to destroy not found",
   "name": "NotFoundError",
 }
 `;

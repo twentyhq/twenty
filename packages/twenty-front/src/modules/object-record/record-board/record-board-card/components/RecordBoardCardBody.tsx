@@ -1,4 +1,3 @@
-import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -26,11 +25,11 @@ export const RecordBoardCardBody = () => {
     RecordBoardCardContext,
   );
 
-  const { updateOneRecord, objectPermissions, objectMetadataItem } =
-    useContext(RecordBoardContext);
+  const { updateOneRecord, objectPermissions } = useContext(RecordBoardContext);
 
   const {
     labelIdentifierFieldMetadataItem,
+    fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
     objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
@@ -58,8 +57,6 @@ export const RecordBoardCardBody = () => {
   const setRecordBoardCardHoverPosition = useSetAtomComponentState(
     recordBoardCardHoverPositionComponentState,
   );
-  const getIsMetadataItemFromStandardApplication =
-    useGetIsMetadataItemFromStandardApplication();
 
   const handleMouseEnter = (index: number) => {
     setRecordBoardCardHoverPosition(index);
@@ -70,8 +67,15 @@ export const RecordBoardCardBody = () => {
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+        const fieldMetadataItem =
+          fieldMetadataItemByFieldMetadataItemId[
+            recordField.fieldMetadataItemId
+          ];
 
-        if (!isDefined(correspondingFieldDefinition)) {
+        if (
+          !isDefined(correspondingFieldDefinition) ||
+          !isDefined(fieldMetadataItem)
+        ) {
           return null;
         }
 
@@ -84,19 +88,8 @@ export const RecordBoardCardBody = () => {
                 isLabelIdentifier: false,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
-                  isSystemObject: objectMetadataItem.isSystem,
-                  isFieldFromStandardApplication:
-                    getIsMetadataItemFromStandardApplication({
-                      applicationId:
-                        correspondingFieldDefinition.metadata.applicationId,
-                    }),
                   objectPermissions,
-                  fieldMetadataItem: {
-                    id: recordField.fieldMetadataItemId,
-                    isUIEditable:
-                      correspondingFieldDefinition.metadata.isUIEditable ??
-                      true,
-                  },
+                  fieldMetadataItem,
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),

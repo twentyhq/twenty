@@ -102,12 +102,13 @@ export class CalendarEventsImportService {
               })
             : null;
 
-          const blocklist = workspaceMember
-            ? await this.blocklistRepository.getByWorkspaceMemberId(
-                workspaceMember.id,
+          const blocklist =
+            await this.blocklistRepository.getEntriesApplicableToWorkspaceMember(
+              {
+                workspaceMemberId: workspaceMember?.id ?? null,
                 workspaceId,
-              )
-            : [];
+              },
+            );
 
           if (!isDefined(connectedAccount.handleAliases)) {
             connectedAccount.handleAliases =
@@ -131,7 +132,9 @@ export class CalendarEventsImportService {
             filterEventsAndReturnCancelledEvents(
               [calendarChannel.handle, ...connectedAccount.handleAliases],
               calendarEvents,
-              blocklist.map((blocklist) => blocklist.handle ?? ''),
+              blocklist
+                .map((blocklistItem) => blocklistItem.handle)
+                .filter(isDefined),
             );
 
           const cancelledEventExternalIds = cancelledEvents.map(
@@ -150,19 +153,36 @@ export class CalendarEventsImportService {
               workspaceId,
             );
           }
-          const calendarChannelEventAssociationRepository =
-            this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-              'calendarChannelEventAssociation',
+          if (cancelledEventExternalIds.length > 0) {
+            const calendarChannelEventAssociationRepository =
+              this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+                'calendarChannelEventAssociation',
+                { shouldBypassPermissionChecks: true },
+              );
+
+            const associationsToDelete =
+              await calendarChannelEventAssociationRepository.find({
+                where: {
+                  eventExternalId: Any(cancelledEventExternalIds),
+                  calendarChannelId: calendarChannel.id,
+                },
+                select: { calendarEventId: true },
+              });
+
+            await calendarChannelEventAssociationRepository.delete({
+              eventExternalId: Any(cancelledEventExternalIds),
+              calendarChannelId: calendarChannel.id,
+            });
+
+            await this.calendarEventCleanerService.deleteOrphanedCalendarEvents(
+              {
+                calendarEventIds: associationsToDelete.map(
+                  ({ calendarEventId }) => calendarEventId,
+                ),
+                workspaceId,
+              },
             );
-
-          await calendarChannelEventAssociationRepository.delete({
-            eventExternalId: Any(cancelledEventExternalIds),
-            calendarChannelId: calendarChannel.id,
-          });
-
-          await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
-            workspaceId,
-          );
+          }
 
           if (eventIdsToFetch.length < CALENDAR_EVENT_IMPORT_BATCH_SIZE) {
             await this.calendarChannelSyncStatusService.markAsCalendarEventSyncCompleted(

@@ -9,10 +9,6 @@ let mockTargetRecordIdentifier = {
 };
 let mockIsInSidePanel = false;
 
-jest.mock('@/object-record/record-show/components/SummaryCard', () => ({
-  SummaryCard: () => null,
-}));
-
 jest.mock('@/page-layout/components/PageLayoutContent', () => ({
   PageLayoutContent: () => <div>Page layout content</div>,
 }));
@@ -40,8 +36,14 @@ jest.mock('@/page-layout/utils/getTabLayoutMode', () => ({
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => ({
-    isInSidePanel: mockIsInSidePanel,
     layoutType: PageLayoutType.RECORD_PAGE,
+  }),
+}));
+
+jest.mock('@/ui/layout/hooks/useWorkspaceSurface', () => ({
+  useWorkspaceSurface: () => ({
+    type: mockIsInSidePanel ? 'side-panel' : 'main',
+    instanceId: mockIsInSidePanel ? 'side-panel' : 'main',
   }),
 }));
 

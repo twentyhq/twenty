@@ -1,22 +1,18 @@
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
 import { type ReactElement } from 'react';
 
 import { EventsGroup } from '@/activities/timeline-activities/components/EventsGroup';
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useTimelineActivityTypeFilter } from '@/activities/timeline-activities/hooks/useTimelineActivityTypeFilter';
+import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
-import { keepTimelineActivitiesOfSelectedTypes } from '@/activities/timeline-activities/utils/keepTimelineActivitiesOfSelectedTypes';
 import { groupEventsByMonth } from '@/activities/timeline-activities/utils/groupEventsByMonth';
+import { keepTimelineActivitiesOfSelectedTypes } from '@/activities/timeline-activities/utils/keepTimelineActivitiesOfSelectedTypes';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useLingui } from '@lingui/react/macro';
-import {
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventListProps = {
@@ -65,16 +61,14 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
 
   if (groupedEvents.length === 0) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`No matching activity`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
+      <EmptyState.Root>
+        <EmptyState.Content>
+          <EmptyState.Title>{t`No matching activity`}</EmptyState.Title>
+          <EmptyState.Description>
             {t`No activity matches the selected types.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+          </EmptyState.Description>
+        </EmptyState.Content>
+      </EmptyState.Root>
     );
   }
 

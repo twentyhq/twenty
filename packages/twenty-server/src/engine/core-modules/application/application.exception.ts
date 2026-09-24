@@ -31,6 +31,8 @@ export enum ApplicationExceptionCode {
   INVALID_WORKSPACE_VERSION = 'INVALID_WORKSPACE_VERSION',
   APPLICATION_INSTALLATION_FAILED = 'APPLICATION_INSTALLATION_FAILED',
   KEY_VALUE_PERSISTENCE_FAILED = 'KEY_VALUE_PERSISTENCE_FAILED',
+  APPLICATION_NOT_EXPORTABLE = 'APPLICATION_NOT_EXPORTABLE',
+  STANDARD_APPLICATION_NOT_EXPORTABLE = 'STANDARD_APPLICATION_NOT_EXPORTABLE',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -87,6 +89,10 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`We couldn't install this application because some of its metadata could not be applied to your workspace.`;
     case ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED:
       return msg`The application key-value entry could not be saved. Please try again.`;
+    case ApplicationExceptionCode.APPLICATION_NOT_EXPORTABLE:
+      return msg`Only applications synced from local source can be exported.`;
+    case ApplicationExceptionCode.STANDARD_APPLICATION_NOT_EXPORTABLE:
+      return msg`The standard application cannot be exported.`;
     default:
       assertUnreachable(code);
   }

@@ -5,6 +5,7 @@ import {
   TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
 } from 'src/database/commands/upgrade-version-command/2-34/timeline-activity-type-upgrade-command-name.constants';
 import { DROP_TIMELINE_ACTIVITY_TYPE_RENDERER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-35/drop-timeline-activity-type-renderer-upgrade-command-name.constant';
+import { ADD_TIMELINE_ACTIVITY_HAPPENS_AT_FIELD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-38/timeline-activity-happens-at-upgrade-command-name.constant';
 import { resolveEntityShapeAtUpgradeCursor } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
 
@@ -13,6 +14,7 @@ const CURRENT_COLUMNS = [
   'frontComponentUniversalIdentifier',
   'targetRelationFieldUniversalIdentifier',
   'triggerFieldUniversalIdentifiers',
+  'happensAtFieldUniversalIdentifier',
   'replacesTimelineActivityTypeUniversalIdentifier',
   'overrides',
   'isActive',
@@ -46,6 +48,7 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
       new Set([
         'targetRelationFieldUniversalIdentifier',
         'triggerFieldUniversalIdentifiers',
+        'happensAtFieldUniversalIdentifier',
         'replacesTimelineActivityTypeUniversalIdentifier',
         'overrides',
         'isActive',
@@ -59,6 +62,7 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
       ]).hiddenPropertyNames,
     ).toEqual(
       new Set([
+        'happensAtFieldUniversalIdentifier',
         'replacesTimelineActivityTypeUniversalIdentifier',
         'overrides',
         'isActive',
@@ -71,7 +75,9 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
         ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
         ADD_TIMELINE_ACTIVITY_TYPE_REPLACEMENT_UPGRADE_COMMAND_NAME,
       ]).hiddenPropertyNames,
-    ).toEqual(new Set(['overrides', 'isActive']));
+    ).toEqual(
+      new Set(['happensAtFieldUniversalIdentifier', 'overrides', 'isActive']),
+    );
 
     expect(
       resolveAt([
@@ -80,7 +86,7 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
         ADD_TIMELINE_ACTIVITY_TYPE_REPLACEMENT_UPGRADE_COMMAND_NAME,
         TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
       ]).hiddenPropertyNames,
-    ).toEqual(new Set());
+    ).toEqual(new Set(['happensAtFieldUniversalIdentifier']));
 
     expect(
       resolveAt([
@@ -89,6 +95,17 @@ describe('TimelineActivityTypeEntity upgrade shape', () => {
         ADD_TIMELINE_ACTIVITY_TYPE_REPLACEMENT_UPGRADE_COMMAND_NAME,
         TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
         DROP_TIMELINE_ACTIVITY_TYPE_RENDERER_UPGRADE_COMMAND_NAME,
+      ]).hiddenPropertyNames,
+    ).toEqual(new Set(['renderer', 'happensAtFieldUniversalIdentifier']));
+
+    expect(
+      resolveAt([
+        REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
+        ADD_TIMELINE_ACTIVITY_ROUTING_UPGRADE_COMMAND_NAME,
+        ADD_TIMELINE_ACTIVITY_TYPE_REPLACEMENT_UPGRADE_COMMAND_NAME,
+        TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+        DROP_TIMELINE_ACTIVITY_TYPE_RENDERER_UPGRADE_COMMAND_NAME,
+        ADD_TIMELINE_ACTIVITY_HAPPENS_AT_FIELD_UPGRADE_COMMAND_NAME,
       ]).hiddenPropertyNames,
     ).toEqual(new Set(['renderer']));
   });

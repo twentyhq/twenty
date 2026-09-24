@@ -138,7 +138,7 @@ export class AgentRunService {
       if (executionResult.hasNoMoreAvailableCredits) {
         return {
           result: null,
-          error: 'AI agent stopped: no more available credits.',
+          error: 'Agent stopped: no more available credits.',
           success: false,
         };
       }
@@ -149,6 +149,13 @@ export class AgentRunService {
         success: true,
       };
     } catch (error) {
+      if (
+        error instanceof AiException &&
+        error.code === AiExceptionCode.INVALID_AGENT_INPUT
+      ) {
+        throw error;
+      }
+
       this.logger.error(
         `Agent execution failed for ${input.agentUniversalIdentifier}`,
         error instanceof Error ? error.stack : error,

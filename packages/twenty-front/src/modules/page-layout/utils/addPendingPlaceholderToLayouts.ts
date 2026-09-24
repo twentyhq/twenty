@@ -1,10 +1,10 @@
 import { createPendingWidgetPlaceholderLayoutItem } from '@/page-layout/utils/createPendingWidgetPlaceholderLayoutItem';
-import { type Layouts } from 'react-grid-layout';
+import { type ResponsiveLayouts } from 'react-grid-layout';
 
 export const addPendingPlaceholderToLayouts = (
-  baseLayouts: Layouts,
+  baseLayouts: ResponsiveLayouts,
   draggedArea: { x: number; y: number; w: number; h: number },
-): Layouts => ({
+): ResponsiveLayouts => ({
   desktop: [
     ...(baseLayouts.desktop ?? []),
     createPendingWidgetPlaceholderLayoutItem(draggedArea, 'desktop'),

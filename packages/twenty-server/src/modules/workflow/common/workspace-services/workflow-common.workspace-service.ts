@@ -1,4 +1,7 @@
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable, Logger } from '@nestjs/common';
+
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -6,12 +9,9 @@ import { In } from 'typeorm';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -22,9 +22,9 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  WorkflowCommonException,
-  WorkflowCommonExceptionCode,
-} from 'src/modules/workflow/common/exceptions/workflow-common.exception';
+  type ObjectMetadataInfo,
+  WorkflowMetadataReadService,
+} from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { type WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
@@ -42,20 +42,17 @@ import {
 import { getWorkflowCommandMenuItemLabel } from 'src/modules/workflow/workflow-trigger/utils/get-workflow-command-menu-item-label.util';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-export type ObjectMetadataInfo = {
-  flatObjectMetadata: FlatObjectMetadata;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-};
+export type { ObjectMetadataInfo };
 
 @Injectable()
 export class WorkflowCommonWorkspaceService {
   private readonly logger = new Logger(WorkflowCommonWorkspaceService.name);
 
   constructor(
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
-    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
@@ -174,15 +171,35 @@ export class WorkflowCommonWorkspaceService {
     workflow: WorkflowWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    if (!isDefined(workflow.lastPublishedVersionId)) {
+    if (!isNonEmptyString(workflow.lastPublishedVersionId)) {
       return;
     }
+    const lastPublishedVersionId = workflow.lastPublishedVersionId;
 
+    const workflowVersion =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowVersionRepository =
+          this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workflowVersionRepository.findOne({
+          where: { id: lastPublishedVersionId },
+          withDeleted: true,
+        });
+      }, buildSystemAuthContext(workspaceId));
     const existingCommandMenuItem =
-      await this.commandMenuItemService.findByWorkflowVersionId(
-        workflow.lastPublishedVersionId,
+      (isDefined(workflowVersion?.coreWorkflowVersionId)
+        ? await this.commandMenuItemService.findByCoreWorkflowVersionId(
+            workflowVersion.coreWorkflowVersionId,
+            workspaceId,
+          )
+        : null) ??
+      (await this.commandMenuItemService.findByWorkflowVersionId(
+        lastPublishedVersionId,
         workspaceId,
-      );
+      ));
 
     if (!isDefined(existingCommandMenuItem)) {
       return;
@@ -212,23 +229,7 @@ export class WorkflowCommonWorkspaceService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     objectIdByNameSingular: Record<string, string>;
   }> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
-
-    const { idByNameSingular } = buildObjectIdByNameMaps(
-      flatObjectMetadataMaps,
-    );
-
-    return {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular: idByNameSingular,
-    };
+    return this.workflowMetadataReadService.getFlatEntityMaps(workspaceId);
   }
 
   async getLogicFunctionById({
@@ -238,17 +239,9 @@ export class WorkflowCommonWorkspaceService {
     logicFunctionId: string;
     workspaceId: string;
   }): Promise<FlatLogicFunction | undefined> {
-    const { flatLogicFunctionMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    return findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: logicFunctionId,
-      flatEntityMaps: flatLogicFunctionMaps,
+    return this.workflowMetadataReadService.getLogicFunctionById({
+      logicFunctionId,
+      workspaceId,
     });
   }
 
@@ -256,38 +249,10 @@ export class WorkflowCommonWorkspaceService {
     objectNameSingular: string,
     workspaceId: string,
   ): Promise<ObjectMetadataInfo> {
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-    } = await this.getFlatEntityMaps(workspaceId);
-
-    const objectId = objectIdByNameSingular[objectNameSingular];
-
-    if (!isDefined(objectId)) {
-      throw new WorkflowCommonException(
-        `Failed to read: Object ${objectNameSingular} not found`,
-        WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: objectId,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(flatObjectMetadata)) {
-      throw new WorkflowCommonException(
-        `Failed to read: Object ${objectNameSingular} not found`,
-        WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-
-    return {
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    };
+    return this.workflowMetadataReadService.getObjectMetadataInfo(
+      objectNameSingular,
+      workspaceId,
+    );
   }
 
   async handleWorkflowSubEntities({
@@ -311,6 +276,12 @@ export class WorkflowCommonWorkspaceService {
       const workflowRunRepository =
         this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
           'workflowRun',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const workflowRepository =
+        this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          'workflow',
           { shouldBypassPermissionChecks: true },
         );
 
@@ -342,13 +313,9 @@ export class WorkflowCommonWorkspaceService {
 
             break;
           case 'restore':
-            await workflowAutomatedTriggerRepository.restore({
+            await this.workflowCoreSyncService.upsertToCore(workspaceId, [
               workflowId,
-            });
-
-            await workflowRunRepository.restore({
-              workflowId,
-            });
+            ]);
 
             await workflowVersionRepository.restore({
               workflowId,
@@ -359,6 +326,58 @@ export class WorkflowCommonWorkspaceService {
               workflowId,
             );
 
+            const workflow = await workflowRepository.findOne({
+              where: { id: workflowId },
+              select: { coreWorkflowId: true },
+            });
+            const workflowVersions = await workflowVersionRepository.find({
+              where: { workflowId },
+              select: { id: true, coreWorkflowVersionId: true },
+            });
+
+            if (
+              !isDefined(workflow?.coreWorkflowId) ||
+              workflowVersions.some(
+                (workflowVersion) =>
+                  !isDefined(workflowVersion.coreWorkflowVersionId),
+              )
+            ) {
+              throw new Error(
+                `Missing core mapping while restoring workflow ${workflowId}`,
+              );
+            }
+
+            await this.workspaceOrmManager.runInWorkspaceTransaction(
+              async ({ getRepository }) => {
+                const transactionalWorkflowRunRepository =
+                  getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
+                    shouldBypassPermissionChecks: true,
+                  });
+
+                await transactionalWorkflowRunRepository.restore({
+                  workflowId,
+                });
+                await transactionalWorkflowRunRepository.update(
+                  { workflowId },
+                  { coreWorkflowId: workflow.coreWorkflowId },
+                );
+
+                for (const workflowVersion of workflowVersions) {
+                  await transactionalWorkflowRunRepository.update(
+                    { workflowId, workflowVersionId: workflowVersion.id },
+                    {
+                      coreWorkflowVersionId:
+                        workflowVersion.coreWorkflowVersionId,
+                    },
+                  );
+                }
+              },
+            );
+
+            await workflowAutomatedTriggerRepository.restore({
+              workflowId,
+            });
+
             break;
         }
 
@@ -368,6 +387,13 @@ export class WorkflowCommonWorkspaceService {
           workspaceId,
           operation,
         });
+
+        if (operation !== 'destroy') {
+          await this.workflowCoreSyncService.reconcileWorkspaceWorkflows(
+            workspaceId,
+            [workflowId],
+          );
+        }
 
         await this.handleLogicFunctionSubEntities({
           workflowVersionRepository,
@@ -444,6 +470,7 @@ export class WorkflowCommonWorkspaceService {
         await this.cleanupCommandMenuItemForVersion(
           workflowVersion.id,
           workspaceId,
+          workflowVersion.coreWorkflowVersionId,
         );
       }
     }
@@ -456,12 +483,19 @@ export class WorkflowCommonWorkspaceService {
   private async cleanupCommandMenuItemForVersion(
     workflowVersionId: string,
     workspaceId: string,
+    coreWorkflowVersionId: string | null,
   ) {
     const existingCommandMenuItem =
-      await this.commandMenuItemService.findByWorkflowVersionId(
+      (isDefined(coreWorkflowVersionId)
+        ? await this.commandMenuItemService.findByCoreWorkflowVersionId(
+            coreWorkflowVersionId,
+            workspaceId,
+          )
+        : null) ??
+      (await this.commandMenuItemService.findByWorkflowVersionId(
         workflowVersionId,
         workspaceId,
-      );
+      ));
 
     if (isDefined(existingCommandMenuItem)) {
       await this.commandMenuItemService.delete(

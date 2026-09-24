@@ -5,6 +5,7 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     id
     universalIdentifier
     applicationId
+    coreWorkflowVersionId
     workflowVersionId
     frontComponentId
     frontComponent {
@@ -22,14 +23,13 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
       ... on PathCommandMenuItemPayload {
         path
       }
-      ... on ObjectMetadataCommandMenuItemPayload {
-        objectMetadataItemId
-      }
     }
     hotKeys
     conditionalAvailabilityExpression
+    conditionalPinnedExpression
     availabilityType
     availabilityObjectMetadataId
+    navigationTargetObjectMetadataId
     pageLayoutId
     isActive
   }

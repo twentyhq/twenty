@@ -1,14 +1,21 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import {
+  CreateDraftFromCoreWorkflowVersionDocument,
+  type CreateDraftFromWorkflowVersionInput,
+  CreateDraftFromWorkflowVersionDocument,
+} from '~/generated/graphql';
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useMutation } from '@apollo/client/react';
-import {
-  type CreateDraftFromWorkflowVersionInput,
-  CreateDraftFromWorkflowVersionDocument,
-} from '~/generated/graphql';
 
 export const useCreateDraftFromWorkflowVersion = () => {
   const apolloCoreClient = useApolloCoreClient();
+  const isCore = useIsWorkflowCoreEnabled();
+  const [mutateCore] = useMutation(CreateDraftFromCoreWorkflowVersionDocument, {
+    client: apolloCoreClient,
+  });
 
   const [mutate] = useMutation(CreateDraftFromWorkflowVersionDocument, {
     client: apolloCoreClient,
@@ -34,6 +41,19 @@ export const useCreateDraftFromWorkflowVersion = () => {
   const createDraftFromWorkflowVersion = async (
     input: CreateDraftFromWorkflowVersionInput,
   ) => {
+    if (isCore) {
+      const result = await mutateCore({
+        variables: {
+          input: {
+            coreWorkflowId: input.workflowId,
+            coreWorkflowVersionIdToCopy: input.workflowVersionIdToCopy,
+          },
+        },
+      });
+      await invalidateCoreWorkflowVersions(apolloCoreClient);
+      return result.data?.createDraftFromWorkflowVersion.id;
+    }
+
     const result = await mutate({
       variables: { input },
       awaitRefetchQueries: true,
@@ -46,6 +66,8 @@ export const useCreateDraftFromWorkflowVersion = () => {
         },
       ],
     });
+
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
 
     return result?.data?.createDraftFromWorkflowVersion.id;
   };

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
@@ -7,14 +7,17 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { createTypeSafeAi } from '@ai-sdk/typesafe-ai';
 import { createXai, type XaiProvider } from '@ai-sdk/xai';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import {
   wrapLanguageModel,
   type LanguageModel,
   type LanguageModelMiddleware,
+  type TranscriptionModel,
 } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AI_SDK_ANTHROPIC,
@@ -24,19 +27,30 @@ import {
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
   AI_SDK_OPENAI_COMPATIBLE,
+  AI_SDK_TYPESAFE_AI,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-gemini-tool-result-refs.middleware';
+import { type AiEvaluationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { getEvaluationModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-evaluation-model-factory.util';
+import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-transcription-model-factory.util';
 
 export type AiSdkProviderInstance = {
-  createModel: (modelId: string) => LanguageModel;
+  // Absent on providers that serve no language model at all, such as an
+  // evaluation-only provider.
+  createModel?: (modelId: string) => LanguageModel;
+  // Absent on providers with no speech-to-text API.
+  createTranscriptionModel?: (modelId: string) => TranscriptionModel;
+  // Absent on providers with no evaluation API.
+  createEvaluationModel?: (modelId: string) => AiEvaluationModel;
   rawProvider: unknown;
   sdkPackage: AiSdkPackage;
 };
 
 @Injectable()
 export class SdkProviderFactoryService {
+  private readonly logger = new Logger(SdkProviderFactoryService.name);
   private readonly providerInstances = new Map<string, AiSdkProviderInstance>();
 
   createProvider(
@@ -88,6 +102,23 @@ export class SdkProviderFactoryService {
     this.providerInstances.clear();
   }
 
+  private toProviderInstance(
+    provider: unknown,
+    sdkPackage: AiSdkPackage,
+    createModel?: (modelId: string) => LanguageModel,
+  ): AiSdkProviderInstance {
+    const createTranscriptionModel = getTranscriptionModelFactory(provider);
+    const createEvaluationModel = getEvaluationModelFactory(provider);
+
+    return {
+      ...(isDefined(createModel) && { createModel }),
+      ...(isDefined(createTranscriptionModel) && { createTranscriptionModel }),
+      ...(isDefined(createEvaluationModel) && { createEvaluationModel }),
+      rawProvider: provider,
+      sdkPackage,
+    };
+  }
+
   private buildProviderInstance(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
@@ -110,6 +141,8 @@ export class SdkProviderFactoryService {
         return this.buildOpenAiCompatibleProvider(config);
       case AI_SDK_AZURE:
         return this.buildAzureProvider(config);
+      case AI_SDK_TYPESAFE_AI:
+        return this.buildTypeSafeAiProvider(config);
       default:
         throw new Error(`Unsupported SDK package: ${config.npm}`);
     }
@@ -125,17 +158,13 @@ export class SdkProviderFactoryService {
       ...(config.baseUrl && { baseURL: config.baseUrl }),
     });
 
-    return {
-      createModel: (modelId: string) => {
-        const model = (provider as CallableFunction)(modelId);
+    return this.toProviderInstance(provider, config.npm, (modelId: string) => {
+      const model = (provider as CallableFunction)(modelId);
 
-        return options?.middleware
-          ? wrapLanguageModel({ model, middleware: options.middleware })
-          : model;
-      },
-      rawProvider: provider,
-      sdkPackage: config.npm,
-    };
+      return options?.middleware
+        ? wrapLanguageModel({ model, middleware: options.middleware })
+        : model;
+    });
   }
 
   private buildXaiProvider(config: AiProviderConfig): AiSdkProviderInstance {
@@ -144,11 +173,9 @@ export class SdkProviderFactoryService {
       ...(config.baseUrl && { baseURL: config.baseUrl }),
     });
 
-    return {
-      createModel: (modelId: string) => provider.responses(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_XAI,
-    };
+    return this.toProviderInstance(provider, AI_SDK_XAI, (modelId: string) =>
+      provider.responses(modelId),
+    );
   }
 
   private buildBedrockProvider(
@@ -182,11 +209,11 @@ export class SdkProviderFactoryService {
         }),
     });
 
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_BEDROCK,
-    };
+    return this.toProviderInstance(
+      provider,
+      AI_SDK_BEDROCK,
+      (modelId: string) => provider(modelId),
+    );
   }
 
   private buildOpenAiCompatibleProvider(
@@ -202,11 +229,24 @@ export class SdkProviderFactoryService {
       ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_OPENAI_COMPATIBLE,
-    };
+    return this.toProviderInstance(
+      provider,
+      AI_SDK_OPENAI_COMPATIBLE,
+      (modelId: string) => provider(modelId),
+    );
+  }
+
+  // Evaluation-only: the provider serves no language model, so the instance
+  // carries no createModel and the registry skips its models for chat.
+  private buildTypeSafeAiProvider(
+    config: AiProviderConfig,
+  ): AiSdkProviderInstance {
+    const provider = createTypeSafeAi({
+      ...(config.apiKey && { apiKey: config.apiKey }),
+      ...(config.baseUrl && { baseURL: config.baseUrl }),
+    });
+
+    return this.toProviderInstance(provider, AI_SDK_TYPESAFE_AI);
   }
 
   private buildAzureProvider(config: AiProviderConfig): AiSdkProviderInstance {
@@ -219,10 +259,8 @@ export class SdkProviderFactoryService {
       ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_AZURE,
-    };
+    return this.toProviderInstance(provider, AI_SDK_AZURE, (modelId: string) =>
+      provider(modelId),
+    );
   }
 }

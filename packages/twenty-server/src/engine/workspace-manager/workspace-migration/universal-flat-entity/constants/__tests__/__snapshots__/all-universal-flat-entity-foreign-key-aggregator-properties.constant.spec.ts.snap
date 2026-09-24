@@ -31,10 +31,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "searchFieldMetadataUniversalIdentifiers",
     "pageLayoutUniversalIdentifiers",
     "commandMenuItemUniversalIdentifiers",
+    "navigationMenuItemUniversalIdentifiers",
   ],
   "objectPermission": [],
   "pageLayout": [
     "tabUniversalIdentifiers",
+    "navigationMenuItemUniversalIdentifiers",
   ],
   "pageLayoutTab": [
     "widgetUniversalIdentifiers",
@@ -59,6 +61,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "rowLevelPermissionPredicateUniversalIdentifiers",
   ],
   "searchFieldMetadata": [],
+  "settingsMenuItem": [],
   "skill": [],
   "timelineActivityType": [],
   "view": [
@@ -68,6 +71,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "viewGroupUniversalIdentifiers",
     "viewFieldGroupUniversalIdentifiers",
     "viewSortUniversalIdentifiers",
+    "navigationMenuItemUniversalIdentifiers",
   ],
   "viewField": [],
   "viewFieldGroup": [
@@ -81,5 +85,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "viewGroup": [],
   "viewSort": [],
   "webhook": [],
+  "workflow": [],
+  "workflowVersion": [],
 }
 `;

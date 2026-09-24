@@ -8,7 +8,7 @@ import {
   bullMQToJobStateEnum,
   JobStateEnum,
   jobStateEnumToBullMQ,
-} from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
+} from 'src/engine/core-modules/message-queue/enums/job-state.enum';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -31,7 +31,10 @@ export class AdminPanelQueueService {
     offset = 0,
   ) {
     const redis = this.redisClient.getQueueClient();
-    const queue = new Queue(queueName, { connection: redis });
+    const queue = new Queue(queueName, {
+      connection: redis,
+      prefix: this.redisClient.getQueuePrefix(),
+    });
 
     try {
       const validLimit = Math.min(Math.max(1, limit), 200);
@@ -124,7 +127,10 @@ export class AdminPanelQueueService {
     results: JobOperationResult[];
   }> {
     const redis = this.redisClient.getQueueClient();
-    const queue = new Queue(queueName, { connection: redis });
+    const queue = new Queue(queueName, {
+      connection: redis,
+      prefix: this.redisClient.getQueuePrefix(),
+    });
 
     try {
       if (jobIds.length === 0) {
@@ -196,7 +202,10 @@ export class AdminPanelQueueService {
     results: JobOperationResult[];
   }> {
     const redis = this.redisClient.getQueueClient();
-    const queue = new Queue(queueName, { connection: redis });
+    const queue = new Queue(queueName, {
+      connection: redis,
+      prefix: this.redisClient.getQueuePrefix(),
+    });
 
     try {
       const results: JobOperationResult[] = [];

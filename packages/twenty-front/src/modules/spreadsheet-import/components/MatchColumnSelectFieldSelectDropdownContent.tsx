@@ -1,10 +1,9 @@
-import { useMemo, useState } from 'react';
-
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -17,9 +16,10 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo, useState } from 'react';
 import { IconForbid, IconX, useIcons } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type ReadonlyDeep } from 'type-fest';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -106,12 +106,16 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
           {!isNonEmptyString(searchFilter) && (
             <>
               <DropdownMenuItemsContainer scrollable={false}>
-                <MenuItemSelect
-                  selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
+                <ListItem
                   onClick={onDoNotImportSelect}
-                  LeftIcon={IconForbid}
-                  text={t`Do not import`}
-                />
+                  role="option"
+                  aria-selected={
+                    selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY
+                  }
+                  selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
+                  indicator="check"
+                  startIcon={<SelectOptionIcon Icon={IconForbid} />}
+                >{t`Do not import`}</ListItem>
               </DropdownMenuItemsContainer>
               {suggestedOptions.length > 0 && (
                 <>
@@ -119,14 +123,18 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                   <DropdownMenuSectionLabel label={t`Suggested`} />
                   <DropdownMenuItemsContainer scrollable={false}>
                     {suggestedOptions.map((option) => (
-                      <MenuItemSelect
+                      <ListItem
                         key={option.value}
-                        selected={selectedValue?.value === option.value}
                         onClick={() => handleSuggestedOptionClick(option)}
-                        LeftIcon={option.Icon}
-                        text={option.label}
-                        contextualText={option.fieldMetadataTypeLabel}
-                      />
+                        role="option"
+                        aria-selected={selectedValue?.value === option.value}
+                        selected={selectedValue?.value === option.value}
+                        indicator="check"
+                        description={option.fieldMetadataTypeLabel}
+                        startIcon={<SelectOptionIcon Icon={option.Icon} />}
+                      >
+                        {option.label}
+                      </ListItem>
                     ))}
                   </DropdownMenuItemsContainer>
                 </>
@@ -137,15 +145,19 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
           )}
           <DropdownMenuItemsContainer scrollable={false}>
             {filteredAvailableFieldMetadataItems.map((field) => (
-              <MenuItemSelect
+              <ListItem
                 key={field.id}
-                selected={selectedValue?.value === field.name}
                 onClick={() => handleFieldClick(field)}
-                LeftIcon={getIcon(field.icon)}
-                text={field.label}
-                contextualText={getFieldMetadataTypeLabel(field.type)}
-                hasSubMenu={hasNestedFields(field)}
-              />
+                role="option"
+                aria-selected={selectedValue?.value === field.name}
+                selected={selectedValue?.value === field.name}
+                indicator="check"
+                hasSubmenu={hasNestedFields(field)}
+                description={getFieldMetadataTypeLabel(field.type)}
+                startIcon={<SelectOptionIcon Icon={getIcon(field.icon)} />}
+              >
+                {field.label}
+              </ListItem>
             ))}
           </DropdownMenuItemsContainer>
         </ScrollWrapper>

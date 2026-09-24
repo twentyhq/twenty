@@ -1,13 +1,13 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
-import { FormBooleanFieldToggleInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldToggleInput';
+import { FormBooleanFieldSwitchInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldSwitchInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -20,9 +20,9 @@ import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/feedback';
-import { type SelectOption } from 'twenty-ui/input';
+import { Callout } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type WorkflowEditActionCreateCalendarEventProps = {
@@ -180,7 +180,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           readonly={actionOptions.readonly}
           VariablePicker={WorkflowVariablePicker}
         />
-        <FormBooleanFieldToggleInput
+        <FormBooleanFieldSwitchInput
           label={t`All day`}
           description={t`Create the event as an all-day event`}
           value={formData.isFullDay}
@@ -195,7 +195,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           onChange={(value) => handleFieldChange('attendees', value)}
           VariablePicker={WorkflowVariablePicker}
         />
-        <FormBooleanFieldToggleInput
+        <FormBooleanFieldSwitchInput
           label={t`Send invitations`}
           description={t`Email the attendees an invitation`}
           hint={t`When off, the event is created with no attendees and nobody is notified.`}
@@ -203,7 +203,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           onChange={(value) => handleFieldChange('sendInvitations', value)}
           disabled={actionOptions.readonly}
         />
-        <FormBooleanFieldToggleInput
+        <FormBooleanFieldSwitchInput
           label={t`Add conferencing`}
           description={t`Add a video conferencing link`}
           hint={t`Generates a Google Meet or Microsoft Teams link depending on the account.`}

@@ -1,45 +1,54 @@
 import { z } from 'zod';
 
-import { type WorkflowValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-validation.workspace-service';
-import { type WorkflowToolContext } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { WorkflowVersionValidationException } from 'src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception';
+import {
+  type WorkflowToolContext,
+  type WorkflowToolDependencies,
+} from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const validateWorkflowSchema = z.object({
-  workflowVersionId: z
+  coreWorkflowVersionId: z
     .string()
     .uuid()
-    .describe('The UUID of the workflow version to validate'),
+    .describe('The core workflow version UUID to validate'),
 });
 
 type ValidateWorkflowInput = z.infer<typeof validateWorkflowSchema>;
 
 export const createValidateWorkflowTool = (
-  deps: {
-    workflowValidationService: WorkflowValidationWorkspaceService;
-  },
+  deps: Pick<WorkflowToolDependencies, 'coreWorkflowLifecycleService'>,
   context: WorkflowToolContext,
 ) => ({
   name: 'validate_workflow' as const,
   description:
-    'Validate a workflow version for correctness. Checks graph topology (connections, reachability, branches, loops), per-step configuration, references to other objects, and variable references between steps. Returns a list of errors and warnings to fix. Does not block or modify the workflow.',
+    'Check whether a workflow version can be activated, without activating it. Runs the exact check activation runs: graph topology (connections, reachability, branches, loops), per-step configuration, references to other objects, and variable references between steps. Succeeds when the version is ready; otherwise fails with the list of issues to fix. Does not modify the workflow.',
   inputSchema: validateWorkflowSchema,
   execute: async (parameters: ValidateWorkflowInput) => {
     try {
-      const result =
-        await deps.workflowValidationService.validateWorkflowVersion({
-          workspaceId: context.workspaceId,
-          workflowVersionId: parameters.workflowVersionId,
-        });
+      await deps.coreWorkflowLifecycleService.validateCoreWorkflowVersion({
+        workspaceId: context.workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
+        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+      });
 
       return {
         success: true,
-        valid: result.valid,
-        errors: result.errors,
-        warnings: result.warnings,
-        message: result.valid
-          ? 'The workflow is valid.'
-          : `The workflow has ${result.errors.length} error(s) that should be fixed.`,
+        message: 'The workflow version can be activated.',
       };
     } catch (error) {
+      if (error instanceof WorkflowVersionValidationException) {
+        return {
+          success: false,
+          error: error.message,
+          issues: error.issues.map(({ code, message, stepId }) => ({
+            code,
+            message,
+            stepId,
+          })),
+          message: `The workflow version has ${error.issues.length} issue(s) to fix before it can be activated.`,
+        };
+      }
+
       return {
         success: false,
         error: error.message,

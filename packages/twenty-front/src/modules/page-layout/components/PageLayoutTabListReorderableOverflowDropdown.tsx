@@ -103,10 +103,10 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   };
 
   const handleEditClick = (tabId: string) => {
-    setPageLayoutTabSettingsOpenTabId(tabId);
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutTabSettings,
     });
+    setPageLayoutTabSettingsOpenTabId(tabId);
     onClose();
   };
 

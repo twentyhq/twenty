@@ -18,10 +18,13 @@ export type HeadlessEngineCommandContextApi = {
   objectMetadataItem: Nullable<EnrichedObjectMetadataItem>;
   currentViewId: Nullable<string>;
   recordIndexId: Nullable<string>;
+  hasAnySoftDeleteFilterOnView?: boolean;
   targetedRecordsRule: ContextStoreTargetedRecordsRule;
   selectedRecords: ObjectRecord[];
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
   payload: Nullable<CommandMenuItemPayload>;
+  navigationTargetObjectMetadataId: Nullable<string>;
+  creationTargetObjectMetadataId?: string;
   isInSidePanel?: boolean;
 };
 
@@ -34,6 +37,8 @@ export type HeadlessTriggerWorkflowVersionCommandContextApi =
   HeadlessEngineCommandContextApi & {
     workflowId: string;
     workflowVersionId: string;
+    coreWorkflowId?: string;
+    coreWorkflowVersionId?: string;
     trigger: WorkflowTrigger | null;
     availabilityType: CommandMenuItemAvailabilityType;
     availabilityObjectMetadataId?: string | null;

@@ -18,12 +18,15 @@ import { UserSessionCookieService } from 'src/engine/core-modules/user-session/s
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @MetadataResolver()
+@AllowSuspendedWorkspace()
 export class UserSessionResolver {
   constructor(
     private readonly userSessionService: UserSessionService,
@@ -31,7 +34,7 @@ export class UserSessionResolver {
   ) {}
 
   @Query(() => [UserSessionDTO])
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
   async currentUserSessions(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
@@ -63,7 +66,7 @@ export class UserSessionResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
   async revokeUserSession(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
@@ -133,7 +136,7 @@ export class UserSessionResolver {
   }
 
   @Mutation(() => Int)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
   async revokeAllOtherUserSessions(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:

@@ -1,12 +1,14 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
+import bytes from 'bytes';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { settings } from 'src/engine/constants/settings';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -16,38 +18,19 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  UsageLimitGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 @MetadataResolver()
 export class FilesFieldResolver {
   constructor(private readonly filesFieldService: FilesFieldService) {}
-
-  @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  async uploadFilesFieldFile(
-    @AuthWorkspace()
-    { id: workspaceId }: WorkspaceEntity,
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, filename }: FileUpload,
-    @Args({
-      name: 'fieldMetadataId',
-      type: () => String,
-      nullable: false,
-    })
-    fieldMetadataId: string,
-  ): Promise<FileWithSignedUrlDTO> {
-    const stream = createReadStream();
-    const buffer = await streamToBuffer(stream);
-
-    return await this.filesFieldService.uploadFile({
-      file: buffer,
-      filename,
-      workspaceId,
-      fieldMetadataId,
-    });
-  }
 
   @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
@@ -64,7 +47,10 @@ export class FilesFieldResolver {
     fieldMetadataUniversalIdentifier: string,
   ): Promise<FileWithSignedUrlDTO> {
     const stream = createReadStream();
-    const buffer = await streamToBuffer(stream);
+    const buffer = await streamToBuffer(
+      stream,
+      bytes(settings.storage.maxFileSize) ?? undefined,
+    );
 
     return await this.filesFieldService.uploadFile({
       file: buffer,

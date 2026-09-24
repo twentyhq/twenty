@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -13,7 +14,7 @@ import {
   IconCalendarMonth,
   IconCalendarWeek,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 type RecordTableCalendarLayoutDropdownContentProps = {
@@ -71,13 +72,17 @@ export const RecordTableCalendarLayoutDropdownContent = ({
             itemId={value}
             onEnter={() => handleSelect(value)}
           >
-            <MenuItemSelect
-              text={label}
-              LeftIcon={Icon}
-              selected={currentCalendarLayout === value}
+            <ListItem
               focused={selectedItemId === value}
               onClick={() => handleSelect(value)}
-            />
+              role="option"
+              aria-selected={currentCalendarLayout === value}
+              selected={currentCalendarLayout === value}
+              indicator="check"
+              startIcon={<SelectOptionIcon Icon={Icon} />}
+            >
+              {label}
+            </ListItem>
           </SelectableListItem>
         ))}
       </SelectableList>

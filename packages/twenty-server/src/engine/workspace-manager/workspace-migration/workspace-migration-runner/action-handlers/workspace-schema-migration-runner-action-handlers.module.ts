@@ -1,3 +1,9 @@
+import { CreateWorkflowVersionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow-version/services/create-workflow-version-action-handler.service';
+import { DeleteWorkflowVersionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow-version/services/delete-workflow-version-action-handler.service';
+import { UpdateWorkflowVersionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow-version/services/update-workflow-version-action-handler.service';
+import { CreateWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/create-workflow-action-handler.service';
+import { DeleteWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/delete-workflow-action-handler.service';
+import { UpdateWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/update-workflow-action-handler.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -98,6 +104,9 @@ import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspa
 import { CreateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/create-timeline-activity-type-action-handler.service';
 import { DeleteTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/delete-timeline-activity-type-action-handler.service';
 import { UpdateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/update-timeline-activity-type-action-handler.service';
+import { CreateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/create-settings-menu-item-action-handler.service';
+import { DeleteSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/delete-settings-menu-item-action-handler.service';
+import { UpdateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/update-settings-menu-item-action-handler.service';
 import { CreateSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/create-search-field-metadata-action-handler.service';
 import { DeleteSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/delete-search-field-metadata-action-handler.service';
 import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/search-field-metadata/services/update-search-field-metadata-action-handler.service';
@@ -110,6 +119,14 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
     MetricsModule,
   ],
   providers: [
+    CreateWorkflowActionHandlerService,
+    UpdateWorkflowActionHandlerService,
+    DeleteWorkflowActionHandlerService,
+
+    CreateWorkflowVersionActionHandlerService,
+    UpdateWorkflowVersionActionHandlerService,
+    DeleteWorkflowVersionActionHandlerService,
+
     CreateFieldActionHandlerService,
     UpdateFieldActionHandlerService,
     DeleteFieldActionHandlerService,
@@ -232,10 +249,14 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
     CreateTimelineActivityTypeActionHandlerService,
     UpdateTimelineActivityTypeActionHandlerService,
     DeleteTimelineActivityTypeActionHandlerService,
+    CreateSettingsMenuItemActionHandlerService,
+    UpdateSettingsMenuItemActionHandlerService,
+    DeleteSettingsMenuItemActionHandlerService,
 
     CreateSearchFieldMetadataActionHandlerService,
     UpdateSearchFieldMetadataActionHandlerService,
     DeleteSearchFieldMetadataActionHandlerService,
   ],
+  exports: [UpdateLogicFunctionActionHandlerService],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

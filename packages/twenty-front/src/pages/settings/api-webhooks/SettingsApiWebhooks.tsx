@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
@@ -16,11 +18,15 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconPlug, IconPlus, IconSparkle2, IconWebhook } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
+import {
+  IconApi,
+  IconPlus,
+  IconSparkle2,
+  IconSparkles,
+  IconWebhook,
+} from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 
 type TabKey =
@@ -59,12 +65,12 @@ export const SettingsApiWebhooks = () => {
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP,
       title: t`MCP`,
-      Icon: IconSparkle2,
+      Icon: IconSparkles,
     },
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
       title: t`API`,
-      Icon: IconPlug,
+      Icon: IconApi,
     },
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
@@ -86,6 +92,7 @@ export const SettingsApiWebhooks = () => {
       title={t`MCP & APIs`}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`APIs and webhooks`}
           tabs={tabs}
           componentInstanceId={SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID}
         />
@@ -99,7 +106,7 @@ export const SettingsApiWebhooks = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <SettingsDiscoveryHeroCard
             lightSrc={isMcpTab ? McpCoverLight : PlaygroundCoverLight}
             darkSrc={isMcpTab ? McpCoverDark : PlaygroundCoverDark}
@@ -115,36 +122,35 @@ export const SettingsApiWebhooks = () => {
             ]}
             playButtonAriaLabel={t`Watch API demo`}
           />
-        </Section>
+        </Section.Root>
 
         {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API && (
           <StyledTabContent>
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Documentation`}
                 description={t`Try our REST or GraphQL API playgrounds`}
               />
               <PlaygroundSetupForm />
-            </Section>
+            </Section.Root>
 
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`API Keys`}
                 description={t`Active API keys created by you or your team.`}
               />
               <StyledTableContainer isMobile={isMobile}>
                 <SettingsApiKeysTable />
                 <StyledButtonContainer>
-                  <Button
-                    Icon={IconPlus}
-                    title={t`Create API key`}
-                    size="small"
-                    variant="secondary"
+                  <NavigationButton
+                    startIcon={<IconPlus />}
+                    size="sm"
                     to={getSettingsPath(SettingsPath.NewApiKey)}
-                  />
+                    variant="outline"
+                  >{t`Create API key`}</NavigationButton>
                 </StyledButtonContainer>
               </StyledTableContainer>
-            </Section>
+            </Section.Root>
           </StyledTabContent>
         )}
 
@@ -156,24 +162,23 @@ export const SettingsApiWebhooks = () => {
 
         {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS && (
           <StyledTabContent>
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Webhooks`}
                 description={t`Establish Webhook endpoints for notifications on asynchronous events.`}
               />
               <StyledTableContainer isMobile={isMobile}>
                 <SettingsWebhooksTable />
                 <StyledButtonContainer>
-                  <Button
-                    Icon={IconPlus}
-                    title={t`Create webhook`}
-                    size="small"
-                    variant="secondary"
+                  <NavigationButton
+                    startIcon={<IconPlus />}
+                    size="sm"
                     to={getSettingsPath(SettingsPath.NewWebhook)}
-                  />
+                    variant="outline"
+                  >{t`Create webhook`}</NavigationButton>
                 </StyledButtonContainer>
               </StyledTableContainer>
-            </Section>
+            </Section.Root>
           </StyledTabContent>
         )}
       </SettingsPageContainer>

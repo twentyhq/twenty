@@ -2,8 +2,9 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -17,8 +18,7 @@ import { recordStoreRecordsSelector } from '@/object-record/record-store/states/
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
-import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -34,11 +34,9 @@ import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
 export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
 
-  const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
-    ContextStoreComponentInstanceContext,
-  );
-  const isInSidePanel =
-    contextStoreInstanceId === SIDE_PANEL_COMPONENT_INSTANCE_ID;
+  const workspaceSurface = useWorkspaceSurface();
+  const isInSidePanel = workspaceSurface.type === 'side-panel';
+  const contextStoreInstanceId = useContextStoreInstanceId();
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -106,10 +104,16 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+  const baseRecordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem?.namePlural ?? '',
     contextStoreCurrentViewId ?? '',
   );
+  const recordIndexId =
+    isInSidePanel &&
+    (workspaceSurface.ownsRouteLocation ||
+      contextStoreInstanceId !== MAIN_CONTEXT_STORE_INSTANCE_ID)
+      ? `${baseRecordIndexId}-${workspaceSurface.instanceId}`
+      : baseRecordIndexId;
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,

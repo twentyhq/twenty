@@ -1,13 +1,13 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { JsonTree } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp, IconTool } from 'twenty-ui/icon';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
@@ -126,7 +126,7 @@ export const SettingsAdminChatToolCallPart = ({
         <StyledToolLabel>
           <IconTool size={14} />
           {toolName}
-          {hasToolError && <Tag color="red" text={t`Failed`} />}
+          {hasToolError && <Tag color="red">{t`Failed`}</Tag>}
         </StyledToolLabel>
         <StyledRightContent>
           {isExpanded ? (

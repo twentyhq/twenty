@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
@@ -6,10 +5,14 @@ import { EventCard } from '@/activities/timeline-activities/rows/components/Even
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
+import {
+  StyledEventRow,
+  StyledEventRowContainer,
+  StyledEventRowContent,
+} from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowMainObjectUpdatedProps = {
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
@@ -20,27 +23,6 @@ type EventRowMainObjectUpdatedProps = {
   happensAt?: string;
   hasRenderer?: boolean;
 };
-
-const StyledRowContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  overflow: hidden;
-`;
-
-const StyledEventRowMainObjectUpdatedContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-`;
 
 export const EventRowMainObjectUpdated = ({
   authorFullName,
@@ -59,18 +41,18 @@ export const EventRowMainObjectUpdated = ({
   const diffEntries = Object.entries(diff);
   if (diffEntries.length === 0) {
     return (
-      <StyledEventRowMainObjectUpdatedContainer>
-        <StyledRowContainer>
-          <StyledRow>
+      <StyledEventRow>
+        <StyledEventRowContainer>
+          <StyledEventRowContent>
             <EventRowItem>{authorFullName}</EventRowItem>
             <EventRowItem variant="action">
               {eventTypeLabel ?? t`updated`}
             </EventRowItem>
             <EventRowItem>{labelIdentifierValue}</EventRowItem>
-          </StyledRow>
+          </StyledEventRowContent>
           <EventRowDate happensAt={happensAt} />
-        </StyledRowContainer>
-      </StyledEventRowMainObjectUpdatedContainer>
+        </StyledEventRowContainer>
+      </StyledEventRow>
     );
   }
 
@@ -78,9 +60,9 @@ export const EventRowMainObjectUpdated = ({
   const recordLabel = labelIdentifierValue;
 
   return (
-    <StyledEventRowMainObjectUpdatedContainer>
-      <StyledRowContainer>
-        <StyledRow>
+    <StyledEventRow>
+      <StyledEventRowContainer>
+        <StyledEventRowContent>
           <EventRowItem>{authorFullName}</EventRowItem>
           <EventRowItem variant="action">
             {eventTypeLabel ?? t`updated`}
@@ -101,9 +83,9 @@ export const EventRowMainObjectUpdated = ({
               )}
             </>
           )}
-        </StyledRow>
+        </StyledEventRowContent>
         <EventRowDate happensAt={happensAt} />
-      </StyledRowContainer>
+      </StyledEventRowContainer>
       {diffEntries.length > 1 && !hasRenderer && (
         <EventCard isOpen={isOpen}>
           {diffEntries.map(([diffKey, diffValue]) => (
@@ -117,6 +99,6 @@ export const EventRowMainObjectUpdated = ({
           ))}
         </EventCard>
       )}
-    </StyledEventRowMainObjectUpdatedContainer>
+    </StyledEventRow>
   );
 };

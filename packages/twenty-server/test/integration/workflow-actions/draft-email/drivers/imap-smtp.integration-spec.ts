@@ -26,7 +26,9 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
   let connectedAccountId: string;
   let messageChannelId: string;
 
-  const findDraftSubjects = async (): Promise<string[]> => {
+  const findDrafts = async (): Promise<
+    { subject: string; source: string }[]
+  > => {
     const client = new ImapFlow({
       host: greenmail.host,
       port: greenmail.imapPort,
@@ -44,17 +46,23 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
         return [];
       }
 
-      const subjects: string[] = [];
+      const drafts: { subject: string; source: string }[] = [];
 
-      for await (const message of client.fetch('1:*', { envelope: true })) {
+      for await (const message of client.fetch('1:*', {
+        envelope: true,
+        source: true,
+      })) {
         const subject = message.envelope?.subject;
 
         if (isNonEmptyString(subject)) {
-          subjects.push(subject);
+          drafts.push({
+            subject,
+            source: message.source?.toString('latin1') ?? '',
+          });
         }
       }
 
-      return subjects;
+      return drafts;
     } finally {
       await client.logout();
     }
@@ -62,7 +70,7 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
 
   beforeAll(async () => {
     await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
+      input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
 
     greenmail = await startGreenmailContainer({
@@ -105,7 +113,7 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
 
   afterAll(async () => {
     await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: true },
+      input: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: [] },
     }).catch(() => undefined);
 
     if (isNonEmptyString(connectedAccountId)) {
@@ -142,7 +150,9 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
       subject,
       connectedAccountId,
     });
-    expect(await findDraftSubjects()).toContain(subject);
+    expect(await findDrafts()).toContainEqual(
+      expect.objectContaining({ subject }),
+    );
     expect(
       await findRecordNodesByFilter<{ id: string }>(
         'message',
@@ -151,5 +161,33 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
         { subject: { eq: subject } },
       ),
     ).toEqual([]);
+  }, 300000);
+
+  it('appends a multi-paragraph draft with CRLF line endings only', async () => {
+    const subject = `IMAP/SMTP multi-paragraph draft ${randomUUID()}`;
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'IMAP/SMTP multi-paragraph draft email workflow',
+      stepType: 'DRAFT_EMAIL',
+      input: {
+        connectedAccountId,
+        recipients: { to: '{{trigger.to}}' },
+        subject: '{{trigger.subject}}',
+        body: '<p>First paragraph</p><p>Second paragraph</p>',
+      },
+      payload: { to: HANDLE, subject },
+    });
+
+    expect(workflowRun).toMatchObject({
+      status: 'COMPLETED',
+      stepStatus: 'SUCCESS',
+    });
+
+    const draft = (await findDrafts()).find(
+      (candidate) => candidate.subject === subject,
+    );
+
+    expect(draft?.source).toContain('First paragraph\r\n\r\nSecond paragraph');
+    expect(draft?.source).not.toMatch(/[^\r]\n/);
   }, 300000);
 });

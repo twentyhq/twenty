@@ -185,6 +185,50 @@ describe('formatSyncActionsPlan', () => {
     expect(plan).not.toContain('Warning:');
   });
 
+  it('should suggest --no-delete when the plan destroys entities and deletions are inferred', () => {
+    const plan = formatSyncActionsPlan(
+      [
+        {
+          type: 'delete',
+          metadataName: 'view',
+          universalIdentifier: 'v',
+          flatEntity: { name: 'My view' },
+        },
+      ],
+      { showNoDeleteHint: true },
+    );
+
+    expect(plan).toContain('Re-run with --no-delete to keep them.');
+  });
+
+  it('should not suggest --no-delete without the option', () => {
+    const plan = formatSyncActionsPlan([
+      {
+        type: 'delete',
+        metadataName: 'view',
+        universalIdentifier: 'v',
+        flatEntity: { name: 'My view' },
+      },
+    ]);
+
+    expect(plan).not.toContain('--no-delete');
+  });
+
+  it('should not suggest --no-delete when nothing is destroyed', () => {
+    const plan = formatSyncActionsPlan(
+      [
+        {
+          type: 'create',
+          metadataName: 'fieldMetadata',
+          flatEntity: { name: 'name' },
+        },
+      ],
+      { showNoDeleteHint: true },
+    );
+
+    expect(plan).not.toContain('--no-delete');
+  });
+
   it('should group by type ordered by first appearance, create before delete within a group', () => {
     const plan = formatSyncActionsPlan([
       {

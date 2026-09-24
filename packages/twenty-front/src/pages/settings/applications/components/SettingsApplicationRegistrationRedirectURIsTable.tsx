@@ -1,14 +1,14 @@
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { IconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconX } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { IconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsApplicationRegistrationRedirectURIsTableProps = {
   redirectUris: string[];
@@ -53,15 +53,17 @@ export const SettingsApplicationRegistrationRedirectURIsTable = ({
 
                     <TableCell align="right">
                       <IconButton
+                        aria-label={t`Remove redirect URI`}
                         onClick={() => {
                           updateRedirectUris(
                             redirectUris.filter((uri) => uri !== redirectUri),
                           );
                         }}
-                        variant="tertiary"
-                        size="small"
-                        Icon={IconX}
-                      />
+                        variant="ghost"
+                        size="sm"
+                      >
+                        <IconX />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

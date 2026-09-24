@@ -55,14 +55,12 @@ describe('protectChatReferencesForMarkdown', () => {
     ).toBe('Open [[object:partner:Partners \\(EMEA\\)]]');
   });
 
-  it('should escape a field label without touching its id', () => {
+  it('should escape a field label without touching its names', () => {
     expect(
       protectChatReferencesForMarkdown(
-        'The [[field:33333333-3333-3333-3333-333333333333:Next step]] field',
+        'The [[field:opportunity:nextStep:Next step (owner)]] field',
       ),
-    ).toBe(
-      'The [[field:33333333-3333-3333-3333-333333333333:Next step]] field',
-    );
+    ).toBe('The [[field:opportunity:nextStep:Next step \\(owner\\)]] field');
   });
 
   it('should escape a view label without touching its id', () => {
@@ -86,11 +84,9 @@ describe('protectChatReferencesForMarkdown', () => {
   it('should leave a marker using a retired closing tag unchanged', () => {
     expect(
       protectChatReferencesForMarkdown(
-        'The [[field:33333333-3333-3333-3333-333333333333:Stage[[/field]] field',
+        'The [[field:opportunity:stage:Stage[[/field]] field',
       ),
-    ).toBe(
-      'The [[field:33333333-3333-3333-3333-333333333333:Stage[[/field]] field',
-    );
+    ).toBe('The [[field:opportunity:stage:Stage[[/field]] field');
   });
 
   it('should keep a surplus bracket added after a reference', () => {
@@ -122,20 +118,20 @@ describe('protectChatReferencesForMarkdown', () => {
   it('should keep only the display name of a marker matching no reference form', () => {
     expect(
       protectChatReferencesForMarkdown(
-        '[[object:person:People]] gets [[field:person:lead source:Lead source]] and [[field:33333333-3333-3333-3333-333333333333:Stage]]',
+        '[[object:person:People]] gets [[field:person:lead source:Lead source]] and [[field:person:stage:Stage]]',
       ),
     ).toBe(
-      '[[object:person:People]] gets Lead source and [[field:33333333-3333-3333-3333-333333333333:Stage]]',
+      '[[object:person:People]] gets Lead source and [[field:person:stage:Stage]]',
     );
   });
 
   it('should rewrite every kind in a mixed string', () => {
     expect(
       protectChatReferencesForMarkdown(
-        'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]]',
+        'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:person:stage:Stage]]',
       ),
     ).toBe(
-      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]]',
+      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:person:stage:Stage]]',
     );
   });
 });

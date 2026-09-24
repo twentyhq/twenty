@@ -1,3 +1,4 @@
+import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -5,15 +6,12 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import {
-  AppTooltip,
-  OverflowingTextWithTooltip,
-  TooltipDelay,
-} from 'twenty-ui/surfaces';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
 
@@ -75,7 +73,7 @@ export const RecordInlineCellContainer = () => {
     useRecordInlineCellContext();
   const { theme } = useContext(ThemeContext);
 
-  const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
+  const { fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
     useContext(FieldContext);
 
   if (isFieldText(fieldDefinition)) {
@@ -98,11 +96,6 @@ export const RecordInlineCellContainer = () => {
     onMouseLeave?.();
   };
 
-  const labelId = `label-${getRecordFieldInputInstanceId({
-    recordId,
-    fieldName: fieldDefinition?.metadata?.fieldName,
-  })}`;
-
   return (
     <StyledInlineCellBaseContainer
       readonly={readonly ?? false}
@@ -110,30 +103,35 @@ export const RecordInlineCellContainer = () => {
       onMouseLeave={handleContainerMouseLeave}
     >
       {(IconLabel || label) && (
-        <StyledLabelAndIconContainer id={labelId}>
-          {IconLabel && (
-            <StyledIconContainer>
-              <IconLabel stroke={theme.icon.stroke.sm} />
-            </StyledIconContainer>
-          )}
-          {showLabel && (
-            <StyledLabelContainer width={labelWidth}>
-              <OverflowingTextWithTooltip text={label} displayedMaxRows={1} />
-            </StyledLabelContainer>
-          )}
-          {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
-          {!showLabel && (
-            <AppTooltip
-              anchorSelect={`#${labelId}`}
-              content={label}
-              clickable
-              noArrow
-              place="bottom"
-              positionStrategy="fixed"
-              delay={TooltipDelay.shortDelay}
-            />
-          )}
-        </StyledLabelAndIconContainer>
+        <Tooltip
+          content={label}
+          disabled={showLabel}
+          side="bottom"
+          positionMethod="fixed"
+          delay={TooltipDelay.shortDelay}
+        >
+          <StyledLabelAndIconContainer>
+            {IconLabel && (
+              <StyledIconContainer>
+                <IconLabel stroke={theme.icon.stroke.sm} />
+              </StyledIconContainer>
+            )}
+            {showLabel && (
+              <StyledLabelContainer width={labelWidth}>
+                <FieldDescriptionTooltip
+                  label={label}
+                  description={fieldDefinition?.metadata?.description}
+                  fallback={
+                    <OverflowingTextWithTooltip
+                      text={label}
+                      displayedMaxRows={1}
+                    />
+                  }
+                />
+              </StyledLabelContainer>
+            )}
+          </StyledLabelAndIconContainer>
+        </Tooltip>
       )}
       <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
         <RecordInlineCellValue />

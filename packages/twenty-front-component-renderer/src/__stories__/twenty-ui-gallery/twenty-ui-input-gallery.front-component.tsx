@@ -1,42 +1,27 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {
-  AdvancedSettingsToggle,
-  AnimatedButton,
-  AnimatedLightIconButton,
-  Button,
-  ButtonGroup,
   CardPicker,
-  Checkbox,
-  ColorPickerButton,
-  ColorSchemeCard,
   ColorSchemePicker,
-  CoreEditorHeader,
-  FloatingButton,
-  FloatingButtonGroup,
-  FloatingIconButton,
-  FloatingIconButtonGroup,
   IconButton,
-  IconButtonGroup,
-  IconListViewGrip,
-  InsideButton,
   LightButton,
   LightIconButton,
-  LightIconButtonGroup,
   MainButton,
+  SearchInput,
+  TabButton,
+} from 'twenty-ui/components';
+import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
+import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
+import {
+  Button,
+  ButtonGroup,
+  Checkbox,
   Radio,
   RadioGroup,
-  RoundedIconButton,
-  SearchInput,
   SegmentedControl,
   Slider,
-  StyledTabContainer,
-  TabButton,
-  TabContent,
-  Toggle,
-} from 'twenty-ui/input';
+  Switch,
+} from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-
 import {
   ComponentGallery,
   type GalleryEntry,
@@ -44,62 +29,38 @@ import {
 
 const INPUT_ENTRIES: GalleryEntry[] = [
   {
-    name: 'AdvancedSettingsToggle',
-    node: (
-      <AdvancedSettingsToggle
-        isAdvancedModeEnabled={false}
-        setIsAdvancedModeEnabled={() => {}}
-      />
-    ),
-  },
-  {
-    name: 'AnimatedButton',
-    node: (
-      <AnimatedButton
-        title="Animated"
-        animatedSvg={<svg width={16} height={16} />}
-      />
-    ),
-  },
-  {
-    name: 'AnimatedLightIconButton',
-    node: <AnimatedLightIconButton Icon={IconStar} />,
-  },
-  {
     name: 'Button',
-    node: <Button title="Button" onClick={() => {}} />,
+    node: <Button onClick={() => {}}>{'Button'}</Button>,
   },
   {
     name: 'ButtonGroup',
     node: (
       <ButtonGroup>
-        {[<Button key="a" title="A" />, <Button key="b" title="B" />]}
+        {[<Button key="a">{'A'}</Button>, <Button key="b">{'B'}</Button>]}
       </ButtonGroup>
     ),
   },
   {
     name: 'CardPicker',
     node: (
-      <CardPicker checked={false} handleChange={() => {}}>
-        Card
-      </CardPicker>
+      <RadioGroup defaultValue="card" aria-label="Card selection">
+        <CardPicker value="card">Card</CardPicker>
+      </RadioGroup>
     ),
   },
   {
     name: 'Checkbox',
-    node: <Checkbox checked={false} onChange={() => {}} />,
+    node: (
+      <Checkbox
+        aria-label="Checkbox"
+        checked={false}
+        onCheckedChange={() => {}}
+      />
+    ),
   },
   {
-    name: 'CoreEditorHeader',
-    node: <CoreEditorHeader title="Editor" />,
-  },
-  {
-    name: 'ColorPickerButton',
-    node: <ColorPickerButton colorName="blue" onClick={() => {}} />,
-  },
-  {
-    name: 'ColorSchemeCard',
-    node: <ColorSchemeCard variant="Light" />,
+    name: 'CodeEditorHeader',
+    node: <CodeEditorHeader title="Editor" />,
   },
   {
     name: 'ColorSchemePicker',
@@ -114,88 +75,64 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'FloatingButton',
-    node: <FloatingButton title="Floating" />,
-  },
-  {
-    name: 'FloatingButtonGroup',
+    name: 'IconButton (elevated)',
     node: (
-      <FloatingButtonGroup>
-        {[
-          <FloatingButton key="a" title="A" />,
-          <FloatingButton key="b" title="B" />,
-        ]}
-      </FloatingButtonGroup>
+      <IconButton elevated size="sm" aria-label="Search">
+        <IconSearch />
+      </IconButton>
     ),
   },
-  {
-    name: 'FloatingIconButton',
-    node: <FloatingIconButton Icon={IconSearch} ariaLabel="Search" />,
-  },
-  {
-    name: 'FloatingIconButtonGroup',
-    node: (
-      <FloatingIconButtonGroup
-        iconButtons={[{ Icon: IconSearch, ariaLabel: 'Search' }]}
-      />
-    ),
-  },
+
   {
     name: 'IconButton',
-    node: <IconButton Icon={IconPlus} ariaLabel="Add" onClick={() => {}} />,
-  },
-  {
-    name: 'IconButtonGroup',
     node: (
-      <IconButtonGroup
-        iconButtons={[{ Icon: IconTrash, ariaLabel: 'Delete' }]}
-      />
+      <IconButton aria-label="Add" onClick={() => {}}>
+        <IconPlus />
+      </IconButton>
     ),
   },
   {
-    name: 'IconListViewGrip',
-    node: <IconListViewGrip />,
-  },
-  {
-    name: 'InsideButton',
-    node: <InsideButton Icon={IconPlus} ariaLabel="Add" />,
+    name: 'ButtonGroup (framed)',
+    node: (
+      <ButtonGroup framed attached={false} aria-label="Record actions">
+        <LightIconButton size="xs" aria-label="Delete" emphasis="subtle">
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
+    ),
   },
   {
     name: 'LightButton',
-    node: <LightButton title="Light" />,
+    node: <LightButton>{'Light'}</LightButton>,
   },
   {
     name: 'LightIconButton',
-    node: <LightIconButton Icon={IconStar} aria-label="Star" />,
-  },
-  {
-    name: 'LightIconButtonGroup',
     node: (
-      <LightIconButtonGroup
-        iconButtons={[{ Icon: IconStar, ariaLabel: 'Star', onClick: () => {} }]}
-      />
+      <LightIconButton aria-label="Star">
+        <IconStar />
+      </LightIconButton>
     ),
   },
   {
     name: 'MainButton',
-    node: <MainButton title="Main" />,
+    node: <MainButton>{'Main'}</MainButton>,
   },
   {
     name: 'Radio',
-    node: <Radio checked={false} label="Radio" />,
-  },
-  {
-    name: 'RadioGroup',
     node: (
-      <RadioGroup value="a">
-        <Radio value="a" label="A" />
-        <Radio value="b" label="B" />
+      <RadioGroup aria-label="Radio example">
+        <Radio value="radio">Radio</Radio>
       </RadioGroup>
     ),
   },
   {
-    name: 'RoundedIconButton',
-    node: <RoundedIconButton Icon={IconPlus} aria-label="Add" />,
+    name: 'RadioGroup',
+    node: (
+      <RadioGroup defaultValue="a" aria-label="Letter">
+        <Radio value="a">A</Radio>
+        <Radio value="b">B</Radio>
+      </RadioGroup>
+    ),
   },
   {
     name: 'SearchInput',
@@ -217,33 +154,39 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Slider',
-    node: <Slider max={100} value={50} onChange={() => {}} />,
-  },
-  {
-    name: 'StyledTabContainer',
     node: (
-      <StyledTabContainer>
-        <TabButton id="t1" title="Tab" />
-      </StyledTabContainer>
+      <Slider.Root defaultValue={50}>
+        <Slider.Control>
+          <Slider.Track>
+            <Slider.Indicator />
+            <Slider.Thumb aria-label="Volume" />
+          </Slider.Track>
+        </Slider.Control>
+      </Slider.Root>
     ),
   },
   {
     name: 'TabButton',
-    node: <TabButton id="tab1" title="Tab" />,
+    node: <TabButton>Tab</TabButton>,
   },
   {
-    name: 'TabContent',
-    node: <TabContent id="tc1" title="Content" />,
-  },
-  {
-    name: 'Toggle',
-    node: <Toggle value={false} onChange={() => {}} />,
+    name: 'Switch',
+    node: (
+      <Switch
+        aria-label="Example switch"
+        checked={false}
+        onCheckedChange={() => {}}
+      />
+    ),
   },
 ];
 
 const InputGallery = () => (
   <ThemeProvider colorScheme="light">
-    <ComponentGallery title="twenty-ui/input" entries={INPUT_ENTRIES} />
+    <ComponentGallery
+      title="twenty-ui/primitives/input + twenty-ui/components"
+      entries={INPUT_ENTRIES}
+    />
   </ThemeProvider>
 );
 
@@ -251,6 +194,6 @@ export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000107',
   name: 'twenty-ui-input-gallery',
   description:
-    'Renders every twenty-ui/input component (except monaco CodeEditor) in the sandbox',
+    'Renders input primitives and shared button presets in the sandbox',
   component: InputGallery,
 });

@@ -2,10 +2,12 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
+import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsRenderableForTargetObject } from '@/page-layout/utils/getTabsRenderableForTargetObject';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -13,7 +15,8 @@ import { useIsMobile } from 'twenty-ui/utilities';
 // every consumer derives them from the same filtered tab set.
 export const usePageLayoutRenderableTabs = () => {
   const isMobile = useIsMobile();
-  const { isInSidePanel, targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -46,6 +49,7 @@ export const usePageLayoutRenderableTabs = () => {
     pageLayoutType: currentPageLayout.type,
     isMobile,
     isInSidePanel,
+    isFirstTabPinned: getIsFirstTabPinned(currentPageLayout),
   });
 
   return {

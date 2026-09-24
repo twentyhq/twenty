@@ -14,6 +14,7 @@ import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata
 import {
   AggregateOperations,
   FieldMetadataType,
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   ViewFilterOperand,
   WidgetType,
@@ -48,7 +49,13 @@ describe('Page layout with tabs update should fail', () => {
                 title: 'Widget 1',
                 type: WidgetType.FIELDS,
                 objectMetadataId: null,
-                gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID as const,
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
                 configuration: {
                   configurationType: WidgetConfigurationType.IFRAME,
                 },
@@ -190,7 +197,8 @@ describe('Page layout with tabs update should fail', () => {
               title: chartTitle,
               type: WidgetType.GRAPH,
               objectMetadataId: testFieldMetadataIds.objectMetadataId,
-              gridPosition: {
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID as const,
                 row: 0,
                 column: 0,
                 rowSpan: 1,

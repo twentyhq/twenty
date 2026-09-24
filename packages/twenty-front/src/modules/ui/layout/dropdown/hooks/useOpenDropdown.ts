@@ -36,13 +36,6 @@ export const useOpenDropdown = () => {
         throw new Error('Dropdown component instance ID is not defined');
       }
 
-      store.set(
-        isDropdownOpenComponentState.atomFamily({
-          instanceId: dropdownComponentInstanceId,
-        }),
-        true,
-      );
-
       setActiveDropdownFocusIdAndMemorizePrevious(dropdownComponentInstanceId);
 
       pushFocusItemToFocusStack({
@@ -60,6 +53,13 @@ export const useOpenDropdown = () => {
             false,
         },
       });
+
+      store.set(
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: dropdownComponentInstanceId,
+        }),
+        true,
+      );
     },
     [
       pushFocusItemToFocusStack,

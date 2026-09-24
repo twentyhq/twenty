@@ -2,7 +2,9 @@ import { SettingsDataModelOverviewEffect } from '@/settings/data-model/graph-ove
 import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject';
 import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
 import { calculateHandlePosition } from '@/settings/data-model/graph-overview/utils/calculateHandlePosition';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import {
   Background,
   type Edge,
@@ -22,6 +24,7 @@ import {
 import { useCallback, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   IconLock,
   IconLockOpen,
@@ -30,7 +33,7 @@ import {
   IconPlus,
   IconX,
 } from 'twenty-ui/icon';
-import { Button, IconButtonGroup } from 'twenty-ui/input';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const nodeTypes: NodeTypes = {
@@ -186,10 +189,11 @@ export const SettingsDataModelOverview = () => {
   return (
     <StyledContainer>
       <StyledCloseButton>
-        <Button
-          Icon={IconX}
+        <NavigationButton
+          startIcon={<IconX />}
+          aria-label={t`Close overview`}
           to={getSettingsPath(SettingsPath.Objects)}
-        ></Button>
+        ></NavigationButton>
       </StyledCloseButton>
       <SettingsDataModelOverviewEffect
         setEdges={setEdges}
@@ -208,27 +212,46 @@ export const SettingsDataModelOverview = () => {
         proOptions={{ hideAttribution: true }}
       >
         <Background />
-        <IconButtonGroup
+        <ButtonGroup
+          framed
+          attached={false}
           className="react-flow__panel react-flow__controls bottom left horizontal"
-          iconButtons={[
-            {
-              Icon: IconPlus,
-              onClick: () => zoomIn(),
-            },
-            {
-              Icon: IconMinus,
-              onClick: () => zoomOut(),
-            },
-            {
-              Icon: IconMaximize,
-              onClick: () => fitView(),
-            },
-            {
-              Icon: isInteractive ? IconLockOpen : IconLock,
-              onClick: () => setInteractive(!isInteractive),
-            },
-          ]}
-        ></IconButtonGroup>
+          aria-label={t`Diagram controls`}
+        >
+          <LightIconButton
+            size="xs"
+            emphasis="subtle"
+            aria-label={t`Zoom in`}
+            onClick={() => zoomIn()}
+          >
+            <IconPlus />
+          </LightIconButton>
+          <LightIconButton
+            size="xs"
+            emphasis="subtle"
+            aria-label={t`Zoom out`}
+            onClick={() => zoomOut()}
+          >
+            <IconMinus />
+          </LightIconButton>
+          <LightIconButton
+            size="xs"
+            emphasis="subtle"
+            aria-label={t`Fit view`}
+            onClick={() => fitView()}
+          >
+            <IconMaximize />
+          </LightIconButton>
+          <LightIconButton
+            size="xs"
+            emphasis="subtle"
+            aria-label={t`Lock diagram`}
+            aria-pressed={!isInteractive}
+            onClick={() => setInteractive(!isInteractive)}
+          >
+            {isInteractive ? <IconLockOpen /> : <IconLock />}
+          </LightIconButton>
+        </ButtonGroup>
       </ReactFlow>
     </StyledContainer>
   );

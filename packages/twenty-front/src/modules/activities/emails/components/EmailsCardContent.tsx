@@ -5,7 +5,7 @@ import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPr
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { styled } from '@linaria/react';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineThread } from '~/generated/graphql';
 
@@ -14,7 +14,7 @@ const StyledContainer = styled(StyledWidgetContentContainer)`
   overflow: hidden;
 `;
 
-const StyledSection = styled(Section)`
+const StyledSection = styled(Section.Root)`
   display: flex;
   flex: 1;
   min-height: 0;

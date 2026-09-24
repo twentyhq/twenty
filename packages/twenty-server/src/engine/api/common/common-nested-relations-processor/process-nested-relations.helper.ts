@@ -24,7 +24,7 @@ import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-b
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
   type FieldMapsForObject,
@@ -42,7 +42,7 @@ const NESTED_RELATION_QUERY_MAX_CONCURRENCY = 4;
 
 type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   parentObjectMetadataItem: FlatObjectMetadata;
   parentObjectRecords: T[];
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -53,6 +53,7 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   authContext: WorkspaceAuthContext;
   useReplica?: boolean;
   rolePermissionConfig?: RolePermissionConfig;
+  repository?: WorkspaceRepository;
   // oxlint-disable-next-line typescript/no-explicit-any
   selectedFields: Record<string, any>;
 };
@@ -85,6 +86,7 @@ export class ProcessNestedRelationsHelper {
       authContext,
       useReplica = false,
       rolePermissionConfig,
+      repository,
       selectedFields,
     }: ProcessNestedRelationsArgs<T>,
     relationQueryLimiter: ConcurrencyLimiter,
@@ -104,6 +106,7 @@ export class ProcessNestedRelationsHelper {
           authContext,
           useReplica,
           rolePermissionConfig,
+          repository,
           relationQueryLimiter,
           selectedFields:
             selectedFields[sourceFieldName] instanceof Object
@@ -128,11 +131,12 @@ export class ProcessNestedRelationsHelper {
     authContext,
     useReplica,
     rolePermissionConfig,
+    repository,
     relationQueryLimiter,
     selectedFields,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -144,6 +148,7 @@ export class ProcessNestedRelationsHelper {
     authContext: WorkspaceAuthContext;
     useReplica: boolean;
     rolePermissionConfig?: RolePermissionConfig;
+    repository?: WorkspaceRepository;
     relationQueryLimiter: ConcurrencyLimiter;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
@@ -192,11 +197,13 @@ export class ProcessNestedRelationsHelper {
         fieldMaps,
       });
 
-    const targetObjectRepository = this.workspaceOrmManager.getRepository(
-      targetObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      { useReplica },
-    );
+    const targetObjectRepository = repository
+      ? repository.getRepositoryForObjectMetadataId(targetObjectMetadata.id)
+      : this.workspaceOrmManager.getRepository(
+          targetObjectMetadata.nameSingular,
+          rolePermissionConfig,
+          { useReplica },
+        );
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
@@ -305,6 +312,7 @@ export class ProcessNestedRelationsHelper {
           authContext,
           useReplica,
           rolePermissionConfig,
+          repository,
           selectedFields,
         },
         relationQueryLimiter,
@@ -320,7 +328,7 @@ export class ProcessNestedRelationsHelper {
     fieldMaps,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     sourceFieldName: string;
     fieldMaps: FieldMapsForObject;

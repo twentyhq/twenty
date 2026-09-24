@@ -20,6 +20,13 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
   'relationTargetFieldMetadataId',
   'relationTargetObjectMetadataId',
   'morphId',
+  // Read by the shared query runners (merge, create, group-by support gates)
+  // and REST/direct-execution paths that also consume this projection.
+  'isActive',
+  'isSystem',
+  // Read by the timeline write path, which drops non-audited fields from the
+  // event diff before an activity row is built.
+  'isAuditLogged',
 ] as const satisfies readonly (keyof FlatFieldMetadata)[];
 
 export type OrmFlatFieldMetadataKey =

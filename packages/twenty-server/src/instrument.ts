@@ -45,6 +45,13 @@ const parseSampleRate = ({
     : fallback;
 };
 
+const parsedExportInterval = Number(process.env.METER_EXPORT_INTERVAL_MS);
+
+const metricExportIntervalMillis =
+  Number.isInteger(parsedExportInterval) && parsedExportInterval > 0
+    ? parsedExportInterval
+    : 30_000;
+
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
   const tracesSampleRate = parseSampleRate({
     value: process.env.SENTRY_TRACES_SAMPLE_RATE,
@@ -59,6 +66,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       tracesSampleRate,
     }).filter((integration) => integration.name !== 'Modules'),
     integrations: [
+      Sentry.extraErrorDataIntegration(),
       Sentry.redisIntegration(),
       Sentry.httpIntegration(),
       Sentry.expressIntegration(),
@@ -134,7 +142,7 @@ const meterProvider = new MeterProvider({
       ? [
           new PeriodicExportingMetricReader({
             exporter: new ConsoleMetricExporter(),
-            exportIntervalMillis: 10000,
+            exportIntervalMillis: metricExportIntervalMillis,
           }),
         ]
       : []),
@@ -145,7 +153,7 @@ const meterProvider = new MeterProvider({
               url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
               temporalityPreference: AggregationTemporality.DELTA,
             }),
-            exportIntervalMillis: 10000,
+            exportIntervalMillis: metricExportIntervalMillis,
           }),
         ]
       : []),

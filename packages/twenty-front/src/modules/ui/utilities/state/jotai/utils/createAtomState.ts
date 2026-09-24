@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type State } from '@/ui/utilities/state/jotai/types/State';
 import { createJotaiCookieStorage } from '@/ui/utilities/state/jotai/utils/createJotaiCookieStorage';
+import { registerRoutedFlowStateScopeRelease } from '@/ui/utilities/state/jotai/utils/routedFlowStateScopeRegistry';
 
 type CookieStorageConfig<ValueType> = {
   cookieKey: string;
@@ -57,6 +58,7 @@ export const createAtomState = <ValueType>({
   localStorageOptions,
   validateInitFn,
   useCookieStorage,
+  scope,
 }: {
   key: string;
   defaultValue: ValueType;
@@ -65,45 +67,74 @@ export const createAtomState = <ValueType>({
   localStorageOptions?: LocalStorageOptions;
   validateInitFn?: (payload: NonNullable<ValueType>) => boolean;
   useCookieStorage?: CookieStorageConfig<ValueType>;
+  scope?: 'routed-flow';
 }): State<ValueType> => {
-  let baseAtom: StateAtom<ValueType>;
+  const buildBaseAtom = (atomKey: string): StateAtom<ValueType> => {
+    let baseAtom: StateAtom<ValueType>;
 
-  if (isDefined(useCookieStorage)) {
-    const storage = createJotaiCookieStorage<ValueType>({
-      cookieKey: useCookieStorage.cookieKey,
-      attributes: useCookieStorage.attributes,
-      validateInitFn: useCookieStorage.validateInitFn,
+    if (isDefined(useCookieStorage)) {
+      const cookieKey = atomKey === key ? useCookieStorage.cookieKey : atomKey;
+      const storage = createJotaiCookieStorage<ValueType>({
+        cookieKey,
+        attributes: useCookieStorage.attributes,
+        validateInitFn: useCookieStorage.validateInitFn,
+      });
+      baseAtom = atomWithStorage<ValueType>(cookieKey, defaultValue, storage, {
+        getOnInit: true,
+      }) as StateAtom<ValueType>;
+    } else if (useSessionStorage) {
+      const storage = createJSONStorage<ValueType>(() => sessionStorage);
+      baseAtom = atomWithStorage<ValueType>(atomKey, defaultValue, storage, {
+        getOnInit: true,
+      }) as StateAtom<ValueType>;
+    } else if (useLocalStorage) {
+      const storage = isDefined(validateInitFn)
+        ? createValidatedLocalStorage<ValueType>(validateInitFn)
+        : undefined;
+      baseAtom = atomWithStorage<ValueType>(
+        atomKey,
+        defaultValue,
+        storage,
+        localStorageOptions ?? undefined,
+      ) as StateAtom<ValueType>;
+    } else {
+      baseAtom = atom(defaultValue);
+    }
+
+    baseAtom.debugLabel = atomKey;
+
+    return baseAtom;
+  };
+
+  const baseAtom = buildBaseAtom(key);
+  const scopedAtomCache = new Map<string, StateAtom<ValueType>>();
+
+  if (scope === 'routed-flow') {
+    registerRoutedFlowStateScopeRelease((scopeId) => {
+      scopedAtomCache.delete(scopeId);
     });
-    baseAtom = atomWithStorage<ValueType>(
-      useCookieStorage.cookieKey,
-      defaultValue,
-      storage,
-      { getOnInit: true },
-    ) as StateAtom<ValueType>;
-  } else if (useSessionStorage) {
-    const storage = createJSONStorage<ValueType>(() => sessionStorage);
-    baseAtom = atomWithStorage<ValueType>(key, defaultValue, storage, {
-      getOnInit: true,
-    }) as StateAtom<ValueType>;
-  } else if (useLocalStorage) {
-    const storage = isDefined(validateInitFn)
-      ? createValidatedLocalStorage<ValueType>(validateInitFn)
-      : undefined;
-    baseAtom = atomWithStorage<ValueType>(
-      key,
-      defaultValue,
-      storage,
-      localStorageOptions ?? undefined,
-    ) as StateAtom<ValueType>;
-  } else {
-    baseAtom = atom(defaultValue);
   }
-
-  baseAtom.debugLabel = key;
 
   return {
     type: 'State',
     key,
+    scope,
     atom: baseAtom,
+    getAtom: (scopeId: string | null) => {
+      if (scope !== 'routed-flow' || scopeId === null) {
+        return baseAtom;
+      }
+
+      const existingAtom = scopedAtomCache.get(scopeId);
+
+      if (isDefined(existingAtom)) {
+        return existingAtom;
+      }
+
+      const scopedAtom = buildBaseAtom(`${key}__${scopeId}`);
+      scopedAtomCache.set(scopeId, scopedAtom);
+
+      return scopedAtom;
+    },
   };
 };

@@ -32,9 +32,9 @@ export const buildMessageStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      label: i18nLabel(msg({ message: `ID`, context: 'fieldMetadata.label' })),
       description: i18nLabel(
-        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+        msg({ message: `ID`, context: 'fieldMetadata.description' }),
       ),
       icon: 'Icon123',
       isSystem: true,
@@ -240,7 +240,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       fieldName: 'headerMessageId',
       type: FieldMetadataType.TEXT,
       label: i18nLabel(
-        msg({ message: `Header message Id`, context: 'fieldMetadata.label' }),
+        msg({ message: `Header message ID`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
@@ -293,6 +293,10 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       icon: 'IconMessage',
       isNullable: true,
       isUIEditable: false,
+      // an email body is a block of prose, so it needs the same multi-line
+      // display as calendarEvent.description rather than the single clamped
+      // line a TEXT field falls back to
+      settings: { displayedMaxRows: 99 },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -331,11 +335,11 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       morphId: null,
       fieldName: 'messageThread',
       label: i18nLabel(
-        msg({ message: `Message Thread Id`, context: 'fieldMetadata.label' }),
+        msg({ message: `Message Thread ID`, context: 'fieldMetadata.label' }),
       ),
       description: i18nLabel(
         msg({
-          message: `Message Thread Id`,
+          message: `Message Thread ID`,
           context: 'fieldMetadata.description',
         }),
       ),
@@ -449,86 +453,6 @@ export const buildMessageStandardFlatFieldMetadatas = ({
         onDelete: RelationOnDeleteAction.SET_NULL,
         joinColumnName: 'messageCampaignId',
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  deliveryStatus: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'deliveryStatus',
-      type: FieldMetadataType.SELECT,
-      label: i18nLabel(
-        msg({ message: `Delivery status`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Per-recipient delivery status for campaign sends`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconMailFast',
-      isNullable: true,
-      isUIEditable: false,
-      options: [
-        {
-          id: '6b189ac2-5054-45c0-a95b-25764e978d81',
-          value: 'QUEUED',
-          label: i18nLabel(
-            msg({ message: `Queued`, context: 'fieldMetadata.label' }),
-          ),
-          position: 0,
-          color: 'gray',
-        },
-        {
-          id: 'af7390a3-bd35-480b-9bc2-6f7d8589b3d2',
-          value: 'SENT',
-          label: i18nLabel(
-            msg({ message: `Sent`, context: 'fieldMetadata.label' }),
-          ),
-          position: 1,
-          color: 'green',
-        },
-        {
-          id: '39c934fc-01d7-48fa-9b79-8e19f75dab03',
-          value: 'FAILED',
-          label: i18nLabel(
-            msg({ message: `Failed`, context: 'fieldMetadata.label' }),
-          ),
-          position: 2,
-          color: 'red',
-        },
-        {
-          id: 'ade2b01f-8f10-43c6-ab3d-63b0d98ce40c',
-          value: 'BOUNCED',
-          label: i18nLabel(
-            msg({ message: `Bounced`, context: 'fieldMetadata.label' }),
-          ),
-          position: 3,
-          color: 'orange',
-        },
-        {
-          id: 'ae79b7bc-b416-4fd2-a366-ab8d91cb22da',
-          value: 'COMPLAINED',
-          label: i18nLabel(
-            msg({ message: `Complained`, context: 'fieldMetadata.label' }),
-          ),
-          position: 4,
-          color: 'purple',
-        },
-        {
-          id: 'c0d3f2a1-7e64-4b9a-8f21-1d5e6a7b8c90',
-          value: 'SKIPPED',
-          label: i18nLabel(
-            msg({ message: `Skipped`, context: 'fieldMetadata.label' }),
-          ),
-          position: 5,
-          color: 'yellow',
-        },
-      ],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

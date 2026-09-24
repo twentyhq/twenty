@@ -1,21 +1,22 @@
 /* @license Enterprise */
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
 import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const useSettingsCustomDomain = () => {
   const { t } = useLingui();
   const domainSchema = getDomainValidationSchema();
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
 
@@ -63,7 +64,10 @@ export const useSettingsCustomDomain = () => {
           ...currentWorkspace,
           customDomain: domainValue,
         });
-        enqueueSuccessSnackBar({ message: t`Custom domain updated` });
+        enqueueToast({
+          variant: 'success',
+          children: t`Custom domain updated`,
+        });
         setIsSubmitting(false);
         checkCustomDomainRecords(domainValue);
       },
@@ -77,11 +81,7 @@ export const useSettingsCustomDomain = () => {
 
           return;
         }
-        if (CombinedGraphQLErrors.is(mutationError)) {
-          enqueueErrorSnackBar({ apolloError: mutationError });
-        } else {
-          enqueueErrorSnackBar({});
-        }
+        enqueueToast(getToastOptionsFromError({ error: mutationError }));
         setIsSubmitting(false);
       },
     });

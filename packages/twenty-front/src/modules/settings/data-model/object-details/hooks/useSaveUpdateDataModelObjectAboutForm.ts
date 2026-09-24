@@ -5,7 +5,7 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange } from '@/settings/data-model/object-details/utils/computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange';
 import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -15,7 +15,7 @@ import { TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'twenty-shared/i18n';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { parseThemeColor } from 'twenty-ui/utilities';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
 import { MetadataTranslationsDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -53,7 +53,7 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
   );
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const apolloClient = useApolloClient();
-  const { openModal, closeModal } = useModal();
+  const { openDialog, closeDialog } = useDialog();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
   const localeOptions = useLocaleOptions();
@@ -131,10 +131,12 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
         nameSingular: updatedObject?.data?.updateOneObject.nameSingular,
         ...(isCustomObject
           ? {
-              color: parseThemeColor(
-                updatedObject?.data?.updateOneObject.color ??
+              color: getObjectColorWithFallback({
+                ...objectMetadataItem,
+                color:
+                  updatedObject?.data?.updateOneObject.color ??
                   objectMetadataItem.color,
-              ),
+              }),
             }
           : {}),
       });
@@ -204,7 +206,7 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
 
       if (isEditingThroughTranslation) {
         setPendingFormValues(formValues);
-        openModal(TRANSLATION_INTENT_MODAL_ID);
+        openDialog(TRANSLATION_INTENT_MODAL_ID);
         return;
       }
     }
@@ -246,7 +248,7 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
       updatePayload: { ...dirtyNonTranslatableValues, translations },
     });
 
-    closeModal(TRANSLATION_INTENT_MODAL_ID);
+    closeDialog(TRANSLATION_INTENT_MODAL_ID);
     setPendingFormValues(null);
 
     if (updateResult.status === 'successful') {
@@ -267,7 +269,7 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
 
     const formValues = pendingFormValues;
 
-    closeModal(TRANSLATION_INTENT_MODAL_ID);
+    closeDialog(TRANSLATION_INTENT_MODAL_ID);
     setPendingFormValues(null);
     await saveAsRename(formValues);
   };

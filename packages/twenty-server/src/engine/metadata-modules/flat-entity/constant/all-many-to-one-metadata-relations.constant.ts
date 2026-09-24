@@ -108,7 +108,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     targetObjectMetadata: {
       metadataName: 'objectMetadata',
       foreignKey: 'targetObjectMetadataId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'navigationMenuItems',
       isNullable: true,
       universalForeignKey: 'targetObjectMetadataUniversalIdentifier',
     },
@@ -122,14 +122,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     view: {
       metadataName: 'view',
       foreignKey: 'viewId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'navigationMenuItems',
       isNullable: true,
       universalForeignKey: 'viewUniversalIdentifier',
     },
     pageLayout: {
       metadataName: 'pageLayout',
       foreignKey: 'pageLayoutId',
-      inverseOneToManyProperty: null,
+      inverseOneToManyProperty: 'navigationMenuItems',
       isNullable: true,
       universalForeignKey: 'pageLayoutUniversalIdentifier',
     },
@@ -556,6 +556,17 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  settingsMenuItem: {
+    workspace: null,
+    application: null,
+    frontComponent: {
+      metadataName: 'frontComponent',
+      foreignKey: 'frontComponentId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'frontComponentUniversalIdentifier',
+    },
+  },
   searchFieldMetadata: {
     workspace: null,
     application: null,
@@ -580,6 +591,15 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: false,
       universalForeignKey: 'tsVectorFieldMetadataUniversalIdentifier',
     },
+  },
+  workflow: {
+    workspace: null,
+    createdBy: null,
+    application: null,
+  },
+  workflowVersion: {
+    workspace: null,
+    application: null,
   },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 

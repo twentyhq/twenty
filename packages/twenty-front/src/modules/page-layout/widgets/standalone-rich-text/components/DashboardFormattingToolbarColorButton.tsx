@@ -53,6 +53,7 @@ export const DashboardFormattingToolbarColorButton = () => {
   );
 
   const { refs, floatingStyles } = useFloating({
+    strategy: 'fixed',
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
     middleware: [
@@ -126,7 +127,10 @@ export const DashboardFormattingToolbarColorButton = () => {
                 menuRef as React.MutableRefObject<HTMLDivElement | null>
               ).current = node;
             }}
-            style={floatingStyles}
+            style={{
+              ...floatingStyles,
+              zIndex: COLOR_DROPDOWN_FLOATING_CONFIG.zIndex,
+            }}
             className="bn-ui-container"
             data-click-outside-id={COLOR_BUTTON_CLICK_OUTSIDE_ID}
           >

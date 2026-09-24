@@ -7,6 +7,7 @@ import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   AggregateOperations,
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
 } from 'twenty-shared/types';
@@ -98,7 +99,8 @@ describe('Page layout with tabs creation via update should succeed', () => {
                 title: 'Existing Tab Widget',
                 type: WidgetType.GRAPH,
                 objectMetadataId: testFieldMetadataIds.objectMetadataId,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -125,7 +127,8 @@ describe('Page layout with tabs creation via update should succeed', () => {
                 title: 'New Tab Iframe Widget',
                 type: WidgetType.IFRAME,
                 objectMetadataId: null,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,

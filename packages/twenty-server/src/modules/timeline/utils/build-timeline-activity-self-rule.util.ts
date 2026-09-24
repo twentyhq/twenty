@@ -49,6 +49,7 @@ export const buildTimelineActivitySelfRule = ({
     sourceFlatObjectMetadata: flatObjectMetadata,
     actions,
     triggerFieldNames: null,
+    happensAtFieldName: null,
     targetShape: { kind: 'SELF' },
   };
 };

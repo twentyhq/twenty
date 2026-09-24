@@ -1,10 +1,26 @@
 import { useEffect } from 'react';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useInView } from 'react-intersection-observer';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
 
+import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
+import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
+import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
+import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
+import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
+import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
+import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
+import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
   CORE_WORKFLOWS_INITIAL_SORT,
@@ -14,8 +30,10 @@ import {
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 
 const StyledTableContainer = styled.div`
@@ -29,22 +47,51 @@ const StyledFetchMoreSentinel = styled.div`
 `;
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
-  isDefined(workflow.workspaceWorkflowId)
-    ? getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: workflow.workspaceWorkflowId,
-      })
-    : undefined;
+  getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
 export const WorkflowCoreIndexPage = () => {
+  const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
+    CORE_WORKFLOWS_TABLE_ID,
+  );
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
-  const { coreWorkflows, hasNextPage, loading, fetchNextPage } =
-    useCoreWorkflows();
+  const {
+    coreWorkflows,
+    hasNextPage,
+    loading,
+    error,
+    fetchNextPage,
+    refetchLoadedCoreWorkflows,
+  } = useCoreWorkflows({ tableId });
 
   const { ref: fetchMoreRef, inView } = useInView();
+
+  const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
+    useCreateCoreWorkflow();
+
+  const { displayedCoreWorkflows, selectedRowIds, toggleRow, selectRows } =
+    useCoreWorkflowsSelection({ coreWorkflows });
+
+  useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
+
+  const coreWorkflowsFilterSettings = useAtomStateValue(
+    coreWorkflowsFilterSettingsState,
+  );
+
+  const hasAppliedFilters = (
+    coreWorkflowsFilterSettings.stepFilters ?? []
+  ).some(isUsableCoreWorkflowFilterRule);
+
+  const hasError = isDefined(error);
+
+  const isEmpty =
+    !loading &&
+    !hasError &&
+    !hasNextPage &&
+    displayedCoreWorkflows.length === 0;
 
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
@@ -62,19 +109,82 @@ export const WorkflowCoreIndexPage = () => {
               <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
             }
             title={objectMetadataItem.labelPlural}
+            actionButton={
+              <>
+                <CommandMenuComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getCommandMenuIdFromRecordIndexId(tableId),
+                  }}
+                >
+                  <CommandMenuContextProvider
+                    displayType="button"
+                    containerType={CommandMenuItemContainerType.IndexPageHeader}
+                  >
+                    <PinnedCommandMenuItemButtons />
+                  </CommandMenuContextProvider>
+                </CommandMenuComponentInstanceContext.Provider>
+                <CoreWorkflowsFilterBar />
+                <SidePanelToggleButton />
+              </>
+            }
           />
         }
       >
         <StyledTableContainer>
-          <CoreObjectTable
-            tableId={CORE_WORKFLOWS_TABLE_ID}
-            columns={WORKFLOW_CORE_TABLE_COLUMNS}
-            items={coreWorkflows}
-            getItemKey={(workflow) => workflow.id}
-            getItemLink={getCoreWorkflowLink}
-            initialSort={CORE_WORKFLOWS_INITIAL_SORT}
-          />
-          {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
+          {hasError && (
+            <RecordIndexEmptyStateDisplay
+              animatedPlaceholderType="errorIndex"
+              title={t`Something went wrong`}
+              subTitle={t`We could not load your ${objectMetadataItem.labelPlural}. Please try again later.`}
+            />
+          )}
+          {isEmpty && (
+            <RecordIndexEmptyStateDisplay
+              animatedPlaceholderType={
+                hasAppliedFilters ? 'noMatchRecord' : 'noRecord'
+              }
+              title={
+                hasAppliedFilters
+                  ? t`No ${objectMetadataItem.labelPlural} found`
+                  : t`Add your first ${objectMetadataItem.labelSingular}`
+              }
+              subTitle={
+                hasAppliedFilters
+                  ? t`No ${objectMetadataItem.labelPlural} match your filters. Try removing some of them.`
+                  : t`Create a ${objectMetadataItem.labelSingular} to automate your work.`
+              }
+              ButtonIcon={IconPlus}
+              buttonTitle={t`Add a ${objectMetadataItem.labelSingular}`}
+              onButtonClick={
+                canCreateCoreWorkflow ? createCoreWorkflow : undefined
+              }
+            />
+          )}
+          {!hasError && !isEmpty && (
+            <>
+              <CoreObjectTable
+                tableId={tableId}
+                columns={WORKFLOW_CORE_TABLE_COLUMNS}
+                items={displayedCoreWorkflows}
+                getItemKey={(workflow) => workflow.id}
+                getItemLink={getCoreWorkflowLink}
+                initialSort={CORE_WORKFLOWS_INITIAL_SORT}
+                selection={{
+                  selectedRowIds,
+                  onToggleRow: toggleRow,
+                  onToggleAllRows: selectRows,
+                }}
+              />
+              {canCreateCoreWorkflow && (
+                <CoreObjectTableAddNewRow
+                  label={t`New ${objectMetadataItem.labelSingular}`}
+                  onClick={createCoreWorkflow}
+                  disabled={isCreatingCoreWorkflow}
+                />
+              )}
+              {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
+            </>
+          )}
         </StyledTableContainer>
       </PageCardLayout>
     </>

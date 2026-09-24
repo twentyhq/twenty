@@ -1,8 +1,14 @@
 import { Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
-import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
+import {
+  type MessageQueueDriver,
+  type QueueJobToAdd,
+  type QueueJobDetails,
+} from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJob,
   type MessageQueueJobData,
@@ -17,28 +23,52 @@ export class SyncDriver implements MessageQueueDriver {
     [queueName: string]: (job: MessageQueueJob) => Promise<void> | void;
   } = {};
 
-  constructor() {}
+  private readonly jobs = new Map<
+    string,
+    QueueJobDetails<MessageQueueJobData>
+  >();
+
+  async getJobs<TData extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobIds: string[],
+  ): Promise<Partial<Record<string, QueueJobDetails<TData>>>> {
+    return Object.fromEntries(
+      jobIds
+        .map((id) => this.jobs.get(`${queueName}:${id}`))
+        .filter(isDefined)
+        .map((job) => [job.id, job]),
+    ) as Partial<Record<string, QueueJobDetails<TData>>>;
+  }
 
   async add<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,
     data: T,
-  ): Promise<void> {
-    await this.processJob(queueName, this.createJob(jobName, data));
+  ): Promise<string | undefined> {
+    const job = this.createJob(jobName, data);
+
+    await this.processJob(queueName, job);
+
+    return job.id;
   }
 
   async bulkAdd<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,
-    dataItems: T[],
-  ): Promise<void> {
+    jobs: QueueJobToAdd<T>[],
+  ): Promise<string[]> {
     let firstError: unknown = undefined;
+    const jobIds: string[] = [];
 
     // Each payload is an independent job in BullMQ, so a failing one must not
     // prevent the others from being processed
-    for (const data of dataItems) {
+    for (const { data, jobId } of jobs) {
+      const job = this.createJob(jobName, data, jobId);
+
+      jobIds.push(job.id);
+
       try {
-        await this.processJob(queueName, this.createJob(jobName, data));
+        await this.processJob(queueName, job);
       } catch (error) {
         firstError = firstError ?? error;
       }
@@ -47,6 +77,8 @@ export class SyncDriver implements MessageQueueDriver {
     if (isDefined(firstError)) {
       throw firstError;
     }
+
+    return jobIds;
   }
 
   async addCron<T extends MessageQueueJobData | undefined>({
@@ -81,7 +113,45 @@ export class SyncDriver implements MessageQueueDriver {
     const worker = this.workersMap[queueName];
 
     if (worker) {
-      await worker(job);
+      const details: QueueJobDetails<MessageQueueJobData> = {
+        id: job.id,
+        data: job.data ?? {},
+        state: 'active',
+        attemptsMade: 0,
+        progress: 0,
+        timestamp: Date.now(),
+        processedOn: Date.now(),
+      };
+      this.jobs.set(`${queueName}:${job.id}`, details);
+      job.updateData = async (data) => {
+        job.data = data;
+        details.data = data ?? {};
+      };
+      job.updateProgress = async (progress) => {
+        details.progress = progress;
+      };
+      try {
+        await worker(job);
+        details.state = 'completed';
+      } catch (error) {
+        details.state = 'failed';
+        details.failedReason =
+          error instanceof Error ? error.message : String(error);
+        throw error;
+      } finally {
+        details.finishedOn = Date.now();
+        details.attemptsMade++;
+        for (const [key, entry] of this.jobs) {
+          if (
+            entry.state !== 'active' &&
+            (this.jobs.size > QUEUE_RETENTION.completedMaxCount ||
+              Date.now() - (entry.finishedOn ?? entry.timestamp) >
+                QUEUE_RETENTION.completedMaxAge * 1000)
+          ) {
+            this.jobs.delete(key);
+          }
+        }
+      }
     } else {
       if (process.env.NODE_ENV !== 'test') {
         this.logger.error(`No handler found for job: ${queueName}`);
@@ -92,12 +162,14 @@ export class SyncDriver implements MessageQueueDriver {
   private createJob<T extends MessageQueueJobData | undefined>(
     name: string,
     data: T,
+    jobId?: string,
   ): MessageQueueJob<T> {
     const job: MessageQueueJob<T> = {
-      id: '',
+      id: jobId ?? v4(),
       name,
       data,
       retryLimit: 0,
+      updateProgress: async () => {},
       updateData: async (updatedData) => {
         job.data = updatedData;
       },

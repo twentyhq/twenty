@@ -1,3 +1,4 @@
+import { Dropdown } from 'twenty-ui/components';
 import { useLingui } from '@lingui/react/macro';
 import {
   IconClock,
@@ -13,28 +14,13 @@ import { AGENT_CHAT_THREAD_GROUP_BY_LABELS } from '@/ai/constants/AgentChatThrea
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER } from '@/ai/constants/AgentChatThreadLastActivityFilter';
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS } from '@/ai/constants/AgentChatThreadLastActivityFilterLabels';
 import { AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE } from '@/ai/constants/AiChatThreadFilterDropdownPage';
-import { type AiChatThreadFilterDropdownPage } from '@/ai/types/AiChatThreadFilterDropdownPage';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { MenuItem } from 'twenty-ui/navigation';
 
-type AiChatThreadFilterDropdownRootMenuProps = {
-  dropdownId: string;
-  onSelectPage: (page: AiChatThreadFilterDropdownPage) => void;
-};
-
-export const AiChatThreadFilterDropdownRootMenu = ({
-  dropdownId,
-  onSelectPage,
-}: AiChatThreadFilterDropdownRootMenuProps) => {
+export const AiChatThreadFilterDropdownRootMenu = () => {
   const { t } = useLingui();
-  const { closeDropdown } = useCloseDropdown();
 
   const [agentChatThreadFilterStatus, setAgentChatThreadFilterStatus] =
     useAtomState(agentChatThreadFilterStatusState);
@@ -58,62 +44,51 @@ export const AiChatThreadFilterDropdownRootMenu = ({
     setAgentChatThreadLastActivityFilter(
       AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER.ALL,
     );
-    closeDropdown(dropdownId);
   };
 
   return (
-    <DropdownContent>
-      <DropdownMenuItemsContainer>
-        <MenuItem
-          LeftIcon={IconStatusChange}
-          text={t`Status`}
-          contextualText={t(
+    <>
+      <Dropdown.Section>
+        <Dropdown.ActionItem
+          startIcon={<IconStatusChange />}
+          description={t(
             AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus],
           )}
-          contextualTextPosition="right"
-          hasSubMenu
-          onClick={() =>
-            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.STATUS)
-          }
-        />
-        <MenuItem
-          LeftIcon={IconLayoutList}
-          text={t`Group by`}
-          contextualText={t(
+          descriptionPlacement="end"
+          hasSubmenu
+          page={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.STATUS}
+        >{t`Status`}</Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          startIcon={<IconLayoutList />}
+          description={t(
             AGENT_CHAT_THREAD_GROUP_BY_LABELS[agentChatThreadGroupBy],
           )}
-          contextualTextPosition="right"
-          hasSubMenu
-          onClick={() =>
-            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.GROUP_BY)
-          }
-        />
-        <MenuItem
-          LeftIcon={IconClock}
-          text={t`Last activity`}
-          contextualText={t(
+          descriptionPlacement="end"
+          hasSubmenu
+          page={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.GROUP_BY}
+        >{t`Group by`}</Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          startIcon={<IconClock />}
+          description={t(
             AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[
               agentChatThreadLastActivityFilter
             ],
           )}
-          contextualTextPosition="right"
-          hasSubMenu
-          onClick={() =>
-            onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.LAST_ACTIVITY)
-          }
-        />
+          descriptionPlacement="end"
+          hasSubmenu
+          page={AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.LAST_ACTIVITY}
+        >{t`Last activity`}</Dropdown.ActionItem>
         {!isAtDefaults && (
           <>
-            <DropdownMenuSeparator />
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Clear filters`}
+            <Dropdown.Separator />
+            <Dropdown.ActionItem
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={handleClearFilters}
-            />
+            >{t`Clear filters`}</Dropdown.ActionItem>
           </>
         )}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };

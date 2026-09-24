@@ -1,11 +1,11 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SETTINGS_ADMIN_CHATS_TABLE_GRID } from '@/settings/admin-panel/chats/constants/SettingsAdminChatsTableGrid';
@@ -72,13 +72,9 @@ export const SettingsAdminChatsTableRow = ({
       </TableCell>
       <TableCell minWidth="0" overflow="hidden">
         <StyledFlagsContainer>
-          {thread.hasError && <Tag color="red" text={t`Error`} />}
-          {isDefined(thread.deletedAt) && (
-            <Tag color="gray" text={t`Archived`} />
-          )}
-          {thread.isOnboardingThread && (
-            <Tag color="blue" text={t`Onboarding`} />
-          )}
+          {thread.hasError && <Tag color="red">{t`Error`}</Tag>}
+          {isDefined(thread.deletedAt) && <Tag color="gray">{t`Archived`}</Tag>}
+          {thread.isOnboardingThread && <Tag color="blue">{t`Onboarding`}</Tag>}
         </StyledFlagsContainer>
       </TableCell>
       <TableCell align="right">

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import SnsPayloadValidator from 'sns-payload-validator';
 
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
@@ -16,14 +17,7 @@ export class SnsSignatureVerifierService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   async assertAllowedAndSigned(payload: SnsPayload): Promise<void> {
-    if (!this.isTopicAllowlisted(payload.TopicArn)) {
-      this.logger.warn(`SNS topic ${payload.TopicArn} is not in allowlist`);
-
-      throw new MessagingWebhookException(
-        'SNS topic not allowed',
-        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_FORBIDDEN_TOPIC,
-      );
-    }
+    this.assertTopicAllowlistedOrThrow(payload.TopicArn);
 
     try {
       await this.validator.validate(payload);
@@ -40,19 +34,30 @@ export class SnsSignatureVerifierService {
     }
   }
 
-  private isTopicAllowlisted(topicArn: string): boolean {
+  private assertTopicAllowlistedOrThrow(topicArn: string): void {
     const allowlist = this.twentyConfigService.get(
       'SES_SNS_TOPIC_ARN_ALLOWLIST',
     );
 
-    if (typeof allowlist !== 'string' || allowlist.trim() === '') {
-      return false;
-    }
-
-    return allowlist
+    const allowedTopicArns = (allowlist ?? '')
       .split(',')
       .map((entry) => entry.trim())
-      .filter((entry) => entry.length > 0)
-      .includes(topicArn);
+      .filter(isNonEmptyString);
+
+    if (!isNonEmptyArray(allowedTopicArns)) {
+      throw new MessagingWebhookException(
+        'SES_SNS_TOPIC_ARN_ALLOWLIST is not configured, every SES webhook payload is rejected',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_NOT_CONFIGURED,
+      );
+    }
+
+    if (!allowedTopicArns.includes(topicArn)) {
+      this.logger.warn(`SNS topic ${topicArn} is not in allowlist`);
+
+      throw new MessagingWebhookException(
+        'SNS topic not allowed',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_FORBIDDEN_TOPIC,
+      );
+    }
   }
 }

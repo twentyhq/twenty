@@ -9,11 +9,13 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement, useEffect, type ReactNode } from 'react';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   type NavigationMenuItem,
   NavigationMenuItemType,
+  ViewKey,
   ViewType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
@@ -24,9 +26,14 @@ import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTe
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 let mockIsMobile = false;
+let mockIsInitialObjectViewEnabled = false;
 
 jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
   useIsMobile: () => mockIsMobile,
+}));
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsInitialObjectViewEnabled,
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) =>
@@ -97,6 +104,34 @@ const buildViewNavigationMenuItem = (
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
 
+const buildCompanyView = (
+  id: string,
+  key: ViewKey | null,
+  position: number,
+) => ({
+  id,
+  name: 'Company view',
+  objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+  type: ViewType.TABLE,
+  key,
+  isCompact: false,
+  viewFields: [],
+  viewFieldGroups: [],
+  viewGroups: [],
+  viewSorts: [],
+  viewFilters: [],
+  viewFilterGroups: [],
+  kanbanAggregateOperation: AggregateOperations.COUNT,
+  icon: '',
+  kanbanAggregateOperationFieldMetadataId: '',
+  position,
+  visibility: ViewVisibility.WORKSPACE,
+  createdByUserWorkspaceId: null,
+  shouldHideEmptyGroups: false,
+  groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
+  isActive: true,
+});
+
 const renderHooks = ({
   withCurrentUser,
   withExistingView,
@@ -104,6 +139,7 @@ const renderHooks = ({
   objectMetadataItems = getTestEnrichedObjectMetadataItemsMock(),
   navigationMenuItems = [],
   withNavigationMenuItemsLoaded = true,
+  views,
 }: {
   withCurrentUser: boolean;
   withExistingView: boolean;
@@ -111,6 +147,7 @@ const renderHooks = ({
   objectMetadataItems?: EnrichedObjectMetadataItem[];
   navigationMenuItems?: NavigationMenuItem[];
   withNavigationMenuItemsLoaded?: boolean;
+  views?: Parameters<typeof setTestViewsInMetadataStore>[1];
 }) => {
   if (withObjectMetadataLoaded) {
     setTestObjectMetadataItemsInMetadataStore(jotaiStore, objectMetadataItems);
@@ -136,7 +173,9 @@ const renderHooks = ({
       );
 
       useEffect(() => {
-        if (withExistingView) {
+        if (isDefined(views)) {
+          setTestViewsInMetadataStore(jotaiStore, views);
+        } else if (withExistingView) {
           setTestViewsInMetadataStore(jotaiStore, [
             {
               id: 'viewId',
@@ -158,6 +197,7 @@ const renderHooks = ({
               visibility: ViewVisibility.WORKSPACE,
               createdByUserWorkspaceId: null,
               shouldHideEmptyGroups: false,
+              groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
               isActive: true,
             },
           ]);
@@ -183,6 +223,7 @@ const renderHooks = ({
 describe('useDefaultHomePagePath', () => {
   afterEach(() => {
     mockIsMobile = false;
+    mockIsInitialObjectViewEnabled = false;
   });
 
   it('should return proper path when no currentUser', async () => {
@@ -286,6 +327,44 @@ describe('useDefaultHomePagePath', () => {
       expect(result.current.defaultHomePagePath).toEqual('/objects/companies');
     });
   });
+  it('should target the initial view rather than the index view when the menu has no object item and the flag is on', async () => {
+    mockIsInitialObjectViewEnabled = true;
+
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [],
+      views: [
+        buildCompanyView('index-view-id', ViewKey.INDEX, 0),
+        buildCompanyView('initial-view-id', null, 1),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(
+        '/objects/companies?viewId=initial-view-id',
+      );
+    });
+  });
+
+  it('should target the index view when the menu has no object item and the flag is off', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [],
+      views: [
+        buildCompanyView('index-view-id', ViewKey.INDEX, 0),
+        buildCompanyView('initial-view-id', null, 1),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(
+        '/objects/companies?viewId=index-view-id',
+      );
+    });
+  });
+
   it('should redirect to profile settings when there is no readable object', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,

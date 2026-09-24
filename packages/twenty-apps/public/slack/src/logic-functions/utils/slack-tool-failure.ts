@@ -1,4 +1,5 @@
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
+import { isSlackRateLimitedError } from 'src/logic-functions/utils/is-slack-rate-limited-error';
 
 export const slackToolFailure = (
   message: string,
@@ -7,4 +8,7 @@ export const slackToolFailure = (
   success: false,
   message,
   error: error instanceof Error ? error.message : 'Slack request failed',
+  ...(isSlackRateLimitedError(error)
+    ? { retryAfterSeconds: error.retryAfter }
+    : {}),
 });

@@ -1,15 +1,15 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 
+import { JsonTree } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useLingui } from '@lingui/react/macro';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { type JsonValue } from 'type-fest';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -251,8 +251,6 @@ const DetailsTab = ({ debug, copyToClipboard }: DetailsTabProps) => {
       id: debug.selectedAgentId,
       label: debug.selectedAgentLabel,
     },
-    fastModel: debug.fastModel,
-    smartModel: debug.smartModel,
     agentModel: debug.agentModel,
     availableAgents: debug.availableAgents,
   };

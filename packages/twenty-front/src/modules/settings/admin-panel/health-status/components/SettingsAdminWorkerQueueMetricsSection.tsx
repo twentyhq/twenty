@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
 import { Select } from '@/ui/input/components/Select';
@@ -6,10 +8,8 @@ import { t } from '@lingui/core/macro';
 import { lazy, Suspense, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconList } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AdminPanelWorkerQueueHealth,
@@ -51,19 +51,21 @@ export const SettingsAdminWorkerQueueMetricsSection = ({
 
   return (
     <StyledContainer>
-      <Section>
+      <Section.Root>
         <StyledControlsContainer>
-          <H2Title title={queue.queueName} description={t`Queue performance`} />
+          <Section.Header
+            title={queue.queueName}
+            description={t`Queue performance`}
+          />
           <StyledRightControls>
-            <Button
-              Icon={IconList}
-              title={t`View Jobs`}
-              size="small"
-              variant="secondary"
+            <NavigationButton
+              startIcon={<IconList />}
+              size="sm"
               to={getSettingsPath(SettingsPath.AdminPanelQueueDetail, {
                 queueName: queue.queueName,
               })}
-            />
+              variant="outline"
+            >{t`View Jobs`}</NavigationButton>
             <Select
               dropdownId={`timerange-${queue.queueName}`}
               value={timeRange}
@@ -77,7 +79,7 @@ export const SettingsAdminWorkerQueueMetricsSection = ({
             />
           </StyledRightControls>
         </StyledControlsContainer>
-      </Section>
+      </Section.Root>
       <Suspense fallback={<WidgetSkeletonLoader />}>
         <SettingsAdminWorkerMetricsGraph
           queueName={queue.queueName}

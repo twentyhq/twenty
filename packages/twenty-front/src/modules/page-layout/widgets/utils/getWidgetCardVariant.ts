@@ -20,6 +20,7 @@ export const getWidgetCardVariant = ({
       return 'framed';
     case PageLayoutType.RECORD_PAGE:
     case PageLayoutType.RECORD_INDEX:
+    case PageLayoutType.RECORD_FORM:
     case null:
       return 'flush';
   }

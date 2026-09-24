@@ -3,24 +3,25 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
+
+const FEATURE_FLAGS_ROWS_REQUIREMENT = {
+  featureFlag: true,
+} as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
 @WorkspaceCache('featureFlagsMap', { packingPonderation: 1 })
 export class WorkspaceFeatureFlagsMapCacheService extends WorkspaceCacheProvider<FeatureFlagMap> {
-  constructor(
-    @InjectWorkspaceScopedRepository(FeatureFlagEntity)
-    private readonly featureFlagRepository: WorkspaceScopedRepository<FeatureFlagEntity>,
-  ) {
-    super();
-  }
+  override readonly rowsRequirement = FEATURE_FLAGS_ROWS_REQUIREMENT;
 
-  async computeForCache(workspaceId: string): Promise<FeatureFlagMap> {
-    const workspaceFeatureFlags =
-      await this.featureFlagRepository.find(workspaceId);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FEATURE_FLAGS_ROWS_REQUIREMENT
+  >): FeatureFlagMap {
+    const { featureFlag: workspaceFeatureFlags } = rows;
 
     return workspaceFeatureFlags.reduce((result, currentFeatureFlag) => {
       result[currentFeatureFlag.key] = currentFeatureFlag.value;

@@ -1,14 +1,47 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import {
+  makeTab,
+  makeWidget,
+} from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import {
   AggregateOperations,
   PageLayoutTabLayoutMode,
+  type PageLayoutWidget,
   WidgetConfigurationType,
   WidgetType,
-  type PageLayoutWidget,
 } from '~/generated-metadata/graphql';
 
 describe('addWidgetToTab', () => {
+  it.each([0, 1, 2])(
+    'keeps a replacement at vertical-list index %s',
+    (index) => {
+      const widgets = [
+        makeWidget('first', 0),
+        makeWidget('middle', 1),
+        makeWidget('last', 2),
+      ];
+      const tabs = [
+        makeTab(
+          'tab-1',
+          widgets.filter((_, widgetIndex) => widgetIndex !== index),
+        ),
+      ];
+      const replacement = makeWidget('replacement', index);
+
+      const result = addWidgetToTab(tabs, 'tab-1', replacement);
+
+      expect(result[0].widgets.map(({ id }) => id)).toEqual(
+        widgets.map((widget, widgetIndex) =>
+          widgetIndex === index ? replacement.id : widget.id,
+        ),
+      );
+      expect(result[0].widgets.map(({ position }) => position)).toMatchObject(
+        widgets.map((_, widgetIndex) => ({ index: widgetIndex })),
+      );
+    },
+  );
+
   const mockWidget: PageLayoutWidget = {
     isSystemSideEffect: false,
     universalIdentifier: 'universal-identifier-mock',
@@ -25,7 +58,14 @@ describe('addWidgetToTab', () => {
       aggregateFieldMetadataId: 'id',
       displayDataLabel: false,
     },
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition' as const,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: 2,
+      columnSpan: 2,
+    },
     objectMetadataId: null,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',

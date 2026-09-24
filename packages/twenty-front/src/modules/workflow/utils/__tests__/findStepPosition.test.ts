@@ -12,7 +12,7 @@ describe('findStepPosition', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         input: {
           objectName: 'Company',
@@ -29,7 +29,7 @@ describe('findStepPosition', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         input: {
           objectName: 'Company',
@@ -48,7 +48,7 @@ describe('findStepPosition', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
         input: {
           objectName: 'Company',

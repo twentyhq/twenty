@@ -1,18 +1,28 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { type WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
+import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
-import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 export const transformEventBatchToWebhookEvents = ({
   workspaceEventBatch,
   webhooks,
+  admittedRecordIds,
 }: {
-  workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
+  workspaceEventBatch: WorkspaceEventBatchForWebhook<ObjectRecordEvent>;
   webhooks: Pick<WebhookEntity, 'id' | 'targetUrl' | 'secret'>[];
+  admittedRecordIds?: Set<string>;
 }): CallWebhookJobData[] => {
   const result: CallWebhookJobData[] = [];
+
+  const events = isDefined(admittedRecordIds)
+    ? workspaceEventBatch.events.filter((event) =>
+        admittedRecordIds.has(event.recordId),
+      )
+    : workspaceEventBatch.events;
 
   for (const webhook of webhooks) {
     const targetUrl = webhook.targetUrl;
@@ -26,7 +36,7 @@ export const transformEventBatchToWebhookEvents = ({
     const eventDate = new Date();
     const secret = webhook.secret;
 
-    for (const eventData of workspaceEventBatch.events) {
+    for (const eventData of events) {
       const { record, updatedFields } = transformEventToWebhookEvent({
         eventName: workspaceEventBatch.name,
         event: eventData,

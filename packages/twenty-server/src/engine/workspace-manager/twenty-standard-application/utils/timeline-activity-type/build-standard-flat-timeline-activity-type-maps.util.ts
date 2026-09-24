@@ -54,6 +54,13 @@ export const buildStandardFlatTimelineActivityTypeMaps = ({
             ? null
             : (definition.emit.through?.triggerFieldUniversalIdentifiers ??
               null),
+        happensAtFieldUniversalIdentifier:
+          hiddenTimelineActivityTypeColumnPropertyNames.has(
+            'happensAtFieldUniversalIdentifier',
+          )
+            ? null
+            : (definition.emit.through?.happensAtFieldUniversalIdentifier ??
+              null),
         replacesTimelineActivityTypeUniversalIdentifier: null,
         isActive: true,
         overrides: null,

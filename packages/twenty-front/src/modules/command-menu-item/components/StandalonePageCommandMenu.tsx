@@ -9,7 +9,9 @@ import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/C
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
+import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,10 +22,15 @@ import {
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
-import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+import {
+  CommandMenuItemAvailabilityType,
+  EngineComponentKey,
+} from '~/generated-metadata/graphql';
 
 export const StandalonePageCommandMenu = () => {
   const store = useStore();
+  const isLayoutCustomizationAllowedOnCurrentPage =
+    useIsLayoutCustomizationAllowedOnCurrentPage();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
@@ -103,6 +110,12 @@ export const StandalonePageCommandMenu = () => {
 
   const filteredCommandMenuItems = useMemo(() => {
     return commandMenuItems
+      .filter(
+        (item) =>
+          item.engineComponentKey !==
+            EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
+          isLayoutCustomizationAllowedOnCurrentPage,
+      )
       .filter(doesCommandMenuItemMatchObjectMetadataId(undefined))
       .filter(
         (item) =>
@@ -118,10 +131,16 @@ export const StandalonePageCommandMenu = () => {
           commandMenuContextApi,
         ),
       )
+      .map((item) => resolveCommandMenuItemPinning(item, commandMenuContextApi))
       .sort(
         (firstItem, secondItem) => firstItem.position - secondItem.position,
       );
-  }, [commandMenuItems, commandMenuContextApi, currentPageLayoutId]);
+  }, [
+    commandMenuItems,
+    commandMenuContextApi,
+    currentPageLayoutId,
+    isLayoutCustomizationAllowedOnCurrentPage,
+  ]);
 
   return (
     <CommandMenuContext.Provider

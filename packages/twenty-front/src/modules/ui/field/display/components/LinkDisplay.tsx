@@ -1,8 +1,9 @@
+import { SocialLink } from '@/ui/field/display/components/SocialLink/SocialLink';
 import { isNonEmptyString } from '@sniptt/guards';
-import { RoundedLink, SocialLink } from 'twenty-ui/navigation';
+import { getSafeUrl } from 'twenty-shared/utils';
+import { RoundedLink } from 'twenty-ui/components';
 import { checkUrlType } from '~/utils/checkUrlType';
 import { isSocialLinkType } from '~/utils/isSocialLinkType';
-import { getSafeUrl } from 'twenty-shared/utils';
 
 type LinkDisplayProps = {
   value: { url: string; label?: string | null };

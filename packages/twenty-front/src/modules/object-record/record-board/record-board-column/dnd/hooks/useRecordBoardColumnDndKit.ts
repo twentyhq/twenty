@@ -1,14 +1,14 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
+import { getRecordGroupReorderConfirmationModalId } from '@/object-record/record-group/utils/getRecordGroupReorderConfirmationModalId';
 import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
@@ -42,7 +42,7 @@ export const useRecordBoardColumnDndKit = (): {
     onDragEnd: (event: DragEndPayload) => void;
   };
 } => {
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
   const { reorderRecordGroups } = useReorderRecordGroups({
     recordIndexId,
@@ -72,37 +72,22 @@ export const useRecordBoardColumnDndKit = (): {
     null,
   );
 
-  // The pointer can leave every sortable (column bodies, trailing empty
-  // space); the last resolved boundary is kept so the drop always lands where
-  // the insertion indicator was last shown. A ref because it is
-  // gesture-scoped bookkeeping read back inside drag callbacks.
-  // oxlint-disable-next-line twenty/no-state-useref
-  const lastDropTargetIndexRef = useRef<number | null>(null);
-
   const lastIndex = visibleRecordGroupIds.length;
 
   const handleDragStart = (_event: DragStartPayload) => {
-    lastDropTargetIndexRef.current = null;
     setActiveDropTargetIndex(null);
   };
 
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const resolvedDropTargetIndex =
+    const dropTargetIndex =
       resolveDropFromPointer({
         target,
         pointer: position.current,
         defaultOrientation: 'vertical',
         getDroppableItemCount: () => lastIndex,
       })?.dropTargetIndex ?? null;
-
-    if (isDefined(resolvedDropTargetIndex)) {
-      lastDropTargetIndexRef.current = resolvedDropTargetIndex;
-    }
-
-    const dropTargetIndex =
-      resolvedDropTargetIndex ?? lastDropTargetIndexRef.current;
 
     setActiveDropTargetIndex((currentActiveDropTargetIndex) =>
       currentActiveDropTargetIndex === dropTargetIndex
@@ -114,9 +99,6 @@ export const useRecordBoardColumnDndKit = (): {
   const handleDragEnd = (event: DragEndPayload) => {
     const { source, target, position } = event.operation;
 
-    const lastDropTargetIndex = lastDropTargetIndexRef.current;
-    lastDropTargetIndexRef.current = null;
-
     setActiveDropTargetIndex(null);
     setDragSelectionStartEnabled(true);
 
@@ -126,13 +108,12 @@ export const useRecordBoardColumnDndKit = (): {
 
     const sourceIndex = source.data.index;
 
-    const dropTargetIndex =
-      resolveDropFromPointer({
-        target,
-        pointer: position.current,
-        defaultOrientation: 'vertical',
-        getDroppableItemCount: () => lastIndex,
-      })?.dropTargetIndex ?? lastDropTargetIndex;
+    const dropTargetIndex = resolveDropFromPointer({
+      target,
+      pointer: position.current,
+      defaultOrientation: 'vertical',
+      getDroppableItemCount: () => lastIndex,
+    })?.dropTargetIndex;
 
     if (!isDefined(dropTargetIndex)) {
       return;
@@ -146,7 +127,7 @@ export const useRecordBoardColumnDndKit = (): {
         fromIndex: sourceIndex,
         toIndex: destinationIndex,
       });
-      openModal(RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID);
+      openDialog(getRecordGroupReorderConfirmationModalId(recordIndexId));
       return;
     }
 

@@ -4,6 +4,16 @@ export type QueueJobBackoffOptions = {
   jitter?: number;
 };
 
+export type QueueJobDeduplicationOptions = {
+  id: string;
+  keepLastIfActive?: boolean;
+};
+
+export type QueueJobRecipient = {
+  workspaceId: string;
+  userWorkspaceId?: string;
+};
+
 export interface QueueJobOptions {
   id?: string;
   allowDuplicatedPrefixes?: boolean;
@@ -11,6 +21,8 @@ export interface QueueJobOptions {
   retryLimit?: number;
   backoff?: QueueJobBackoffOptions;
   delay?: number;
+  deduplication?: QueueJobDeduplicationOptions;
+  broadcastTo?: QueueJobRecipient;
 }
 
 export interface QueueCronJobOptions extends QueueJobOptions {

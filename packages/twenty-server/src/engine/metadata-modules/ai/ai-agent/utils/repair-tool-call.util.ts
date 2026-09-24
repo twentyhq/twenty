@@ -83,7 +83,7 @@ export const repairToolCall = async ({
         `- Object structures must match the schema shape`,
         `- Array items must follow the specified format`,
       ].join('\n'),
-      experimental_telemetry: buildAiTelemetry({
+      ...buildAiTelemetry({
         functionId: 'repair-tool-call',
         workspaceId: billingContext?.workspaceId,
         userWorkspaceId: billingContext?.userWorkspaceId,

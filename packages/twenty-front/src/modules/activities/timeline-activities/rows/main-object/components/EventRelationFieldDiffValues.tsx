@@ -1,14 +1,15 @@
 import { styled } from '@linaria/react';
-import { useId, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { isRelationFieldChangeValue } from '@/activities/timeline-activities/utils/relationFieldChangeValue';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRelationFieldDiffValuesProps = {
@@ -126,38 +127,26 @@ const RelationFieldDiffValue = ({
   afterDisplayName: string | null;
 }) => {
   const { t } = useLingui();
-  const instanceId = useId();
-
-  // react-tooltip anchors via a CSS selector, so the id must be selector-safe
-  const tooltipAnchorId = `relation-field-diff-${instanceId.replace(
-    /[^a-zA-Z0-9-_]/g,
-    '-',
-  )}`;
-
   const emptyLabel = t`Empty`;
   const tooltipContent = `${beforeDisplayName ?? emptyLabel} → ${
     afterDisplayName ?? emptyLabel
   }`;
 
   return (
-    <>
+    <Tooltip
+      content={tooltipContent}
+      delay={TooltipDelay.shortDelay}
+      side="bottom"
+      positionMethod="fixed"
+    >
       {afterDisplayName !== null ? (
-        <StyledRelationValue id={tooltipAnchorId}>
-          {afterDisplayName}
-        </StyledRelationValue>
+        <StyledRelationValue>{afterDisplayName}</StyledRelationValue>
       ) : (
-        <StyledEmptyValue id={tooltipAnchorId}>
+        <StyledEmptyValue>
           <Trans>Empty</Trans>
         </StyledEmptyValue>
       )}
-      <AppTooltip
-        anchorSelect={`#${tooltipAnchorId}`}
-        content={tooltipContent}
-        delay={TooltipDelay.shortDelay}
-        place={TooltipPosition.Bottom}
-        positionStrategy="fixed"
-      />
-    </>
+    </Tooltip>
   );
 };
 

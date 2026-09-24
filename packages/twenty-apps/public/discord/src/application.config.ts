@@ -20,6 +20,7 @@ export default defineApplication({
   applicationVariables: {
     DISCORD_BOT_TOKEN: {
       universalIdentifier: DISCORD_BOT_TOKEN_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Discord bot token',
       description:
         'Bot token from your Discord application (Developer Portal → Bot tab → Reset Token). Used with the `Bot` auth prefix to call the Discord REST API. The same token authenticates the bot across every guild it has been invited to.',
       isSecret: true,

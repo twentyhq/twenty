@@ -1,6 +1,7 @@
 import {
   getRecordTableWidgetLayout,
   getRecordTableWidgetLayoutViewType,
+  isRecordTableWidgetContentEditingSupported,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { ViewType } from '~/generated-metadata/graphql';
 
@@ -27,6 +28,26 @@ describe('getRecordTableWidgetLayoutViewType', () => {
       ViewType.TABLE_WIDGET,
     );
   });
+});
+
+describe('isRecordTableWidgetContentEditingSupported', () => {
+  it.each([
+    [ViewType.TABLE_WIDGET, true],
+    [ViewType.KANBAN_WIDGET, true],
+    [ViewType.LIST_WIDGET, false],
+    [ViewType.CALENDAR_WIDGET, false],
+    [ViewType.TABLE, true],
+    [ViewType.KANBAN, true],
+    [ViewType.LIST, false],
+    [ViewType.CALENDAR, false],
+  ] as const)(
+    'should return whether %s supports widget content editing',
+    (viewType, expectedIsWidgetContentEditingSupported) => {
+      expect(isRecordTableWidgetContentEditingSupported(viewType)).toBe(
+        expectedIsWidgetContentEditingSupported,
+      );
+    },
+  );
 });
 
 describe('getRecordTableWidgetLayout', () => {

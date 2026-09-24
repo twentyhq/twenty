@@ -8,8 +8,6 @@ import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
 import {
   SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH,
@@ -21,7 +19,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -30,9 +30,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { SearchInput, SettingsRow } from 'twenty-ui/components';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -176,25 +175,21 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItemToggle
-                        LeftIcon={IconArchive}
-                        onToggleChange={() =>
+                      <SettingsRow
+                        startIcon={<IconArchive />}
+                        onCheckedChange={() =>
                           setShowDeactivated(!showDeactivated)
                         }
-                        toggled={showDeactivated}
-                        text={t`Deactivated`}
-                        toggleSize="small"
-                      />
+                        checked={showDeactivated}
+                      >{t`Deactivated`}</SettingsRow>
                       {isAdvancedModeEnabled && (
-                        <MenuItemToggle
-                          LeftIcon={IconSettings}
-                          onToggleChange={() =>
+                        <SettingsRow
+                          startIcon={<IconSettings />}
+                          onCheckedChange={() =>
                             setShowSystemObjects(!showSystemObjects)
                           }
-                          toggled={showSystemObjects}
-                          text={t`System objects`}
-                          toggleSize="small"
-                        />
+                          checked={showSystemObjects}
+                        >{t`System objects`}</SettingsRow>
                       )}
                     </DropdownMenuItemsContainer>
                   </DropdownContent>

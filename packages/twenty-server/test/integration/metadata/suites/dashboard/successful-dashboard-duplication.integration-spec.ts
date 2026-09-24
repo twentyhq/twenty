@@ -17,6 +17,7 @@ import {
 } from 'twenty-shared/testing';
 import {
   AggregateOperations,
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   ViewFilterOperand,
   WidgetType,
@@ -127,7 +128,8 @@ describe('Dashboard duplication should succeed', () => {
               title: 'Test Widget',
               type: WidgetType.IFRAME,
               pageLayoutTabId: testPageLayoutTabId,
-              gridPosition: {
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
                 row: 0,
                 column: 0,
                 rowSpan: 1,
@@ -235,7 +237,8 @@ describe('Dashboard duplication should succeed', () => {
         type: WidgetType.GRAPH,
         objectMetadataId: companyObject.id,
         pageLayoutTabId: testPageLayoutTabId,
-        gridPosition: {
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
           row: 0,
           column: 0,
           rowSpan: 1,

@@ -1,8 +1,10 @@
+import { t } from '@lingui/core/macro';
 import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
-import { EditLinkPopover } from '@/advanced-text-editor/components/EditLinkPopover';
+import { EditLinkDropdown } from '@/advanced-text-editor/components/EditLinkDropdown';
 import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/StyledBubbleMenuContainer';
+import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
+import { getEditLinkDropdownId } from '@/advanced-text-editor/utils/getEditLinkDropdownId';
 import { type Editor } from '@tiptap/core';
-import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import { IconExternalLink, IconLinkOff } from 'twenty-ui/icon';
 import { getSafeUrl } from 'twenty-shared/utils';
@@ -12,13 +14,10 @@ type LinkBubbleMenuProps = {
 };
 
 export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
-  const state = useEditorState({
-    editor,
-    selector: (ctx) => {
-      return {
-        linkHref: ctx.editor.getAttributes('link').href || '',
-      };
-    },
+  const state = useLiveEditorState(editor, (currentEditor) => {
+    return {
+      linkHref: currentEditor.getAttributes('link').href || '',
+    };
   });
 
   const handleShouldShow = () => {
@@ -28,6 +27,7 @@ export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
   const menuActions = [
     {
       Icon: IconExternalLink,
+      label: t`Open link`,
       onClick: () => {
         const safeHref = getSafeUrl(state.linkHref);
 
@@ -38,6 +38,7 @@ export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
     },
     {
       Icon: IconLinkOff,
+      label: t`Remove link`,
       onClick: () =>
         editor.chain().focus().extendMarkRange('link').unsetLink().run(),
     },
@@ -51,11 +52,19 @@ export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
       updateDelay={0}
     >
       <StyledBubbleMenuContainer>
-        <EditLinkPopover defaultValue={state.linkHref} editor={editor} />
-        {menuActions.map(({ Icon, onClick }) => {
+        <EditLinkDropdown
+          dropdownId={getEditLinkDropdownId({
+            editorInstanceId: editor.instanceId,
+            bubbleMenuType: 'link',
+          })}
+          defaultValue={state.linkHref}
+          editor={editor}
+        />
+        {menuActions.map(({ label, Icon, onClick }) => {
           return (
             <BubbleMenuIconButton
               key={Icon.name || Icon.displayName || 'unknown'}
+              label={label}
               Icon={Icon}
               onClick={onClick}
             />

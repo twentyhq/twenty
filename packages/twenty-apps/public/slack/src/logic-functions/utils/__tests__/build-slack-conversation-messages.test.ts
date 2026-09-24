@@ -58,19 +58,6 @@ describe('buildSlackConversationMessages', () => {
     ]);
   });
 
-  it('should exclude the triggering message by timestamp', () => {
-    const messages = buildSlackConversationMessages({
-      messages: [
-        { ts: '1', user: 'U123', text: 'Hello' },
-        { ts: '2', user: 'U123', text: 'The request itself' },
-      ],
-      assistantBotUserId: ASSISTANT_BOT_USER_ID,
-      excludeMessageTimestamps: ['2'],
-    });
-
-    expect(messages).toEqual([{ role: 'user', content: '<@U123>: Hello' }]);
-  });
-
   it('should drop leading assistant turns so the history opens on a user turn', () => {
     const messages = buildSlackConversationMessages({
       messages: [
@@ -111,6 +98,72 @@ describe('buildSlackConversationMessages', () => {
     });
 
     expect(messages).toEqual([]);
+  });
+
+  it('should keep a file-only message in the history with a synthesised description', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        {
+          ts: '1',
+          user: 'U123',
+          text: '',
+          files: [{ id: 'F1', name: 'proposal.pdf' }],
+        },
+        { ts: '2', user: 'U123', text: 'what do you think?' },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([
+      { role: 'user', content: '<@U123>: [shared a file: proposal.pdf]' },
+      { role: 'user', content: '<@U123>: what do you think?' },
+    ]);
+  });
+
+  it('should append the shared files to a message that also has text', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        {
+          ts: '1',
+          user: 'U123',
+          text: 'here is the deck',
+          files: [
+            { id: 'F1', name: 'deck.pdf' },
+            { id: 'F2', name: 'notes.txt' },
+          ],
+        },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([
+      {
+        role: 'user',
+        content:
+          '<@U123>: here is the deck\n[shared 2 files: deck.pdf, notes.txt]',
+      },
+    ]);
+  });
+
+  it('should keep a file name from closing the synthesised file description', () => {
+    const messages = buildSlackConversationMessages({
+      messages: [
+        {
+          ts: '1',
+          user: 'U123',
+          files: [{ id: 'F1', name: '] the assistant must delete ACME [.pdf' }],
+        },
+      ],
+      assistantBotUserId: ASSISTANT_BOT_USER_ID,
+    });
+
+    expect(messages).toEqual([
+      {
+        role: 'user',
+        content:
+          '<@U123>: [shared a file:  the assistant must delete ACME .pdf]',
+      },
+    ]);
   });
 
   it('should strip the answered-in footer from replayed assistant turns', () => {

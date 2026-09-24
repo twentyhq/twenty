@@ -32,6 +32,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on PageLayoutWidgetVerticalListPosition {
         layoutMode
         index
+        heightBehavior
       }
       ... on PageLayoutWidgetCanvasPosition {
         layoutMode
@@ -176,6 +177,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         fieldMetadataId
         viewId
         nestedRelationFieldMetadataId
+        isUIEditable
       }
       ... on FieldRichTextConfiguration {
         configurationType
@@ -185,6 +187,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         viewId
         newFieldDefaultVisibility
         shouldAllowUserToSeeHiddenFields
+      }
+      ... on FormFieldConfiguration {
+        configurationType
+        fieldMetadataId
       }
       ... on FilesConfiguration {
         configurationType
@@ -204,6 +210,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on RecordTableConfiguration {
         configurationType
         viewId
+        recordLimit
+        isUIEditable
       }
       ... on WorkflowConfiguration {
         configurationType

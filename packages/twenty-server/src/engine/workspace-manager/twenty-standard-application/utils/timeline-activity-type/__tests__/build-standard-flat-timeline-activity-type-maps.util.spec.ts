@@ -37,6 +37,7 @@ describe('buildStandardFlatTimelineActivityTypeMaps', () => {
       new Set([
         'targetRelationFieldUniversalIdentifier',
         'triggerFieldUniversalIdentifiers',
+        'happensAtFieldUniversalIdentifier',
       ]),
     );
 
@@ -47,6 +48,10 @@ describe('buildStandardFlatTimelineActivityTypeMaps', () => {
     expect(
       getTimelineActivityTypeOrThrow(maps, 'noteUpdated')
         .triggerFieldUniversalIdentifiers,
+    ).toBeNull();
+    expect(
+      getTimelineActivityTypeOrThrow(maps, 'messageLinked')
+        .happensAtFieldUniversalIdentifier,
     ).toBeNull();
   });
 
@@ -71,5 +76,17 @@ describe('buildStandardFlatTimelineActivityTypeMaps', () => {
       getTimelineActivityTypeOrThrow(maps, 'attachmentLinked')
         .targetRelationFieldUniversalIdentifier,
     ).toBe(STANDARD_OBJECTS.attachment.fields.targetPerson.universalIdentifier);
+    expect(
+      getTimelineActivityTypeOrThrow(maps, 'messageLinked')
+        .happensAtFieldUniversalIdentifier,
+    ).toBe(STANDARD_OBJECTS.message.fields.receivedAt.universalIdentifier);
+    expect(
+      getTimelineActivityTypeOrThrow(maps, 'calendarEventLinked')
+        .happensAtFieldUniversalIdentifier,
+    ).toBe(STANDARD_OBJECTS.calendarEvent.fields.startsAt.universalIdentifier);
+    expect(
+      getTimelineActivityTypeOrThrow(maps, 'attachmentLinked')
+        .happensAtFieldUniversalIdentifier,
+    ).toBeNull();
   });
 });

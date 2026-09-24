@@ -1,23 +1,23 @@
-import { Field } from 'twenty-ui/input';
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { AutogrowWrapper } from '@/ui/input/components/internal/AutogrowWrapper/AutogrowWrapper';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import React, {
-  forwardRef,
   type ChangeEvent,
   type FocusEventHandler,
   type InputHTMLAttributes,
+  forwardRef,
   useContext,
   useId,
   useRef,
   useState,
 } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { AutogrowWrapper } from 'twenty-ui/layout';
+import { Field } from 'twenty-ui/primitives/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   box-sizing: border-box;
   display: inline-flex;
@@ -178,6 +178,16 @@ const StyledInput = styled.input<
         ? themeCssVariables.border.color.danger
         : themeCssVariables.color.blue};
   }
+
+  &[type='number']::-webkit-outer-spin-button,
+  &[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &[type='number'] {
+    -moz-appearance: textfield;
+  }
 `;
 
 const StyledLeftIconContainer = styled.div<{ sizeVariant: TextInputSize }>`
@@ -260,6 +270,7 @@ const TextInputComponent = forwardRef<
 >(
   (
     {
+      'aria-label': ariaLabel,
       className,
       label,
       value,
@@ -347,6 +358,7 @@ const TextInputComponent = forwardRef<
             )}
 
             <StyledInput
+              aria-label={ariaLabel}
               id={instanceId}
               width={width}
               data-testid={dataTestId}

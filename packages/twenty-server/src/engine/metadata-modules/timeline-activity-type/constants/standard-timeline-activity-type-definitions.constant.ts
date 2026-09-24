@@ -18,6 +18,7 @@ type StandardTimelineActivityTypeDefinitionSource = {
     through?: {
       relationFieldUniversalIdentifier: string;
       triggerFieldUniversalIdentifiers?: string[];
+      happensAtFieldUniversalIdentifier?: string;
     };
   };
 };
@@ -28,6 +29,7 @@ export type StandardTimelineActivityTypeDefinition =
     objectUniversalIdentifier: string | null;
     targetRelationFieldUniversalIdentifier?: string;
     triggerFieldUniversalIdentifiers?: string[];
+    happensAtFieldUniversalIdentifier?: string;
   };
 
 // Standard wildcard emitters supply platform fallbacks when no object-specific
@@ -231,6 +233,8 @@ const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITION_SOURCES: StandardTimelineActivi
           relationFieldUniversalIdentifier:
             STANDARD_OBJECTS.message.fields.messageParticipants
               .universalIdentifier,
+          happensAtFieldUniversalIdentifier:
+            STANDARD_OBJECTS.message.fields.receivedAt.universalIdentifier,
         },
       },
     },
@@ -252,6 +256,8 @@ const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITION_SOURCES: StandardTimelineActivi
           relationFieldUniversalIdentifier:
             STANDARD_OBJECTS.calendarEvent.fields.calendarEventParticipants
               .universalIdentifier,
+          happensAtFieldUniversalIdentifier:
+            STANDARD_OBJECTS.calendarEvent.fields.startsAt.universalIdentifier,
         },
       },
     },
@@ -306,4 +312,6 @@ export const STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS: StandardTimelineActivi
       definition.emit.through?.relationFieldUniversalIdentifier,
     triggerFieldUniversalIdentifiers:
       definition.emit.through?.triggerFieldUniversalIdentifiers,
+    happensAtFieldUniversalIdentifier:
+      definition.emit.through?.happensAtFieldUniversalIdentifier,
   }));

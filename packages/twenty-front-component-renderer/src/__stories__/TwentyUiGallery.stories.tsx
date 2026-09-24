@@ -1,13 +1,53 @@
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, waitFor, within } from 'storybook/test';
+import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
+import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
+import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
+import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
+import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
+import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
+import { dropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSandboxFailureTest';
+import { type Meta } from '@storybook/react-vite';
 
 import {
-  errorHandler,
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
-import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
+import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryStory';
+import {
+  createCheckboxTest,
+  createFieldControlsTest,
+  createRadioGroupPreactTest,
+  sliderTest,
+  toastTest,
+} from '@/__stories__/twenty-ui-gallery/utils/componentInteractionTests';
+import {
+  statusControlsTest,
+  tagControlsTest,
+  avatarControlsTest,
+  chipControlsTest,
+} from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
+import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
+import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
+import {
+  codeEditorTest,
+  displayHelpersTest,
+  galleryRenderTest,
+  inputPreactTest,
+  inputReactTest,
+  themeTokenTest,
+} from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
+import {
+  alertDialogTest,
+  menuTest,
+  popoverTest,
+  radioGroupReactTest,
+  selectTest,
+  sliderRangeTest,
+  switchTest,
+  tabsPreactTest,
+  tabsReactTest,
+} from '@/__stories__/twenty-ui-gallery/utils/sandboxFailureTests';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { createTooltipSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createTooltipSandboxFailureTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -20,245 +60,428 @@ const meta: Meta<typeof FrontComponentRenderer> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof FrontComponentRenderer>;
 
-// Every gallery fixture wraps each component in an error boundary and reports
-// the aggregated result on the gallery-status element, so a single play
-// function covers all submodules.
-const galleryTest: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-
-  const status = await canvas.findByTestId(
-    'gallery-status',
-    {},
-    { timeout: 30000 },
-  );
-
-  await waitFor(() => {
-    expect(status).toHaveAttribute('data-failed-messages', '');
-    expect(status).toHaveAttribute('data-failed-count', '0');
-  });
-
-  expect(Number(status.getAttribute('data-total-count'))).toBeGreaterThan(0);
-  expect(errorHandler).not.toHaveBeenCalled();
-};
-
-const createGalleryStory = (name: string, runtime?: 'preact'): Story => ({
-  args: {
-    componentUrl: getBuiltStoryComponentPathForRender(
-      `${name}.front-component`,
-      runtime,
-    ),
-  },
-  play: galleryTest,
+export const DataDisplayReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-data-display-gallery',
+  runtime: 'react',
+  play: galleryRenderTest,
+});
+export const DataDisplayPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-data-display-gallery',
+  runtime: 'preact',
+  play: galleryRenderTest,
 });
 
-// Golden known-failure test (TDD): PASSES while the documented sandbox gap
-// exists — the failing component set matches the expected set EXACTLY. It
-// FAILS on regression (an unexpected component starts failing), on fix
-// (nothing fails anymore) and on partial fix (only some expected components
-// still fail): when your fix lands, flip the story back to the strict
-// zero-failure `createGalleryStory` play.
-const createKnownFailureGalleryTest =
-  (expectedFailedComponents: string[]): Story['play'] =>
-  async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const status = await canvas.findByTestId(
-      'gallery-status',
-      {},
-      { timeout: 30000 },
-    );
-
-    const expectedFailedComponentsSorted = [...expectedFailedComponents].sort();
-
-    // Failure reports arrive asynchronously: retry until the failed set
-    // matches the expected set exactly.
-    await waitFor(() => {
-      const failedComponents = (status.getAttribute('data-failed-names') ?? '')
-        .split(', ')
-        .filter((failedComponent) => failedComponent.length > 0)
-        .sort();
-
-      expect(failedComponents).toEqual(expectedFailedComponentsSorted);
-    });
-
-    expect(errorHandler).not.toHaveBeenCalled();
-  };
-
-const createKnownFailureGalleryStory = (
-  name: string,
-  expectedFailedComponents: string[],
-  runtime?: 'preact',
-): Story => ({
-  ...createGalleryStory(name, runtime),
-  play: createKnownFailureGalleryTest(expectedFailedComponents),
+export const FeedbackReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-feedback-gallery',
+  runtime: 'react',
+  play: galleryRenderTest,
+});
+export const FeedbackPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-feedback-gallery',
+  runtime: 'preact',
+  play: galleryRenderTest,
 });
 
-// KNOWN ISSUE (TDD): LinkChip crashes without a router context in the sandbox.
-export const DataDisplayReact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-data-display-gallery',
-  ['LinkChip'],
-);
-export const DataDisplayPreact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-data-display-gallery',
-  ['LinkChip'],
-  'preact',
-);
+export const IconReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-gallery',
+  runtime: 'react',
+  play: galleryRenderTest,
+});
+export const IconPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-gallery',
+  runtime: 'preact',
+  play: galleryRenderTest,
+});
 
-export const FeedbackReact: Story = createGalleryStory(
-  'twenty-ui-feedback-gallery',
-);
-export const FeedbackPreact: Story = createGalleryStory(
-  'twenty-ui-feedback-gallery',
-  'preact',
-);
+export const InputReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-input-gallery',
+  runtime: 'react',
+  play: inputReactTest,
+});
+export const InputPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-input-gallery',
+  runtime: 'preact',
+  play: inputPreactTest,
+});
 
-export const IconReact: Story = createGalleryStory('twenty-ui-icon-gallery');
-export const IconPreact: Story = createGalleryStory(
-  'twenty-ui-icon-gallery',
-  'preact',
-);
+export const JsonVisualizerReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-json-visualizer-gallery',
+  runtime: 'react',
+  play: galleryRenderTest,
+});
+export const JsonVisualizerPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-json-visualizer-gallery',
+  runtime: 'preact',
+  play: galleryRenderTest,
+});
 
-export const InputReact: Story = createGalleryStory('twenty-ui-input-gallery');
-export const InputPreact: Story = createGalleryStory(
-  'twenty-ui-input-gallery',
-  'preact',
-);
+export const LayoutReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-layout-gallery',
+  runtime: 'react',
+  play: galleryRenderTest,
+});
+export const LayoutPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-layout-gallery',
+  runtime: 'preact',
+  play: galleryRenderTest,
+});
 
-export const JsonVisualizerReact: Story = createGalleryStory(
-  'twenty-ui-json-visualizer-gallery',
-);
-export const JsonVisualizerPreact: Story = createGalleryStory(
-  'twenty-ui-json-visualizer-gallery',
-  'preact',
-);
+export const NavigationReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-navigation-gallery',
+  runtime: 'react',
+  play: galleryRenderTest,
+});
+export const NavigationPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-navigation-gallery',
+  runtime: 'preact',
+  play: galleryRenderTest,
+});
 
-export const LayoutReact: Story = createGalleryStory(
-  'twenty-ui-layout-gallery',
-);
-export const LayoutPreact: Story = createGalleryStory(
-  'twenty-ui-layout-gallery',
-  'preact',
-);
+export const SurfacesReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-surfaces-gallery',
+  runtime: 'react',
+  play: galleryRenderTest,
+});
+export const SurfacesPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-surfaces-gallery',
+  runtime: 'preact',
+  play: galleryRenderTest,
+});
 
-// KNOWN ISSUE (TDD): react-router Links crash without a router context.
-const NAVIGATION_EXPECTED_FAILURES = ['RawLink', 'UndecoratedLink'];
-export const NavigationReact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-navigation-gallery',
-  NAVIGATION_EXPECTED_FAILURES,
-);
-export const NavigationPreact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-navigation-gallery',
-  NAVIGATION_EXPECTED_FAILURES,
-  'preact',
-);
+export const DialogReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dialog',
+  runtime: 'react',
+  play: dialogTest,
+});
+export const DialogPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dialog',
+  runtime: 'preact',
+  play: dialogTest,
+});
 
-export const SurfacesReact: Story = createGalleryStory(
-  'twenty-ui-surfaces-gallery',
-);
-export const SurfacesPreact: Story = createGalleryStory(
-  'twenty-ui-surfaces-gallery',
-  'preact',
-);
-
-// KNOWN ISSUE (TDD) golden test: an open Modal (base-ui Dialog portal) hangs
-// the React-runtime render — the gallery status must never mount. Works under
-// Preact (see ModalOpenPreact). When fixed, flip this story to the strict
-// zero-failure play used by ModalOpenPreact.
-const modalOpenHangTest: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-
-  await expect(
-    canvas.findByTestId('gallery-status', {}, { timeout: 10000 }),
-  ).rejects.toThrow();
-};
-
-const modalOpenTest: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-
-  const status = await canvas.findByTestId(
-    'gallery-status',
-    {},
-    { timeout: 15000 },
-  );
-
-  await waitFor(() => {
-    expect(status).toHaveAttribute('data-failed-messages', '');
-    expect(status).toHaveAttribute('data-failed-count', '0');
-  });
-
-  expect(errorHandler).not.toHaveBeenCalled();
-};
-
-export const ModalOpenReact: Story = {
-  ...createGalleryStory('twenty-ui-modal-open-gallery'),
-  play: modalOpenHangTest,
-};
-export const ModalOpenPreact: Story = {
-  ...createGalleryStory('twenty-ui-modal-open-gallery', 'preact'),
-  play: modalOpenTest,
-};
-
-// KNOWN ISSUE (TDD) golden test: monaco cannot load inside the sandbox worker
-// (no script loading in the polyfilled DOM, opaque-origin CSP): the CodeEditor
-// wrapper mounts but monaco's onMount never fires. If front components ever
-// get a supported code editor path, flip the assertion to 'mounted'.
-const codeEditorTest: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-
-  const codeEditor = await canvas.findByTestId(
-    'code-editor-component',
-    {},
-    { timeout: 30000 },
-  );
-
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-
-  expect(codeEditor).toHaveAttribute('data-monaco-mount-state', 'pending');
-};
-
-export const CodeEditorReact: Story = {
-  ...createGalleryStory('twenty-ui-code-editor-gallery'),
+export const CodeEditorReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-code-editor-gallery',
+  runtime: 'react',
   play: codeEditorTest,
-};
-export const CodeEditorPreact: Story = {
-  ...createGalleryStory('twenty-ui-code-editor-gallery', 'preact'),
+});
+export const CodeEditorPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-code-editor-gallery',
+  runtime: 'preact',
   play: codeEditorTest,
-};
+});
 
-export const TypographyReact: Story = createGalleryStory(
-  'twenty-ui-typography-gallery',
-);
-export const TypographyPreact: Story = createGalleryStory(
-  'twenty-ui-typography-gallery',
-  'preact',
-);
+export const TypographyReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-typography-gallery',
+  runtime: 'react',
+  play: typographyTest,
+});
+export const TypographyPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-typography-gallery',
+  runtime: 'preact',
+  play: typographyTest,
+});
 
-const themeTokenTest: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-
-  const iconWrapper = await canvas.findByTestId(
-    'theme-token-icon-wrapper',
-    {},
-    { timeout: 30000 },
-  );
-
-  await waitFor(() => {
-    const iconBox = iconWrapper.getBoundingClientRect();
-
-    expect(Math.round(iconBox.width)).toBe(16);
-    expect(Math.round(iconBox.height)).toBe(16);
-  });
-
-  expect(errorHandler).not.toHaveBeenCalled();
-};
-
-export const ThemeTokensReact: Story = {
-  ...createGalleryStory('twenty-ui-theme-tokens'),
+export const ThemeTokensReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-theme-tokens',
+  runtime: 'react',
   play: themeTokenTest,
-};
-export const ThemeTokensPreact: Story = {
-  ...createGalleryStory('twenty-ui-theme-tokens', 'preact'),
+});
+export const ThemeTokensPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-theme-tokens',
+  runtime: 'preact',
   play: themeTokenTest,
-};
+});
+
+export const FieldControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-field-controls',
+  runtime: 'react',
+  // React serializes boolean ARIA as empty strings and loses Textarea's
+  // change handler.
+  play: createFieldControlsTest({
+    expectedAriaInvalid: '',
+    expectedReportedValues: /^Email: alice; Notes:$/,
+  }),
+});
+export const FieldControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-field-controls',
+  runtime: 'preact',
+  play: createFieldControlsTest({
+    expectedAriaInvalid: 'true',
+    expectedReportedValues: 'Email: alice; Notes: Follow up',
+  }),
+});
+
+export const DisplayHelpersReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-display-helpers',
+  runtime: 'react',
+  play: displayHelpersTest,
+});
+export const DisplayHelpersPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-display-helpers',
+  runtime: 'preact',
+  play: displayHelpersTest,
+});
+
+export const ListItemReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-list-item',
+  runtime: 'react',
+  play: createListItemSandboxFailureTest('react'),
+});
+export const ListItemPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-list-item',
+  runtime: 'preact',
+  play: createListItemSandboxFailureTest('preact'),
+});
+
+export const PickerListItemsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-picker-list-items',
+  runtime: 'react',
+  play: pickerListItemsTest,
+});
+
+export const PickerListItemsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-picker-list-items',
+  runtime: 'preact',
+  play: pickerListItemsTest,
+});
+
+export const SettingsRowReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-settings-row',
+  runtime: 'react',
+  play: settingsRowTest,
+});
+
+export const SettingsRowPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-settings-row',
+  runtime: 'preact',
+  play: settingsRowTest,
+});
+
+export const TabsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tabs',
+  runtime: 'react',
+  play: tabsReactTest,
+});
+export const TabsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tabs',
+  runtime: 'preact',
+  play: tabsPreactTest,
+});
+
+export const PopoverReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-popover',
+  runtime: 'react',
+  play: popoverTest,
+});
+export const PopoverPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-popover',
+  runtime: 'preact',
+  play: popoverTest,
+});
+
+export const TooltipReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tooltip',
+  runtime: 'react',
+  play: createTooltipSandboxFailureTest('react'),
+});
+
+export const TooltipPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tooltip',
+  runtime: 'preact',
+  play: createTooltipSandboxFailureTest('preact'),
+});
+
+export const MenuReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-menu',
+  runtime: 'react',
+  play: menuTest,
+});
+export const MenuPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-menu',
+  runtime: 'preact',
+  play: menuTest,
+});
+
+export const DropdownReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'react',
+  play: dropdownSandboxFailureTest,
+});
+
+export const DropdownPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dropdown',
+  runtime: 'preact',
+  play: dropdownSandboxFailureTest,
+});
+
+export const SelectReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-select',
+  runtime: 'react',
+  play: selectTest,
+});
+export const SelectPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-select',
+  runtime: 'preact',
+  play: selectTest,
+});
+
+export const ToastReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-toast',
+  runtime: 'react',
+  play: toastTest,
+});
+export const ToastPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-toast',
+  runtime: 'preact',
+  play: toastTest,
+});
+
+export const AlertDialogReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-alert-dialog',
+  runtime: 'react',
+  play: alertDialogTest,
+});
+export const AlertDialogPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-alert-dialog',
+  runtime: 'preact',
+  play: alertDialogTest,
+});
+
+export const SwitchReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-switch',
+  runtime: 'react',
+  play: switchTest,
+});
+export const SwitchPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-switch',
+  runtime: 'preact',
+  play: switchTest,
+});
+
+export const CheckboxReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-checkbox',
+  runtime: 'react',
+  play: createCheckboxTest({ expectedAriaTrue: '' }),
+});
+export const CheckboxPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-checkbox',
+  runtime: 'preact',
+  play: createCheckboxTest({ expectedAriaTrue: 'true' }),
+});
+
+export const SliderReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-slider',
+  runtime: 'react',
+  play: sliderTest,
+});
+export const SliderPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-slider',
+  runtime: 'preact',
+  play: sliderTest,
+});
+
+export const SliderRangeReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-slider-range',
+  runtime: 'react',
+  play: sliderRangeTest,
+});
+export const SliderRangePreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-slider-range',
+  runtime: 'preact',
+  play: sliderRangeTest,
+});
+
+export const RadioGroupReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'react',
+  play: radioGroupReactTest,
+});
+export const RadioGroupPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'preact',
+  play: createRadioGroupPreactTest({ optionName: 'Daily' }),
+});
+
+export const CardPickerReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'react',
+  play: radioGroupReactTest,
+});
+export const CardPickerPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-radio-group',
+  runtime: 'preact',
+  play: createRadioGroupPreactTest({ optionName: 'Pro plan' }),
+});
+
+export const StatusControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-status-controls',
+  runtime: 'react',
+  play: statusControlsTest,
+});
+
+export const StatusControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-status-controls',
+  runtime: 'preact',
+  play: statusControlsTest,
+});
+
+export const TagControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tag-controls',
+  runtime: 'react',
+  play: tagControlsTest,
+});
+
+export const TagControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-tag-controls',
+  runtime: 'preact',
+  play: tagControlsTest,
+});
+
+export const ButtonControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-controls',
+  runtime: 'react',
+  play: buttonControlsTest,
+});
+
+export const ButtonControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-controls',
+  runtime: 'preact',
+  play: buttonControlsTest,
+});
+
+export const AvatarControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-avatar-controls',
+  runtime: 'react',
+  play: avatarControlsTest,
+});
+
+export const AvatarControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-avatar-controls',
+  runtime: 'preact',
+  play: avatarControlsTest,
+});
+
+export const ChipControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-chip-controls',
+  runtime: 'react',
+  play: chipControlsTest,
+});
+
+export const ChipControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-chip-controls',
+  runtime: 'preact',
+  play: chipControlsTest,
+});
+
+export const IconButtonElevatedReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-elevated',
+  runtime: 'react',
+  play: iconButtonElevatedTest,
+});
+
+export const IconButtonElevatedPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-icon-button-elevated',
+  runtime: 'preact',
+  play: iconButtonElevatedTest,
+});

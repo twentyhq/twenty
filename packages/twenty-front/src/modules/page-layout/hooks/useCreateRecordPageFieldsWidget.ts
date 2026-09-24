@@ -57,13 +57,14 @@ export const useCreateRecordPageFieldsWidget = () => {
       tabs: addWidgetToTab(prev.tabs, tabId, newWidget),
     }));
 
-    store.set(pageLayoutEditingWidgetIdState, widgetId);
-
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.RecordPageFieldsSettings,
       focusTitleInput: true,
       resetNavigationStack: true,
     });
+    store.set(pageLayoutEditingWidgetIdState, widgetId);
+
+    return newWidget;
   }, [
     currentPageLayout.tabs,
     navigatePageLayoutSidePanel,

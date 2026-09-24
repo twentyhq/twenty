@@ -1,4 +1,6 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Float,
@@ -14,12 +16,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
@@ -37,17 +39,26 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
+import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
+@UseFilters(
+  UsageLimitGraphqlApiExceptionFilter,
+  BillingGraphqlApiExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(
@@ -55,14 +66,15 @@ export class AgentChatResolver {
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly aiBillingService: AiBillingService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly redisClientService: RedisClientService,
-    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
-    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
   ) {}
 
   @Query(() => [AgentChatThreadDTO])
+  @AllowSuspendedWorkspace()
   async chatThreads(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -172,14 +184,18 @@ export class AgentChatResolver {
       );
     }
 
-    const resolvedModelId = modelId ?? workspace.smartModel;
-
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
+    const resolvedModelId = getChatModelId({
+      requestedModelId: modelId,
       workspace,
-    );
+    });
 
-    await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
+    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
+
+    await this.aiBillingService.assertAiExecutionAllowed({
+      workspaceId: workspace.id,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId, userWorkspaceId },
@@ -286,11 +302,14 @@ export class AgentChatResolver {
     }
 
     this.aiModelRegistryService.validateModelAvailability(
-      modelId ?? workspace.smartModel,
-      workspace,
+      getChatModelId({ requestedModelId: modelId, workspace }),
     );
 
-    await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
+    await this.aiBillingService.assertAiExecutionAllowed({
+      workspaceId: workspace.id,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const result = await this.agentChatStreamingService.retryLastFailedTurn({
       threadId,
@@ -336,14 +355,18 @@ export class AgentChatResolver {
       );
     }
 
-    const resolvedModelId = modelId ?? workspace.smartModel;
-
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
+    const resolvedModelId = getChatModelId({
+      requestedModelId: modelId,
       workspace,
-    );
+    });
 
-    await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
+    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
+
+    await this.aiBillingService.assertAiExecutionAllowed({
+      workspaceId: workspace.id,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId, userWorkspaceId },

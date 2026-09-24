@@ -17,13 +17,12 @@ import {
   IsUUID,
 } from 'class-validator';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-import {
-  type CommandMenuItemPayload,
-  CommandMenuItemPayloadUnion,
-} from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
+import { CommandMenuItemPayloadUnion } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
+import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 
@@ -42,6 +41,11 @@ export class CommandMenuItemDTO {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   workflowVersionId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  coreWorkflowVersionId?: string;
 
   @IsUUID()
   @IsOptional()
@@ -85,7 +89,7 @@ export class CommandMenuItemDTO {
 
   @IsOptional()
   @Field(() => CommandMenuItemPayloadUnion, { nullable: true })
-  payload?: CommandMenuItemPayload;
+  payload?: PathCommandMenuItemPayload;
 
   @IsString({ each: true })
   @IsOptional()
@@ -96,6 +100,11 @@ export class CommandMenuItemDTO {
   @IsOptional()
   @Field({ nullable: true })
   conditionalAvailabilityExpression?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  conditionalPinnedExpression?: string;
 
   @IsUUID()
   @IsOptional()
@@ -119,7 +128,7 @@ export class CommandMenuItemDTO {
   // cannot tell a standard label from one a workspace renamed, and would match
   // the workspace's own copy against the standard catalog.
   @HideField()
-  overrides?: CommandMenuItemOverrides | null;
+  overrides?: AuthoredOverrides<CommandMenuItemOverrides> | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
   universalIdentifier?: string;

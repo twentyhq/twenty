@@ -2,7 +2,6 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Column, useRowSelection } from 'react-data-grid';
-import { createPortal } from 'react-dom';
 
 import {
   type ImportedStructuredRow,
@@ -12,9 +11,10 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Checkbox, Switch } from 'twenty-ui/primitives/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;
@@ -41,10 +41,14 @@ const StyledCheckboxContainer = styled.div`
   width: 100%;
 `;
 
-const StyledToggleContainer = styled.div`
+const StyledSwitchContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
+`;
+
+const StyledSwitch = styled(Switch)`
+  align-self: center;
 `;
 
 const StyledInputContainer = styled.div`
@@ -95,12 +99,14 @@ export const generateColumns = (
           <Checkbox
             aria-label={t`Select`}
             checked={isRowSelected}
-            variant={CheckboxVariant.Tertiary}
-            onChange={(event) => {
+            variant={'soft'}
+            onCheckedChange={(isChecked, eventDetails) => {
               onRowSelectionChange({
                 row: props.row,
-                checked: event.target.checked,
-                isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
+                checked: isChecked,
+                isShiftClick:
+                  'shiftKey' in eventDetails.event &&
+                  eventDetails.event.shiftKey === true,
               });
             }}
           />
@@ -118,20 +124,17 @@ export const generateColumns = (
       resizable: true,
       renderHeaderCell: () => (
         <StyledHeaderContainer>
-          <StyledHeaderLabel id={formatSafeId(column.key)}>
-            {column.label}
-          </StyledHeaderLabel>
-          <>
-            {column.description &&
-              createPortal(
-                <AppTooltip
-                  anchorSelect={`#${formatSafeId(column.key)}`}
-                  place="top"
-                  content={column.description}
-                />,
-                document.body,
-              )}
-          </>
+          <Tooltip
+            side="top"
+            content={column.description}
+            delay={TooltipDelay.mediumDelay}
+            disabled={!column.description}
+          >
+            <StyledHeaderLabel id={formatSafeId(column.key)}>
+              {column.label}
+            </StyledHeaderLabel>
+          </Tooltip>
+          <></>
         </StyledHeaderContainer>
       ),
       editable: column.fieldType.type !== 'checkbox',
@@ -175,23 +178,23 @@ export const generateColumns = (
         switch (column.fieldType.type) {
           case 'checkbox':
             component = (
-              <StyledToggleContainer
+              <StyledSwitchContainer
                 id={formatSafeId(`${columnKey}-${row.__index}`)}
                 onClick={(event) => {
                   event.stopPropagation();
                 }}
               >
-                <Toggle
-                  centered
-                  value={row[columnKey] as boolean}
-                  onChange={() => {
+                <StyledSwitch
+                  aria-label={column.label}
+                  checked={row[columnKey] as boolean}
+                  onCheckedChange={() => {
                     onRowChange({
                       ...row,
                       [columnKey]: !row[columnKey],
                     });
                   }}
                 />
-              </StyledToggleContainer>
+              </StyledSwitchContainer>
             );
             break;
           case 'select':
@@ -217,18 +220,13 @@ export const generateColumns = (
 
         if (isDefined(row.__errors?.[columnKey])) {
           return (
-            <>
+            <Tooltip
+              content={row.__errors?.[columnKey]?.message}
+              side="top"
+              delay={TooltipDelay.shortDelay}
+            >
               {component}
-              {createPortal(
-                <AppTooltip
-                  anchorSelect={`#${formatSafeId(`${columnKey}-${row.__index}`)}`}
-                  place="top"
-                  content={row.__errors?.[columnKey]?.message}
-                  delay={TooltipDelay.shortDelay}
-                />,
-                document.body,
-              )}
-            </>
+            </Tooltip>
           );
         }
 

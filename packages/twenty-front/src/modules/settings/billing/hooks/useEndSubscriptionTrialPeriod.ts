@@ -3,12 +3,12 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useLazyQuery, useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/components';
 import {
   BillingPortalSessionDocument,
   EndSubscriptionTrialPeriodDocument,
@@ -16,8 +16,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useEndSubscriptionTrialPeriod = () => {
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar, enqueueInfoSnackBar } =
-    useSnackBar();
+  const { enqueueToast } = useToast();
   const [endSubscriptionTrialPeriod] = useMutation(
     EndSubscriptionTrialPeriodDocument,
     {
@@ -66,8 +65,9 @@ export const useEndSubscriptionTrialPeriod = () => {
       }
     }
 
-    enqueueErrorSnackBar({
-      message: t`No payment method found. Please update your billing details.`,
+    enqueueToast({
+      variant: 'error',
+      children: t`No payment method found. Please update your billing details.`,
     });
   };
 
@@ -79,8 +79,9 @@ export const useEndSubscriptionTrialPeriod = () => {
       setIsLoading(true);
 
       if (options?.skipPaymentMethodRedirect === true) {
-        enqueueInfoSnackBar({
-          message: t`Activating subscription...`,
+        enqueueToast({
+          variant: 'info',
+          children: t`Activating subscription...`,
         });
       }
 
@@ -152,14 +153,16 @@ export const useEndSubscriptionTrialPeriod = () => {
           : previousWorkspace,
       );
 
-      enqueueSuccessSnackBar({
-        message: t`Subscription activated.`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Subscription activated.`,
       });
 
       return { success: true, hasPaymentMethod: true };
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error while ending trial period. Please contact Twenty team.`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Error while ending trial period. Please contact Twenty team.`,
       });
       return { success: false };
     } finally {

@@ -154,6 +154,7 @@ export class AddAttachmentTimelineActivityTypesCommand extends ProvisionedWorksp
         targetRelationFieldUniversalIdentifier:
           attachmentTargetRelationFieldMetadata.universalIdentifier,
         triggerFieldUniversalIdentifiers: null,
+        happensAtFieldUniversalIdentifier: null,
         replacesTimelineActivityTypeUniversalIdentifier: null,
         isActive: true,
         overrides: null,

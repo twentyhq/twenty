@@ -6,6 +6,7 @@ export const CREATE_CALENDAR_EVENT = gql`
       success
       error
       iCalUid
+      calendarEventId
       conferenceLink
     }
   }

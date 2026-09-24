@@ -1,11 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { msg } from '@lingui/core/macro';
+import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isAutoSelectModelId,
+  isDefined,
+} from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   DataSource,
@@ -20,6 +28,7 @@ import {
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
@@ -58,6 +67,12 @@ import {
   type WorkspaceDeletionApplicationUninstallJobData,
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
+import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
+import { WORKSPACE_SOFT_DELETED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-soft-deleted-event.constant';
+import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
+import { type WorkspaceReactivatedEvent } from 'src/engine/core-modules/workspace/types/workspace-reactivated-event.type';
+import { type WorkspaceSoftDeletedEvent } from 'src/engine/core-modules/workspace/types/workspace-soft-deleted-event.type';
+import { type WorkspaceSuspendedEvent } from 'src/engine/core-modules/workspace/types/workspace-suspended-event.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -65,7 +80,6 @@ import {
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
@@ -123,17 +137,19 @@ export class WorkspaceService {
     editableProfileFields: PermissionFlagType.SECURITY,
     isTwoFactorAuthenticationEnforced: PermissionFlagType.SECURITY,
     defaultRoleId: PermissionFlagType.ROLES,
-    fastModel: PermissionFlagType.WORKSPACE,
-    smartModel: PermissionFlagType.WORKSPACE,
+    aiChatModelTier: PermissionFlagType.AI_SETTINGS,
+    aiAgentModelTier: PermissionFlagType.AI_SETTINGS,
+    isAutoModelSelectionEnabled: PermissionFlagType.AI_SETTINGS,
+    aiModelIdByTier: PermissionFlagType.AI_SETTINGS,
+    aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
-    enabledAiModelIds: PermissionFlagType.AI_SETTINGS,
-    useRecommendedModels: PermissionFlagType.AI_SETTINGS,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly eventEmitter: EventEmitter2,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -160,8 +176,8 @@ export class WorkspaceService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly deleteCascadeMessageQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
-    private readonly logicFunctionMessageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.applicationLifecycleHookQueue)
+    private readonly applicationLifecycleHookMessageQueueService: MessageQueueService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
@@ -172,14 +188,108 @@ export class WorkspaceService {
     private readonly applicationUninstallService: ApplicationUninstallService,
   ) {}
 
+  // Pins are stored as given, so a stale or mistyped id must be refused here
+  // rather than silently falling back to the tier default at run time. A pin
+  // that is already stored is left alone so the others stay editable.
+  private validateAiModelIdByTier({
+    aiModelIdByTier,
+    storedAiModelIdByTier,
+  }: {
+    aiModelIdByTier: Partial<Record<AiModelTier, string>>;
+    storedAiModelIdByTier: Partial<Record<AiModelTier, string>>;
+  }): void {
+    for (const [tier, modelId] of Object.entries(aiModelIdByTier)) {
+      if (!isAiModelTier(tier)) {
+        throw new WorkspaceException(
+          `Unknown AI model tier "${tier}"`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (!isNonEmptyString(modelId)) {
+        throw new WorkspaceException(
+          `Missing model id for tier "${tier}"`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (isAutoSelectModelId(modelId)) {
+        throw new WorkspaceException(
+          `Tier "${tier}" must be pinned to a concrete model`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (modelId === storedAiModelIdByTier?.[tier]) {
+        continue;
+      }
+
+      if (!this.aiModelRegistryService.isModelAdminAllowed(modelId)) {
+        throw new WorkspaceException(
+          'Selected model has been disabled by the administrator',
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (!isDefined(this.aiModelRegistryService.getModelConfig(modelId))) {
+        throw new WorkspaceException(
+          `Model "${modelId}" is not in this instance's catalog`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+    }
+  }
+
+  // Same contract as a tier pin: stored as given, so an id that names nothing
+  // this instance can run must be refused here rather than stored and silently
+  // ignored at run time. A pin already stored is left alone so the rest of the
+  // form stays editable after an administrator withdraws the model.
+  private validateAiEvaluationModelId({
+    aiEvaluationModelId,
+    storedAiEvaluationModelId,
+  }: {
+    aiEvaluationModelId: string | null;
+    storedAiEvaluationModelId: string | null;
+  }): void {
+    if (!isNonEmptyString(aiEvaluationModelId)) {
+      return;
+    }
+
+    if (aiEvaluationModelId === storedAiEvaluationModelId) {
+      return;
+    }
+
+    if (
+      !isDefined(
+        this.aiModelRegistryService.getEvaluationModelConfig(
+          aiEvaluationModelId,
+        ),
+      )
+    ) {
+      throw new WorkspaceException(
+        `Model "${aiEvaluationModelId}" is not an evaluation model in this instance's catalog`,
+        WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+      );
+    }
+
+    if (!this.aiModelRegistryService.isModelAdminAllowed(aiEvaluationModelId)) {
+      throw new WorkspaceException(
+        'Selected model has been disabled by the administrator',
+        WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+      );
+    }
+  }
+
   async updateWorkspaceById({
     payload,
     userWorkspaceId,
     apiKey,
+    application,
   }: {
     payload: Partial<WorkspaceEntity> & { id: string };
     userWorkspaceId?: string;
     apiKey: ApiKeyEntity | undefined;
+    application?: FlatApplication;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -192,6 +302,7 @@ export class WorkspaceService {
       userWorkspaceId,
       workspaceId: workspace.id,
       apiKey,
+      application,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -273,46 +384,18 @@ export class WorkspaceService {
       );
     }
 
-    const isChangingModels =
-      isDefined(payload.smartModel) || isDefined(payload.fastModel);
-    const isChangingAvailability =
-      payload.useRecommendedModels !== undefined ||
-      payload.enabledAiModelIds !== undefined;
+    if (isDefined(payload.aiModelIdByTier)) {
+      this.validateAiModelIdByTier({
+        aiModelIdByTier: payload.aiModelIdByTier,
+        storedAiModelIdByTier: workspace.aiModelIdByTier,
+      });
+    }
 
-    if (isChangingModels || isChangingAvailability) {
-      const effectiveWorkspace = {
-        useRecommendedModels:
-          payload.useRecommendedModels ?? workspace.useRecommendedModels,
-        enabledAiModelIds:
-          payload.enabledAiModelIds ?? workspace.enabledAiModelIds,
-      };
-
-      const modelsToValidate = [
-        payload.smartModel ?? workspace.smartModel,
-        payload.fastModel ?? workspace.fastModel,
-      ].filter(isDefined);
-
-      for (const modelId of modelsToValidate) {
-        if (!this.aiModelRegistryService.isModelAdminAllowed(modelId)) {
-          throw new WorkspaceException(
-            'Selected model has been disabled by the administrator',
-            WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
-          );
-        }
-
-        if (
-          !isModelAllowedByWorkspace(
-            modelId,
-            effectiveWorkspace,
-            this.aiModelRegistryService.getRecommendedModelIds(),
-          )
-        ) {
-          throw new WorkspaceException(
-            'Selected model is not available in this workspace',
-            WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
-          );
-        }
-      }
+    if (isDefined(payload.aiEvaluationModelId)) {
+      this.validateAiEvaluationModelId({
+        aiEvaluationModelId: payload.aiEvaluationModelId,
+        storedAiEvaluationModelId: workspace.aiEvaluationModelId,
+      });
     }
 
     let updatedWorkspace: WorkspaceEntity;
@@ -321,6 +404,7 @@ export class WorkspaceService {
       updatedWorkspace = await this.workspaceRepository.save({
         ...workspace,
         ...payload,
+        ...(payload.logo === null ? { logoFileId: null } : {}),
       });
     } catch (error) {
       if (payload.customDomain && customDomainRegistered) {
@@ -525,6 +609,10 @@ export class WorkspaceService {
     const hasBeenSuspended = isDefined(affected) && affected > 0;
 
     if (hasBeenSuspended) {
+      this.eventEmitter.emit(WORKSPACE_SUSPENDED_EVENT, {
+        workspaceId: id,
+      } satisfies WorkspaceSuspendedEvent);
+
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     }
 
@@ -550,6 +638,10 @@ export class WorkspaceService {
     const hasBeenReactivated = isDefined(affected) && affected > 0;
 
     if (hasBeenReactivated) {
+      this.eventEmitter.emit(WORKSPACE_REACTIVATED_EVENT, {
+        workspaceId: id,
+      } satisfies WorkspaceReactivatedEvent);
+
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     }
 
@@ -588,6 +680,11 @@ export class WorkspaceService {
 
     await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+
+    this.eventEmitter.emit(WORKSPACE_SOFT_DELETED_EVENT, {
+      workspaceId: id,
+    } satisfies WorkspaceSoftDeletedEvent);
+
     await this.enqueueWorkspaceDeletionApplicationUninstall(id);
 
     this.logger.log(`workspace ${id} soft deleted`);
@@ -692,7 +789,7 @@ export class WorkspaceService {
   async enqueueWorkspaceDeletionApplicationUninstall(
     workspaceId: string,
   ): Promise<void> {
-    await this.logicFunctionMessageQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
+    await this.applicationLifecycleHookMessageQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
       WorkspaceDeletionApplicationUninstallJob.name,
       { workspaceId },
       {
@@ -901,12 +998,14 @@ export class WorkspaceService {
     userWorkspaceId,
     workspaceId,
     apiKey,
+    application,
     workspaceActivationStatus,
   }: {
     payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey: ApiKeyEntity | undefined;
+    application?: FlatApplication;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
@@ -973,6 +1072,7 @@ export class WorkspaceService {
           workspaceId,
           setting: permission,
           apiKeyId: apiKey?.id,
+          applicationId: application?.id,
         });
 
       if (!hasPermission) {

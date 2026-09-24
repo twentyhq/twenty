@@ -1,7 +1,7 @@
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
+import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
-import { WidgetType } from 'twenty-shared/types';
 
 describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
   const now = '2026-01-01T00:00:00.000Z';
@@ -14,6 +14,13 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         universalIdentifier: 'widget-uuid-1',
         title: 'My Widget',
         type: WidgetType.VIEW,
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 0,
+          column: 0,
+          rowSpan: DEFAULT_WIDGET_SIZE.default.h,
+          columnSpan: DEFAULT_WIDGET_SIZE.default.w,
+        },
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
@@ -32,13 +39,13 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     expect(result.type).toBe(WidgetType.VIEW);
     expect(result.objectMetadataUniversalIdentifier).toBeNull();
     expect(result.conditionalDisplay).toBeNull();
-    expect(result.gridPosition).toEqual({
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
       column: 0,
       rowSpan: DEFAULT_WIDGET_SIZE.default.h,
       columnSpan: DEFAULT_WIDGET_SIZE.default.w,
     });
-    expect(result.position).toBeNull();
     expect(result.universalConfiguration).toEqual({
       configurationType: 'VIEW',
     });
@@ -50,6 +57,13 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         universalIdentifier: 'widget-uuid-2',
         title: 'Iframe Widget',
         type: 'IFRAME',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 0,
+          column: 0,
+          rowSpan: DEFAULT_WIDGET_SIZE.default.h,
+          columnSpan: DEFAULT_WIDGET_SIZE.default.w,
+        },
         objectUniversalIdentifier: 'obj-uuid-1',
         configuration: {
           configurationType: 'IFRAME',
@@ -64,7 +78,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     expect(result.title).toBe('Iframe Widget');
     expect(result.type).toBe('IFRAME');
     expect(result.objectMetadataUniversalIdentifier).toBe('obj-uuid-1');
-    expect(result.gridPosition).toEqual({
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
       column: 0,
       rowSpan: DEFAULT_WIDGET_SIZE.default.h,
@@ -76,13 +91,19 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     });
   });
 
-  it('should use manifest gridPosition when provided', () => {
+  it('should use manifest position when provided', () => {
     const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
       pageLayoutWidgetManifest: {
         universalIdentifier: 'widget-uuid-3',
         title: 'Positioned Widget',
         type: WidgetType.GRAPH,
-        gridPosition: { row: 2, column: 6, rowSpan: 4, columnSpan: 6 },
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 2,
+          column: 6,
+          rowSpan: 4,
+          columnSpan: 6,
+        },
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
@@ -90,7 +111,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       now,
     });
 
-    expect(result.gridPosition).toEqual({
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 2,
       column: 6,
       rowSpan: 4,

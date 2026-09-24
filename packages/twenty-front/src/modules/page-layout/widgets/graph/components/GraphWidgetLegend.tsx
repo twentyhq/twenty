@@ -11,11 +11,12 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContext, useRef, useState } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type GraphWidgetLegendItem = {
@@ -266,17 +267,21 @@ export const GraphWidgetLegend = ({
                 <LightIconButton
                   onClick={handlePreviousPage}
                   disabled={safeCurrentPage === 0}
-                  Icon={IconChevronLeft}
-                  accent="tertiary"
-                />
+                  emphasis="subtle"
+                  aria-label={t`Previous`}
+                >
+                  <IconChevronLeft />
+                </LightIconButton>
                 <StyledPaginationIndicator>
                   {safeCurrentPage + 1}/{totalPages}
                 </StyledPaginationIndicator>
                 <LightIconButton
                   onClick={handleNextPage}
                   disabled={safeCurrentPage === totalPages - 1}
-                  Icon={IconChevronRight}
-                />
+                  aria-label={t`Next`}
+                >
+                  <IconChevronRight />
+                </LightIconButton>
               </StyledPaginationContainer>
             )}
             <StyledAnimationClipContainer>

@@ -18,8 +18,10 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -49,6 +51,7 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningDTO)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @AllowSuspendedWorkspace()
   async initiateOTPProvisioning(
     @Args()
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
@@ -100,7 +103,7 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningDTO)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
   async initiateOTPProvisioningForAuthenticatedUser(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -124,7 +127,12 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => DeleteTwoFactorAuthenticationMethodDTO)
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
+    CustomPermissionGuard,
+  )
   async deleteTwoFactorAuthenticationMethod(
     @Args()
     deleteTwoFactorAuthenticationMethodInput: DeleteTwoFactorAuthenticationMethodInput,
@@ -161,7 +169,12 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => VerifyTwoFactorAuthenticationMethodDTO)
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    UserAuthGuard,
+    RequireUserSessionGuard,
+    NoPermissionGuard,
+  )
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
     @Args()
     verifyTwoFactorAuthenticationMethodInput: VerifyTwoFactorAuthenticationMethodInput,

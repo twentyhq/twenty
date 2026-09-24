@@ -1,3 +1,5 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -6,34 +8,67 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
+import {
+  type WorkflowVariableSelection,
+  type WorkflowVariableStepSelection,
+} from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
+import { getWorkflowVariableSelectionFromSearchResult } from '@/workflow/workflow-variables/utils/getWorkflowVariableSelectionFromSearchResult';
+import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/searchWorkflowVariables';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconX, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;
   steps: StepOutputSchemaV2[];
-  onSelect: (value: string) => void;
+  onSelect: (selection: WorkflowVariableStepSelection) => void;
+  onVariableSelect: (selection: WorkflowVariableSelection) => void;
+  shouldDisplaySpecialItems?: boolean;
+  shouldDisplayRecordObjects?: boolean;
+  objectNameSingularsToSelect?: string[];
 };
 
 export const WorkflowVariablesDropdownSteps = ({
   dropdownId,
   steps,
   onSelect,
+  onVariableSelect,
+  shouldDisplaySpecialItems,
+  shouldDisplayRecordObjects,
+  objectNameSingularsToSelect,
 }: WorkflowVariablesDropdownStepsProps) => {
   const { getIcon } = useIcons();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { closeDropdown } = useCloseDropdown();
 
+  const search = searchInputValue.trim().toLowerCase();
   const availableSteps = steps.filter((step) =>
-    searchInputValue
-      ? step.name.toLowerCase().includes(searchInputValue)
-      : true,
+    step.name.toLowerCase().includes(search),
   );
+  const matchingVariables = searchWorkflowVariables({
+    steps,
+    searchInputValue,
+    shouldDisplaySpecialItems,
+    shouldDisplayRecordObjects,
+    objectNameSingularsToSelect,
+    objectMetadataItems,
+  });
+
+  const handleSearchResultSelect = (variable: WorkflowVariableSearchResult) => {
+    if (!variable.isLeaf) {
+      onSelect({ stepId: variable.stepId, path: variable.path });
+      return;
+    }
+
+    onVariableSelect(getWorkflowVariableSelectionFromSearchResult(variable));
+  };
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
@@ -49,31 +84,40 @@ export const WorkflowVariablesDropdownSteps = ({
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
+        placeholder={t`Search steps and fields`}
         value={searchInputValue}
         onChange={(event) => setSearchInputValue(event.target.value)}
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {availableSteps.length > 0 ? (
-          availableSteps.map((item, _index) => (
-            <MenuItemSelect
-              key={`step-${item.id}`}
-              selected={false}
-              focused={false}
-              onClick={() => onSelect(item.id)}
-              text={item.name}
-              LeftIcon={item.icon ? getIcon(item.icon) : undefined}
-              hasSubMenu
-            />
-          ))
-        ) : (
-          <MenuItem
-            key="no-steps"
-            onClick={() => {}}
-            text={t`No variables available`}
-            LeftIcon={undefined}
-            hasSubMenu={false}
-          />
+        <WorkflowVariableSearchResultItems
+          searchResults={matchingVariables}
+          onSelect={handleSearchResultSelect}
+        />
+        {matchingVariables.length > 0 && availableSteps.length > 0 && (
+          <DropdownMenuSeparator />
+        )}
+        {availableSteps.map((item) => (
+          <ListItem
+            key={`step-${item.id}`}
+            focused={false}
+            onClick={() => onSelect({ stepId: item.id })}
+            role="option"
+            aria-selected={false}
+            selected={false}
+            indicator="check"
+            hasSubmenu
+            startIcon={
+              <SelectOptionIcon
+                Icon={item.icon ? getIcon(item.icon) : undefined}
+              />
+            }
+          >
+            {item.name}
+          </ListItem>
+        ))}
+        {matchingVariables.length === 0 && availableSteps.length === 0 && (
+          <ListItem disabled>{t`No variables available`}</ListItem>
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>

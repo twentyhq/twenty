@@ -16,9 +16,11 @@ import { type ObjectManifest } from './objectManifestType';
 import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type StandalonePageLayoutWidgetManifest,
 } from './pageLayoutManifestType';
 import { type PermissionFlagManifest } from './permissionFlagManifestType';
 import { type RoleManifest } from './roleManifestType';
+import { type SettingsMenuItemManifest } from './settingsMenuItemManifestType';
 import { type SkillManifest } from './skillManifestType';
 import { type TimelineActivityTypeManifest } from './timelineActivityTypeManifestType';
 import {
@@ -48,7 +50,9 @@ export type Manifest = {
   navigationMenuItems: NavigationMenuItemManifest[];
   pageLayouts: PageLayoutManifest[];
   pageLayoutTabs: PageLayoutTabManifest[];
+  pageLayoutWidgets: StandalonePageLayoutWidgetManifest[];
   commandMenuItems: CommandMenuItemManifest[];
   timelineActivityTypes: TimelineActivityTypeManifest[];
+  settingsMenuItems: SettingsMenuItemManifest[];
   translations?: TranslationsManifest;
 };

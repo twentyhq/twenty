@@ -14,6 +14,7 @@ export const parseGoogleOAuthError = (
     return new ConnectedAccountRefreshAccessTokenException(
       `Google refresh token network error: ${error.code} - ${error.message}`,
       ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
+      { cause: error },
     );
   }
 
@@ -32,11 +33,13 @@ export const parseGoogleOAuthError = (
     return new ConnectedAccountRefreshAccessTokenException(
       `Google auth error: ${googleOAuthError.reason} - ${googleOAuthError.message}`,
       ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+      { cause: error },
     );
   }
 
   return new ConnectedAccountRefreshAccessTokenException(
     `Google refresh token failed (${googleOAuthError.code ?? 'no status'}): ${googleOAuthError.reason} - ${googleOAuthError.message}`,
     ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
+    { cause: error },
   );
 };

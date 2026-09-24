@@ -1,6 +1,3 @@
-import { styled } from '@linaria/react';
-import { useCallback, useEffect, useRef } from 'react';
-
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -11,18 +8,20 @@ import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingSt
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback, useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/input';
+import { MainButton, useToast } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
+
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -41,7 +40,7 @@ const StyledButtonContainer = styled.div`
 
 export const WorkspaceActivation = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace, { loading: isActivating }] = useMutation(
@@ -84,13 +83,11 @@ export const WorkspaceActivation = () => {
       setIsCreatingWorkspace(false);
       setOnboardingActivationFailed(true);
 
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   }, [
     activateWorkspace,
-    enqueueErrorSnackBar,
+    enqueueToast,
     loadCurrentUser,
     setOnboardingActivationFailed,
     setIsAppEffectRedirectEnabled,
@@ -149,13 +146,12 @@ export const WorkspaceActivation = () => {
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
           <MainButton
-            title={t`Retry`}
             onClick={() => {
               void activate();
             }}
             disabled={isActivating}
             fullWidth
-          />
+          >{t`Retry`}</MainButton>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledContainer>

@@ -1,12 +1,13 @@
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/feedback';
+import { InlineBanner } from 'twenty-ui/components';
 import {
   BillingPlanKey,
   BillingPortalSessionDocument,
@@ -36,8 +37,6 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     skip: !hasPermissionToManageBilling,
   });
 
-  useSnackBarOnQueryError(error);
-
   const openPaymentMethodUpdate = () => {
     if (isDefined(data?.billingPortalSession.url)) {
       redirect(data.billingPortalSession.url);
@@ -45,7 +44,7 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
   };
 
   const planName =
-    currentBillingSubscription.metadata?.['plan'] === BillingPlanKey.PRO
+    getSubscriptionPlanKey(currentBillingSubscription) === BillingPlanKey.PRO
       ? t`pro plan`
       : t`organization plan`;
 
@@ -62,14 +61,17 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
       : t`Trial ends soon. Please contact your admin to add card details to keep the ${planName}`;
 
   return (
-    <InlineBanner
-      color="blue"
-      message={message}
-      button={{
-        title: t`Add card`,
-        hidden: !hasPermissionToManageBilling,
-        onClick: openPaymentMethodUpdate,
-      }}
-    />
+    <>
+      <ToastOnQueryErrorEffect error={error} />
+      <InlineBanner
+        color="blue"
+        message={message}
+        button={{
+          title: t`Add card`,
+          hidden: !hasPermissionToManageBilling,
+          onClick: openPaymentMethodUpdate,
+        }}
+      />
+    </>
   );
 };

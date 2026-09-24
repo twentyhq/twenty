@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   FieldActorSource,
   MessageChannelContactAutoCreationPolicy,
+  MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -125,11 +126,12 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   : [];
               });
 
-              await this.messageParticipantService.saveMessageParticipants(
-                participantsWithMessageId,
-                workspaceId,
-                transactionScope,
-              );
+              const savedMessageParticipants =
+                await this.messageParticipantService.saveMessageParticipants(
+                  participantsWithMessageId,
+                  workspaceId,
+                  transactionScope,
+                );
 
               const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
                 messagesToSave.flatMap((message) => {
@@ -164,6 +166,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
               return {
                 participantsWithMessageId,
+                savedMessageParticipants,
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageThreadIdMap,
               };
@@ -194,6 +197,28 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     if (!isDefined(savedMessagesResult)) {
       return undefined;
     }
+
+    const messageIds = [
+      ...new Set(
+        savedMessagesResult.participantsWithMessageId.map(
+          ({ messageId }) => messageId,
+        ),
+      ),
+    ];
+
+    // The matcher resolves a participant by looking its handle up as an email
+    // address. On a channel whose handles are not email addresses that finds
+    // nothing and writes personId back to null, discarding the identities the
+    // caller supplied at save time, so those channels only reconcile targets.
+    await this.messageParticipantService.matchMessageParticipants({
+      participants: savedMessagesResult.savedMessageParticipants,
+      messageIds,
+      workspaceId,
+      matchWith:
+        messageChannel.type === MessageChannelType.APP
+          ? 'targetsOnly'
+          : 'workspaceMemberAndPerson',
+    });
 
     return {
       messageExternalIdsAndIdsMap:

@@ -1,30 +1,27 @@
-import { useMutation } from '@apollo/client/react';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
-import { IconLink, IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { Card, CardContent } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CLEAR_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/clearMaintenanceMode';
 import { SET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/setMaintenanceMode';
 import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-status/maintenance-mode/states/adminPanelMaintenanceModeState';
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { InputHint } from 'twenty-ui/input';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { InputHint } from '@/ui/input/components/internal/InputHint/InputHint';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useMutation } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { Section, useToast } from 'twenty-ui/components';
+import { IconLink, IconTool } from 'twenty-ui/icon';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -46,7 +43,7 @@ export const SettingsAdminMaintenanceMode = () => {
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
   const { userTimezone } = useUserTimezone();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [setMaintenanceModeMutation] = useMutation(SET_MAINTENANCE_MODE, {
     client: apolloAdminClient,
@@ -98,15 +95,16 @@ export const SettingsAdminMaintenanceMode = () => {
           link,
         });
       } catch (error: unknown) {
-        enqueueErrorSnackBar({
-          message:
+        enqueueToast({
+          variant: 'error',
+          children:
             error instanceof Error
               ? error.message
               : t`Failed to set maintenance mode.`,
         });
       }
     },
-    [setMaintenanceModeMutation, setMaintenanceMode, enqueueErrorSnackBar],
+    [setMaintenanceModeMutation, setMaintenanceMode, enqueueToast],
   );
 
   const handleToggle = useCallback(
@@ -191,13 +189,13 @@ export const SettingsAdminMaintenanceMode = () => {
     : undefined;
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Maintenance`}
         description={t`Schedule a maintenance window and notify all users`}
       />
       <Card rounded>
-        <SettingsOptionCardContentToggle
+        <SettingsOptionCardContentSwitch
           Icon={IconTool}
           title={t`Maintenance mode`}
           description={toggleDescription}
@@ -241,16 +239,13 @@ export const SettingsAdminMaintenanceMode = () => {
               </div>
               {isScheduled && (
                 <StyledStatusRow>
-                  <Status
-                    color="orange"
-                    text={t`Planned for ${formattedStartDate}`}
-                  />
+                  <Status color="orange">{t`Planned for ${formattedStartDate}`}</Status>
                 </StyledStatusRow>
               )}
             </StyledFormContainer>
           </CardContent>
         )}
       </Card>
-    </Section>
+    </Section.Root>
   );
 };

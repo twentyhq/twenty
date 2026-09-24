@@ -35,7 +35,7 @@ const toCandidates = <T extends { universalIdentifier?: string }>(
       label: getLabel(entity),
     }));
 
-const MANIFEST_ENTITY_REGISTRY: Record<
+export const MANIFEST_ENTITY_REGISTRY: Record<
   AllMetadataName,
   ManifestEntityRegistryEntry
 > = {
@@ -92,6 +92,14 @@ const MANIFEST_ENTITY_REGISTRY: Record<
         (timelineActivityType) => timelineActivityType.label,
       ),
   },
+  settingsMenuItem: {
+    entityKind: 'settings menu item',
+    getCandidates: (manifest) =>
+      toCandidates(
+        manifest.settingsMenuItems,
+        (settingsMenuItem) => settingsMenuItem.title,
+      ),
+  },
   view: {
     entityKind: 'view',
     getCandidates: (manifest) =>
@@ -117,6 +125,7 @@ const MANIFEST_ENTITY_REGISTRY: Record<
   pageLayoutWidget: {
     entityKind: 'page layout widget',
     getCandidates: (manifest) => [
+      ...toCandidates(manifest.pageLayoutWidgets, (widget) => widget.title),
       ...(manifest.pageLayoutTabs ?? []).flatMap((pageLayoutTab) =>
         toCandidates(pageLayoutTab.widgets, (widget) => widget.title),
       ),
@@ -264,6 +273,14 @@ const MANIFEST_ENTITY_REGISTRY: Record<
   },
   searchFieldMetadata: {
     entityKind: 'search field',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  workflow: {
+    entityKind: 'workflow',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  workflowVersion: {
+    entityKind: 'workflow version',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
 };

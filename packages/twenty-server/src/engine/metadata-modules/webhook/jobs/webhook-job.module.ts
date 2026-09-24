@@ -1,26 +1,36 @@
 import { Module } from '@nestjs/common';
 
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { FlatWebhookModule } from 'src/engine/metadata-modules/flat-webhook/flat-webhook.module';
 import { CallWebhookJobsForMetadataJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook-jobs-for-metadata.job';
 import { CallWebhookJobsJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook-jobs.job';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
+import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
+import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
+import { RecordSharingFeatureModule } from 'src/engine/core-modules/record-share/record-sharing-feature.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
     EventLogEmitterModule,
+    FeatureFlagModule,
     FlatWebhookModule,
     MetricsModule,
+    RecordShareModule,
+    RecordSharingFeatureModule,
     SecureHttpClientModule,
+    UsageLimitModule,
     WorkspaceCacheModule,
   ],
   providers: [
     CallWebhookJobsJob,
     CallWebhookJobsForMetadataJob,
     CallWebhookJob,
+    WebhookRateLimitService,
   ],
 })
 export class WebhookJobModule {}

@@ -4,8 +4,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconPlug } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderItem';
 import { getProviderIcon } from '@/settings/admin-panel/ai/utils/getProviderIcon';
@@ -72,14 +73,15 @@ export const SettingsAdminAiProviderListCard = ({
     <SettingsListCard
       items={providers}
       rounded
+      RowIconColor={themeCssVariables.font.color.primary}
       RowIconFn={(provider) => getProviderIcon(provider.name ?? provider.id)}
       getItemLabel={(provider) => provider.label ?? provider.id}
       getItemDescription={getProviderDescription}
       RowRightComponent={({ item: provider }) =>
         isProviderConfigured(provider) ? (
-          <Status color="green" text={t`Configured`} weight="medium" />
+          <Status color="green" weight="medium">{t`Configured`}</Status>
         ) : (
-          <Status color="orange" text={t`No credentials`} weight="medium" />
+          <Status color="orange" weight="medium">{t`No credentials`}</Status>
         )
       }
       to={(provider) =>

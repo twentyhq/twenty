@@ -35,11 +35,15 @@ Set these on the application registration after installing
 | `CALL_RECORDER_RECORDING_RETENTION_HOURS` | No | How long Recall.ai retains the source media after processing. Defaults to `166` hours (6 days 22 hours), just under Recall's 168-hour free-storage window. Values above `168` may incur Recall storage charges. Twenty's ingested copy is unaffected. |
 | `RECALL_WEBHOOK_SECRET` | Yes | Svix signing secret (`whsec_…`) used to verify incoming Recall webhooks. |
 
-> **Bot behavior settings** (display name, join timing, lobby and leave
-> timeouts), the transcription provider (`CALL_RECORDER_TRANSCRIPT_PROVIDER`)
-> and the summary settings (`CALL_RECORDER_SUMMARY_ENABLED`,
-> `CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT`) are **application variables**
-> that a workspace admin tunes inside the app — not server variables.
+> **Calendar scheduling** (`CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED`,
+> the "Record my calendar meetings" toggle; turning it off cancels
+> every scheduled recording), **bot behavior settings** (display name,
+> recording notice, join timing, lobby and leave timeouts), the transcription
+> provider
+> (`CALL_RECORDER_TRANSCRIPT_PROVIDER`) and the summary settings
+> (`CALL_RECORDER_SUMMARY_ENABLED`,
+> `CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT`) are **application variables** that
+> a workspace admin tunes inside the app — not server variables.
 
 ## Configuring the Recall webhook
 
@@ -94,6 +98,7 @@ webhook update is missed.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | No bot joined a meeting | **Recording** was off, the event had no conference link, it wasn't synced from a connected calendar, or `RECALL_API_KEY` isn't set | Confirm the event is on, upcoming, has a video link, and came from a synced calendar; confirm `RECALL_API_KEY` is set |
+| Recording is `NOT_RECORDED` with reason `workspace_out_of_credits`, `workspace_without_subscription` or `workspace_suspended` | The workspace could not spend credits about ten minutes before the bot would have joined, so the bot was canceled or never created | Top up credits or fix the subscription in **Settings → Billing**; later meetings are recorded again, the skipped meeting is not retried |
 | Recording never reaches `COMPLETED` | A Recall webhook was missed, or only one of audio/video was produced | The reconciliation job pulls the latest status from Recall within a few minutes; if it is marked `FAILED`, inspect the bot in the Recall dashboard |
 | Transcript empty, or marked pending/failed | Recall hasn't finished async transcription yet, or transcription failed for that call | Wait for the reconciliation job to ingest the transcript; a persistent failure leaves a marker in the transcript |
 | Webhook rejected with `500` (`Invalid webhook signature`, Recall keeps retrying) | `RECALL_WEBHOOK_SECRET` doesn't match the Recall endpoint's signing secret | Re-copy the `whsec_…` secret from the Recall webhook endpoint into the `RECALL_WEBHOOK_SECRET` server variable |

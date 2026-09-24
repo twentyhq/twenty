@@ -1,3 +1,4 @@
+import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
@@ -41,7 +42,7 @@ describe('Workflow agent role assignment persistence (integration)', () => {
       input: {
         label: 'Role-Assigned Workflow Agent',
         prompt: 'Test prompt',
-        modelId: 'openai/gpt-4.1',
+        modelId: TEST_AI_MODEL_ID,
         roleId,
       },
     });
@@ -53,7 +54,7 @@ describe('Workflow agent role assignment persistence (integration)', () => {
       input: {
         label: 'Roleless Workflow Agent',
         prompt: 'Test prompt',
-        modelId: 'openai/gpt-4.1',
+        modelId: TEST_AI_MODEL_ID,
       },
     });
 

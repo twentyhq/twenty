@@ -13,6 +13,7 @@ import { InformationBannerReconnectAccountInsufficientPermissions } from '@/info
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
 
@@ -49,8 +50,7 @@ export const InformationBannerWrapper = () => {
     isWorkspaceSuspended && !isDefined(subscriptionStatus);
 
   const displayFailPaymentInfoBanner =
-    subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
+    isSubscriptionPaymentOverdue(subscriptionStatus);
 
   const displayEndTrialPeriodBanner =
     hasReachedCurrentBillingPeriodCap &&

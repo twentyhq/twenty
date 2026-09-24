@@ -16,6 +16,10 @@ const SIGNING_SECRET = `whsec_${SECRET_BYTES.toString('base64')}`;
 
 const RESEND_WEBHOOK_PATH = '/webhooks/messaging/resend';
 
+const SUPPRESSION_WAIT_TIMEOUT_MS = 20_000;
+const SUPPRESSION_POLL_INTERVAL_MS = 250;
+const SUPPRESSION_SETTLE_MS = 5_000;
+
 const signRawBody = ({
   svixId,
   svixTimestamp,
@@ -51,12 +55,35 @@ const postResendWebhook = (
 describe('Resend webhook (integration)', () => {
   let unsubscribeTokenService: UnsubscribeTokenService;
 
-  const findSuppressionReasons = async (emailAddress: string) => {
+  const readSuppressionReasons = async (emailAddress: string) => {
     const suppressions = await getCoreRepository<MessageSuppressionEntity>(
       MessageSuppressionEntity,
     ).findBy({ workspaceId: SEED_APPLE_WORKSPACE_ID, emailAddress });
 
     return suppressions.map((suppression) => suppression.reason);
+  };
+
+  const waitForSuppressionReasons = async (emailAddress: string) => {
+    const deadline = Date.now() + SUPPRESSION_WAIT_TIMEOUT_MS;
+    let reasons = await readSuppressionReasons(emailAddress);
+
+    while (reasons.length === 0 && Date.now() < deadline) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, SUPPRESSION_POLL_INTERVAL_MS),
+      );
+
+      reasons = await readSuppressionReasons(emailAddress);
+    }
+
+    return reasons;
+  };
+
+  const readSuppressionReasonsAfterSettle = async (emailAddress: string) => {
+    await new Promise((resolve) =>
+      setTimeout(resolve, SUPPRESSION_SETTLE_MS),
+    );
+
+    return readSuppressionReasons(emailAddress);
   };
 
   beforeAll(async () => {
@@ -86,7 +113,7 @@ describe('Resend webhook (integration)', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(await findSuppressionReasons(emailAddress)).toEqual([
+    expect(await waitForSuppressionReasons(emailAddress)).toEqual([
       MessageSuppressionReason.BOUNCE,
     ]);
   }, 60000);
@@ -106,7 +133,7 @@ describe('Resend webhook (integration)', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(await findSuppressionReasons(emailAddress)).toEqual([
+    expect(await waitForSuppressionReasons(emailAddress)).toEqual([
       MessageSuppressionReason.COMPLAINT,
     ]);
   }, 60000);
@@ -127,7 +154,9 @@ describe('Resend webhook (integration)', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(await findSuppressionReasons(emailAddress)).toEqual([]);
+    expect(
+      await readSuppressionReasonsAfterSettle(emailAddress),
+    ).toEqual([]);
   }, 60000);
 
   it('suppresses nothing for a bounce without a workspace tag', async () => {
@@ -145,7 +174,9 @@ describe('Resend webhook (integration)', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(await findSuppressionReasons(emailAddress)).toEqual([]);
+    expect(
+      await readSuppressionReasonsAfterSettle(emailAddress),
+    ).toEqual([]);
   }, 60000);
 
   it('suppresses the sender of a received email addressed to the unsubscribe mailbox', async () => {
@@ -166,7 +197,7 @@ describe('Resend webhook (integration)', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(await findSuppressionReasons(emailAddress)).toEqual([
+    expect(await waitForSuppressionReasons(emailAddress)).toEqual([
       MessageSuppressionReason.UNSUBSCRIBE,
     ]);
   }, 60000);

@@ -1,35 +1,35 @@
-import styled from '@emotion/styled';
 import { useQuery } from '@apollo/client/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useDebounce } from 'use-debounce';
 
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { type ApplicationRegistration } from '~/generated-metadata/graphql';
-import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsPath } from 'twenty-shared/types';
+import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
+import { type ApplicationRegistration } from '~/generated-metadata/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const INITIAL_VISIBLE_WORKSPACES = 3;
 const SHOW_MORE_PAGE_SIZE = 20;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
-const StyledSection = styled(Section)`
+const StyledSection = styled(Section.Root)`
   margin-top: ${themeCssVariables.spacing[5]};
 `;
 
@@ -77,14 +77,11 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   const hasMore = result?.hasMore ?? false;
 
   const isSearching = debouncedSearchTerm.trim() !== '';
-
-  // Don't render a misleading "no installs" state when the query actually failed
-  if (isDefined(error)) {
-    return null;
-  }
+  const hasFailed = isDefined(error);
 
   // The app is installed nowhere (as opposed to a search yielding no matches)
-  const hasNoInstalls = totalCount === 0 && !isSearching && !loading;
+  const hasNoInstalls =
+    totalCount === 0 && !isSearching && !loading && !hasFailed;
 
   if (hasNoInstalls) {
     return null;
@@ -142,8 +139,14 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
       </StyledSearchInputContainer>
       {loading ? (
         <SettingsSectionSkeletonLoader />
+      ) : hasFailed ? (
+        <SettingsEmptyPlaceholder>{t`Couldn't load installed workspaces`}</SettingsEmptyPlaceholder>
       ) : workspaces.length === 0 ? (
-        <SettingsEmptyPlaceholder>{t`No workspaces found`}</SettingsEmptyPlaceholder>
+        <SettingsEmptyPlaceholder>
+          {isSearching
+            ? t`No workspaces match this search`
+            : t`No workspaces found`}
+        </SettingsEmptyPlaceholder>
       ) : (
         <Table>
           <TableRow
@@ -167,9 +170,9 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
                   overflow="hidden"
                 >
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(workspace.logo ?? undefined)}
-                    placeholder={workspace.displayName ?? '—'}
-                    placeholderColorSeed={workspace.id}
+                    src={getAbsoluteImageUrl(workspace.logo ?? undefined)}
+                    name={workspace.displayName ?? '—'}
+                    colorSeed={workspace.id}
                     size="md"
                   />
                   <OverflowingTextWithTooltip
@@ -187,26 +190,24 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
           </TableBody>
         </Table>
       )}
-      {!isExpanded && totalCount > INITIAL_VISIBLE_WORKSPACES && (
+      {!hasFailed && !isExpanded && totalCount > INITIAL_VISIBLE_WORKSPACES && (
         <StyledButtonContainer>
           <Button
-            title={t`Show all`}
-            Icon={IconChevronDown}
-            variant="secondary"
-            size="small"
+            startIcon={<IconChevronDown />}
+            size="sm"
             onClick={() => setIsExpanded(true)}
-          />
+            variant="outline"
+          >{t`Show all`}</Button>
         </StyledButtonContainer>
       )}
-      {isExpanded && hasMore && (
+      {!hasFailed && isExpanded && hasMore && (
         <StyledButtonContainer>
           <Button
-            title={t`Show more`}
-            Icon={IconDotsVertical}
-            variant="secondary"
-            size="small"
+            startIcon={<IconDotsVertical />}
+            size="sm"
             onClick={handleShowMore}
-          />
+            variant="outline"
+          >{t`Show more`}</Button>
         </StyledButtonContainer>
       )}
     </StyledSection>

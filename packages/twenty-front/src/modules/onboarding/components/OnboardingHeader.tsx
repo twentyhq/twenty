@@ -2,8 +2,8 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconCoins, IconInfoCircle } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
@@ -80,6 +80,7 @@ const StyledCreditsTag = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
   border-top-left-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
+  corner-shape: round;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
@@ -103,6 +104,7 @@ const StyledInfoTag = styled.div`
   border-bottom-right-radius: ${themeCssVariables.border.radius.rounded};
   border-top-right-radius: ${themeCssVariables.border.radius.rounded};
   box-sizing: border-box;
+  corner-shape: round;
   display: flex;
   height: ${themeCssVariables.spacing[6]};
   justify-content: center;
@@ -129,13 +131,14 @@ export const OnboardingHeader = ({
       <StyledLeftSide>
         {isDefined(onBack) && (
           <LightIconButton
-            Icon={IconChevronLeft}
-            accent="tertiary"
-            size="small"
+            emphasis="subtle"
+            size="sm"
             onClick={onBack}
             disabled={isBackDisabled}
             aria-label={t`Go back`}
-          />
+          >
+            <IconChevronLeft />
+          </LightIconButton>
         )}
       </StyledLeftSide>
       <StyledCenter>

@@ -1,63 +1,69 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
-import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import {
+  IconDotsVertical,
+  IconEdit,
+  IconPlus,
+  IconTrash,
+} from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/components';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type NavigationMenuItemFolderNavigationDrawerItemDropdownProps = {
   folderId: string;
-  onRename: () => void;
+  itemCount: number;
+  onEdit: () => void;
   onDelete: () => void;
-  closeDropdown: () => void;
 };
 
 export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
   folderId,
-  onRename,
+  itemCount,
+  onEdit,
   onDelete,
-  closeDropdown,
 }: NavigationMenuItemFolderNavigationDrawerItemDropdownProps) => {
   const { t } = useLingui();
-  const handleRename = () => {
-    closeDropdown();
-    onRename();
-  };
-
-  const handleDelete = () => {
-    closeDropdown();
-    onDelete();
-  };
+  const dropdownId = `navigation-menu-item-folder-edit-${folderId}`;
 
   return (
-    <Dropdown
-      dropdownId={`navigation-menu-item-folder-edit-${folderId}`}
-      data-select-disable
+    <NavigationMenuItemMenu
+      section="favorite"
+      dropdownId={dropdownId}
       clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+          <IconDotsVertical />
+        </LightIconButton>
       }
       dropdownPlacement="bottom-start"
-      dropdownComponents={
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+      renderMenu={({ onClose, onAdd }) => (
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconPencil}
-              onClick={handleRename}
-              accent="default"
-              text={t`Rename`}
-            />
-            <MenuItem
-              LeftIcon={IconTrash}
-              onClick={handleDelete}
-              accent="danger"
-              text={t`Delete`}
-            />
+            <ListItem
+              startIcon={<IconEdit />}
+              onClick={() => {
+                onClose();
+                onEdit();
+              }}
+            >{t`Edit`}</ListItem>
+            <ListItem
+              startIcon={<IconPlus />}
+              onClick={() => onAdd({ folderId, position: itemCount })}
+            >{t`Add menu item`}</ListItem>
+            <ListItem
+              startIcon={<IconTrash />}
+              onClick={() => {
+                onClose();
+                onDelete();
+              }}
+              color="danger"
+            >{t`Remove from sidebar`}</ListItem>
           </DropdownMenuItemsContainer>
         </DropdownContent>
-      }
+      )}
     />
   );
 };

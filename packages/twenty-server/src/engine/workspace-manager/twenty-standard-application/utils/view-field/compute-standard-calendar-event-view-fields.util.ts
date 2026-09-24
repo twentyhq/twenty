@@ -214,6 +214,20 @@ export const computeStandardCalendarEventViewFields = (
           viewFieldGroupName: 'general',
         },
       }),
+    calendarEventRecordPageFieldsCalendarEventTargets:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'calendarEvent',
+        context: {
+          viewName: 'calendarEventRecordPageFields',
+          viewFieldName: 'calendarEventTargets',
+          fieldName: 'calendarEventTargets',
+          position: 8,
+          isVisible: true,
+          size: 200,
+          viewFieldGroupName: 'general',
+        },
+      }),
     calendarEventRecordPageFieldsExternalCreatedAt:
       createStandardViewFieldFlatMetadata({
         ...args,

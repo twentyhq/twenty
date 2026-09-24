@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
+import { SettingsRow } from 'twenty-ui/components';
 
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
-import { MenuItemToggle } from 'twenty-ui/navigation';
 
 import { type AdminChatsFilterState } from '@/settings/admin-panel/chats/types/AdminChatsFilterState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -29,42 +29,36 @@ export const SettingsAdminChatsFilterDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItemToggle
-              LeftIcon={IconSparkles}
-              onToggleChange={() =>
+            <SettingsRow
+              startIcon={<IconSparkles />}
+              onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
                   onboardingOnly: !filters.onboardingOnly,
                 })
               }
-              toggled={filters.onboardingOnly}
-              text={t`Onboarding only`}
-              toggleSize="small"
-            />
-            <MenuItemToggle
-              LeftIcon={IconAlertTriangle}
-              onToggleChange={() =>
+              checked={filters.onboardingOnly}
+            >{t`Onboarding only`}</SettingsRow>
+            <SettingsRow
+              startIcon={<IconAlertTriangle />}
+              onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
                   hasErrorOnly: !filters.hasErrorOnly,
                 })
               }
-              toggled={filters.hasErrorOnly}
-              text={t`Has error`}
-              toggleSize="small"
-            />
-            <MenuItemToggle
-              LeftIcon={IconMessage}
-              onToggleChange={() =>
+              checked={filters.hasErrorOnly}
+            >{t`Has error`}</SettingsRow>
+            <SettingsRow
+              startIcon={<IconMessage />}
+              onCheckedChange={() =>
                 onFiltersChange({
                   ...filters,
                   userNeverEngagedOnly: !filters.userNeverEngagedOnly,
                 })
               }
-              toggled={filters.userNeverEngagedOnly}
-              text={t`No user reply`}
-              toggleSize="small"
-            />
+              checked={filters.userNeverEngagedOnly}
+            >{t`No user reply`}</SettingsRow>
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }

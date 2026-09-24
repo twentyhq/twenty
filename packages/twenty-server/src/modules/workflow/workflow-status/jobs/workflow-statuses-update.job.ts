@@ -1,6 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 
 import isEqual from 'lodash.isequal';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
@@ -112,14 +113,17 @@ export class WorkflowStatusesUpdateJob {
       workflowVersionRepository,
     });
 
-    const previousWorkflow = await workflowRepository.findOneOrFail({
+    const previousWorkflow = await workflowRepository.findOne({
       where: {
         id: workflowId,
       },
       withDeleted: true,
     });
 
-    if (isEqual(newWorkflowStatuses, previousWorkflow.statuses)) {
+    if (
+      !isDefined(previousWorkflow) ||
+      isEqual(newWorkflowStatuses, previousWorkflow.statuses)
+    ) {
       return;
     }
 
@@ -150,11 +154,15 @@ export class WorkflowStatusesUpdateJob {
         { shouldBypassPermissionChecks: true },
       );
 
-    const workflow = await workflowRepository.findOneOrFail({
+    const workflow = await workflowRepository.findOne({
       where: {
         id: statusUpdate.workflowId,
       },
     });
+
+    if (!isDefined(workflow)) {
+      return;
+    }
 
     const newWorkflowStatuses = await this.getWorkflowStatuses({
       workflowId: statusUpdate.workflowId,

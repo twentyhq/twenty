@@ -17,7 +17,7 @@ export const computeStandardMessageCampaignViews = (
       context: {
         viewName: 'allMessageCampaigns',
         name: INDEX_VIEW_NAME,
-        type: ViewType.TABLE,
+        type: ViewType.LIST,
         key: ViewKey.INDEX,
         position: 0,
         icon: 'IconSend',
@@ -32,7 +32,7 @@ export const computeStandardMessageCampaignViews = (
         type: ViewType.FIELDS_WIDGET,
         key: null,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconListDetails',
       },
     }),
   };

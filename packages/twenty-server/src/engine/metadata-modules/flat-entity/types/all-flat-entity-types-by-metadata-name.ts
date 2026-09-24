@@ -1,3 +1,25 @@
+import { type FlatWorkflowVersionMaps } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version-maps.type';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
+import { type FlatWorkflowMaps } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow-maps.type';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
+import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
+import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
+import {
+  type FlatCreateWorkflowVersionAction,
+  type FlatDeleteWorkflowVersionAction,
+  type FlatUpdateWorkflowVersionAction,
+  type UniversalCreateWorkflowVersionAction,
+  type UniversalDeleteWorkflowVersionAction,
+  type UniversalUpdateWorkflowVersionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow-version/types/workspace-migration-workflow-version-action.type';
+import {
+  type FlatCreateWorkflowAction,
+  type FlatDeleteWorkflowAction,
+  type FlatUpdateWorkflowAction,
+  type UniversalCreateWorkflowAction,
+  type UniversalDeleteWorkflowAction,
+  type UniversalUpdateWorkflowAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow/types/workspace-migration-workflow-action.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
@@ -7,7 +29,6 @@ import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-co
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFieldPermissionMaps } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission-maps.type';
@@ -49,6 +70,11 @@ import { type FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sor
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatSearchFieldMetadataMaps } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata-maps.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
+import { type FlatIndexMetadataMaps } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata-maps.type';
+import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
@@ -349,10 +375,21 @@ import {
   type UniversalDeleteSearchFieldMetadataAction,
   type UniversalUpdateSearchFieldMetadataAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/search-field-metadata/types/workspace-migration-search-field-metadata-action.type';
+import { type FlatSettingsMenuItemMaps } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item-maps.type';
+import { type FlatSettingsMenuItem } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item.type';
+import { type UniversalFlatSettingsMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-settings-menu-item.type';
+import {
+  type FlatCreateSettingsMenuItemAction,
+  type FlatDeleteSettingsMenuItemAction,
+  type FlatUpdateSettingsMenuItemAction,
+  type UniversalCreateSettingsMenuItemAction,
+  type UniversalDeleteSettingsMenuItemAction,
+  type UniversalUpdateSettingsMenuItemAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/types/workspace-migration-settings-menu-item-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
-    flatEntityMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatEntityMaps: FlatFieldMetadataMaps;
     universalActions: {
       create: UniversalCreateFieldAction;
       update: UniversalUpdateFieldAction;
@@ -371,7 +408,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'fieldMetadata'>;
   };
   objectMetadata: {
-    flatEntityMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatEntityMaps: FlatObjectMetadataMaps;
     universalActions: {
       create: UniversalCreateObjectAction;
       update: UniversalUpdateObjectAction;
@@ -515,7 +552,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewFilterGroup'>;
   };
   index: {
-    flatEntityMaps: FlatEntityMaps<FlatIndexMetadata>;
+    flatEntityMaps: FlatIndexMetadataMaps;
     universalActions: {
       create: UniversalCreateIndexAction;
       update: UniversalUpdateIndexAction;
@@ -531,7 +568,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'index'>;
   };
   logicFunction: {
-    flatEntityMaps: FlatEntityMaps<FlatLogicFunction>;
+    flatEntityMaps: FlatLogicFunctionMaps;
     universalActions: {
       create: UniversalCreateLogicFunctionAction;
       update: UniversalUpdateLogicFunctionAction;
@@ -563,7 +600,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewFilter'>;
   };
   role: {
-    flatEntityMaps: FlatEntityMaps<FlatRole>;
+    flatEntityMaps: FlatRoleMaps;
     universalActions: {
       create: UniversalCreateRoleAction;
       update: UniversalUpdateRoleAction;
@@ -865,5 +902,53 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatTimelineActivityType;
     universalFlatEntity: UniversalFlatTimelineActivityType;
     entity: MetadataEntity<'timelineActivityType'>;
+  };
+  settingsMenuItem: {
+    flatEntityMaps: FlatSettingsMenuItemMaps;
+    universalActions: {
+      create: UniversalCreateSettingsMenuItemAction;
+      update: UniversalUpdateSettingsMenuItemAction;
+      delete: UniversalDeleteSettingsMenuItemAction;
+    };
+    flatActions: {
+      create: FlatCreateSettingsMenuItemAction;
+      update: FlatUpdateSettingsMenuItemAction;
+      delete: FlatDeleteSettingsMenuItemAction;
+    };
+    flatEntity: FlatSettingsMenuItem;
+    universalFlatEntity: UniversalFlatSettingsMenuItem;
+    entity: MetadataEntity<'settingsMenuItem'>;
+  };
+  workflow: {
+    flatEntityMaps: FlatWorkflowMaps;
+    universalActions: {
+      create: UniversalCreateWorkflowAction;
+      update: UniversalUpdateWorkflowAction;
+      delete: UniversalDeleteWorkflowAction;
+    };
+    flatActions: {
+      create: FlatCreateWorkflowAction;
+      update: FlatUpdateWorkflowAction;
+      delete: FlatDeleteWorkflowAction;
+    };
+    flatEntity: FlatWorkflow;
+    universalFlatEntity: UniversalFlatWorkflow;
+    entity: MetadataEntity<'workflow'>;
+  };
+  workflowVersion: {
+    flatEntityMaps: FlatWorkflowVersionMaps;
+    universalActions: {
+      create: UniversalCreateWorkflowVersionAction;
+      update: UniversalUpdateWorkflowVersionAction;
+      delete: UniversalDeleteWorkflowVersionAction;
+    };
+    flatActions: {
+      create: FlatCreateWorkflowVersionAction;
+      update: FlatUpdateWorkflowVersionAction;
+      delete: FlatDeleteWorkflowVersionAction;
+    };
+    flatEntity: FlatWorkflowVersion;
+    universalFlatEntity: UniversalFlatWorkflowVersion;
+    entity: MetadataEntity<'workflowVersion'>;
   };
 };

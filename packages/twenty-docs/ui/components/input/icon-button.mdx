@@ -1,0 +1,133 @@
+---
+title: IconButton
+description: Trigger actions with accessible icon buttons.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import IconButtonReference from '/snippets/ui/generated/input/icon-button.mdx';
+
+`IconButton` composes [Button](/ui/primitives/input/button) with a square or round surface. Pass the icon as children and provide an `aria-label` describing the action. Icon content is decorative and hidden from assistive technology.
+
+## Usage
+
+```tsx
+import { IconButton } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const CreateRecordButton = () => (
+  <IconButton
+    aria-label="Create record"
+    variant="solid"
+    color="accent"
+    size="sm"
+  >
+    <IconPlus />
+  </IconButton>
+);
+```
+
+Sizes are `xs` (20px), `sm` (24px), and `md` (32px). The defaults are `md`, `outline`, and `neutral`. Variants and colors match Button. Use `shape="round"` for a circular button; the default shape is `square`.
+
+<StoryEmbed
+  title="Icon button example"
+  storyId="ui-components-iconbutton--catalog"
+  height={620}
+/>
+
+## Tooltip
+
+Add `tooltip` to show text on hover and keyboard focus. Keep `aria-label` as the accessible name of the action. Disabled and loading buttons retain hover tooltips.
+
+```tsx
+import { IconButton } from 'twenty-ui/components';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchRecordsButton = () => (
+  <IconButton aria-label="Search" tooltip="Search records" variant="ghost">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+<StoryEmbed
+  title="Icon button with tooltip"
+  storyId="ui-components-iconbutton--tooltip-documentation"
+  height={180}
+/>
+
+The tooltip defaults to the bottom, with a 1000ms delay and a 5px offset. Use `tooltipPlace`, `tooltipDelay`, and `tooltipOffset` to adjust it. Omitting `tooltip` renders the button directly.
+
+## State ownership
+
+Your application supplies `loading` and `disabled`. Both prevent activation. Loading preserves the square dimensions and accessible label. The button does not track a selected value or set loading automatically after a click. Native keyboard focus follows the browser; use `aria-pressed` when your application owns a toggle state.
+
+## Elevated actions
+
+Use `elevated` to add a shadow and backdrop blur. The default neutral outline button also gains a bordered surface with matching icon and interaction colors. Other variants and semantic colors keep their existing palette.
+
+`elevated` defaults to `false`. It does not change positioning, visibility, or size. The size remains `md` (32px) by default; set `size="sm"` for a 24px control.
+
+```tsx
+import { IconButton } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const AddWidgetButton = () => (
+  <IconButton elevated size="sm" aria-label="Add widget">
+    <IconPlus />
+  </IconButton>
+);
+```
+
+<StoryEmbed
+  title="Elevated icon action"
+  storyId="ui-components-iconbutton--elevated"
+  height={180}
+/>
+
+Omit `elevated` or set it to `false` to restore the standard appearance. Elevated buttons support the same tooltips, loading states, links, and keyboard interactions.
+
+<StoryEmbed
+  title="Elevated icon action with tooltip"
+  storyId="ui-components-iconbutton--elevated-tooltip"
+  height={180}
+/>
+
+Replace existing `FloatingIconButton` controls with `IconButton elevated`. Pass the icon as children, use native `aria-label`, and map `small` to `sm` and `medium` to `md`. Supply `size="sm"` when the previous control used its default size. Native focus and `aria-pressed` replace synthetic focus and active flags.
+
+`FloatingIconButtonGroup` is removed. Compose ButtonGroup with IconButton for grouped actions, and keep any shared floating surface in your layout.
+
+## Grouped actions
+
+```tsx
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
+import { IconPlus, IconSearch } from 'twenty-ui/icon';
+
+export const RecordActions = () => (
+  <ButtonGroup aria-label="Record actions" size="sm" variant="outline">
+    <IconButton aria-label="Search records">
+      <IconSearch />
+    </IconButton>
+    <IconButton aria-label="Create record">
+      <IconPlus />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+[ButtonGroup](/ui/primitives/input/button-group) supplies size, variant, color, and adjoining corners. Individual buttons do not need a position prop.
+
+## Links and forms
+
+Use `href` to render an anchor. The caller can provide a custom `render` element, including its own router link. Supply `href` to select link semantics; the renderer must preserve an anchor. Without `href`, preserve a native button. Neither `nativeButton` nor `role` is part of the public button interface. Disabled links cannot activate. Routing stays in the application.
+
+Native attributes, event handlers, refs, and render composition pass through to Button. The default is `type="button"`; set `type="submit"` explicitly for form submission.
+
+## Props
+
+<IconButtonReference />
+
+## Compact and round controls
+
+Use `size="xs"` for a 20px control and `shape="round"` for circular corners. Existing `RoundedIconButton` controls become `IconButton` with `shape="round"`, `variant="solid"`, and `color="accent"`. Map their old `small` size to `xs` and `medium` size to `sm`. Supply icon children and an accessible name.

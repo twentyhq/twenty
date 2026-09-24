@@ -1,7 +1,8 @@
 import { listConnections } from 'twenty-sdk/logic-function';
 
 export const getSlackConnection = async (): Promise<
-  { success: true; accessToken: string } | { success: false; error: string }
+  | { success: true; accessToken: string; connectionId: string }
+  | { success: false; error: string }
 > => {
   try {
     const connections = await listConnections({ providerName: 'slack' });
@@ -17,7 +18,11 @@ export const getSlackConnection = async (): Promise<
       };
     }
 
-    return { success: true, accessToken: connection.accessToken };
+    return {
+      success: true,
+      accessToken: connection.accessToken,
+      connectionId: connection.id,
+    };
   } catch (error) {
     const message =
       error instanceof Error

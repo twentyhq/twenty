@@ -1,12 +1,14 @@
 import {
   defineObject,
   FieldType,
+  MetadataWritability,
   OnDeleteAction,
   RelationType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
 import {
+  SLACK_USER_LINK_CONSENT_STATE_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_USER_LINK_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
   SLACK_USER_LINK_SOURCE_FIELD_UNIVERSAL_IDENTIFIER,
@@ -15,6 +17,7 @@ import {
   SLACK_USER_LINK_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_USER_LINKS_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 
 export default defineObject({
@@ -26,6 +29,7 @@ export default defineObject({
   description:
     'Links a Slack account to a workspace member so the assistant can act with that member permissions instead of its own.',
   icon: 'IconBrandSlack',
+  writability: MetadataWritability.APPLICATION,
   labelIdentifierFieldMetadataUniversalIdentifier:
     SLACK_USER_LINK_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
@@ -77,6 +81,47 @@ export default defineObject({
         },
       ],
       name: 'source',
+    },
+    {
+      universalIdentifier:
+        SLACK_USER_LINK_CONSENT_STATE_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      label: 'Consent state',
+      description:
+        'Whether the linked Slack user has consented to the assistant acting with the mapped member permissions',
+      icon: 'IconShieldCheck',
+      defaultValue: `'${SLACK_USER_LINK_CONSENT_STATE.ACTIVE}'`,
+      options: [
+        {
+          id: '57e1a3f1-37d2-4a1d-a1ed-f69a237a819b',
+          value: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
+          label: 'Active',
+          position: 0,
+          color: 'green',
+        },
+        {
+          id: '99cdcf02-893f-47f8-bb88-77c2ebc85c33',
+          value: SLACK_USER_LINK_CONSENT_STATE.PENDING,
+          label: 'Awaiting consent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          id: '738afb28-4ec5-4d72-879a-319baaf16eae',
+          value: SLACK_USER_LINK_CONSENT_STATE.DECLINED,
+          label: 'Declined',
+          position: 2,
+          color: 'red',
+        },
+        {
+          id: '14dab847-b348-4331-bd01-7622939553a3',
+          value: SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET,
+          label: 'Admin set',
+          position: 3,
+          color: 'gray',
+        },
+      ],
+      name: 'consentState',
     },
     {
       universalIdentifier:

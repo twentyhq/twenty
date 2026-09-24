@@ -7,7 +7,7 @@ import {
   isStandardTimelineActivityRendererUniversalIdentifier,
   isTimelineActivityAction,
 } from 'twenty-shared/timeline';
-import { RelationType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
@@ -217,6 +217,7 @@ export class FlatTimelineActivityTypeValidatorService {
       frontComponentUniversalIdentifier,
       targetRelationFieldUniversalIdentifier,
       triggerFieldUniversalIdentifiers,
+      happensAtFieldUniversalIdentifier,
       replacesTimelineActivityTypeUniversalIdentifier,
     } = timelineActivityType;
 
@@ -359,6 +360,29 @@ export class FlatTimelineActivityTypeValidatorService {
           code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
           message: t`Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event`,
           userFriendlyMessage: msg`The trigger fields used by this timeline activity type are not available`,
+        });
+      }
+    }
+
+    if (isDefined(happensAtFieldUniversalIdentifier)) {
+      const happensAtField =
+        validationMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+          happensAtFieldUniversalIdentifier
+        ];
+      const hasInvalidHappensAtField =
+        timelineActivityType.action !== 'linked' ||
+        !isDefined(targetRelationFieldUniversalIdentifier) ||
+        !isDefined(happensAtField) ||
+        happensAtField.objectMetadataUniversalIdentifier !==
+          objectUniversalIdentifier ||
+        (happensAtField.type !== FieldMetadataType.DATE_TIME &&
+          happensAtField.type !== FieldMetadataType.DATE);
+
+      if (hasInvalidHappensAtField) {
+        validationResult.errors.push({
+          code: TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT,
+          message: t`Timeline activity type happensAt field must be a date field on the source object of a linked relation event`,
+          userFriendlyMessage: msg`The happensAt field used by this timeline activity type is not available`,
         });
       }
     }

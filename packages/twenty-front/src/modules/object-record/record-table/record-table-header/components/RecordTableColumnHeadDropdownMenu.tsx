@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
@@ -19,11 +20,10 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconArrowsSort,
   IconEyeOff,
   IconFilter,
-  IconSortDescending,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   recordField: RecordField;
@@ -135,40 +135,35 @@ export const RecordTableColumnHeadDropdownMenu = ({
       <StyledDropdownMenuItemsContainerWrapper>
         <DropdownMenuItemsContainer>
           {isFilterable && (
-            <MenuItem
-              LeftIcon={IconFilter}
+            <ListItem
+              startIcon={<IconFilter />}
               onClick={handleFilterClick}
-              text={t`Filter`}
-            />
+            >{t`Filter`}</ListItem>
           )}
           {isSortable && (
-            <MenuItem
-              LeftIcon={IconSortDescending}
+            <ListItem
+              startIcon={<IconArrowsSort />}
               onClick={handleSortClick}
-              text={t`Sort`}
-            />
+            >{t`Sort`}</ListItem>
           )}
           {showSeparator && <DropdownMenuSeparator />}
           {canMoveLeft && (
-            <MenuItem
-              LeftIcon={IconArrowLeft}
+            <ListItem
+              startIcon={<IconArrowLeft />}
               onClick={handleColumnMoveLeft}
-              text={t`Move left`}
-            />
+            >{t`Move left`}</ListItem>
           )}
           {canMoveRight && (
-            <MenuItem
-              LeftIcon={IconArrowRight}
+            <ListItem
+              startIcon={<IconArrowRight />}
               onClick={handleColumnMoveRight}
-              text={t`Move right`}
-            />
+            >{t`Move right`}</ListItem>
           )}
           {canHide && (
-            <MenuItem
-              LeftIcon={IconEyeOff}
-              onClick={async () => await handleColumnVisibility()}
-              text={t`Hide`}
-            />
+            <ListItem
+              startIcon={<IconEyeOff />}
+              onClick={handleColumnVisibility}
+            >{t`Hide`}</ListItem>
           )}
         </DropdownMenuItemsContainer>
       </StyledDropdownMenuItemsContainerWrapper>

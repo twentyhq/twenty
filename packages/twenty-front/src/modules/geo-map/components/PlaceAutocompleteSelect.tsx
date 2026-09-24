@@ -6,8 +6,9 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { useMemo, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   margin-bottom: 0px !important;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
@@ -54,12 +55,22 @@ export const PlaceAutocompleteSelect = ({
                   itemId={option.value}
                   onEnter={() => onChange(option.value)}
                 >
-                  <MenuItemSelectTag
+                  <ListItem
                     key={option.value}
-                    text={option.label}
-                    color="transparent"
                     onClick={() => onChange(option.value)}
-                  />
+                    role="option"
+                    aria-selected={false}
+                    selected={false}
+                    indicator="check"
+                  >
+                    <Tag
+                      color={'transparent'}
+                      borderStyle="dashed"
+                      variant={'soft'}
+                    >
+                      {option.label}
+                    </Tag>
+                  </ListItem>
                 </SelectableListItem>
               );
             })}

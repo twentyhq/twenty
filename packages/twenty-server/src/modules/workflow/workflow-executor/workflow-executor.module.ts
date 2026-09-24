@@ -1,12 +1,16 @@
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { Module } from '@nestjs/common';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
+import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { AiAgentActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent-action.module';
+import { ClassifyActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/classify-action.module';
 import { CodeActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code-action.module';
 import { CreateCalendarEventActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/create-calendar-event/create-calendar-event-action.module';
 import { DelayActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/delay-action.module';
@@ -24,6 +28,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 
 @Module({
   imports: [
+    WorkflowCoreModule,
     WorkflowCommonModule,
     WorkflowRunModule,
     CodeActionModule,
@@ -37,12 +42,15 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     IfElseActionModule,
     IteratorActionModule,
     AiAgentActionModule,
+    ClassifyActionModule,
     EmptyActionModule,
     FeatureFlagModule,
     HttpRequestActionModule,
     MailSenderActionModule,
     CreateCalendarEventActionModule,
     MetricsModule,
+    UsageLimitModule,
+    UsageModule,
   ],
   providers: [WorkflowExecutorWorkspaceService, WorkflowActionFactory],
   exports: [WorkflowExecutorWorkspaceService],

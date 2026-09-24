@@ -1,0 +1,23 @@
+import { defineLogicFunction } from 'twenty-sdk/define';
+
+import { SLACK_USER_LINKS_SET_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
+import { SLACK_SET_USER_LINK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { slackSetUserLinkHandler } from 'src/logic-functions/handlers/slack-set-user-link-handler';
+import { slackSetUserLinkInputSchema } from './schemas/slack-set-user-link-input.schema';
+
+export default defineLogicFunction({
+  universalIdentifier: SLACK_SET_USER_LINK_UNIVERSAL_IDENTIFIER,
+  name: 'slack-set-user-link',
+  description:
+    'Link a Slack user to a workspace member so the assistant acts with that member permissions. Restricted to members with the roles permission. A link whose emails match activates immediately as an AUTO link; any other in-workspace link asks the Slack user for consent first, and accounts outside the installed workspace are admin-set.',
+  timeoutSeconds: 30,
+  toolTriggerSettings: {
+    inputSchema: slackSetUserLinkInputSchema,
+  },
+  httpRouteTriggerSettings: {
+    path: SLACK_USER_LINKS_SET_ROUTE_PATH,
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+  handler: slackSetUserLinkHandler,
+});

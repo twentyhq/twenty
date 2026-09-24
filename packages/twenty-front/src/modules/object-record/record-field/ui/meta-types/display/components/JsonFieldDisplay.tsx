@@ -1,10 +1,10 @@
 import { useJsonFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useJsonFieldDisplay';
-import { JsonDisplay } from 'twenty-ui/data-display';
+import { JsonDisplay } from '@/ui/field/display/components/JsonDisplay/JsonDisplay';
 import { ExpandedFieldDisplay } from '@/ui/layout/expandable-list/components/ExpandedFieldDisplay';
 import { t } from '@lingui/core/macro';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { isTwoFirstDepths, JsonTree } from 'twenty-ui/json-visualizer';
+import { JsonTree } from 'twenty-ui/components';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const JsonFieldDisplay = () => {
@@ -43,7 +43,6 @@ export const JsonFieldDisplay = () => {
         >
           <JsonTree
             value={fieldValue}
-            shouldExpandNodeInitially={isTwoFirstDepths}
             emptyArrayLabel={t`Empty Array`}
             emptyObjectLabel={t`Empty Object`}
             emptyStringLabel={t`[empty string]`}

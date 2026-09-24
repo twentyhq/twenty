@@ -1,20 +1,20 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { UserContext } from '@/users/contexts/UserContext';
-import { useContext } from 'react';
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Avatar } from 'twenty-ui/data-display';
+import { UserContext } from '@/users/contexts/UserContext';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconKey, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateString } from '~/utils/string/formatDateString';
-import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 const StyledIconWrapper = styled.div`
   align-items: center;
@@ -64,16 +64,16 @@ export const SettingsRoleAssignmentTableRow = ({
         );
         return (
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
-            placeholderColorSeed={enrichedWorkspaceMember?.id}
-            placeholder={enrichedWorkspaceMember?.name.firstName ?? ''}
-            type="rounded"
+            src={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
+            colorSeed={enrichedWorkspaceMember?.id}
+            name={enrichedWorkspaceMember?.name.firstName ?? ''}
+            shape="circle"
             size="md"
           />
         );
       }
       case 'agent': {
-        const Icon = getIcon(roleTarget.data.icon || 'IconRobot');
+        const Icon = getIcon(roleTarget.data.icon || 'IconLego');
         return <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />;
       }
       case 'apiKey': {

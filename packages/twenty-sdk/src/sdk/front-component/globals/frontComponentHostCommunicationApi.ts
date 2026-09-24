@@ -15,8 +15,19 @@ export type NavigateFunction = <T extends AppPath>(
   options?: NavigateOptions,
 ) => Promise<void>;
 
-export type OpenSidePanelPageParams =
+type OpenRoutedSidePanelPageParams<T extends AppPath> = {
+  to: T;
+  queryParams?: Record<string, any>;
+  hash?: string;
+  pageTitle?: string;
+  resetNavigationStack?: boolean;
+} & (T extends `${string}:${string}`
+  ? { params: NonNullable<Parameters<typeof getAppPath<T>>[1]> }
+  : { params?: Parameters<typeof getAppPath<T>>[1] });
+
+type OpenPurposeBuiltSidePanelPageParams =
   | {
+      // Deprecated: use `to: AppPath.RecordShowPage` with typed `params`.
       page: SidePanelPages.ViewRecord;
       recordId: string;
       objectNameSingular: string;
@@ -62,19 +73,26 @@ export type OpenSidePanelPageParams =
   | {
       page: Exclude<
         SidePanelPages,
+        | SidePanelPages.RoutedPage
         | SidePanelPages.ViewRecord
         | SidePanelPages.EditRichText
         | SidePanelPages.ComposeEmail
         | SidePanelPages.ViewFrontComponent
         | SidePanelPages.AskAI
+        | SidePanelPages.ViewRecords
+        | SidePanelPages.Copilot
       >;
       pageTitle: string;
       pageIcon?: string;
       shouldResetSearchState?: boolean;
     };
 
-export type OpenSidePanelPageFunction = (
-  params: OpenSidePanelPageParams,
+export type OpenSidePanelPageParams<T extends AppPath = AppPath> =
+  | OpenRoutedSidePanelPageParams<T>
+  | OpenPurposeBuiltSidePanelPageParams;
+
+export type OpenSidePanelPageFunction = <T extends AppPath>(
+  params: OpenSidePanelPageParams<T>,
 ) => Promise<void>;
 
 export type CommandConfirmationModalResult = 'confirm' | 'cancel';

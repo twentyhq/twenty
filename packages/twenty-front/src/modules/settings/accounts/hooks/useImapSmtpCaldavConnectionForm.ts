@@ -2,7 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useToast } from 'twenty-ui/components';
 
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -23,7 +24,6 @@ import {
   connectionImapSmtpCalDav,
   connectionImapSmtpCalDavUpdate,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -80,7 +80,7 @@ export const useImapSmtpCaldavConnectionForm = ({
   });
 
   const { handleSubmit, formState, watch, reset } = formMethods;
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { isSubmitting } = formState;
 
   const { connectedAccount, loading: accountLoading } =
@@ -183,7 +183,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           ? t`Connection successfully updated`
           : t`Connection successfully created`;
 
-        enqueueSuccessSnackBar({ message: successMessage });
+        enqueueToast({ variant: 'success', children: successMessage });
 
         const { connectedAccountId: returnedConnectedAccountId } =
           data?.saveImapSmtpCaldavAccount ?? {};
@@ -192,9 +192,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           connectedAccountId: returnedConnectedAccountId,
         });
       } catch (error) {
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
     [
@@ -202,9 +200,8 @@ export const useImapSmtpCaldavConnectionForm = ({
       saveConnection,
       isEditing,
       connectedAccountId,
-      enqueueSuccessSnackBar,
+      enqueueToast,
       navigate,
-      enqueueErrorSnackBar,
     ],
   );
 

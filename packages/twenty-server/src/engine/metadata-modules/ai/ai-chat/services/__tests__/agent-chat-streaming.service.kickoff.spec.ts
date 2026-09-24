@@ -1,3 +1,4 @@
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   AgentMessageRole,
@@ -35,6 +36,9 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     threadMessages = [hiddenKickoffMessageEntity],
   } = {}) => {
     const threadRepository = {
+      findOneOrFail: jest
+        .fn()
+        .mockResolvedValue({ userWorkspaceId: 'user-workspace-id' }),
       findOne: jest.fn().mockResolvedValue(kickoffThread),
       update: jest.fn().mockResolvedValue({ affected: claimAffected }),
     };
@@ -59,15 +63,37 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     };
     const metricsService = { incrementCounterBy: jest.fn() };
 
+    const eventPublisherService = {
+      publish: jest.fn(),
+      resetStreamState: jest.fn(),
+    };
+
     const service = new AgentChatStreamingService(
       threadRepository as never,
       { find: jest.fn().mockResolvedValue([]) } as never,
       messageQueueService as never,
       agentChatService as never,
-      { publish: jest.fn().mockResolvedValue(undefined) } as never,
+      eventPublisherService as never,
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
       metricsService as never,
+      new AgentChatStreamRecoveryService(
+        threadRepository as never,
+        streamHeartbeatService as never,
+        eventPublisherService as never,
+        metricsService as never,
+      ),
+      {
+        authorizeJob: jest.fn().mockResolvedValue(undefined),
+        authorizeRetry: jest.fn().mockResolvedValue(undefined),
+        authorize: jest.fn().mockResolvedValue({}),
+        resolveMessage: jest.fn().mockResolvedValue({
+          sender: {
+            userWorkspaceId: 'user-workspace-id',
+            applicationId: null,
+          },
+        }),
+      } as never,
     );
 
     return {
@@ -134,6 +160,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     expect(agentChatService.ensureHiddenKickoffMessage).toHaveBeenCalledWith({
       threadId: 'thread-id',
       workspaceId: 'workspace-id',
+      userWorkspaceId: 'user-workspace-id',
       text: kickoffText,
     });
     expect(agentChatService.getMessagesForThread).toHaveBeenCalledWith(
@@ -146,7 +173,6 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
         browsingContext: null,
         modelId: 'default-fast-model',
         lastUserMessageText: kickoffText,
-        lastUserMessageParts: [{ type: 'text', text: kickoffText }],
         hasTitle: true,
         existingTurnId: 'kickoff-turn-id',
       }),

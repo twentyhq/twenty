@@ -2,20 +2,16 @@ import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { TaskList } from '@/activities/tasks/components/TaskList';
 import { type Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
-import { isDefined } from 'twenty-shared/utils';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+import { isDefined } from 'twenty-shared/utils';
+
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -50,25 +46,22 @@ export const TaskGroupsContent = ({
 
   if (isTasksEmpty) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
+      <EmptyState.Root>
         <AnimatedPlaceholder type="noTask" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`Mission accomplished!`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
+        <EmptyState.Content>
+          <EmptyState.Title>{t`Mission accomplished!`}</EmptyState.Title>
+          <EmptyState.Description>
             {t`All tasks addressed. Maintain the momentum.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
+          </EmptyState.Description>
+        </EmptyState.Content>
         {isDefined(onCreateTask) && (
           <Button
-            Icon={IconPlus}
-            title={t`New task`}
-            variant="secondary"
+            startIcon={<IconPlus />}
             onClick={onCreateTask}
-          />
+            variant="outline"
+          >{t`New task`}</Button>
         )}
-      </AnimatedPlaceholderEmptyContainer>
+      </EmptyState.Root>
     );
   }
 

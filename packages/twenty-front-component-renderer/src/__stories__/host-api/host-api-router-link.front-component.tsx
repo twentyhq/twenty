@@ -1,5 +1,5 @@
+import { Link } from 'react-router-dom';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';
@@ -13,9 +13,7 @@ const HostApiRouterLinkFrontComponent = () => (
   <ThemeProvider colorScheme="light">
     <FrontComponentCard title="host-api:router-link">
       <span data-testid="router-link">
-        <UndecoratedLink to="/objects/companies">
-          Go to companies
-        </UndecoratedLink>
+        <Link to="/objects/companies">Go to companies</Link>
       </span>
     </FrontComponentCard>
   </ThemeProvider>

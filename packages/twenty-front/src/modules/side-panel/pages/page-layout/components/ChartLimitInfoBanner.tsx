@@ -1,6 +1,6 @@
+import { SidePanelInformationBanner } from '@/side-panel/components/SidePanelInformationBanner/SidePanelInformationBanner';
 import { getChartLimitMessage } from '@/side-panel/pages/page-layout/utils/getChartLimitMessage';
 import { t } from '@lingui/core/macro';
-import { SidePanelInformationBanner } from 'twenty-ui/feedback';
 import { type WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 type ChartLimitInfoBannerProps = {

@@ -63,7 +63,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-c');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-c' });
     });
 
     const draft = store.get(getDraftAtom());
@@ -95,7 +95,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-c');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-c' });
     });
 
     const draft = store.get(getDraftAtom());
@@ -130,7 +130,9 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('new-widget');
+      result.current.insertCreatedWidgetAtContext({
+        newWidgetId: 'new-widget',
+      });
     });
 
     const draft = store.get(getDraftAtom());
@@ -165,7 +167,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-c');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-c' });
     });
 
     const draft = store.get(getDraftAtom());
@@ -196,12 +198,75 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-b');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-b' });
     });
 
     const draft = store.get(getDraftAtom());
 
     expect(draft).toBe(initialDraft);
+  });
+
+  it('uses an explicit top insertion point instead of a stale picker context', () => {
+    const store = createStore();
+    store.set(
+      getDraftAtom(),
+      makeDraft([
+        makeTab('tab-1', [
+          makeWidget('first', 0),
+          makeWidget('second', 1),
+          makeWidget('new-widget', 2),
+        ]),
+      ]),
+    );
+    store.set(getInsertionContextAtom(), {
+      targetWidgetId: 'second',
+      direction: 'below',
+    });
+
+    const { result } = renderHook(() => useInsertCreatedWidgetAtContext(), {
+      wrapper: getWrapper(store),
+    });
+
+    act(() => {
+      result.current.insertCreatedWidgetAtContext({
+        newWidgetId: 'new-widget',
+        insertionContext: {
+          targetWidgetId: 'first',
+          direction: 'above',
+        },
+      });
+    });
+
+    expect(
+      store.get(getDraftAtom()).tabs[0].widgets.map(({ id }) => id),
+    ).toEqual(['new-widget', 'first', 'second']);
+    expect(store.get(getInsertionContextAtom())).toBeNull();
+  });
+
+  it('keeps a bottom insertion appended and clears a stale picker context', () => {
+    const store = createStore();
+    const initialDraft = makeDraft([
+      makeTab('tab-1', [makeWidget('first', 0), makeWidget('new-widget', 1)]),
+    ]);
+    store.set(getDraftAtom(), initialDraft);
+    store.set(getInsertionContextAtom(), {
+      targetWidgetId: 'first',
+      direction: 'above',
+    });
+
+    const { result } = renderHook(() => useInsertCreatedWidgetAtContext(), {
+      wrapper: getWrapper(store),
+    });
+
+    act(() => {
+      result.current.insertCreatedWidgetAtContext({
+        newWidgetId: 'new-widget',
+        insertionContext: null,
+      });
+    });
+
+    expect(store.get(getDraftAtom())).toBe(initialDraft);
+    expect(store.get(getInsertionContextAtom())).toBeNull();
   });
 
   it('should no-op when target widget is not found', () => {
@@ -224,7 +289,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-b');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-b' });
     });
 
     const draft = store.get(getDraftAtom());
@@ -252,7 +317,9 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('non-existent-widget');
+      result.current.insertCreatedWidgetAtContext({
+        newWidgetId: 'non-existent-widget',
+      });
     });
 
     const draft = store.get(getDraftAtom());
@@ -283,7 +350,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-b');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-b' });
     });
 
     const insertionContext = store.get(getInsertionContextAtom());
@@ -320,7 +387,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-c');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-c' });
     });
 
     const draft = store.get(getDraftAtom());

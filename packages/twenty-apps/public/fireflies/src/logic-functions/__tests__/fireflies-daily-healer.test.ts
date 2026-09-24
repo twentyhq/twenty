@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import firefliesDailyHealerLogicFunction from 'src/logic-functions/fireflies-daily-healer';
+import { LOGIC_FUNCTION_EXECUTION_CONTEXT } from 'src/logic-functions/__tests__/logic-function-execution-context.test-support';
 
 const fetchMock = vi.fn();
 const enqueueJobMock = vi.hoisted(() => vi.fn());
@@ -50,7 +51,10 @@ describe('firefliesDailyHealerLogicFunction', () => {
       }),
     );
 
-    const result = await firefliesDailyHealerLogicFunction.config.handler();
+    const result = await firefliesDailyHealerLogicFunction.config.handler(
+      {},
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
 
     const [, request] = fetchMock.mock.calls[0];
     const { variables } = JSON.parse(String((request as RequestInit).body)) as {

@@ -1,6 +1,7 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useRecordIndexIdFromCurrentContextStore = () => {
@@ -10,10 +11,13 @@ export const useRecordIndexIdFromCurrentContextStore = () => {
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+  const baseRecordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
     contextStoreCurrentViewId || '',
   );
+
+  const recordIndexId =
+    useWorkspaceSurfaceScopedComponentInstanceId(baseRecordIndexId);
 
   return {
     objectMetadataItem,

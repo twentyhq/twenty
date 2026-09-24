@@ -1,18 +1,23 @@
+import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { randomUUID } from 'node:crypto';
 
-import { addMonths, startOfMonth } from 'date-fns';
+import { addDays, addMonths, startOfMonth } from 'date-fns';
 import request from 'supertest';
 import {
-  getBillingUsageCacheService,
-  getMirroredCreditBalance,
   getSeededBillingWorkspaceId,
   listCreditGrants,
+  quitBillingFixtureRedis,
+  readAllowanceCounter,
   resetBillingCreditState,
   setupResourceCreditSubscription,
+  warmAllowanceCounter,
+  setSubscriptionStatus,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
-import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -26,6 +31,7 @@ const GRANT_MUTATION = `
     $amount: Float!
     $type: BillingCreditGrantType!
     $reason: String
+    $expiresInDays: Int
     $clientOperationId: UUID!
   ) {
     grantWorkspaceCredits(
@@ -33,12 +39,14 @@ const GRANT_MUTATION = `
       amount: $amount
       type: $type
       reason: $reason
+      expiresInDays: $expiresInDays
       clientOperationId: $clientOperationId
     ) {
       id
       amount
       type
       reason
+      expiresAt
       isActive
     }
   }
@@ -90,6 +98,10 @@ describe('Admin credit grant and revoke (integration)', () => {
     await resetBillingCreditState(workspaceId);
   });
 
+  afterAll(async () => {
+    await quitBillingFixtureRedis();
+  });
+
   it('records a granted amount on the ledger and mirrors it', async () => {
     const response = await grantCredits({
       workspaceId,
@@ -109,20 +121,72 @@ describe('Admin credit grant and revoke (integration)', () => {
       reason: 'Outage on the 3rd',
       revokedAt: null,
     });
-    expect(await getMirroredCreditBalance(workspaceId)).toBe(
-      2 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+  });
+
+  it('leaves a granted amount without an expiry so no missed transition can drop it', async () => {
+    const response = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.grantWorkspaceCredits.expiresAt).toBeNull();
+
+    const grants = await listCreditGrants(workspaceId);
+
+    expect(grants[0].expiresAt).toBeNull();
+  });
+
+  // Rounded up to a period end rather than the exact day: credits are spent and
+  // settled a period at a time, so a deadline inside one would be invisible to
+  // both the cached counter and the carry-forward.
+  it('expires a time-boxed grant at the end of the period the requested day falls in', async () => {
+    const response = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.SALES,
+      reason: 'Pilot credits',
+      expiresInDays: 30,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.grantWorkspaceCredits.isActive).toBe(true);
+
+    const [storedGrant] = await listCreditGrants(workspaceId);
+
+    // Which period the thirtieth day lands in depends on when the suite runs,
+    // so the boundary is derived the same way the server derives it rather
+    // than listed.
+    const expectedExpiresAt = alignGrantExpiryToPeriodEnd({
+      requestedExpiresAt: addDays(new Date(), 30),
+      currentPeriodStart: PERIOD_START,
+      currentPeriodEnd: PERIOD_END,
+      interval: SubscriptionInterval.Month,
+    });
+
+    expect(storedGrant.expiresAt).toEqual(expectedExpiresAt);
+    expect(expectedExpiresAt.getTime()).toBeGreaterThanOrEqual(
+      addDays(new Date(), 30).getTime(),
     );
   });
 
-  it('adds the granted amount to a warm usage counter', async () => {
-    const cache = getBillingUsageCacheService();
-
-    await cache.warmAvailableCredits(
+  it('refuses an expiry beyond the accepted range', async () => {
+    const response = await grantCredits({
       workspaceId,
-      PERIOD_START,
-      PERIOD_END,
-      500_000,
-    );
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+      expiresInDays: 100_000,
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(await listCreditGrants(workspaceId)).toHaveLength(0);
+  });
+
+  it('drops the warm allowance counter when a grant lands', async () => {
+    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
 
     await grantCredits({
       workspaceId,
@@ -131,21 +195,10 @@ describe('Admin credit grant and revoke (integration)', () => {
       reason: null,
     });
 
-    expect(await cache.getAvailableCredits(workspaceId, PERIOD_START)).toBe(
-      500_000 + 2 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
-    );
+    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
-  it('takes a revoked grant back off the ledger and the counter', async () => {
-    const cache = getBillingUsageCacheService();
-
-    await cache.warmAvailableCredits(
-      workspaceId,
-      PERIOD_START,
-      PERIOD_END,
-      500_000,
-    );
-
+  it('takes a revoked grant off the ledger and drops the counter', async () => {
     const granted = await grantCredits({
       workspaceId,
       amount: 2,
@@ -153,6 +206,8 @@ describe('Admin credit grant and revoke (integration)', () => {
       reason: null,
     });
     const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
+
+    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
 
     const revoked = await callAdminGraphql(REVOKE_MUTATION, {
       workspaceId,
@@ -167,10 +222,28 @@ describe('Admin credit grant and revoke (integration)', () => {
     const grants = await listCreditGrants(workspaceId);
 
     expect(grants[0].revokedAt).not.toBeNull();
-    expect(await getMirroredCreditBalance(workspaceId)).toBe(0);
-    expect(await cache.getAvailableCredits(workspaceId, PERIOD_START)).toBe(
-      500_000,
-    );
+    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
+  });
+
+  it('drops the counter again when a revocation is retried', async () => {
+    const granted = await grantCredits({
+      workspaceId,
+      amount: 2,
+      type: BillingCreditGrantType.COMPENSATION,
+      reason: null,
+    });
+    const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
+
+    await callAdminGraphql(REVOKE_MUTATION, { workspaceId, creditGrantId });
+    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+
+    const retried = await callAdminGraphql(REVOKE_MUTATION, {
+      workspaceId,
+      creditGrantId,
+    });
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
   // The panel only offers the three operator types, but the mutation is
@@ -221,14 +294,42 @@ describe('Admin credit grant and revoke (integration)', () => {
     };
 
     const first = await callAdminGraphql(GRANT_MUTATION, variables);
+    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
     const second = await callAdminGraphql(GRANT_MUTATION, variables);
 
     expect(second.body.data.grantWorkspaceCredits.id).toBe(
       first.body.data.grantWorkspaceCredits.id,
     );
     expect(await listCreditGrants(workspaceId)).toHaveLength(1);
-    expect(await getMirroredCreditBalance(workspaceId)).toBe(
-      25 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
+  });
+
+  // The refusal to time-box a grant with no billing period must not reach a
+  // replay: the subscription that anchored the original deadline can be gone by
+  // the time the client retries, and the operation already succeeded.
+  it('answers a retried time-boxed grant after the subscription is canceled', async () => {
+    const clientOperationId = randomUUID();
+    const variables = {
+      workspaceId,
+      amount: 25,
+      type: BillingCreditGrantType.SALES,
+      reason: 'Retried after cancellation',
+      clientOperationId,
+      expiresInDays: 30,
+    };
+
+    const first = await callAdminGraphql(GRANT_MUTATION, variables);
+
+    expect(first.body.errors).toBeUndefined();
+
+    await setSubscriptionStatus(workspaceId, SubscriptionStatus.Canceled);
+
+    const second = await callAdminGraphql(GRANT_MUTATION, variables);
+
+    expect(second.body.errors).toBeUndefined();
+    expect(second.body.data.grantWorkspaceCredits.id).toBe(
+      first.body.data.grantWorkspaceCredits.id,
     );
+    expect(await listCreditGrants(workspaceId)).toHaveLength(1);
   });
 });

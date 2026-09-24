@@ -1,9 +1,8 @@
-import { t } from '@lingui/core/macro';
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { InputLabel } from 'twenty-ui/input';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Select } from '@/ui/input/components/Select';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import {
   BODY_TYPES,
   DEFAULT_JSON_BODY_PLACEHOLDER,
@@ -14,6 +13,7 @@ import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actio
 import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
@@ -22,9 +22,9 @@ import {
   type BodyType,
 } from 'twenty-shared/workflow';
 import { IconFileText, IconKey } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -1,3 +1,5 @@
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
@@ -24,8 +26,6 @@ import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/en
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @MetadataResolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
@@ -33,8 +33,8 @@ export class AgentChatSubscriptionResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
-    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
-    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
   ) {}
 
   @Subscription(() => AgentChatEventDTO, {
@@ -77,7 +77,7 @@ export class AgentChatSubscriptionResolver {
 
     let lastReapCheckAt = 0;
 
-    return wrapAsyncIteratorWithLifecycle(iterator, {
+    return wrapAsyncIteratorWithLifecycle(() => iterator, {
       initialValue: keepalivePayload,
       onHeartbeat: async () => {
         if (

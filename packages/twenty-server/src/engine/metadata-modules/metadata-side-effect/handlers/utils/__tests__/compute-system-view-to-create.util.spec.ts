@@ -14,7 +14,7 @@ const objectMetadata = {
 };
 
 describe('computeSystemViewToCreate', () => {
-  it.each([ViewKey.INDEX, SYSTEM_VIEW_KEYS.FIELDS_WIDGET])(
+  it.each([SYSTEM_VIEW_KEYS.INDEX, SYSTEM_VIEW_KEYS.FIELDS_WIDGET])(
     'should derive the %s view universal identifier from the object',
     (viewKey) => {
       const result = computeSystemViewToCreate({
@@ -43,6 +43,7 @@ describe('computeSystemViewToCreate', () => {
 
     expect(result.key).toBe(ViewKey.INDEX);
     expect(result.type).toBe(ViewType.TABLE);
+    expect(result.icon).toBe('IconTable');
     expect(result.name).toBe('All {objectLabelPlural}');
     expect(result.isSystemSideEffect).toBe(true);
     expect(result.objectMetadataUniversalIdentifier).toBe(
@@ -63,6 +64,7 @@ describe('computeSystemViewToCreate', () => {
     // The record-page view key is derivation-only, never persisted.
     expect(result.key).toBeNull();
     expect(result.type).toBe(ViewType.FIELDS_WIDGET);
+    expect(result.icon).toBe('IconList');
     expect(result.name).toBe('Ticket Record Page Fields');
     expect(result.isSystemSideEffect).toBe(true);
   });

@@ -11,8 +11,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipVariant } from 'twenty-ui/data-display';
-import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -73,7 +72,7 @@ export const RecordCalendarCardHeader = ({
           <RecordChip
             objectNameSingular={objectMetadataItem.nameSingular}
             record={recordStore}
-            variant={ChipVariant.Transparent}
+            variant="ghost"
             isIconHidden={true}
             forceDisableClick
             triggerEvent={'CLICK'}
@@ -83,7 +82,7 @@ export const RecordCalendarCardHeader = ({
             <RecordChip
               objectNameSingular={objectMetadataItem.nameSingular}
               record={recordStore}
-              variant={ChipVariant.Transparent}
+              variant="ghost"
               isIconHidden={true}
               onClick={handleChipClick}
               triggerEvent={'CLICK'}
@@ -96,10 +95,10 @@ export const RecordCalendarCardHeader = ({
           <Checkbox
             hoverable
             checked={isRecordCalendarCardSelected}
-            onChange={(value) => {
-              setIsRecordCalendarCardSelected(value.target.checked);
+            onCheckedChange={(isChecked) => {
+              setIsRecordCalendarCardSelected(isChecked);
             }}
-            variant={CheckboxVariant.Secondary}
+            variant="outline"
           />
         </StopPropagationContainer>
       </StyledCheckboxContainer>

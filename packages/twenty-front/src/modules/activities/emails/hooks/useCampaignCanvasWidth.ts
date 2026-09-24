@@ -13,10 +13,13 @@ import {
 export const useCampaignCanvasWidth = (editor: Editor | null): string => {
   const canvasWidth = useEditorState({
     editor,
-    selector: ({ editor: currentEditor }) =>
-      isDefined(currentEditor)
-        ? (resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme)
-            ?.width ?? CANVAS_THEME_DEFAULTS.width)
+    // Reading the editor passed in rather than the snapshot one, which keeps
+    // pointing at the instance `useEditor` destroyed when it recreated the
+    // editor, until the next transaction refreshes the snapshot.
+    selector: () =>
+      isDefined(editor)
+        ? (resolveCanvasTheme(editor.state.doc.attrs.canvasTheme)?.width ??
+          CANVAS_THEME_DEFAULTS.width)
         : CANVAS_THEME_DEFAULTS.width,
   });
 

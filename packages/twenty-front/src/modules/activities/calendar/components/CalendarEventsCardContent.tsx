@@ -3,21 +3,17 @@ import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext'
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { format, getYear } from 'date-fns';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
+
+import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H3Title } from 'twenty-ui/typography';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
@@ -36,6 +32,7 @@ const StyledTitleContainer = styled.div`
     color: ${themeCssVariables.font.color.secondary};
     font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};
+    line-height: inherit;
   }
 `;
 
@@ -71,17 +68,15 @@ export const CalendarEventsCardContent = ({
   if (!timelineCalendarEvents?.length) {
     // TODO: change animated placeholder
     return (
-      <AnimatedPlaceholderEmptyContainer>
+      <EmptyState.Root>
         <AnimatedPlaceholder type="noMatchRecord" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`No Events`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
+        <EmptyState.Content>
+          <EmptyState.Title>{t`No Events`}</EmptyState.Title>
+          <EmptyState.Description>
             {t`No events have been scheduled with this ${objectName} yet.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+          </EmptyState.Description>
+        </EmptyState.Content>
+      </EmptyState.Root>
     );
   }
 
@@ -102,19 +97,15 @@ export const CalendarEventsCardContent = ({
           });
 
           return (
-            <Section key={monthTime}>
+            <Section.Root key={monthTime}>
               <StyledTitleContainer>
-                <H3Title
-                  title={
-                    <>
-                      {monthLabel}
-                      {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
-                    </>
-                  }
-                />
+                <Heading level={3} size="lg">
+                  {monthLabel}
+                  {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
+                </Heading>
               </StyledTitleContainer>
               <CalendarMonthCard dayTimes={monthDayTimes} />
-            </Section>
+            </Section.Root>
           );
         })}
         <CustomResolverFetchMoreLoader

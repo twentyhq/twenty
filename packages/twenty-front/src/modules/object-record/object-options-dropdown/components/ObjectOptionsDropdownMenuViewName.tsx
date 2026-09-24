@@ -1,3 +1,4 @@
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -7,7 +8,6 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -15,8 +15,8 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { styled } from '@linaria/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -78,6 +78,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
   const [viewName, setViewName] = useState(currentView?.name);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const { dropdownId } = useObjectOptionsDropdown();
 
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
@@ -88,7 +89,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
 
       await updateViewFromCurrentState();
     },
-    focusId: VIEW_PICKER_DROPDOWN_ID,
+    focusId: dropdownId,
     dependencies: [viewPickerIsPersisting, updateViewFromCurrentState],
   });
 
@@ -130,7 +131,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
         <DropdownMenuItemsContainer>
           <StyledDropdownMenuIconAndNameContainer>
             <IconPicker
-              size="small"
+              size="sm"
               onChange={handleIconChange}
               selectedIconKey={viewPickerSelectedIcon}
             />

@@ -250,7 +250,7 @@ const triggerUpdateRelationOptimisticEffect = ({
       triggerAttachRelationOptimisticEffect({
         cache,
         sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
-        sourceRecordId: updatedSourceRecord.id,
+        sourceRecord: updatedSourceRecord,
         fieldNameOnTargetRecord: gqlFieldNameOnTargetRecord,
         targetObjectMetadataItem: fullTargetObjectMetadataItem,
         targetRecordId: targetRecordToAttachTo.id,
@@ -405,7 +405,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
         triggerAttachRelationOptimisticEffect({
           cache,
           sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
-          sourceRecordId: updatedSourceRecord.id,
+          sourceRecord: updatedSourceRecord,
           fieldNameOnTargetRecord: targetFieldMetadata.name,
           targetObjectMetadataItem: fullTargetObjectMetadataItem,
           objectMetadataItems,

@@ -3,62 +3,29 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, LessThan, MoreThan } from 'typeorm';
+import { type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
-import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-// Shared with the backfill instance command so the two are safe in either
-// order: whichever runs first claims the key, the other is a no-op.
-const LEGACY_BALANCE_IDEMPOTENCY_KEY_PREFIX = 'backfill-credit-balance:';
 
 export type CreateBillingCreditGrantParams = {
   workspaceId: string;
   amountMicro: number;
   type: BillingCreditGrantType;
   effectiveAt: Date;
-  expiresAt: Date;
+  // Null means the credits stay spendable until something settles them, which
+  // is the default. See the entity for why an expiry is a tombstone here.
+  expiresAt: Date | null;
   reason?: string | null;
   grantedByUserId?: string | null;
   idempotencyKey?: string | null;
   sourceGrantId?: string | null;
-};
-
-const getPostgresErrorCode = (error: unknown): string | undefined => {
-  if (!isDefined(error) || typeof error !== 'object' || !('code' in error)) {
-    return undefined;
-  }
-
-  return typeof error.code === 'string' ? error.code : undefined;
-};
-
-// TypeORM wraps the driver error, and which of the two carries the code
-// depends on how the query was issued.
-const isUniqueViolation = (error: unknown): boolean => {
-  if (getPostgresErrorCode(error) === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION) {
-    return true;
-  }
-
-  if (
-    !isDefined(error) ||
-    typeof error !== 'object' ||
-    !('driverError' in error)
-  ) {
-    return false;
-  }
-
-  return (
-    getPostgresErrorCode(error.driverError) ===
-    POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
-  );
 };
 
 // Owns the billingCreditGrant table. Deliberately free of side effects so that
@@ -69,14 +36,13 @@ export class BillingCreditGrantService {
   constructor(
     @InjectWorkspaceScopedRepository(BillingCreditGrantEntity)
     private readonly billingCreditGrantRepository: WorkspaceScopedRepository<BillingCreditGrantEntity>,
-    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
 
   // Returns null when idempotencyKey has already been used, so callers can tell
   // a fresh grant from a replayed one.
   async createGrant(
     params: CreateBillingCreditGrantParams,
+    entityManager?: EntityManager,
   ): Promise<BillingCreditGrantEntity | null> {
     const {
       workspaceId,
@@ -97,133 +63,137 @@ export class BillingCreditGrantService {
       );
     }
 
-    if (expiresAt.getTime() <= effectiveAt.getTime()) {
+    if (isDefined(expiresAt) && expiresAt.getTime() <= effectiveAt.getTime()) {
       throw new BillingException(
         `Cannot grant credits to workspace ${workspaceId} expiring at ${expiresAt.toISOString()}, before or when they become effective at ${effectiveAt.toISOString()}`,
         BillingExceptionCode.BILLING_CREDIT_GRANT_VALIDITY_INVALID,
       );
     }
 
-    try {
-      const { identifiers, generatedMaps } =
-        await this.billingCreditGrantRepository.insert(workspaceId, {
-          amountMicro,
-          type,
-          effectiveAt,
-          expiresAt,
-          reason,
-          grantedByUserId,
-          idempotencyKey,
-          sourceGrantId,
-        });
+    const repository = this.getRepository(entityManager);
 
-      const insertedId = identifiers[0]?.id ?? generatedMaps[0]?.id;
-      const grantId = typeof insertedId === 'string' ? insertedId : undefined;
+    // Idempotency is enforced by letting Postgres drop the duplicate rather
+    // than by catching the unique violation: the rollover inserts inside a
+    // transaction, where a raised constraint error would abort every write
+    // that came before it.
+    const { raw } = await repository
+      .createQueryBuilder()
+      .insert()
+      .values({
+        workspaceId,
+        amountMicro,
+        type,
+        effectiveAt,
+        expiresAt,
+        reason,
+        grantedByUserId,
+        idempotencyKey,
+        sourceGrantId,
+      })
+      .orIgnore()
+      .returning('id')
+      .execute();
 
-      if (!isDefined(grantId)) {
-        return null;
-      }
+    const [insertedRow] = raw as { id?: string }[];
+    const grantId = insertedRow?.id;
 
-      return this.billingCreditGrantRepository.findOne(workspaceId, {
-        where: { id: grantId },
-      });
-    } catch (error) {
-      if (isDefined(idempotencyKey) && isUniqueViolation(error)) {
-        return null;
-      }
-
-      throw error;
+    if (!isDefined(grantId)) {
+      return null;
     }
+
+    // Read back rather than returning the raw row, which skips the bigint
+    // transformer and would hand callers amountMicro as a string.
+    return repository.findOne(workspaceId, { where: { id: grantId } });
   }
 
   async getActiveCreditsMicro(workspaceId: string): Promise<number> {
+    const { balanceMicro } = await this.getActiveCreditBalance({
+      workspaceId,
+      boundary: null,
+    });
+
+    return balanceMicro;
+  }
+
+  // One statement, so the balance and the expiry that bounds its validity come
+  // from the same snapshot: read separately, a grant lapsing between the two
+  // reads is counted in the balance yet missing from the expiry, and the
+  // counter would keep its credits spendable until the period ends.
+  async getActiveCreditBalance({
+    workspaceId,
+    boundary,
+  }: {
+    workspaceId: string;
+    boundary: Date | null;
+  }): Promise<{ balanceMicro: number; earliestExpiryBefore: Date | null }> {
     const result = await this.billingCreditGrantRepository
       .createQueryBuilder('billingCreditGrant')
       .select('COALESCE(SUM("billingCreditGrant"."amountMicro"), 0)', 'total')
+      .addSelect(
+        isDefined(boundary)
+          ? 'MIN("billingCreditGrant"."expiresAt") FILTER (WHERE "billingCreditGrant"."expiresAt" < :boundary)'
+          : 'NULL',
+        'earliestExpiry',
+      )
       .where('"billingCreditGrant"."workspaceId" = :workspaceId', {
         workspaceId,
       })
       .andWhere('"billingCreditGrant"."revokedAt" IS NULL')
       .andWhere('"billingCreditGrant"."effectiveAt" <= now()')
-      .andWhere('"billingCreditGrant"."expiresAt" > now()')
-      .getRawOne<{ total: string | number | null }>();
+      .andWhere(
+        '("billingCreditGrant"."expiresAt" IS NULL OR "billingCreditGrant"."expiresAt" > now())',
+      )
+      .setParameters(isDefined(boundary) ? { boundary } : {})
+      .getRawOne<{
+        total: string | number | null;
+        earliestExpiry: Date | string | null;
+      }>();
 
-    const total = Number(result?.total ?? 0);
+    const balanceMicro = Number(result?.total ?? 0);
 
     // Rounding a balance would hand out or withhold credits that were never
     // granted, so refuse rather than serve a number we cannot represent.
-    if (!Number.isSafeInteger(total)) {
+    if (!Number.isSafeInteger(balanceMicro)) {
       throw new BillingException(
-        `Credit balance for workspace ${workspaceId} is not a safe integer (${total})`,
+        `Credit balance for workspace ${workspaceId} is not a safe integer (${balanceMicro})`,
         BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID,
       );
     }
 
-    return total;
-  }
-
-  // Moves a not-yet-backfilled balance into the ledger before anything writes
-  // to it. Without this the first grant recomputes the mirror column from a
-  // ledger that does not hold the legacy balance yet, erasing it.
-  // Remove along with creditBalanceMicro.
-  async materializeLegacyBalance({
-    workspaceId,
-    effectiveAt,
-    expiresAt,
-  }: {
-    workspaceId: string;
-    effectiveAt: Date;
-    expiresAt: Date;
-  }): Promise<void> {
-    if (await this.hasAnyGrant(workspaceId)) {
-      return;
-    }
-
-    const legacyBalanceMicro = await this.getMirroredBalanceMicro(workspaceId);
-
-    if (legacyBalanceMicro <= 0) {
-      return;
-    }
-
-    await this.createGrant({
-      workspaceId,
-      amountMicro: legacyBalanceMicro,
-      type: BillingCreditGrantType.ROLLOVER,
-      effectiveAt,
-      expiresAt,
-      reason: 'Backfilled from billingCustomer.creditBalanceMicro',
-      idempotencyKey: `${LEGACY_BALANCE_IDEMPOTENCY_KEY_PREFIX}${workspaceId}`,
-    });
-  }
-
-  // What a workspace can actually spend, which is the ledger except in the
-  // window between this release deploying and its backfill running: until a
-  // workspace has any grant at all, its balance still only exists in the
-  // mirror column. Remove along with creditBalanceMicro.
-  async getSpendableCreditsMicro(workspaceId: string): Promise<number> {
-    if (await this.hasAnyGrant(workspaceId)) {
-      return this.getActiveCreditsMicro(workspaceId);
-    }
-
-    return this.getMirroredBalanceMicro(workspaceId);
+    return {
+      balanceMicro,
+      earliestExpiryBefore: isDefined(result?.earliestExpiry)
+        ? new Date(result.earliestExpiry)
+        : null,
+    };
   }
 
   // Grants that were spendable at any point during the given period.
-  async findGrantsLiveDuringPeriod({
-    workspaceId,
-    periodStart,
-    periodEnd,
-  }: {
-    workspaceId: string;
-    periodStart: Date;
-    periodEnd: Date;
-  }): Promise<BillingCreditGrantEntity[]> {
-    return this.billingCreditGrantRepository.find(workspaceId, {
-      where: {
-        revokedAt: IsNull(),
-        effectiveAt: LessThan(periodEnd),
-        expiresAt: MoreThan(periodStart),
-      },
+  async findGrantsLiveDuringPeriod(
+    {
+      workspaceId,
+      periodStart,
+      periodEnd,
+    }: {
+      workspaceId: string;
+      periodStart: Date;
+      periodEnd: Date;
+    },
+    entityManager?: EntityManager,
+  ): Promise<BillingCreditGrantEntity[]> {
+    return this.getRepository(entityManager).find(workspaceId, {
+      where: [
+        {
+          revokedAt: IsNull(),
+          effectiveAt: LessThan(periodEnd),
+          expiresAt: IsNull(),
+        },
+        {
+          revokedAt: IsNull(),
+          effectiveAt: LessThan(periodEnd),
+          expiresAt: MoreThan(periodStart),
+        },
+      ],
       order: { createdAt: 'ASC' },
     });
   }
@@ -249,27 +219,36 @@ export class BillingCreditGrantService {
     return row?.expiresAt ?? null;
   }
 
-  // Enforces the one-grant-per-period invariant at the point where periods
-  // actually roll: whatever a writer guessed for expiresAt, a grant never
-  // outlives the period it was carried forward from. Matched by predicate
-  // rather than by id so a grant created while the transition runs is covered
-  // too.
-  async closeGrantsAtPeriodEnd({
-    workspaceId,
-    periodEnd,
-  }: {
-    workspaceId: string;
-    periodEnd: Date;
-  }): Promise<void> {
-    await this.billingCreditGrantRepository.update(
+  // Settles every grant the closing period could still spend, so that the
+  // carry-forward rows written next in the same transaction are the only ones
+  // left live. Matched by predicate rather than by id so a grant created while
+  // the transition runs is covered too.
+  async closeGrantsAtPeriodEnd(
+    {
       workspaceId,
-      {
-        revokedAt: IsNull(),
-        effectiveAt: LessThan(periodEnd),
-        expiresAt: MoreThan(periodEnd),
-      },
-      { expiresAt: periodEnd },
-    );
+      periodEnd,
+    }: {
+      workspaceId: string;
+      periodEnd: Date;
+    },
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const repository = this.getRepository(entityManager);
+
+    // The OR keeps an operator-set expiry already inside the period alone,
+    // which it has to stay: stamping it forward would hand back credits that
+    // had lapsed before the boundary.
+    await repository
+      .createQueryBuilder()
+      .update()
+      .set({ expiresAt: periodEnd })
+      .where('"workspaceId" = :workspaceId', { workspaceId })
+      .andWhere('"revokedAt" IS NULL')
+      .andWhere('"effectiveAt" < :periodEnd', { periodEnd })
+      .andWhere('("expiresAt" IS NULL OR "expiresAt" > :periodEnd)', {
+        periodEnd,
+      })
+      .execute();
   }
 
   async listGrants(workspaceId: string): Promise<BillingCreditGrantEntity[]> {
@@ -278,8 +257,6 @@ export class BillingCreditGrantService {
     });
   }
 
-  // wasRevokedNow tells a retried revocation apart from the one that actually
-  // took the credits away, so callers only adjust balances once.
   async revokeGrant({
     workspaceId,
     grantId,
@@ -288,7 +265,7 @@ export class BillingCreditGrantService {
     workspaceId: string;
     grantId: string;
     revokedByUserId?: string | null;
-  }): Promise<{ grant: BillingCreditGrantEntity; wasRevokedNow: boolean }> {
+  }): Promise<BillingCreditGrantEntity> {
     const grant = await this.billingCreditGrantRepository.findOne(workspaceId, {
       where: { id: grantId },
     });
@@ -301,26 +278,18 @@ export class BillingCreditGrantService {
     }
 
     if (isDefined(grant.revokedAt)) {
-      return { grant, wasRevokedNow: false };
+      return grant;
     }
 
-    const { affected } = await this.billingCreditGrantRepository.update(
+    await this.billingCreditGrantRepository.update(
       workspaceId,
       { id: grantId, revokedAt: IsNull() },
       { revokedAt: new Date(), revokedByUserId: revokedByUserId ?? null },
     );
 
-    const revokedGrant = await this.billingCreditGrantRepository.findOneOrFail(
-      workspaceId,
-      { where: { id: grantId } },
-    );
-
-    // Two concurrent revocations both read an unrevoked grant; only the one
-    // whose UPDATE matched may move the balance.
-    return {
-      grant: revokedGrant,
-      wasRevokedNow: isDefined(affected) && affected > 0,
-    };
+    return this.billingCreditGrantRepository.findOneOrFail(workspaceId, {
+      where: { id: grantId },
+    });
   }
 
   async findGrantByIdempotencyKey(
@@ -334,19 +303,11 @@ export class BillingCreditGrantService {
     return grant ?? null;
   }
 
-  // Whether the ledger has taken over from billingCustomer.creditBalanceMicro
-  // for this workspace. Public so the mirror write can refuse to overwrite a
-  // balance the backfill has not reached yet.
-  async hasAnyGrant(workspaceId: string): Promise<boolean> {
-    return this.billingCreditGrantRepository.exists(workspaceId, { where: {} });
-  }
-
-  private async getMirroredBalanceMicro(workspaceId: string): Promise<number> {
-    const billingCustomer = await this.billingCustomerRepository.findOne(
-      workspaceId,
-      { select: { creditBalanceMicro: true }, where: {} },
-    );
-
-    return billingCustomer?.creditBalanceMicro ?? 0;
+  private getRepository(
+    entityManager?: EntityManager,
+  ): WorkspaceScopedRepository<BillingCreditGrantEntity> {
+    return isDefined(entityManager)
+      ? this.billingCreditGrantRepository.withManager(entityManager)
+      : this.billingCreditGrantRepository;
   }
 }

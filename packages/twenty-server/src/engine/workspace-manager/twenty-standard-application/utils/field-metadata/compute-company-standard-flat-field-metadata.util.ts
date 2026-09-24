@@ -32,9 +32,9 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      label: i18nLabel(msg({ message: `ID`, context: 'fieldMetadata.label' })),
       description: i18nLabel(
-        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+        msg({ message: `ID`, context: 'fieldMetadata.description' }),
       ),
       icon: 'Icon123',
       isSystem: true,
@@ -174,6 +174,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       isUnique: true,
       settings: {
         maxNumberOfValues: 1,
+        type: 'domain',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -439,7 +440,6 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
         .icon,
-      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'taskTarget',
       targetFieldName: 'targetCompany',
@@ -471,7 +471,6 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
         .icon,
-      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'noteTarget',
       targetFieldName: 'targetCompany',

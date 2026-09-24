@@ -11,6 +11,8 @@ import {
 import {
   countDestructiveActions,
   hasDestructiveActions,
+  NO_DELETE_HINT,
+  shouldShowNoDeleteHint,
 } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
@@ -29,6 +31,7 @@ export class SyncApplicationOrchestratorStep {
   private notify: () => void;
   private verbose: boolean;
   private force: boolean;
+  private inferDeletionFromMissingEntities: boolean;
   private interactive: boolean;
   private onExit?: (params: { code: number; message: string }) => void;
 
@@ -38,6 +41,7 @@ export class SyncApplicationOrchestratorStep {
     notify,
     verbose,
     force,
+    inferDeletionFromMissingEntities,
     interactive,
     onExit,
   }: {
@@ -46,6 +50,7 @@ export class SyncApplicationOrchestratorStep {
     notify: () => void;
     verbose?: boolean;
     force?: boolean;
+    inferDeletionFromMissingEntities?: boolean;
     interactive?: boolean;
     onExit?: (params: { code: number; message: string }) => void;
   }) {
@@ -54,6 +59,8 @@ export class SyncApplicationOrchestratorStep {
     this.notify = notify;
     this.verbose = verbose ?? false;
     this.force = force ?? false;
+    this.inferDeletionFromMissingEntities =
+      inferDeletionFromMissingEntities ?? true;
     this.interactive = interactive ?? false;
     this.onExit = onExit;
   }
@@ -92,12 +99,23 @@ export class SyncApplicationOrchestratorStep {
 
       const planResult = await this.apiService.syncApplication(manifest, {
         dryRun: true,
+        inferDeletionFromMissingEntities: this.inferDeletionFromMissingEntities,
       });
 
       if (!planResult.success) {
         this.applyFailure(planResult, events);
 
         return;
+      }
+
+      if (
+        shouldShowNoDeleteHint({
+          actions: planResult.data.actions,
+          inferDeletionFromMissingEntities:
+            this.inferDeletionFromMissingEntities,
+        })
+      ) {
+        events.push({ message: NO_DELETE_HINT, status: 'info' });
       }
 
       if (hasDestructiveActions(planResult.data.actions)) {
@@ -114,7 +132,9 @@ export class SyncApplicationOrchestratorStep {
 
     events.push({ message: 'Syncing manifest', status: 'info' });
 
-    const syncResult = await this.apiService.syncApplication(manifest);
+    const syncResult = await this.apiService.syncApplication(manifest, {
+      inferDeletionFromMissingEntities: this.inferDeletionFromMissingEntities,
+    });
 
     if (syncResult.success) {
       events.push(...formatSyncActionsSummary(syncResult.data.actions));

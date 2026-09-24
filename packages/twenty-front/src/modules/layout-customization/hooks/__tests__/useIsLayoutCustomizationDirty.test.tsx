@@ -1,3 +1,4 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
 import { useIsLayoutCustomizationDirty } from '@/layout-customization/hooks/useIsLayoutCustomizationDirty';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -24,6 +25,7 @@ const MOCK_PAGE_LAYOUT: PageLayout = {
   id: PAGE_LAYOUT_ID_1,
   name: 'Test Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isFirstTabPinned: true,
   isSystemSideEffect: true,
   objectMetadataId: 'obj-1',
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
@@ -38,6 +40,7 @@ const MOCK_DRAFT_PAGE_LAYOUT = {
   id: PAGE_LAYOUT_ID_1,
   name: 'Test Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isFirstTabPinned: true,
   objectMetadataId: 'obj-1',
   tabs: [] as PageLayout['tabs'],
   defaultTabToFocusOnMobileAndSidePanelId: null,
@@ -50,6 +53,15 @@ const getWrapper =
   );
 
 describe('useIsLayoutCustomizationDirty', () => {
+  it('enables Save for an object color change without navigation changes', () => {
+    const store = createStore();
+    store.set(objectColorsDraftState.atom, { 'company-id': 'red' });
+    const { result } = renderHook(() => useIsLayoutCustomizationDirty(), {
+      wrapper: getWrapper(store),
+    });
+    expect(result.current.isDirty).toBe(true);
+  });
+
   it('should return not dirty when no layouts are touched and nav is clean', () => {
     const store = createStore();
     const wrapper = getWrapper(store);

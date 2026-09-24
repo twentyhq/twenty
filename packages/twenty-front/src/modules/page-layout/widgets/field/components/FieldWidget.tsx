@@ -6,36 +6,33 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
 import { FieldWidgetJunctionRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationCard';
 import { FieldWidgetJunctionRelationField } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationField';
-import { FieldWidgetRichTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetRichTextEditor';
 import { FieldWidgetMorphRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelationCard';
 import { FieldWidgetMorphRelationField } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelationField';
 import { FieldWidgetRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetRelationCard';
 import { FieldWidgetRelationField } from '@/page-layout/widgets/field/components/FieldWidgetRelationField';
 import { FieldWidgetRelationTable } from '@/page-layout/widgets/field/components/FieldWidgetRelationTable';
+import { FieldWidgetRichTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetRichTextEditor';
+import { FieldWidgetTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetTextEditor';
 import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
 import { getFieldWidgetEffectiveDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetEffectiveDisplayMode';
-import { FieldWidgetTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetTextEditor';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -51,7 +48,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   assertFieldWidgetOrThrow(widget);
 
   const targetRecord = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -76,17 +73,15 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     return (
       <SidePanelProvider value={{ isInSidePanel }}>
         <StyledContainer>
-          <AnimatedPlaceholderEmptyContainer>
+          <EmptyState.Root>
             <AnimatedPlaceholder type="noRecord" />
-            <AnimatedPlaceholderEmptyTextContainer>
-              <AnimatedPlaceholderEmptyTitle>
-                {t`No field configured`}
-              </AnimatedPlaceholderEmptyTitle>
-              <AnimatedPlaceholderEmptySubTitle>
+            <EmptyState.Content>
+              <EmptyState.Title>{t`No field configured`}</EmptyState.Title>
+              <EmptyState.Description>
                 {t`Select a field to display in this widget`}
-              </AnimatedPlaceholderEmptySubTitle>
-            </AnimatedPlaceholderEmptyTextContainer>
-          </AnimatedPlaceholderEmptyContainer>
+              </EmptyState.Description>
+            </EmptyState.Content>
+          </EmptyState.Root>
         </StyledContainer>
       </SidePanelProvider>
     );
@@ -125,26 +120,28 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   }
 
   if (isFieldRelation(fieldDefinition)) {
-    const isJunctionRelation = isDefined(
-      getJunctionConfig({
-        settings: fieldDefinition.metadata.settings,
-        relationObjectMetadataId:
-          fieldDefinition.metadata.relationObjectMetadataId,
-        relationTargetFieldMetadataId:
-          fieldDefinition.metadata.relationFieldMetadataId,
-        sourceObjectMetadataId: objectMetadataItem.id,
-        objectMetadataItems,
-      }),
-    );
+    const junctionConfig = resolveJunctionConfig({
+      settings: fieldDefinition.metadata.settings,
+      relationObjectMetadataId:
+        fieldDefinition.metadata.relationObjectMetadataId,
+      relationTargetFieldMetadataId:
+        fieldDefinition.metadata.relationFieldMetadataId,
+      sourceObjectMetadataId: objectMetadataItem.id,
+      objectMetadataItems,
+    });
 
-    if (isJunctionRelation) {
+    if (isDefined(junctionConfig)) {
+      if (!isUsableJunctionConfig(junctionConfig)) {
+        return null;
+      }
+
       if (fieldDisplayMode === FieldDisplayMode.CARD) {
         return (
           <FieldWidgetJunctionRelationCard
             fieldDefinition={fieldDefinition}
             relationValue={record}
             isInSidePanel={isInSidePanel}
-            sourceObjectMetadataId={objectMetadataItem.id}
+            junctionConfig={junctionConfig}
           />
         );
       }
@@ -154,16 +151,16 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
           <FieldWidgetRelationTable
             fieldDefinition={fieldDefinition}
             recordId={targetRecord.id}
+            junctionConfig={junctionConfig}
           />
         );
       }
 
       return (
         <FieldWidgetJunctionRelationField
-          fieldDefinition={fieldDefinition}
           relationValue={record}
           isInSidePanel={isInSidePanel}
-          sourceObjectMetadataId={objectMetadataItem.id}
+          junctionConfig={junctionConfig}
         />
       );
     }

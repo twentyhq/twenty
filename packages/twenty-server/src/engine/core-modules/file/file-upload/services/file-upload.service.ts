@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Readable, Transform } from 'stream';
@@ -6,32 +6,36 @@ import { pipeline } from 'stream/promises';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import bytes from 'bytes';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { settings } from 'src/engine/constants/settings';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
+import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
+import { type CompletedFileUpload } from 'src/engine/core-modules/file/file-upload/types/completed-file-upload.type';
 import {
   FileUploadException,
   FileUploadExceptionCode,
 } from 'src/engine/core-modules/file/file-upload/file-upload.exception';
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
 import { FileUploadTargetService } from 'src/engine/core-modules/file/file-upload/services/file-upload-target.service';
+import { assertValidDirectUploadSize } from 'src/engine/core-modules/file/file-upload/utils/assert-valid-direct-upload-size.util';
+import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { withDeadline } from 'src/utils/with-deadline';
 
 export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.FilesField,
@@ -39,10 +43,20 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.EmailAttachment,
   FileFolder.AgentChat,
   FileFolder.EmailImage,
+  FileFolder.AppTarball,
+] as const;
+
+// A tarball leaves quarantine through completeAppTarballUpload only, behind
+// the marketplace-apps permission: the generic completion, open to any member
+// allowed to upload files, must not persist bytes in that folder.
+export const DEDICATED_COMPLETION_FILE_FOLDERS = [
+  FileFolder.AppTarball,
 ] as const;
 
 @Injectable()
 export class FileUploadService {
+  private readonly logger = new Logger(FileUploadService.name);
+
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly fileUrlService: FileUrlService,
@@ -86,19 +100,19 @@ export class FileUploadService {
       );
     }
 
-    const maxFileSize = bytes(settings.storage.maxDirectUploadFileSize) ?? 0;
+    assertValidDirectUploadSize(size);
 
-    if (!Number.isInteger(size) || size <= 0 || size > maxFileSize) {
-      throw new FileUploadException(
-        `Invalid file size ${size} (max ${maxFileSize} bytes)`,
-        FileUploadExceptionCode.FILE_TOO_LARGE,
-        {
-          userFriendlyMessage: msg`The file is empty or exceeds the maximum allowed size.`,
-        },
+    const { ext } = buildFileInfo(filename);
+
+    // Completion refuses to sanitize an SVG this big, so reject before the
+    // client transfers it. The declared extension is a client claim, which
+    // only makes this a shortcut: the sniffed check at completion decides.
+    if (ext.toLowerCase() === 'svg' && size > MAX_SANITIZABLE_SVG_BYTES) {
+      throw buildSvgTooLargeException(
+        `declared size ${size} exceeds the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
       );
     }
 
-    const { ext } = buildFileInfo(filename);
     const mimeType = 'application/octet-stream';
 
     const fileId = v4();
@@ -194,7 +208,10 @@ export class FileUploadService {
           fileFolder,
           applicationUniversalIdentifier: application.universalIdentifier,
           workspaceId,
-          resourcePath,
+          resourcePath: buildPendingUploadResourcePath({
+            fileId,
+            resourcePath,
+          }),
           stream: sizeLimiter,
           mimeType: file.mimeType,
         }),
@@ -230,7 +247,7 @@ export class FileUploadService {
   }: {
     workspaceId: string;
     fileId: string;
-  }): Promise<FileWithSignedUrlDTO> {
+  }): Promise<CompletedFileUpload> {
     const file = await this.findFileOrThrow({ workspaceId, fileId });
     const [fileFolder] = file.path.split('/');
 
@@ -244,6 +261,20 @@ export class FileUploadService {
         FileUploadExceptionCode.FILE_NOT_FOUND,
         {
           userFriendlyMessage: msg`File not found.`,
+        },
+      );
+    }
+
+    if (
+      DEDICATED_COMPLETION_FILE_FOLDERS.includes(
+        fileFolder as (typeof DEDICATED_COMPLETION_FILE_FOLDERS)[number],
+      )
+    ) {
+      throw new FileUploadException(
+        `File ${fileId} in folder ${fileFolder} is completed by its dedicated mutation`,
+        FileUploadExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`This file must be completed with its dedicated mutation.`,
         },
       );
     }
@@ -271,8 +302,8 @@ export class FileUploadService {
       file,
     });
 
-    const completedFile =
-      await this.fileUploadCompletionService.completeUploadedFile({
+    const completedFile = await withDeadline({
+      promise: this.fileUploadCompletionService.completeUploadedFile({
         workspaceId,
         file,
         storageLocation: {
@@ -281,7 +312,24 @@ export class FileUploadService {
           workspaceId,
           resourcePath,
         },
-      });
+      }),
+      timeoutMs: COMPLETE_FILE_UPLOAD_DEADLINE_MS,
+      createTimeoutError: () =>
+        new FileUploadException(
+          `Completion of file ${fileId} exceeded ${COMPLETE_FILE_UPLOAD_DEADLINE_MS}ms waiting on storage`,
+          FileUploadExceptionCode.STORAGE_TIMEOUT,
+          {
+            userFriendlyMessage: msg`File storage took too long to respond. Please retry.`,
+          },
+        ),
+      onSettleAfterDeadline: (settlement) => {
+        this.logger.warn(
+          settlement.status === 'fulfilled'
+            ? `Completion of file ${fileId} succeeded after the deadline had been reported to the client`
+            : `Completion of file ${fileId} failed after the deadline had been reported to the client: ${settlement.error}`,
+        );
+      },
+    });
 
     return this.toFileWithSignedUrl({
       file: { ...file, ...completedFile, status: FILE_STATUS.UPLOADED },
@@ -414,7 +462,7 @@ export class FileUploadService {
     file: FileEntity;
     fileFolder: FileFolder;
     workspaceId: string;
-  }): Promise<FileWithSignedUrlDTO> {
+  }): Promise<CompletedFileUpload> {
     return {
       ...file,
       url: await this.fileUrlService.signFileByIdUrl({

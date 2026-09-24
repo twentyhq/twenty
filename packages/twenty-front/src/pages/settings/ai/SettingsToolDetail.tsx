@@ -1,28 +1,23 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
+import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
+import { TextArea } from '@/ui/input/components/TextArea';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
-import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
-
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextArea } from '@/ui/input/components/TextArea';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -38,10 +33,10 @@ export const SettingsToolDetail = () => {
   const { toolIdentifier } = useParams();
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { updateLogicFunction, deleteLogicFunction } =
     usePersistLogicFunction();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [isDeleting, setIsDeleting] = useState(false);
   const [editedName, setEditedName] = useState<string | null>(null);
@@ -163,10 +158,10 @@ export const SettingsToolDetail = () => {
     });
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({ message: t`Tool deleted` });
+      enqueueToast({ variant: 'success', children: t`Tool deleted` });
       navigate(getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'));
     } else {
-      enqueueErrorSnackBar({ message: t`Failed to delete tool` });
+      enqueueToast({ variant: 'error', children: t`Failed to delete tool` });
     }
 
     setIsDeleting(false);
@@ -210,17 +205,17 @@ export const SettingsToolDetail = () => {
             highlightColor={theme.background.transparent.lighter}
             borderRadius={4}
           >
-            <Section>
+            <Section.Root>
               <Skeleton height={20} width={200} />
               <Skeleton height={20} width={400} />
 
               <Skeleton height={80} />
-            </Section>
+            </Section.Root>
           </SkeletonTheme>
         ) : (
           <>
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Parameters`}
                 description={t`Input parameters accepted by this tool`}
               />
@@ -229,10 +224,10 @@ export const SettingsToolDetail = () => {
                 requiredFields={inputSchema?.required}
                 functionLink={functionLink}
               />
-            </Section>
+            </Section.Root>
 
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Description`}
                 description={t`Define what this tool does`}
               />
@@ -245,29 +240,28 @@ export const SettingsToolDetail = () => {
                 onChange={handleDescriptionChange}
                 disabled={isReadOnly}
               />
-            </Section>
+            </Section.Root>
 
             {isCustomTool && !isManaged && (
-              <Section>
-                <H2Title
+              <Section.Root>
+                <Section.Header
                   title={t`Danger zone`}
                   description={t`Delete this tool`}
                 />
                 <Button
-                  Icon={IconTrash}
-                  title={t`Delete`}
-                  accent="danger"
-                  size="small"
-                  variant="secondary"
-                  onClick={() => openModal(DELETE_TOOL_MODAL_ID)}
-                />
-              </Section>
+                  startIcon={<IconTrash />}
+                  size="sm"
+                  onClick={() => openDialog(DELETE_TOOL_MODAL_ID)}
+                  variant="outline"
+                  color="danger"
+                >{t`Delete`}</Button>
+              </Section.Root>
             )}
           </>
         )}
       </SettingsPageContainer>
-      <ConfirmationModal
-        modalInstanceId={DELETE_TOOL_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={DELETE_TOOL_MODAL_ID}
         title={t`Delete Tool`}
         subtitle={t`Are you sure you want to delete this tool? This action cannot be undone.`}
         onConfirmClick={handleDelete}

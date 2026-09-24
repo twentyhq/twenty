@@ -1,12 +1,14 @@
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
@@ -14,11 +16,10 @@ import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/feedback';
+import { InlineBanner } from 'twenty-ui/components';
 import { IconInfoCircle, IconLink, IconRefresh } from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { parseThemeColor } from 'twenty-ui/utilities';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/utils/computeMetadataNamesFromLabels';
@@ -96,6 +97,11 @@ export const SettingsDataModelObjectAboutForm = ({
   watch('description');
   watch('icon');
   const objectIconColor = watch('color');
+  const resolvedIconColor = getObjectColorWithFallback({
+    nameSingular: objectMetadataItem?.nameSingular ?? watch('nameSingular'),
+    isSystem: objectMetadataItem?.isSystem ?? false,
+    color: objectIconColor,
+  });
 
   const apiNameTooltipText =
     !isDefined(objectMetadataItem) ||
@@ -153,6 +159,7 @@ export const SettingsDataModelObjectAboutForm = ({
             render={({ field: { onChange, value } }) => (
               <IconPicker
                 selectedIconKey={value}
+                iconColor={resolvedIconColor}
                 disabled={disableEdition}
                 dropdownId={
                   isDefined(objectMetadataItem)
@@ -162,7 +169,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 iconColorPicker={
                   showObjectColorInIconPicker
                     ? {
-                        selectedColor: parseThemeColor(objectIconColor),
+                        selectedColor: resolvedIconColor,
                         onColorChange: (nextColor) => {
                           setValue('color', nextColor, {
                             shouldDirty: true,
@@ -330,21 +337,20 @@ export const SettingsDataModelObjectAboutForm = ({
                             RightIcon={() =>
                               tooltip && (
                                 <>
-                                  <IconInfoCircle
-                                    id={infoCircleElementId + fieldName}
-                                    size={theme.icon.size.md}
-                                    color={theme.font.color.tertiary}
-                                    style={{ outline: 'none' }}
-                                  />
-                                  <AppTooltip
-                                    anchorSelect={`#${infoCircleElementId}${fieldName}`}
+                                  <Tooltip
                                     content={tooltip}
-                                    offset={5}
-                                    noArrow
-                                    place="bottom"
-                                    positionStrategy="fixed"
+                                    sideOffset={5}
+                                    side="bottom"
+                                    positionMethod="fixed"
                                     delay={TooltipDelay.shortDelay}
-                                  />
+                                  >
+                                    <IconInfoCircle
+                                      id={infoCircleElementId + fieldName}
+                                      size={theme.icon.size.md}
+                                      color={theme.font.color.tertiary}
+                                      style={{ outline: 'none' }}
+                                    />
+                                  </Tooltip>
                                 </>
                               )
                             }
@@ -364,7 +370,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   defaultValue={objectMetadataItem?.isLabelSyncedWithName}
                   render={({ field: { onChange, value } }) => (
                     <Card rounded>
-                      <SettingsOptionCardContentToggle
+                      <SettingsOptionCardContentSwitch
                         Icon={IconRefresh}
                         title={t`Synchronize Objects Labels and API Names`}
                         description={t`Should changing an object's label also change the API?`}
@@ -400,7 +406,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   defaultValue={false}
                   render={({ field: { onChange, value } }) => (
                     <Card rounded>
-                      <SettingsOptionCardContentToggle
+                      <SettingsOptionCardContentSwitch
                         Icon={IconLink}
                         title={t`Skip creating a Name field `}
                         description={t`Useful for pivot/junction tables`}

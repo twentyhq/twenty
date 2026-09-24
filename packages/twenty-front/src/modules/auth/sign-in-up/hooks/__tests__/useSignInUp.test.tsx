@@ -7,8 +7,8 @@ import { I18nProvider } from '@lingui/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
@@ -24,8 +24,11 @@ jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace', () => ({
   useIsCurrentLocationOnAWorkspace: () => ({ isOnAWorkspace: true }),
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueErrorSnackBar: jest.fn() }),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 jest.mock('@/client-config/hooks/useCaptcha', () => ({

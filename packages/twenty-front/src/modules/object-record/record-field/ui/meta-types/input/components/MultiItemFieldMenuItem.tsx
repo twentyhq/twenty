@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { t } from '@lingui/core/macro';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -13,7 +14,6 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;
@@ -88,29 +88,25 @@ export const MultiItemFieldMenuItem = <T,>({
         <DropdownContent>
           <DropdownMenuItemsContainer>
             {showSetAsPrimaryButton && (
-              <MenuItem
-                LeftIcon={IconBookmarkPlus}
-                text={t`Set as Primary`}
+              <ListItem
+                startIcon={<IconBookmarkPlus />}
                 onClick={handleSetAsPrimaryClick}
-              />
+              >{t`Set as Primary`}</ListItem>
             )}
-            <MenuItem
-              LeftIcon={IconPencil}
-              text={t`Edit`}
+            <ListItem
+              startIcon={<IconPencil />}
               onClick={handleEditClick}
-            />
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Delete`}
+            >{t`Edit`}</ListItem>
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={handleDeleteClick}
-            />
+            >{t`Delete`}</ListItem>
             {showCopyButton && (
-              <MenuItem
-                LeftIcon={IconCopy}
-                text={t`Copy`}
+              <ListItem
+                startIcon={<IconCopy />}
                 onClick={handleCopyClick}
-              />
+              >{t`Copy`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

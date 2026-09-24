@@ -6,13 +6,13 @@ import { validateDateFieldOrThrow } from 'src/engine/api/common/common-args-proc
 import { validateDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-time-field-or-throw.util';
 import { validateNumberFieldOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-number-field-or-throw.util';
 import { validateUUIDFieldOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
 import { parseNumberValue } from './parse-number-value.util';
 
 export const validateAndTransformValueByFieldType = (
   value: unknown,
-  fieldMetadata: FlatFieldMetadata,
+  fieldMetadata: OrmFlatFieldMetadata,
   fieldName: string,
 ): unknown => {
   const fieldType = fieldMetadata.type;

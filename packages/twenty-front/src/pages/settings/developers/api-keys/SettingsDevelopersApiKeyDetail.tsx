@@ -1,32 +1,29 @@
-import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useStore } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
+import { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconRepeat, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation, useQuery } from '@apollo/client/react';
 import {
   AssignRoleToApiKeyDocument,
   CreateApiKeyDocument,
@@ -57,8 +54,8 @@ const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
 
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const { openModal } = useModal();
+  const { enqueueToast } = useToast();
+  const { openDialog } = useDialog();
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigateSettings();
@@ -123,14 +120,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
           roleId,
         },
       });
-      enqueueSuccessSnackBar({
-        message: t`Role updated successfully`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Role updated successfully`,
       });
       setSelectedRoleId(roleId);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error updating role`,
-      });
+      enqueueToast({ variant: 'error', children: t`Error updating role` });
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +153,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         );
       }
     } catch {
-      enqueueErrorSnackBar({ message: t`Error deleting api key.` });
+      enqueueToast({ variant: 'error', children: t`Error deleting api key.` });
     } finally {
       setIsLoading(false);
     }
@@ -170,8 +166,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
     const roleIdToUse = selectedRoleId;
 
     if (!roleIdToUse) {
-      enqueueErrorSnackBar({
-        message: t`A role must be selected for the API key`,
+      enqueueToast({
+        variant: 'error',
+        children: t`A role must be selected for the API key`,
       });
       return;
     }
@@ -213,8 +210,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
     try {
       if (isDefined(apiKey)) {
         if (!isNonEmptyString(apiKeyName)) {
-          enqueueErrorSnackBar({
-            message: t`API key name cannot be empty`,
+          enqueueToast({
+            variant: 'error',
+            children: t`API key name cannot be empty`,
           });
           return;
         }
@@ -233,8 +231,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
         }
       }
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error regenerating api key.`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Error regenerating api key.`,
       });
     } finally {
       setIsLoading(false);
@@ -270,10 +269,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
           ]}
         >
           <SettingsPageContainer>
-            <Section>
+            <Section.Root>
               {apiKeyToken ? (
                 <>
-                  <H2Title
+                  <Section.Header
                     title={t`API Key`}
                     description={t`Copy this key as it will not be visible again`}
                   />
@@ -281,34 +280,36 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 </>
               ) : (
                 <>
-                  <H2Title
+                  <Section.Header
                     title={t`API Key`}
                     description={t`Regenerate an API key`}
                   />
                   <StyledInputContainer>
                     <Button
-                      title={t`Regenerate Key`}
-                      Icon={IconRepeat}
-                      onClick={() => openModal(REGENERATE_API_KEY_MODAL_ID)}
-                    />
+                      startIcon={<IconRepeat />}
+                      onClick={() => openDialog(REGENERATE_API_KEY_MODAL_ID)}
+                    >{t`Regenerate Key`}</Button>
                     <StyledInfo>
                       {formatExpiration(apiKey?.expiresAt || '', true, false)}
                     </StyledInfo>
                   </StyledInputContainer>
                 </>
               )}
-            </Section>
-            <Section>
-              <H2Title title={t`Name`} description={t`Name of your API key`} />
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
+                title={t`Name`}
+                description={t`Name of your API key`}
+              />
               <ApiKeyNameInput
                 apiKeyName={apiKeyName}
                 apiKeyId={apiKey?.id}
                 disabled={isLoading}
                 onNameUpdate={setApiKeyName}
               />
-            </Section>
-            <Section>
-              <H2Title
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Role`}
                 description={t`What this API can do: Select a user role to define its permissions.`}
               />
@@ -317,9 +318,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 onChange={handleRoleChange}
                 roles={roles}
               />
-            </Section>
-            <Section>
-              <H2Title
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Expiration`}
                 description={t`When the key will be disabled`}
               />
@@ -330,27 +331,26 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 disabled
                 fullWidth
               />
-            </Section>
-            <Section>
-              <H2Title
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Danger zone`}
                 description={t`Delete this integration`}
               />
               <Button
-                accent="danger"
-                variant="secondary"
-                title={t`Delete`}
-                Icon={IconTrash}
-                onClick={() => openModal(DELETE_API_KEY_MODAL_ID)}
-              />
-            </Section>
+                startIcon={<IconTrash />}
+                onClick={() => openDialog(DELETE_API_KEY_MODAL_ID)}
+                variant="outline"
+                color="danger"
+              >{t`Delete`}</Button>
+            </Section.Root>
           </SettingsPageContainer>
         </SettingsPageLayout>
       )}
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={DELETE_API_KEY_MODAL_ID}
+        dialogId={DELETE_API_KEY_MODAL_ID}
         title={t`Delete API key`}
         subtitle={
           <Trans>
@@ -363,10 +363,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
         confirmButtonText={t`Delete`}
         loading={isLoading}
       />
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={REGENERATE_API_KEY_MODAL_ID}
+        dialogId={REGENERATE_API_KEY_MODAL_ID}
         title={t`Regenerate an API key`}
         subtitle={
           <Trans>

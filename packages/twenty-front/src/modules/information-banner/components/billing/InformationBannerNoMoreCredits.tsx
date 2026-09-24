@@ -2,8 +2,8 @@ import { InformationBanner } from '@/information-banner/components/InformationBa
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useCreditUpgradeAction } from '@/settings/billing/hooks/useCreditUpgradeAction';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -23,7 +23,7 @@ export const InformationBannerNoMoreCredits = () => {
     usePermissionFlagMap();
 
   const navigateSettings = useNavigateSettings();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const setInformationBannerIsOpen = useSetAtomComponentState(
     informationBannerIsOpenComponentState,
@@ -45,7 +45,7 @@ export const InformationBannerNoMoreCredits = () => {
   const buttonOnClick = !hasPermissionToUpdateCreditPlan
     ? undefined
     : canUpgradeInline
-      ? () => openModal(INFORMATION_BANNER_UPGRADE_CREDIT_PLAN_MODAL_ID)
+      ? () => openDialog(INFORMATION_BANNER_UPGRADE_CREDIT_PLAN_MODAL_ID)
       : () => navigateSettings(SettingsPath.Billing);
 
   return (
@@ -56,8 +56,8 @@ export const InformationBannerNoMoreCredits = () => {
         variant="secondary"
         message={
           hasPermissionToUpdateCreditPlan
-            ? t`Credits limit reached. Update your credit plan to keep Workflows and AI running.`
-            : t`Credits limit reached. Contact your admin to resume Workflows and AI.`
+            ? t`Credit limit reached. Update your credit plan to keep workflows, AI, and apps running.`
+            : t`Credit limit reached. Contact your admin to resume workflows, AI, and apps.`
         }
         buttonTitle={
           hasPermissionToUpdateCreditPlan ? t`Update plan` : undefined
@@ -67,13 +67,13 @@ export const InformationBannerNoMoreCredits = () => {
         onClose={() => setInformationBannerIsOpen(false)}
       />
       {canUpgradeInline && (
-        <ConfirmationModal
-          modalInstanceId={INFORMATION_BANNER_UPGRADE_CREDIT_PLAN_MODAL_ID}
+        <ConfirmationDialog
+          dialogId={INFORMATION_BANNER_UPGRADE_CREDIT_PLAN_MODAL_ID}
           title={t`Get more credits`}
           subtitle={t`Upgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`}
           onConfirmClick={upgradeCreditPlan}
           confirmButtonText={t`Upgrade`}
-          confirmButtonAccent="blue"
+          confirmButtonColor="accent"
           loading={isUpgrading}
         />
       )}

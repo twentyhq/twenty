@@ -1,3 +1,5 @@
+import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-file.type';
+
 type SlackEventAuthorization = {
   user_id?: string;
   is_bot?: boolean;
@@ -8,6 +10,11 @@ type SlackRevokedTokens = {
   bot?: string[];
 };
 
+type SlackSharedLink = {
+  url?: string;
+  domain?: string;
+};
+
 type SlackInboundEvent = {
   type?: string;
   subtype?: string;
@@ -15,11 +22,20 @@ type SlackInboundEvent = {
   bot_id?: string;
   user?: string;
   text?: string;
+  files?: SlackMessageFile[];
   ts?: string;
   thread_ts?: string;
   channel?: string;
   tab?: string;
   tokens?: SlackRevokedTokens;
+  message_ts?: string;
+  unfurl_id?: string;
+  source?: string;
+  links?: SlackSharedLink[];
+  trigger_id?: string;
+  external_ref?: { id?: string; type?: string };
+  link?: SlackSharedLink;
+  entity_url?: string;
 };
 
 export type SlackEventsRequestBody = {

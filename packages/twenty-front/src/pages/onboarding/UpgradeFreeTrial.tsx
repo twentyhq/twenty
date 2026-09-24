@@ -3,13 +3,13 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingContentBlock } from '@/onboarding/components/StyledOnboardingContentBlock';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
 import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanCard';
 import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-free-trial/OnboardingTrialExtensionTag';
@@ -27,9 +27,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Info, Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
-import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
+import { Info, MainButton } from 'twenty-ui/components';
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { RadioGroup } from 'twenty-ui/primitives/input';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/primitives/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type Billing,
@@ -102,12 +103,11 @@ const UpgradeFreeTrialSubmitButton = ({
 
   return (
     <MainButton
-      title={t`Continue`}
       onClick={handleSubmit}
       fullWidth
-      Icon={() => (isSubmitting ? <Loader /> : null)}
+      startIcon={isSubmitting ? <Loader /> : null}
       disabled={!isStripeReady || isSubmitting}
-    />
+    >{t`Continue`}</MainButton>
   );
 };
 
@@ -162,7 +162,7 @@ const UpgradeFreeTrialContent = ({
     void handleCheckoutSession();
   };
 
-  const selectTrialPeriod = (withCreditCard: boolean) => () => {
+  const selectTrialPeriod = (withCreditCard: boolean) => {
     if (
       isDefined(baseProductPrice) &&
       billingCheckoutSession.requirePaymentMethod !== withCreditCard
@@ -180,13 +180,17 @@ const UpgradeFreeTrialContent = ({
   return (
     <>
       <OnboardingStepAnimatedItem index={3}>
-        <StyledCards>
+        <RadioGroup
+          render={<StyledCards />}
+          aria-label={t`Trial plan`}
+          value={requirePaymentMethod}
+          onValueChange={selectTrialPeriod}
+        >
           <OnboardingPlanCard
             title={t`Upgraded`}
             titleSuffix={t`· FREE`}
             note={t`No charge will be made. You'll receive an email reminder 7 days before it ends.`}
-            selected={requirePaymentMethod}
-            onSelect={selectTrialPeriod(true)}
+            value={true}
           >
             {requirePaymentMethod &&
               (isPaymentAvailable ? (
@@ -212,11 +216,10 @@ const UpgradeFreeTrialContent = ({
               title={t`Basic`}
               titleSuffix={t`without credit card`}
               badge={t`${withoutCreditCardTrialPeriod.duration} days`}
-              selected={!requirePaymentMethod}
-              onSelect={selectTrialPeriod(false)}
+              value={false}
             />
           )}
-        </StyledCards>
+        </RadioGroup>
       </OnboardingStepAnimatedItem>
 
       <OnboardingStepAnimatedItem index={4}>
@@ -228,16 +231,15 @@ const UpgradeFreeTrialContent = ({
                 recurringInterval={billingCheckoutSession.interval}
               />
             ) : (
-              <MainButton title={t`Continue`} fullWidth disabled />
+              <MainButton fullWidth disabled>{t`Continue`}</MainButton>
             )
           ) : (
             <MainButton
-              title={t`Continue`}
               onClick={handleCheckoutSessionClick}
               fullWidth
-              Icon={() => (isCheckoutSubmitting ? <Loader /> : null)}
+              startIcon={isCheckoutSubmitting ? <Loader /> : null}
               disabled={isCheckoutSubmitting}
-            />
+            >{t`Continue`}</MainButton>
           )}
           <StyledLinkGroup>
             <ClickToActionLink onClick={signOut}>
@@ -321,7 +323,7 @@ export const UpgradeFreeTrial = ({
             mode: 'subscription',
             amount: baseProductPrice.unitAmount,
             currency: 'usd',
-            paymentMethodTypes: ['card'],
+            paymentMethodTypes: ['card', 'link'],
             appearance,
           }}
         >

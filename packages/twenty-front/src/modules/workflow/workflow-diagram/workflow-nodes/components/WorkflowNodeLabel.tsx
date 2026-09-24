@@ -1,7 +1,7 @@
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 import { styled } from '@linaria/react';
-import { Label } from 'twenty-ui/typography';
+import { Text } from 'twenty-ui/primitives/typography';
 
 type WorkflowNodeLabelProps = {
   runStatus?: WorkflowRunStepStatus;
@@ -30,7 +30,13 @@ export const WorkflowNodeLabel = ({
 
   return (
     <StyledNodeLabelWrapper labelColor={labelColor} className={className}>
-      <Label>{children}</Label>
+      <StyledDisplayLabel>{children}</StyledDisplayLabel>
     </StyledNodeLabelWrapper>
   );
 };
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;

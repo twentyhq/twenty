@@ -12,6 +12,7 @@ import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
+import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type WorkflowAutomatedTriggerMaps } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
@@ -20,7 +21,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { type UsageLimitRules } from 'src/engine/core-modules/usage-limit/types/usage-limit-rules.type';
+import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
 
 export type AdditionalCacheDataMaps = {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
@@ -38,8 +39,9 @@ export type AdditionalCacheDataMaps = {
   applicationVariableMaps: ApplicationVariableCacheMaps;
   graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
   currentBillingSubscription: CurrentBillingSubscription;
+  billingEntitlements: BillingEntitlements;
   workflowAutomatedTriggerMaps: WorkflowAutomatedTriggerMaps;
-  usageLimitRules: UsageLimitRules;
+  usageLimits: UsageLimits;
 };
 
 export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &

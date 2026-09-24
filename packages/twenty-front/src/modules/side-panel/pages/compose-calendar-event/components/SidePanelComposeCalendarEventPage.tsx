@@ -5,7 +5,6 @@ import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { composeCalendarEventInitialValuesComponentState } from '@/side-panel/pages/compose-calendar-event/states/composeCalendarEventInitialValuesComponentState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -13,8 +12,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IconButton, useToast } from 'twenty-ui/components';
 import { IconCalendarEvent, IconTrash } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -32,7 +32,7 @@ export const SidePanelComposeCalendarEventPage = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const navigateSettings = useNavigateSettings();
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const composerState = useCalendarEventComposer({
     initialValues: composeCalendarEventInitialValues,
@@ -48,7 +48,9 @@ export const SidePanelComposeCalendarEventPage = () => {
 
   const handleAddAccount = () => {
     closeSidePanelMenu();
-    navigateSettings(SettingsPath.NewAccount);
+    navigateSettings(SettingsPath.NewAccount, undefined, undefined, {
+      surface: 'main',
+    });
   };
 
   const handleReauthorize = async () => {
@@ -67,8 +69,9 @@ export const SidePanelComposeCalendarEventPage = () => {
         loginHint: selectedAccount.handle,
       });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to reconnect calendar account`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to reconnect calendar account`,
       });
     }
   };
@@ -92,23 +95,23 @@ export const SidePanelComposeCalendarEventPage = () => {
         actions={[
           <IconButton
             key="discard"
-            size="small"
-            variant="primary"
-            Icon={IconTrash}
-            ariaLabel={t`Discard`}
+            size="sm"
+            variant="outline"
+            aria-label={t`Discard`}
             onClick={goBackFromSidePanel}
-          />,
+          >
+            <IconTrash />
+          </IconButton>,
           <Button
             key="create"
-            size="small"
-            variant="primary"
-            accent="blue"
-            title={t`Create event`}
-            Icon={IconCalendarEvent}
+            size="sm"
+            startIcon={<IconCalendarEvent />}
             hotkeys={[getOsControlSymbol(), '⏎']}
             onClick={composerState.handleCreate}
             disabled={!composerState.canCreate}
-          />,
+            variant="solid"
+            color="accent"
+          >{t`Create event`}</Button>,
         ]}
       />
     </StyledContainer>

@@ -4,6 +4,7 @@ import { useContext } from 'react';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 
+import { TIMELINE_ICON_SLOT_SIZE } from '@/activities/timeline-activities/constants/TimelineIconSlotSize';
 import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
 import { getStandardTimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/StandardTimelineActivityRenderer';
@@ -30,42 +31,36 @@ const StyledTimelineItemContainer = styled.div`
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
-  height: 'auto';
   justify-content: space-between;
   overflow: hidden;
   white-space: nowrap;
 `;
 
 const StyledLeftContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  width: ${TIMELINE_ICON_SLOT_SIZE}px;
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  height: 16px;
-  justify-content: center;
-  margin: 5px;
-  text-decoration-line: underline;
-  user-select: none;
-  width: 16px;
-  z-index: 2;
-`;
-
-const StyledVerticalLineContainer = styled.div`
-  display: flex;
   flex-shrink: 0;
-  height: 100%;
+  height: ${TIMELINE_ICON_SLOT_SIZE}px;
   justify-content: center;
+  user-select: none;
+  width: 100%;
   z-index: 2;
 `;
 
 const StyledVerticalLine = styled.div`
   background: ${themeCssVariables.border.color.light};
-  height: 100%;
+  flex: 1;
   width: 2px;
+  z-index: 2;
 `;
 
 const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
@@ -76,7 +71,8 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
   gap: ${themeCssVariables.spacing[1]};
   margin-bottom: ${({ isMarginBottom }) =>
     isMarginBottom ? themeCssVariables.spacing[3] : '0'};
-  min-height: 26px;
+  min-height: ${TIMELINE_ICON_SLOT_SIZE}px;
+  min-width: 0;
   overflow: hidden;
 `;
 
@@ -189,11 +185,7 @@ export const EventRow = ({
               linkedObjectMetadataItem={linkedObjectMetadataItem}
             />
           </StyledIconContainer>
-          {!isLastEvent && (
-            <StyledVerticalLineContainer>
-              <StyledVerticalLine />
-            </StyledVerticalLineContainer>
-          )}
+          {!isLastEvent && <StyledVerticalLine />}
         </StyledLeftContainer>
         <StyledItemContainer isMarginBottom={!isLastEvent}>
           <EventRowDynamicComponent

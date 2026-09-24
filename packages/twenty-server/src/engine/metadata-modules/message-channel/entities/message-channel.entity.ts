@@ -59,6 +59,15 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
   ['webhookSubscriptionExternalId'],
   { where: '"webhookSubscriptionExternalId" IS NOT NULL' },
 )
+// An app creates its channel from a connect hook, which a provider can retry
+// or run concurrently. The create path reads before it writes, so only the
+// database can actually stop a second row appearing for one handle. Scoped to
+// APP so it makes no claim about the email rows already in this table.
+@Index(
+  'IDX_MESSAGE_CHANNEL_APP_CONNECTED_ACCOUNT_HANDLE_UNIQUE',
+  ['workspaceId', 'connectedAccountId', 'handle'],
+  { unique: true, where: `"type" = 'APP'` },
+)
 export class MessageChannelEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

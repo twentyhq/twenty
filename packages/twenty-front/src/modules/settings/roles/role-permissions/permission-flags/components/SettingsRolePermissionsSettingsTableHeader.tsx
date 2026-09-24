@@ -1,7 +1,7 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -29,23 +29,28 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
     settingsDraftRoleFamilyState,
     roleId,
   );
+  const currentPermissions = settingsDraftRole.permissionFlags ?? [];
+  const permissionFlagsByKey = new Map(
+    currentPermissions.map((permissionFlag) => [
+      permissionFlag.flag,
+      permissionFlag,
+    ]),
+  );
+  const settingsPermissionKeys = new Set(
+    settingsPermissionsConfig.map((permission) => permission.key),
+  );
   const allSettingsPermissionsEnabled = settingsPermissionsConfig.every(
-    (permission) =>
-      settingsDraftRole.permissionFlags?.some(
-        (permissionFlag) => permissionFlag.flag === permission.key,
-      ),
+    (permission) => permissionFlagsByKey.has(permission.key),
   );
 
   const someSettingsPermissionsEnabled = settingsPermissionsConfig.some(
-    (permission) =>
-      settingsDraftRole.permissionFlags?.some(
-        (permissionFlag) => permissionFlag.flag === permission.key,
-      ),
+    (permission) => permissionFlagsByKey.has(permission.key),
   );
 
   return (
-    <TableRow gridAutoColumns="3fr 4fr 24px">
+    <TableRow gridAutoColumns="3fr 2fr 4fr 24px">
       <TableHeader>{t`Name`}</TableHeader>
+      <TableHeader>{t`App`}</TableHeader>
       <TableHeader>{t`Description`}</TableHeader>
       <TableHeader
         align="right"
@@ -58,19 +63,29 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
             someSettingsPermissionsEnabled && !allSettingsPermissionsEnabled
           }
           disabled={!isEditable}
-          aria-label={t`Toggle all settings permissions`}
-          onChange={() => {
+          aria-label={t`Toggle all permissions`}
+          onCheckedChange={() => {
             const newValue = !allSettingsPermissionsEnabled;
+            const otherPermissions = currentPermissions.filter(
+              (permissionFlag) =>
+                !settingsPermissionKeys.has(permissionFlag.flag),
+            );
 
             setSettingsDraftRole({
               ...settingsDraftRole,
-              permissionFlags: newValue
-                ? settingsPermissionsConfig.map((permission) => ({
-                    id: v4(),
-                    flag: permission.key,
-                    roleId,
-                  }))
-                : [],
+              permissionFlags: [
+                ...otherPermissions,
+                ...(newValue
+                  ? settingsPermissionsConfig.map(
+                      (permission) =>
+                        permissionFlagsByKey.get(permission.key) ?? {
+                          id: v4(),
+                          flag: permission.key,
+                          roleId,
+                        },
+                    )
+                  : []),
+              ],
             });
           }}
         />

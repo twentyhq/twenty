@@ -1,42 +1,27 @@
 import { useLingui } from '@lingui/react/macro';
-import { useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
+import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useExpandAskAiSidePanelPage = (): SidePanelExpandTarget => {
   const { t } = useLingui();
-  const navigate = useNavigateApp();
-  const location = useLocation();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { closeSidePanelMenu } = useSidePanelMenu();
+  const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
   return {
     label: t`Expand chat`,
+    disabledReason: isLayoutCustomizationModeEnabled
+      ? t`Finish editing the layout to expand chat`
+      : undefined,
     hasExpandShortcut: false,
     expand: () => {
-      void closeSidePanelMenu();
-
-      navigate(
-        AppPath.AiChat,
-        {
-          threadId:
-            isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)
-              ? currentAiChatThread
-              : null,
-        },
-        undefined,
-        {
-          state: {
-            returnLocation: `${location.pathname}${location.search}${location.hash}`,
-          },
-        },
-      );
+      navigateToAiChatPage({ threadId: currentAiChatThread });
     },
   };
 };

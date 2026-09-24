@@ -11,7 +11,7 @@ export const getSlackWebhookSecret = ():
     return {
       success: false,
       error:
-        'SLACK_WEBHOOK_SECRET application variable is not set. Set it in the Twenty Slack app settings, using the signing secret from your Slack app (Basic Information > App Credentials).',
+        'SLACK_WEBHOOK_SECRET application variable is not set. Set it on the Slack application registration in Twenty (Settings > Applications, admin only), using the signing secret from your Slack app (Basic Information > App Credentials).',
     };
   }
 

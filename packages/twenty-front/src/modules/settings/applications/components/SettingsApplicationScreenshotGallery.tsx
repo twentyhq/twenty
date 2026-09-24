@@ -1,5 +1,8 @@
+import { SettingsApplicationScreenshotLightbox } from '@/settings/applications/components/SettingsApplicationScreenshotLightbox';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { t } from '@lingui/core/macro';
+import { useId, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsApplicationScreenshotGalleryProps = {
@@ -11,38 +14,38 @@ const StyledGalleryContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[6]};
   min-width: 0;
+  padding-bottom: ${themeCssVariables.spacing[4]};
   width: 100%;
 `;
 
-const StyledScreenshotsContainer = styled.div`
-  align-items: center;
-  aspect-ratio: 8 / 5;
+const StyledHeroButton = styled.button`
+  aspect-ratio: 59 / 30;
   background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
+  border: none;
   border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  justify-content: center;
+  cursor: pointer;
   overflow: hidden;
-`;
-
-const StyledScreenshotImage = styled.img`
-  height: 100%;
-  object-fit: contain;
+  padding: 0;
   width: 100%;
 `;
 
-const StyledScreenshotThumbnails = styled.div`
+const StyledHeroImage = styled.img`
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  width: 100%;
+`;
+
+const StyledThumbnails = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow-x: auto;
 `;
 
-const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
-  align-items: center;
-  aspect-ratio: 8 / 5;
+const StyledThumbnail = styled.button<{ isSelected: boolean }>`
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid
     ${({ isSelected }) =>
@@ -51,10 +54,10 @@ const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
         : themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
-  display: flex;
-  flex: 0 0 96px;
-  justify-content: center;
+  flex: 0 0 88px;
+  height: 56px;
   overflow: hidden;
+  padding: 0;
 
   &:hover {
     border-color: ${themeCssVariables.color.blue};
@@ -62,8 +65,9 @@ const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
 `;
 
 const StyledThumbnailImage = styled.img`
+  display: block;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   width: 100%;
 `;
 
@@ -72,6 +76,8 @@ export const SettingsApplicationScreenshotGallery = ({
   displayName,
 }: SettingsApplicationScreenshotGalleryProps) => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
+  const { openDialog, closeDialog } = useDialog();
+  const lightboxModalId = useId();
 
   if (screenshots.length === 0) {
     return null;
@@ -81,26 +87,41 @@ export const SettingsApplicationScreenshotGallery = ({
 
   return (
     <StyledGalleryContainer>
-      <StyledScreenshotsContainer>
-        <StyledScreenshotImage
+      <StyledHeroButton
+        type="button"
+        aria-label={t`View screenshot in full screen`}
+        onClick={() => openDialog(lightboxModalId)}
+      >
+        <StyledHeroImage
           src={screenshots[safeIndex]}
           alt={`${displayName} screenshot ${safeIndex + 1}`}
         />
-      </StyledScreenshotsContainer>
-      <StyledScreenshotThumbnails>
-        {screenshots.slice(0, 6).map((screenshot, index) => (
-          <StyledThumbnail
-            key={index}
-            isSelected={index === selectedScreenshotIndex}
-            onClick={() => setSelectedScreenshotIndex(index)}
-          >
-            <StyledThumbnailImage
-              src={screenshot}
-              alt={`${displayName} thumbnail ${index + 1}`}
-            />
-          </StyledThumbnail>
-        ))}
-      </StyledScreenshotThumbnails>
+      </StyledHeroButton>
+      {screenshots.length > 1 && (
+        <StyledThumbnails>
+          {screenshots.map((screenshot, index) => (
+            <StyledThumbnail
+              key={index}
+              type="button"
+              isSelected={index === safeIndex}
+              onClick={() => setSelectedScreenshotIndex(index)}
+            >
+              <StyledThumbnailImage
+                src={screenshot}
+                alt={`${displayName} thumbnail ${index + 1}`}
+              />
+            </StyledThumbnail>
+          ))}
+        </StyledThumbnails>
+      )}
+      <SettingsApplicationScreenshotLightbox
+        modalInstanceId={lightboxModalId}
+        screenshots={screenshots}
+        displayName={displayName}
+        selectedIndex={safeIndex}
+        onSelectedIndexChange={setSelectedScreenshotIndex}
+        onClose={() => closeDialog(lightboxModalId)}
+      />
     </StyledGalleryContainer>
   );
 };

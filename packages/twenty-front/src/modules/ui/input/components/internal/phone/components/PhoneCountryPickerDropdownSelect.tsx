@@ -1,15 +1,14 @@
-import { t } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-import { useMemo, useState } from 'react';
-
 import { type Country } from '@/ui/input/components/internal/types/Country';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
 import 'react-phone-number-input/style.css';
-import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.div`
@@ -58,36 +57,48 @@ export const PhoneCountryPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCountries?.length === 0 ? (
-          <MenuItem text={t`No results`} />
+          <ListItem disabled>{t`No results`}</ListItem>
         ) : (
           <>
             {selectedCountry && (
-              <MenuItemSelectAvatar
+              <ListItem
                 key={selectedCountry.countryCode}
-                selected={true}
                 onClick={() => onChange(selectedCountry.countryCode)}
-                text={`${selectedCountry.countryName} (+${selectedCountry.callingCode})`}
-                avatar={
+                role="option"
+                aria-selected={true}
+                selected={true}
+                indicator="check"
+                startIcon={
                   <StyledIconContainer>
                     <selectedCountry.Flag />
                   </StyledIconContainer>
                 }
-              />
+              >
+                <OverflowingTextWithTooltip
+                  text={`${selectedCountry.countryName} (+${selectedCountry.callingCode})`}
+                />
+              </ListItem>
             )}
             {filteredCountries.map(
               ({ countryCode, countryName, callingCode, Flag }) =>
                 selectedCountry?.countryCode === countryCode ? null : (
-                  <MenuItemSelectAvatar
+                  <ListItem
                     key={countryCode}
-                    selected={selectedCountry?.countryCode === countryCode}
                     onClick={() => onChange(countryCode)}
-                    text={`${countryName} (+${callingCode})`}
-                    avatar={
+                    role="option"
+                    aria-selected={selectedCountry?.countryCode === countryCode}
+                    selected={selectedCountry?.countryCode === countryCode}
+                    indicator="check"
+                    startIcon={
                       <StyledIconContainer>
                         <Flag />
                       </StyledIconContainer>
                     }
-                  />
+                  >
+                    <OverflowingTextWithTooltip
+                      text={`${countryName} (+${callingCode})`}
+                    />
+                  </ListItem>
                 ),
             )}
           </>

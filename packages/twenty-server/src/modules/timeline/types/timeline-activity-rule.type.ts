@@ -8,5 +8,6 @@ export type TimelineActivityRule = {
   actions: TimelineActivityRuleAction[];
   timelineActivityType?: ResolvedTimelineActivityType;
   triggerFieldNames: string[] | null;
+  happensAtFieldName: string | null;
   targetShape: TimelineActivityRuleTargetShape;
 };

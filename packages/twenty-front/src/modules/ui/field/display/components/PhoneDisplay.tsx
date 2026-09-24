@@ -1,7 +1,7 @@
+import { ContactLink } from '@/ui/field/display/components/internal/ContactLink/ContactLink';
 import { parsePhoneNumber, type PhoneNumber } from 'libphonenumber-js';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ContactLink } from 'twenty-ui/navigation';
 
 interface PhoneDisplayProps {
   value: PhoneDisplayValueProps;

@@ -49,9 +49,23 @@ import {
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-association-data-seeds.constant';
 import {
+  getMessageCampaignDataSeeds,
   MESSAGE_CAMPAIGN_DATA_SEED_COLUMNS,
-  MESSAGE_CAMPAIGN_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-campaign-data-seeds.constant';
+import {
+  MESSAGE_LIST_DATA_SEED_COLUMNS,
+  MESSAGE_LIST_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-list-data-seeds.constant';
+import {
+  MESSAGE_LIST_MEMBER_DATA_SEED_COLUMNS,
+  MESSAGE_LIST_MEMBER_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-list-member-data-seeds.constant';
+import {
+  CALENDAR_EVENT_TARGET_DATA_SEED_COLUMNS,
+  getCalendarEventTargetDataSeeds,
+  getMessageThreadTargetDataSeeds,
+  MESSAGE_THREAD_TARGET_DATA_SEED_COLUMNS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-calendar-target-data-seeds.constant';
 import {
   MESSAGE_DATA_SEED_COLUMNS,
   MESSAGE_DATA_SEEDS,
@@ -126,12 +140,23 @@ const getRecordSeedsBatches = (
   attachmentSeeds: RecordSeedConfig['recordSeeds'],
   _featureFlags?: Record<FeatureFlagKey, boolean>,
 ): RecordSeedConfig[][] => {
+  // Participants are generated randomly, so they are built once and the
+  // derived target junction seeds are computed from the same arrays.
+  const messageParticipantSeeds = getMessageParticipantDataSeeds(workspaceId);
+  const calendarEventParticipantSeeds =
+    getCalendarEventParticipantDataSeeds(workspaceId);
+
   // Batch 1: No dependencies
   const batch1: RecordSeedConfig[] = [
     {
       tableName: 'workspaceMember',
       pgColumns: WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
       recordSeeds: getWorkspaceMemberDataSeeds(workspaceId),
+    },
+    {
+      tableName: 'messageList',
+      pgColumns: MESSAGE_LIST_DATA_SEED_COLUMNS,
+      recordSeeds: MESSAGE_LIST_DATA_SEEDS,
     },
     {
       tableName: '_surveyResult',
@@ -173,7 +198,7 @@ const getRecordSeedsBatches = (
     },
   ];
 
-  // Batch 4: Depends on person/company/messageChannel or independent
+  // Batch 4: Depends on person/company/messageList or independent
   const batch4: RecordSeedConfig[] = [
     {
       tableName: 'opportunity',
@@ -201,9 +226,14 @@ const getRecordSeedsBatches = (
       recordSeeds: MESSAGE_THREAD_DATA_SEEDS,
     },
     {
+      tableName: 'messageListMember',
+      pgColumns: MESSAGE_LIST_MEMBER_DATA_SEED_COLUMNS,
+      recordSeeds: MESSAGE_LIST_MEMBER_DATA_SEEDS,
+    },
+    {
       tableName: 'messageCampaign',
       pgColumns: MESSAGE_CAMPAIGN_DATA_SEED_COLUMNS,
-      recordSeeds: MESSAGE_CAMPAIGN_DATA_SEEDS,
+      recordSeeds: getMessageCampaignDataSeeds(workspaceId),
     },
     {
       tableName: '_employmentHistory',
@@ -237,7 +267,7 @@ const getRecordSeedsBatches = (
     {
       tableName: 'calendarEventParticipant',
       pgColumns: CALENDAR_EVENT_PARTICIPANT_DATA_SEED_COLUMNS,
-      recordSeeds: getCalendarEventParticipantDataSeeds(workspaceId),
+      recordSeeds: calendarEventParticipantSeeds,
     },
     {
       tableName: 'message',
@@ -256,7 +286,19 @@ const getRecordSeedsBatches = (
     {
       tableName: 'messageParticipant',
       pgColumns: MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
-      recordSeeds: getMessageParticipantDataSeeds(workspaceId),
+      recordSeeds: messageParticipantSeeds,
+    },
+    {
+      tableName: 'messageThreadTarget',
+      pgColumns: MESSAGE_THREAD_TARGET_DATA_SEED_COLUMNS,
+      recordSeeds: getMessageThreadTargetDataSeeds(messageParticipantSeeds),
+    },
+    {
+      tableName: 'calendarEventTarget',
+      pgColumns: CALENDAR_EVENT_TARGET_DATA_SEED_COLUMNS,
+      recordSeeds: getCalendarEventTargetDataSeeds(
+        calendarEventParticipantSeeds,
+      ),
     },
     {
       tableName: 'attachment',

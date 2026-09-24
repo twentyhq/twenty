@@ -3,6 +3,7 @@ import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { useFieldsWidgetFields } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFields';
 import { getHiddenFieldsFromGroups } from '@/page-layout/widgets/fields/utils/getHiddenFieldsFromGroups';
 import { useViewById } from '@/views/hooks/useViewById';
 import { useMemo } from 'react';
@@ -22,14 +23,14 @@ export const useFieldsWidgetHiddenFields = ({
     objectNameSingular,
   });
 
+  const visibleFields = useFieldsWidgetFields(objectMetadataItem);
+
   const hiddenFields = useMemo<FieldsWidgetGroupField[]>(() => {
     if (!isDefined(objectMetadataItem)) {
       return [];
     }
 
-    const activeFields = objectMetadataItem.fields.filter(
-      (field) => field.isActive,
-    );
+    const activeFields = visibleFields.filter((field) => field.isActive);
 
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
       const groups: FieldsWidgetGroup[] = view.viewFieldGroups.map((group) => {
@@ -90,7 +91,7 @@ export const useFieldsWidgetHiddenFields = ({
     }
 
     return [];
-  }, [objectMetadataItem, view]);
+  }, [objectMetadataItem, view, visibleFields]);
 
   return { hiddenFields };
 };

@@ -25,6 +25,7 @@ const noteLinkedTimelineActivityType = {
   objectUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
   targetRelationFieldUniversalIdentifier: null,
   triggerFieldUniversalIdentifiers: null,
+  happensAtFieldUniversalIdentifier: null,
   frontComponentUniversalIdentifier: FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   replacesTimelineActivityTypeUniversalIdentifier: null,
   isActive: true,
@@ -45,6 +46,7 @@ const flatTimelineActivityTypeMaps: TimelineActivityTypeResolutionMaps = {
       objectUniversalIdentifier: null,
       targetRelationFieldUniversalIdentifier: null,
       triggerFieldUniversalIdentifiers: null,
+      happensAtFieldUniversalIdentifier: null,
       frontComponentUniversalIdentifier: null,
       replacesTimelineActivityTypeUniversalIdentifier: null,
       isActive: true,
@@ -125,8 +127,10 @@ describe('buildTimelineActivityTypeResolution', () => {
           noteLinked: {
             ...noteLinkedTimelineActivityType,
             overrides: {
-              label: 'Added a note',
-              icon: 'IconPencil',
+              '20202020-aaaa-4aaa-8aaa-000000000001': {
+                label: 'Added a note',
+                icon: 'IconPencil',
+              },
             },
           },
         },

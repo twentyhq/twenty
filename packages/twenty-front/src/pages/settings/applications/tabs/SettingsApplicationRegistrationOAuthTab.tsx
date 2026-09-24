@@ -1,27 +1,25 @@
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconKey, IconRefresh, IconShield } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   RotateApplicationRegistrationClientSecretDocument,
   UpdateApplicationRegistrationDocument,
 } from '~/generated-metadata/graphql';
-import { applicationRegistrationClientSecretFamilyState } from '~/pages/settings/applications/states/applicationRegistrationClientSecretFamilyState';
-import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 import { SettingsApplicationRegistrationRedirectURIsInput } from '~/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput';
 import { SettingsApplicationRegistrationRedirectURIsTable } from '~/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsTable';
+import { applicationRegistrationClientSecretFamilyState } from '~/pages/settings/applications/states/applicationRegistrationClientSecretFamilyState';
+import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 
 const ROTATE_SECRET_MODAL_ID = 'rotate-application-registration-secret-modal';
 
@@ -35,8 +33,8 @@ export const SettingsApplicationRegistrationOAuthTab = ({
   registration: ApplicationRegistrationData;
 }) => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const { openModal } = useModal();
+  const { enqueueToast } = useToast();
+  const { openDialog } = useDialog();
 
   const applicationRegistrationId = registration.id;
 
@@ -73,10 +71,13 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           },
         },
       });
-      enqueueSuccessSnackBar({ message: t`Redirect URIs updated` });
+      enqueueToast({ variant: 'success', children: t`Redirect URIs updated` });
       setFormRedirectUris(newFormRedirectUris);
     } catch {
-      enqueueErrorSnackBar({ message: t`Error updating redirect URIs` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Error updating redirect URIs`,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -93,13 +94,15 @@ export const SettingsApplicationRegistrationOAuthTab = ({
 
       if (isNonEmptyString(secret)) {
         setRotatedSecret(secret);
-        enqueueSuccessSnackBar({
-          message: t`Client secret rotated. Copy it now — it won't be shown again.`,
+        enqueueToast({
+          variant: 'success',
+          children: t`Client secret rotated. Copy it now — it won't be shown again.`,
         });
       }
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error rotating client secret`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Error rotating client secret`,
       });
     } finally {
       setIsLoading(false);
@@ -125,8 +128,8 @@ export const SettingsApplicationRegistrationOAuthTab = ({
 
   return (
     <>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`OAuth`}
           description={t`Credentials and scopes for OAuth authorization flows`}
         />
@@ -137,26 +140,25 @@ export const SettingsApplicationRegistrationOAuthTab = ({
         />
         <StyledRotateContainer>
           <Button
-            Icon={IconRefresh}
-            title={t`Rotate client secret`}
-            variant="secondary"
-            onClick={() => openModal(ROTATE_SECRET_MODAL_ID)}
-          />
+            startIcon={<IconRefresh />}
+            onClick={() => openDialog(ROTATE_SECRET_MODAL_ID)}
+            variant="outline"
+          >{t`Rotate client secret`}</Button>
         </StyledRotateContainer>
-      </Section>
+      </Section.Root>
 
       {displayedSecret && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Client Secret`}
             description={t`Copy this secret as it will not be visible again`}
           />
           <ApiKeyInput apiKey={displayedSecret} />
-        </Section>
+        </Section.Root>
       )}
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Redirect URIs`}
           description={t`Allowed redirect URIs for OAuth flows`}
         />
@@ -168,12 +170,12 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           redirectUris={formRedirectUris}
           updateRedirectUris={handleSave}
         />
-      </Section>
+      </Section.Root>
 
-      <ConfirmationModal
+      <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        modalInstanceId={ROTATE_SECRET_MODAL_ID}
+        dialogId={ROTATE_SECRET_MODAL_ID}
         title={t`Rotate client secret`}
         subtitle={
           <Trans>

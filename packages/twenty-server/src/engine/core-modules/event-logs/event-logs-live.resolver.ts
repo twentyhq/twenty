@@ -81,7 +81,7 @@ export class EventLogsLiveResolver {
       workspaceId: workspace.id,
     });
 
-    return wrapAsyncIteratorWithLifecycle(iterator, {
+    return wrapAsyncIteratorWithLifecycle(() => iterator, {
       onHeartbeat: async () => {
         await this.workspaceEventLiveService.markWatched(
           workspace.id,

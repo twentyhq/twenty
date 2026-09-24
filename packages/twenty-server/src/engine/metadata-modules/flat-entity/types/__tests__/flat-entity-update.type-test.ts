@@ -21,6 +21,8 @@ type Assertions = [
       | 'options'
       | 'settings'
       | 'isUnique'
+      | 'isSearchable'
+      | 'isAuditLogged'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
       | 'writability'
@@ -59,6 +61,8 @@ type Assertions = [
       | 'isUIEditable'
       | 'isUICreatable'
       | 'writability'
+      | 'readability'
+      | 'readabilityParentFieldUniversalIdentifiers'
     >
   >,
 

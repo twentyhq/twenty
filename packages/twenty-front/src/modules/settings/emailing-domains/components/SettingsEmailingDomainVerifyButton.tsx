@@ -1,11 +1,11 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { VerifyEmailingDomainDocument } from '~/generated-metadata/graphql';
 import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { VerifyEmailingDomainDocument } from '~/generated-metadata/graphql';
+
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useToast } from 'twenty-ui/components';
 
 type SettingsEmailingDomainVerifyButtonProps = {
   emailingDomainId: string;
@@ -15,7 +15,7 @@ export const SettingsEmailingDomainVerifyButton = ({
   emailingDomainId,
 }: SettingsEmailingDomainVerifyButtonProps) => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [verifyEmailingDomain, { loading }] = useMutation(
     VerifyEmailingDomainDocument,
   );
@@ -23,23 +23,22 @@ export const SettingsEmailingDomainVerifyButton = ({
   const handleVerify = async () => {
     try {
       await verifyEmailingDomain({ variables: { id: emailingDomainId } });
-      enqueueSuccessSnackBar({ message: t`Started verification process` });
-    } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
+      enqueueToast({
+        variant: 'success',
+        children: t`Started verification process`,
       });
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
   return (
     <Button
       onClick={handleVerify}
-      isLoading={loading}
-      variant="secondary"
-      Icon={IconRefresh}
-      size="small"
-      title={t`Check verification`}
+      loading={loading}
+      startIcon={<IconRefresh />}
       disabled={loading}
-    />
+      variant="outline"
+    >{t`Check verification`}</Button>
   );
 };

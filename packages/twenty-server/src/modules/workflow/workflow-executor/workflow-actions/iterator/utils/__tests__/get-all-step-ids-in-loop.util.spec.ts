@@ -345,6 +345,45 @@ describe('getAllStepIdsInLoop', () => {
       expect(result).toEqual(['step2']);
     });
 
+    it('should ignore references to steps that no longer exist', () => {
+      const steps = [
+        createMockIteratorStep('iterator1', ['step2'], []),
+        createMockCodeStep('step2', ['deleted-step', 'iterator1']),
+      ];
+
+      const result = getAllStepIdsInLoop({
+        iteratorStepId: 'iterator1',
+        initialLoopStepIds: ['step2'],
+        steps,
+      });
+
+      expect(result).toEqual(['step2']);
+    });
+
+    it('should ignore a dangling nextStepIds reference on an If/Else step', () => {
+      const steps = [
+        createMockIteratorStep('iterator1', ['ifElse1'], []),
+        createMockIfElseStep(
+          'ifElse1',
+          [
+            { id: 'branch1', nextStepIds: ['step2'] },
+            { id: 'branch2', nextStepIds: ['step3'] },
+          ],
+          ['deleted-step'],
+        ),
+        createMockCodeStep('step2', ['iterator1']),
+        createMockCodeStep('step3', ['iterator1']),
+      ];
+
+      const result = getAllStepIdsInLoop({
+        iteratorStepId: 'iterator1',
+        initialLoopStepIds: ['ifElse1'],
+        steps,
+      });
+
+      expect(result).toEqual(['ifElse1', 'step2', 'step3']);
+    });
+
     it('should prevent infinite loops with circular references', () => {
       const steps = [
         createMockIteratorStep('iterator1', ['step2'], []),

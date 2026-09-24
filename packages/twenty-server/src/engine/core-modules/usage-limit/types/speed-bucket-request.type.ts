@@ -7,5 +7,5 @@ export type SpeedBucketRequest = {
   windowMs: number;
   spenderType: SpenderType;
   spenderId: string | null;
-  isFallback: boolean;
+  isDefault: boolean;
 };

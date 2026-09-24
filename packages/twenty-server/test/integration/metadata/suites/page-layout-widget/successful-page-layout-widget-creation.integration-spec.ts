@@ -2,6 +2,7 @@ import {
   TEST_IFRAME_CONFIG,
   TEST_STANDALONE_RICH_TEXT_CONFIG,
   TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL,
+  TEST_STANDALONE_RICH_TEXT_CONFIG_TIPTAP_BODY,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
@@ -15,12 +16,18 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { AggregateOperations, WidgetType } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutTabLayoutMode,
+  type PageLayoutWidgetGridPosition,
+  WidgetType,
+} from 'twenty-shared/types';
 
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
+import { type StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
@@ -29,12 +36,7 @@ type StaticTestContext = {
     title: string;
     type: WidgetType;
     configuration: AllPageLayoutWidgetConfiguration;
-    gridPosition: {
-      row: number;
-      column: number;
-      rowSpan: number;
-      columnSpan: number;
-    };
+    position: PageLayoutWidgetGridPosition;
   };
 };
 
@@ -44,6 +46,7 @@ type GraphTestContext = {
 };
 
 const DEFAULT_GRID_POSITION = {
+  layoutMode: PageLayoutTabLayoutMode.GRID as const,
   row: 0,
   column: 0,
   rowSpan: 1,
@@ -58,7 +61,7 @@ const STATIC_TEST_CASES: EachTestingContext<StaticTestContext>[] = [
         title: 'Iframe Widget',
         type: WidgetType.IFRAME,
         configuration: TEST_IFRAME_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
+        position: DEFAULT_GRID_POSITION,
       },
     },
   },
@@ -71,7 +74,7 @@ const STATIC_TEST_CASES: EachTestingContext<StaticTestContext>[] = [
         configuration: {
           configurationType: WidgetConfigurationType.IFRAME,
         },
-        gridPosition: DEFAULT_GRID_POSITION,
+        position: DEFAULT_GRID_POSITION,
       },
     },
   },
@@ -83,7 +86,7 @@ const STATIC_TEST_CASES: EachTestingContext<StaticTestContext>[] = [
         title: 'Rich Text Widget',
         type: WidgetType.STANDALONE_RICH_TEXT,
         configuration: TEST_STANDALONE_RICH_TEXT_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
+        position: DEFAULT_GRID_POSITION,
       },
     },
   },
@@ -95,7 +98,7 @@ const STATIC_TEST_CASES: EachTestingContext<StaticTestContext>[] = [
         title: 'Rich Text Widget Minimal',
         type: WidgetType.STANDALONE_RICH_TEXT,
         configuration: TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL,
-        gridPosition: DEFAULT_GRID_POSITION,
+        position: DEFAULT_GRID_POSITION,
       },
     },
   },
@@ -363,6 +366,33 @@ describe('Page layout widget creation should succeed', () => {
     },
   );
 
+  it('should store a tiptap rich text body as blocknote blocks', async () => {
+    const { data } = await createOnePageLayoutWidget({
+      expectToFail: false,
+      input: {
+        title: 'Rich Text Widget TipTap',
+        type: WidgetType.STANDALONE_RICH_TEXT,
+        configuration: TEST_STANDALONE_RICH_TEXT_CONFIG_TIPTAP_BODY,
+        position: DEFAULT_GRID_POSITION,
+        pageLayoutTabId: testSetup.pageLayoutTabId,
+      },
+    });
+
+    createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
+
+    const { body } = data.createPageLayoutWidget
+      .configuration as StandaloneRichTextConfigurationDTO;
+
+    expect(body.markdown).toBe('Checklist:\n\n- call the client');
+
+    const storedBlocks = JSON.parse(body.blocknote ?? '[]');
+
+    expect(storedBlocks.map((block: { type: string }) => block.type)).toEqual([
+      'paragraph',
+      'bulletListItem',
+    ]);
+  });
+
   it.each(eachTestingContextFilter(graphTestCases))(
     'should $title',
     async ({ context: { widgetTitle, buildConfiguration } }) => {
@@ -374,7 +404,7 @@ describe('Page layout widget creation should succeed', () => {
           objectMetadataId: testSetup.objectMetadataId,
           configuration: buildConfiguration(),
           pageLayoutTabId: testSetup.pageLayoutTabId,
-          gridPosition: DEFAULT_GRID_POSITION,
+          position: DEFAULT_GRID_POSITION,
         },
       });
 

@@ -2,6 +2,7 @@ import { isNumber } from '@sniptt/guards';
 import {
   AggregateOperations,
   ObjectRecordGroupByDateGranularity,
+  PageLayoutTabLayoutMode,
   ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
@@ -270,7 +271,8 @@ const withRangeMinMaxRefinement = <T extends z.ZodType<RangeMinMaxFields>>(
     },
   );
 
-export const gridPositionSchema = z.object({
+export const widgetPositionSchema = z.object({
+  layoutMode: z.literal(PageLayoutTabLayoutMode.GRID),
   row: z.number().min(0).describe('Row position (0-based)'),
   column: z
     .number()

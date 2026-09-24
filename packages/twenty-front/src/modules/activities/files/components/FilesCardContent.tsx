@@ -4,18 +4,14 @@ import { AttachmentUploadTrigger } from '@/activities/files/components/Attachmen
 import { DropZone } from '@/activities/files/components/DropZone';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -64,29 +60,28 @@ export const FilesCardContent = ({
             onUploadFiles={onUploadFiles}
           />
         ) : (
-          <AnimatedPlaceholderEmptyContainer>
+          <EmptyState.Root>
             <AnimatedPlaceholder type="noFile" />
-            <AnimatedPlaceholderEmptyTextContainer>
-              <AnimatedPlaceholderEmptyTitle>
+            <EmptyState.Content>
+              <EmptyState.Title>
                 <Trans>No Files</Trans>
-              </AnimatedPlaceholderEmptyTitle>
-              <AnimatedPlaceholderEmptySubTitle>
+              </EmptyState.Title>
+              <EmptyState.Description>
                 <Trans>There are no associated files with this record.</Trans>
-              </AnimatedPlaceholderEmptySubTitle>
-            </AnimatedPlaceholderEmptyTextContainer>
+              </EmptyState.Description>
+            </EmptyState.Content>
             {canUploadFiles && (
               <AttachmentUploadTrigger targetableObject={targetRecord}>
                 {({ openFilePicker }) => (
                   <Button
-                    Icon={IconPlus}
-                    title={t`Add file`}
-                    variant="secondary"
+                    startIcon={<IconPlus />}
                     onClick={openFilePicker}
-                  />
+                    variant="outline"
+                  >{t`Add file`}</Button>
                 )}
               </AttachmentUploadTrigger>
             )}
-          </AnimatedPlaceholderEmptyContainer>
+          </EmptyState.Root>
         )}
       </StyledDropZoneContainer>
     );

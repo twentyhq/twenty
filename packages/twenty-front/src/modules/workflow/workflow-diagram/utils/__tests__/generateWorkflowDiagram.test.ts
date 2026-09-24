@@ -1,4 +1,5 @@
 import {
+  type WorkflowIfElseAction,
   type WorkflowStep,
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
@@ -50,7 +51,7 @@ describe('generateWorkflowDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -68,7 +69,7 @@ describe('generateWorkflowDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -127,7 +128,7 @@ describe('generateWorkflowDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -145,7 +146,7 @@ describe('generateWorkflowDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -192,7 +193,7 @@ describe('generateWorkflowDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -210,7 +211,7 @@ describe('generateWorkflowDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -257,7 +258,7 @@ describe('generateWorkflowDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -275,7 +276,7 @@ describe('generateWorkflowDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -293,7 +294,7 @@ describe('generateWorkflowDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -326,5 +327,77 @@ describe('generateWorkflowDiagram', () => {
 
     expect(result.edges[3].source).toEqual('step3');
     expect(result.edges[3].target).toEqual('step1');
+  });
+
+  it('makes If/Else branch edges reconnectable only in editable workflows', () => {
+    const ifElseStep: WorkflowIfElseAction = {
+      id: 'if-else',
+      name: 'Contract type',
+      type: 'IF_ELSE',
+      valid: true,
+      settings: {
+        input: {
+          stepFilterGroups: [],
+          stepFilters: [],
+          branches: [
+            {
+              id: 'if',
+              filterGroupId: 'filter-if',
+              nextStepIds: ['first', 'second'],
+            },
+            { id: 'else', nextStepIds: ['first'] },
+          ],
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: 0 },
+          continueOnFailure: { value: false },
+        },
+      },
+    };
+    const targetSteps = ['first', 'second'].map(
+      (id): WorkflowStep => ({
+        id,
+        name: id,
+        type: 'HTTP_REQUEST',
+        valid: true,
+        settings: {
+          input: { method: 'GET', url: '', headers: {} },
+          outputSchema: {},
+          errorHandlingOptions: {
+            retryOnFailure: { value: 0 },
+            continueOnFailure: { value: false },
+          },
+        },
+      }),
+    );
+    const generateBranchEdges = (
+      workflowContext: 'workflow' | 'workflow-version',
+    ) =>
+      generateWorkflowDiagram({
+        trigger: undefined,
+        steps: [ifElseStep, ...targetSteps],
+        workflowContext,
+      }).edges.filter((edge) => edge.source === ifElseStep.id);
+
+    const editableEdges = generateBranchEdges('workflow');
+
+    expect(
+      editableEdges.map((edge) => edge.data?.sourceConnectionOptions),
+    ).toEqual([
+      { connectedStepType: 'IF_ELSE', settings: { branchId: 'if' } },
+      { connectedStepType: 'IF_ELSE', settings: { branchId: 'if' } },
+      { connectedStepType: 'IF_ELSE', settings: { branchId: 'else' } },
+    ]);
+    expect(
+      editableEdges.every(
+        (edge) => edge.reconnectable === 'target' && edge.deletable === false,
+      ),
+    ).toBe(true);
+    expect(
+      generateBranchEdges('workflow-version').every(
+        (edge) => edge.reconnectable === false,
+      ),
+    ).toBe(true);
   });
 });

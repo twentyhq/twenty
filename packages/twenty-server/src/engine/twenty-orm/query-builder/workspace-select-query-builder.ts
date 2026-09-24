@@ -46,7 +46,10 @@ import {
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
-import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import {
+  type WorkspaceRelationShape,
+  type WorkspaceTableShape,
+} from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 let objectWhereParameterSequence = 0;
@@ -676,6 +679,23 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     );
   }
 
+  getJoinParentRelationShape(
+    alias: string,
+  ): WorkspaceRelationShape | undefined {
+    const clause =
+      this.joinClauses.find((joinClause) => joinClause.alias === alias) ??
+      this.existsFilterClauses.find(
+        (existsFilterClause) => existsFilterClause.alias === alias,
+      );
+
+    if (!isDefined(clause)) {
+      return undefined;
+    }
+
+    return this.getTableShapeForAlias(clause.parentAlias)
+      ?.relationShapeByFieldName[clause.relationFieldName];
+  }
+
   markRowLevelPermissionApplied(alias: string): boolean {
     if (this.aliasesWithRowLevelPermissionApplied.has(alias)) {
       return false;
@@ -768,6 +788,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         formatResult: this.context.formatResult,
       },
       whereClauses: this.whereClauses,
+      includeDeleted: this.includeDeleted,
       parameters: this.parameters,
     });
   }
@@ -858,7 +879,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
           this.buildRelationExistsCondition({
             relationFieldName: columnName,
             relationShape,
-            where: value,
+            applyWhere: (nestedBuilder) => nestedBuilder.where(value),
             parameters,
           }),
         );
@@ -915,15 +936,50 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return { sql: conditions.join(' AND '), parameters };
   }
 
+  // Registers a correlated EXISTS on a relation and returns the token to place
+  // in a where clause; the caller writes the related table's condition on the
+  // nested builder, whose alias names that table. Unlike a join, an EXISTS never
+  // duplicates root rows, so this is how a to-many relation gets filtered.
+  addRelationExistsFilter({
+    relationFieldName,
+    applyWhere,
+  }: {
+    relationFieldName: string;
+    applyWhere: (nestedBuilder: WorkspaceSelectQueryBuilder) => void;
+  }): string {
+    const relationShape =
+      this.tableShape.relationShapeByFieldName[relationFieldName];
+
+    if (!isDefined(relationShape)) {
+      throw new TwentyOrmException(
+        `Unknown relation "${relationFieldName}" on "${this.tableShape.nameSingular}"`,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    const parameters: Record<string, unknown> = {};
+
+    const token = this.buildRelationExistsCondition({
+      relationFieldName,
+      relationShape,
+      applyWhere,
+      parameters,
+    });
+
+    this.setParameters(parameters);
+
+    return token;
+  }
+
   private buildRelationExistsCondition({
     relationFieldName,
     relationShape,
-    where,
+    applyWhere,
     parameters,
   }: {
     relationFieldName: string;
     relationShape: WorkspaceTableShape['relationShapeByFieldName'][string];
-    where: ObjectWhereLike;
+    applyWhere: (nestedBuilder: WorkspaceSelectQueryBuilder) => void;
     parameters: Record<string, unknown>;
   }): string {
     const targetTableShape = this.context.tableShapeByObjectMetadataId(
@@ -953,7 +1009,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       tableShape: targetTableShape,
     });
 
-    nestedBuilder.where(where);
+    applyWhere(nestedBuilder);
 
     Object.assign(parameters, nestedBuilder.parameters);
 

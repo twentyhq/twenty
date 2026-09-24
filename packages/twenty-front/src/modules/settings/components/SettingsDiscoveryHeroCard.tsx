@@ -1,13 +1,11 @@
-import {
-  SettingsCustomizeVideoModal,
-  type SettingsCustomizeVideoModalTab,
-} from '@/settings/components/SettingsCustomizeVideoModal';
+import { type SettingsCustomizeVideoModalTab } from '@/settings/types/SettingsCustomizeVideoModalTab';
+import { SettingsCustomizeVideoModal } from '@/settings/components/SettingsCustomizeVideoModal';
 import { HeroPlayButton } from '@/ui/layout/hero/components/HeroPlayButton';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext } from 'react';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DEFAULT_COVER_HEIGHT = 150;
@@ -64,7 +62,7 @@ export const SettingsDiscoveryHeroCard = ({
 }: SettingsDiscoveryHeroCardProps) => {
   const { t } = useLingui();
   const { colorScheme } = useContext(ThemeContext);
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
   const shouldDisplayVideo = tabs.length > 0;
 
   const modalInstanceId = `${instanceIdPrefix}-modal`;
@@ -80,7 +78,7 @@ export const SettingsDiscoveryHeroCard = ({
           {shouldDisplayVideo && (
             <StyledOverlay>
               <HeroPlayButton
-                onClick={() => openModal(modalInstanceId)}
+                onClick={() => openDialog(modalInstanceId)}
                 ariaLabel={playButtonAriaLabel ?? t`Watch demo`}
               />
             </StyledOverlay>

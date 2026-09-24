@@ -2,17 +2,18 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { Select } from '@/ui/input/components/Select';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 import {
   IconGoogle,
   IconLink,
@@ -20,17 +21,16 @@ import {
   IconMicrosoft,
   IconPassword,
 } from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,
   WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 
-import { Toggle2FA } from './Toggle2FA';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { TwoFactorAuthenticationSwitch } from './TwoFactorAuthenticationSwitch';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -41,8 +41,8 @@ const StyledSettingsSecurityOptionsList = styled.div`
 export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
+  const { enqueueToast } = useToast();
+  const ssoIdentitiesProviders = useAtomStateValue(ssoIdentitiesProvidersState);
   const authProviders = useAtomStateValue(authProvidersState);
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
@@ -79,7 +79,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       currentWorkspace.isGoogleAuthEnabled,
       currentWorkspace.isMicrosoftAuthEnabled,
       currentWorkspace.isPasswordAuthEnabled,
-      (SSOIdentitiesProviders?.length ?? 0) > 0,
+      (ssoIdentitiesProviders?.length ?? 0) > 0,
     ];
 
     if (
@@ -87,8 +87,9 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       allAuthProvidersEnabled.filter((isAuthEnabled) => isAuthEnabled).length <=
         1
     ) {
-      return enqueueErrorSnackBar({
-        message: t`At least one authentication method must be enabled`,
+      return enqueueToast({
+        variant: 'error',
+        children: t`At least one authentication method must be enabled`,
       });
     }
 
@@ -108,9 +109,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         ...currentWorkspace,
         [key]: !currentWorkspace[key],
       });
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error: err }));
     });
   };
 
@@ -131,9 +130,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         isPublicInviteLinkEnabled: value,
       });
     } catch (err: any) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   };
 
@@ -192,9 +189,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             }
           : currentWorkspaceValue,
       );
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error: err }));
     });
   };
 
@@ -204,7 +199,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         <>
           <Card rounded>
             {authProviders.google === true && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 Icon={IconGoogle}
                 title={t`Google`}
                 description={t`Allow logins through Google's single sign-on functionality.`}
@@ -217,7 +212,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               />
             )}
             {authProviders.microsoft === true && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 Icon={IconMicrosoft}
                 title={t`Microsoft`}
                 description={t`Allow logins through Microsoft's single sign-on functionality.`}
@@ -230,7 +225,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               />
             )}
             {authProviders.password === true && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 Icon={IconPassword}
                 title={t`Password`}
                 description={t`Allow users to sign in with an email and password.`}
@@ -241,7 +236,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             )}
           </Card>
           <Card rounded>
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={IconLink}
               title={t`Invite by Link`}
               description={t`Allow the invitation of new users by sharing an invite link.`}
@@ -272,7 +267,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 />
               </SettingsOptionCardContentSelect>
             )}
-            <Toggle2FA />
+            <TwoFactorAuthenticationSwitch />
           </Card>
         </>
       )}

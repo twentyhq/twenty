@@ -5,7 +5,7 @@ import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowRightContainer = styled.div`
@@ -26,12 +26,12 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
 
   const status = computeSyncStatus(messageChannel, calendarChannel);
 
-  // Archived accounts are frozen (owner left the workspace): their synced data
-  // is kept but sync is disabled, so the live sync status is no longer relevant.
+  // Archived accounts retain their synced data but cannot be synced until they
+  // are reconnected, so the live sync status is no longer relevant.
   if (isArchived) {
     return (
       <StyledRowRightContainer>
-        <Status color="gray" text={t`Archived`} weight="medium" />
+        <Status color="gray" weight="medium">{t`Sync paused`}</Status>
         <SettingsAccountsRowDropdownMenu account={account} />
       </StyledRowRightContainer>
     );
@@ -40,24 +40,23 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
   return (
     <StyledRowRightContainer>
       {status === SyncStatus.FAILED && (
-        <Status color="red" text={t`Sync failed`} weight="medium" />
+        <Status color="red" weight="medium">{t`Sync failed`}</Status>
       )}
       {status === SyncStatus.SYNCED && (
-        <Status color="green" text={t`Synced`} weight="medium" />
+        <Status color="green" weight="medium">{t`Synced`}</Status>
       )}
       {status === SyncStatus.NOT_SYNCED && (
-        <Status color="orange" text={t`Not synced`} weight="medium" />
+        <Status color="orange" weight="medium">{t`Not synced`}</Status>
       )}
       {status === SyncStatus.IMPORTING && (
         <Status
           color="turquoise"
-          text={t`Importing`}
           weight="medium"
-          isLoaderVisible
-        />
+          loading
+        >{t`Importing`}</Status>
       )}
       {status === SyncStatus.PENDING_CONFIGURATION && (
-        <Status color="orange" text={t`Setup incomplete`} weight="medium" />
+        <Status color="orange" weight="medium">{t`Setup incomplete`}</Status>
       )}
       <SettingsAccountsRowDropdownMenu account={account} />
     </StyledRowRightContainer>

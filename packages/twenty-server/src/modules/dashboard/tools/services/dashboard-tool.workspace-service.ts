@@ -45,16 +45,23 @@ export class DashboardToolWorkspaceService {
 
   generateDashboardTools(
     workspaceId: string,
-    _rolePermissionConfig: RolePermissionConfig,
+    rolePermissionConfig: RolePermissionConfig,
   ): ToolSet {
     const context = { workspaceId };
+    const contextWithPermissions = { workspaceId, rolePermissionConfig };
 
     const createCompleteDashboard = createCreateCompleteDashboardTool(
       this.deps,
-      context,
+      contextWithPermissions,
     );
-    const listDashboards = createListDashboardsTool(this.deps, context);
-    const getDashboard = createGetDashboardTool(this.deps, context);
+    const listDashboards = createListDashboardsTool(
+      this.deps,
+      contextWithPermissions,
+    );
+    const getDashboard = createGetDashboardTool(
+      this.deps,
+      contextWithPermissions,
+    );
     const addDashboardTab = createAddDashboardTabTool(this.deps, context);
     const addDashboardWidget = createAddDashboardWidgetTool(this.deps, context);
     const updateDashboardWidget = createUpdateDashboardWidgetTool(

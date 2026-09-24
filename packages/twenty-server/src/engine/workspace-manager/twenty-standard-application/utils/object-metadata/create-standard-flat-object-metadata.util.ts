@@ -1,6 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
@@ -11,6 +15,214 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
 
 export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
+  agentChatThread: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentChatThread'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentChatThread',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+        nameSingular: 'agentChatThread',
+        namePlural: 'agentChatThreads',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Agent chat thread',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Agent chat threads',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Agent chat thread',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconMessage',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
+  agentTurn: (
+    args: Omit<CreateStandardObjectArgs<'agentTurn'>, 'context' | 'objectName'>,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentTurn',
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.agentTurn.universalIdentifier,
+        nameSingular: 'agentTurn',
+        namePlural: 'agentTurns',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Agent turn',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Agent turns',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({ message: 'Agent turn', context: 'objectMetadata.description' }),
+        ),
+        icon: 'IconLego',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
+  agentMessage: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentMessage'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentMessage',
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.agentMessage.universalIdentifier,
+        nameSingular: 'agentMessage',
+        namePlural: 'agentMessages',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Agent message',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Agent messages',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Agent message',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconLego',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
+  agentMessagePart: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentMessagePart'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentMessagePart',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+        nameSingular: 'agentMessagePart',
+        namePlural: 'agentMessageParts',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Agent message part',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Agent message parts',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Agent message part',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconLego',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
+  agentTurnEvaluation: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentTurnEvaluation'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentTurnEvaluation',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
+        nameSingular: 'agentTurnEvaluation',
+        namePlural: 'agentTurnEvaluations',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Agent turn evaluation',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Agent turn evaluations',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Agent turn evaluation',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconLego',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
+
   attachment: ({
     now,
     workspaceId,
@@ -46,6 +258,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconFileImport',
         isSystem: true,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['targetNote'],
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -129,6 +343,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        writability: MetadataWritability.SYSTEM,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -270,6 +485,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['calendarEvent'],
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -431,6 +648,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         ),
         icon: 'IconSend',
         isSystem: true,
+        isSearchable: true,
         isUICreatable: false,
         labelIdentifierFieldMetadataName: 'name',
       },
@@ -560,6 +778,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        writability: MetadataWritability.SYSTEM,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -608,6 +827,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        writability: MetadataWritability.SYSTEM,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -748,6 +968,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['messageThread'],
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -815,6 +1037,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconNotes',
         isSearchable: true,
         shortcut: 'N',
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['noteTargets'],
         labelIdentifierFieldMetadataName: 'title',
       },
       workspaceId,
@@ -857,6 +1081,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCheckbox',
         isSystem: true,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['targetPerson'],
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -945,6 +1171,53 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  recordShare: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'recordShare'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'recordShare',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.recordShare.universalIdentifier,
+        nameSingular: 'recordShare',
+        namePlural: 'recordShares',
+        labelSingular: i18nLabel(
+          msg({
+            message: `Record share`,
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: `Record shares`,
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Who may read a record of a private object`,
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconLock',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        writability: MetadataWritability.SYSTEM,
+        readability: MetadataReadability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   task: ({
     now,
     workspaceId,
@@ -971,6 +1244,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCheckbox',
         isSearchable: true,
         shortcut: 'T',
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['taskTargets'],
         labelIdentifierFieldMetadataName: 'title',
       },
       workspaceId,
@@ -1013,6 +1288,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCheckbox',
         isSystem: true,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['targetPerson'],
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -1060,6 +1337,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['targetPerson'],
         labelIdentifierFieldMetadataName: 'linkedRecordCachedName',
       },
       workspaceId,
@@ -1140,6 +1419,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconSettingsAutomation',
         isSystem: true,
         isUICreatable: false,
+        writability: MetadataWritability.SYSTEM,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,

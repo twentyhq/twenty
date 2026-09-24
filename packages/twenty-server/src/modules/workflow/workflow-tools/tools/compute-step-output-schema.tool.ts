@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   workflowActionSchema,
   workflowTriggerSchema,
@@ -15,14 +16,17 @@ const computeStepOutputSchemaSchema = z.object({
   step: z
     .union([workflowTriggerSchema, workflowActionSchema])
     .describe('The workflow step configuration'),
-  workflowVersionId: z
+  coreWorkflowVersionId: z
     .string()
     .uuid()
-    .describe('The UUID of the workflow version'),
+    .describe('The core workflow version UUID'),
 });
 
 export const createComputeStepOutputSchemaTool = (
-  deps: Pick<WorkflowToolDependencies, 'workflowSchemaService'>,
+  deps: Pick<
+    WorkflowToolDependencies,
+    'workflowSchemaService' | 'coreWorkflowVersionListService'
+  >,
   context: WorkflowToolContext,
 ) => ({
   name: 'compute_step_output_schema' as const,
@@ -31,13 +35,32 @@ export const createComputeStepOutputSchemaTool = (
   inputSchema: computeStepOutputSchemaSchema,
   execute: async (parameters: {
     step: WorkflowTrigger | WorkflowAction;
-    workflowVersionId: string;
+    coreWorkflowVersionId: string;
   }) => {
     try {
+      const coreWorkflowVersion =
+        await deps.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId(
+          {
+            workspaceId: context.workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          },
+        );
+
+      if (!isDefined(coreWorkflowVersion)) {
+        return {
+          success: false,
+          error: `Workflow version ${parameters.coreWorkflowVersionId} not found`,
+        };
+      }
+
       return await deps.workflowSchemaService.computeStepOutputSchema({
         step: parameters.step,
         workspaceId: context.workspaceId,
-        workflowVersionId: parameters.workflowVersionId,
+        workflowVersionContent: {
+          trigger: coreWorkflowVersion.trigger,
+          steps: coreWorkflowVersion.steps,
+        },
       });
     } catch (error) {
       return {

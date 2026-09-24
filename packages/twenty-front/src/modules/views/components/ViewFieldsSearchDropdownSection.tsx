@@ -4,13 +4,15 @@ import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdow
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type ViewFieldsSearchDropdownSectionProps = {
   searchInput: string;
@@ -72,29 +74,33 @@ export const ViewFieldsSearchDropdownSection = ({
             fieldMetadataItem.id === fieldMetadataItemLabelIdentifier?.id;
 
           return (
-            <MenuItem
+            <ListItem
               key={fieldMetadataItem.id}
-              LeftIcon={getIcon(fieldMetadataItem.icon)}
-              iconButtons={
-                isLabelIdentifier
-                  ? undefined
-                  : [
-                      {
-                        Icon: isVisible ? IconEyeOff : IconEye,
-                        onClick: () =>
-                          handleChangeFieldVisibility({
-                            fieldMetadataId: fieldMetadataItem.id,
-                            isVisible: !isVisible,
-                          }),
-                      },
-                    ]
+              startIcon={
+                <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
               }
-              text={fieldMetadataItem.label}
-            />
+              actions={
+                isLabelIdentifier ? undefined : (
+                  <LightIconButton
+                    aria-label={isVisible ? t`Hide field` : t`Show field`}
+                    onClick={() =>
+                      handleChangeFieldVisibility({
+                        fieldMetadataId: fieldMetadataItem.id,
+                        isVisible: !isVisible,
+                      })
+                    }
+                  >
+                    {isVisible ? <IconEyeOff /> : <IconEye />}
+                  </LightIconButton>
+                )
+              }
+            >
+              {fieldMetadataItem.label}
+            </ListItem>
           );
         })
       ) : (
-        <MenuItem disabled text={t`No results`} accent="placeholder" />
+        <ListItem disabled>{t`No results`}</ListItem>
       )}
     </DropdownMenuItemsContainer>
   );

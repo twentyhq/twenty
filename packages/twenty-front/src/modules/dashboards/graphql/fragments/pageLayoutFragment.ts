@@ -11,6 +11,7 @@ export const PAGE_LAYOUT_FRAGMENT = gql`
     type
     universalIdentifier
     isSystemSideEffect
+    isFirstTabPinned
     defaultTabToFocusOnMobileAndSidePanelId
     createdAt
     updatedAt

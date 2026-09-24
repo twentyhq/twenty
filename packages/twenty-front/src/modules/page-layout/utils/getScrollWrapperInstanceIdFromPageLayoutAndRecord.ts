@@ -10,14 +10,12 @@ export const getScrollWrapperInstanceIdFromPageLayoutAndRecord = ({
   pageLayoutId,
   layoutType,
   targetRecordIdentifier,
-  isInSidePanel,
   scrollWrapperArea,
   pageLayoutTabId,
 }: {
   pageLayoutId: string;
   layoutType: LayoutRenderingContextType['layoutType'];
   targetRecordIdentifier?: TargetRecordIdentifier;
-  isInSidePanel: boolean;
   scrollWrapperArea: PageLayoutScrollWrapperArea;
   pageLayoutTabId?: string;
 }) => {
@@ -26,10 +24,9 @@ export const getScrollWrapperInstanceIdFromPageLayoutAndRecord = ({
       ? targetRecordIdentifier?.id
       : undefined;
   const recordScope = isDefined(recordId) ? `-${recordId}` : '';
-  const renderingScope = isInSidePanel ? 'side-panel' : 'main-view';
   const tabScope = isDefined(pageLayoutTabId) ? `-${pageLayoutTabId}` : '';
 
   return `${getScrollWrapperInstanceIdFromPageLayoutId(
     pageLayoutId,
-  )}${recordScope}-${renderingScope}-${scrollWrapperArea}${tabScope}`;
+  )}${recordScope}-${scrollWrapperArea}${tabScope}`;
 };

@@ -1,4 +1,3 @@
-import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -19,6 +18,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordCalendarCardBodyProps = {
   recordId: string;
@@ -53,6 +53,7 @@ export const RecordCalendarCardBody = ({
 
   const {
     labelIdentifierFieldMetadataItem,
+    fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
     objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
@@ -69,8 +70,6 @@ export const RecordCalendarCardBody = ({
   const setRecordCalendarCardHoverPosition = useSetAtomComponentState(
     recordCalendarCardHoverPositionComponentState,
   );
-  const getIsMetadataItemFromStandardApplication =
-    useGetIsMetadataItemFromStandardApplication();
 
   const handleMouseEnter = (index: number) => {
     setRecordCalendarCardHoverPosition(index);
@@ -83,6 +82,17 @@ export const RecordCalendarCardBody = ({
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+        const fieldMetadataItem =
+          fieldMetadataItemByFieldMetadataItemId[
+            recordField.fieldMetadataItemId
+          ];
+
+        if (
+          !isDefined(correspondingFieldDefinition) ||
+          !isDefined(fieldMetadataItem)
+        ) {
+          return null;
+        }
 
         return (
           <StopPropagationContainer key={recordField.fieldMetadataItemId}>
@@ -93,19 +103,8 @@ export const RecordCalendarCardBody = ({
                 isLabelIdentifier: false,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
-                  isSystemObject: objectMetadataItem.isSystem,
-                  isFieldFromStandardApplication:
-                    getIsMetadataItemFromStandardApplication({
-                      applicationId:
-                        correspondingFieldDefinition.metadata.applicationId,
-                    }),
                   objectPermissions,
-                  fieldMetadataItem: {
-                    id: recordField.fieldMetadataItemId,
-                    isUIEditable:
-                      correspondingFieldDefinition.metadata.isUIEditable ??
-                      true,
-                  },
+                  fieldMetadataItem,
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),

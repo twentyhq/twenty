@@ -1,3 +1,5 @@
+import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-file.type';
+
 export type SlackMessageEventOptions = {
   channelId: string;
   text: string;
@@ -10,4 +12,5 @@ export type SlackMessageEventOptions = {
   botUserId?: string;
   botId?: string;
   subtype?: string;
+  files?: SlackMessageFile[];
 };

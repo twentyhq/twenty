@@ -12,6 +12,7 @@ type EnterpriseValidityPayload = {
 
 type SignValidityTokenOptions = {
   subscriptionCancelAt: number | null;
+  graceExpiresAt?: number | null;
 };
 
 function getValidityTokenDurationDays(): number {
@@ -33,15 +34,14 @@ function getValidityTokenDurationDays(): number {
 function computeValidityExp(
   nowSeconds: number,
   durationDays: number,
-  subscriptionCancelAt: number | null,
+  caps: (number | null | undefined)[],
 ): number {
   const defaultExp = nowSeconds + durationDays * SECONDS_PER_DAY;
+  const applicableCaps = caps.filter(
+    (cap): cap is number => typeof cap === 'number' && cap > 0,
+  );
 
-  if (subscriptionCancelAt === null || subscriptionCancelAt <= 0) {
-    return defaultExp;
-  }
-
-  return Math.min(defaultExp, subscriptionCancelAt);
+  return Math.min(defaultExp, ...applicableCaps);
 }
 
 export function signValidityToken(
@@ -50,8 +50,10 @@ export function signValidityToken(
 ): string {
   const now = Math.floor(Date.now() / 1000);
   const durationDays = getValidityTokenDurationDays();
-  const subscriptionCancelAt = options?.subscriptionCancelAt ?? null;
-  const exp = computeValidityExp(now, durationDays, subscriptionCancelAt);
+  const exp = computeValidityExp(now, durationDays, [
+    options?.subscriptionCancelAt,
+    options?.graceExpiresAt,
+  ]);
 
   const payload: EnterpriseValidityPayload = {
     exp,

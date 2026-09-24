@@ -7,8 +7,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const WorkspaceApp = () => {
-  const isFunctionSettingsEnabled = false;
-
   const currentUser = useAtomStateValue(currentUserState);
 
   const isAdminPageEnabled =
@@ -21,8 +19,8 @@ export const WorkspaceApp = () => {
 
   return (
     <RouterProvider
+      useTransitions={false}
       router={useCreateWorkspaceAppRouter({
-        isFunctionSettingsEnabled,
         isAdminPageEnabled,
         isWorkflowCoreIndexPageEnabled,
       })}

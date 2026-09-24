@@ -13,7 +13,6 @@ import {
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -22,6 +21,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { ToastProvider } from 'twenty-ui/components';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({
@@ -54,11 +54,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={jotaiStore}>
       <MemoryRouter>
         <I18nProvider i18n={i18n}>
-          <SnackBarComponentInstanceContext.Provider
-            value={{ instanceId: 'test-scope-id' }}
-          >
-            {children}
-          </SnackBarComponentInstanceContext.Provider>
+          <ToastProvider>{children}</ToastProvider>
         </I18nProvider>
       </MemoryRouter>
     </JotaiProvider>

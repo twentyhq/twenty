@@ -288,11 +288,12 @@ describe('ViewToolsFactory', () => {
 
         expect(
           viewQueryParamsService.resolveViewToQueryParams,
-        ).toHaveBeenCalledWith(
-          mockViewId,
-          mockWorkspaceId,
-          'workspace-member-id',
-        );
+        ).toHaveBeenCalledWith({
+          viewId: mockViewId,
+          workspaceId: mockWorkspaceId,
+          currentWorkspaceMemberId: 'workspace-member-id',
+          currentUserWorkspaceId: mockUserWorkspaceId,
+        });
         expect(result).toEqual(mockQueryParams);
       });
     });
@@ -629,7 +630,7 @@ describe('ViewToolsFactory', () => {
           name: 'Pipeline',
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.TABLE,
-          icon: 'IconList',
+          icon: 'IconTable',
           visibility: ViewVisibility.WORKSPACE,
           viewFields: [{}, {}],
           viewFilters: [{}],
@@ -691,7 +692,7 @@ describe('ViewToolsFactory', () => {
           name: 'Pipeline',
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.TABLE,
-          icon: 'IconList',
+          icon: 'IconTable',
           visibility: ViewVisibility.WORKSPACE,
           fieldCount: 2,
           filterCount: 1,
@@ -705,7 +706,7 @@ describe('ViewToolsFactory', () => {
           name: 'By Id',
           objectMetadataId: mockObjectMetadataId,
           type: ViewType.TABLE,
-          icon: 'IconList',
+          icon: 'IconTable',
           visibility: ViewVisibility.WORKSPACE,
           viewFields: [{}],
         } as any);

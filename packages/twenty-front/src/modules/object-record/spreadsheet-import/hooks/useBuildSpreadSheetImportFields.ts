@@ -1,3 +1,4 @@
+import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -112,6 +113,8 @@ export const useBuildSpreadsheetImportFields = () => {
       fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
         fieldMetadataItem.type,
         fieldMetadataItem.label,
+        undefined,
+        getLinksVariant(fieldMetadataItem),
       ),
       isNestedField: false,
       ...overrides,
@@ -144,6 +147,7 @@ export const useBuildSpreadsheetImportFields = () => {
                 fieldMetadataItem.type,
                 label,
                 subFieldName,
+                getLinksVariant(fieldMetadataItem),
               ),
             isNestedField: true,
             isCompositeSubField: true,
@@ -190,6 +194,7 @@ export const useBuildSpreadsheetImportFields = () => {
                 uniqueConstraintField.type,
                 uniqueConstraintField.name,
                 subFieldName,
+                getLinksVariant(uniqueConstraintField),
               ),
             isNestedField: true,
             isCompositeSubField: true,

@@ -1,5 +1,5 @@
+import { LightIconButton } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 
 type WidgetCardHeaderActionButtonProps = {
   Icon: IconComponent;
@@ -17,12 +17,13 @@ export const WidgetCardHeaderActionButton = ({
   disabled,
 }: WidgetCardHeaderActionButtonProps) => (
   <LightIconButton
-    Icon={Icon}
     aria-label={label}
     title={label}
-    accent="tertiary"
-    size="small"
+    emphasis="subtle"
+    size="sm"
     onClick={onClick}
     disabled={disabled}
-  />
+  >
+    <Icon />
+  </LightIconButton>
 );

@@ -1,6 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type UpdateMultipleRecordsState } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
@@ -8,7 +9,7 @@ import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-m
 import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSectionContainer = styled.div`
@@ -54,7 +55,7 @@ export const UpdateMultipleRecordsForm = ({
 
   return (
     <StyledSectionContainer>
-      <Section>
+      <Section.Root>
         {fieldsWithDefinitions.map(({ fieldMetadataItem, fieldDefinition }) => {
           const fieldName = fieldDefinition.metadata.fieldName;
           const isRelation = isFieldRelation(fieldDefinition);
@@ -85,10 +86,11 @@ export const UpdateMultipleRecordsForm = ({
               defaultValue={value}
               onChange={handleValueChange}
               onClear={() => onChange(fieldNameOrRelationIdName, undefined)}
+              settings={getRecordFormFieldInputSettings(fieldMetadataItem.type)}
             />
           );
         })}
-      </Section>
+      </Section.Root>
     </StyledSectionContainer>
   );
 };

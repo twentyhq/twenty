@@ -1,21 +1,31 @@
 import { Injectable } from '@nestjs/common';
 
+import { isString } from '@sniptt/guards';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
+import { v4 } from 'uuid';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Like, type QueryRunner } from 'typeorm';
+import {
+  type FindOptionsWhere,
+  Like,
+  type QueryRunner,
+  type UpdateResult,
+} from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
-import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
+import { buildReleasedStockByApplication } from 'src/engine/core-modules/file-storage/utils/build-released-stock-by-application.util';
+import { buildStockDelta } from 'src/engine/core-modules/file-storage/utils/build-stock-delta.util';
 import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/validate-folder-path.util';
@@ -24,6 +34,13 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { STOCK_METERS } from 'src/engine/core-modules/usage-limit/constants/usage-meters.constant';
+import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
+import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
+import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
+import { type StockScope } from 'src/engine/core-modules/usage-limit/types/stock-scope.type';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -41,7 +58,163 @@ export class FileStorageService {
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly usageLimitStockService: UsageLimitStockService,
   ) {}
+
+  async releaseStorageStock({
+    workspaceId,
+    applicationId,
+    bytes,
+    quantity,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    bytes: number;
+    quantity: number;
+  }): Promise<void> {
+    await this.usageLimitStockService.releaseStock({
+      workspaceId,
+      resourceType: UsageResourceType.STORAGE,
+      operationType: UsageOperationType.STORAGE_FILE,
+      spenders: { applicationId },
+      cost: { bytes, quantity },
+    });
+  }
+
+  async invalidateStorageStock({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId?: string;
+  }): Promise<void> {
+    await this.usageLimitStockService.invalidateStock({
+      workspaceId,
+      resourceType: UsageResourceType.STORAGE,
+      operationType: UsageOperationType.STORAGE_FILE,
+      spenders: { applicationId },
+    });
+  }
+
+  private async assertStorageStockAvailable({
+    workspaceId,
+    applicationId,
+    delta,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    delta: StockCost;
+  }): Promise<void> {
+    if (STOCK_METERS.every((meter) => (delta[meter] ?? 0) <= 0)) {
+      return;
+    }
+
+    await this.usageLimitStockService.assertStockAvailable({
+      workspaceId,
+      resourceType: UsageResourceType.STORAGE,
+      operationType: UsageOperationType.STORAGE_FILE,
+      spenders: { applicationId },
+      cost: delta,
+      computeUsedStock: (scope) =>
+        this.computeStorageUsedStock({ workspaceId, ...scope }),
+    });
+  }
+
+  private async computeStorageUsedStock({
+    workspaceId,
+    spenderType,
+    spenderId,
+  }: StockScope & { workspaceId: string }): Promise<
+    Record<StockMeter, number>
+  > {
+    const query = this.fileRepository
+      .createQueryBuilder('file')
+      .select('COUNT(*)::bigint', 'quantity')
+      .addSelect('COALESCE(SUM(file.size), 0)::bigint', 'bytes')
+      .where('file.workspaceId = :workspaceId', { workspaceId })
+      .withDeleted();
+
+    if (spenderType === 'application') {
+      query.andWhere('file.applicationId = :applicationId', {
+        applicationId: spenderId,
+      });
+    }
+
+    const used = await query.getRawOne<{ quantity: string; bytes: string }>();
+
+    return {
+      quantity: Number(used?.quantity ?? 0),
+      bytes: Number(used?.bytes ?? 0),
+    };
+  }
+
+  private async deleteFileRows({
+    workspaceId,
+    where,
+    fileRepository,
+  }: {
+    workspaceId: string;
+    where: FindOptionsWhere<FileEntity>;
+    fileRepository: WorkspaceScopedRepository<FileEntity>;
+  }): Promise<void> {
+    const deletedRows = await fileRepository.deleteAndReturn(
+      workspaceId,
+      where,
+    );
+
+    const releasedByApplication = buildReleasedStockByApplication(deletedRows);
+
+    await Promise.all(
+      [...releasedByApplication.entries()].map(([applicationId, released]) =>
+        this.releaseStorageStock({ workspaceId, applicationId, ...released }),
+      ),
+    );
+  }
+
+  private findFileByPath({
+    fileRepository,
+    workspaceId,
+    filePath,
+    applicationId,
+  }: {
+    fileRepository: WorkspaceScopedRepository<FileEntity>;
+    workspaceId: string;
+    filePath: string;
+    applicationId: string;
+  }): Promise<FileEntity | null> {
+    return fileRepository.findOne(workspaceId, {
+      where: { path: filePath, applicationId },
+      withDeleted: true,
+    });
+  }
+
+  private async applyStorageStockDelta({
+    workspaceId,
+    applicationId,
+    delta,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    delta: StockCost;
+  }): Promise<void> {
+    const scope = {
+      workspaceId,
+      resourceType: UsageResourceType.STORAGE,
+      operationType: UsageOperationType.STORAGE_FILE,
+      spenders: { applicationId },
+    };
+
+    if ((delta.bytes ?? 0) < 0) {
+      return this.releaseStorageStock({
+        workspaceId,
+        applicationId,
+        bytes: -(delta.bytes ?? 0),
+        quantity: 0,
+      });
+    }
+
+    return this.usageLimitStockService.acquireStock({ ...scope, cost: delta });
+  }
 
   private async resolveApplicationIdOrThrow({
     applicationUniversalIdentifier,
@@ -239,27 +412,51 @@ export class FileStorageService {
         resourcePath,
       });
 
+    const size = isString(persistedSourceFile)
+      ? Buffer.byteLength(persistedSourceFile)
+      : persistedSourceFile.length;
+
+    const existingFile = await this.findFileByPath({
+      fileRepository: fileRepository,
+      workspaceId,
+      filePath,
+      applicationId: resolvedApplicationId,
+    });
+
+    const delta = buildStockDelta({ existingFile, size });
+
+    await this.assertStorageStockAvailable({
+      workspaceId,
+      applicationId: resolvedApplicationId,
+      delta,
+    });
+
     await driver.writeFile({
       filePath: onStorageFilePath,
       mimeType,
       sourceFile: persistedSourceFile,
     });
 
-    return fileRepository.upsertAndReturnOne(
+    const file = await fileRepository.upsertAndReturnOne(
       workspaceId,
       {
         path: filePath,
         applicationId: resolvedApplicationId,
-        id: fileId,
+        id: existingFile?.id ?? fileId,
         mimeType,
-        size:
-          typeof persistedSourceFile === 'string'
-            ? Buffer.byteLength(persistedSourceFile)
-            : persistedSourceFile.length,
+        size,
         settings,
       },
       ['path', 'workspaceId', 'applicationId'],
     );
+
+    await this.applyStorageStockDelta({
+      workspaceId,
+      applicationId: resolvedApplicationId,
+      delta,
+    });
+
+    return file;
   }
 
   // Creates the file record ahead of a direct client upload. The bytes are
@@ -296,12 +493,27 @@ export class FileStorageService {
       resourcePath,
     });
 
-    return this.fileRepository.upsertAndReturnOne(
+    const existingFile = await this.findFileByPath({
+      fileRepository: this.fileRepository,
+      workspaceId,
+      filePath,
+      applicationId: resolvedApplicationId,
+    });
+
+    const delta = buildStockDelta({ existingFile, size });
+
+    await this.assertStorageStockAvailable({
+      workspaceId,
+      applicationId: resolvedApplicationId,
+      delta,
+    });
+
+    const file = await this.fileRepository.upsertAndReturnOne(
       workspaceId,
       {
         path: filePath,
         applicationId: resolvedApplicationId,
-        id: fileId,
+        id: existingFile?.id ?? fileId,
         mimeType,
         size,
         settings,
@@ -309,6 +521,48 @@ export class FileStorageService {
       },
       ['path', 'workspaceId', 'applicationId'],
     );
+
+    await this.applyStorageStockDelta({
+      workspaceId,
+      applicationId: resolvedApplicationId,
+      delta,
+    });
+
+    return file;
+  }
+
+  async markFileUploaded({
+    workspaceId,
+    applicationId,
+    fileId,
+    chargedSize,
+    size,
+    mimeType,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    fileId: string;
+    chargedSize: number;
+    size: number;
+    mimeType: string;
+  }): Promise<UpdateResult> {
+    const updateResult = await this.fileRepository.update(
+      workspaceId,
+      { id: fileId },
+      { status: FILE_STATUS.UPLOADED, mimeType, size },
+    );
+
+    if (updateResult.affected === 0 || size === chargedSize) {
+      return updateResult;
+    }
+
+    await this.applyStorageStockDelta({
+      workspaceId,
+      applicationId,
+      delta: { bytes: size - chargedSize, quantity: 0 },
+    });
+
+    return updateResult;
   }
 
   async writeFileStream(
@@ -330,7 +584,7 @@ export class FileStorageService {
 
   async getFileMetadata(
     params: ResourceIdentifier,
-  ): Promise<{ size: number } | null> {
+  ): Promise<FileStorageMetadata | null> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const { onStorageFilePath } =
       this.validateAndBuildFileStoragePathOrThrow(params);
@@ -392,6 +646,20 @@ export class FileStorageService {
     });
   }
 
+  readFilePrefix(
+    params: ResourceIdentifier & { byteCount: number },
+  ): Promise<Buffer> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
+
+    return driver.readFilePrefix({
+      filePath: onStorageFilePath,
+      byteCount: params.byteCount,
+    });
+  }
+
   downloadFile(
     params: ResourceIdentifier & { localPath: string },
   ): Promise<void> {
@@ -418,7 +686,11 @@ export class FileStorageService {
       ? this.fileRepository.withManager(queryRunner.manager)
       : this.fileRepository;
 
-    await fileRepository.delete(workspaceId, { applicationId });
+    await this.deleteFileRows({
+      workspaceId,
+      where: { applicationId },
+      fileRepository,
+    });
   }
 
   async deleteApplicationFilesFromStorage({
@@ -454,14 +726,31 @@ export class FileStorageService {
         workspaceId: params.workspaceId,
       }));
 
-    await this.fileRepository.delete(params.workspaceId, {
-      path: filePath,
-      applicationId,
+    await this.deleteFileRows({
+      workspaceId: params.workspaceId,
+      where: { path: filePath, applicationId },
+      fileRepository: this.fileRepository,
+    });
+  }
+
+  // Removes only the stored object. deleteFile also drops any row sitting at
+  // that path, which is wrong once the row is gone or belongs to a later
+  // upload that reused the same resource path.
+  async deleteFileObject(params: ResourceIdentifier): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
+
+    await driver.delete({
+      folderPath: dirname(onStorageFilePath),
+      filename: basename(onStorageFilePath),
     });
   }
 
   async deleteFolder(
-    params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
+    params: Omit<ResourceIdentifier, 'resourcePath'> & {
+      folderPath: string;
+    },
   ): Promise<void> {
     const {
       workspaceId,
@@ -487,9 +776,10 @@ export class FileStorageService {
       workspaceId,
     });
 
-    await this.fileRepository.delete(workspaceId, {
-      path: Like(`${validatedFolderPath}%`),
-      applicationId,
+    await this.deleteFileRows({
+      workspaceId,
+      where: { path: Like(`${validatedFolderPath}%`), applicationId },
+      fileRepository: this.fileRepository,
     });
   }
 
@@ -545,6 +835,92 @@ export class FileStorageService {
     return driver.copy(params);
   }
 
+  async copyFile({
+    from,
+    to,
+    applicationId,
+    fileId,
+    size,
+    mimeType,
+    settings,
+  }: {
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+    applicationId: string;
+    fileId: string;
+    size: number;
+    mimeType: string;
+    settings: FileSettings | null;
+  }): Promise<FileEntity> {
+    const { filePath } = this.validateAndBuildFileStoragePathOrThrow(to);
+    const delta = { bytes: size, quantity: 1 };
+
+    await this.assertStorageStockAvailable({
+      workspaceId: to.workspaceId,
+      applicationId,
+      delta,
+    });
+
+    await this.copy({ from, to });
+
+    const file = await this.fileRepository.insertAndReturnOne(to.workspaceId, {
+      id: fileId,
+      path: filePath,
+      applicationId,
+      mimeType,
+      size,
+      status: FILE_STATUS.UPLOADED,
+      settings,
+    });
+
+    await this.applyStorageStockDelta({
+      workspaceId: to.workspaceId,
+      applicationId,
+      delta,
+    });
+
+    return file;
+  }
+
+  async copyFileByPath({
+    from,
+    to,
+  }: {
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+  }): Promise<FileEntity> {
+    const { filePath } = this.validateAndBuildFileStoragePathOrThrow(from);
+
+    const [sourceApplicationId, destinationApplicationId] = await Promise.all([
+      this.resolveApplicationIdOrThrow(from),
+      this.resolveApplicationIdOrThrow(to),
+    ]);
+
+    const sourceFile = await this.findFileByPath({
+      fileRepository: this.fileRepository,
+      workspaceId: from.workspaceId,
+      filePath,
+      applicationId: sourceApplicationId,
+    });
+
+    if (!isDefined(sourceFile)) {
+      throw new FileStorageException(
+        `File not found at path "${filePath}"`,
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    return this.copyFile({
+      from,
+      to,
+      applicationId: destinationApplicationId,
+      fileId: v4(),
+      mimeType: sourceFile.mimeType,
+      size: sourceFile.size,
+      settings: sourceFile.settings,
+    });
+  }
+
   async copy({
     from,
     to,
@@ -571,6 +947,29 @@ export class FileStorageService {
     return driver.copy({
       from: { folderPath: fromPath },
       to: { folderPath: toPath },
+    });
+  }
+
+  async move({
+    from,
+    to,
+    ifMatchChecksum,
+  }: {
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+    ifMatchChecksum?: string;
+  }): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const { onStorageFilePath: fromPath } =
+      this.validateAndBuildFileStoragePathOrThrow(from);
+    const { onStorageFilePath: toPath } =
+      this.validateAndBuildFileStoragePathOrThrow(to);
+
+    return driver.move({
+      from: { folderPath: dirname(fromPath), filename: basename(fromPath) },
+      to: { folderPath: dirname(toPath), filename: basename(toPath) },
+      ifMatchChecksum,
     });
   }
 

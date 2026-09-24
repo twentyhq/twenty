@@ -25,6 +25,7 @@ import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template
 import { getCommandMenuItemBaseFile } from '@/cli/utilities/entity/entity-command-menu-item-template';
 import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getPageLayoutTabBaseFile } from '@/cli/utilities/entity/entity-page-layout-tab-template';
+import { getPageLayoutWidgetBaseFile } from '@/cli/utilities/entity/entity-page-layout-widget-template';
 import { getRecordPageLayoutBaseFile } from '@/cli/utilities/entity/entity-record-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
@@ -32,6 +33,7 @@ import { getConnectionProviderBaseFile } from '@/cli/utilities/entity/entity-con
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import { getViewFieldBaseFile } from '@/cli/utilities/entity/entity-view-field-template';
+import { getSettingsMenuItemBaseFile } from '@/cli/utilities/entity/entity-settings-menu-item-template';
 import { getTimelineActivityTypeBaseFile } from '@/cli/utilities/entity/entity-timeline-activity-type-template';
 import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
@@ -265,6 +267,15 @@ export class EntityAddCommand {
         return { name, file };
       }
 
+      case SyncableEntity.PageLayoutWidget: {
+        const name = await this.getEntityName(entity);
+
+        const file = getPageLayoutWidgetBaseFile({
+          name,
+        });
+        return { name, file };
+      }
+
       case SyncableEntity.CommandMenuItem: {
         const name = await this.getEntityName(entity);
 
@@ -278,6 +289,14 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getTimelineActivityTypeBaseFile({ name });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.SettingsMenuItem: {
+        const name = await this.getEntityName(entity);
+
+        const file = getSettingsMenuItemBaseFile({ name });
 
         return { name, file };
       }

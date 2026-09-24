@@ -16,6 +16,7 @@ import {
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
@@ -24,24 +25,34 @@ export class WorkspaceOrmManager {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly recordSharingFeatureService: RecordSharingFeatureService,
   ) {}
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntity: Type<T>,
     permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: { useReplica?: boolean },
+    repositoryOptions?: {
+      useReplica?: boolean;
+      shouldSkipEventEmission?: boolean;
+    },
   ): WorkspaceRepository<T>;
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     objectMetadataName: string,
     permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: { useReplica?: boolean },
+    repositoryOptions?: {
+      useReplica?: boolean;
+      shouldSkipEventEmission?: boolean;
+    },
   ): WorkspaceRepository<T>;
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: { useReplica?: boolean },
+    repositoryOptions?: {
+      useReplica?: boolean;
+      shouldSkipEventEmission?: boolean;
+    },
   ): WorkspaceRepository<T> {
     const objectMetadataName = this.resolveObjectMetadataName(
       workspaceEntityOrObjectMetadataName,
@@ -49,7 +60,10 @@ export class WorkspaceOrmManager {
 
     return this.workspaceDataSourceService
       .getDataSource({ useReplica: repositoryOptions?.useReplica ?? false })
-      .getRepository<T>(objectMetadataName, permissionOptions);
+      .getRepository<T>(objectMetadataName, permissionOptions, {
+        shouldSkipEventEmission:
+          repositoryOptions?.shouldSkipEventEmission ?? false,
+      });
   }
 
   private resolveObjectMetadataName<T extends ObjectLiteral>(
@@ -95,6 +109,7 @@ export class WorkspaceOrmManager {
       flatFieldMetadataMapsOrm,
       flatIndexMaps,
       featureFlagsMap,
+      billingEntitlements,
       rolesPermissions: permissionsPerRoleId,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -105,6 +120,7 @@ export class WorkspaceOrmManager {
       'flatFieldMetadataMapsOrm',
       'flatIndexMaps',
       'featureFlagsMap',
+      'billingEntitlements',
       'rolesPermissions',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
@@ -124,6 +140,11 @@ export class WorkspaceOrmManager {
       flatRowLevelPermissionPredicateGroupMaps,
       objectIdByNameSingular,
       featureFlagsMap,
+      billingEntitlements,
+      isRecordSharingEnabled:
+        await this.recordSharingFeatureService.isRecordSharingEnabled(
+          workspaceId,
+        ),
       permissionsPerRoleId,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -135,11 +156,15 @@ export class WorkspaceOrmManager {
   ): Promise<ORMWorkspaceContext> {
     const workspaceId = authContext.workspace.id;
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMapsOrm } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMapsOrm',
-      ]);
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMapsOrm,
+      billingEntitlements,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMapsOrm',
+      'billingEntitlements',
+    ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
@@ -165,6 +190,8 @@ export class WorkspaceOrmManager {
       },
       objectIdByNameSingular,
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
+      billingEntitlements,
+      isRecordSharingEnabled: false,
       permissionsPerRoleId: {},
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},

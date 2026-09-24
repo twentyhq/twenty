@@ -1,6 +1,6 @@
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { forwardRef } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/data-display';
-import { MenuItemSuggestion } from 'twenty-ui/navigation';
+import { MenuItemSuggestion } from 'twenty-ui/components';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';
@@ -18,10 +18,10 @@ const renderItem = (
   <MenuItemSuggestion
     LeftIcon={() => (
       <AvatarOrIcon
-        placeholder={item.label}
-        placeholderColorSeed={item.recordId}
-        avatarType="rounded"
-        avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
+        name={item.label}
+        colorSeed={item.recordId}
+        shape="circle"
+        src={getAbsoluteImageUrl(item.imageUrl)}
       />
     )}
     text={item.label}

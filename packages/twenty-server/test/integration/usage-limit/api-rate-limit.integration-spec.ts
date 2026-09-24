@@ -8,11 +8,9 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 
 import { gql } from 'graphql-tag';
 import { createClient } from 'redis';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -23,7 +21,6 @@ const LIMIT_VALUE = 1;
 
 describe('API rate limiting', () => {
   let usageLimitRepository: Repository<UsageLimitEntity>;
-  let featureFlagRepository: Repository<FeatureFlagEntity>;
   let apiKeyRepository: Repository<ApiKeyEntity>;
   let redis: Awaited<ReturnType<typeof createClient>>;
   let usageLimitId: string;
@@ -55,8 +52,7 @@ describe('API rate limiting', () => {
 
   const invalidateWorkspaceCaches = async () => {
     const keys = [
-      ...(await redis.keys(`*featureFlagsMap:${SEED_APPLE_WORKSPACE_ID}*`)),
-      ...(await redis.keys(`*usageLimitRules:${SEED_APPLE_WORKSPACE_ID}*`)),
+      ...(await redis.keys(`*usageLimits:${SEED_APPLE_WORKSPACE_ID}*`)),
     ];
 
     if (keys.length > 0) {
@@ -120,22 +116,10 @@ describe('API rate limiting', () => {
   beforeAll(async () => {
     usageLimitRepository =
       getCoreRepository<UsageLimitEntity>(UsageLimitEntity);
-    featureFlagRepository =
-      getCoreRepository<FeatureFlagEntity>(FeatureFlagEntity);
     apiKeyRepository = getCoreRepository<ApiKeyEntity>(ApiKeyEntity);
     redis = await createClient({ url: process.env.REDIS_URL }).connect();
 
     await createDedicatedApiKey();
-
-    await featureFlagRepository.delete({
-      key: FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
-    await featureFlagRepository.save({
-      key: FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED,
-      value: true,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
 
     const [usageLimit] = await usageLimitRepository.save([
       {
@@ -145,8 +129,9 @@ describe('API rate limiting', () => {
         spenderType: 'apiKey',
         spenderId: apiKeyId,
         limitKind: 'speed',
-        windowSeconds: WINDOW_SECONDS,
-        limitValueType: 'absolute',
+        periodCount: WINDOW_SECONDS,
+        periodUnit: 'second',
+        meter: 'quantity',
         limitValue: LIMIT_VALUE,
         burstValue: LIMIT_VALUE,
       },
@@ -159,10 +144,6 @@ describe('API rate limiting', () => {
 
   afterAll(async () => {
     await usageLimitRepository.delete({ id: usageLimitId });
-    await featureFlagRepository.delete({
-      key: FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
     await apiKeyRepository.delete({ id: apiKeyId });
     await invalidateWorkspaceCaches();
     await redis.quit();
@@ -203,9 +184,11 @@ describe('API rate limiting', () => {
       expect(extensions).toMatchObject({
         code: 'RATE_LIMITED',
         limitKind: 'speed',
+        exhaustedKind: 'limit',
         limit: LIMIT_VALUE,
         remaining: 0,
-        windowSeconds: WINDOW_SECONDS,
+        periodCount: WINDOW_SECONDS,
+        periodUnit: 'second',
         scope: { spenderType: 'apiKey', spenderId: apiKeyId },
       });
       expect(extensions.retryAfterMs).toBeGreaterThan(0);
@@ -245,9 +228,11 @@ describe('API rate limiting', () => {
         statusCode: 429,
         error: 'RATE_LIMITED',
         limitKind: 'speed',
+        exhaustedKind: 'limit',
         limit: LIMIT_VALUE,
         remaining: 0,
-        windowSeconds: WINDOW_SECONDS,
+        periodCount: WINDOW_SECONDS,
+        periodUnit: 'second',
         retryAfterSeconds: 1,
         scope: { spenderType: 'apiKey', spenderId: apiKeyId },
       });

@@ -1,11 +1,12 @@
 import { type ObjectManifest } from 'twenty-shared/application';
-import { MetadataWritability } from 'twenty-shared/types';
+import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
 
 const APP_UID = '11111111-1111-1111-1111-111111111111';
 const OBJECT_UID = '22222222-2222-2222-2222-222222222222';
 const LABEL_IDENTIFIER_FIELD_UID = '33333333-3333-3333-3333-333333333333';
+const PARENT_FIELD_UID = '44444444-4444-4444-4444-444444444444';
 const NOW = '2026-05-15T10:00:00.000Z';
 
 const buildObjectManifest = (
@@ -82,6 +83,88 @@ describe('fromObjectManifestToUniversalFlatObjectMetadata', () => {
       });
 
       expect(result.writability).toBe(MetadataWritability.APPLICATION);
+    });
+  });
+
+  describe('readability', () => {
+    it('defaults to OPEN when omitted from the manifest', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.readability).toBe(MetadataReadability.OPEN);
+    });
+
+    it('carries the manifest value through', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          readability: MetadataReadability.PRIVATE,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.readability).toBe(MetadataReadability.PRIVATE);
+    });
+
+    it('defaults the parent fields to null when omitted from the manifest', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.readabilityParentFieldUniversalIdentifiers).toBeNull();
+    });
+
+    it('carries the parent fields through', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          readability: MetadataReadability.INHERITED,
+          readabilityParentFieldUniversalIdentifiers: [PARENT_FIELD_UID],
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.readabilityParentFieldUniversalIdentifiers).toEqual([
+        PARENT_FIELD_UID,
+      ]);
+    });
+  });
+
+  describe('fidelity properties', () => {
+    it('should default color, label sync and image identifier', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.color).toBeNull();
+      expect(result.isLabelSyncedWithName).toBe(false);
+      expect(result.imageIdentifierFieldMetadataUniversalIdentifier).toBeNull();
+    });
+
+    it('should respect explicit color, label sync and image identifier', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          color: 'blue',
+          isLabelSyncedWithName: true,
+          imageIdentifierFieldMetadataUniversalIdentifier:
+            'image-field-universal-identifier',
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.color).toBe('blue');
+      expect(result.isLabelSyncedWithName).toBe(true);
+      expect(result.imageIdentifierFieldMetadataUniversalIdentifier).toBe(
+        'image-field-universal-identifier',
+      );
     });
   });
 });

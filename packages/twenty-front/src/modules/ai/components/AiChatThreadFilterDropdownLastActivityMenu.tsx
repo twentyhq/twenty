@@ -1,15 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { Dropdown } from 'twenty-ui/components';
 
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER } from '@/ai/constants/AgentChatThreadLastActivityFilter';
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS } from '@/ai/constants/AgentChatThreadLastActivityFilterLabels';
 import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_OPTIONS = [
@@ -20,45 +14,29 @@ const AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_OPTIONS = [
   AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER.ALL,
 ] as const;
 
-type AiChatThreadFilterDropdownLastActivityMenuProps = {
-  onBack: () => void;
-};
-
-export const AiChatThreadFilterDropdownLastActivityMenu = ({
-  onBack,
-}: AiChatThreadFilterDropdownLastActivityMenuProps) => {
+export const AiChatThreadFilterDropdownLastActivityMenu = () => {
   const { t } = useLingui();
-  const { closeDropdown } = useCloseDropdown();
   const [
     agentChatThreadLastActivityFilter,
     setAgentChatThreadLastActivityFilter,
   ] = useAtomState(agentChatThreadLastActivityFilterState);
 
   return (
-    <DropdownContent>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={onBack}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {t`Last activity`}
-      </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
+    <>
+      <Dropdown.Back>{t`Last activity`}</Dropdown.Back>
+      <Dropdown.Section>
         {AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_OPTIONS.map((option) => (
-          <MenuItemSelect
+          <Dropdown.OptionItem
             key={option}
-            text={t(AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[option])}
-            selected={agentChatThreadLastActivityFilter === option}
-            onClick={() => {
+            onSelect={() => {
               setAgentChatThreadLastActivityFilter(option);
-              closeDropdown();
             }}
-          />
+            selected={agentChatThreadLastActivityFilter === option}
+          >
+            {t(AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[option])}
+          </Dropdown.OptionItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };

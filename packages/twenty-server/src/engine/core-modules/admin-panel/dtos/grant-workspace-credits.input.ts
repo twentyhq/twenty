@@ -1,17 +1,25 @@
-import { ArgsType, Field, Float } from '@nestjs/graphql';
+import { ArgsType, Field, Float, Int } from '@nestjs/graphql';
 
 import {
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsPositive,
   IsString,
   IsUUID,
+  Max,
   MaxLength,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+
+// Kept at a year, which is the longest the picker offers and comfortably
+// inside the number of periods alignGrantExpiryToPeriodEnd will walk on the
+// shortest interval. Raising it means raising MAX_PERIODS_AHEAD with it, or a
+// long validity silently comes back short.
+const MAX_CREDIT_GRANT_VALIDITY_IN_DAYS = 365;
 
 @ArgsType()
 export class GrantWorkspaceCreditsInput {
@@ -34,6 +42,15 @@ export class GrantWorkspaceCreditsInput {
   @IsString()
   @MaxLength(500)
   reason?: string;
+
+  // Left out, the credits do not expire: they stay spendable until a period
+  // transition settles them against usage. Set only for a time-boxed grant.
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @Max(MAX_CREDIT_GRANT_VALIDITY_IN_DAYS)
+  expiresInDays?: number;
 
   // Identifies one intended grant, so a retried mutation returns the grant the
   // first attempt wrote instead of handing out the credits a second time.

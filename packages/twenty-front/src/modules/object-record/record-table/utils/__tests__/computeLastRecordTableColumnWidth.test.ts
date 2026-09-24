@@ -7,7 +7,6 @@ describe('computeLastRecordTableColumnWidth', () => {
     const { lastColumnWidth } = computeLastRecordTableColumnWidth({
       recordFields,
       tableWidth: 200,
-      shouldCompactFirstColumn: false,
       isDragColumnHidden: false,
       isCheckboxColumnHidden: false,
     });
@@ -21,7 +20,6 @@ describe('computeLastRecordTableColumnWidth', () => {
     const { lastColumnWidth } = computeLastRecordTableColumnWidth({
       recordFields,
       tableWidth: 300,
-      shouldCompactFirstColumn: false,
       isDragColumnHidden: false,
       isCheckboxColumnHidden: false,
     });
@@ -35,7 +33,6 @@ describe('computeLastRecordTableColumnWidth', () => {
     const { lastColumnWidth } = computeLastRecordTableColumnWidth({
       recordFields,
       tableWidth: 300,
-      shouldCompactFirstColumn: false,
       isDragColumnHidden: true,
       isCheckboxColumnHidden: true,
     });
@@ -43,28 +40,27 @@ describe('computeLastRecordTableColumnWidth', () => {
     expect(lastColumnWidth).toBe(65);
   });
 
-  it('uses the compact first column width when shouldCompactFirstColumn is true', () => {
+  it('substitutes the first column width when an override is given', () => {
     const recordFields = [{ size: 100 }, { size: 150 }];
 
-    const { lastColumnWidth: lastColumnWidthWithCompact } =
+    const { lastColumnWidth: lastColumnWidthWithOverride } =
       computeLastRecordTableColumnWidth({
         recordFields,
         tableWidth: 300,
-        shouldCompactFirstColumn: true,
+        firstColumnWidthOverride: 72,
         isDragColumnHidden: false,
         isCheckboxColumnHidden: false,
       });
 
-    const { lastColumnWidth: lastColumnWidthWithoutCompact } =
+    const { lastColumnWidth: lastColumnWidthWithoutOverride } =
       computeLastRecordTableColumnWidth({
         recordFields,
         tableWidth: 300,
-        shouldCompactFirstColumn: false,
         isDragColumnHidden: false,
         isCheckboxColumnHidden: false,
       });
 
-    expect(lastColumnWidthWithCompact).toBe(37);
-    expect(lastColumnWidthWithoutCompact).toBe(0);
+    expect(lastColumnWidthWithOverride).toBe(3);
+    expect(lastColumnWidthWithoutOverride).toBe(0);
   });
 });

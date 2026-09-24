@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -22,8 +23,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 
 type RecordDetailMorphRelationSectionDropdownOneToManyProps = {
   dropdownTriggerClickableComponent?: ReactNode;
@@ -162,9 +163,11 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
         dropdownTriggerClickableComponent ?? (
           <LightIconButton
             className="displayOnHover"
-            Icon={IconPlus}
-            accent="tertiary"
-          />
+            emphasis="subtle"
+            aria-label={t`Add relation`}
+          >
+            <IconPlus />
+          </LightIconButton>
         )
       }
       dropdownComponents={

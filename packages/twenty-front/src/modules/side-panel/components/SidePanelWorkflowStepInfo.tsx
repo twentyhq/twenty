@@ -3,7 +3,7 @@ import { useLogicFunctionThirdPartyApplicationInformation } from '@/logic-functi
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,6 +17,7 @@ import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAg
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
+import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
@@ -27,7 +28,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
-import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SidePanelWorkflowStepInfo = ({
@@ -38,7 +39,7 @@ export const SidePanelWorkflowStepInfo = ({
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageInfoSelector).page;
 
   const workflowId = useSidePanelWorkflowIdOrThrow();
 
@@ -136,7 +137,9 @@ export const SidePanelWorkflowStepInfo = ({
     ? getTriggerIconColor(stepDefinition.definition.type)
     : getActionIconColorOrThrow(stepDefinition.definition.type);
 
-  const headerType = isTrigger ? t`Trigger` : t`Action`;
+  const headerType = isTrigger
+    ? t`Trigger`
+    : t(getActionHeaderTypeOrThrow(stepDefinition.definition.type));
 
   const label = isDefined(thirdPartyApplicationInformation)
     ? thirdPartyApplicationInformation.name
@@ -177,7 +180,7 @@ export const SidePanelWorkflowStepInfo = ({
   };
 
   return (
-    <SidePanelPageInfoLayout
+    <HeaderIdentifier
       icon={
         isDefined(thirdPartyApplicationInformation) ? (
           <AppChip

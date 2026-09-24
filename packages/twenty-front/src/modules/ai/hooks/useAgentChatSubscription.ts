@@ -269,6 +269,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
               inputCredits: usage.inputCredits,
               outputCredits: usage.outputCredits,
             },
+            cachedInputTokens:
+              (prev?.cachedInputTokens ?? 0) + usage.cachedInputTokens,
             conversationSize: usage.conversationSize,
             contextWindowTokens: model.contextWindowTokens,
             inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
@@ -383,7 +385,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             errorAtom,
             createAiChatCodedError(
               'Chat stopped: no more available credits.',
-              AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
+              AiChatErrorCode.CREDITS_EXHAUSTED,
             ),
           );
 

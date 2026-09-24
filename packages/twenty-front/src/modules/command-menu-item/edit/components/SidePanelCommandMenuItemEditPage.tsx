@@ -5,6 +5,7 @@ import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/edit/hook
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { getCommandMenuItemPlaceholderValues } from '@/command-menu-item/utils/getCommandMenuItemPlaceholderValues';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -12,22 +13,26 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { ContextStorePageType } from 'twenty-shared/types';
-import { interpolateCommandMenuItemPlaceholders } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
-import { getCommandMenuItemPlaceholderValues } from '@/command-menu-item/utils/getCommandMenuItemPlaceholderValues';
+import {
+  LightIconButton,
+  MenuItem,
+  MenuItemDraggable,
+} from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconPin,
   IconPinnedOff,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -82,7 +87,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
   );
 
   const getDisplayLabel = (item: CommandMenuItemFieldsFragment) =>
-    interpolateCommandMenuItemPlaceholders(
+    interpolateMessagePlaceholders(
       item.label,
       getCommandMenuItemPlaceholderValues(commandMenuContextApi),
     );
@@ -132,17 +137,6 @@ export const SidePanelCommandMenuItemEditPage = () => {
       position: nextPinnedPosition,
     });
   };
-
-  const makeOptionsDropdownWrapper =
-    (item: Pick<CommandMenuItemFieldsFragment, 'id' | 'shortLabel'>) =>
-    ({ iconButton }: { iconButton: React.ReactElement }) => (
-      <CommandMenuItemOptionsDropdown
-        itemId={item.id}
-        shortLabel={item.shortLabel}
-        serverShortLabel={serverItemsById.get(item.id)?.shortLabel ?? null}
-        iconButton={iconButton}
-      />
-    );
 
   const handlePinnedDragEnd = (result: DraggableListDropResult) => {
     const { source, destination, draggableId } = result;
@@ -236,20 +230,35 @@ export const SidePanelCommandMenuItemEditPage = () => {
                           text={getDisplayLabel(item)}
                           gripMode="onHover"
                           isIconDisplayedOnHoverOnly={false}
-                          iconButtons={[
-                            {
-                              Icon: IconDotsVertical,
-                              Wrapper: makeOptionsDropdownWrapper(item),
-                              onClick: () => {},
-                            },
-                            {
-                              Icon: IconPinnedOff,
-                              onClick: (event) => {
-                                event.stopPropagation();
-                                handleTogglePin(item.id, true);
-                              },
-                            },
-                          ]}
+                          iconButtons={
+                            <ButtonGroup
+                              attached={false}
+                              aria-label={t`Menu item actions`}
+                            >
+                              <CommandMenuItemOptionsDropdown
+                                itemId={item.id}
+                                shortLabel={item.shortLabel}
+                                serverShortLabel={
+                                  serverItemsById.get(item.id)?.shortLabel ??
+                                  null
+                                }
+                                iconButton={
+                                  <LightIconButton aria-label={t`More options`}>
+                                    <IconDotsVertical />
+                                  </LightIconButton>
+                                }
+                              />
+                              <LightIconButton
+                                aria-label={t`Unpin`}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleTogglePin(item.id, true);
+                                }}
+                              >
+                                <IconPinnedOff />
+                              </LightIconButton>
+                            </ButtonGroup>
+                          }
                         />
                       </SelectableListItem>
                     }
@@ -276,15 +285,17 @@ export const SidePanelCommandMenuItemEditPage = () => {
                     LeftIcon={ItemIcon}
                     text={getDisplayLabel(item)}
                     isIconDisplayedOnHoverOnly={false}
-                    iconButtons={[
-                      {
-                        Icon: IconPin,
-                        onClick: (event) => {
+                    iconButtons={
+                      <LightIconButton
+                        aria-label={t`Pin`}
+                        onClick={(event) => {
                           event.stopPropagation();
                           handleTogglePin(item.id, false);
-                        },
-                      },
-                    ]}
+                        }}
+                      >
+                        <IconPin />
+                      </LightIconButton>
+                    }
                   />
                 </SelectableListItem>
               );

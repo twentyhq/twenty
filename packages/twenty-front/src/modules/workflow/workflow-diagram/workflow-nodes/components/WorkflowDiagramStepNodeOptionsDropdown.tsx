@@ -10,8 +10,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { IconButton } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { FloatingIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOptionsButtonContainer = styled.div`
@@ -70,11 +70,9 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
           dropdownId={dropdownId}
           selectableItemIdArray={selectableItemIds}
           clickableComponent={
-            <FloatingIconButton
-              size="medium"
-              Icon={IconDotsVertical}
-              ariaLabel={t`Node options`}
-            />
+            <IconButton elevated size="md" aria-label={t`Node options`}>
+              <IconDotsVertical />
+            </IconButton>
           }
           dropdownPlacement="right-start"
           shouldRegisterOptionsHotkey={false}

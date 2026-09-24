@@ -1,11 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { HttpResponse, graphql } from 'msw';
 import { expect, within } from 'storybook/test';
 
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
+import { Toaster } from 'twenty-ui/components';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -16,7 +18,7 @@ const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
     ComponentDecorator,
     RouterDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   parameters: {
     msw: graphqlMocks,
@@ -25,7 +27,7 @@ const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsDevelopersWebhookForm>;
+type Story = StoryObj<typeof SettingsDevelopersWebhookForm>;
 
 export const CreateMode: Story = {
   args: {
@@ -64,5 +66,40 @@ export const EditMode: Story = {
 
     await canvas.findByText('Danger zone');
     await canvas.findByText('Delete this webhook');
+  },
+};
+
+export const QueryError: Story = {
+  args: {
+    mode: WebhookFormMode.Edit,
+    webhookId: 'unavailable-webhook',
+  },
+  decorators: [
+    (Story) => (
+      <>
+        <Story />
+        <Toaster getToastProps={() => ({ progress: 100 })} />
+      </>
+    ),
+  ],
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('GetWebhook', () =>
+          HttpResponse.json({
+            errors: [{ message: 'Connection lost' }],
+          }),
+        ),
+        ...graphqlMocks.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    const toast = await canvas.findByRole('status');
+
+    expect(toast).toHaveTextContent('Failed to load webhook');
+    expect(canvas.getAllByRole('status')).toHaveLength(1);
+    expect(canvas.queryByText('Connection lost')).not.toBeInTheDocument();
   },
 };

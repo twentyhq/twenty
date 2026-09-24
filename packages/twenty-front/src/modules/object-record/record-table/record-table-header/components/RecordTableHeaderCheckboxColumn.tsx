@@ -15,7 +15,7 @@ import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-t
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -87,7 +87,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
         <Checkbox
           hoverable
           checked={checked}
-          onChange={onChange}
+          onCheckedChange={() => onChange()}
           indeterminate={indeterminate}
           disabled={recordTableIsEmpty}
           aria-label={t`Select all rows`}

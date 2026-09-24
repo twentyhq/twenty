@@ -113,6 +113,7 @@ describe('Uninstall application logic function hook', () => {
       .mockResolvedValue({
         data: {},
         duration: 1,
+        billedDurationMs: 1,
         logs: '',
         status: LogicFunctionExecutionStatus.SUCCESS,
       });
@@ -241,6 +242,7 @@ describe('Uninstall application logic function hook', () => {
     executeSpy.mockResolvedValue({
       data: null,
       duration: 1,
+      billedDurationMs: 1,
       logs: '',
       status: LogicFunctionExecutionStatus.ERROR,
       error: {

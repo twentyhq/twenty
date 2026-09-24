@@ -1,34 +1,16 @@
 import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
 import { type EventRowNativeComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
+import {
+  StyledEventRow,
+  StyledEventRowContainer,
+  StyledEventRowContent,
+} from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowMainObjectProps = EventRowNativeComponentProps;
-
-const StyledMainContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-`;
-
-const StyledRowContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  overflow: hidden;
-`;
 
 export const EventRowMainObject = ({
   authorFullName,
@@ -43,18 +25,18 @@ export const EventRowMainObject = ({
   switch (eventAction) {
     case 'created': {
       return (
-        <StyledMainContainer>
-          <StyledRowContainer>
-            <StyledRow>
+        <StyledEventRow>
+          <StyledEventRowContainer>
+            <StyledEventRowContent>
               <EventRowItem>{labelIdentifierValue}</EventRowItem>
               <EventRowItem variant="action">
                 {eventTypeLabel ?? t`was created by`}
               </EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
-            </StyledRow>
+            </StyledEventRowContent>
             <EventRowDate happensAt={happensAt} />
-          </StyledRowContainer>
-        </StyledMainContainer>
+          </StyledEventRowContainer>
+        </StyledEventRow>
       );
     }
     case 'updated': {
@@ -72,34 +54,34 @@ export const EventRowMainObject = ({
     }
     case 'deleted': {
       return (
-        <StyledMainContainer>
-          <StyledRowContainer>
-            <StyledRow>
+        <StyledEventRow>
+          <StyledEventRowContainer>
+            <StyledEventRowContent>
               <EventRowItem>{labelIdentifierValue}</EventRowItem>
               <EventRowItem variant="action">
                 {eventTypeLabel ?? t`was deleted by`}
               </EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
-            </StyledRow>
+            </StyledEventRowContent>
             <EventRowDate happensAt={happensAt} />
-          </StyledRowContainer>
-        </StyledMainContainer>
+          </StyledEventRowContainer>
+        </StyledEventRow>
       );
     }
     case 'restored': {
       return (
-        <StyledMainContainer>
-          <StyledRowContainer>
-            <StyledRow>
+        <StyledEventRow>
+          <StyledEventRowContainer>
+            <StyledEventRowContent>
               <EventRowItem>{labelIdentifierValue}</EventRowItem>
               <EventRowItem variant="action">
                 {eventTypeLabel ?? t`was restored by`}
               </EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
-            </StyledRow>
+            </StyledEventRowContent>
             <EventRowDate happensAt={happensAt} />
-          </StyledRowContainer>
-        </StyledMainContainer>
+          </StyledEventRowContainer>
+        </StyledEventRow>
       );
     }
     default: {
@@ -108,16 +90,16 @@ export const EventRowMainObject = ({
       }
 
       return (
-        <StyledMainContainer>
-          <StyledRowContainer>
-            <StyledRow>
+        <StyledEventRow>
+          <StyledEventRowContainer>
+            <StyledEventRowContent>
               <EventRowItem>{authorFullName}</EventRowItem>
               <EventRowItem variant="action">{eventTypeLabel}</EventRowItem>
               <EventRowItem>{labelIdentifierValue}</EventRowItem>
-            </StyledRow>
+            </StyledEventRowContent>
             <EventRowDate happensAt={happensAt} />
-          </StyledRowContainer>
-        </StyledMainContainer>
+          </StyledEventRowContainer>
+        </StyledEventRow>
       );
     }
   }

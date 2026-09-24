@@ -31,7 +31,7 @@ export const getDataOrThrow = (response: MetadataAPIResponse) => {
 
 export type MessageFolderDto = Pick<
   MessageFolderDTO,
-  'id' | 'name' | 'isSynced' | 'isSentFolder'
+  'id' | 'name' | 'isSynced' | 'isSentFolder' | 'pendingSyncAction'
 >;
 
 export type MessageChannelDto = Pick<
@@ -148,6 +148,7 @@ export const queryMessageFolders = async (
           name
           isSynced
           isSentFolder
+          pendingSyncAction
         }
       }
     `,
@@ -311,4 +312,21 @@ export const deleteConnectedAccount = async (
   getDataOrThrow(response);
 
   await waitForAllJobsToFinish();
+};
+
+export const disconnectConnectedAccount = async (
+  connectedAccountId: string,
+): Promise<void> => {
+  const response = await makeMetadataAPIRequest({
+    query: gql`
+      mutation DisconnectConnectedAccountForTest($id: UUID!) {
+        disconnectConnectedAccount(id: $id) {
+          id
+        }
+      }
+    `,
+    variables: { id: connectedAccountId },
+  });
+
+  getDataOrThrow(response);
 };

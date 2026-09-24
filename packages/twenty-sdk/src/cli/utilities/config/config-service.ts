@@ -16,8 +16,6 @@ export type RemoteConfig = {
   // App registration credentials (from `createApplicationRegistration`)
   appRegistrationId?: string;
   appRegistrationClientId?: string;
-  appAccessToken?: string;
-  appRefreshToken?: string;
 };
 
 type PersistedConfig = {
@@ -97,8 +95,6 @@ export class ConfigService {
         str(source.applicationRefreshToken),
       appRegistrationId: str(source.appRegistrationId),
       appRegistrationClientId: str(source.appRegistrationClientId),
-      appAccessToken: str(source.appAccessToken),
-      appRefreshToken: str(source.appRefreshToken),
     });
 
     const profiles =
@@ -167,8 +163,6 @@ export class ConfigService {
         twentyCLIRefreshToken: remoteConfig.twentyCLIRefreshToken,
         appRegistrationId: remoteConfig.appRegistrationId,
         appRegistrationClientId: remoteConfig.appRegistrationClientId,
-        appAccessToken: remoteConfig.appAccessToken,
-        appRefreshToken: remoteConfig.appRefreshToken,
       };
     } catch {
       return defaultConfig;

@@ -1,27 +1,30 @@
+import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
+import { getToolName, type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import { useState } from 'react';
-import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
+import { JsonTree } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
 import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
-import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
-import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
+import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
+import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -339,33 +342,39 @@ const ThinkingToolStepRow = ({
             {hasError ? (
               <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
             ) : (
-              <StyledToolDetailsContent>
-                <StyledToolTabListContainer>
-                  <TabList
-                    tabs={toolTabs}
-                    behaveAsLinks={false}
-                    componentInstanceId={toolTabListComponentInstanceId}
-                  />
-                </StyledToolTabListContainer>
-                <StyledToolJsonContent>
-                  <StyledJsonTreeContainer>
-                    <JsonTree
-                      value={
-                        (activeTab === 'output'
-                          ? toolOutput
-                          : toolInput) as JsonValue
-                      }
-                      shouldExpandNodeInitially={() => false}
-                      emptyArrayLabel={t`Empty Array`}
-                      emptyObjectLabel={t`Empty Object`}
-                      emptyStringLabel={t`[empty string]`}
-                      arrowButtonCollapsedLabel={t`Expand`}
-                      arrowButtonExpandedLabel={t`Collapse`}
-                      onNodeValueClick={copyToClipboard}
+              <TabListRoot componentInstanceId={toolTabListComponentInstanceId}>
+                <StyledToolDetailsContent>
+                  <StyledToolTabListContainer>
+                    <TabList
+                      aria-label={t`Tool details: ${displayMessage}`}
+                      tabs={toolTabs}
+                      behaveAsLinks={false}
+                      componentInstanceId={toolTabListComponentInstanceId}
                     />
-                  </StyledJsonTreeContainer>
-                </StyledToolJsonContent>
-              </StyledToolDetailsContent>
+                  </StyledToolTabListContainer>
+                  <Tabs.Panel
+                    value={activeTab}
+                    render={<StyledToolJsonContent />}
+                  >
+                    <StyledJsonTreeContainer>
+                      <JsonTree
+                        value={
+                          (activeTab === 'output'
+                            ? toolOutput
+                            : toolInput) as JsonValue
+                        }
+                        shouldExpandNodeInitially={() => false}
+                        emptyArrayLabel={t`Empty Array`}
+                        emptyObjectLabel={t`Empty Object`}
+                        emptyStringLabel={t`[empty string]`}
+                        arrowButtonCollapsedLabel={t`Expand`}
+                        arrowButtonExpandedLabel={t`Collapse`}
+                        onNodeValueClick={copyToClipboard}
+                      />
+                    </StyledJsonTreeContainer>
+                  </Tabs.Panel>
+                </StyledToolDetailsContent>
+              </TabListRoot>
             )}
           </StyledToolDetailsContainer>
         </AnimatedExpandableContainer>

@@ -1,4 +1,5 @@
 import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -6,10 +7,9 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { Temporal } from 'temporal-polyfill';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
-import { EllipsisDisplay } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTimeZoneSpacer = styled.span`
   min-width: ${themeCssVariables.spacing[1]};

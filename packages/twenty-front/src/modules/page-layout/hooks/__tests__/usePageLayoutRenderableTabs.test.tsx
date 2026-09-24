@@ -4,7 +4,7 @@ import { renderHook } from '@testing-library/react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 let mockIsMobile = false;
-let mockIsInSidePanel = false;
+let mockWorkspaceSurfaceType: 'main' | 'side-panel' = 'main';
 
 const homeTab: PageLayoutTab = {
   isSystemSideEffect: false,
@@ -40,9 +40,12 @@ jest.mock('@/page-layout/hooks/useIsPageLayoutInEditMode', () => ({
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => ({
-    isInSidePanel: mockIsInSidePanel,
     targetRecordIdentifier: undefined,
   }),
+}));
+
+jest.mock('@/ui/layout/hooks/useWorkspaceSurface', () => ({
+  useWorkspaceSurface: () => ({ type: mockWorkspaceSurfaceType }),
 }));
 
 jest.mock('twenty-ui/utilities', () => ({
@@ -52,18 +55,22 @@ jest.mock('twenty-ui/utilities', () => ({
 describe('usePageLayoutRenderableTabs', () => {
   beforeEach(() => {
     mockIsMobile = false;
-    mockIsInSidePanel = false;
+    mockWorkspaceSurfaceType = 'main';
   });
 
   it.each([
-    { context: 'full record page', isMobile: false, isInSidePanel: false },
-    { context: 'mobile record page', isMobile: true, isInSidePanel: false },
-    { context: 'record side panel', isMobile: false, isInSidePanel: true },
-  ])(
+    { context: 'full record page', isMobile: false, surfaceType: 'main' },
+    { context: 'mobile record page', isMobile: true, surfaceType: 'main' },
+    {
+      context: 'record side panel',
+      isMobile: false,
+      surfaceType: 'side-panel',
+    },
+  ] as const)(
     'uses the page layout tabs on the $context',
-    ({ isMobile, isInSidePanel }) => {
+    ({ isMobile, surfaceType }) => {
       mockIsMobile = isMobile;
-      mockIsInSidePanel = isInSidePanel;
+      mockWorkspaceSurfaceType = surfaceType;
 
       const { result } = renderHook(() => usePageLayoutRenderableTabs());
 

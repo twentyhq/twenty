@@ -3,23 +3,19 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/TabSettingsPlacementSection';
 import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/SingleWidgetTabVisibilityDropdownContent';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
+import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconEyeX,
-  IconPinned,
-  IconRefreshDot,
-  IconTrash,
-} from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { IconEyeX, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID =
   'reset-single-widget-tab-to-default-modal';
@@ -30,6 +26,7 @@ type SingleWidgetTabSettingsContentProps = {
   pageLayoutId: string;
   singleWidget: PageLayoutWidget;
   canSetAsPinned: boolean;
+  canUnpin: boolean;
   canMoveLeft: boolean;
   canMoveRight: boolean;
   isResetToDefaultDisabled: boolean;
@@ -37,6 +34,7 @@ type SingleWidgetTabSettingsContentProps = {
   onMoveLeft: () => void;
   onMoveRight: () => void;
   onSetAsPinned: () => void;
+  onUnpin: () => void;
   onResetToDefault: () => void;
   onDelete: () => void;
 };
@@ -45,6 +43,7 @@ export const SingleWidgetTabSettingsContent = ({
   pageLayoutId,
   singleWidget,
   canSetAsPinned,
+  canUnpin,
   canMoveLeft,
   canMoveRight,
   isResetToDefaultDisabled,
@@ -52,11 +51,12 @@ export const SingleWidgetTabSettingsContent = ({
   onMoveLeft,
   onMoveRight,
   onSetAsPinned,
+  onUnpin,
   onResetToDefault,
   onDelete,
 }: SingleWidgetTabSettingsContentProps) => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openDialog } = useDialog();
 
   const visibilityLabel = useTranslatedVisibilityLabel(
     singleWidget.conditionalAvailabilityExpression,
@@ -66,13 +66,22 @@ export const SingleWidgetTabSettingsContent = ({
     if (isResetToDefaultDisabled) {
       return;
     }
-    openModal(RESET_TAB_TO_DEFAULT_MODAL_ID);
+    openDialog(RESET_TAB_TO_DEFAULT_MODAL_ID);
   };
 
+  const placementItems = getTabSettingsPlacementItems({
+    canSetAsPinned,
+    canUnpin,
+    canMoveLeft,
+    canMoveRight,
+    onSetAsPinned,
+    onUnpin,
+    onMoveLeft,
+    onMoveRight,
+  });
+
   const selectableItemIds = [
-    ...(canSetAsPinned ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED] : []),
-    ...(canMoveLeft ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT] : []),
-    ...(canMoveRight ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT] : []),
+    ...placementItems.map((item) => item.id),
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     ...(canDelete ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE] : []),
@@ -81,47 +90,7 @@ export const SingleWidgetTabSettingsContent = ({
   return (
     <>
       <SidePanelList selectableItemIds={selectableItemIds}>
-        <SidePanelGroup heading={t`Placement`}>
-          {canSetAsPinned && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED}
-              onEnter={onSetAsPinned}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED}
-                Icon={IconPinned}
-                label={t`Pin tab`}
-                onClick={onSetAsPinned}
-              />
-            </SelectableListItem>
-          )}
-          {canMoveLeft && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-              onEnter={onMoveLeft}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-                Icon={IconChevronLeft}
-                label={t`Move left`}
-                onClick={onMoveLeft}
-              />
-            </SelectableListItem>
-          )}
-          {canMoveRight && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-              onEnter={onMoveRight}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-                Icon={IconChevronRight}
-                label={t`Move right`}
-                onClick={onMoveRight}
-              />
-            </SelectableListItem>
-          )}
-        </SidePanelGroup>
+        <TabSettingsPlacementSection items={placementItems} />
         <SidePanelGroup heading={t`Manage`}>
           <SelectableListItem
             itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
@@ -149,28 +118,28 @@ export const SingleWidgetTabSettingsContent = ({
               contextualTextPosition="right"
             />
           </SelectableListItem>
-          <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-              onEnter={handleResetToDefault}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-                Icon={IconRefreshDot}
-                label={t`Reset to default`}
-                onClick={handleResetToDefault}
-                disabled={isResetToDefaultDisabled}
-              />
-            </SelectableListItem>
-          </div>
-          {isResetToDefaultDisabled && (
-            <AppTooltip
-              anchorSelect={`#${RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}`}
-              content={t`No default configuration available for this tab`}
-              noArrow
-              place="bottom"
-            />
-          )}
+          <Tooltip
+            delay={TooltipDelay.mediumDelay}
+            content={t`No default configuration available for this tab`}
+            side="bottom"
+            disabled={!isResetToDefaultDisabled}
+          >
+            <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
+              <SelectableListItem
+                itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                onEnter={handleResetToDefault}
+              >
+                <CommandMenuItem
+                  id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                  Icon={IconRefreshDot}
+                  label={t`Reset to default`}
+                  onClick={handleResetToDefault}
+                  disabled={isResetToDefaultDisabled}
+                />
+              </SelectableListItem>
+            </div>
+          </Tooltip>
+
           {canDelete && (
             <SelectableListItem
               itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
@@ -186,13 +155,13 @@ export const SingleWidgetTabSettingsContent = ({
           )}
         </SidePanelGroup>
       </SidePanelList>
-      <ConfirmationModal
-        modalInstanceId={RESET_TAB_TO_DEFAULT_MODAL_ID}
+      <ConfirmationDialog
+        dialogId={RESET_TAB_TO_DEFAULT_MODAL_ID}
         title={t`Reset to default`}
         subtitle={t`This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone.`}
         onConfirmClick={onResetToDefault}
         confirmButtonText={t`Reset`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </>
   );

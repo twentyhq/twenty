@@ -1,26 +1,20 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsStatsGrid } from '@/settings/components/SettingsStatsGrid';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Fragment, useContext, useState } from 'react';
-import {
-  IconMessage,
-  IconSparkle2,
-  IconSparkles,
-  IconTool,
-} from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section, useToast } from 'twenty-ui/components';
+import { IconBook, IconMessage, IconSparkles, IconTool } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -38,7 +32,7 @@ const MCP_DEEP_LINK = `${getSettingsPath(SettingsPath.ApiWebhooks)}#mcp`;
 
 export const SettingsAiOverviewTab = () => {
   const { theme } = useContext(ThemeContext);
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -72,10 +66,11 @@ export const SettingsAiOverviewTab = () => {
         aiAdditionalInstructions: originalInstructions || null,
       });
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorSnackBar({ apolloError: error });
+        enqueueToast(getToastOptionsFromError({ error }));
       } else {
-        enqueueErrorSnackBar({
-          message: t`Failed to save workspace instructions`,
+        enqueueToast({
+          variant: 'error',
+          children: t`Failed to save workspace instructions`,
         });
       }
     }
@@ -83,8 +78,8 @@ export const SettingsAiOverviewTab = () => {
 
   return (
     <Fragment>
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`At a glance`}
           description={t`What's installed and being used in your workspace`}
         />
@@ -99,7 +94,7 @@ export const SettingsAiOverviewTab = () => {
             ],
             [
               {
-                Icon: IconSparkles,
+                Icon: IconBook,
                 label: t`Skills`,
                 value: stats ? stats.skillsCount.toString() : '—',
               },
@@ -113,23 +108,23 @@ export const SettingsAiOverviewTab = () => {
             ],
           ]}
         />
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`MCP Server`}
           description={t`Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol`}
         />
         <UndecoratedLink to={MCP_DEEP_LINK}>
           <SettingsCard
-            Icon={<IconSparkle2 size={theme.icon.size.md} />}
+            Icon={<IconSparkles size={theme.icon.size.md} />}
             title={t`Set up MCP`}
           />
         </UndecoratedLink>
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Workspace Instructions`}
           description={t`Custom instructions appended to every system prompt`}
         />
@@ -152,7 +147,7 @@ export const SettingsAiOverviewTab = () => {
             minHeight={150}
           />
         </StyledInstructionsContainer>
-      </Section>
+      </Section.Root>
     </Fragment>
   );
 };

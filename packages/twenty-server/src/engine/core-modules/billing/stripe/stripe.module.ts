@@ -3,11 +3,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
+import { StripeEntitlementService } from 'src/engine/core-modules/billing/stripe/services/stripe-entitlement.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
@@ -34,9 +34,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripeBillingPortalService,
     StripeBillingMeterService,
     StripeCustomerService,
+    StripeEntitlementService,
     StripePriceService,
     StripeProductService,
-    StripeBillingMeterEventService,
     StripeInvoiceService,
     provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
@@ -45,12 +45,12 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripeBillingPortalService,
     StripeBillingMeterService,
     StripeCustomerService,
+    StripeEntitlementService,
     StripePriceService,
     StripeCheckoutService,
     StripeSubscriptionItemService,
     StripeSubscriptionService,
     StripeProductService,
-    StripeBillingMeterEventService,
     StripeSubscriptionScheduleService,
     StripeInvoiceService,
   ],

@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
-import { Avatar, AvatarGroup } from 'twenty-ui/data-display';
+import { AvatarGroup } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -99,11 +100,11 @@ export const WorkspaceMemberAvatarStack = ({
           return (
             <StyledAvatarContainer key={workspaceMember.id}>
               <Avatar
-                avatarUrl={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
-                placeholder={displayName}
-                placeholderColorSeed={workspaceMember.id}
+                src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                name={displayName}
+                colorSeed={workspaceMember.id}
                 size="md"
-                type="rounded"
+                shape="circle"
               />
             </StyledAvatarContainer>
           );

@@ -1,7 +1,7 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useNumberFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useNumberFieldDisplay';
-import { NumberDisplay } from 'twenty-ui/data-display';
 import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const NumberFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useNumberFieldDisplay();
@@ -10,7 +10,7 @@ export const NumberFieldDisplay = () => {
   const { formatNumber } = useNumberFormat();
 
   if (!isDefined(fieldValue)) {
-    return <NumberDisplay value={null} />;
+    return <Text truncate />;
   }
 
   const numericValue = Number(fieldValue);
@@ -24,5 +24,5 @@ export const NumberFieldDisplay = () => {
     formattedValue = formatNumber(numericValue, { decimals });
   }
 
-  return <NumberDisplay value={formattedValue} />;
+  return <Text truncate>{formattedValue}</Text>;
 };

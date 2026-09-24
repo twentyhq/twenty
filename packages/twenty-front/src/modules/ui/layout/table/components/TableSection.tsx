@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext, useState } from 'react';
-import { TableBody } from './TableBody';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { Label } from 'twenty-ui/typography';
+import { Text } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { TableBody } from './TableBody';
 
 type TableSectionProps = {
   children: ReactNode;
@@ -53,7 +53,7 @@ export const TableSection = ({
         isExpanded={isExpanded}
         onClick={handleToggleSection}
       >
-        <Label>{title}</Label>
+        <StyledDisplayLabel>{title}</StyledDisplayLabel>
         {isExpanded ? (
           <IconChevronUp
             size={theme.icon.size.md}
@@ -76,3 +76,9 @@ export const TableSection = ({
     </>
   );
 };
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;

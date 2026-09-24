@@ -39,7 +39,7 @@ export const getNavigationMenuItemBaseFile = ({
 export default defineNavigationMenuItem({
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
-  icon: 'IconList',
+  icon: 'IconCompass',
   position: 0,
 ${typeAndConfig}
 });

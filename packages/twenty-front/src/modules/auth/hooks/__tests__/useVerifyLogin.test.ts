@@ -1,18 +1,17 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { AppPath } from 'twenty-shared/types';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { AppPath } from 'twenty-shared/types';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -21,8 +20,11 @@ jest.mock('../useAuth', () => ({
   useAuth: jest.fn(),
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: jest.fn(),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 jest.mock('~/hooks/useNavigateApp', () => ({
@@ -42,20 +44,9 @@ const renderHooks = () => {
   return { result };
 };
 
-const staleTokenPair = {
-  accessOrWorkspaceAgnosticToken: {
-    token: 'stale-access-token',
-    expiresAt: '2020-01-01T00:00:00.000Z',
-  },
-  refreshToken: {
-    token: 'stale-refresh-token',
-    expiresAt: '2020-01-01T00:00:00.000Z',
-  },
-};
-
 describe('useVerifyLogin', () => {
   const mockGetAuthTokensFromLoginToken = jest.fn();
-  const mockEnqueueErrorSnackBar = jest.fn();
+
   const mockNavigate = jest.fn();
 
   beforeEach(() => {
@@ -65,10 +56,6 @@ describe('useVerifyLogin', () => {
 
     (useAuth as jest.Mock).mockReturnValue({
       getAuthTokensFromLoginToken: mockGetAuthTokensFromLoginToken,
-    });
-
-    (useSnackBar as jest.Mock).mockReturnValue({
-      enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
     });
 
     (useNavigateApp as jest.Mock).mockReturnValue(mockNavigate);
@@ -82,21 +69,7 @@ describe('useVerifyLogin', () => {
     expect(mockGetAuthTokensFromLoginToken).toHaveBeenCalledWith('test-token');
   });
 
-  it('should clear the existing token pair before exchanging the login token', async () => {
-    jotaiStore.set(tokenPairState.atom, staleTokenPair);
-    const tokenPairsAtExchangeTime: unknown[] = [];
-    mockGetAuthTokensFromLoginToken.mockImplementation(() => {
-      tokenPairsAtExchangeTime.push(jotaiStore.get(tokenPairState.atom));
-    });
-
-    const { result } = renderHooks();
-
-    await result.current.verifyLoginToken('test-token');
-
-    expect(tokenPairsAtExchangeTime).toEqual([null]);
-  });
-
-  it('should handle verification error', async () => {
+  it('should handle a non-GraphQL verification error', async () => {
     const error = new Error('Verification failed');
     mockGetAuthTokensFromLoginToken.mockRejectedValueOnce(error);
 
@@ -104,8 +77,34 @@ describe('useVerifyLogin', () => {
 
     await result.current.verifyLoginToken('test-token');
 
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-      message: 'Authentication failed',
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'Authentication failed',
+    });
+    expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
+  });
+
+  it('should display the user-friendly GraphQL verification message', async () => {
+    const error = new CombinedGraphQLErrors({
+      errors: [
+        {
+          message: 'Session could not be created',
+          extensions: {
+            userFriendlyMessage:
+              'Your session has expired. Please sign in again.',
+          },
+        },
+      ],
+    });
+    mockGetAuthTokensFromLoginToken.mockRejectedValueOnce(error);
+
+    const { result } = renderHooks();
+
+    await result.current.verifyLoginToken('test-token');
+
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'Your session has expired. Please sign in again.',
     });
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
   });

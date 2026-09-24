@@ -1,6 +1,7 @@
-import { Inject, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Inject, UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
+import { type ApplicationCapability } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -8,13 +9,15 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
@@ -31,6 +34,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
   FrontComponentGraphqlApiExceptionInterceptor,
 )
 @MetadataResolver(() => FrontComponentDTO)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class FrontComponentResolver {
   constructor(
     @Inject(FrontComponentService)
@@ -57,8 +61,38 @@ export class FrontComponentResolver {
     );
   }
 
+  @ResolveField(() => String, { nullable: true })
+  async applicationName(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | undefined> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    return flatApplicationMaps.byId[frontComponent.applicationId]?.name;
+  }
+
+  @ResolveField(() => [String], { nullable: true })
+  async applicationGrantedCapabilities(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApplicationCapability[]> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    return (
+      flatApplicationMaps.byId[frontComponent.applicationId]
+        ?.grantedCapabilities ?? []
+    );
+  }
+
   @Query(() => [FrontComponentDTO])
   @UseGuards(NoPermissionGuard)
+  @AllowSuspendedWorkspace()
   async frontComponents(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<FrontComponentDTO[]> {
@@ -66,7 +100,7 @@ export class FrontComponentResolver {
   }
 
   @Query(() => FrontComponentDTO, { nullable: true })
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
+  @UseGuards(RequireAccessTokenGuard, NoPermissionGuard)
   async frontComponent(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -79,19 +113,18 @@ export class FrontComponentResolver {
       return null;
     }
 
-    const tokenPair =
-      await this.applicationTokenService.generateApplicationTokenPair({
+    const [tokenPair, applicationVariables] = await Promise.all([
+      this.applicationTokenService.generateApplicationTokenPair({
         applicationId: dto.applicationId,
         workspaceId: workspace.id,
         userWorkspaceId,
         userId: user.id,
-      });
-
-    const applicationVariables =
-      await this.applicationVariableService.getPublicEnvVariables({
+      }),
+      this.applicationVariableService.getPublicEnvVariables({
         workspaceId: workspace.id,
         applicationId: dto.applicationId,
-      });
+      }),
+    ]);
 
     return {
       ...dto,

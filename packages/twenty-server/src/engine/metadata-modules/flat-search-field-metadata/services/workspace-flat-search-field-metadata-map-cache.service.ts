@@ -1,74 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatSearchFieldMetadataMaps } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata-maps.type';
 import { fromSearchFieldMetadataEntityToFlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/from-search-field-metadata-entity-to-flat-search-field-metadata.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
-import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
+const FLAT_SEARCH_FIELD_METADATA_ROWS_REQUIREMENT = {
+  searchFieldMetadata: true,
+  application: ['id', 'universalIdentifier'],
+  objectMetadata: ['id', 'universalIdentifier'],
+  fieldMetadata: [
+    'id',
+    'universalIdentifier',
+    'name',
+    'type',
+    'objectMetadataId',
+  ],
+} as const;
+
 @Injectable()
 @WorkspaceCache('flatSearchFieldMetadataMaps', { packingPonderation: 1 })
-export class WorkspaceFlatSearchFieldMetadataMapCacheService extends WorkspaceCacheProvider<FlatSearchFieldMetadataMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(SearchFieldMetadataEntity)
-    private readonly searchFieldMetadataRepository: WorkspaceScopedRepository<SearchFieldMetadataEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-  ) {
-    super();
-  }
+export class WorkspaceFlatSearchFieldMetadataMapCacheService extends MetadataFlatEntityMapsCacheProvider<'searchFieldMetadata'> {
+  override readonly rowsRequirement =
+    FLAT_SEARCH_FIELD_METADATA_ROWS_REQUIREMENT;
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<FlatSearchFieldMetadataMaps> {
-    const [
-      existingSearchFieldMetadatas,
-      applications,
-      objectMetadatas,
-      fieldMetadatas,
-    ] = await Promise.all([
-      this.searchFieldMetadataRepository.find(workspaceId),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.fieldMetadataRepository.find({
-        where: { workspaceId },
-        select: [
-          'id',
-          'universalIdentifier',
-          'name',
-          'type',
-          'objectMetadataId',
-        ],
-        withDeleted: true,
-      }),
-    ]);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_SEARCH_FIELD_METADATA_ROWS_REQUIREMENT
+  >): FlatSearchFieldMetadataMaps {
+    const {
+      searchFieldMetadata: existingSearchFieldMetadatas,
+      application: applications,
+      objectMetadata: objectMetadatas,
+      fieldMetadata: fieldMetadatas,
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

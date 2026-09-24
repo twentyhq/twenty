@@ -32,6 +32,7 @@ type ApiPartner = {
   approvedCaseStudyCount: number;
   approvedCaseStudyWithCoverCount: number;
   rotationKey: string;
+  superPartner?: boolean | null;
 };
 
 type ApiResponse = {
@@ -130,6 +131,7 @@ export async function fetchLiveMarketplacePartners(): Promise<
         services: [],
         portfolio: [],
         clients: [],
+        superPartner: apiPartner.superPartner === true,
         partnerTier: readPartnerTier(apiPartner.partnerTier),
         serviceCount: apiPartner.serviceCount,
         approvedCaseStudyCount: apiPartner.approvedCaseStudyCount,

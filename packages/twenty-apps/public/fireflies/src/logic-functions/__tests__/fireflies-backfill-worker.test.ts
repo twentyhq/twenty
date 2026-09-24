@@ -5,6 +5,7 @@ import {
   serveFirefliesApi,
 } from 'src/logic-functions/flows/__tests__/import-missing-fireflies-calls.test-support';
 import firefliesBackfillWorkerLogicFunction from 'src/logic-functions/fireflies-backfill-worker';
+import { LOGIC_FUNCTION_EXECUTION_CONTEXT } from 'src/logic-functions/__tests__/logic-function-execution-context.test-support';
 
 const fetchMock = vi.fn();
 const enqueueJobMock = vi.hoisted(() => vi.fn());
@@ -48,7 +49,10 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
 
   it('rejects an invalid worker payload', async () => {
     await expect(
-      firefliesBackfillWorkerLogicFunction.config.handler({ days: 0 }),
+      firefliesBackfillWorkerLogicFunction.config.handler(
+        { days: 0 },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow('requires a valid days window');
   });
 
@@ -62,9 +66,12 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
 
     serveFirefliesApi([transcripts], fetchMock);
 
-    const result = await firefliesBackfillWorkerLogicFunction.config.handler({
-      days: 30,
-    });
+    const result = await firefliesBackfillWorkerLogicFunction.config.handler(
+      {
+        days: 30,
+      },
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
 
     expect(result).toEqual(
       expect.objectContaining({
@@ -106,7 +113,10 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
       .mockRejectedValueOnce(new Error('Network failed'));
 
     await expect(
-      firefliesBackfillWorkerLogicFunction.config.handler({ days: 30 }),
+      firefliesBackfillWorkerLogicFunction.config.handler(
+        { days: 30 },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow(
       'Fireflies backfill enqueued 1 of 2 batches before enqueue failed: Network failed',
     );
@@ -115,7 +125,10 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
 
   it('fails discovery when Fireflies listing fails', async () => {
     await expect(
-      firefliesBackfillWorkerLogicFunction.config.handler({ days: 30 }),
+      firefliesBackfillWorkerLogicFunction.config.handler(
+        { days: 30 },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow('Fireflies backfill listing failed');
     expect(enqueueJobMock).not.toHaveBeenCalled();
   });
@@ -123,9 +136,12 @@ describe('firefliesBackfillWorkerLogicFunction', () => {
   it('skips discovery when the Fireflies api key is missing', async () => {
     vi.stubEnv('FIREFLIES_API_KEY', '');
 
-    const result = await firefliesBackfillWorkerLogicFunction.config.handler({
-      days: 30,
-    });
+    const result = await firefliesBackfillWorkerLogicFunction.config.handler(
+      {
+        days: 30,
+      },
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
 
     expect(result).toEqual(
       expect.objectContaining({ outcome: 'not-configured' }),

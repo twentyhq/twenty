@@ -4,6 +4,7 @@ import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -32,6 +33,11 @@ export class UpdatePageLayoutWithTabsInput {
   @IsUUID()
   @IsOptional()
   objectMetadataId: string | null;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isFirstTabPinned?: boolean;
 
   @Field(() => [UpdatePageLayoutTabWithWidgetsInput])
   @IsArray()

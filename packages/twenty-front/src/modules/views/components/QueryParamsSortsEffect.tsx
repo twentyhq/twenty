@@ -13,13 +13,13 @@ export const QueryParamsSortsEffect = () => {
   const { applyViewSortsToCurrentRecordSorts } =
     useApplyViewSortsToCurrentRecordSorts();
 
-  const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
+  const currentViewObjectMetadataItemIsDifferentFromUrlObjectMetadataItem =
     currentView?.objectMetadataId !== objectMetadataItem.id;
 
   useEffect(() => {
     if (
       !hasSortsQueryParams ||
-      currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem
+      currentViewObjectMetadataItemIsDifferentFromUrlObjectMetadataItem
     ) {
       return;
     }
@@ -37,7 +37,7 @@ export const QueryParamsSortsEffect = () => {
     hasSortsQueryParams,
     getSortsFromQueryParams,
     applyViewSortsToCurrentRecordSorts,
-    currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
+    currentViewObjectMetadataItemIsDifferentFromUrlObjectMetadataItem,
     currentView?.id,
   ]);
 

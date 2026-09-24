@@ -1,35 +1,22 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks/useAddStepFilterToGroup';
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
-import {
-  StepLogicalOperator,
-  ViewFilterOperand,
-  type StepFilter,
-  type StepFilterGroup,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { buildEmptyStepFilter } from '@/workflow/workflow-steps/filters/utils/buildEmptyStepFilter';
 import { t } from '@lingui/core/macro';
+import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 
 type WorkflowStepFilterAddFilterRuleSelectProps = {
   stepFilterGroup: StepFilterGroup;
-};
-
-const BASE_NEW_STEP_FILTER = {
-  type: 'unknown',
-  label: '',
-  value: '',
-  operand: ViewFilterOperand.IS,
-  displayValue: '',
-  stepFilterGroupId: '',
-  stepOutputKey: '',
 };
 
 export const WorkflowStepFilterAddFilterRuleSelect = ({
@@ -49,19 +36,14 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
 
   const { closeDropdown } = useCloseDropdown();
 
+  const { addStepFilterToGroup } = useAddStepFilterToGroup({
+    stepFilterGroup,
+  });
+
   const handleAddFilter = () => {
     closeDropdown(dropdownId);
 
-    const newStepFilter = {
-      id: v4(),
-      ...BASE_NEW_STEP_FILTER,
-      stepFilterGroupId: stepFilterGroup.id,
-      positionInStepFilterGroup: newPositionInStepFilterGroup,
-    } satisfies StepFilter;
-
-    upsertStepFilterSettings({
-      stepFilterToUpsert: newStepFilter,
-    });
+    addStepFilterToGroup();
   };
 
   const handleAddFilterGroup = () => {
@@ -76,15 +58,11 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
       positionInStepFilterGroup: newPositionInStepFilterGroup,
     };
 
-    const newStepFilter: StepFilter = {
-      id: v4(),
-      ...BASE_NEW_STEP_FILTER,
-      stepFilterGroupId: newStepFilterGroupId,
-      positionInStepFilterGroup: 1,
-    };
-
     upsertStepFilterSettings({
-      stepFilterToUpsert: newStepFilter,
+      stepFilterToUpsert: buildEmptyStepFilter({
+        stepFilterGroupId: newStepFilterGroupId,
+        positionInStepFilterGroup: 1,
+      }),
       stepFilterGroupToUpsert: newStepFilterGroup,
     });
   };
@@ -123,17 +101,15 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconPlus}
-              text={t`Add rule`}
+            <ListItem
+              startIcon={<IconPlus />}
               onClick={handleAddFilter}
-            />
+            >{t`Add rule`}</ListItem>
             {isFilterRuleGroupOptionVisible && (
-              <MenuItem
-                LeftIcon={IconLibraryPlus}
-                text={t`Add rule group`}
+              <ListItem
+                startIcon={<IconLibraryPlus />}
                 onClick={handleAddFilterGroup}
-              />
+              >{t`Add rule group`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
         </DropdownContent>

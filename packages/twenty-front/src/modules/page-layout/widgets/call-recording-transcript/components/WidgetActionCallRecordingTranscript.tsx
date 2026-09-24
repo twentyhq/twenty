@@ -1,31 +1,41 @@
-import { useCallRecordingsSeeAllHref } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingsSeeAllHref';
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
-import { callRecordingTranscriptHeaderDataComponentFamilyState } from '@/page-layout/widgets/call-recording-transcript/states/callRecordingTranscriptHeaderDataComponentFamilyState';
-import { widgetHeaderCountComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderCountComponentFamilyState';
+import { WidgetActionCallRecordingSeeAll } from '@/page-layout/widgets/call-recording/components/WidgetActionCallRecordingSeeAll';
+import { useCallRecordingForWidget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForWidget';
+import { getCallRecordingPlaybackMedia } from '@/page-layout/widgets/call-recording/utils/getCallRecordingPlaybackMedia';
+import { buildCallRecordingTranscriptPlainText } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptPlainText';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
-import { WidgetCardHeaderActionLink } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionLink';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { IconArrowUpRight, IconCopy, IconLink } from 'twenty-ui/icon';
+import { useMemo } from 'react';
+import {
+  isDefined,
+  isNonEmptyArray,
+  parseCallRecordingTranscriptEntries,
+} from 'twenty-shared/utils';
+import { IconCopy, IconLink } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WidgetActionCallRecordingTranscript = () => {
-  const widget = useCurrentWidget();
-  const callRecordingTranscriptHeaderData = useAtomComponentFamilyStateValue(
-    callRecordingTranscriptHeaderDataComponentFamilyState,
-    widget.id,
-  );
-  const widgetHeaderCount = useAtomComponentFamilyStateValue(
-    widgetHeaderCountComponentFamilyState,
-    widget.id,
-  );
-  const callRecordingsSeeAllHref = useCallRecordingsSeeAllHref();
+  const { callRecording, loading, error, restriction } =
+    useCallRecordingForWidget({ kind: 'transcript' });
   const { copyToClipboard } = useCopyToClipboard();
 
-  const transcriptPlainText =
-    callRecordingTranscriptHeaderData?.transcriptPlainText;
-  const videoFileUrl = callRecordingTranscriptHeaderData?.videoFileUrl;
+  const canExposeCallRecording =
+    !loading && !isDefined(error) && !isDefined(restriction);
+
+  const transcriptEntries = useMemo(
+    () =>
+      parseCallRecordingTranscriptEntries(
+        canExposeCallRecording ? callRecording?.transcript : undefined,
+      ),
+    [callRecording?.transcript, canExposeCallRecording],
+  );
+
+  const transcriptPlainText = isNonEmptyArray(transcriptEntries)
+    ? buildCallRecordingTranscriptPlainText(transcriptEntries)
+    : undefined;
+
+  const playbackMedia = getCallRecordingPlaybackMedia(
+    canExposeCallRecording ? callRecording : undefined,
+  );
 
   return (
     <>
@@ -41,24 +51,20 @@ export const WidgetActionCallRecordingTranscript = () => {
           }
         />
       )}
-      {isDefined(videoFileUrl) && (
+      {isDefined(playbackMedia) && (
         <WidgetCardHeaderActionButton
           Icon={IconLink}
-          label={t`Copy video download link`}
+          label={
+            playbackMedia.kind === 'video'
+              ? t`Copy video download link`
+              : t`Copy audio download link`
+          }
           onClick={() =>
-            copyToClipboard(videoFileUrl, t`Link copied to clipboard`)
+            copyToClipboard(playbackMedia.url, t`Link copied to clipboard`)
           }
         />
       )}
-      {isDefined(callRecordingsSeeAllHref) &&
-        isDefined(widgetHeaderCount) &&
-        widgetHeaderCount > 0 && (
-          <WidgetCardHeaderActionLink
-            Icon={IconArrowUpRight}
-            label={t`See all call recordings linked to this calendar event`}
-            to={callRecordingsSeeAllHref}
-          />
-        )}
+      <WidgetActionCallRecordingSeeAll />
     </>
   );
 };

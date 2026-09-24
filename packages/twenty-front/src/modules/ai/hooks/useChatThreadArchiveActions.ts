@@ -1,8 +1,8 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useToast } from 'twenty-ui/components';
 import {
   ArchiveChatThreadDocument,
   UnarchiveChatThreadDocument,
@@ -10,7 +10,7 @@ import {
 
 export const useChatThreadArchiveActions = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [archiveMutation] = useMutation(ArchiveChatThreadDocument);
   const [unarchiveMutation] = useMutation(UnarchiveChatThreadDocument);
@@ -27,9 +27,7 @@ export const useChatThreadArchiveActions = () => {
         });
       }
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
@@ -45,9 +43,7 @@ export const useChatThreadArchiveActions = () => {
         });
       }
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

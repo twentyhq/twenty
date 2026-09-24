@@ -32,9 +32,9 @@ export const buildMessageListStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      label: i18nLabel(msg({ message: `ID`, context: 'fieldMetadata.label' })),
       description: i18nLabel(
-        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+        msg({ message: `ID`, context: 'fieldMetadata.description' }),
       ),
       icon: 'Icon123',
       isSystem: true,
@@ -222,6 +222,29 @@ export const buildMessageListStandardFlatFieldMetadatas = ({
         msg({ message: `The list name`, context: 'fieldMetadata.description' }),
       ),
       icon: 'IconUsersGroup',
+      isNullable: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  description: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'description',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(
+        msg({ message: `Description`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `What this list is for`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconFileDescription',
       isNullable: true,
     },
     standardObjectMetadataRelatedEntityIds,

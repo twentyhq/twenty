@@ -1,26 +1,22 @@
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
+import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { lazy, Suspense } from 'react';
+import { Suspense, lazy } from 'react';
+import { AppPath } from 'twenty-shared/types';
 
 const BackgroundMockPage = lazy(() =>
   import('@/sign-in-background-mock/components/BackgroundMockPage').then(
     (module) => ({ default: module.BackgroundMockPage }),
   ),
 );
-import { AppPath } from 'twenty-shared/types';
 
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
-import { MainButton } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderErrorContainer,
-  AnimatedPlaceholderErrorSubTitle,
-  AnimatedPlaceholderErrorTitle,
-} from 'twenty-ui/feedback';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -48,25 +44,27 @@ export const NotFound = () => {
     <>
       <PageTitle title={t`Page Not Found | Twenty`} />
       <StyledBackDrop>
-        <AnimatedPlaceholderErrorContainer>
+        <ErrorState.Root>
           <AnimatedPlaceholder type="error404" />
-          <AnimatedPlaceholderEmptyTextContainer>
-            <AnimatedPlaceholderErrorTitle>
+          <EmptyState.Content>
+            <ErrorState.Title>
               <Trans>Off the beaten path</Trans>
-            </AnimatedPlaceholderErrorTitle>
-            <AnimatedPlaceholderErrorSubTitle>
+            </ErrorState.Title>
+            <ErrorState.Description>
               <Trans>
                 The page you're seeking is either gone or never was. Let's get
                 you back on track
               </Trans>
-            </AnimatedPlaceholderErrorSubTitle>
-          </AnimatedPlaceholderEmptyTextContainer>
+            </ErrorState.Description>
+          </EmptyState.Content>
           <StyledButtonContainer>
-            <UndecoratedLink to={AppPath.Index}>
-              <MainButton title={t`Back to content`} fullWidth />
-            </UndecoratedLink>
+            <NavigationButton
+              buttonComponent={MainButton}
+              to={AppPath.Index}
+              fullWidth
+            >{t`Back to content`}</NavigationButton>
           </StyledButtonContainer>
-        </AnimatedPlaceholderErrorContainer>
+        </ErrorState.Root>
       </StyledBackDrop>
       <Suspense fallback={null}>
         <BackgroundMockPage />

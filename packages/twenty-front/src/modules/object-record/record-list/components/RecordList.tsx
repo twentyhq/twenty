@@ -2,7 +2,7 @@ import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/s
 import { RecordListBody } from '@/object-record/record-list/components/RecordListBody';
 import { RecordListFieldTooltip } from '@/object-record/record-list/components/RecordListFieldTooltip';
 import { RecordListRecordGroupsBody } from '@/object-record/record-list/components/RecordListRecordGroupsBody';
-import { RecordListResponsiveFieldCountEffect } from '@/object-record/record-list/components/RecordListResponsiveFieldCountEffect';
+import { RecordListResponsiveFieldsEffect } from '@/object-record/record-list/components/RecordListResponsiveFieldsEffect';
 import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -34,16 +34,19 @@ export const RecordList = () => {
 
   return (
     <StyledContainer ref={setContainerElement}>
-      <RecordListResponsiveFieldCountEffect
-        containerElement={containerElement}
-      />
-      <ScrollWrapper
-        componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
-        defaultEnableXScroll={false}
-      >
-        {hasRecordGroups ? <RecordListRecordGroupsBody /> : <RecordListBody />}
-      </ScrollWrapper>
-      <RecordListFieldTooltip />
+      <RecordListResponsiveFieldsEffect containerElement={containerElement} />
+      <RecordListFieldTooltip>
+        <ScrollWrapper
+          componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
+          defaultEnableXScroll={false}
+        >
+          {hasRecordGroups ? (
+            <RecordListRecordGroupsBody />
+          ) : (
+            <RecordListBody />
+          )}
+        </ScrollWrapper>
+      </RecordListFieldTooltip>
     </StyledContainer>
   );
 };

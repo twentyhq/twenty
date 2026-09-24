@@ -8,14 +8,20 @@ export const useListenToObjectRecordOperationBrowserEvent = ({
   onObjectRecordOperationBrowserEvent,
   objectMetadataItemId,
   operationTypes,
+  enabled = true,
 }: {
   onObjectRecordOperationBrowserEvent: (
     detail: ObjectRecordOperationBrowserEventDetail,
   ) => void;
   objectMetadataItemId?: string;
   operationTypes?: ObjectRecordOperation['type'][];
+  enabled?: boolean;
 }) => {
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     const handleObjectRecordOperationEvent = (event: Event) => {
       const detail = (
         event as CustomEvent<ObjectRecordOperationBrowserEventDetail>
@@ -50,6 +56,7 @@ export const useListenToObjectRecordOperationBrowserEvent = ({
       );
     };
   }, [
+    enabled,
     objectMetadataItemId,
     onObjectRecordOperationBrowserEvent,
     operationTypes,

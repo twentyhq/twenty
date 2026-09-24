@@ -1,6 +1,6 @@
 import {
-  type LanguageModelV3Prompt,
-  type LanguageModelV3ToolResultPart,
+  type LanguageModelV4Prompt,
+  type LanguageModelV4ToolResultPart,
 } from '@ai-sdk/provider';
 
 import { sanitizeToolResultRefs } from 'src/engine/metadata-modules/ai/ai-models/utils/sanitize-tool-result-refs.util';
@@ -19,8 +19,8 @@ const SCHEMA_WITH_REFS = {
 };
 
 const getFirstToolResultPart = (
-  prompt: LanguageModelV3Prompt,
-): LanguageModelV3ToolResultPart => {
+  prompt: LanguageModelV4Prompt,
+): LanguageModelV4ToolResultPart => {
   const toolMessage = prompt.find((message) => message.role === 'tool');
 
   if (toolMessage?.role !== 'tool') {
@@ -40,7 +40,7 @@ const getFirstToolResultPart = (
 
 describe('sanitizeToolResultRefs', () => {
   it('should serialize tool-result json output containing $ref/$defs to text', () => {
-    const prompt: LanguageModelV3Prompt = [
+    const prompt: LanguageModelV4Prompt = [
       {
         role: 'tool',
         content: [
@@ -65,7 +65,7 @@ describe('sanitizeToolResultRefs', () => {
 
   it('should preserve output-level providerOptions when serializing to text', () => {
     const providerOptions = { google: { cacheControl: { type: 'ephemeral' } } };
-    const prompt: LanguageModelV3Prompt = [
+    const prompt: LanguageModelV4Prompt = [
       {
         role: 'tool',
         content: [
@@ -89,7 +89,7 @@ describe('sanitizeToolResultRefs', () => {
   });
 
   it('should convert error-json output containing refs to error-text', () => {
-    const prompt: LanguageModelV3Prompt = [
+    const prompt: LanguageModelV4Prompt = [
       {
         role: 'tool',
         content: [
@@ -114,7 +114,7 @@ describe('sanitizeToolResultRefs', () => {
 
   it('should leave tool results without refs untouched', () => {
     const value = { success: true, result: { id: '1', name: 'Acme' } };
-    const prompt: LanguageModelV3Prompt = [
+    const prompt: LanguageModelV4Prompt = [
       {
         role: 'tool',
         content: [
@@ -135,7 +135,7 @@ describe('sanitizeToolResultRefs', () => {
   });
 
   it('should not touch non-tool messages', () => {
-    const prompt: LanguageModelV3Prompt = [
+    const prompt: LanguageModelV4Prompt = [
       { role: 'system', content: 'You are helpful.' },
       {
         role: 'user',

@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import { type ToolStatusLabels } from '@/ai/types/tool-status-labels.type';
+import { type ToolStatusLabels } from '@/ai/types/ToolStatusLabels';
 
 export const ACTION_TOOL_STATUS_LABELS: Record<string, ToolStatusLabels> = {
   send_email: {
@@ -10,6 +10,10 @@ export const ACTION_TOOL_STATUS_LABELS: Record<string, ToolStatusLabels> = {
   draft_email: {
     loading: msg`Drafting email`,
     completed: msg`Drafted email`,
+  },
+  find_connected_accounts: {
+    loading: msg`Finding connected accounts`,
+    completed: msg`Found connected accounts`,
   },
   search_help_center: {
     loading: msg`Searching the help center`,

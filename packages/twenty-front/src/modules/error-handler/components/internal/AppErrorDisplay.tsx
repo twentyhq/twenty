@@ -1,34 +1,28 @@
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { t } from '@lingui/core/macro';
 import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+import { Button } from 'twenty-ui/primitives/input';
 
 export const AppErrorDisplay = ({
   resetErrorBoundary,
   title = t`Sorry, something went wrong`,
 }: AppErrorDisplayProps) => {
   return (
-    <AnimatedPlaceholderEmptyContainer>
+    <EmptyState.Root>
       <AnimatedPlaceholder type="errorIndex" />
-      <AnimatedPlaceholderEmptyTextContainer>
-        <AnimatedPlaceholderEmptyTitle>{title}</AnimatedPlaceholderEmptyTitle>
-        <AnimatedPlaceholderEmptySubTitle>
+      <EmptyState.Content>
+        <EmptyState.Title>{title}</EmptyState.Title>
+        <EmptyState.Description>
           {t`Please refresh the page.`}
-        </AnimatedPlaceholderEmptySubTitle>
-      </AnimatedPlaceholderEmptyTextContainer>
+        </EmptyState.Description>
+      </EmptyState.Content>
       <Button
-        Icon={IconRefresh}
-        title={t`Reload`}
-        variant="secondary"
+        startIcon={<IconRefresh />}
         onClick={resetErrorBoundary}
-      />
-    </AnimatedPlaceholderEmptyContainer>
+        variant="outline"
+      >{t`Reload`}</Button>
+    </EmptyState.Root>
   );
 };

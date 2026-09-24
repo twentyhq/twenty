@@ -7,24 +7,39 @@ import { type MeetingRecording } from 'src/logic-functions/types/meeting-recordi
 import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { isRecallBotJoinWithinCreditCheckLead } from 'src/logic-functions/domain/is-recall-bot-join-within-credit-check-lead.util';
+import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { getCreditsUnavailableFailureReason } from 'src/logic-functions/data/get-credits-unavailable-failure-reason.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { markCallRecordingNotRecorded } from 'src/logic-functions/data/mark-call-recording-not-recorded.util';
+import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 import {
   computeRecallBotCreationIdempotencyKey,
   scheduleRecallBot,
 } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
+export type ScheduleRecallBotForCallRecordingResult =
+  | { status: 'scheduled' }
+  | { status: 'skipped'; reason: string }
+  | { status: 'blocked'; failureReason: string }
+  | { status: 'failed'; reason: string };
+
 // The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
 export const scheduleRecallBotForCallRecording = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
-): Promise<boolean> => {
+): Promise<ScheduleRecallBotForCallRecordingResult> => {
   const meetingUrl = calendarEvent.conferenceLinkUrl;
   const meetingStartsAt = calendarEvent.startsAt;
 
   if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
-    return false;
+    return { status: 'skipped', reason: 'meeting has no link or start time' };
+  }
+
+  if (!isCalendarBotSchedulingEnabled()) {
+    return { status: 'skipped', reason: 'calendar bot scheduling is off' };
   }
 
   const joinAt = computeRecallBotJoinAt(meetingStartsAt);
@@ -40,7 +55,31 @@ export const scheduleRecallBotForCallRecording = async (
     freshCallRecording.status !== CallRecordingStatus.SCHEDULED ||
     !isUndefined(freshCallRecording.externalBotId)
   ) {
-    return false;
+    return {
+      status: 'skipped',
+      reason: 'call recording no longer awaits a bot',
+    };
+  }
+
+  // A bot created this close to the join starts joining at once, so the verdict comes first.
+  const isJoinWithinCreditCheckLead = isRecallBotJoinWithinCreditCheckLead({
+    joinAt,
+    now: new Date(),
+  });
+  const creditsUnavailableFailureReason = isJoinWithinCreditCheckLead
+    ? await getCreditsUnavailableFailureReason()
+    : undefined;
+
+  if (!isUndefined(creditsUnavailableFailureReason)) {
+    await markCallRecordingNotRecorded(client, {
+      callRecordingId: callRecording.id,
+      failureReason: creditsUnavailableFailureReason,
+    });
+
+    return {
+      status: 'blocked',
+      failureReason: creditsUnavailableFailureReason,
+    };
   }
 
   const workspaceId = getCurrentWorkspaceId();
@@ -50,7 +89,7 @@ export const scheduleRecallBotForCallRecording = async (
       `[call-recorder] cannot schedule Recall bot for callRecording ${callRecording.id}: workspace id unavailable, the shared webhook could not be routed back`,
     );
 
-    return false;
+    return { status: 'failed', reason: 'workspace id unavailable' };
   }
 
   const automaticVideoOutput = await buildRecallBotAutomaticVideoOutput();
@@ -98,7 +137,7 @@ export const scheduleRecallBotForCallRecording = async (
       `[call-recorder] failed to schedule Recall bot for callRecording ${callRecording.id}: ${scheduleResult.errorMessage}`,
     );
 
-    return false;
+    return { status: 'failed', reason: scheduleResult.errorMessage };
   }
 
   await updateCallRecording(client, {
@@ -106,5 +145,13 @@ export const scheduleRecallBotForCallRecording = async (
     data: { externalBotId: scheduleResult.externalBotId },
   });
 
-  return true;
+  if (!isJoinWithinCreditCheckLead) {
+    await enqueuePreJoinCreditCheck({
+      callRecordingId: callRecording.id,
+      externalBotId: scheduleResult.externalBotId,
+      joinAt,
+    });
+  }
+
+  return { status: 'scheduled' };
 };

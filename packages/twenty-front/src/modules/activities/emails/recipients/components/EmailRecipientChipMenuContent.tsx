@@ -1,18 +1,17 @@
-import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
-
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { MenuItemAvatar, useToast } from 'twenty-ui/components';
+import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -36,7 +35,7 @@ export const EmailRecipientChipMenuContent = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { copyToClipboard } = useCopyToClipboard();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const { createOneRecord: createPerson } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Person,
@@ -65,7 +64,7 @@ export const EmailRecipientChipMenuContent = ({
     });
 
     if (isDefined(createdPerson)) {
-      enqueueSuccessSnackBar({ message: t`Person created` });
+      enqueueToast({ variant: 'success', children: t`Person created` });
     }
   };
 
@@ -95,13 +94,13 @@ export const EmailRecipientChipMenuContent = ({
             {isDefined(workspaceMember) ? (
               <MenuItemAvatar
                 avatar={{
-                  avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
-                  placeholder: isNonEmptyString(workspaceMemberFullName)
+                  src: getAbsoluteImageUrl(workspaceMember.avatarUrl),
+                  name: isNonEmptyString(workspaceMemberFullName)
                     ? workspaceMemberFullName
                     : recipient.address,
-                  placeholderColorSeed: workspaceMember.id,
+                  colorSeed: workspaceMember.id,
                   size: 'md',
-                  type: 'rounded',
+                  shape: 'circle',
                 }}
                 text={
                   isNonEmptyString(workspaceMemberFullName)
@@ -113,13 +112,13 @@ export const EmailRecipientChipMenuContent = ({
             ) : isDefined(person) ? (
               <MenuItemAvatar
                 avatar={{
-                  avatarUrl: getAbsoluteImageUrl(person.avatarUrl),
-                  placeholder: isNonEmptyString(personFullName)
+                  src: getAbsoluteImageUrl(person.avatarUrl),
+                  name: isNonEmptyString(personFullName)
                     ? personFullName
                     : recipient.address,
-                  placeholderColorSeed: person.id,
+                  colorSeed: person.id,
                   size: 'md',
-                  type: 'rounded',
+                  shape: 'circle',
                 }}
                 text={
                   isNonEmptyString(personFullName)
@@ -129,29 +128,29 @@ export const EmailRecipientChipMenuContent = ({
                 contextualText={recipient.address}
               />
             ) : (
-              <MenuItem
-                LeftIcon={IconUserPlus}
-                text={t`Add as person`}
+              <ListItem
+                startIcon={<IconUserPlus />}
                 onClick={handleAddAsPerson}
-              />
+              >{t`Add as person`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
         </>
       )}
       <DropdownMenuItemsContainer>
-        <MenuItem
-          LeftIcon={IconCopy}
-          text={t`Copy email`}
+        <ListItem
+          startIcon={<IconCopy />}
           onClick={handleCopy}
-        />
-        <MenuItem LeftIcon={IconPencil} text={t`Edit`} onClick={handleEdit} />
-        <MenuItem
-          accent="danger"
-          LeftIcon={IconTrash}
-          text={t`Remove`}
+        >{t`Copy email`}</ListItem>
+        <ListItem
+          startIcon={<IconPencil />}
+          onClick={handleEdit}
+        >{t`Edit`}</ListItem>
+        <ListItem
+          color="danger"
+          startIcon={<IconTrash />}
           onClick={handleRemove}
-        />
+        >{t`Remove`}</ListItem>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

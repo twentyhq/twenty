@@ -1,0 +1,25 @@
+import { t } from '@lingui/core/macro';
+import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
+
+type FrontComponentLoadErrorToastEffectProps = {
+  errorMessage?: string;
+};
+
+export const FrontComponentLoadErrorToastEffect = ({
+  errorMessage,
+}: FrontComponentLoadErrorToastEffectProps) => {
+  const { enqueueToast } = useToast();
+
+  useEffect(() => {
+    if (isDefined(errorMessage)) {
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to load front component: ${errorMessage}`,
+      });
+    }
+  }, [errorMessage, enqueueToast]);
+
+  return null;
+};

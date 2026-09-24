@@ -1,15 +1,15 @@
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { AnimatedCircleLoading } from '@/workflow/components/internal/AnimatedCircleLoading/AnimatedCircleLoading';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import {
   IconLoader,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
 } from 'twenty-ui/icon';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
-import { AnimatedCircleLoading } from 'twenty-ui/layout';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div`
   display: flex;
   flex: 1;
@@ -127,7 +127,7 @@ export const WorkflowStepExecutionResult = ({
 
   return (
     <StyledContainer>
-      <CoreEditorHeader
+      <CodeEditorHeader
         leftNodes={[computeLeftNode()]}
         rightNodes={[<LightCopyIconButton copyText={result} />]}
       />

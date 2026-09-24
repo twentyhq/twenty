@@ -35,7 +35,8 @@ describe('AuthResolve (integration)', () => {
 
     return client
       .post('/metadata')
-      .set('Origin', ORIGIN.toString())
+      .set('Host', ORIGIN.host)
+      .set('Origin', ORIGIN.origin)
       .send(queryData)
       .expect(200)
       .expect((res) => {
@@ -69,7 +70,8 @@ describe('AuthResolve (integration)', () => {
 
     return client
       .post('/metadata')
-      .set('Origin', ORIGIN.toString())
+      .set('Host', ORIGIN.host)
+      .set('Origin', ORIGIN.origin)
       .send(queryData)
       .expect(200)
       .expect((res) => {

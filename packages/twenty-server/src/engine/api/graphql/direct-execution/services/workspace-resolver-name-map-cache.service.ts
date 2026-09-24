@@ -7,25 +7,25 @@ import {
   buildResolverNameMap,
 } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
+
+const GRAPHQL_RESOLVER_NAME_ROWS_REQUIREMENT = {
+  objectMetadata: ['universalIdentifier', 'nameSingular', 'namePlural'],
+} as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
 @WorkspaceCache('graphQLResolverNameMap', { packingPonderation: 4 })
 export class WorkspaceResolverNameMapCacheService extends WorkspaceCacheProvider<
   Record<string, ResolverNameMapEntry>
 > {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {
-    super();
-  }
+  override readonly rowsRequirement = GRAPHQL_RESOLVER_NAME_ROWS_REQUIREMENT;
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<Record<string, ResolverNameMapEntry>> {
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
-
-    return buildResolverNameMap(flatObjectMetadataMaps);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof GRAPHQL_RESOLVER_NAME_ROWS_REQUIREMENT
+  >): Record<string, ResolverNameMapEntry> {
+    return buildResolverNameMap(rows.objectMetadata);
   }
 }

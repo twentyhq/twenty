@@ -13,13 +13,16 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
+import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -41,9 +44,14 @@ import { eventStreamIdToChannelId } from 'src/engine/subscriptions/utils/get-cha
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 
 @MetadataResolver()
+@AllowSuspendedWorkspace()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(EventStreamExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  EventStreamExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+  AuthGraphqlApiExceptionFilter,
+)
 export class EventStreamResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
@@ -62,6 +70,7 @@ export class EventStreamResolver {
         eventStreamId: variables.eventStreamId,
         objectRecordEventsWithQueryIds: payload.objectRecordEventsWithQueryIds,
         metadataEvents: payload.metadataEvents,
+        queueJobEvents: payload.queueJobEvents ?? [],
       };
     },
   })
@@ -72,6 +81,7 @@ export class EventStreamResolver {
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
@@ -112,6 +122,7 @@ export class EventStreamResolver {
       authContext: {
         userId: user?.id,
         userWorkspaceId,
+        workspaceMemberId,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
       },
@@ -148,7 +159,9 @@ export class EventStreamResolver {
 
     let lastTtlRefreshAt = 0;
 
-    return wrapAsyncIteratorWithLifecycle(iterator, {
+    return wrapAsyncIteratorWithLifecycle(() => iterator, {
+      heartbeatStart: 'on-first-next',
+      heartbeatErrorBehavior: 'ignore',
       initialValue: {
         objectRecordEventsWithQueryIds: [],
         metadataEvents: [],

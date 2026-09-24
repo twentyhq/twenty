@@ -94,6 +94,7 @@ export type RecordTableConfiguration = {
   configurationType: 'RECORD_TABLE';
   viewId?: SerializedRelation | null;
   recordLimit?: number;
+  isUIEditable?: boolean;
 };
 
 export type FieldConfiguration = {
@@ -104,6 +105,12 @@ export type FieldConfiguration = {
   // One-to-many relation field on the relation target object, to list records
   // two relation hops away (e.g. Company -> People -> Owned opportunities)
   nestedRelationFieldMetadataId?: string | null;
+  isUIEditable?: boolean;
+};
+
+export type FormFieldConfiguration = {
+  configurationType: 'FORM_FIELD';
+  fieldMetadataId: string;
 };
 
 export type FieldsConfiguration = {
@@ -201,6 +208,7 @@ export type PageLayoutWidgetConfiguration =
   | RecordTableConfiguration
   | FieldConfiguration
   | FieldsConfiguration
+  | FormFieldConfiguration
   | FieldRichTextConfiguration
   | StandaloneRichTextConfiguration
   | IframeConfiguration

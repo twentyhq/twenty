@@ -1,35 +1,37 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/stale-bot-state-logic-function-universal-identifier';
-import { STALE_BOT_STATE_CRON_PATTERN } from 'src/logic-functions/constants/stale-bot-state-cron-pattern';
+import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
-import { type ConvergeDivergedCallRecordingsResult } from 'src/logic-functions/flows/converge-diverged-call-recordings-result.type';
-import {
-  buildStepFailure,
-  type StepFailure,
-} from 'src/logic-functions/utils/build-step-failure.util';
+import { reconcileCallRecording } from 'src/logic-functions/flows/reconcile-call-recording.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
+import { getString } from 'src/logic-functions/utils/get-string.util';
 
-const reconcileStaleBotStateHandler = async (): Promise<object> => {
-  const now = new Date();
-  const client = new CoreApiClient();
+export const reconcileStaleBotStateHandler = async (
+  payload: unknown,
+): Promise<object> => {
+  const body = asRecord(payload);
+  const callRecordingId = getString(body?.callRecordingId);
+  const client = new CoreApiClient({ fetch: fetchWithTimeout });
 
-  const statusConvergenceResult = await convergeDivergedCallRecordingsSafely(
-    client,
-    now,
-  );
-
-  return { statusConvergenceResult };
-};
-
-const convergeDivergedCallRecordingsSafely = async (
-  client: CoreApiClient,
-  now: Date,
-): Promise<ConvergeDivergedCallRecordingsResult | StepFailure> => {
   try {
-    return await convergeDivergedCallRecordings({ client, now });
+    if (!isUndefined(callRecordingId)) {
+      await reconcileCallRecording({ client, callRecordingId });
+      return { callRecordingId };
+    }
+
+    return {
+      statusConvergenceResult: await convergeDivergedCallRecordings({
+        client,
+        now: new Date(),
+        after: getString(body?.after),
+      }),
+    };
   } catch (error) {
-    return buildStepFailure('call recording status convergence', error);
+    throw buildRetryableStepFailure('call recording recovery', error);
   }
 };
 
@@ -37,10 +39,7 @@ export default defineLogicFunction({
   universalIdentifier: STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-stale-bot-state',
   description:
-    'Converges stale Call Recording status and artifacts with Recall when webhook delivery is missed.',
+    'Enqueues missing artifact imports and reconciles recording lifecycle state when Recall webhooks are missed.',
   timeoutSeconds: 250,
   handler: reconcileStaleBotStateHandler,
-  cronTriggerSettings: {
-    pattern: STALE_BOT_STATE_CRON_PATTERN,
-  },
 });

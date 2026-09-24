@@ -127,7 +127,6 @@ export const computeSystemRecordPageLayoutToCreate = ({
       pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
       title: widgetProps.title,
       type: widgetProps.type,
-      gridPosition: widgetProps.gridPosition,
       position: widgetProps.position,
       // @ts-expect-error - configurationType is validated but TS can't match to discriminated union
       universalConfiguration,
@@ -148,10 +147,12 @@ export const computeSystemRecordPageLayoutToCreate = ({
     name: `Default ${objectMetadata.labelSingular} Layout`,
     type: PageLayoutType.RECORD_PAGE,
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
+    navigationMenuItemUniversalIdentifiers: [],
     tabUniversalIdentifiers: pageLayoutTabs.map(
       (tab) => tab.universalIdentifier,
     ),
     isSystemSideEffect: true,
+    isFirstTabPinned: true,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

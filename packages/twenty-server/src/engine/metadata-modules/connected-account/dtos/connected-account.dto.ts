@@ -45,8 +45,13 @@ export class ConnectedAccountDTO {
   @Field(() => Date, { nullable: true })
   authFailedAt: Date | null;
 
-  // Set when the account is frozen after its owner is removed from the
-  // workspace: synced data is kept but the account is read-only.
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  authFailedReason: string | null;
+
+  // Set when the account is disconnected or frozen: synced data is kept but
+  // cannot be updated until the account is reconnected.
   @IsDateString()
   @IsOptional()
   @Field(() => Date, { nullable: true })

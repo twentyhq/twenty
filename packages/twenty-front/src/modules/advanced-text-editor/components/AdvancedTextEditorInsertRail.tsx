@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
@@ -15,8 +17,8 @@ import {
   IconTypography,
   IconVariable,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';
@@ -33,6 +35,7 @@ const StyledRail = styled.div`
   box-shadow:
     0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
     0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
+  corner-shape: round;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
@@ -220,16 +223,17 @@ export const AdvancedTextEditorInsertRail = ({
       />
       <StyledRail>
         <LightIconButton
-          Icon={IconTypography}
-          size="medium"
-          accent={openMenu === 'text' ? 'secondary' : 'tertiary'}
+          size="md"
+          emphasis={openMenu === 'text' ? 'standard' : 'subtle'}
           title={t`Text`}
           onClick={() => setOpenMenu(openMenu === 'text' ? null : 'text')}
-        />
+          aria-label={t`Text`}
+        >
+          <IconTypography />
+        </LightIconButton>
         <LightIconButton
-          Icon={IconPhoto}
-          size="medium"
-          accent={openMenu === 'image' ? 'secondary' : 'tertiary'}
+          size="md"
+          emphasis={openMenu === 'image' ? 'standard' : 'subtle'}
           title={isUploadingImage ? t`Uploading...` : t`Image`}
           disabled={isUploadingImage}
           onClick={() => {
@@ -240,59 +244,69 @@ export const AdvancedTextEditorInsertRail = ({
 
             setOpenMenu(openMenu === 'image' ? null : 'image');
           }}
-        />
+          aria-label={isUploadingImage ? t`Uploading...` : t`Image`}
+        >
+          <IconPhoto />
+        </LightIconButton>
         <LightIconButton
-          Icon={IconLayoutGrid}
-          size="medium"
-          accent={openMenu === 'blocks' ? 'secondary' : 'tertiary'}
+          size="md"
+          emphasis={openMenu === 'blocks' ? 'standard' : 'subtle'}
           title={t`Blocks`}
           onClick={() => setOpenMenu(openMenu === 'blocks' ? null : 'blocks')}
-        />
+          aria-label={t`Blocks`}
+        >
+          <IconLayoutGrid />
+        </LightIconButton>
         {hasVariables && (
           <LightIconButton
-            Icon={IconVariable}
-            size="medium"
-            accent={openMenu === 'variables' ? 'secondary' : 'tertiary'}
+            size="md"
+            emphasis={openMenu === 'variables' ? 'standard' : 'subtle'}
             title={t`Variables`}
             onClick={() =>
               setOpenMenu(openMenu === 'variables' ? null : 'variables')
             }
-          />
+            aria-label={t`Variables`}
+          >
+            <IconVariable />
+          </LightIconButton>
         )}
       </StyledRail>
       {openMenu === 'variables' && (
         <StyledPopover>
           {variables.map(({ label, value }) => (
-            <MenuItem
+            <ListItem
               key={value}
-              text={<StyledVariableLiteral>{value}</StyledVariableLiteral>}
-              contextualText={label}
+              description={label}
               onClick={() => insertVariable(value)}
-            />
+            >
+              <StyledVariableLiteral>{value}</StyledVariableLiteral>
+            </ListItem>
           ))}
         </StyledPopover>
       )}
       {openMenu === 'text' && (
         <StyledPopover>
           {textItems.map(({ Icon, label, content }) => (
-            <MenuItem
+            <ListItem
               key={label}
-              LeftIcon={Icon}
-              text={label}
+              startIcon={<SelectOptionIcon Icon={Icon} />}
               onClick={() => insertAtEnd(content)}
-            />
+            >
+              {label}
+            </ListItem>
           ))}
         </StyledPopover>
       )}
       {openMenu === 'blocks' && (
         <StyledPopover>
           {blockItems.map(({ Icon, id, label, content }) => (
-            <MenuItem
+            <ListItem
               key={id}
-              LeftIcon={Icon}
-              text={label}
+              startIcon={<SelectOptionIcon Icon={Icon} />}
               onClick={() => insertAtEnd(content)}
-            />
+            >
+              {label}
+            </ListItem>
           ))}
         </StyledPopover>
       )}
@@ -315,10 +329,9 @@ export const AdvancedTextEditorInsertRail = ({
               {t`Paste a link to a hosted image`}
             </StyledImageHint>
             <Button
-              title={t`Insert image`}
-              size="small"
+              size="sm"
               onClick={handleInsertImage}
-            />
+            >{t`Insert image`}</Button>
           </StyledImageForm>
         </StyledPopover>
       )}

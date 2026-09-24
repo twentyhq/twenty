@@ -13,18 +13,16 @@ import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 
 const mockNavigateSettings = jest.fn();
-const mockEnqueueSuccessSnackBar = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
 
 jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: () => mockNavigateSettings,
 }));
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
-    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-  }),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 const createMockWebhookData = (overrides = {}) => ({
@@ -173,8 +171,9 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
-        message: 'Webhook https://test.com/webhook created successfully',
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'success',
+        children: 'Webhook https://test.com/webhook created successfully',
       });
     });
 
@@ -218,8 +217,9 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-        apolloError: expect.any(Error),
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'error',
+        children: 'An error occurred.',
       });
     });
 
@@ -255,8 +255,9 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
-        message: 'Webhook https://test.com/webhook created successfully',
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'success',
+        children: 'Webhook https://test.com/webhook created successfully',
       });
     });
   });
@@ -313,8 +314,9 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
-        message: 'Webhook https://updated.com/webhook updated successfully',
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'success',
+        children: 'Webhook https://updated.com/webhook updated successfully',
       });
     });
 
@@ -366,8 +368,9 @@ describe('useWebhookForm', () => {
         await result.current.handleSave(formData);
       });
 
-      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-        apolloError: expect.any(Error),
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'error',
+        children: 'An error occurred.',
       });
     });
   });
@@ -440,8 +443,9 @@ describe('useWebhookForm', () => {
         await result.current.handleDelete();
       });
 
-      expect(mockEnqueueSuccessSnackBar).toHaveBeenCalledWith({
-        message: 'Webhook deleted successfully',
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'success',
+        children: 'Webhook deleted successfully',
       });
     });
 
@@ -455,8 +459,9 @@ describe('useWebhookForm', () => {
         await result.current.handleDelete();
       });
 
-      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-        message: 'Webhook ID is required for deletion',
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'error',
+        children: 'Webhook ID is required for deletion',
       });
     });
 
@@ -492,8 +497,9 @@ describe('useWebhookForm', () => {
         await result.current.handleDelete();
       });
 
-      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-        apolloError: expect.any(Error),
+      expect(mockEnqueueToast).toHaveBeenCalledWith({
+        variant: 'error',
+        children: 'An error occurred.',
       });
     });
   });

@@ -1,28 +1,25 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { Table } from '@/ui/layout/table/components/Table';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
+import { Section, SettingsRow } from 'twenty-ui/components';
 import {
   IconFilter,
   IconKey,
+  IconLego,
   IconPlus,
-  IconRobot,
   IconSearch,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -79,8 +76,8 @@ export const SettingsRolesList = () => {
   });
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`All roles`}
         description={t`Assign roles to specify access permissions`}
       />
@@ -101,30 +98,25 @@ export const SettingsRolesList = () => {
           dropdownOffset={{ x: 0, y: 8 }}
           clickableComponent={
             <Button
-              Icon={IconFilter}
-              size="medium"
-              variant="secondary"
-              accent="default"
-              ariaLabel={t`Filter`}
+              startIcon={<IconFilter />}
+              size="md"
+              aria-label={t`Filter`}
+              variant="outline"
             />
           }
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItemToggle
-                  LeftIcon={IconRobot}
-                  onToggleChange={() => setShowAgentRoles(!showAgentRoles)}
-                  toggled={showAgentRoles}
-                  text={t`Agent roles`}
-                  toggleSize="small"
-                />
-                <MenuItemToggle
-                  LeftIcon={IconKey}
-                  onToggleChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
-                  toggled={showApiKeyRoles}
-                  text={t`API key roles`}
-                  toggleSize="small"
-                />
+                <SettingsRow
+                  startIcon={<IconLego />}
+                  onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
+                  checked={showAgentRoles}
+                >{t`Agent roles`}</SettingsRow>
+                <SettingsRow
+                  startIcon={<IconKey />}
+                  onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
+                  checked={showApiKeyRoles}
+                >{t`API key roles`}</SettingsRow>
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }
@@ -146,16 +138,15 @@ export const SettingsRolesList = () => {
         </StyledTableRows>
       </Table>
       <StyledCreateRoleSectionContainer>
-        <Section>
+        <Section.Root>
           <Button
-            Icon={IconPlus}
-            title={t`Create Role`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={() => navigateSettings(SettingsPath.RoleCreate)}
-          />
-        </Section>
+            variant="outline"
+          >{t`Create Role`}</Button>
+        </Section.Root>
       </StyledCreateRoleSectionContainer>
-    </Section>
+    </Section.Root>
   );
 };

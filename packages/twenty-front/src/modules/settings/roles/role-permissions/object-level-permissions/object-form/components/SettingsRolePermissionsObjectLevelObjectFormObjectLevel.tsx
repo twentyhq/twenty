@@ -6,8 +6,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`
@@ -65,8 +64,8 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
     ];
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title={t`Object-Level`}
         description={t`Actions users can perform on this object`}
       />
@@ -87,6 +86,6 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
           ))}
         </StyledTableRows>
       </StyledTable>
-    </Section>
+    </Section.Root>
   );
 };

@@ -1,78 +1,66 @@
+import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  VisibilityHidden,
-  VisibilityHiddenInput,
-} from 'twenty-ui/accessibility';
+import { Section } from 'twenty-ui/components';
+import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { Button } from 'twenty-ui/primitives/input';
+import { Heading, Text } from 'twenty-ui/primitives/typography';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-import {
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-  H3Title,
-  Label,
-  LinkifiedText,
-  SeparatorLineText,
-  StyledText,
-  StyledTextContent,
-  StyledTextWrapper,
-} from 'twenty-ui/typography';
 
 import {
   ComponentGallery,
   type GalleryEntry,
 } from '../shared/front-components/component-gallery';
 
+const SectionExample = () => {
+  const [activations, setActivations] = useState(0);
+
+  return (
+    <Section.Root>
+      <Section.Header
+        title="Workspace preferences"
+        description="Manage the settings for your workspace."
+        adornment={
+          <Button onClick={() => setActivations((count) => count + 1)}>
+            Edit workspace
+          </Button>
+        }
+      />
+      <Text aria-label="Workspace edits">{activations}</Text>
+    </Section.Root>
+  );
+};
+
 const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
   {
-    name: 'H1Title',
-    node: <H1Title title="Heading 1" fontColor={H1TitleFontColor.Primary} />,
+    name: 'Heading',
+    node: (
+      <Heading level={1} size="lg">
+        Heading 1
+      </Heading>
+    ),
   },
   {
-    name: 'H2Title',
-    node: <H2Title title="Heading 2" />,
+    name: 'Section',
+    node: <SectionExample />,
   },
   {
-    name: 'H3Title',
-    node: <H3Title title="Heading 3" />,
-  },
-  {
-    name: 'Label',
-    node: <Label variant="default">Label</Label>,
-  },
-  {
-    name: 'LinkifiedText',
-    node: <LinkifiedText text="Visit https://twenty.com now" />,
-  },
-  {
-    name: 'SeparatorLineText',
-    node: <SeparatorLineText>or</SeparatorLineText>,
-  },
-  {
-    name: 'StyledText',
-    node: <StyledText text="Styled text" />,
-  },
-  {
-    name: 'StyledTextContent',
-    node: <StyledTextContent>Content</StyledTextContent>,
-  },
-  {
-    name: 'StyledTextWrapper',
-    node: <StyledTextWrapper>Wrapper</StyledTextWrapper>,
+    name: 'HeadingLevel',
+    node: (
+      <Heading level={3} size="sm">
+        Heading 3
+      </Heading>
+    ),
   },
   {
     name: 'VisibilityHidden',
     node: <VisibilityHidden>Screen-reader only</VisibilityHidden>,
-  },
-  {
-    name: 'VisibilityHiddenInput',
-    node: <VisibilityHiddenInput readOnly value="" />,
   },
 ];
 
 const TypographyGallery = () => (
   <ThemeProvider colorScheme="light">
     <ComponentGallery
-      title="twenty-ui/typography + accessibility"
+      title="twenty-ui/primitives/typography + accessibility"
       entries={TYPOGRAPHY_ENTRIES}
     />
   </ThemeProvider>
@@ -82,6 +70,6 @@ export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000104',
   name: 'twenty-ui-typography-gallery',
   description:
-    'Renders every twenty-ui/typography and accessibility component in the sandbox',
+    'Renders every twenty-ui/primitives/typography and accessibility component in the sandbox',
   component: TypographyGallery,
 });

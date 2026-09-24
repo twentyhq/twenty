@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   StyledPageLayoutDropdownContentContainer,
@@ -13,7 +14,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type FieldWidgetNestedFieldDropdownContentProps = {
   drillInFieldMetadataItem: FieldMetadataItem;
@@ -55,13 +56,17 @@ export const FieldWidgetNestedFieldDropdownContent = ({
       itemId={fieldMetadataItem.id}
       onEnter={onSelect}
     >
-      <MenuItemSelect
-        text={fieldMetadataItem.label}
-        selected={checkedItemId === fieldMetadataItem.id}
+      <ListItem
         focused={selectedItemId === fieldMetadataItem.id}
-        LeftIcon={getIcon(fieldMetadataItem.icon)}
         onClick={onSelect}
-      />
+        role="option"
+        aria-selected={checkedItemId === fieldMetadataItem.id}
+        selected={checkedItemId === fieldMetadataItem.id}
+        indicator="check"
+        startIcon={<SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />}
+      >
+        {fieldMetadataItem.label}
+      </ListItem>
     </SelectableListItem>
   );
 

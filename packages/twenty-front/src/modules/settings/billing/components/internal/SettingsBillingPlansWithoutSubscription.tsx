@@ -1,10 +1,10 @@
 import { SettingsBillingPlanComparisonTable } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTable';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
-import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
+import { type SettingsBillingPlanAction } from '@/settings/billing/types/SettingsBillingPlanAction';
 import {
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
-} from '@/settings/billing/types/settingsBillingPlanComparison.type';
+} from '@/settings/billing/types/SettingsBillingPlanComparison';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -53,12 +53,12 @@ export const SettingsBillingPlansWithoutSubscription = ({
     isDisabled: boolean;
     isLoading: boolean;
   }): SettingsBillingPlanAction => ({
-    accent: 'blue',
+    color: 'accent',
     disabled: isDisabled,
     isLoading,
     onClick: handleCheckoutSession,
     title: t`Choose plan`,
-    variant: 'primary',
+    variant: 'solid',
   });
 
   const isAnyCheckoutSessionSubmitting =

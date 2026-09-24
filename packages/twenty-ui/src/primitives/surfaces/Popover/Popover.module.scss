@@ -1,0 +1,90 @@
+.positioner {
+  z-index: var(--t-last-layer-z-index);
+}
+
+.popup {
+  --tw-popover-padding: var(--t-spacing-2);
+
+  backdrop-filter: var(--t-blur-medium);
+  background: var(--t-background-transparent-primary);
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-md);
+  box-shadow: var(--t-box-shadow-strong);
+  color: var(--t-font-color-primary);
+  outline: none;
+  padding: var(--tw-popover-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-spacing-1);
+  max-inline-size: var(--available-width);
+  overflow: visible;
+  transition: opacity duration(fast) ease-out;
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+
+  &[data-ending-style] {
+    transition-timing-function: ease-in;
+  }
+}
+
+.title {
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-medium);
+  color: var(--t-font-color-primary);
+  margin: 0;
+}
+
+.description {
+  font-size: var(--t-font-size-sm);
+  color: var(--t-font-color-secondary);
+  margin: 0;
+}
+
+.arrow {
+  --tw-popover-arrow-size: 6px;
+
+  position: absolute;
+  background: inherit;
+  backdrop-filter: var(--t-blur-medium);
+
+  &[data-side='top'],
+  &[data-side='bottom'] {
+    width: calc(2 * var(--tw-popover-arrow-size));
+    height: var(--tw-popover-arrow-size);
+  }
+
+  &[data-side='left'],
+  &[data-side='right'],
+  &[data-side='inline-start'],
+  &[data-side='inline-end'] {
+    width: var(--tw-popover-arrow-size);
+    height: calc(2 * var(--tw-popover-arrow-size));
+  }
+
+  &[data-side='top'] {
+    bottom: calc(-1 * var(--tw-popover-arrow-size));
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+
+  &[data-side='bottom'] {
+    top: calc(-1 * var(--tw-popover-arrow-size));
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+
+  &[data-side='left'],
+  &[data-side='inline-start']:dir(ltr),
+  &[data-side='inline-end']:dir(rtl) {
+    right: calc(-1 * var(--tw-popover-arrow-size));
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  &[data-side='right'],
+  &[data-side='inline-end']:dir(ltr),
+  &[data-side='inline-start']:dir(rtl) {
+    left: calc(-1 * var(--tw-popover-arrow-size));
+    clip-path: polygon(100% 0, 100% 100%, 0 50%);
+  }
+}

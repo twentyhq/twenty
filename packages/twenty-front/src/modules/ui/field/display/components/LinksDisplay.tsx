@@ -2,13 +2,14 @@ import React, { useMemo } from 'react';
 
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { SocialLink } from '@/ui/field/display/components/SocialLink/SocialLink';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import {
   getAbsoluteUrlOrThrow,
   getUrlHostnameOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
-import { RoundedLink, SocialLink } from 'twenty-ui/navigation';
+import { RoundedLink } from 'twenty-ui/components';
 import { checkUrlType } from '~/utils/checkUrlType';
 import { isSocialLinkType } from '~/utils/isSocialLinkType';
 

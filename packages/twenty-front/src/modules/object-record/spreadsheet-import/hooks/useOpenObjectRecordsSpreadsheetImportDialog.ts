@@ -1,3 +1,4 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
@@ -10,8 +11,8 @@ import { SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE } from '@/spreadsheet-impo
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useToast } from 'twenty-ui/components';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -20,7 +21,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -43,6 +44,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     mutationBatchSize: SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE,
     setBatchedRecordsCount: setSpreadsheetImportCreatedRecordsProgress,
     abortController,
+    skipPostOptimisticEffect: true,
   });
 
   const openObjectRecordsSpreadsheetImportDialog = (
@@ -85,9 +87,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             },
           });
         } catch (error: any) {
-          enqueueErrorSnackBar({
-            apolloError: error,
-          });
+          enqueueToast(getToastOptionsFromError({ error }));
         }
       },
       spreadsheetImportFields,

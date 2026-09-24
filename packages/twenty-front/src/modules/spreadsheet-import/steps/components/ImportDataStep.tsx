@@ -1,13 +1,13 @@
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ModalContent } from 'twenty-ui/surfaces';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { t } from '@lingui/core/macro';
-import { Loader } from 'twenty-ui/feedback';
+import { Loader } from 'twenty-ui/primitives/feedback';
 
 const StyledHeader = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -43,11 +43,20 @@ export const ImportDataStep = ({
 
   return (
     <>
-      <ModalContent noPadding isVerticallyCentered isHorizontallyCentered>
+      <Dialog.Body
+        style={{
+          display: 'flex',
+          flex: '1 1 0%',
+          flexDirection: 'column',
+          padding: 0,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <StyledHeader>{t`Importing Data ...`}</StyledHeader>
         <StyledDescription>{t`${formattedCreatedRecordsProgress} out of ${formattedRecordsToImportCount} records imported.`}</StyledDescription>
         <Loader />
-      </ModalContent>
+      </Dialog.Body>
       <StepNavigationButton onBack={onClose} backTitle={t`Cancel`} />
     </>
   );

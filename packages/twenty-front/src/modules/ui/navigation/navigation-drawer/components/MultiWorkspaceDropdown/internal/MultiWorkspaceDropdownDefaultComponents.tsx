@@ -1,14 +1,14 @@
-import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-
 import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
-import { supportChatState } from '@/client-config/states/supportChatState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { supportChatState } from '@/client-config/states/supportChatState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -16,19 +16,19 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
+import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
+import { OPEN_RECORD_IN_OPTIONS } from '@/ui/navigation/navigation-drawer/constants/OpenRecordInOptions';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { LightIconButton } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconLogout,
@@ -38,20 +38,13 @@ import {
   IconSwitchHorizontal,
   IconUserPlus,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import {
-  MenuItem,
-  MenuItemSelectAvatar,
-  UndecoratedLink,
-} from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-
-const StyledDescription = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  padding-left: ${themeCssVariables.spacing[1]};
-`;
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -77,7 +70,16 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     multiWorkspaceDropdownState,
   );
 
-  const { openSettingsMenu } = useOpenSettingsMenu();
+  const { openRecordInPreference } = useOpenRecordInPreference();
+  const navigateSettings = useNavigateSettings();
+
+  const isMobile = useIsMobile();
+  const canDisplaySidePanel = !isMobile;
+
+  const handleSettings = () => {
+    closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+    navigateSettings(SettingsPath.ProfilePage);
+  };
 
   const handleSupport = () => {
     window.FrontChat?.('show');
@@ -104,8 +106,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <DropdownMenuHeaderLeftComponent
             Avatar={
               <Avatar
-                placeholder={currentWorkspace?.displayName || ''}
-                avatarUrl={getAbsoluteImageUrl(
+                name={currentWorkspace?.displayName || ''}
+                src={getAbsoluteImageUrl(
                   currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
                 )}
               />
@@ -116,27 +118,27 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <Dropdown
             clickableComponent={
               <LightIconButton
-                Icon={IconDotsVertical}
-                size="small"
-                accent="tertiary"
-              />
+                size="sm"
+                emphasis="subtle"
+                aria-label={t`More options`}
+              >
+                <IconDotsVertical />
+              </LightIconButton>
             }
             dropdownId="multi-workspace-dropdown-context-menu"
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
                   {isMultiWorkspaceEnabled && (
-                    <MenuItem
-                      LeftIcon={IconPlus}
-                      text={t`Create Workspace`}
+                    <ListItem
+                      startIcon={<IconPlus />}
                       onClick={createWorkspace}
-                    />
+                    >{t`Create Workspace`}</ListItem>
                   )}
-                  <MenuItem
-                    LeftIcon={IconLogout}
-                    text={t`Log out`}
+                  <ListItem
+                    startIcon={<IconLogout />}
                     onClick={signOut}
-                  />
+                  >{t`Log out`}</ListItem>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }
@@ -165,68 +167,82 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     handleChange(availableWorkspace);
                   }}
                 >
-                  <MenuItemSelectAvatar
-                    text={availableWorkspace.displayName ?? t`(No name)`}
-                    avatar={
+                  <ListItem
+                    role="option"
+                    aria-selected={false}
+                    selected={false}
+                    indicator="check"
+                    startIcon={
                       <Avatar
-                        placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={getAbsoluteImageUrl(
+                        name={availableWorkspace.displayName || ''}
+                        src={getAbsoluteImageUrl(
                           availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
                         )}
                       />
                     }
-                    selected={false}
-                  />
+                  >
+                    {availableWorkspace.displayName ?? t`(No name)`}
+                  </ListItem>
                 </UndecoratedLink>
               ))}
             {availableWorkspacesCount > 4 && (
-              <MenuItem
-                LeftIcon={IconSwitchHorizontal}
-                text={t`Other workspaces`}
+              <ListItem
+                startIcon={<IconSwitchHorizontal />}
                 onClick={() => setMultiWorkspaceDropdown('workspaces-list')}
-                hasSubMenu={true}
-              />
+                hasSubmenu
+              >{t`Other workspaces`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
         </>
       )}
       <DropdownMenuItemsContainer>
-        <MenuItem
-          LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
-          text={
-            <>
-              {t`Theme `}
-              <StyledDescription>{` · ${colorScheme}`}</StyledDescription>
-            </>
+        {/* Desktop reaches settings from the drawer's mode switcher, which
+            mobile does not render, so the workspace menu is where it lives. */}
+        {isMobile && (
+          <ListItem
+            startIcon={<IconSettings />}
+            onClick={handleSettings}
+          >{t`Settings`}</ListItem>
+        )}
+        <ListItem
+          startIcon={
+            <SelectOptionIcon
+              Icon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
+            />
           }
-          hasSubMenu={true}
+          description={colorScheme}
+          hasSubmenu
           onClick={() => setMultiWorkspaceDropdown('themes')}
-        />
+        >{t`Theme`}</ListItem>
+        {canDisplaySidePanel && (
+          <ListItem
+            startIcon={
+              <SelectOptionIcon
+                Icon={OPEN_RECORD_IN_OPTIONS[openRecordInPreference].Icon}
+              />
+            }
+            description={t(
+              OPEN_RECORD_IN_OPTIONS[openRecordInPreference].label,
+            )}
+            hasSubmenu
+            onClick={() => setMultiWorkspaceDropdown('open-record-in')}
+          >{t`Open in`}</ListItem>
+        )}
         <UndecoratedLink
           to={`${getSettingsPath(SettingsPath.WorkspaceMembersPage)}#invite`}
           onClick={() => {
             closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
           }}
         >
-          <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
+          <ListItem startIcon={<IconUserPlus />}>{t`Invite user`}</ListItem>
         </UndecoratedLink>
         {isSupportChatConfigured && (
-          <MenuItem
-            LeftIcon={IconMessage}
-            text={t`Support`}
+          <ListItem
+            startIcon={<IconMessage />}
             onClick={handleSupport}
-          />
+          >{t`Support`}</ListItem>
         )}
-        <UndecoratedLink
-          to={getSettingsPath(SettingsPath.ProfilePage)}
-          onClick={() => {
-            openSettingsMenu();
-            closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
-          }}
-        >
-          <MenuItem LeftIcon={IconSettings} text={t`Settings`} />
-        </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

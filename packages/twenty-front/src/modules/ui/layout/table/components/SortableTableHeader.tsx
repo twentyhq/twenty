@@ -32,12 +32,12 @@ export const SortableTableHeader = ({
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,
     {
-      tableId,
+      tableId: tableId,
     },
   );
   const setSortedFieldByTable = useSetAtomFamilyState(
     sortedFieldByTableFamilyState,
-    { tableId },
+    { tableId: tableId },
   );
 
   const sortValue = sortedFieldByTable ?? initialSort;

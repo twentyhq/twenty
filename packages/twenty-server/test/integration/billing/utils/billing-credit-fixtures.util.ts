@@ -1,7 +1,10 @@
-import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
-import { type BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
+import { createClient, type RedisClientType } from 'redis';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
 
 // The dev seeder gives every workspace a billingCustomer and an active
 // billingSubscription, but no subscription item, and no period. Rollover needs
@@ -20,7 +23,7 @@ export type CreditGrantRow = {
   amountMicro: number;
   type: BillingCreditGrantType;
   effectiveAt: Date;
-  expiresAt: Date;
+  expiresAt: Date | null;
   revokedAt: Date | null;
   reason: string | null;
   idempotencyKey: string | null;
@@ -140,7 +143,7 @@ export const insertCreditGrant = async ({
   amountMicro: number;
   type: BillingCreditGrantType;
   effectiveAt: Date;
-  expiresAt: Date;
+  expiresAt: Date | null;
   idempotencyKey?: string | null;
 }): Promise<string> => {
   const [row] = await query<{ id: string }>(
@@ -166,15 +169,53 @@ export const listCreditGrants = async (
     [workspaceId],
   );
 
-export const getMirroredCreditBalance = async (
+let redisClient: RedisClientType | null = null;
+
+const getRedisClient = async (): Promise<RedisClientType> => {
+  if (!isDefined(redisClient)) {
+    redisClient = createClient({ url: process.env.REDIS_URL });
+    await redisClient.connect();
+  }
+
+  return redisClient;
+};
+
+export const quitBillingFixtureRedis = async (): Promise<void> => {
+  if (isDefined(redisClient)) {
+    await redisClient.quit();
+    redisClient = null;
+  }
+};
+
+const buildTestAllowanceCounterKey = (
   workspaceId: string,
-): Promise<number> => {
-  const [row] = await query<{ creditBalanceMicro: string }>(
-    `SELECT "creditBalanceMicro" FROM core."billingCustomer" WHERE "workspaceId" = $1`,
-    [workspaceId],
+  periodStart: Date,
+): string =>
+  `${CacheStorageNamespace.IntegrationTests}:${CacheStorageNamespace.EngineUsageLimit}:${buildAllowanceCounterKey({ workspaceId, periodStart })}`;
+
+export const warmAllowanceCounter = async (
+  workspaceId: string,
+  periodStart: Date,
+  valueMicro: number,
+): Promise<void> => {
+  const redis = await getRedisClient();
+
+  await redis.set(
+    buildTestAllowanceCounterKey(workspaceId, periodStart),
+    String(valueMicro),
+  );
+};
+
+export const readAllowanceCounter = async (
+  workspaceId: string,
+  periodStart: Date,
+): Promise<number | null> => {
+  const redis = await getRedisClient();
+  const value = await redis.get(
+    buildTestAllowanceCounterKey(workspaceId, periodStart),
   );
 
-  return Number(row?.creditBalanceMicro ?? 0);
+  return isDefined(value) ? Number(value) : null;
 };
 
 export const resetBillingCreditState = async (
@@ -184,20 +225,27 @@ export const resetBillingCreditState = async (
     `DELETE FROM core."billingCreditGrant" WHERE "workspaceId" = $1`,
     [workspaceId],
   );
-  await query(
-    `UPDATE core."billingCustomer" SET "creditBalanceMicro" = 0 WHERE "workspaceId" = $1`,
-    [workspaceId],
-  );
-  const cache = getBillingUsageCacheService();
 
-  await cache.flushAvailableCredits(workspaceId);
-  // Adjustment markers outlive a counter flush by design, so a transition in
-  // one test would otherwise make the next one read its first delivery as a
-  // replay that had already moved the counter.
-  await cache.flushCounterAdjustmentMarkers(workspaceId);
+  const redis = await getRedisClient();
+  const staleKeys = [
+    ...(await redis.keys(`*{${workspaceId}}:quota:allowance:*`)),
+    ...(await redis.keys(`*currentBillingSubscription:${workspaceId}*`)),
+  ];
+
+  if (isNonEmptyArray(staleKeys)) {
+    await redis.del(staleKeys);
+  }
 };
 
-export const getBillingUsageCacheService = (): BillingUsageCacheService =>
-  getAppProviderByClassName<BillingUsageCacheService>(
-    'BillingUsageCacheService',
+// Cancelling is what makes getCurrentBillingSubscription stop returning it, so
+// this is how a test reaches the no-subscription path without deleting rows the
+// rest of the suite shares.
+export const setSubscriptionStatus = async (
+  workspaceId: string,
+  status: SubscriptionStatus,
+): Promise<void> => {
+  await query(
+    `UPDATE "core"."billingSubscription" SET status = $2 WHERE "workspaceId" = $1`,
+    [workspaceId, status],
   );
+};

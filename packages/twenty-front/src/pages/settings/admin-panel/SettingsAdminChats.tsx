@@ -1,14 +1,13 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { SearchInput, Section } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { SettingsAdminChatsContent } from '@/settings/admin-panel/chats/components/SettingsAdminChatsContent';
@@ -55,8 +54,8 @@ export const SettingsAdminChats = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Chats`}
             description={t`Browse AI chat threads across all workspaces (${totalCount} matching)`}
           />
@@ -80,16 +79,15 @@ export const SettingsAdminChats = () => {
           {hasMore && !isDefined(error) && (
             <StyledShowMoreContainer>
               <Button
-                title={t`Show more`}
-                Icon={IconDotsVertical}
+                startIcon={<IconDotsVertical />}
                 onClick={handleShowMore}
                 disabled={isShowMoreDisabled}
-                size="small"
-                variant="secondary"
-              />
+                size="sm"
+                variant="outline"
+              >{t`Show more`}</Button>
             </StyledShowMoreContainer>
           )}
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

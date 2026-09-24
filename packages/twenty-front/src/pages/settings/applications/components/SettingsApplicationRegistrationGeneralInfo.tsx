@@ -1,16 +1,25 @@
-import {
-  IconBox,
-  IconDownload,
-  IconGitBranch,
-  IconTag,
-  IconWorld,
-} from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
   SettingsTableCard,
   type TableItem,
 } from '@/settings/components/SettingsTableCard';
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
+import {
+  IconBox,
+  IconDownload,
+  IconTag,
+  IconVersions,
+  IconWorld,
+} from 'twenty-ui/icon';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ApplicationRegistration,
   ApplicationRegistrationSourceType,
@@ -18,20 +27,6 @@ import {
   FindOneApplicationSummaryDocument,
   GetPublicWorkspaceDataByIdDocument,
 } from '~/generated-metadata/graphql';
-import { isNonEmptyString } from '@sniptt/guards';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useQuery } from '@apollo/client/react';
-import {
-  AvatarOrIcon,
-  Chip,
-  ChipSize,
-  ChipVariant,
-  Tag,
-} from 'twenty-ui/data-display';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
-import { SettingsPath } from 'twenty-shared/types';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -73,13 +68,13 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     },
   );
 
-  const { data: applicationSummaryData } = useQuery(
-    FindOneApplicationSummaryDocument,
-    {
+  const { data: applicationSummaryData, refetch: refetchApplicationSummary } =
+    useQuery(FindOneApplicationSummaryDocument, {
       variables: { universalIdentifier: registration.universalIdentifier },
       skip: !registration.universalIdentifier,
-    },
-  );
+    });
+
+  useRefetchOnApplicationOperation({ refetch: refetchApplicationSummary });
 
   const isApplicationInstalled = isDefined(
     applicationSummaryData?.findOneApplication,
@@ -113,19 +108,19 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
       label: t`Owner`,
       value: isDefined(ownerWorkspace?.displayName) ? (
         <Chip
-          size={ChipSize.Large}
-          variant={ChipVariant.Highlighted}
-          clickable={false}
-          leftComponent={
+          size="md"
+          variant="soft"
+          startElement={
             <AvatarOrIcon
-              avatarType="rounded"
-              avatarUrl={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+              shape="circle"
+              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
             />
           }
-          label={ownerWorkspace.displayName}
-        />
+        >
+          {ownerWorkspace.displayName}
+        </Chip>
       ) : (
-        <Tag color="orange" text={t`Unclaimed`} />
+        <Tag color="orange">{t`Unclaimed`}</Tag>
       ),
     });
 
@@ -176,7 +171,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
 
     if (isNonEmptyString(registration.latestAvailableVersion)) {
       items.push({
-        Icon: IconGitBranch,
+        Icon: IconVersions,
         label: t`Latest version`,
         value: registration.latestAvailableVersion,
       });
@@ -186,9 +181,9 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
       Icon: IconDownload,
       label: t`Installed`,
       value: isApplicationInstalled ? (
-        <Tag color="green" text={t`Yes`} />
+        <Tag color="green">{t`Yes`}</Tag>
       ) : (
-        <Tag color="orange" text={t`No`} />
+        <Tag color="orange">{t`No`}</Tag>
       ),
     });
 
@@ -196,8 +191,8 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
   };
 
   return (
-    <Section>
-      <H2Title title={t`General`} description={t`About your app`} />
+    <Section.Root>
+      <Section.Header title={t`General`} description={t`About your app`} />
       <StyledGeneralContainer>
         <SettingsTableCard
           rounded
@@ -213,6 +208,6 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           }
         />
       </StyledGeneralContainer>
-    </Section>
+    </Section.Root>
   );
 };

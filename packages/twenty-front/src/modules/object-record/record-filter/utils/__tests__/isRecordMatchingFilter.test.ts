@@ -735,6 +735,141 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(false);
     });
 
+    it('matches a to-many relation when any loaded related record satisfies the nested filter', () => {
+      const personMockObjectMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      )!;
+
+      const filter = {
+        pointOfContactForOpportunities: {
+          id: { eq: opportunityWithPointOfContact.id },
+        },
+      } as RecordGqlOperationFilter;
+
+      const personWithOpportunities = {
+        id: personId,
+        pointOfContactForOpportunities: [
+          { id: '20202020-0000-4000-8000-000000000001' },
+          { id: opportunityWithPointOfContact.id },
+        ],
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: personWithOpportunities,
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: {
+            ...personWithOpportunities,
+            pointOfContactForOpportunities: [],
+          },
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+    });
+
+    it('matches a to-many relation held as a connection, the way records reach the optimistic effects', () => {
+      const personMockObjectMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      )!;
+
+      const filter = {
+        pointOfContactForOpportunities: {
+          id: { eq: opportunityWithPointOfContact.id },
+        },
+      } as RecordGqlOperationFilter;
+
+      const buildPersonWithOpportunityConnection = (
+        opportunityIds: string[],
+      ) => ({
+        id: personId,
+        pointOfContactForOpportunities: {
+          __typename: 'OpportunityConnection',
+          edges: opportunityIds.map((id) => ({
+            __typename: 'OpportunityEdge',
+            node: { id },
+          })),
+        },
+      });
+
+      expect(
+        isRecordMatchingFilter({
+          record: buildPersonWithOpportunityConnection([
+            '20202020-0000-4000-8000-000000000001',
+            opportunityWithPointOfContact.id,
+          ]),
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: buildPersonWithOpportunityConnection([]),
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+
+      expect(
+        isRecordMatchingFilter({
+          record: { id: personId },
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+    });
+
+    it('reads a join column filter from the related record when the column is not loaded', () => {
+      const personMockObjectMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      )!;
+
+      const filter = {
+        pointOfContactForOpportunities: {
+          pointOfContactId: { in: [personId] },
+        },
+      } as RecordGqlOperationFilter;
+
+      const buildPersonWithOpportunityPointOfContact = (
+        pointOfContact: { id: string } | null,
+      ) => ({
+        id: personId,
+        pointOfContactForOpportunities: [
+          { id: opportunityWithPointOfContact.id, pointOfContact },
+        ],
+      });
+
+      expect(
+        isRecordMatchingFilter({
+          record: buildPersonWithOpportunityPointOfContact({ id: personId }),
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: buildPersonWithOpportunityPointOfContact(null),
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(false);
+    });
+
     it('evaluates composite conditions against the related record', () => {
       const filter = {
         pointOfContact: {
@@ -824,7 +959,7 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(true);
     });
 
-    it('does not match a nested filter on a list of related records', () => {
+    it('matches a nested filter on a list of related records when one of them satisfies it', () => {
       const filter = {
         people: { id: { eq: personId } },
       } as RecordGqlOperationFilter;
@@ -834,6 +969,18 @@ describe('isRecordMatchingFilter', () => {
           record: {
             ...companiesMock[0],
             people: [{ id: personId }],
+          },
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+          objectMetadataItems,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: {
+            ...companiesMock[0],
+            people: [{ id: '20202020-0000-4000-8000-000000000001' }],
           },
           filter,
           objectMetadataItem: companyMockObjectMetadataItem,

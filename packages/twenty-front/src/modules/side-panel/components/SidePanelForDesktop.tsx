@@ -12,7 +12,7 @@ import {
   SIDE_PANEL_WIDTH_VAR,
   sidePanelWidthState,
 } from '@/side-panel/states/sidePanelWidthState';
-import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
+import { DialogContainerContext } from '@/ui/layout/dialog/contexts/DialogContainerContext';
 import { ResizablePanelGap } from '@/ui/layout/resizable-panel/components/ResizablePanelGap';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -184,13 +184,15 @@ export const SidePanelForDesktop = () => {
       >
         <StyledSidePanel isShrinkingFromFullWidth={isShrinkingFromFullWidth}>
           <StyledModalContainer ref={handleModalContainerRef} />
-          <ModalContainerContext.Provider value={{ container: modalContainer }}>
+          <DialogContainerContext.Provider
+            value={{ container: modalContainer }}
+          >
             <ParentClickOutsideIdContext.Provider
               value={SIDE_PANEL_CLICK_OUTSIDE_ID}
             >
               {shouldShowContent && <SidePanelRouter />}
             </ParentClickOutsideIdContext.Provider>
-          </ModalContainerContext.Provider>
+          </DialogContainerContext.Provider>
         </StyledSidePanel>
       </StyledSidePanelWrapper>
     </>

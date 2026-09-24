@@ -1,10 +1,24 @@
 import { makeWidget } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 const makeWidgetWithType = (id: string, type: WidgetType, tabId = 'tab-1') => ({
   ...makeWidget(id, 0, tabId),
   type,
+});
+
+const makeTabViewportFrontComponent = (id: string, tabId = 'tab-1') => ({
+  ...makeWidgetWithType(id, WidgetType.FRONT_COMPONENT, tabId),
+  position: {
+    __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 0,
+    heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+  },
 });
 
 describe('canVerticalListAcceptWidget', () => {
@@ -64,5 +78,25 @@ describe('canVerticalListAcceptWidget', () => {
         widget: makeWidgetWithType('notes', WidgetType.NOTES),
       }),
     ).toBe(true);
+  });
+
+  it('treats an explicit TAB_VIEWPORT front component like a viewport-filling widget', () => {
+    expect(
+      canVerticalListAcceptWidget({
+        destinationWidgets: [
+          makeTabViewportFrontComponent('front-component', 'tab-2'),
+        ],
+        widget: makeWidgetWithType('notes', WidgetType.NOTES),
+      }),
+    ).toBe(false);
+
+    expect(
+      canVerticalListAcceptWidget({
+        destinationWidgets: [
+          makeWidgetWithType('emails', WidgetType.EMAILS, 'tab-2'),
+        ],
+        widget: makeTabViewportFrontComponent('front-component'),
+      }),
+    ).toBe(false);
   });
 });

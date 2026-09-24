@@ -23,6 +23,13 @@ describe('isValidReturnToPath', () => {
     expect(isValidReturnToPath('/objects\\..\\evil')).toBe(false);
   });
 
+  it('should return false for paths containing control characters', () => {
+    expect(isValidReturnToPath('/\n/evil.com')).toBe(false);
+    expect(isValidReturnToPath('/\r/evil.com')).toBe(false);
+    expect(isValidReturnToPath('/\t/evil.com')).toBe(false);
+    expect(isValidReturnToPath('/objects/pe\u0000ople')).toBe(false);
+  });
+
   it('should return false for onboarding paths', () => {
     expect(isValidReturnToPath('/workspace-activation')).toBe(false);
     expect(isValidReturnToPath('/create/profile')).toBe(false);

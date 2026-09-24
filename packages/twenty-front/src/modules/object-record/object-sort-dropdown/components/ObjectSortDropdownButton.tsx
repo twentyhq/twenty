@@ -1,12 +1,14 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useCloseSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useCloseSortDropdown';
 import { useResetRecordSortDropdownSearchInput } from '@/object-record/object-sort-dropdown/hooks/useResetRecordSortDropdownSearchInput';
 import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useResetSortDropdown';
 import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
+import { getObjectSortDropdownId } from '@/object-record/object-sort-dropdown/utils/getObjectSortDropdownId';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
@@ -28,12 +30,11 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
@@ -48,6 +49,7 @@ export const ObjectSortDropdownButton = () => {
   const { resetSortDropdown } = useResetSortDropdown();
 
   const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
+  const dropdownId = getObjectSortDropdownId(recordIndexId);
 
   const objectSortDropdownSearchInput = useAtomComponentStateValue(
     objectSortDropdownSearchInputComponentState,
@@ -111,7 +113,6 @@ export const ObjectSortDropdownButton = () => {
 
   const handleDropdownOpen = () => {
     resetSortDropdown();
-    setSelectedItemId(selectableItemIdArray[0]);
   };
 
   const { closeSortDropdown } = useCloseSortDropdown();
@@ -142,7 +143,7 @@ export const ObjectSortDropdownButton = () => {
 
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
+    dropdownId,
   );
 
   const { t } = useLingui();
@@ -154,12 +155,7 @@ export const ObjectSortDropdownButton = () => {
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
-  );
-
-  const setSelectedItemId = useSetAtomComponentState(
-    selectedItemIdComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
+    dropdownId,
   );
 
   const shouldShowHiddenFields = hiddenFieldMetadataItemsSorted.length > 0;
@@ -167,7 +163,7 @@ export const ObjectSortDropdownButton = () => {
 
   return (
     <Dropdown
-      dropdownId={OBJECT_SORT_DROPDOWN_ID}
+      dropdownId={dropdownId}
       dropdownOffset={{ y: 8 }}
       onOpen={handleDropdownOpen}
       clickableComponent={
@@ -188,7 +184,7 @@ export const ObjectSortDropdownButton = () => {
             {t`Sort`}
           </DropdownMenuHeader>
           <DropdownMenuInnerSelect
-            dropdownId="record-sort-direction-dropdown"
+            dropdownId={`${dropdownId}-direction`}
             options={[ViewSortDirection.ASC, ViewSortDirection.DESC].map(
               (sortDirection) => ({
                 value: sortDirection,
@@ -220,9 +216,9 @@ export const ObjectSortDropdownButton = () => {
             }
           />
           <SelectableList
-            selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
+            selectableListInstanceId={dropdownId}
             selectableItemIdArray={selectableItemIdArray}
-            focusId={OBJECT_SORT_DROPDOWN_ID}
+            focusId={dropdownId}
           >
             {shouldShowVisibleFields && (
               <>
@@ -235,17 +231,22 @@ export const ObjectSortDropdownButton = () => {
                         itemId={visibleFieldMetadataItem.id}
                         onEnter={() => handleAddSort(visibleFieldMetadataItem)}
                       >
-                        <MenuItem
+                        <ListItem
                           focused={
                             selectedItemId === visibleFieldMetadataItem.id
                           }
-                          testId={`visible-select-sort-${index}`}
+                          data-testid={`visible-select-sort-${index}`}
                           onClick={() =>
                             handleAddSort(visibleFieldMetadataItem)
                           }
-                          LeftIcon={getIcon(visibleFieldMetadataItem.icon)}
-                          text={visibleFieldMetadataItem.label}
-                        />
+                          startIcon={
+                            <SelectOptionIcon
+                              Icon={getIcon(visibleFieldMetadataItem.icon)}
+                            />
+                          }
+                        >
+                          {visibleFieldMetadataItem.label}
+                        </ListItem>
                       </SelectableListItem>
                     ),
                   )}
@@ -264,15 +265,20 @@ export const ObjectSortDropdownButton = () => {
                         itemId={hiddenFieldMetadataItem.id}
                         onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
                       >
-                        <MenuItem
+                        <ListItem
                           focused={
                             selectedItemId === hiddenFieldMetadataItem.id
                           }
-                          testId={`hidden-select-sort-${index}`}
+                          data-testid={`hidden-select-sort-${index}`}
                           onClick={() => handleAddSort(hiddenFieldMetadataItem)}
-                          LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
-                          text={hiddenFieldMetadataItem.label}
-                        />
+                          startIcon={
+                            <SelectOptionIcon
+                              Icon={getIcon(hiddenFieldMetadataItem.icon)}
+                            />
+                          }
+                        >
+                          {hiddenFieldMetadataItem.label}
+                        </ListItem>
                       </SelectableListItem>
                     ),
                   )}

@@ -4,12 +4,12 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type Issuer } from 'openid-client';
 
-import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
+import { OidcAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
-import { type WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
+import { type SsoConfiguration } from 'src/engine/core-modules/sso/types/sso-configurations.type';
+import { type WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 const createMockExecutionContext = (mockedRequest: any): ExecutionContext => {
   return {
@@ -30,26 +30,24 @@ jest
 
 jest.mock('openid-client', () => ({
   Strategy: jest.fn(),
-  Issuer: {
-    discover: jest.fn().mockResolvedValue({} as Issuer),
-  },
 }));
 
 describe('OIDCAuthGuard', () => {
-  let guard: OIDCAuthGuard;
-  let ssoService: SSOService;
+  let guard: OidcAuthGuard;
+  let ssoService: SsoService;
   let guardRedirectService: GuardRedirectService;
   let mockExecutionContext: ExecutionContext;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        OIDCAuthGuard,
+        OidcAuthGuard,
         {
-          provide: SSOService,
+          provide: SsoService,
           useValue: {
-            findSSOIdentityProviderById: jest.fn(),
-            getOIDCClient: jest.fn(),
+            findSsoIdentityProviderById: jest.fn(),
+            discoverOidcIssuer: jest.fn().mockResolvedValue({} as Issuer),
+            getOidcClient: jest.fn(),
           },
         },
         {
@@ -69,8 +67,8 @@ describe('OIDCAuthGuard', () => {
       ],
     }).compile();
 
-    guard = module.get<OIDCAuthGuard>(OIDCAuthGuard);
-    ssoService = module.get<SSOService>(SSOService);
+    guard = module.get<OidcAuthGuard>(OidcAuthGuard);
+    ssoService = module.get<SsoService>(SsoService);
     guardRedirectService =
       module.get<GuardRedirectService>(GuardRedirectService);
 
@@ -88,18 +86,21 @@ describe('OIDCAuthGuard', () => {
 
     mockExecutionContext = createMockExecutionContext(mockedRequest);
 
-    jest.spyOn(ssoService, 'findSSOIdentityProviderById').mockResolvedValue({
+    jest.spyOn(ssoService, 'findSsoIdentityProviderById').mockResolvedValue({
       id: 'test-id',
       issuer: 'https://issuer.example.com',
       workspace: {},
-    } as SSOConfiguration & WorkspaceSSOIdentityProviderEntity);
+    } as SsoConfiguration & WorkspaceSsoIdentityProviderEntity);
 
     const result = await guard.canActivate(mockExecutionContext);
 
     expect(result).toBe(true);
     expect(guardRedirectService.dispatchErrorFromGuard).not.toHaveBeenCalled();
-    expect(ssoService.findSSOIdentityProviderById).toHaveBeenCalledWith(
+    expect(ssoService.findSsoIdentityProviderById).toHaveBeenCalledWith(
       'test-id',
+    );
+    expect(ssoService.discoverOidcIssuer).toHaveBeenCalledWith(
+      'https://issuer.example.com',
     );
   });
 
@@ -111,11 +112,11 @@ describe('OIDCAuthGuard', () => {
     mockExecutionContext = createMockExecutionContext(mockedRequest);
 
     jest
-      .spyOn(ssoService, 'findSSOIdentityProviderById')
+      .spyOn(ssoService, 'findSsoIdentityProviderById')
       .mockResolvedValue(null);
 
     await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(false);
-    expect(ssoService.findSSOIdentityProviderById).toHaveBeenCalledWith(
+    expect(ssoService.findSsoIdentityProviderById).toHaveBeenCalledWith(
       'non-existent-id',
     );
     expect(guardRedirectService.dispatchErrorFromGuard).toHaveBeenCalled();
@@ -129,7 +130,7 @@ describe('OIDCAuthGuard', () => {
     mockExecutionContext = createMockExecutionContext(mockedRequest);
 
     jest
-      .spyOn(ssoService, 'findSSOIdentityProviderById')
+      .spyOn(ssoService, 'findSsoIdentityProviderById')
       .mockResolvedValue(null);
 
     await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(false);

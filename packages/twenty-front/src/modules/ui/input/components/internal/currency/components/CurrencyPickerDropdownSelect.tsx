@@ -1,14 +1,13 @@
-import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
-
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const CurrencyPickerDropdownSelect = ({
   selectedCurrency,
@@ -42,25 +41,35 @@ export const CurrencyPickerDropdownSelect = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {filteredCurrencies.length === 0 ? (
-          <MenuItem text={t`No results`} />
+          <ListItem disabled>{t`No results`}</ListItem>
         ) : (
           <>
             {selectedCurrency && (
-              <MenuItemSelectAvatar
+              <ListItem
                 key={selectedCurrency.value}
-                selected={true}
                 onClick={() => onChange(selectedCurrency)}
-                text={selectedCurrency.label}
-              />
+                role="option"
+                aria-selected={true}
+                selected={true}
+                indicator="check"
+              >
+                {selectedCurrency.label}
+              </ListItem>
             )}
             {filteredCurrencies.map((item) =>
               selectedCurrency?.value === item.value ? null : (
-                <MenuItemSelectAvatar
+                <ListItem
                   key={item.value}
-                  selected={selectedCurrency?.value === item.value}
                   onClick={() => onChange(item)}
-                  text={`${item.label} (${item.value})`}
-                />
+                  role="option"
+                  aria-selected={selectedCurrency?.value === item.value}
+                  selected={selectedCurrency?.value === item.value}
+                  indicator="check"
+                >
+                  <OverflowingTextWithTooltip
+                    text={`${item.label} (${item.value})`}
+                  />
+                </ListItem>
               ),
             )}
           </>

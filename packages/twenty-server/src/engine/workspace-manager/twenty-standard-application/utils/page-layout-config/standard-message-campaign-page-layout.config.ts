@@ -5,7 +5,6 @@ import {
 
 import { PageLayoutType, WidgetType } from 'twenty-shared/types';
 import {
-  GRID_POSITIONS,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -28,7 +27,6 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
             .tabs.home.widgets.recipients.universalIdentifier,
         title: 'Recipients',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FOURTH,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.messageCampaign.fields.recipients

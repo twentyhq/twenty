@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { findOrThrow } from 'twenty-shared/utils';
-import { JsonContains, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   BillingException,
@@ -25,40 +25,6 @@ export class BillingPlanService {
     @InjectRepository(BillingProductEntity)
     private readonly billingProductRepository: Repository<BillingProductEntity>,
   ) {}
-
-  async getProductsByProductMetadata({
-    planKey,
-    priceUsageBased,
-    productKey,
-  }: {
-    planKey: BillingPlanKey;
-    priceUsageBased: BillingUsageType;
-    productKey: BillingProductKey;
-  }): Promise<BillingProductEntity[]> {
-    return await this.billingProductRepository.find({
-      where: {
-        metadata: JsonContains({
-          priceUsageBased,
-          planKey,
-          productKey,
-        }),
-        active: true,
-      },
-      relations: ['billingPrices'],
-    });
-  }
-
-  async getPlanBaseProduct(
-    planKey: BillingPlanKey,
-  ): Promise<BillingProductEntity> {
-    const [baseProduct] = await this.getProductsByProductMetadata({
-      planKey,
-      priceUsageBased: BillingUsageType.LICENSED,
-      productKey: BillingProductKey.BASE_PRODUCT,
-    });
-
-    return baseProduct;
-  }
 
   async listPlans(): Promise<BillingGetPlanResult[]> {
     const planKeys = Object.values(BillingPlanKey);

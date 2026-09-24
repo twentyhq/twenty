@@ -1,3 +1,4 @@
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
@@ -24,13 +25,17 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const fileRepository = { find: jest.fn().mockResolvedValue([]) };
     const agentChatService = {
+      getThreadById: jest.fn().mockResolvedValue(undefined),
       resolvePendingQuestion: jest.fn().mockResolvedValue({
         turnId: 'turn-id',
+        answerText: 'Which option?\nFirst option',
         rollback: { partId: 'part-id', previousOutput: {} },
       }),
       restorePendingQuestion: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
-      addMessage: jest.fn().mockResolvedValue({ id: 'file-message-id' }),
+      addMessage: jest
+        .fn()
+        .mockResolvedValue({ id: 'file-message-id', turnId: 'answer-turn-id' }),
       deleteMessage: jest.fn().mockResolvedValue(undefined),
     };
     const eventPublisherService = {
@@ -47,6 +52,11 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
       clear: jest.fn().mockResolvedValue(undefined),
     };
 
+    const metricsService = { incrementCounterBy: jest.fn() };
+
+    const actorService = {
+      authorizeQuestionAnswer: jest.fn().mockResolvedValue(undefined),
+    };
     const service = new AgentChatStreamingService(
       threadRepository as never,
       fileRepository as never,
@@ -55,11 +65,19 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
       eventPublisherService as never,
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
-      { incrementCounterBy: jest.fn() } as never,
+      metricsService as never,
+      new AgentChatStreamRecoveryService(
+        threadRepository as never,
+        streamHeartbeatService as never,
+        eventPublisherService as never,
+        metricsService as never,
+      ),
+      actorService as never,
     );
 
     return {
       service,
+      actorService,
       threadRepository,
       fileRepository,
       messageQueueService,
@@ -78,6 +96,55 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     workspace,
   };
 
+  it.each([
+    { answers: [] },
+    {
+      answers: [
+        { questionIndex: 0, selectedOptionIndices: [], freeText: '  ' },
+      ],
+    },
+  ])(
+    'rejects an empty answer without changing the question or queue',
+    async ({ answers }) => {
+      const {
+        service,
+        agentChatService,
+        messageQueueService,
+        streamHeartbeatService,
+      } = buildService();
+      await expect(
+        service.answerPendingQuestionAndResumeStream({
+          ...answerArguments,
+          answers,
+        }),
+      ).rejects.toMatchObject({ code: 'INVALID_QUESTION_ANSWER' });
+      expect(agentChatService.resolvePendingQuestion).not.toHaveBeenCalled();
+      expect(agentChatService.addMessage).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+      expect(streamHeartbeatService.markClaimed).not.toHaveBeenCalled();
+    },
+  );
+
+  it('leaves the pending question untouched when application authorization fails', async () => {
+    const {
+      service,
+      actorService,
+      agentChatService,
+      messageQueueService,
+      streamHeartbeatService,
+    } = buildService();
+    actorService.authorizeQuestionAnswer.mockRejectedValue(
+      new Error('Application context changed'),
+    );
+    await expect(
+      service.answerPendingQuestionAndResumeStream(answerArguments),
+    ).rejects.toThrow('Application context changed');
+    expect(agentChatService.resolvePendingQuestion).not.toHaveBeenCalled();
+    expect(agentChatService.addMessage).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+    expect(streamHeartbeatService.markClaimed).not.toHaveBeenCalled();
+  });
+
   it('marks the heartbeat before the pending question claims the thread', async () => {
     const { service, agentChatService, streamHeartbeatService } =
       buildService();
@@ -87,7 +154,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
 
     expect(result).toEqual({
       streamId: expect.any(String),
-      turnId: 'turn-id',
+      turnId: 'answer-turn-id',
     });
     expect(streamHeartbeatService.markClaimed).toHaveBeenCalledWith(
       result.streamId,
@@ -116,8 +183,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
       expect.any(String),
       expect.objectContaining({
         threadId: 'thread-id',
-        existingTurnId: 'turn-id',
-        isResume: true,
+        existingTurnId: 'answer-turn-id',
       }),
     );
   });
@@ -144,7 +210,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     expect(publishedEvents).toHaveLength(0);
   });
 
-  it('persists attached files as a user message on the question turn before enqueueing', async () => {
+  it('persists the attributed answer and files in a new turn before enqueueing', async () => {
     const { service, agentChatService, fileRepository, messageQueueService } =
       buildService();
 
@@ -163,6 +229,10 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
         role: AgentMessageRole.USER,
         parts: [
           {
+            type: 'text',
+            text: 'Which option?\nFirst option',
+          },
+          {
             type: 'file',
             mediaType: 'text/csv',
             filename: 'contacts.csv',
@@ -171,7 +241,7 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
           },
         ],
       },
-      turnId: 'turn-id',
+      userWorkspaceId: 'user-workspace-id',
       workspaceId: 'workspace-id',
     });
     expect(
@@ -179,12 +249,17 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
   });
 
-  it('does not persist a user message when there are no attachments', async () => {
+  it('persists the answer sender even without attachments', async () => {
     const { service, agentChatService } = buildService();
 
     await service.answerPendingQuestionAndResumeStream(answerArguments);
 
-    expect(agentChatService.addMessage).not.toHaveBeenCalled();
+    expect(agentChatService.addMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userWorkspaceId: 'user-workspace-id',
+        uiMessage: expect.objectContaining({ role: AgentMessageRole.USER }),
+      }),
+    );
   });
 
   it('restores the question when persisting attachments fails', async () => {

@@ -17,15 +17,6 @@ jest.mock(
   }),
 );
 
-jest.mock(
-  '@/page-layout/widgets/fields/hooks/useDeleteViewForFieldsWidget',
-  () => ({
-    useDeleteViewForFieldsWidget: () => ({
-      deleteViewForFieldsWidget: jest.fn(),
-    }),
-  }),
-);
-
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({
     closeSidePanelMenu: jest.fn(),
