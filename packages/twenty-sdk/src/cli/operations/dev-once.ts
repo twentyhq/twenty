@@ -55,11 +55,17 @@ export type AppDevOnceResult = {
 const appendRecoveryHint = (
   message: string,
   errorMessage: string | undefined,
+  subCode: string | undefined,
 ): string => {
-  const hint = getSyncErrorRecoveryHint(errorMessage);
+  const hint = getSyncErrorRecoveryHint({ message: errorMessage, subCode });
 
   return hint ? `${message}\n\n${hint}` : message;
 };
+
+const getSubCode = (
+  error: MetadataValidationErrorResponse | undefined,
+): string | undefined =>
+  isPlainObject(error) ? (error as { subCode?: string }).subCode : undefined;
 
 const NOT_INSTALLED_SUB_CODES = new Set([
   'APP_NOT_INSTALLED',
@@ -103,7 +109,11 @@ const buildSyncError = (
 
   return {
     code: APP_ERROR_CODES.SYNC_FAILED,
-    message: appendRecoveryHint(message, result.message),
+    message: appendRecoveryHint(
+      message,
+      result.message,
+      getSubCode(result.error),
+    ),
   };
 };
 

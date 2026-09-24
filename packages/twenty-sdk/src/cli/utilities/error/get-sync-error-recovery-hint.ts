@@ -1,6 +1,19 @@
-export const getSyncErrorRecoveryHint = (
-  message: string | undefined,
-): string | undefined => {
+import { WorkspaceMigrationV2ExceptionCode } from 'twenty-shared/metadata';
+
+export const getSyncErrorRecoveryHint = ({
+  message,
+  subCode,
+}: {
+  message: string | undefined;
+  subCode?: string;
+}): string | undefined => {
+  if (
+    subCode ===
+    WorkspaceMigrationV2ExceptionCode.DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS
+  ) {
+    return 'Hint: a previous data model change is still being applied in the background. Wait for it to finish, then sync again.';
+  }
+
   const normalizedMessage = (message ?? '').toLowerCase();
 
   if (normalizedMessage.includes('not installed')) {

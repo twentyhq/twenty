@@ -216,7 +216,10 @@ export class SyncApplicationOrchestratorStep {
       });
     }
 
-    const recoveryHint = getSyncErrorRecoveryHint(result.message);
+    const recoveryHint = getSyncErrorRecoveryHint({
+      message: result.message,
+      subCode: (result.error as { subCode?: string } | undefined)?.subCode,
+    });
 
     if (recoveryHint) {
       events.push({ message: recoveryHint, status: 'info' });

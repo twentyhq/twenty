@@ -14,8 +14,11 @@ import {
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderGraphqlApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/workspace-migration-builder-graphql-api-exception-handler.util';
+import { workspaceMigrationRunnerGraphqlApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/workspace-migration-runner-graphql-api-exception-handler.util';
 
 export const objectMetadataGraphqlApiExceptionHandler = (error: unknown) => {
+  workspaceMigrationRunnerGraphqlApiExceptionHandler(error);
+
   if (error instanceof WorkspaceMigrationBuilderException) {
     return workspaceMigrationBuilderGraphqlApiExceptionHandler(error);
   }

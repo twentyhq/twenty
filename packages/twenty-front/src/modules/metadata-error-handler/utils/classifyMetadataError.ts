@@ -1,4 +1,6 @@
 import { type CombinedGraphQLErrors } from '@apollo/client/errors';
+import { type MessageDescriptor } from '@lingui/core';
+import { type Nullable } from 'twenty-shared/types';
 import {
   type AllMetadataName,
   type MetadataValidationErrorResponse,
@@ -18,12 +20,22 @@ export type MetadataErrorClassification =
       type: 'v2-internal';
       code: WorkspaceMigrationV2ExceptionCode;
       message: string;
+    }
+  | {
+      type: 'v2-conflict';
+      userFriendlyMessage: Nullable<MessageDescriptor | string>;
     };
 
 const isMetadataValidationError = (
   extensions: Record<string, unknown>,
 ): extensions is MetadataValidationErrorResponse =>
   extensions.code === 'METADATA_VALIDATION_FAILED';
+
+const isDeferredActionsInProgressError = (
+  extensions: Record<string, unknown>,
+): boolean =>
+  extensions.subCode ===
+  WorkspaceMigrationV2ExceptionCode.DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS;
 
 const isMetadataInternalError = (
   extensions: Record<string, unknown>,
@@ -68,6 +80,15 @@ export const classifyMetadataError = ({
       extensions,
       primaryMetadataName,
       relatedFailingMetadataNames,
+    };
+  }
+
+  if (isDeferredActionsInProgressError(extensions)) {
+    return {
+      type: 'v2-conflict',
+      userFriendlyMessage: extensions.userFriendlyMessage as Nullable<
+        MessageDescriptor | string
+      >,
     };
   }
 

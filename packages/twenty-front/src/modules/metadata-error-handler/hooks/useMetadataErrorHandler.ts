@@ -1,5 +1,6 @@
 import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { classifyMetadataError } from '@/metadata-error-handler/utils/classifyMetadataError';
@@ -123,6 +124,20 @@ export const useMetadataErrorHandler = () => {
             children: t`Failed to ${translatedOperationType} ${translatedMetadataName}. Please try again.`,
           });
         }
+        break;
+      }
+
+      case 'v2-conflict': {
+        const { userFriendlyMessage } = classification;
+
+        enqueueToast({
+          variant: 'error',
+          children: isDefined(userFriendlyMessage)
+            ? typeof userFriendlyMessage === 'string'
+              ? userFriendlyMessage
+              : t(userFriendlyMessage)
+            : t`A previous data model change is still being applied in the background. Please try again in a moment.`,
+        });
         break;
       }
 
