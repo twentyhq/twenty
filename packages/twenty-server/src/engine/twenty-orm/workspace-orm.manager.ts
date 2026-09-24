@@ -141,6 +141,10 @@ export class WorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap,
       billingEntitlements,
+      isLegacyRecordAccessOpen:
+        await this.recordSharingFeatureService.isLegacyRecordAccessOpen(
+          workspaceId,
+        ),
       isRecordSharingEnabled:
         await this.recordSharingFeatureService.isRecordSharingEnabled(
           workspaceId,

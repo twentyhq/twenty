@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { isLegacyRecordAccessOpen } from 'src/engine/core-modules/record-share/utils/is-legacy-record-access-open.util';
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
@@ -48,5 +49,19 @@ export class RecordSharingFeatureService implements OnModuleInit {
     }
 
     return this.entitlementProvider.hasRecordSharingEntitlement(workspaceId);
+  }
+  async isLegacyRecordAccessOpen(workspaceId: string): Promise<boolean> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+    if (
+      !isLegacyRecordAccessOpen({
+        flatObjectMetadataMaps,
+        wasRecordSharingEnabled: false,
+      })
+    )
+      return false;
+    return !(await this.isRecordSharingEnabled(workspaceId));
   }
 }

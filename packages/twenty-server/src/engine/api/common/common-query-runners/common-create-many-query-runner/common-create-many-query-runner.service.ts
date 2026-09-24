@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -645,7 +646,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   private isRecordSharingEnabled(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
-    return queryRunnerContext.isRecordSharingEnabled;
+    return (
+      queryRunnerContext.isRecordSharingEnabled ||
+      queryRunnerContext.flatObjectMetadata.universalIdentifier ===
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+    );
   }
 
   private resolveNestedRelationsForCreate({

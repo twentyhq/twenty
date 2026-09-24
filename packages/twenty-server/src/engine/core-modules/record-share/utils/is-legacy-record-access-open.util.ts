@@ -4,23 +4,17 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 export const isLegacyRecordAccessOpen = ({
   flatObjectMetadataMaps,
-  featureFlagsMap,
-  billingEntitlements,
-}: Pick<
-  WorkspaceInternalContext,
-  'flatObjectMetadataMaps' | 'featureFlagsMap' | 'billingEntitlements'
->): boolean => {
+  wasRecordSharingEnabled,
+}: Pick<WorkspaceInternalContext, 'flatObjectMetadataMaps'> & {
+  wasRecordSharingEnabled: boolean;
+}): boolean => {
   const thread =
     flatObjectMetadataMaps.byUniversalIdentifier[
       STANDARD_OBJECTS.agentChatThread.universalIdentifier
     ];
-  // SYSTEM is retained until compatibility grants commit. Historical entitlement
-  // only distinguishes the old policy during this transition; it grants no new feature.
+  // SYSTEM stays in place until compatibility grants have committed.
   return (
     thread?.readability === MetadataReadability.SYSTEM &&
-    !(
-      featureFlagsMap?.IS_RECORD_SHARING_ENABLED === true &&
-      billingEntitlements?.RECORD_SHARING === true
-    )
+    !wasRecordSharingEnabled
   );
 };

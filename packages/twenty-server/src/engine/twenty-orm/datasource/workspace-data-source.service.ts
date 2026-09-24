@@ -1,4 +1,3 @@
-import { isLegacyRecordAccessOpen } from 'src/engine/core-modules/record-share/utils/is-legacy-record-access-open.util';
 import {
   Injectable,
   Logger,
@@ -123,7 +122,7 @@ export class WorkspaceDataSourceService
       objectIdByNameSingular: workspaceContext.objectIdByNameSingular,
       featureFlagsMap: workspaceContext.featureFlagsMap,
       billingEntitlements: workspaceContext.billingEntitlements,
-      isRecordSharingEnabled: !isLegacyRecordAccessOpen(workspaceContext),
+      isLegacyRecordAccessOpen: workspaceContext.isLegacyRecordAccessOpen,
       userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
       apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
       eventEmitterService: this.workspaceEventEmitter,
