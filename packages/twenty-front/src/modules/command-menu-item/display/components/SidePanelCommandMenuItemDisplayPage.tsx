@@ -1,5 +1,7 @@
 import { COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER } from '@/command-menu-item/constants/CommandMenuItemSectionsInDisplayOrder';
+import { COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID } from '@/command-menu-item/constants/CommandMenuAskAiFallbackItemId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuAskAiFallbackItem } from '@/command-menu-item/display/components/CommandMenuAskAiFallbackItem';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
 import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useCommandMenuAppActions';
@@ -13,6 +15,7 @@ import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupC
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
@@ -34,7 +37,10 @@ import {
   IconTable,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+import {
+  CommandMenuItemAvailabilityType,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const SECTION_ICONS: Record<CommandMenuItemSection, IconComponent> = {
   SELECTION: IconCheckbox,
@@ -63,6 +69,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     useCommandMenuItemCurrentViewSectionContext();
   const objectSectionContext = useCommandMenuItemObjectSectionContext();
   const workspaceSectionContext = useCommandMenuItemWorkspaceSectionContext();
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const { filterCommandMenuItemsWithSidePanelSearch } =
     useFilterCommandMenuItemsWithSidePanelSearch({
@@ -95,7 +102,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     [pinnedFirstCommandMenuItems],
   );
 
-  const isSearchActive = isNonEmptyString(sidePanelSearch.trim());
+  const trimmedSidePanelSearch = sidePanelSearch.trim();
+
+  const isSearchActive = isNonEmptyString(trimmedSidePanelSearch);
 
   const matchingItems = filterCommandMenuItemsWithSidePanelSearch(
     nonFallbackCommandMenuItems,
@@ -157,8 +166,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     appActions.length === 0 &&
     coreObjectsCommandIds.length === 0;
 
+  const shouldDisplayAskAiFallbackItem = isSearchActive && hasAiPermission;
+
   const shouldDisplayFallbackItems =
-    hasNoMatchingItems && fallbackCommandMenuItems.length > 0;
+    hasNoMatchingItems &&
+    (fallbackCommandMenuItems.length > 0 || shouldDisplayAskAiFallbackItem);
 
   const shouldDisplayNoResults =
     isSearchActive && hasNoMatchingItems && !shouldDisplayFallbackItems;
@@ -170,6 +182,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ]),
     ...(shouldDisplayFallbackItems
       ? fallbackCommandMenuItems.map((item) => item.id)
+      : []),
+    ...(shouldDisplayFallbackItems && shouldDisplayAskAiFallbackItem
+      ? [COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID]
       : []),
   ];
 
@@ -225,10 +240,16 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         );
       })}
       {shouldDisplayFallbackItems && (
-        <CommandMenuItemSectionGroup heading={t`Fallback`} Icon={IconLifebuoy}>
+        <CommandMenuItemSectionGroup
+          heading={t`Use ‘${trimmedSidePanelSearch}’ with...`}
+          Icon={IconLifebuoy}
+        >
           {fallbackCommandMenuItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
           ))}
+          {shouldDisplayAskAiFallbackItem && (
+            <CommandMenuAskAiFallbackItem prompt={trimmedSidePanelSearch} />
+          )}
         </CommandMenuItemSectionGroup>
       )}
     </SidePanelList>

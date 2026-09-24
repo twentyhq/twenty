@@ -10,6 +10,7 @@ import { Context as ResponsiveContext } from 'react-responsive';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -37,6 +38,7 @@ import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
+  PermissionFlagType,
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
 import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
@@ -169,23 +171,27 @@ type CreateDecoratorParams = {
   pathname?: string;
   viewportWidth?: number;
   colorScheme?: ColorScheme;
+  permissionFlags?: PermissionFlagType[];
 };
 
-const createDecorator =
-  ({
-    commandMenuItems,
-    sidePanelSearch,
-    commandMenuContextApi = EMPTY_COMMAND_MENU_CONTEXT_API,
-    pinnedItemsContainerWidth = 1000,
-    isNavigationDrawerExpanded = true,
-    isInPreviewMode = false,
-    pathname = '/objects/companies',
-    viewportWidth = 1280,
-    colorScheme = 'System',
-  }: CreateDecoratorParams): Decorator =>
-  (Story) => {
+const createDecorator = ({
+  commandMenuItems,
+  sidePanelSearch,
+  commandMenuContextApi = EMPTY_COMMAND_MENU_CONTEXT_API,
+  pinnedItemsContainerWidth = 1000,
+  isNavigationDrawerExpanded = true,
+  isInPreviewMode = false,
+  pathname = '/objects/companies',
+  viewportWidth = 1280,
+  colorScheme = 'System',
+  permissionFlags = [],
+}: CreateDecoratorParams): Decorator => {
+  const currentUserWorkspace = { permissionFlags, objectsPermissions: [] };
+
+  return (Story) => {
     jotaiStore.set(sidePanelSearchState.atom, sidePanelSearch);
     jotaiStore.set(isSidePanelOpenedState.atom, true);
+    jotaiStore.set(currentUserWorkspaceState.atom, currentUserWorkspace);
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       ...mockedWorkspaceMemberData,
       colorScheme,
@@ -250,6 +256,7 @@ const createDecorator =
       </JotaiProvider>
     );
   };
+};
 
 const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
   title: 'Modules/CommandMenu/SidePanelCommandMenuItemDisplayPage',
@@ -373,6 +380,24 @@ export const SearchWithoutMatchingItemsAndWithFallback: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
+  },
+};
+
+export const SearchWithoutMatchingItemsOffersAskAi: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [...PINNED_ITEMS, OTHER_ITEM, FALLBACK_ITEM],
+      sidePanelSearch: 'mike',
+      pinnedItemsContainerWidth: 1000,
+      permissionFlags: [PermissionFlagType.AI],
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Use ‘mike’ with...')).toBeVisible();
+    expect(canvas.getByText('Search records')).toBeVisible();
+    expect(canvas.getByText('Ask AI')).toBeVisible();
   },
 };
 
