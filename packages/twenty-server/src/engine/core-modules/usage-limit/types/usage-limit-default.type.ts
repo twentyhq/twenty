@@ -6,9 +6,6 @@ import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-// A declared default expressed as the scope it occupies. A default covers every
-// operation its definition allows while a stored row names exactly one, so a
-// definition entry becomes one of these per allowed operation type.
 export type UsageLimitDefault = {
   resourceType: UsageResourceType;
   operationType: UsageOperationType;
