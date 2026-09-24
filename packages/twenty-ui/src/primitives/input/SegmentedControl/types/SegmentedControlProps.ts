@@ -4,8 +4,8 @@ import { type SegmentedControlOption } from './SegmentedControlOption';
 
 export type SegmentedControlProps<TValue extends string = string> = Omit<
   RadioGroupProps<TValue>,
-  'children' | 'role'
+  'aria-label' | 'aria-labelledby' | 'children' | 'role'
 > & {
   itemWidth?: 'content' | 'equal';
   options: readonly SegmentedControlOption<TValue>[];
-};
+} & ({ 'aria-label': string } | { 'aria-labelledby': string });

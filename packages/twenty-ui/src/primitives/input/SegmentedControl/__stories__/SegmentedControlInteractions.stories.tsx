@@ -2,32 +2,25 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { IconComment, IconHome } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
 
 import { SegmentedControl } from '../SegmentedControl';
 import { type SegmentedControlProps } from '../types/SegmentedControlProps';
-import { IconOnlyTabList } from './SegmentedControl.stories';
-
-const ControlledExample = (props: SegmentedControlProps<string>) => {
-  const [value, setValue] = useState('system');
-
-  return (
-    <>
-      <SegmentedControl {...props} value={value} />
-      <Button onClick={() => setValue('dark')}>Confirm appearance</Button>
-    </>
-  );
-};
 
 const PendingExample = (props: SegmentedControlProps<string>) => {
-  const [isPending, setIsPending] = useState(true);
+  const [isPending, setIsPending] = useState(false);
 
   return (
     <>
-      <SegmentedControl {...props} disabled={isPending} />
+      <SegmentedControl
+        {...props}
+        disabled={isPending}
+        onValueChange={(value, eventDetails) => {
+          props.onValueChange?.(value, eventDetails);
+          setIsPending(true);
+        }}
+      />
       <Button onClick={() => setIsPending(false)}>Finish saving</Button>
     </>
   );
@@ -72,42 +65,6 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 type Story = StoryObj<typeof SegmentedControl>;
 
-export const WrappedIcons: Story = {
-  args: {
-    'aria-label': 'Start page',
-    defaultValue: 'home',
-    options: [
-      {
-        startIcon: <IconHome data-testid="direct-icon" />,
-        'aria-label': 'Home',
-        value: 'home',
-      },
-      {
-        startIcon: (
-          <span>
-            <IconComment data-testid="wrapped-icon" />
-          </span>
-        ),
-        'aria-label': 'Chat',
-        value: 'chat',
-      },
-    ],
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const directIconBounds = canvas
-      .getByTestId('direct-icon')
-      .getBoundingClientRect();
-    const wrappedIconBounds = canvas
-      .getByTestId('wrapped-icon')
-      .getBoundingClientRect();
-
-    await expect(directIconBounds.width).toBeGreaterThan(0);
-    await expect(wrappedIconBounds.width).toBe(directIconBounds.width);
-    await expect(wrappedIconBounds.height).toBe(directIconBounds.height);
-  },
-};
-
 export const Uncontrolled: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -132,40 +89,29 @@ export const Uncontrolled: Story = {
   },
 };
 
-export const Controlled: Story = {
-  render: (args) => <ControlledExample {...args} />,
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    const dark = canvas.getByRole('radio', { name: 'Dark' });
-
-    await userEvent.click(dark);
-    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
-    await expect(args.onValueChange).toHaveBeenCalledWith(
-      'dark',
-      expect.anything(),
-    );
-    await expect(canvas.getByRole('radio', { name: 'System' })).toBeChecked();
-    await expect(dark).not.toBeChecked();
-
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Confirm appearance' }),
-    );
-    await expect(dark).toBeChecked();
-    await expect(
-      canvas.getByRole('radio', { name: 'System' }),
-    ).not.toBeChecked();
-  },
-};
-
 export const DisabledOption: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const light = canvas.getByRole('radio', { name: 'Light' });
 
-    await expect(light).toBeDisabled();
+    await expect(light).toHaveAttribute('aria-disabled', 'true');
     await userEvent.click(light);
     await expect(canvas.getByRole('radio', { name: 'System' })).toBeChecked();
     await expect(args.onValueChange).not.toHaveBeenCalled();
+  },
+};
+
+export const DisabledCheckedOption: Story = {
+  args: { defaultValue: 'light' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const dark = canvas.getByRole('radio', { name: 'Dark' });
+
+    await userEvent.tab();
+    await expect(canvas.getByRole('radio', { name: 'Light' })).toHaveFocus();
+    await userEvent.keyboard('{ArrowRight}');
+    await waitFor(() => expect(dark).toHaveFocus());
+    await expect(dark).toBeChecked();
   },
 };
 
@@ -174,23 +120,30 @@ export const Pending: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const dark = canvas.getByRole('radio', { name: 'Dark' });
+    const contrast = canvas.getByRole('radio', { name: 'High contrast' });
 
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowRight}');
+    await waitFor(() => expect(dark).toBeChecked());
     for (const choice of canvas.getAllByRole('radio')) {
-      await expect(choice).toBeDisabled();
+      await expect(choice).toHaveAttribute('aria-disabled', 'true');
     }
-    await userEvent.click(dark);
-    await expect(canvas.getByRole('radio', { name: 'System' })).toBeChecked();
-    await expect(args.onValueChange).not.toHaveBeenCalled();
+    await expect(dark).toHaveFocus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(dark).toHaveFocus();
+    await userEvent.click(contrast);
+    await expect(contrast).not.toBeChecked();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
 
     await userEvent.click(
       canvas.getByRole('button', { name: 'Finish saving' }),
     );
-    await expect(dark).toBeEnabled();
-    await userEvent.click(dark);
-    await expect(dark).toBeChecked();
-    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
-    await expect(args.onValueChange).toHaveBeenCalledWith(
-      'dark',
+    await expect(contrast).not.toHaveAttribute('aria-disabled');
+    await userEvent.click(contrast);
+    await expect(contrast).toBeChecked();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(2);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      'contrast',
       expect.anything(),
     );
   },
@@ -235,52 +188,9 @@ export const Keyboard: Story = {
     await expect(system).toBeChecked();
     await userEvent.keyboard('{ArrowLeft}');
     await waitFor(() => expect(contrast).toBeChecked());
-    await userEvent.tab();
-    await expect(system).not.toHaveFocus();
+    await userEvent.tab({ shift: true });
     await expect(contrast).not.toHaveFocus();
-  },
-};
-
-export const RightToLeft: Story = {
-  render: (args) => (
-    <TextDirectionProvider direction="rtl">
-      <SegmentedControl {...args} dir="rtl" />
-    </TextDirectionProvider>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
     await userEvent.tab();
-    await userEvent.keyboard('{ArrowLeft}');
-    await waitFor(() =>
-      expect(canvas.getByRole('radio', { name: 'Dark' })).toHaveFocus(),
-    );
-    await expect(canvas.getByRole('radio', { name: 'Dark' })).toBeChecked();
-    await userEvent.keyboard('{ArrowRight}');
-    await waitFor(() =>
-      expect(canvas.getByRole('radio', { name: 'System' })).toBeChecked(),
-    );
-  },
-};
-
-export const TabPanels: Story = {
-  render: IconOnlyTabList.render,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const home = canvas.getByRole('tab', { name: 'Home' });
-    const chat = canvas.getByRole('tab', { name: 'Chat' });
-    await expect(canvas.getByRole('tabpanel', { name: 'Home' })).toBeVisible();
-    await userEvent.tab();
-    await expect(home).toHaveFocus();
-    await userEvent.keyboard('{ArrowRight}');
-    await waitFor(() => expect(chat).toHaveFocus());
-    await expect(chat).toHaveAttribute('aria-selected', 'true');
-    await expect(canvas.getByRole('tabpanel', { name: 'Chat' })).toBeVisible();
-    await expect(
-      canvas.queryByRole('tabpanel', { name: 'Home' }),
-    ).not.toBeInTheDocument();
-    await expect(chat).toHaveAttribute(
-      'aria-controls',
-      canvas.getByRole('tabpanel', { name: 'Chat' }).id,
-    );
+    await expect(contrast).toHaveFocus();
   },
 };

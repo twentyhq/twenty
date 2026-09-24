@@ -11,7 +11,7 @@ const OPTIONS = [
 
 runComponentConformance({
   name: 'SegmentedControl',
-  element: <SegmentedControl options={OPTIONS} />,
+  element: <SegmentedControl aria-label="Billing period" options={OPTIONS} />,
   refInstanceOf: HTMLDivElement,
   ownClassName: styles.container,
 });

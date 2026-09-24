@@ -1,9 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconComment, IconHome } from '@ui/icon';
 import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
-import { Tabs } from '@ui/primitives/navigation/Tabs/Tabs';
 import { ComponentDecorator } from '@ui/testing';
 
 import { SegmentedControl } from '../SegmentedControl';
@@ -25,23 +24,26 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 type Story = StoryObj<typeof SegmentedControl>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const monthlyLabel = canvas.getByText('Monthly');
+
+    await expect(
+      canvas.getByRole('radio', { name: 'Annual' }).getBoundingClientRect()
+        .width,
+    ).toBe(
+      canvas.getByRole('radio', { name: 'Monthly' }).getBoundingClientRect()
+        .width,
+    );
+    await expect(monthlyLabel.scrollWidth).toBeLessThanOrEqual(
+      monthlyLabel.clientWidth,
+    );
+  },
+};
 
 export const Dark: Story = {
   globals: { colorScheme: 'dark' },
-};
-
-export const IconOnlyTabList: Story = {
-  render: () => (
-    <Tabs.Root defaultValue="home">
-      <Tabs.List aria-label="Workspace" activateOnFocus>
-        <Tabs.Tab value="home" aria-label="Home" startIcon={<IconHome />} />
-        <Tabs.Tab value="chat" aria-label="Chat" startIcon={<IconComment />} />
-      </Tabs.List>
-      <Tabs.Panel value="home">Home content</Tabs.Panel>
-      <Tabs.Panel value="chat">Chat content</Tabs.Panel>
-    </Tabs.Root>
-  ),
 };
 
 export const WithDisabledOption: Story = {
@@ -59,18 +61,41 @@ export const IconOnly: Story = {
     'aria-label': 'Start page',
     defaultValue: 'home',
     options: [
-      { startIcon: <IconHome />, 'aria-label': 'Home', value: 'home' },
-      { startIcon: <IconComment />, 'aria-label': 'Chat', value: 'chat' },
+      {
+        startIcon: <IconHome data-testid="direct-icon" />,
+        'aria-label': 'Home',
+        value: 'home',
+      },
+      {
+        startIcon: (
+          <span>
+            <IconComment data-testid="wrapped-icon" />
+          </span>
+        ),
+        'aria-label': 'Chat',
+        value: 'chat',
+      },
     ],
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const home = canvas.getByRole('radio', { name: 'Home' });
     const chat = canvas.getByRole('radio', { name: 'Chat' });
+    const directIcon = canvas.getByTestId('direct-icon');
+    const directIconBounds = directIcon.getBoundingClientRect();
+    const wrappedIconBounds = canvas
+      .getByTestId('wrapped-icon')
+      .getBoundingClientRect();
 
+    await expect(directIcon.parentElement).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    );
+    await expect(directIconBounds.width).toBeGreaterThan(0);
+    await expect(wrappedIconBounds.width).toBe(directIconBounds.width);
+    await expect(wrappedIconBounds.height).toBe(directIconBounds.height);
     await expect(home).toBeChecked();
     await expect(chat).not.toBeChecked();
-    await expect(canvas.queryByRole('img')).not.toBeInTheDocument();
     await userEvent.click(chat);
     await expect(chat).toBeChecked();
     await expect(home).not.toBeChecked();
@@ -91,4 +116,17 @@ export const RightToLeft: Story = {
       <SegmentedControl {...args} dir="rtl" />
     </TextDirectionProvider>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const annual = canvas.getByRole('radio', { name: 'Annual' });
+    const monthly = canvas.getByRole('radio', { name: 'Monthly' });
+
+    await userEvent.tab();
+    await expect(annual).toHaveFocus();
+    await userEvent.keyboard('{ArrowLeft}');
+    await waitFor(() => expect(monthly).toHaveFocus());
+    await expect(monthly).toBeChecked();
+    await userEvent.keyboard('{ArrowRight}');
+    await waitFor(() => expect(annual).toBeChecked());
+  },
 };

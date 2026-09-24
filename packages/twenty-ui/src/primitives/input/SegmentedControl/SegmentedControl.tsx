@@ -1,9 +1,9 @@
 import { Radio as RadioPrimitive } from '@base-ui/react/radio';
+import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
 import { clsx } from 'clsx';
 
-import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
+import { isRenderableSlot } from '@ui/primitives/navigation/ListItem/internal/isRenderableSlot';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
-import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './SegmentedControl.module.scss';
 import { type SegmentedControlProps } from './types/SegmentedControlProps';
@@ -14,29 +14,33 @@ export const SegmentedControl = <TValue extends string>({
   options,
   ...props
 }: SegmentedControlProps<TValue>) => (
-  <RadioGroup
+  <RadioGroupPrimitive
     {...props}
     className={mergeClassNames(styles.container, className)}
+    data-item-width={itemWidth}
   >
-    {options.map(({ label, startIcon, value, ...optionProps }) => (
-      <RadioPrimitive.Root
-        {...optionProps}
-        key={value}
-        value={value}
-        nativeButton
-        render={<button type="button" />}
-        className={clsx(styles.item, !isDefined(label) && styles.iconOnly)}
-        data-item-width={itemWidth}
-      >
-        <>
-          {isDefined(startIcon) && (
+    {options.map(
+      ({ 'aria-label': ariaLabel, disabled, label, startIcon, value }) => (
+        <RadioPrimitive.Root
+          key={value}
+          value={value}
+          disabled={disabled}
+          aria-label={ariaLabel}
+          className={clsx(
+            styles.item,
+            !isRenderableSlot(label) && styles.iconOnly,
+          )}
+        >
+          {isRenderableSlot(startIcon) && (
             <span className={styles.icon} aria-hidden>
               {startIcon}
             </span>
           )}
-          {isDefined(label) && <span className={styles.label}>{label}</span>}
-        </>
-      </RadioPrimitive.Root>
-    ))}
-  </RadioGroup>
+          {isRenderableSlot(label) && (
+            <span className={styles.label}>{label}</span>
+          )}
+        </RadioPrimitive.Root>
+      ),
+    )}
+  </RadioGroupPrimitive>
 );

@@ -1,10 +1,8 @@
 import { expect, within } from 'storybook/test';
 
+import { SEGMENTED_CONTROL_ORDERING_ERROR } from '@/__stories__/twenty-ui-gallery/constants/SEGMENTED_CONTROL_ORDERING_ERROR';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { createGalleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/createGalleryRenderTest';
-
-const SEGMENTED_CONTROL_ORDERING_ERROR =
-  /SegmentedControl: \w+\.compareDocumentPosition is not a function(?: \| |$)/;
 
 export const inputReactTest: TwentyUiGalleryPlayFunction = async (context) => {
   await createGalleryRenderTest({
