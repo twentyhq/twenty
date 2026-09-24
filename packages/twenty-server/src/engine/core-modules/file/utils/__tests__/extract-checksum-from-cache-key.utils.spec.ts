@@ -1,4 +1,4 @@
-import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/extract-checksum-from-cache-key.util';
+import { extractChecksumFromCacheKey } from 'src/engine/core-modules/file/utils/extract-checksum-from-cache-key.utils';
 
 const VALID_CHECKSUM = 'a'.repeat(64);
 
