@@ -48,7 +48,9 @@ export class AgentChatThreadTargetService {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow(args);
 
     await this.assertThreadIsEditableOrThrow(args);
-    await this.assertRecordIsReadableOrThrow(args);
+    // A record in the trash keeps its links, which can still be listed and
+    // removed, but nothing new is filed under it.
+    await this.assertRecordIsReadableOrThrow({ ...args, withDeleted: false });
 
     const link = { threadId: args.threadId, [joinColumnName]: args.recordId };
 
@@ -67,7 +69,7 @@ export class AgentChatThreadTargetService {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow(args);
 
     await this.assertThreadIsEditableOrThrow(args);
-    await this.assertRecordIsReadableOrThrow(args);
+    await this.assertRecordIsReadableOrThrow({ ...args, withDeleted: true });
 
     await this.withTargetRepository(args.workspaceId, (repository) =>
       repository.delete({
@@ -90,7 +92,11 @@ export class AgentChatThreadTargetService {
       objectNameSingular,
     });
 
-    await this.assertRecordIsReadableOrThrow({ objectNameSingular, recordId });
+    await this.assertRecordIsReadableOrThrow({
+      objectNameSingular,
+      recordId,
+      withDeleted: true,
+    });
 
     return joinColumnName;
   }
@@ -122,7 +128,8 @@ export class AgentChatThreadTargetService {
   private async assertRecordIsReadableOrThrow({
     objectNameSingular,
     recordId,
-  }: RecordReference): Promise<void> {
+    withDeleted,
+  }: RecordReference & { withDeleted: boolean }): Promise<void> {
     const record = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const { authContext, userWorkspaceRoleMap, apiKeyRoleMap } =
@@ -144,7 +151,11 @@ export class AgentChatThreadTargetService {
         try {
           return await this.workspaceOrmManager
             .getRepository(objectNameSingular, rolePermissionConfig)
-            .findOne({ where: { id: recordId }, select: { id: true } });
+            .findOne({
+              where: { id: recordId },
+              select: { id: true },
+              withDeleted,
+            });
         } catch (error) {
           if (
             error instanceof PermissionsException &&

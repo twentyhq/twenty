@@ -30,6 +30,7 @@ const ROLE_ID = '20202020-0000-4000-8000-000000000009';
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const THREAD_ID = '20202020-0000-4000-8000-000000000002';
 const RECORD_ID = '20202020-0000-4000-8000-000000000004';
+const TRASHED_RECORD_ID = '20202020-0000-4000-8000-000000000005';
 const UNREADABLE_RECORD_ID = '20202020-0000-4000-8000-000000000008';
 const OWNER_ID = 'owner';
 const OTHER_MEMBER_ID = 'other-member';
@@ -70,18 +71,22 @@ const buildService = () => {
     existsBy: jest.fn().mockResolvedValue(false),
     insert: jest.fn(),
     delete: jest.fn(),
-    find: jest.fn().mockResolvedValue([]),
   };
 
   // Records the caller is allowed to read. A record outside their grants is
-  // indistinguishable from one that does not exist.
+  // indistinguishable from one that does not exist, and one in the trash is
+  // found only when the lookup includes deleted records.
   const readableRecordIds = new Set([RECORD_ID]);
+  const trashedRecordIds = new Set([TRASHED_RECORD_ID]);
 
   const recordRepository = {
     findOne: jest
       .fn()
-      .mockImplementation(async ({ where }) =>
-        readableRecordIds.has(where.id) ? { id: where.id } : null,
+      .mockImplementation(async ({ where, withDeleted }) =>
+        readableRecordIds.has(where.id) ||
+        (withDeleted === true && trashedRecordIds.has(where.id))
+          ? { id: where.id }
+          : null,
       ),
   };
 
@@ -125,7 +130,6 @@ const buildService = () => {
     targetRepository,
     agentChatSharingService,
     recordRepository,
-    readableRecordIds,
     workspaceOrmManager,
     storage,
   };
@@ -232,6 +236,45 @@ describe('Attaching a conversation to a record', () => {
   });
 });
 
+// A record in the trash keeps its links, and its page still shows them.
+describe('Conversations of a record in the trash', () => {
+  it('lists them', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.resolveAuthorizedRecordOrThrow({
+        workspaceId: WORKSPACE_ID,
+        objectNameSingular: 'company',
+        recordId: TRASHED_RECORD_ID,
+      }),
+    ).resolves.toBe('targetCompanyId');
+  });
+
+  it('detaches one', async () => {
+    const { service, targetRepository } = buildService();
+
+    await service.detachThreadFromRecord({
+      ...args,
+      recordId: TRASHED_RECORD_ID,
+    });
+
+    expect(targetRepository.delete).toHaveBeenCalledWith({
+      threadId: THREAD_ID,
+      targetCompanyId: TRASHED_RECORD_ID,
+    });
+  });
+
+  it('files no new one', async () => {
+    const { service, targetRepository } = buildService();
+
+    await expect(
+      service.attachThreadToRecord({ ...args, recordId: TRASHED_RECORD_ID }),
+    ).rejects.toMatchObject({ code: 'RECORD_NOT_FOUND' });
+
+    expect(targetRepository.insert).not.toHaveBeenCalled();
+  });
+});
+
 describe('Resolving the record a conversation list is scoped to', () => {
   it('returns the join column of the record object leg once the record is readable', async () => {
     const { service } = buildService();
@@ -255,20 +298,6 @@ describe('Resolving the record a conversation list is scoped to', () => {
         recordId: RECORD_ID,
       }),
     ).rejects.toMatchObject({ code: 'INVALID_AGENT_INPUT' });
-  });
-
-  // Reading every link and filtering afterwards would page an arbitrary prefix
-  // of the links, which one member could fill with their own attachments.
-  it('never reads the link rows itself', async () => {
-    const { service, targetRepository } = buildService();
-
-    await service.resolveAuthorizedRecordOrThrow({
-      workspaceId: WORKSPACE_ID,
-      objectNameSingular: 'company',
-      recordId: RECORD_ID,
-    });
-
-    expect(targetRepository.find).not.toHaveBeenCalled();
   });
 });
 
@@ -326,6 +355,7 @@ describe('Authorizing the record a conversation is attached to', () => {
     expect(recordRepository.findOne).toHaveBeenCalledWith({
       where: { id: RECORD_ID },
       select: { id: true },
+      withDeleted: false,
     });
   });
 

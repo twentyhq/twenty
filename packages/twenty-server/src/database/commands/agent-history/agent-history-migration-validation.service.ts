@@ -15,8 +15,9 @@ type Storage = AgentHistoryStorageState['storage'];
 @Injectable()
 export class AgentHistoryMigrationValidationService {
   // agentChatThreadTarget rows point at the workspace-schema thread table. A
-  // rollback clears that store, so the links would be cascaded away with no way
-  // to rebuild them from core. Refuse instead of losing them silently.
+  // rollback leaves that store in place, but the next forward migration clears
+  // it, cascading the links away with no way to rebuild them from core. Refuse
+  // instead of losing them silently.
   async assertNoThreadTargets({
     runner,
     workspaceId,

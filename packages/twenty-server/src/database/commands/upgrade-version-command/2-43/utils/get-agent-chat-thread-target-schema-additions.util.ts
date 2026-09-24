@@ -31,19 +31,20 @@ export const getAgentChatThreadTargetSchemaAdditions = ({
   existing: AgentChatThreadTargetSchemaMaps;
   standard: AgentChatThreadTargetSchemaMaps;
 }) => {
-  const objects = Object.values(
-    standard.flatObjectMetadataMaps.byUniversalIdentifier,
-  )
-    .filter(isDefined)
-    .filter(
-      (object) =>
-        object.universalIdentifier === OBJECT_UNIVERSAL_IDENTIFIER &&
-        !isDefined(
-          existing.flatObjectMetadataMaps.byUniversalIdentifier[
-            object.universalIdentifier
-          ],
-        ),
-    );
+  const standardFlatObjectMetadata =
+    standard.flatObjectMetadataMaps.byUniversalIdentifier[
+      OBJECT_UNIVERSAL_IDENTIFIER
+    ];
+
+  const objects =
+    isDefined(standardFlatObjectMetadata) &&
+    !isDefined(
+      existing.flatObjectMetadataMaps.byUniversalIdentifier[
+        OBJECT_UNIVERSAL_IDENTIFIER
+      ],
+    )
+      ? [standardFlatObjectMetadata]
+      : [];
 
   const fields = Object.values(
     standard.flatFieldMetadataMaps.byUniversalIdentifier,
