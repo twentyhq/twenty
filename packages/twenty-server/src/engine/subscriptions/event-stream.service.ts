@@ -41,6 +41,7 @@ export class EventStreamService implements OnModuleInit {
         return this.getTotalActiveStreamCount();
       },
       cacheValue: true,
+      perPod: true,
     });
   }
 
