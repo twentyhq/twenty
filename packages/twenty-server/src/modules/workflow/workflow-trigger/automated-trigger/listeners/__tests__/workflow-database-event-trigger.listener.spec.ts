@@ -30,7 +30,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let recordShareStorageService: jest.Mocked<RecordShareStorageService>;
   let recordSharingFeatureService: jest.Mocked<
-    Pick<RecordSharingFeatureService, 'isRecordSharingEnabled'>
+    Pick<
+      RecordSharingFeatureService,
+      'isRecordSharingEnabled' | 'isLegacyRecordAccessOpen'
+    >
   >;
 
   const setTriggerMap = (
@@ -113,6 +116,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     } as unknown as jest.Mocked<RecordShareStorageService>;
 
     recordSharingFeatureService = {
+      isLegacyRecordAccessOpen: jest.fn().mockResolvedValue(false),
       isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
     };
 

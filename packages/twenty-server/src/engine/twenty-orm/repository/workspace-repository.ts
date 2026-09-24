@@ -1,4 +1,3 @@
-import { isLegacyRecordAccessOpen } from 'src/engine/core-modules/record-share/utils/is-legacy-record-access-open.util';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
@@ -2038,9 +2037,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment {
     return {
-      isLegacyRecordAccessOpen: isLegacyRecordAccessOpen(
-        this.options.internalContext,
-      ),
+      isLegacyRecordAccessOpen:
+        this.options.internalContext.isLegacyRecordAccessOpen,
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,

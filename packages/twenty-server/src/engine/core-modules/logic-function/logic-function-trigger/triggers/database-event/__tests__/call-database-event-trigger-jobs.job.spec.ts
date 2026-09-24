@@ -130,7 +130,10 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
   let job: CallDatabaseEventTriggerJobsJob;
   let messageQueueService: { bulkAdd: jest.Mock };
   let recordShareStorageService: { findByRecordIds: jest.Mock };
-  let recordSharingFeatureService: { isRecordSharingEnabled: jest.Mock };
+  let recordSharingFeatureService: {
+    isRecordSharingEnabled: jest.Mock;
+    isLegacyRecordAccessOpen: jest.Mock;
+  };
   let cacheData: Record<string, unknown>;
 
   const buildBatch = (
@@ -186,6 +189,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     };
     recordSharingFeatureService = {
+      isLegacyRecordAccessOpen: jest.fn().mockResolvedValue(false),
       isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
     };
 

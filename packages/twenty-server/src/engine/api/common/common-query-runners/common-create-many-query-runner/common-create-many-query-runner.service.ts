@@ -619,10 +619,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     await this.shareWithService.insertRecordSharesForCreatedRecords({
       authContext,
       objectMetadataId: flatObjectMetadata.id,
-      isRecordSharingEnabled:
-        this.isRecordSharingEnabled(queryRunnerContext) ||
-        flatObjectMetadata.universalIdentifier ===
-          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+      isRecordSharingEnabled: this.isRecordSharingEnabled(queryRunnerContext),
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
       shareWith,
@@ -645,7 +642,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   private isRecordSharingEnabled(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): boolean {
-    return queryRunnerContext.isRecordSharingEnabled;
+    return (
+      queryRunnerContext.isRecordSharingEnabled ||
+      queryRunnerContext.flatObjectMetadata.universalIdentifier ===
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+    );
   }
 
   private resolveNestedRelationsForCreate({

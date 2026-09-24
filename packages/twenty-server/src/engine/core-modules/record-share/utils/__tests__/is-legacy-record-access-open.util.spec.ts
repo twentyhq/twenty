@@ -20,8 +20,7 @@ it.each([
           },
         },
       },
-      featureFlagsMap: { IS_RECORD_SHARING_ENABLED: flag },
-      billingEntitlements: { RECORD_SHARING: entitlement },
+      wasRecordSharingEnabled: flag && entitlement,
     } as never);
     expect(legacyOpen).toBe(expected);
     expect(

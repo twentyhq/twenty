@@ -1,4 +1,4 @@
-import { isLegacyRecordAccessOpen } from 'src/engine/core-modules/record-share/utils/is-legacy-record-access-open.util';
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -58,6 +58,7 @@ export class RecordAccessPolicyService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordSharingFeatureService: RecordSharingFeatureService,
   ) {}
 
   // A subject receives the records a query would return it: its role must read
@@ -160,21 +161,14 @@ export class RecordAccessPolicyService {
     fetchRecordShares: FetchRecordShares,
   ): Promise<Set<string>> {
     const { objectMetadata, snapshots, subject } = evaluation;
-    const legacyContext =
-      objectMetadata.readability === MetadataReadability.SYSTEM ||
-      objectMetadata.readability === MetadataReadability.OPEN
-        ? undefined
-        : await this.workspaceCacheService.getOrRecompute(
-            evaluation.workspaceId,
-            [
-              'flatObjectMetadataMaps',
-              'featureFlagsMap',
-              'billingEntitlements',
-            ],
-          );
+    const legacyOpen =
+      objectMetadata.readability !== MetadataReadability.SYSTEM &&
+      objectMetadata.readability !== MetadataReadability.OPEN &&
+      (await this.recordSharingFeatureService.isLegacyRecordAccessOpen(
+        evaluation.workspaceId,
+      ));
     const gateKind = resolveRecordShareGateKind({
-      isLegacyRecordAccessOpen:
-        isDefined(legacyContext) && isLegacyRecordAccessOpen(legacyContext),
+      isLegacyRecordAccessOpen: legacyOpen,
       readability: objectMetadata.readability,
       isOwningApplication: subject.isOwningApplication(objectMetadata),
     });

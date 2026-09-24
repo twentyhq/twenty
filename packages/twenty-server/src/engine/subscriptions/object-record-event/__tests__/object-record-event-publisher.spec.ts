@@ -106,7 +106,10 @@ describe('ObjectRecordEventPublisher', () => {
     >
   >;
   let mockRecordSharingFeatureService: jest.Mocked<
-    Pick<RecordSharingFeatureService, 'isRecordSharingEnabled'>
+    Pick<
+      RecordSharingFeatureService,
+      'isRecordSharingEnabled' | 'isLegacyRecordAccessOpen'
+    >
   >;
   let mockRecordShareStorageService: jest.Mocked<
     Pick<RecordShareStorageService, 'findByRecordIds'>
@@ -285,6 +288,7 @@ describe('ObjectRecordEventPublisher', () => {
     };
 
     mockRecordSharingFeatureService = {
+      isLegacyRecordAccessOpen: jest.fn().mockResolvedValue(false),
       isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
     };
 
@@ -556,66 +560,59 @@ describe('ObjectRecordEventPublisher', () => {
       });
     });
 
-    it.each([true, false])(
-      'only publishes shared private records when the rollout flag is %s',
-      async (isEnabled) => {
-        const privateObjectMetadata: FlatObjectMetadata = {
-          ...companyObjectMetadata,
-          readability: MetadataReadability.PRIVATE,
-        };
+    it('only publishes shared private records after metadata activation', async () => {
+      const privateObjectMetadata: FlatObjectMetadata = {
+        ...companyObjectMetadata,
+        readability: MetadataReadability.PRIVATE,
+      };
 
-        mockRecordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
-          isEnabled,
-        );
-
-        mockRecordShareStorageService.findByRecordIds.mockResolvedValue([
-          {
-            id: 'record-share-1',
-            recordId: 'record-1',
-            objectMetadataId: privateObjectMetadata.id,
-            principalId: EVERYONE_PRINCIPAL_ID,
-            principalType: RecordSharePrincipalType.EVERYONE,
-            accessLevel: RecordShareAccessLevel.READ,
-            rowCause: RecordShareRowCause.MANUAL,
-            sourceId: 'source-1',
-          },
-        ] as RecordShare[]);
-
-        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
-          name: 'company.created',
-          workspaceId,
-          objectMetadata: privateObjectMetadata,
-          events: [
-            createMockEvent(),
-            createMockEvent({
-              recordId: 'record-2',
-              properties: { after: { id: 'record-2', name: 'Hidden Company' } },
-            }),
-          ],
-        };
-
-        await service.publish(eventBatch as WorkspaceEventBatch<never>);
-
-        expect(
-          mockRecordShareStorageService.findByRecordIds,
-        ).toHaveBeenCalledWith({
-          workspaceId,
+      mockRecordShareStorageService.findByRecordIds.mockResolvedValue([
+        {
+          id: 'record-share-1',
+          recordId: 'record-1',
           objectMetadataId: privateObjectMetadata.id,
-          recordIds: ['record-1', 'record-2'],
-        });
+          principalId: EVERYONE_PRINCIPAL_ID,
+          principalType: RecordSharePrincipalType.EVERYONE,
+          accessLevel: RecordShareAccessLevel.READ,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: 'source-1',
+        },
+      ] as RecordShare[]);
 
-        const publishCall = (
-          mockSubscriptionService.publishToEventStream as jest.Mock
-        ).mock.calls[0][0];
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: privateObjectMetadata,
+        events: [
+          createMockEvent(),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: { id: 'record-2', name: 'Hidden Company' } },
+          }),
+        ],
+      };
 
-        expect(
-          publishCall.payload.objectRecordEventsWithQueryIds.map(
-            (matchedEvent: { objectRecordEvent: { recordId: string } }) =>
-              matchedEvent.objectRecordEvent.recordId,
-          ),
-        ).toEqual(['record-1']);
-      },
-    );
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockRecordShareStorageService.findByRecordIds,
+      ).toHaveBeenCalledWith({
+        workspaceId,
+        objectMetadataId: privateObjectMetadata.id,
+        recordIds: ['record-1', 'record-2'],
+      });
+
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds.map(
+          (matchedEvent: { objectRecordEvent: { recordId: string } }) =>
+            matchedEvent.objectRecordEvent.recordId,
+        ),
+      ).toEqual(['record-1']);
+    });
 
     it('publishes a batch without consulting the sharing rollout flag', async () => {
       mockRecordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
