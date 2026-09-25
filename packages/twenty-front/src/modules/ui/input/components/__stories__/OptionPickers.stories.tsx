@@ -57,7 +57,7 @@ const InnerSelectExample = () => {
 };
 
 const meta: Meta = {
-  title: 'UI/Input/LocalOptionPickers',
+  title: 'UI/Input/OptionPickers',
   decorators: [ComponentDecorator],
 };
 export default meta;
