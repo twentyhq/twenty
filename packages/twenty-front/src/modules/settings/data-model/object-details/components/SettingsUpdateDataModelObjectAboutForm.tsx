@@ -15,10 +15,14 @@ import {
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { settingsObjectAboutFormHasUnsavedEditsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectAboutFormHasUnsavedEditsFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { isEmptyObject } from 'twenty-shared/utils';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 
 const StyledCenteredButton = styled(Button)`
@@ -79,6 +83,18 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     formConfig,
     readonly,
   });
+
+  // Edits stay dirty until their save, or the translate-or-rename choice,
+  // completes; leaving the page before that would drop them
+  const hasUnsavedEdits = !isEmptyObject(formConfig.formState.dirtyFields);
+  const setSettingsObjectAboutFormHasUnsavedEdits = useSetAtomFamilyState(
+    settingsObjectAboutFormHasUnsavedEditsFamilyState,
+    { objectMetadataItemId: objectMetadataItem.id },
+  );
+
+  useEffect(() => {
+    setSettingsObjectAboutFormHasUnsavedEdits(hasUnsavedEdits);
+  }, [hasUnsavedEdits, setSettingsObjectAboutFormHasUnsavedEdits]);
 
   return (
     // oxlint-disable-next-line react/jsx-props-no-spreading

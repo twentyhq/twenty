@@ -8,10 +8,12 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
+import { settingsObjectAboutFormHasUnsavedEditsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectAboutFormHasUnsavedEditsFamilyState';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -61,6 +63,10 @@ export const ObjectSettings = ({
   const { openDialog, closeDialog } = useDialog();
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+  const settingsObjectAboutFormHasUnsavedEdits = useAtomFamilyStateValue(
+    settingsObjectAboutFormHasUnsavedEditsFamilyState,
+    { objectMetadataItemId: objectMetadataItem.id },
+  );
 
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
@@ -129,6 +135,7 @@ export const ObjectSettings = ({
           />
           <SettingsTranslationsCard
             objectNamePlural={objectMetadataItem.namePlural}
+            disabled={settingsObjectAboutFormHasUnsavedEdits}
           />
         </Section.Root>
       </StyledFormSectionContainer>
