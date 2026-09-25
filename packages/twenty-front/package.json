@@ -129,7 +129,6 @@
     "react-markdown": "^10.1.0",
     "react-phone-number-input": "patch:react-phone-number-input@npm%3A3.4.5#../../.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch",
     "react-qr-code": "^2.0.18",
-    "react-responsive": "^9.0.2",
     "react-router-dom": "^7.18.4",
     "react-textarea-autosize": "^8.4.1",
     "remark-gfm": "^4.0.1",

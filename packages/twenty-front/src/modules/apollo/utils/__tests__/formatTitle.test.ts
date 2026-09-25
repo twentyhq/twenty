@@ -1,4 +1,4 @@
-import { OperationType } from '@/apollo/types/operation-type';
+import { OperationType } from '@/apollo/types/OperationType';
 
 import formatTitle from '@/apollo/utils/formatTitle';
 

@@ -1,7 +1,7 @@
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type Participant } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
-import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
+import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address.type';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 
 export const buildReplyToParticipants = (

@@ -1,5 +1,5 @@
 import { filterSettingsApplicationTimelineActivityTypes } from '~/pages/settings/applications/utils/filterSettingsApplicationTimelineActivityTypes';
-import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
+import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/SettingsApplicationTimelineActivityType';
 
 const timelineActivityTypes: SettingsApplicationTimelineActivityType[] = [
   {

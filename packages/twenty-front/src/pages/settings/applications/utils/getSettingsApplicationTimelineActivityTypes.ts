@@ -1,6 +1,6 @@
 import { type TimelineActivityTypeManifest } from 'twenty-shared/application';
-import { type InstalledTimelineActivityType } from '~/pages/settings/applications/types/installedTimelineActivityType';
-import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
+import { type InstalledTimelineActivityType } from '~/pages/settings/applications/types/InstalledTimelineActivityType';
+import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/SettingsApplicationTimelineActivityType';
 
 const getSettingsApplicationTimelineActivityTypeCommonFields = (
   timelineActivityType:

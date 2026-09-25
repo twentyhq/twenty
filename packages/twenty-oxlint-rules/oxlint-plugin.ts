@@ -53,6 +53,10 @@ import {
   RULE_NAME as noJotaiStoreInSelectorName,
 } from './rules/no-jotai-store-in-selector';
 import {
+  rule as noMiscasedAcronymInIdentifier,
+  RULE_NAME as noMiscasedAcronymInIdentifierName,
+} from './rules/no-miscased-acronym-in-identifier';
+import {
   rule as noMiscasedAcronymInMessage,
   RULE_NAME as noMiscasedAcronymInMessageName,
 } from './rules/no-miscased-acronym-in-message';
@@ -85,6 +89,10 @@ import {
   RULE_NAME as styledComponentsPrefixedWithStyledName,
 } from './rules/styled-components-prefixed-with-styled';
 import {
+  rule as typesFolderFilename,
+  RULE_NAME as typesFolderFilenameName,
+} from './rules/types-folder-filename';
+import {
   rule as upgradeCommandFilename,
   RULE_NAME as upgradeCommandFilenameName,
 } from './rules/upgrade-command-filename';
@@ -106,6 +114,7 @@ export default definePlugin({
     [noHardcodedColorsName]: noHardcodedColors,
     [noIcuEscapingApostropheName]: noIcuEscapingApostrophe,
     [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,
+    [noMiscasedAcronymInIdentifierName]: noMiscasedAcronymInIdentifier,
     [noMiscasedAcronymInMessageName]: noMiscasedAcronymInMessage,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
     [noStateUserefName]: noStateUseref,
@@ -115,6 +124,7 @@ export default definePlugin({
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
+    [typesFolderFilenameName]: typesFolderFilename,
     [upgradeCommandFilenameName]: upgradeCommandFilename,
   },
 });

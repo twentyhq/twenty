@@ -2,7 +2,8 @@ import { type CommandMenuItemSection } from '@/command-menu-item/types/CommandMe
 
 export const COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER = [
   'SELECTION',
-  'THIS_VIEW',
+  'CURRENT_VIEW',
+  'THIS_OBJECT',
   'ASK_AND_FIND',
   'CREATE_RECORD',
   'WORKSPACE',
