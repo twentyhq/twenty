@@ -78,12 +78,13 @@ describe('tracking opt-out as a suppression (integration)', () => {
       isOptedOut: true,
     });
 
-    await expect(
-      messageSuppressionService.findTrackingOptedOutEmailAddresses({
+    const trackingOptedOutEmailAddresses =
+      await messageSuppressionService.findTrackingOptedOutEmailAddresses({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         emailAddresses: [emailAddress],
-      }),
-    ).resolves.toEqual(new Set([emailAddress]));
+      });
+
+    expect([...trackingOptedOutEmailAddresses]).toEqual([emailAddress]);
 
     const [suppression] =
       await messageSuppressionService.findApplicableSuppressions({
