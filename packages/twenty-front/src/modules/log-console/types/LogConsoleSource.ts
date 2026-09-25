@@ -16,7 +16,6 @@ import {
 export type LogConsoleSource = {
   id: LogConsoleSourceId;
   label: MessageDescriptor;
-  entryLabel: MessageDescriptor;
   Icon: IconComponent;
   table: EventLogTable;
   fieldFilters?: EventLogFieldFilterInput[];

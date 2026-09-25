@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
 import {
@@ -24,7 +23,6 @@ import { LogConsoleTimeRangeDropdown } from '@/log-console/components/LogConsole
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { useLogConsoleRetention } from '@/log-console/hooks/useLogConsoleRetention';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
-import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
@@ -37,7 +35,6 @@ import { isLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/isLogC
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogsLiveStream';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
-import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -85,7 +82,6 @@ type LogConsoleResultsProps = {
 export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
-  const { navigateSidePanel } = useNavigateSidePanel();
   const timeZone = useLogConsoleTimeZone();
   const { dateFormat, timeFormat } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
@@ -93,9 +89,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
-  );
-  const isLogConsoleSelectedLogOpened = useAtomStateValue(
-    isLogConsoleSelectedLogOpenedSelector,
   );
   const [logConsoleTimeRange, setLogConsoleTimeRange] = useAtomState(
     logConsoleTimeRangeState,
@@ -207,12 +200,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   const openLog = (entry: EventLogRecord) => {
     setLogConsoleSelectedLog({ source, entry });
-    navigateSidePanel({
-      page: SidePanelPages.LogDetail,
-      pageTitle: t(source.entryLabel),
-      pageIcon: source.Icon,
-      resetNavigationStack: true,
-    });
   };
 
   const formatRangeDate = (date: string, format: string) =>
@@ -273,11 +260,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
         liveEntryCount={liveEntries.length}
         entriesSinceClear={entriesSinceClear}
         loading={loading}
-        selectedEntry={
-          isLogConsoleSelectedLogOpened
-            ? logConsoleSelectedLog?.entry
-            : undefined
-        }
+        selectedEntry={logConsoleSelectedLog?.entry}
         onLoadMore={loadMore}
         onEntryClick={openLog}
       />

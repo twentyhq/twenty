@@ -8,14 +8,12 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
-import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -80,7 +78,6 @@ export const LogConsoleTable = ({
 }: LogConsoleTableProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
     LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
@@ -96,7 +93,7 @@ export const LogConsoleTable = ({
     },
   });
 
-  const columns = isSidePanelOpened
+  const columns = isDefined(selectedEntry)
     ? source.columns.filter((column) => !column.hiddenWhenPanelOpen)
     : source.columns;
 

@@ -1,6 +1,5 @@
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
-import { SidePanelLogDetailPage } from '@/log-console/components/SidePanelLogDetailPage';
 import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/components/SidePanelCoreWorkflowFiltersPage';
 import { SidePanelCoreWorkflowVersionPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionPage';
 import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage';
@@ -96,7 +95,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.RecordCreationForm, <SidePanelRecordCreationFormPage />],
   [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
   [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
-  [SidePanelPages.LogDetail, <SidePanelLogDetailPage />],
   [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
   [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
