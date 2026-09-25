@@ -1,9 +1,14 @@
+import { useMutation } from '@apollo/client/react';
+
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions';
-import { useUpdateCoreWorkflowVisibility } from '@/object-core/workflows/hooks/useUpdateCoreWorkflowVisibility';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowVisibility } from '~/generated/graphql';
+import {
+  UpdateCoreWorkflowVisibilityDocument,
+  WorkflowVisibility,
+} from '~/generated/graphql';
 
 export const ToggleWorkflowVisibilitySingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
@@ -12,9 +17,11 @@ export const ToggleWorkflowVisibilitySingleRecordCommand = () => {
   const [coreWorkflow] = useCoreWorkflowsWithCurrentVersions(
     isDefined(recordId) ? [recordId] : [],
   );
-  const { updateVisibility } = useUpdateCoreWorkflowVisibility({
-    coreWorkflowId: recordId ?? '',
-  });
+  const apolloCoreClient = useApolloCoreClient();
+  const [updateCoreWorkflowVisibility] = useMutation(
+    UpdateCoreWorkflowVisibilityDocument,
+    { client: apolloCoreClient },
+  );
 
   if (!isDefined(recordId)) {
     throw new Error('Record ID is required to change workflow visibility');
@@ -25,11 +32,17 @@ export const ToggleWorkflowVisibilitySingleRecordCommand = () => {
       return;
     }
 
-    return updateVisibility(
-      coreWorkflow.visibility === WorkflowVisibility.PRIVATE
-        ? WorkflowVisibility.WORKSPACE
-        : WorkflowVisibility.PRIVATE,
-    );
+    return updateCoreWorkflowVisibility({
+      variables: {
+        input: {
+          coreWorkflowId: coreWorkflow.id,
+          visibility:
+            coreWorkflow.visibility === WorkflowVisibility.PRIVATE
+              ? WorkflowVisibility.WORKSPACE
+              : WorkflowVisibility.PRIVATE,
+        },
+      },
+    });
   };
 
   return (
