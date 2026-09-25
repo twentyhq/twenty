@@ -4412,6 +4412,7 @@ msgstr ""
 
 #. js-lingui-id: n5pcaT
 #: src/modules/ai/components/AiModelTierDropdown.tsx
+#: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "Choose a model mode"
 msgstr ""
 
@@ -4701,6 +4702,7 @@ msgstr ""
 #. js-lingui-id: yz7wBu
 #: src/modules/ai/components/AiChatCloseButton.tsx
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -13577,11 +13579,6 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#. js-lingui-id: jBzu2R
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message and calendar target reads"
-msgstr ""
-
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -18800,6 +18797,7 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -21004,6 +21002,12 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
+#. js-lingui-id: MGwdi/
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
+#: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbarColorButton.tsx
+msgid "Text and background colors"
+msgstr ""
+
 #. js-lingui-id: MapzEo
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
@@ -22270,6 +22274,11 @@ msgstr ""
 msgid "Turn evaluated successfully"
 msgstr ""
 
+#. js-lingui-id: M4zYAl
+#: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
+msgid "Turn into"
+msgstr ""
+
 #. js-lingui-id: 8680YN
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "Turn not found"
@@ -23253,11 +23262,6 @@ msgstr ""
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
-msgstr ""
-
-#. js-lingui-id: c2ES/s
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use target relations to find messages and calendar events linked to records."
 msgstr ""
 
 #. js-lingui-id: 40bRe+
