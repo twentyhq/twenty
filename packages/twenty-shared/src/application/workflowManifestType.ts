@@ -1,9 +1,6 @@
 import { z } from 'zod';
 
-import { isDefined } from '@/utils/validation/isDefined';
-
 import { workflowStepManifestSchema } from '@/application/workflowStepManifestType';
-import { getStepOutgoingStepIds } from '@/workflow/validation/utils/get-step-outgoing-step-ids.util';
 import { buildWorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
 import { validateWorkflowGraph } from '@/workflow/validation/utils/validate-workflow-graph.util';
 
@@ -46,17 +43,16 @@ export const workflowManifestSchema = z
         settings: { input: step.input },
       })),
     };
+    const graph = buildWorkflowGraph(validatableWorkflow);
     for (const issue of validateWorkflowGraph({
       workflow: validatableWorkflow,
-      graph: buildWorkflowGraph(validatableWorkflow),
+      graph,
     })) {
-      if (issue.severity === 'error')
+      if (issue.severity === 'error') {
         context.addIssue({ code: 'custom', message: issue.message });
+      }
     }
 
-    const stepsById = new Map(
-      steps.map((step) => [step.universalIdentifier, step]),
-    );
     const visiting = new Set<string>();
     const visited = new Set<string>();
     const visit = (id: string): void => {
@@ -70,30 +66,12 @@ export const workflowManifestSchema = z
       if (visited.has(id)) {
         return;
       }
-      const step = stepsById.get(id);
-      if (!isDefined(step)) {
-        context.addIssue({
-          code: 'custom',
-          message: `Workflow references missing step ${id}`,
-        });
-        return;
-      }
       visiting.add(id);
-      getStepOutgoingStepIds({
-        ...step,
-        id: step.universalIdentifier,
-        settings: { input: step.input },
-      }).forEach(visit);
+      (graph.childrenByStepId.get(id) ?? []).forEach(visit);
       visiting.delete(id);
       visited.add(id);
     };
     trigger.nextStepIds.forEach(visit);
-    if (visited.size !== steps.length) {
-      context.addIssue({
-        code: 'custom',
-        message: 'Every workflow step must be reachable from its trigger',
-      });
-    }
   });
 
 export type WorkflowManifest = z.input<typeof workflowManifestSchema>;

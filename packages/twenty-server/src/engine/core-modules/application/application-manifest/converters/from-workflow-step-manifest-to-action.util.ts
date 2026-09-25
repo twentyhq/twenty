@@ -1,3 +1,4 @@
+import { computeWorkflowManifestOrderBy } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-order-by.util';
 import { msg } from '@lingui/core/macro';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -52,6 +53,9 @@ export const fromWorkflowStepManifestToAction = ({
       throw new ApplicationException(
         'Workflow field does not belong to the referenced object',
         ApplicationExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`The workflow field does not belong to the referenced object.`,
+        },
       );
     }
     return resolved;
@@ -142,6 +146,18 @@ export const fromWorkflowStepManifestToAction = ({
                 ...orderBy,
                 ...(isDefined(orderBy.recordSorts)
                   ? {
+                      gqlOperationOrderBy: orderBy.recordSorts.flatMap(
+                        (reference) =>
+                          computeWorkflowManifestOrderBy({
+                            field: field(
+                              reference.fieldMetadataUniversalIdentifier,
+                              objectUniversalIdentifier,
+                            ),
+                            direction: reference.direction,
+                            subFieldName: reference.subFieldName,
+                            references,
+                          }),
+                      ),
                       recordSorts: orderBy.recordSorts.map((reference) =>
                         fieldReference(reference, objectUniversalIdentifier),
                       ),
@@ -176,14 +192,25 @@ export const fromWorkflowStepManifestToAction = ({
     }
     case 'FORM':
       input = step.input.map((formField) => {
-        if (formField.type !== 'RECORD') return formField;
+        if (formField.type !== 'RECORD') {
+          return formField;
+        }
         const { objectUniversalIdentifier, ...settings } =
           formField.settings ?? {};
+        if (typeof objectUniversalIdentifier !== 'string') {
+          throw new ApplicationException(
+            'Record picker fields require an object universal identifier',
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`The workflow record picker must reference an object.`,
+            },
+          );
+        }
         return {
           ...formField,
           settings: {
             ...settings,
-            objectName: objectName(objectUniversalIdentifier as string),
+            objectName: objectName(objectUniversalIdentifier),
           },
         };
       });

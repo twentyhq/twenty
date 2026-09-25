@@ -1,10 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import {
+  type WorkflowManifestReferences,
+  type WorkflowManifestObjectReference,
+  type WorkflowManifestFieldReference,
+} from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
-export const computeWorkflowManifestReferences = ({
+export const prepareWorkflowManifestReferences = ({
   fromAllFlatEntityMaps,
   toAllUniversalFlatEntityMaps,
   existingAllFlatEntityMaps,
@@ -20,17 +24,19 @@ export const computeWorkflowManifestReferences = ({
   const agentIdByUniversalIdentifier = new Map<string, string>();
   const objectByUniversalIdentifier = new Map<
     string,
-    { nameSingular: string }
+    WorkflowManifestObjectReference
   >();
   const fieldByUniversalIdentifier = new Map<
     string,
-    { id: string; name: string; objectUniversalIdentifier: string }
+    WorkflowManifestFieldReference
   >();
 
   for (const logicFunction of Object.values(
     toAllUniversalFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
   )) {
-    if (!isDefined(logicFunction)) continue;
+    if (!isDefined(logicFunction)) {
+      continue;
+    }
     logicFunction.id =
       fromAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier[
         logicFunction.universalIdentifier
@@ -49,7 +55,9 @@ export const computeWorkflowManifestReferences = ({
   for (const agent of Object.values(
     toAllUniversalFlatEntityMaps.flatAgentMaps.byUniversalIdentifier,
   )) {
-    if (!isDefined(agent)) continue;
+    if (!isDefined(agent)) {
+      continue;
+    }
     agent.id =
       fromAllFlatEntityMaps.flatAgentMaps.byUniversalIdentifier[
         agent.universalIdentifier
@@ -68,8 +76,7 @@ export const computeWorkflowManifestReferences = ({
   )) {
     if (isDefined(field) && field.applicationId !== ownerApplicationId) {
       fieldByUniversalIdentifier.set(field.universalIdentifier, {
-        id: field.id,
-        name: field.name,
+        ...field,
         objectUniversalIdentifier: field.objectMetadataUniversalIdentifier,
       });
     }
@@ -77,20 +84,22 @@ export const computeWorkflowManifestReferences = ({
   for (const object of Object.values(
     toAllUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
   )) {
-    if (isDefined(object))
+    if (isDefined(object)) {
       objectByUniversalIdentifier.set(object.universalIdentifier, object);
+    }
   }
   for (const field of Object.values(
     toAllUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
   )) {
-    if (!isDefined(field)) continue;
+    if (!isDefined(field)) {
+      continue;
+    }
     field.id =
       fromAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
         field.universalIdentifier
       ]?.id ?? v4();
     fieldByUniversalIdentifier.set(field.universalIdentifier, {
-      id: field.id,
-      name: field.name,
+      ...field,
       objectUniversalIdentifier: field.objectMetadataUniversalIdentifier,
     });
   }

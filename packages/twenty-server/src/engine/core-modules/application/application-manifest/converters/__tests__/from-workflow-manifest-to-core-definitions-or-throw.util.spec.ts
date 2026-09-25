@@ -71,8 +71,9 @@ describe('application workflow definitions', () => {
     };
     const changed = structuredClone(manifest);
     const changedStep = changed.version.steps[0];
-    if (changedStep.type !== 'LOGIC_FUNCTION')
+    if (changedStep.type !== 'LOGIC_FUNCTION') {
       throw new Error('Expected a function step');
+    }
     changedStep.input.greeting = 'After';
     const after = fromWorkflowManifestToCoreDefinitionsOrThrow({
       ...options,
@@ -120,6 +121,109 @@ describe('application workflow definitions', () => {
   it('rejects an unsupported trigger on the server too', () => {
     const invalid = structuredClone(manifest);
     Object.assign(invalid.version.trigger, { type: 'WEBHOOK' });
+    expect(() =>
+      fromWorkflowManifestToCoreDefinitionsOrThrow({
+        ...options,
+        manifest: invalid,
+      }),
+    ).toThrow();
+  });
+});
+
+const BRANCH_ID = '77777777-7777-4777-8777-777777777777';
+const BODY_ID = '88888888-8888-4888-8888-888888888888';
+const FIRST_STEP_ID = manifest.version.steps[0].universalIdentifier;
+
+const branchingWorkflow = (type: 'IF_ELSE' | 'ITERATOR'): WorkflowManifest => ({
+  ...manifest,
+  version: {
+    ...manifest.version,
+    steps: [
+      ...(type === 'IF_ELSE'
+        ? [
+            {
+              universalIdentifier: FIRST_STEP_ID,
+              name: 'Choose',
+              type: 'IF_ELSE' as const,
+              nextStepIds: [],
+              input: {
+                stepFilters: [],
+                stepFilterGroups: [],
+                branches: [
+                  { id: 'first', nextStepIds: [BRANCH_ID] },
+                  { id: 'otherwise', nextStepIds: [BODY_ID] },
+                ],
+              },
+            },
+          ]
+        : [
+            {
+              universalIdentifier: FIRST_STEP_ID,
+              name: 'Repeat',
+              type: 'ITERATOR' as const,
+              nextStepIds: [BRANCH_ID],
+              input: { items: ['one', 'two'], initialLoopStepIds: [BODY_ID] },
+            },
+          ]),
+      {
+        universalIdentifier: BRANCH_ID,
+        name: 'After',
+        type: 'EMPTY',
+        input: {},
+        nextStepIds: [],
+      },
+      {
+        universalIdentifier: BODY_ID,
+        name: 'Inside',
+        type: 'EMPTY',
+        input: {},
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+
+describe('application workflow action graphs', () => {
+  it.each(['IF_ELSE', 'ITERATOR'] as const)(
+    'accepts steps reachable only through %s edges',
+    (type) => {
+      expect(() =>
+        fromWorkflowManifestToCoreDefinitionsOrThrow({
+          ...options,
+          manifest: branchingWorkflow(type),
+        }),
+      ).not.toThrow();
+    },
+  );
+
+  it.each(['IF_ELSE', 'ITERATOR'] as const)(
+    'rejects missing and cyclic %s edges',
+    (type) => {
+      const missing = branchingWorkflow(type);
+      missing.version.steps.pop();
+      expect(() =>
+        fromWorkflowManifestToCoreDefinitionsOrThrow({
+          ...options,
+          manifest: missing,
+        }),
+      ).toThrow();
+      const cyclic = branchingWorkflow(type);
+      cyclic.version.steps[2].nextStepIds = [FIRST_STEP_ID];
+      expect(() =>
+        fromWorkflowManifestToCoreDefinitionsOrThrow({
+          ...options,
+          manifest: cyclic,
+        }),
+      ).toThrow();
+    },
+  );
+
+  it('validates each action input instead of accepting arbitrary configuration', () => {
+    const invalid = structuredClone(manifest);
+    Object.assign(invalid.version.steps[0], {
+      type: 'HTTP_REQUEST',
+      input: { method: 'BOGUS' },
+    });
     expect(() =>
       fromWorkflowManifestToCoreDefinitionsOrThrow({
         ...options,

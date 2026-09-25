@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import { workflowStepManifestSchema } from 'twenty-shared/application';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
@@ -17,7 +18,14 @@ const references = {
   fieldByUniversalIdentifier: new Map([
     [
       FIELD_ID,
-      { id: LOCAL_ID, name: 'owner', objectUniversalIdentifier: REFERENCE_ID },
+      {
+        id: LOCAL_ID,
+        name: 'owner',
+        objectUniversalIdentifier: REFERENCE_ID,
+        type: FieldMetadataType.TEXT,
+        settings: null,
+        relationTargetObjectMetadataUniversalIdentifier: null,
+      },
     ],
   ]),
 };
@@ -161,6 +169,7 @@ describe('application workflow actions', () => {
       },
       orderBy: {
         recordSorts: [{ fieldMetadataId: LOCAL_ID, direction: 'ASC' }],
+        gqlOperationOrderBy: [{ owner: 'AscNullsLast' }],
       },
     });
     expect(
@@ -194,6 +203,9 @@ describe('application workflow actions', () => {
                 id: LOCAL_ID,
                 name: 'owner',
                 objectUniversalIdentifier: LOCAL_ID,
+                type: FieldMetadataType.TEXT,
+                settings: null,
+                relationTargetObjectMetadataUniversalIdentifier: null,
               },
             ],
           ]),

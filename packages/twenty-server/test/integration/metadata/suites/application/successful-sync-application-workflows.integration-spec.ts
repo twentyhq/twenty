@@ -208,7 +208,7 @@ describe('application-owned core workflows', () => {
     const changed = structuredClone(MANIFEST);
     const changedStep = changed.workflows![0].version.steps[0];
     if (changedStep.type !== 'LOGIC_FUNCTION')
-      throw new Error('Expected a function step');
+      { throw new Error('Expected a function step'); }
     changedStep.input.greeting = 'After';
     const upgrade = await syncApplication({ manifest: changed });
     expect(upgrade.errors).toBeUndefined();

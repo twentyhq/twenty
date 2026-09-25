@@ -1,4 +1,4 @@
-import { computeWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-references.util';
+import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
 import { msg } from '@lingui/core/macro';
 import { fromWorkflowManifestToCoreDefinitionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-core-definitions-or-throw.util';
 import { Injectable } from '@nestjs/common';
@@ -160,7 +160,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const flatField of Object.values(
       allUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     )) {
-      if (!isDefined(flatField)) continue;
+      if (!isDefined(flatField)) {
+        continue;
+      }
 
       const bucket =
         fieldsByObjectUniversalIdentifier.get(
@@ -719,7 +721,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     if (workflows.length > 0) {
-      const references = computeWorkflowManifestReferences({
+      const references = prepareWorkflowManifestReferences({
         fromAllFlatEntityMaps,
         toAllUniversalFlatEntityMaps: allUniversalFlatEntityMaps,
         existingAllFlatEntityMaps,

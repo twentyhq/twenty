@@ -118,7 +118,14 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
           .optional(),
         orderBy: z
           .strictObject({
-            recordSorts: z.array(fieldReferenceSchema).optional(),
+            recordSorts: z
+              .array(
+                fieldReferenceSchema.extend({
+                  direction: z.enum(['ASC', 'DESC']),
+                  subFieldName: z.string().nullable().optional(),
+                }),
+              )
+              .optional(),
             gqlOperationOrderBy: z
               .array(z.record(z.string(), z.unknown()))
               .optional(),

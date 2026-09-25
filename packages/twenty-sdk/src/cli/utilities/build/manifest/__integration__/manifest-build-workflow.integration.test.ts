@@ -11,7 +11,7 @@ describe('workflow application manifest', () => {
     expect(manifest?.logicFunctions).toHaveLength(1);
     const step = manifest?.workflows?.[0].version.steps[0];
     expect(step?.type).toBe('LOGIC_FUNCTION');
-    if (step?.type !== 'LOGIC_FUNCTION') throw new Error('Expected a function step');
+    if (step?.type !== 'LOGIC_FUNCTION') { throw new Error('Expected a function step'); }
     expect(step.logicFunctionUniversalIdentifier).toBe(manifest?.logicFunctions[0].universalIdentifier);
   });
 

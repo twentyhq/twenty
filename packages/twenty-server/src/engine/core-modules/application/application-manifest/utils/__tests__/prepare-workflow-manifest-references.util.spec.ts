@@ -3,7 +3,7 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { computeWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-references.util';
+import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
 
 const OWNER = 'owner';
 const object = {
@@ -42,7 +42,7 @@ const proposedMaps = () => {
 describe('workflow manifest references', () => {
   it('uses the IDs assigned to metadata in the same installation', () => {
     const proposed = proposedMaps();
-    const references = computeWorkflowManifestReferences({
+    const references = prepareWorkflowManifestReferences({
       fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       existingAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       toAllUniversalFlatEntityMaps: proposed,
@@ -70,14 +70,14 @@ describe('workflow manifest references', () => {
 
   it('reuses installed IDs when the application is updated', () => {
     const installed = proposedMaps();
-    computeWorkflowManifestReferences({
+    prepareWorkflowManifestReferences({
       fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       existingAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       toAllUniversalFlatEntityMaps: installed,
       ownerApplicationId: OWNER,
     });
     const updated = proposedMaps();
-    computeWorkflowManifestReferences({
+    prepareWorkflowManifestReferences({
       fromAllFlatEntityMaps: installed,
       existingAllFlatEntityMaps: installed,
       toAllUniversalFlatEntityMaps: updated,
@@ -101,7 +101,7 @@ describe('workflow manifest references', () => {
       universalIdentifier: 'standard',
       applicationId: 'standard-application',
     };
-    const references = computeWorkflowManifestReferences({
+    const references = prepareWorkflowManifestReferences({
       fromAllFlatEntityMaps: installed,
       existingAllFlatEntityMaps: installed,
       toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
