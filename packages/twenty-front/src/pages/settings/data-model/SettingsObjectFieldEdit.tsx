@@ -34,7 +34,7 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -157,9 +157,13 @@ export const SettingsObjectFieldEdit = () => {
     workspaceSurface.type,
   ]);
 
-  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const { isDirty, isValid, isSubmitting, dirtyFields } = formConfig.formState;
 
   const canSave = isDirty && isValid && !isSubmitting;
+
+  // Settings forms fill in their own defaults on mount, which sets isDirty
+  // before any edit; dirtyFields only lists what the user changed
+  const hasUnsavedEdits = !isEmptyObject(dirtyFields);
 
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
     return workspaceSurface.type === 'side-panel' ? (
@@ -410,7 +414,7 @@ export const SettingsObjectFieldEdit = () => {
               <SettingsTranslationsCard
                 objectNamePlural={objectNamePlural}
                 fieldName={fieldMetadataItem.name}
-                disabled={isDirty}
+                disabled={hasUnsavedEdits}
               />
             </Section.Root>
 
