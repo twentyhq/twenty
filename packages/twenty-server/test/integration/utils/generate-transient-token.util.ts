@@ -28,7 +28,7 @@ export const generateTransientTokenResponse = async ({
 }: Omit<PerformMetadataQueryParams<never>, 'input'>): CommonResponseBody<{
   generateTransientToken: TransientTokenDTO;
 }> => {
-  const response = await makeMetadataAPIRequest(
+  const response = await makeMetadataApiRequest(
     generateTransientTokenQueryFactory(),
     token,
   );
@@ -52,7 +52,7 @@ export const generateTransientTokenResponse = async ({
 };
 
 export const generateTransientToken = async (): Promise<string> => {
-  const response = await makeMetadataAPIRequest(
+  const response = await makeMetadataApiRequest(
     generateTransientTokenQueryFactory(),
   );
 

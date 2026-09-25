@@ -375,7 +375,7 @@ describe('people merge resolvers (integration)', () => {
 
   describe('merging with a partial response selection', () => {
     it('should merge every field even when the mutation only selects the id', async () => {
-      const createPersonsResponse = await makeGraphqlAPIRequest(
+      const createPersonsResponse = await makeGraphqlApiRequest(
         createManyOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
@@ -402,7 +402,7 @@ describe('people merge resolvers (integration)', () => {
 
       createdPersonIdsForCleaning.push(priorityPerson.id, duplicatePerson.id);
 
-      const mergeResponse = await makeGraphqlAPIRequest(
+      const mergeResponse = await makeGraphqlApiRequest(
         mergeManyOperationFactory({
           objectMetadataPluralName: 'people',
           gqlFields: 'id',
@@ -413,7 +413,7 @@ describe('people merge resolvers (integration)', () => {
 
       expect(mergeResponse.body.errors).toBeUndefined();
 
-      const findMergedPersonResponse = await makeGraphqlAPIRequest(
+      const findMergedPersonResponse = await makeGraphqlApiRequest(
         findOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,

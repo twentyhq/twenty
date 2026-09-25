@@ -74,11 +74,11 @@ export const parseSamlMetadataFromXmlFile = (
     if (!entityDescriptor)
       throw new Error('EntityDescriptor element is missing');
 
-    const IDPSSODescriptor = getByPrefixAndKey(xmlDoc, 'IDPSSODescriptor');
-    if (!IDPSSODescriptor)
+    const idpSsoDescriptor = getByPrefixAndKey(xmlDoc, 'IDPSSODescriptor');
+    if (!idpSsoDescriptor)
       throw new Error('IDPSSODescriptor element is missing');
 
-    const keyDescriptors = getByPrefixAndKey(IDPSSODescriptor, 'KeyDescriptor');
+    const keyDescriptors = getByPrefixAndKey(idpSsoDescriptor, 'KeyDescriptor');
     if (!keyDescriptors) throw new Error('KeyDescriptor element is missing');
 
     const keyInfo = getByPrefixAndKey(keyDescriptors, 'KeyInfo');

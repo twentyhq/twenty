@@ -104,7 +104,12 @@ export const extractSessionCookie = (
   response: Response,
   cookieName?: string,
 ):
-  | { rawCookie: string; cookieName: string; cookieHeader: string; sessionToken: string }
+  | {
+      rawCookie: string;
+      cookieName: string;
+      cookieHeader: string;
+      sessionToken: string;
+    }
   | undefined => {
   const candidateNames =
     cookieName === undefined ? SESSION_COOKIE_NAMES : [cookieName];

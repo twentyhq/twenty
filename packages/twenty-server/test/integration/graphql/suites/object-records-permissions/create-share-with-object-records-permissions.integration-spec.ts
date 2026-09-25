@@ -752,14 +752,14 @@ describe('createShareWithObjectRecordsPermissions', () => {
         );
         expect(shares).toHaveLength(isLegacyOpen ? 2 : 1);
 
-        const otherMemberResponse = await makeGraphqlAPIRequestWithMemberRole(
+        const otherMemberResponse = await makeGraphqlApiRequestWithMemberRole(
           findManyOperation(recordId),
         );
         expect(otherMemberResponse.body.errors).toBeUndefined();
         expect(
           otherMemberResponse.body.data.shareWithTestObjects.edges,
         ).toHaveLength(isLegacyOpen ? 1 : 0);
-        const ownerResponse = await makeGraphqlAPIRequest(
+        const ownerResponse = await makeGraphqlApiRequest(
           findManyOperation(recordId),
         );
         expect(ownerResponse.body.errors).toBeUndefined();
@@ -770,7 +770,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
 
       it('honors explicit API targets without creating an everyone grant', async () => {
         const recordId = trackRecordId();
-        const response = await makeGraphqlAPIRequestWithApiKey(
+        const response = await makeGraphqlApiRequestWithApiKey(
           createOneOperation({
             data: { id: recordId, name: 'API create with explicit sharing' },
             shareWith: [
@@ -792,7 +792,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
           ]),
         );
         expect(await findRecordShares(recordId)).toHaveLength(2);
-        const readerResponse = await makeGraphqlAPIRequestWithMemberRole(
+        const readerResponse = await makeGraphqlApiRequestWithMemberRole(
           findManyOperation(recordId),
         );
         expect(readerResponse.body.errors).toBeUndefined();

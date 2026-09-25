@@ -19,7 +19,7 @@ describe('API key role assignment permission', () => {
   let applicationRegistrationId: string;
 
   const rotateClientSecretAs = (token?: string) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       {
         query: gql`
           mutation RotateSecret($id: String!) {
@@ -113,7 +113,7 @@ describe('API key role assignment permission', () => {
 
     apiKeyId = createApiKeyResponse.body.data.createApiKey.id;
 
-    const createRegistrationResponse = await makeMetadataAPIRequest({
+    const createRegistrationResponse = await makeMetadataApiRequest({
       query: gql`
         mutation CreateApplicationRegistration(
           $input: CreateApplicationRegistrationInput!

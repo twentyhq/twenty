@@ -551,7 +551,9 @@ describe('Order by relation field (e2e)', () => {
       const connection = response.body.data.people;
 
       collectedIds.push(
-        ...connection.edges.map((edge: { node: { id: string } }) => edge.node.id),
+        ...connection.edges.map(
+          (edge: { node: { id: string } }) => edge.node.id,
+        ),
       );
 
       if (!connection.pageInfo.hasNextPage) {
@@ -608,7 +610,9 @@ describe('Order by relation field (e2e)', () => {
       const connection = response.body.data.people;
 
       collectedIds.push(
-        ...connection.edges.map((edge: { node: { id: string } }) => edge.node.id),
+        ...connection.edges.map(
+          (edge: { node: { id: string } }) => edge.node.id,
+        ),
       );
 
       if (!connection.pageInfo.hasNextPage) {

@@ -473,7 +473,7 @@ describe('workspace permissions', () => {
           }
         `;
 
-        const workspaceResponse = await makeMetadataAPIRequest({
+        const workspaceResponse = await makeMetadataApiRequest({
           query: getWorkspaceQuery,
         });
 
@@ -481,7 +481,7 @@ describe('workspace permissions', () => {
       });
 
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const response = await makeMetadataAPIRequest(
+        const response = await makeMetadataApiRequest(
           {
             query: completeWorkspaceLogoUploadMutation,
             variables: { fileId: '20202020-0000-4000-8000-000000000000' },

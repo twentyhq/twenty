@@ -303,7 +303,7 @@ describe('Usage limit mutations', () => {
     it('refuses a workspace delete of one', async () => {
       const usageLimit = await seedOperatorRow();
 
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: DELETE_USAGE_LIMIT,
         variables: { usageLimitId: usageLimit.id },
       });
@@ -353,7 +353,7 @@ describe('Usage limit mutations', () => {
     };
 
     it('refuses a workspace write that would replace a default', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: CREATE_USAGE_LIMIT,
         variables: { input: storageStockPayload() },
       });
@@ -369,7 +369,7 @@ describe('Usage limit mutations', () => {
     });
 
     it('allows a workspace write on a meter no default covers', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: CREATE_USAGE_LIMIT,
         variables: { input: storageStockPayload({ meter: 'quantity' }) },
       });
@@ -380,7 +380,7 @@ describe('Usage limit mutations', () => {
     it('refuses moving an operator override off the default it replaces', async () => {
       const usageLimit = await seedOperatorOverride();
 
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: UPDATE_USAGE_LIMIT,
         variables: {
           input: {
@@ -402,7 +402,7 @@ describe('Usage limit mutations', () => {
     it('refuses deleting an operator override', async () => {
       const usageLimit = await seedOperatorOverride();
 
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: DELETE_USAGE_LIMIT,
         variables: { usageLimitId: usageLimit.id },
       });
