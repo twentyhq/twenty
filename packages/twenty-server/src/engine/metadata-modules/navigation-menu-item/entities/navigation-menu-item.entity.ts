@@ -43,6 +43,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @Check(
   'CHK_navigation_menu_item_type_fields',
   `("type" = 'FOLDER')
+  OR ("type" = 'DIVIDER')
   OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL)
   OR ("type" = 'VIEW' AND "viewId" IS NOT NULL)
   OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)

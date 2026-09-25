@@ -258,6 +258,23 @@ describe('filterAndSortNavigationMenuItems', () => {
     expect(result[0].id).toBe('link-1');
   });
 
+  it('should keep divider items', () => {
+    const result = filterAndSortNavigationMenuItems(
+      [
+        {
+          id: 'divider-1',
+          type: NavigationMenuItemType.DIVIDER,
+          position: 1,
+        } as NavigationMenuItem,
+      ],
+      [],
+      [],
+      false,
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('divider-1');
+  });
+
   it('should keep object items when objectMetadata exists', () => {
     const result = filterAndSortNavigationMenuItems(
       [
