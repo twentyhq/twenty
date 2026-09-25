@@ -4,15 +4,15 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildTranscriptPageLayoutTabUpdates } from 'src/database/commands/upgrade-version-command/2-42/utils/build-transcript-page-layout-tab-updates.util';
+import { buildTranscriptPageLayoutTabUpdates } from 'src/database/commands/upgrade-version-command/2-43/utils/build-transcript-page-layout-tab-updates.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.42.0', 1790014992118)
+@RegisteredWorkspaceCommand('2.43.0', 1790322700000)
 @Command({
-  name: 'upgrade:2-42:rename-call-recording-tabs-to-transcript',
+  name: 'upgrade:2-43:rename-call-recording-tabs-to-transcript',
   description:
     'Rename the standard Calendar Event and Call Recording transcript tabs while preserving workspace customizations',
 })
