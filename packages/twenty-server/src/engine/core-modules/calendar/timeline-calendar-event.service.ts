@@ -4,18 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import omit from 'lodash.omit';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  And,
-  Any,
-  In,
-  LessThan,
-  MoreThanOrEqual,
-  type FindOperator,
-  type Repository,
-} from 'typeorm';
+import { Any, In, type Repository } from 'typeorm';
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
+import { buildStartsAtCondition } from 'src/engine/core-modules/calendar/utils/build-starts-at-condition.util';
 import { type TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
@@ -84,7 +77,7 @@ export class TimelineCalendarEventService {
           { shouldBypassPermissionChecks: true },
         );
 
-      const startsAtCondition = this.buildStartsAtCondition({
+      const startsAtCondition = buildStartsAtCondition({
         startsAtFrom,
         startsAtBefore,
       });
@@ -405,24 +398,5 @@ export class TimelineCalendarEventService {
       startsAtBefore,
       ...(isDefined(targetFilter) && { targetFilter }),
     });
-  }
-
-  private buildStartsAtCondition({
-    startsAtFrom,
-    startsAtBefore,
-  }: {
-    startsAtFrom?: Date;
-    startsAtBefore?: Date;
-  }): FindOperator<string> | undefined {
-    const conditions = [
-      ...(isDefined(startsAtFrom)
-        ? [MoreThanOrEqual(startsAtFrom.toISOString())]
-        : []),
-      ...(isDefined(startsAtBefore)
-        ? [LessThan(startsAtBefore.toISOString())]
-        : []),
-    ];
-
-    return conditions.length > 0 ? And(...conditions) : undefined;
   }
 }
