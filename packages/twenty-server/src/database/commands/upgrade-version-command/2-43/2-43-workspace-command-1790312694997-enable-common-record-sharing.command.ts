@@ -18,7 +18,7 @@ import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-hi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.43.0', 1790251806563)
+@RegisteredWorkspaceCommand('2.43.0', 1790312694997)
 @Command({
   name: 'upgrade:2-43:enable-common-record-sharing',
   description:
