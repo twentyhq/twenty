@@ -2915,6 +2915,7 @@ export type MessageSuppressionList = {
 export enum MessageSuppressionReason {
   BOUNCE = 'BOUNCE',
   COMPLAINT = 'COMPLAINT',
+  TRACKING = 'TRACKING',
   UNSUBSCRIBE = 'UNSUBSCRIBE'
 }
 

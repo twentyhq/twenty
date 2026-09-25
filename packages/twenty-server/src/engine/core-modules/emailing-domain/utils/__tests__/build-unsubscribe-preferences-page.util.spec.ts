@@ -5,6 +5,7 @@ const buildPage = (topics: TopicOptOutState[]) =>
   buildUnsubscribePreferencesPage({
     token: 'token-1',
     topics,
+    isTrackingOptedOut: undefined,
     updatePath: '/unsubscribe/update',
     unsubscribeAllPath: '/unsubscribe/all',
   });
@@ -74,10 +75,40 @@ describe('buildUnsubscribePreferencesPage', () => {
       topics: [
         { unsubscribeTopicId: 'topic-1', topicName: 'News', optedOut: false },
       ],
+      isTrackingOptedOut: undefined,
       updatePath: '/unsubscribe/update',
       unsubscribeAllPath: '/unsubscribe/all',
     });
 
     expect(page).not.toContain('<script>');
+  });
+
+  describe('when the workspace tracks clicks', () => {
+    it('offers the tracking choice even without topics', () => {
+      const page = buildUnsubscribePreferencesPage({
+        token: 'token-1',
+        topics: [],
+        isTrackingOptedOut: false,
+        updatePath: '/unsubscribe/update',
+        unsubscribeAllPath: '/unsubscribe/all',
+      });
+
+      expect(page).toContain('action="/unsubscribe/update"');
+      expect(page).toContain('value="TRACKED" checked />');
+      expect(page).toContain('value="OPTED_OUT" />');
+    });
+
+    it('preselects the refusal the recipient already made', () => {
+      const page = buildUnsubscribePreferencesPage({
+        token: 'token-1',
+        topics: [],
+        isTrackingOptedOut: true,
+        updatePath: '/unsubscribe/update',
+        unsubscribeAllPath: '/unsubscribe/all',
+      });
+
+      expect(page).toContain('value="TRACKED" />');
+      expect(page).toContain('value="OPTED_OUT" checked />');
+    });
   });
 });

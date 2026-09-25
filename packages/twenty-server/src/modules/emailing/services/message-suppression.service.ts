@@ -148,6 +148,95 @@ export class MessageSuppressionService {
     }, buildSystemAuthContext(workspaceId));
   }
 
+  async findTrackingOptedOutEmailAddresses({
+    workspaceId,
+    emailAddresses,
+  }: {
+    workspaceId: string;
+    emailAddresses: string[];
+  }): Promise<Set<string>> {
+    const normalizedAddresses = this.normalizeAddresses(emailAddresses);
+
+    if (!isNonEmptyArray(normalizedAddresses)) {
+      return new Set();
+    }
+
+    const optOuts = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const suppressionRepository = this.workspaceOrmManager.getRepository(
+          MessageSuppressionWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+          { shouldSkipEventEmission: true },
+        );
+
+        return suppressionRepository.find({
+          where: {
+            emailAddress: In(normalizedAddresses),
+            reason: MessageSuppressionReason.TRACKING,
+          },
+        });
+      },
+      buildSystemAuthContext(workspaceId),
+    );
+
+    return new Set(optOuts.map(({ emailAddress }) => emailAddress));
+  }
+
+  async isTrackingOptedOut({
+    workspaceId,
+    emailAddress,
+  }: {
+    workspaceId: string;
+    emailAddress: string;
+  }): Promise<boolean> {
+    const optedOut = await this.findTrackingOptedOutEmailAddresses({
+      workspaceId,
+      emailAddresses: [emailAddress],
+    });
+
+    return optedOut.size > 0;
+  }
+
+  async setTrackingOptOut({
+    workspaceId,
+    emailAddress,
+    isOptedOut,
+  }: {
+    workspaceId: string;
+    emailAddress: string;
+    isOptedOut: boolean;
+  }): Promise<void> {
+    if (isOptedOut) {
+      await this.suppress({
+        workspaceId,
+        emailAddress,
+        reason: MessageSuppressionReason.TRACKING,
+        source: MessageSuppressionSource.SYSTEM,
+      });
+
+      return;
+    }
+
+    const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
+
+    if (!isNonEmptyString(normalizedEmailAddress)) {
+      return;
+    }
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const suppressionRepository = this.workspaceOrmManager.getRepository(
+        MessageSuppressionWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      );
+
+      await suppressionRepository.delete({
+        emailAddress: normalizedEmailAddress,
+        reason: MessageSuppressionReason.TRACKING,
+      });
+    }, buildSystemAuthContext(workspaceId));
+  }
+
   async suppress({
     workspaceId,
     emailAddress,
@@ -166,12 +255,16 @@ export class MessageSuppressionService {
       ? null
       : unsubscribeTopicId;
 
-    const whereKey = {
-      emailAddress: normalizedEmailAddress,
-      unsubscribeTopicId: isDefined(effectiveTopicId)
-        ? effectiveTopicId
-        : IsNull(),
-    };
+    const whereKey =
+      reason === MessageSuppressionReason.TRACKING
+        ? { emailAddress: normalizedEmailAddress, reason }
+        : {
+            emailAddress: normalizedEmailAddress,
+            unsubscribeTopicId: isDefined(effectiveTopicId)
+              ? effectiveTopicId
+              : IsNull(),
+            reason: Not(MessageSuppressionReason.TRACKING),
+          };
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const suppressionRepository = this.workspaceOrmManager.getRepository(

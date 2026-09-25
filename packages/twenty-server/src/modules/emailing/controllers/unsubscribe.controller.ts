@@ -15,6 +15,7 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { type UnsubscribeTokenVerification } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-token-verification.type';
@@ -42,6 +43,7 @@ const PREVIEW_RESULT_PAGE = buildUnsubscribeResultPage(
 type UnsubscribeFormBody = {
   t?: string;
   unsubscribeTopicId?: string | string[];
+  tracking?: string;
 };
 
 const RATE_LIMIT = { maxRequests: 120, windowMs: 60_000 };
@@ -115,16 +117,23 @@ export class UnsubscribeController {
 
     const { payload, isExpired } = this.verifyTokenOrThrow(token);
 
-    const topics = isExpired
-      ? []
-      : await this.messageSuppressionService.getTopicOptOutState({
-          workspaceId: payload.workspaceId,
-          emailAddress: payload.emailAddress,
-        });
+    const [topics, isTrackingOptedOut] = isExpired
+      ? [[], undefined]
+      : await Promise.all([
+          this.messageSuppressionService.getTopicOptOutState({
+            workspaceId: payload.workspaceId,
+            emailAddress: payload.emailAddress,
+          }),
+          this.messageSuppressionService.isTrackingOptedOut({
+            workspaceId: payload.workspaceId,
+            emailAddress: payload.emailAddress,
+          }),
+        ]);
 
     return buildUnsubscribePreferencesPage({
       token,
       topics,
+      isTrackingOptedOut,
       updatePath: UPDATE_PREFERENCES_PATH,
       unsubscribeAllPath: UNSUBSCRIBE_ALL_PATH,
     });
@@ -159,6 +168,16 @@ export class UnsubscribeController {
       }),
     });
 
+    const trackingChoice = this.parseTrackingChoice(body.tracking);
+
+    if (isDefined(trackingChoice)) {
+      await this.messageSuppressionService.setTrackingOptOut({
+        workspaceId: payload.workspaceId,
+        emailAddress: payload.emailAddress,
+        isOptedOut: trackingChoice === 'OPTED_OUT',
+      });
+    }
+
     return buildUnsubscribeResultPage(
       'Preferences updated',
       'Your email preferences have been saved.',
@@ -188,6 +207,19 @@ export class UnsubscribeController {
       'You have been unsubscribed',
       'You will no longer receive marketing emails from this sender.',
     );
+  }
+
+  private parseTrackingChoice(
+    tracking: string | undefined,
+  ): 'TRACKED' | 'OPTED_OUT' | undefined {
+    switch (tracking) {
+      case 'TRACKED':
+        return 'TRACKED';
+      case 'OPTED_OUT':
+        return 'OPTED_OUT';
+      default:
+        return undefined;
+    }
   }
 
   private normalizeTopicIds(

@@ -24,5 +24,8 @@ export class CampaignAudiencePreviewDTO {
   topicUnsubscribed: number;
 
   @Field(() => Int)
+  trackingRefused: number;
+
+  @Field(() => Int)
   sendable: number;
 }

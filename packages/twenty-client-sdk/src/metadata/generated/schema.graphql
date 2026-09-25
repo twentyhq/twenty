@@ -3178,6 +3178,7 @@ type MessageSuppression {
 enum MessageSuppressionReason {
   BOUNCE
   COMPLAINT
+  TRACKING
   UNSUBSCRIBE
 }
 
