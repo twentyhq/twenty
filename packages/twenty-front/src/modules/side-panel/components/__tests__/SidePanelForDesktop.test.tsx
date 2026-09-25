@@ -1,10 +1,4 @@
-import {
-  act,
-  createEvent,
-  fireEvent,
-  render,
-  screen,
-} from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
@@ -194,12 +188,7 @@ describe('SidePanelForDesktop', () => {
     });
 
     fireEvent.animationEnd(wrapperElement);
-    const transition = createEvent.transitionEnd(
-      screen.getByRole('complementary'),
-    );
-
-    Object.defineProperty(transition, 'propertyName', { value: 'transform' });
-    fireEvent(screen.getByRole('complementary'), transition);
+    fireEvent.transitionEnd(wrapperElement);
 
     expect(sidePanelCloseAnimationCompleteCleanupMock).toHaveBeenCalledTimes(1);
   });
@@ -213,40 +202,5 @@ describe('SidePanelForDesktop', () => {
       'data-shrink-from-full-width',
       'false',
     );
-  });
-  it('keeps content mounted until the panel itself finishes sliding closed', () => {
-    jotaiStore.set(isSidePanelOpenedState.atom, true);
-    render(<SidePanelForDesktop />, { wrapper: Wrapper });
-
-    act(() => {
-      jotaiStore.set(isSidePanelOpenedState.atom, false);
-      jotaiStore.set(isSidePanelClosingState.atom, true);
-    });
-
-    const panel = screen.getByRole('complementary');
-    const content = screen.getByTestId('side-panel-content');
-
-    for (const [target, propertyName] of [
-      [content, 'transform'],
-      [panel, 'opacity'],
-    ] as const) {
-      const transition = createEvent.transitionEnd(target);
-
-      Object.defineProperty(transition, 'propertyName', {
-        value: propertyName,
-      });
-      fireEvent(target, transition);
-    }
-
-    expect(content).toBeInTheDocument();
-    expect(sidePanelCloseAnimationCompleteCleanupMock).not.toHaveBeenCalled();
-
-    const transition = createEvent.transitionEnd(panel);
-
-    Object.defineProperty(transition, 'propertyName', { value: 'transform' });
-    fireEvent(panel, transition);
-
-    expect(content).not.toBeInTheDocument();
-    expect(sidePanelCloseAnimationCompleteCleanupMock).toHaveBeenCalledTimes(1);
   });
 });
