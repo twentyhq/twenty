@@ -1,11 +1,5 @@
 // oxlint-disable twenty/graphql-resolvers-should-be-guarded
-import {
-  type CanActivate,
-  Module,
-  type Provider,
-  type Type,
-  UseGuards,
-} from '@nestjs/common';
+import { type CanActivate, Module, type Type, UseGuards } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import {
   GraphQLModule,
@@ -28,11 +22,9 @@ import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter
 export const runGuardedQuery = async ({
   guard,
   request,
-  providers = [],
 }: {
   guard: Type<CanActivate>;
   request: Record<string, unknown>;
-  providers?: Provider[];
 }) => {
   @Resolver()
   class TestResolver {
@@ -43,7 +35,7 @@ export const runGuardedQuery = async ({
     }
   }
 
-  @Module({ providers: [TestResolver, ...providers] })
+  @Module({ providers: [TestResolver] })
   class FeatureModule {}
 
   @Module({
