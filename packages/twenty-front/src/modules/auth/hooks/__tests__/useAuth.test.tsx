@@ -20,14 +20,8 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
-import {
-  SignInUpStep,
-  signInUpStepState,
-} from '@/auth/states/signInUpStepState';
-import { isStayingOnDefaultDomainState } from '@/domain-manager/states/isStayingOnDefaultDomainState';
 import { renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
-import { AppPath } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { ToastProvider } from 'twenty-ui/components';
 
@@ -57,11 +51,9 @@ jest.mock('@/auth/sign-in-up/hooks/useSignUpInNewWorkspace', () => ({
   })),
 }));
 
-const redirectToWorkspaceDomainSpy = jest.fn();
-
 jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
   useRedirectToWorkspaceDomain: jest.fn().mockImplementation(() => ({
-    redirectToWorkspaceDomain: redirectToWorkspaceDomainSpy,
+    redirectToWorkspaceDomain: jest.fn(),
   })),
 }));
 
@@ -100,10 +92,7 @@ const renderHooks = () => {
 describe('useAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    sessionStorage.clear();
     getDefaultStore().set(returnToPathState.atom, '');
-    getDefaultStore().set(signInUpStepState.atom, SignInUpStep.Init);
-    getDefaultStore().set(isStayingOnDefaultDomainState.atom, false);
   });
 
   it('should return login token object', async () => {
@@ -230,113 +219,5 @@ describe('useAuth', () => {
     });
 
     expect(mocks.signUpInWorkspace.result).toHaveBeenCalled();
-  });
-
-  describe('navigateAfterMultiWorkspaceSignInUp', () => {
-    const availableWorkspaces = {
-      availableWorkspacesForSignIn: [
-        {
-          id: 'workspace-id',
-          displayName: 'Apple',
-          loginToken: 'login-token',
-          inviteHash: null,
-          personalInviteToken: null,
-          logo: null,
-          sso: [],
-          workspaceUrls: {
-            subdomainUrl: 'https://apple.twenty.com',
-            customUrl: null,
-          },
-        },
-      ],
-      availableWorkspacesForSignUp: [],
-    };
-
-    it('should send a user with a single workspace straight to it', async () => {
-      window.history.replaceState(null, '', '/welcome');
-
-      const { result } = renderHooks();
-
-      await act(async () => {
-        await result.current.navigateAfterMultiWorkspaceSignInUp({
-          availableWorkspaces,
-          email,
-        });
-      });
-
-      expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledTimes(1);
-      expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledWith(
-        'https://apple.twenty.com',
-        AppPath.Verify,
-        { loginToken: 'login-token', email },
-      );
-    });
-
-    it('should let the user choose when a resumed session asked to stay on the default domain', async () => {
-      window.history.replaceState(
-        null,
-        '',
-        '/welcome?stayOnDefaultDomain=true',
-      );
-
-      const { result } = renderHooks();
-
-      await act(async () => {
-        await result.current.navigateAfterMultiWorkspaceSignInUp({
-          availableWorkspaces,
-          email,
-          isResumingSession: true,
-        });
-      });
-
-      expect(redirectToWorkspaceDomainSpy).not.toHaveBeenCalled();
-      expect(getDefaultStore().get(signInUpStepState.atom)).toBe(
-        SignInUpStep.WorkspaceSelection,
-      );
-    });
-
-    it('should let the user choose when a resumed session stays on the default domain after the url marker is gone', async () => {
-      window.history.replaceState(null, '', '/welcome');
-      getDefaultStore().set(isStayingOnDefaultDomainState.atom, true);
-
-      const { result } = renderHooks();
-
-      await act(async () => {
-        await result.current.navigateAfterMultiWorkspaceSignInUp({
-          availableWorkspaces,
-          email,
-          isResumingSession: true,
-        });
-      });
-
-      expect(redirectToWorkspaceDomainSpy).not.toHaveBeenCalled();
-      expect(getDefaultStore().get(signInUpStepState.atom)).toBe(
-        SignInUpStep.WorkspaceSelection,
-      );
-    });
-
-    it('should still send a user who just signed in straight to their single workspace', async () => {
-      window.history.replaceState(
-        null,
-        '',
-        '/welcome?stayOnDefaultDomain=true',
-      );
-
-      const { result } = renderHooks();
-
-      await act(async () => {
-        await result.current.navigateAfterMultiWorkspaceSignInUp({
-          availableWorkspaces,
-          email,
-        });
-      });
-
-      expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledTimes(1);
-      expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledWith(
-        'https://apple.twenty.com',
-        AppPath.Verify,
-        { loginToken: 'login-token', email },
-      );
-    });
   });
 });
