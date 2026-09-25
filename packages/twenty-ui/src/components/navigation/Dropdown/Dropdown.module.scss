@@ -87,3 +87,12 @@
     transform: rotate(180deg);
   }
 }
+
+.title {
+  flex: 1;
+  margin: 0;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

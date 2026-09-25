@@ -1,10 +1,3 @@
-import { type ReactNode } from 'react';
+import { type useRender } from '@base-ui/react/use-render';
 
-export type DropdownHeaderProps = {
-  children: ReactNode;
-  action?: {
-    icon: 'close' | 'back';
-    label: string;
-    onClick: () => void;
-  };
-};
+export type DropdownHeaderProps = useRender.ComponentProps<'div'>;

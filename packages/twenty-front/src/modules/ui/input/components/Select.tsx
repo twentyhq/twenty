@@ -110,6 +110,9 @@ export const Select = <TValue extends SelectValue>({
       !isDefined(callToActionButton) &&
       (!isDefined(emptyOption) || selectedOption !== emptyOption));
 
+  const shouldShowPinnedOption =
+    isDefined(pinnedOption) && !isNonEmptyString(searchInputValue);
+
   const dropDownMenuWidth =
     dropdownWidthAuto && selectContainerRef.current?.clientWidth
       ? selectContainerRef.current?.clientWidth
@@ -137,7 +140,6 @@ export const Select = <TValue extends SelectValue>({
     <StyledContainer
       className={className}
       fullWidth={fullWidth}
-      tabIndex={0}
       onBlur={(event) => {
         const nextFocus = event.relatedTarget;
         const isFocusWithinSelect =
@@ -193,6 +195,7 @@ export const Select = <TValue extends SelectValue>({
             align="start"
             sideOffset={dropdownOffset?.y ?? 0}
             alignOffset={dropdownOffset?.x ?? 0}
+            aria-label={isNonEmptyString(label) ? label : undefined}
           >
             {withSearchInput === true && (
               <Dropdown.Search
@@ -205,7 +208,7 @@ export const Select = <TValue extends SelectValue>({
             {withSearchInput === true && isNonEmptyArray(filteredOptions) && (
               <Dropdown.Separator />
             )}
-            {isDefined(pinnedOption) && (
+            {shouldShowPinnedOption && (
               <Dropdown.Section>
                 <Dropdown.OptionItem
                   onSelect={() => {
@@ -230,7 +233,7 @@ export const Select = <TValue extends SelectValue>({
                 </Dropdown.OptionItem>
               </Dropdown.Section>
             )}
-            {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
+            {shouldShowPinnedOption && isNonEmptyArray(filteredOptions) && (
               <Dropdown.Separator />
             )}
             {isNonEmptyArray(filteredOptions) && (

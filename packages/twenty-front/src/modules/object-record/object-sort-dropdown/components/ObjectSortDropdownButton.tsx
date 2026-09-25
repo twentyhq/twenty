@@ -149,16 +149,10 @@ export const ObjectSortDropdownButton = () => {
         width={GenericDropdownContentWidth.ExtraLarge}
         align="end"
         sideOffset={8}
-        aria-label={t`Sort`}
       >
-        <Dropdown.Header
-          action={{
-            icon: 'close',
-            label: t`Close`,
-            onClick: closeSortDropdown,
-          }}
-        >
-          {t`Sort`}
+        <Dropdown.Header>
+          <Dropdown.Close aria-label={t`Close`} />
+          <Dropdown.Title>{t`Sort`}</Dropdown.Title>
         </Dropdown.Header>
         <DropdownMenuInnerSelect
           dropdownId={`${dropdownId}-direction`}
@@ -191,7 +185,6 @@ export const ObjectSortDropdownButton = () => {
           placeholder={t`Search fields`}
           aria-label={t`Search fields`}
           onValueChange={setObjectSortDropdownSearchInput}
-          enterSelects="first-match"
         />
         {shouldShowVisibleFields && (
           <Dropdown.Section label={t`Visible fields`}>

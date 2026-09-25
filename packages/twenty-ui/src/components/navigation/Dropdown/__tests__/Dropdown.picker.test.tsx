@@ -1,7 +1,7 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Dropdown } from '../Dropdown';
@@ -11,11 +11,11 @@ const PEOPLE = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
 const SearchablePicker = ({
   multiple = false,
   onCreate,
-  enterSelects,
+  onSelectPerson,
 }: {
   multiple?: boolean;
-  enterSelects?: ComponentProps<typeof Dropdown.Search>['enterSelects'];
   onCreate: () => void;
+  onSelectPerson?: (person: string) => void;
 }) => {
   const [search, setSearch] = useState('');
   const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
@@ -28,7 +28,6 @@ const SearchablePicker = ({
       <Dropdown.Trigger>Assignees</Dropdown.Trigger>
       <Dropdown.Content aria-label="Choose assignees">
         <Dropdown.Search
-          enterSelects={enterSelects}
           aria-label="Search people"
           value={search}
           onValueChange={setSearch}
@@ -40,15 +39,16 @@ const SearchablePicker = ({
           <Dropdown.OptionItem
             key={person}
             selected={selectedPeople.includes(person)}
-            onSelect={() =>
+            onSelect={() => {
+              onSelectPerson?.(person);
               setSelectedPeople((current) =>
                 current.includes(person)
                   ? current.filter(
                       (selectedPerson) => selectedPerson !== person,
                     )
                   : [...current, person],
-              )
-            }
+              );
+            }}
           >
             {person}
           </Dropdown.OptionItem>
@@ -63,26 +63,19 @@ const SearchablePicker = ({
 
 describe('Dropdown picker', () => {
   it.each([
-    { enterSelects: undefined, query: 'grace', shouldSelect: false },
-    { enterSelects: 'first-match', query: '', shouldSelect: true },
-    { enterSelects: 'first-match', query: 'grace', shouldSelect: true },
-    {
-      enterSelects: 'first-match-while-searching',
-      query: '',
-      shouldSelect: false,
-    },
-    {
-      enterSelects: 'first-match-while-searching',
-      query: 'grace',
-      shouldSelect: true,
-    },
-  ] as const)(
-    'handles Enter from search with $enterSelects and query "$query"',
-    async ({ enterSelects, query, shouldSelect }) => {
+    { query: '', selectedPerson: undefined },
+    { query: 'grace', selectedPerson: 'Grace Hopper' },
+  ])(
+    'handles Enter from search with query "$query"',
+    async ({ query, selectedPerson }) => {
       const user = userEvent.setup();
       const onCreate = vi.fn();
+      const onSelectPerson = vi.fn();
       render(
-        <SearchablePicker enterSelects={enterSelects} onCreate={onCreate} />,
+        <SearchablePicker
+          onCreate={onCreate}
+          onSelectPerson={onSelectPerson}
+        />,
       );
       await user.click(screen.getByRole('button', { name: 'Assignees' }));
       const search = screen.getByRole('searchbox', { name: 'Search people' });
@@ -91,9 +84,44 @@ describe('Dropdown picker', () => {
         await user.type(search, query);
       }
       await user.keyboard('{Enter}');
-      expect(onCreate).toHaveBeenCalledTimes(shouldSelect ? 1 : 0);
+      expect(onCreate).not.toHaveBeenCalled();
+      if (isNonEmptyString(selectedPerson)) {
+        expect(onSelectPerson).toHaveBeenCalledExactlyOnceWith(selectedPerson);
+      } else {
+        expect(onSelectPerson).not.toHaveBeenCalled();
+      }
     },
   );
+
+  it('highlights the option Enter picks while the search has text', async () => {
+    const user = userEvent.setup();
+    render(<SearchablePicker onCreate={vi.fn()} />);
+    await user.click(screen.getByRole('button', { name: 'Assignees' }));
+    const search = screen.getByRole('searchbox', { name: 'Search people' });
+    await waitFor(() => expect(search).toHaveFocus());
+    expect(search).not.toHaveAttribute('aria-activedescendant');
+
+    await user.type(search, 'a');
+    const ada = screen.getByRole('button', { name: 'Ada Lovelace' });
+    await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'));
+    expect(search).toHaveAttribute('aria-activedescendant', ada.id);
+    expect(
+      screen.getByRole('button', { name: 'Create person' }),
+    ).not.toHaveAttribute('data-highlighted');
+
+    await user.type(search, 'r');
+    const margaret = screen.getByRole('button', { name: 'Margaret Hamilton' });
+    await waitFor(() => expect(margaret).toHaveAttribute('data-highlighted'));
+    expect(search).toHaveAttribute('aria-activedescendant', margaret.id);
+
+    await user.clear(search);
+    await waitFor(() =>
+      expect(search).not.toHaveAttribute('aria-activedescendant'),
+    );
+    expect(
+      screen.getByRole('button', { name: 'Ada Lovelace' }),
+    ).not.toHaveAttribute('data-highlighted');
+  });
 
   it('selects the first enabled result', async () => {
     const user = userEvent.setup();
@@ -102,10 +130,7 @@ describe('Dropdown picker', () => {
       <Dropdown.Root type="picker">
         <Dropdown.Trigger>Fields</Dropdown.Trigger>
         <Dropdown.Content aria-label="Fields">
-          <Dropdown.Search
-            aria-label="Search fields"
-            enterSelects="first-match"
-          />
+          <Dropdown.Search aria-label="Search fields" />
           <Dropdown.OptionItem selected={false} disabled>
             Disabled
           </Dropdown.OptionItem>
@@ -116,7 +141,9 @@ describe('Dropdown picker', () => {
       </Dropdown.Root>,
     );
     await user.click(screen.getByRole('button', { name: 'Fields' }));
-    await waitFor(() => expect(screen.getByRole('searchbox')).toHaveFocus());
+    const search = screen.getByRole('searchbox');
+    await waitFor(() => expect(search).toHaveFocus());
+    await user.type(search, 'n');
     await user.keyboard('{Enter}');
     expect(onSelect).toHaveBeenCalledOnce();
     await waitFor(() =>
@@ -124,16 +151,13 @@ describe('Dropdown picker', () => {
     );
   });
 
-  it('leaves an empty result list open when Enter selects the first match', async () => {
+  it('leaves an empty result list open when Enter has no option to pick', async () => {
     const user = userEvent.setup();
     render(
       <Dropdown.Root type="picker">
         <Dropdown.Trigger>Fields</Dropdown.Trigger>
         <Dropdown.Content aria-label="Fields">
-          <Dropdown.Search
-            aria-label="Search fields"
-            enterSelects="first-match"
-          />
+          <Dropdown.Search aria-label="Search fields" />
           <Dropdown.Empty>No fields found</Dropdown.Empty>
         </Dropdown.Content>
       </Dropdown.Root>,
@@ -141,9 +165,36 @@ describe('Dropdown picker', () => {
     await user.click(screen.getByRole('button', { name: 'Fields' }));
     const search = screen.getByRole('searchbox');
     await waitFor(() => expect(search).toHaveFocus());
+    await user.type(search, 'x');
     await user.keyboard('{Enter}');
     expect(screen.getByRole('dialog')).toBeVisible();
     expect(search).toHaveFocus();
+  });
+
+  it('names the popup after its title and closes from the header', async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+    render(
+      <Dropdown.Root type="picker" onOpenChange={onOpenChange}>
+        <Dropdown.Trigger>Sort</Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Header>
+            <Dropdown.Close aria-label="Close sort" />
+            <Dropdown.Title>Sort by</Dropdown.Title>
+          </Dropdown.Header>
+          <Dropdown.OptionItem selected={false}>Name</Dropdown.OptionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+    await user.click(screen.getByRole('button', { name: 'Sort' }));
+    expect(
+      await screen.findByRole('dialog', { name: 'Sort by' }),
+    ).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Close sort' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
   });
 
   it('filters caller-owned results and navigates mixed commands and options from search', async () => {

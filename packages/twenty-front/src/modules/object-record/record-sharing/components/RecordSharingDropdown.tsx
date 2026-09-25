@@ -8,6 +8,7 @@ import { RecordSharingDropdownContent } from '@/object-record/record-sharing/com
 import { useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { Dropdown } from 'twenty-ui/components';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -55,13 +56,13 @@ export const RecordSharingDropdown = ({
               >{t`Share`}</Button>
             }
           />
-          <Dropdown.Content width={320} align="end" aria-label={title}>
+          <DropdownContent width={320} align="end">
             <RecordSharingDropdownContent
               title={title}
               recordUrl={recordUrl}
               sharingState={sharingState}
             />
-          </Dropdown.Content>
+          </DropdownContent>
         </DropdownRoot>
       )}
     </>

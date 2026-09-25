@@ -309,10 +309,6 @@
   The default value of the input. Use when uncontrolled.
 </ParamField>
 
-<ParamField body="Search.enterSelects" type="&quot;first-match-while-searching&quot; | &quot;first-match&quot;">
-
-</ParamField>
-
 <ParamField body="Search.onValueChange" type="((value: string) =&gt; void)">
 
 </ParamField>
@@ -335,8 +331,59 @@
 
 ### Dropdown.Header
 
-<ParamField body="Header.action" type="{ icon: &quot;close&quot; | &quot;back&quot;; label: string; onClick: () =&gt; void; }">
+<ParamField body="Header.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
 
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+### Dropdown.Title
+
+<ParamField body="Title.className" type="string | ((state: PopoverTitleState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Title.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverTitleState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Title.style" type="CSSProperties | ((state: PopoverTitleState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### Dropdown.Close
+
+<ParamField body="Close.aria-label" type="string" required>
+
+</ParamField>
+
+<ParamField body="Close.className" type="string | ((state: PopoverCloseState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Close.nativeButton" type="boolean" default="true">
+  Whether the component renders a native `<button>` element when replacing it
+  via the `render` prop.
+  Set to `false` if the rendered element is not a button (for example, `<div>`).
+</ParamField>
+
+<ParamField body="Close.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverCloseState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Close.style" type="CSSProperties | ((state: PopoverCloseState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>
 
 ### Dropdown.Page

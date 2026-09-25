@@ -246,6 +246,8 @@ export const DOCUMENTED_COMPONENTS = [
       'OptionItem',
       'Search',
       'Header',
+      'Title',
+      'Close',
       'Page',
       'Back',
       'Submenu',

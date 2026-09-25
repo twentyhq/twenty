@@ -39,9 +39,14 @@ export const SearchAndHiddenObjects: Story = {
       within(popup).getByRole('searchbox', { name: 'Search' }),
       'compan',
     );
-    await userEvent.click(
-      await within(popup).findByRole('button', { name: 'Companies' }),
-    );
+    const companies = await within(popup).findByRole('button', {
+      name: 'Companies',
+    });
+    expect(
+      within(popup).queryByRole('button', { name: 'All objects' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(companies).toHaveAttribute('data-highlighted'));
+    await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await userEvent.click(trigger);
     const reopened = await body.findByRole('dialog');

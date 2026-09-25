@@ -15,15 +15,10 @@ export const DropdownNestedExample = () => {
   return (
     <Dropdown.Root type="picker" open={open} onOpenChange={setOpen}>
       <Dropdown.Trigger render={<Button>Sort</Button>} />
-      <Dropdown.Content aria-label="Sort fields" width={240}>
-        <Dropdown.Header
-          action={{
-            icon: 'close',
-            label: 'Close sort',
-            onClick: () => setOpen(false),
-          }}
-        >
-          Sort
+      <Dropdown.Content width={240}>
+        <Dropdown.Header>
+          <Dropdown.Close aria-label="Close sort" />
+          <Dropdown.Title>Sort</Dropdown.Title>
         </Dropdown.Header>
         <Dropdown.Section>
           <Dropdown.Root type="picker">
@@ -49,7 +44,6 @@ export const DropdownNestedExample = () => {
           placeholder="Search fields"
           value={search}
           onValueChange={setSearch}
-          enterSelects="first-match"
         />
         <Dropdown.Section label="Fields">
           {fields.map((field) => (

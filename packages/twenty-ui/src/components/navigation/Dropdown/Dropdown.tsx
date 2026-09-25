@@ -2,6 +2,7 @@ import { type ReactElement } from 'react';
 
 import { DropdownActionItem } from './internal/DropdownActionItem';
 import { DropdownBack } from './internal/DropdownBack';
+import { DropdownClose } from './internal/DropdownClose';
 import { DropdownContent } from './internal/DropdownContent';
 import { DropdownEmpty } from './internal/DropdownEmpty';
 import { DropdownHeader } from './internal/DropdownHeader';
@@ -14,6 +15,7 @@ import { DropdownSection } from './internal/DropdownSection';
 import { DropdownSeparator } from './internal/DropdownSeparator';
 import { DropdownSubmenu } from './internal/DropdownSubmenu';
 import { DropdownSubmenuTrigger } from './internal/DropdownSubmenuTrigger';
+import { DropdownTitle } from './internal/DropdownTitle';
 import { DropdownTrigger } from './internal/DropdownTrigger';
 import { type DropdownRootProps } from './types/DropdownRootProps';
 
@@ -28,6 +30,8 @@ export const Dropdown = {
   OptionItem: DropdownOptionItem,
   Search: DropdownSearch,
   Header: DropdownHeader,
+  Title: DropdownTitle,
+  Close: DropdownClose,
   Page: DropdownPage,
   Back: DropdownBack,
   Submenu: DropdownSubmenu,

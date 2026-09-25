@@ -50,6 +50,7 @@ export const DropdownRoot = ({
     'first',
   );
   const [focusOnOpen, setFocusOnOpen] = useState(true);
+  const [searchTargetId, setSearchTargetId] = useState<string>();
 
   if (previousOpen !== open) {
     setPreviousOpen(open);
@@ -60,6 +61,7 @@ export const DropdownRoot = ({
       setPageFocusRequest(undefined);
       setInitialFocusEdge('first');
       setFocusOnOpen(true);
+      setSearchTargetId(undefined);
     }
   }
 
@@ -172,6 +174,8 @@ export const DropdownRoot = ({
           goBack,
           registerPage,
           registerOpenNestedRoot,
+          searchTargetId,
+          setSearchTargetId,
         }}
       >
         <DropdownNestedRootEffect

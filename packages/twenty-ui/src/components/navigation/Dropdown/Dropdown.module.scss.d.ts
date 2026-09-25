@@ -8,5 +8,6 @@ declare const classNames: {
   readonly searchContainer: 'searchContainer';
   readonly search: 'search';
   readonly status: 'status';
+  readonly title: 'title';
 };
 export default classNames;

@@ -27,4 +27,6 @@ export type DropdownContextValue = {
   goBack: () => void;
   registerPage: (page: { id: string; type?: DropdownType }) => void;
   registerOpenNestedRoot: () => () => void;
+  searchTargetId?: string;
+  setSearchTargetId: (id: string | undefined) => void;
 };
