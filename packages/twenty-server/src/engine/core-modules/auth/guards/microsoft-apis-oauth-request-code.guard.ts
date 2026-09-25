@@ -10,6 +10,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { ConnectedAccountOAuthService } from 'src/engine/core-modules/auth/services/connected-account-oauth.service';
 import { MicrosoftAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-request-code.auth.strategy';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -22,6 +23,7 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
 ) {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly transientTokenService: TransientTokenService,
     private readonly connectedAccountOAuthService: ConnectedAccountOAuthService,
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(WorkspaceEntity)
@@ -49,13 +51,18 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
 
       const request = context.switchToHttp().getRequest();
 
-      const { workspaceId } =
-        await this.connectedAccountOAuthService.verifyTransientTokenAndPermissions(
+      const { workspaceId, userId } =
+        await this.transientTokenService.verifyTransientToken(
           request.query.transientToken,
         );
 
       workspace = await this.workspaceRepository.findOneBy({
         id: workspaceId,
+      });
+
+      await this.connectedAccountOAuthService.verifyUserCanConnectAccount({
+        userId,
+        workspaceId,
       });
 
       new MicrosoftAPIsOauthRequestCodeStrategy(this.twentyConfigService);

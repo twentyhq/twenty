@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 
 import request from 'supertest';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
+import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -41,6 +42,8 @@ describe.each([
   ({ provider, path, authorizationHostname, setupProviderMock }) => {
     const handle = `oauth-permission-${randomUUID()}@apple.dev`;
     const client = request(`http://localhost:${APP_PORT}`);
+    const appleWorkspaceHostname = new URL(buildAppleWorkspaceOrigin())
+      .hostname;
 
     setupProviderMock({ handle });
 
@@ -170,6 +173,7 @@ describe.each([
         await generateMemberTransientToken(),
       );
 
+      expect(redirect.hostname).toBe(appleWorkspaceHostname);
       expect(redirect.searchParams.get('errorMessage')).toBe(
         'You do not have permission to connect accounts',
       );
@@ -216,6 +220,7 @@ describe.each([
 
       const redirect = await completeAuthorization(state);
 
+      expect(redirect.hostname).toBe(appleWorkspaceHostname);
       expect(redirect.searchParams.get('errorMessage')).toBe(
         'You do not have permission to connect accounts',
       );

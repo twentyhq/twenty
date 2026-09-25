@@ -13,6 +13,7 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedUserData } from '~/testing/mock-data/users';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
@@ -126,6 +127,17 @@ const DEFAULT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
       continueOnFailure: {
         value: false,
       },
+    },
+  },
+};
+
+const OWN_ACCOUNT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
+  ...DEFAULT_DRAFT_EMAIL_ACTION,
+  settings: {
+    ...DEFAULT_DRAFT_EMAIL_ACTION.settings,
+    input: {
+      ...DEFAULT_DRAFT_EMAIL_ACTION.settings.input,
+      connectedAccountId: MOCK_CONNECTED_ACCOUNT_ID,
     },
   },
 };
@@ -292,6 +304,52 @@ export const DraftEmail: Story = {
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
     expect(await canvas.findByText('Advanced options')).toBeVisible();
+  },
+};
+
+export const DraftEmailMissingScopes: Story = {
+  args: {
+    action: OWN_ACCOUNT_DRAFT_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Missing email draft permission.'),
+    ).toBeVisible();
+    expect(
+      await canvas.findByRole('button', { name: 'Reauthorize' }),
+    ).toBeVisible();
+  },
+};
+
+export const DraftEmailMissingScopesWithoutPermission: Story = {
+  args: {
+    action: OWN_ACCOUNT_DRAFT_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  parameters: {
+    currentUserWorkspace: {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Ask a workspace admin for the Sync Account permission to reconnect this account.',
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Reauthorize' }),
+    ).not.toBeInTheDocument();
   },
 };
 

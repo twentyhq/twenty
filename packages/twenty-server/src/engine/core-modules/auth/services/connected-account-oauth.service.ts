@@ -10,29 +10,25 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 export class ConnectedAccountOAuthService {
   constructor(
-    private readonly transientTokenService: TransientTokenService,
     private readonly permissionsService: PermissionsService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  async verifyTransientTokenAndPermissions(transientToken: string) {
-    const tokenPayload =
-      await this.transientTokenService.verifyTransientToken(transientToken);
-    const { userId, workspaceId, workspaceMemberId } = tokenPayload;
-
-    if (
-      !isNonEmptyString(userId) ||
-      !isNonEmptyString(workspaceId) ||
-      !isNonEmptyString(workspaceMemberId)
-    ) {
+  async verifyUserCanConnectAccount({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
+    if (!isNonEmptyString(userId) || !isNonEmptyString(workspaceId)) {
       throw new AuthException(
         'Transient token is missing user or workspace information',
         AuthExceptionCode.INVALID_INPUT,
@@ -65,7 +61,5 @@ export class ConnectedAccountOAuthService {
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
-
-    return tokenPayload;
   }
 }
