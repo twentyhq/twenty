@@ -264,6 +264,7 @@
         "no-seed": {
           "cwd": "packages/twenty-server",
           "commands": [
+            "node dist/database/scripts/truncate-clickhouse.js",
             "node dist/database/scripts/truncate-db.js",
             "nx database:init",
             "nx command-no-deps -- cache:flush"
@@ -273,6 +274,7 @@
         "seed": {
           "cwd": "packages/twenty-server",
           "commands": [
+            "node dist/database/scripts/truncate-clickhouse.js",
             "node dist/database/scripts/truncate-db.js",
             "nx database:init",
             "nx command-no-deps -- cache:flush",
