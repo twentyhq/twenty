@@ -6060,9 +6060,6 @@ export default {
             "duplicateEmails": [
                 30
             ],
-            "overCap": [
-                30
-            ],
             "hardSuppressed": [
                 30
             ],
