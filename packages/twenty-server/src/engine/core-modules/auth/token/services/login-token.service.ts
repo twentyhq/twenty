@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { isDefined } from 'twenty-shared/utils';
@@ -102,25 +103,17 @@ export class LoginTokenService {
       );
     }
 
-    if (!isDefined(decoded.jti) || decoded.jti.length === 0) {
+    if (!isNonEmptyString(decoded.jti)) {
       throw buildInvalidLoginTokenException();
     }
 
     return decoded;
   }
 
-  async verifyAndConsumeLoginToken(
-    loginToken: string,
-  ): Promise<LoginTokenJwtPayload> {
-    const decoded = await this.verifyLoginToken(loginToken);
-
-    await this.consumeLoginToken(decoded);
-
-    return decoded;
-  }
-
-  async consumeLoginToken(payload: LoginTokenJwtPayload): Promise<void> {
-    if (!isDefined(payload.jti) || payload.jti.length === 0) {
+  async consumeLoginTokenOrThrow(
+    payload: LoginTokenJwtPayload,
+  ): Promise<void> {
+    if (!isNonEmptyString(payload.jti)) {
       throw buildInvalidLoginTokenException();
     }
 

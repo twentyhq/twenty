@@ -91,7 +91,7 @@ describe('LoginTokenService', () => {
     cacheStorageService.setIfAbsent.mockResolvedValueOnce(true);
 
     await expect(
-      service.consumeLoginToken({
+      service.consumeLoginTokenOrThrow({
         type: JwtTokenTypeEnum.LOGIN,
         sub: 'test@example.com',
         workspaceId: 'workspace-id',
@@ -106,7 +106,7 @@ describe('LoginTokenService', () => {
     cacheStorageService.setIfAbsent.mockResolvedValueOnce(false);
 
     await expect(
-      service.consumeLoginToken({
+      service.consumeLoginTokenOrThrow({
         type: JwtTokenTypeEnum.LOGIN,
         sub: 'test@example.com',
         workspaceId: 'workspace-id',
