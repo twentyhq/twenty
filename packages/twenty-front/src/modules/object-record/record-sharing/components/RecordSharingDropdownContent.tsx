@@ -16,7 +16,6 @@ import { RecordSharingAccessSelect } from '@/object-record/record-sharing/compon
 import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharing/constants/RecordShareAccessLevelOptions';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { getRecordShareLabel } from '@/object-record/record-sharing/utils/getRecordShareLabel';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -91,7 +90,9 @@ export const RecordSharingDropdownContent = ({
 
   return (
     <>
-      <DropdownMenuHeader>{title}</DropdownMenuHeader>
+      <Dropdown.Header>
+        <Dropdown.Title>{title}</Dropdown.Title>
+      </Dropdown.Header>
       {loading ? (
         <Dropdown.Loading>{t`Loading…`}</Dropdown.Loading>
       ) : error ? (

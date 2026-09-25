@@ -1,4 +1,4 @@
-import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
+import { type PlaceAutocompleteResult } from '@/geo-map/types/PlaceApi';
 
 describe('PlaceAutocompleteSelect Component', () => {
   describe('component interface', () => {

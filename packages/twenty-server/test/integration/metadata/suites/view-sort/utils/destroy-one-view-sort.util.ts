@@ -1,4 +1,4 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyViewSortQueryFactory } from 'test/integration/metadata/suites/view-sort/utils/destroy-view-sort-query-factory.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
@@ -17,7 +17,7 @@ export const destroyOneViewSort = async ({
     input,
   });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

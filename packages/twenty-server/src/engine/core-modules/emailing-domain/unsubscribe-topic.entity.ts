@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 @Entity({ name: 'unsubscribeTopic', schema: 'core' })
 @Index('IDX_UNSUBSCRIBE_TOPIC_WORKSPACE_ID', ['workspaceId'])

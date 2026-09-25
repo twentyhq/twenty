@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
@@ -17,6 +19,7 @@ import {
   type StandardPageLayoutConfig,
   type StandardPageLayoutTabConfig,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 const CALENDAR_EVENT_PAGE_TABS = {
   home: {
@@ -92,9 +95,11 @@ const CALENDAR_EVENT_PAGE_TABS = {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
         .callRecording.universalIdentifier,
-    title: 'Call Recording',
+    title: i18nLabel(
+      msg({ message: 'Transcript', context: 'pageLayoutTab.title' }),
+    ),
     position: 40,
-    icon: 'IconVideo',
+    icon: 'IconBlockquote',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     widgets: {
       transcript: {

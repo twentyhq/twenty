@@ -54,7 +54,7 @@ export const SettingsLogicFunctionNewForm = ({
           onChange={onChange('description')}
           readOnly={readonly}
         />
-        <Card rounded>
+        <Card.Root rounded>
           <SettingsOptionCardContentCounter
             Icon={IconClockHour8}
             title={t`Timeout`}
@@ -65,7 +65,7 @@ export const SettingsLogicFunctionNewForm = ({
             maxValue={900}
             disabled={readonly}
           />
-        </Card>
+        </Card.Root>
       </StyledInputsContainer>
     </Section.Root>
   );

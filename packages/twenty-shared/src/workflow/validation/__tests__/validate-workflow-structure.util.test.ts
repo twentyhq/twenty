@@ -1,4 +1,4 @@
-import { type ValidatableWorkflow } from '@/workflow/validation/types/workflow-validation.type';
+import { type ValidatableWorkflow } from '@/workflow/validation/types/WorkflowValidation';
 import { validateWorkflowStructure } from '../validate-workflow-structure.util';
 
 const getCodes = (workflow: ValidatableWorkflow): string[] => {

@@ -3,7 +3,7 @@ import { type CompleteApplicationFileUploadsResult } from 'test/integration/meta
 import { createApplicationFileUploadsQueryFactory } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads-query-factory.util';
 import { type CreateApplicationFileUploadsResult } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads.util';
 import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -36,7 +36,7 @@ const runDirectUpload = async ({
   fileBuffer: Buffer;
   token?: string;
 }): Promise<UploadApplicationFileResult> => {
-  const createResponse = await makeMetadataAPIRequest(
+  const createResponse = await makeMetadataApiRequest(
     createApplicationFileUploadsQueryFactory({
       applicationUniversalIdentifier,
       files: [{ fileFolder, filePath, size: fileBuffer.length }],
@@ -77,7 +77,7 @@ const runDirectUpload = async ({
     };
   }
 
-  const completeResponse = await makeMetadataAPIRequest(
+  const completeResponse = await makeMetadataApiRequest(
     completeApplicationFileUploadsQueryFactory({
       applicationUniversalIdentifier,
       fileIds: [uploadTarget.fileId],

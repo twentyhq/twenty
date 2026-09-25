@@ -1,5 +1,5 @@
-import { makeAdminPanelAPIRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -88,7 +88,7 @@ describe('Workspace usage limits from the admin panel', () => {
   let usageLimitRepository: Repository<UsageLimitEntity>;
 
   const findWorkspaceUsageLimits = async () => {
-    const response = await makeAdminPanelAPIRequest({
+    const response = await makeAdminPanelApiRequest({
       query: WORKSPACE_USAGE_LIMITS,
       variables: { workspaceId: SEED_APPLE_WORKSPACE_ID },
     });
@@ -123,7 +123,7 @@ describe('Workspace usage limits from the admin panel', () => {
   });
 
   it('lets an operator replace a default the workspace cannot touch', async () => {
-    const response = await makeAdminPanelAPIRequest({
+    const response = await makeAdminPanelApiRequest({
       query: CREATE_WORKSPACE_USAGE_LIMIT,
       variables: {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -162,7 +162,7 @@ describe('Workspace usage limits from the admin panel', () => {
   });
 
   it('lets an operator remove the override it created', async () => {
-    const createResponse = await makeAdminPanelAPIRequest({
+    const createResponse = await makeAdminPanelApiRequest({
       query: CREATE_WORKSPACE_USAGE_LIMIT,
       variables: {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -175,7 +175,7 @@ describe('Workspace usage limits from the admin panel', () => {
 
     jestExpectToBeDefined(usageLimitId);
 
-    const deleteResponse = await makeAdminPanelAPIRequest({
+    const deleteResponse = await makeAdminPanelApiRequest({
       query: DELETE_WORKSPACE_USAGE_LIMIT,
       variables: { workspaceId: SEED_APPLE_WORKSPACE_ID, usageLimitId },
     });
@@ -236,7 +236,7 @@ describe('Workspace usage limits from the admin panel', () => {
         },
       ],
     ])('is refused on %s', async (_label, query, variables) => {
-      const response = await makeAdminPanelAPIRequest({ query, variables });
+      const response = await makeAdminPanelApiRequest({ query, variables });
 
       expect(response.body.errors).toBeDefined();
       expect(
@@ -248,7 +248,7 @@ describe('Workspace usage limits from the admin panel', () => {
   });
 
   it('refuses a user without the security permission', async () => {
-    const response = await makeAdminPanelAPIRequestWithGuestRole({
+    const response = await makeAdminPanelApiRequestWithGuestRole({
       query: WORKSPACE_USAGE_LIMITS,
       variables: { workspaceId: SEED_APPLE_WORKSPACE_ID },
     });
