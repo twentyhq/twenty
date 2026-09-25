@@ -1,6 +1,8 @@
 import { type RemoteConnection } from '@remote-dom/core/elements';
-import { type CommandConfirmationModalResult } from 'twenty-sdk/front-component';
-import { type FrontComponentExecutionContext } from '@/types/FrontComponentExecutionContext';
+import {
+  type CommandConfirmationModalResult,
+  type FrontComponentExecutionContext,
+} from 'twenty-sdk/front-component';
 import { type GeometryUpdateBatch } from '@/types/GeometryUpdateBatch';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
 import { type MediaSessionEventBatch } from '@/types/MediaSession';

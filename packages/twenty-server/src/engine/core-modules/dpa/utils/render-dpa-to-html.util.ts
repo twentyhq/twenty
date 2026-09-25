@@ -1,5 +1,5 @@
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
-import { type ResolvedDpa } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { type ResolvedDpa } from 'src/engine/core-modules/dpa/types/dpa.type';
 
 const renderMultiline = (value: string): string =>
   escapeHtml(value)

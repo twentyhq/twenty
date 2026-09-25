@@ -1,5 +1,5 @@
 import { seedBuiltFrontComponentSharedDependenciesFile } from 'test/integration/metadata/suites/application/utils/seed-built-front-component-shared-dependencies-file.util';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -40,7 +40,7 @@ describe('Front component shared dependencies endpoint', () => {
   });
 
   it('should return 404 when the application declares no shared dependencies bundle', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/front-component-shared-dependencies/${applicationId}`,
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -68,7 +68,7 @@ describe('Front component shared dependencies endpoint', () => {
     });
 
     it('should serve the shared dependencies bundle with no-store on the plain path', async () => {
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'get',
         path: `/front-component-shared-dependencies/${applicationId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -84,7 +84,7 @@ describe('Front component shared dependencies endpoint', () => {
     });
 
     it('should serve the checksum-fingerprinted path with an immutable cache header', async () => {
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'get',
         path: `/front-component-shared-dependencies/${applicationId}/${SHARED_DEPENDENCIES_CHECKSUM}.js`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

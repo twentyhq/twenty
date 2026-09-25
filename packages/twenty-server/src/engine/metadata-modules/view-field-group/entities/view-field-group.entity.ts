@@ -16,7 +16,7 @@ import { ADD_IS_SYSTEM_SIDE_EFFECT_TO_VIEW_FIELD_GROUP_UPGRADE_COMMAND_NAME } fr
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
 
 export type ViewFieldGroupOverrides = {
   isActive?: boolean;
@@ -26,6 +26,7 @@ export type ViewFieldGroupOverrides = {
 };
 
 @Entity({ name: 'viewFieldGroup', schema: 'core' })
+@Index('IDX_VIEW_FIELD_GROUP_APPLICATION_ID', ['applicationId'])
 @Index('IDX_VIEW_FIELD_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FIELD_GROUP_VIEW_ID', ['viewId'])
 export class ViewFieldGroupEntity

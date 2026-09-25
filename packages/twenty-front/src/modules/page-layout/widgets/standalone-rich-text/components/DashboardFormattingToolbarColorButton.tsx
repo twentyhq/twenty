@@ -1,24 +1,16 @@
 import { useActiveStyles, useBlockNoteEditor } from '@blocknote/react';
 import { styled } from '@linaria/react';
-import {
-  autoUpdate,
-  flip,
-  offset,
-  shift,
-  useFloating,
-} from '@floating-ui/react';
-import { useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useLingui } from '@lingui/react/macro';
+import { useId } from 'react';
+import { Dropdown } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DashboardColorIcon } from '@/page-layout/widgets/standalone-rich-text/components/DashboardColorIcon';
 import { DashboardColorSelectionMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardColorSelectionMenu';
-import { COLOR_DROPDOWN_FLOATING_CONFIG } from '@/page-layout/widgets/standalone-rich-text/constants/ColorDropdownFloatingConfig';
 import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor';
 import { extractColorFromProps } from '@/page-layout/widgets/standalone-rich-text/utils/extractColorFromProps';
-import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
 const StyledColorButton = styled.button`
   align-items: center;
@@ -37,14 +29,10 @@ const StyledColorButton = styled.button`
   }
 `;
 
-const COLOR_BUTTON_CLICK_OUTSIDE_ID = 'color-button-click-outside';
-
 export const DashboardFormattingToolbarColorButton = () => {
   const editor = useBlockNoteEditor();
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [isOpen, setIsOpen] = useState(false);
-
+  const { t } = useLingui();
+  const instanceId = useId();
   const activeStyles = useActiveStyles(editor);
   const currentTextColor = extractColorFromProps(activeStyles, 'text');
   const currentBackgroundColor = extractColorFromProps(
@@ -52,97 +40,50 @@ export const DashboardFormattingToolbarColorButton = () => {
     'background',
   );
 
-  const { refs, floatingStyles } = useFloating({
-    strategy: 'fixed',
-    placement: 'bottom-start',
-    whileElementsMounted: autoUpdate,
-    middleware: [
-      offset(COLOR_DROPDOWN_FLOATING_CONFIG.offsetFromButton),
-      flip(),
-      shift({ padding: COLOR_DROPDOWN_FLOATING_CONFIG.boundaryPadding }),
-    ],
-  });
-
-  useListenClickOutside({
-    refs: [menuRef],
-    excludedClickOutsideIds: [COLOR_BUTTON_CLICK_OUTSIDE_ID],
-    callback: () => setIsOpen(false),
-    listenerId: 'custom-color-style-button',
-  });
-
-  const handleButtonClick = () => {
-    if (isDefined(buttonRef.current)) {
-      refs.setReference(buttonRef.current);
-    }
-    setIsOpen(!isOpen);
-  };
-
-  const applyTextColor = (color: string) => {
+  const handleTextColorSelect = (color: BlockNoteColor) => {
     if (color === 'default') {
       editor.removeStyles({ textColor: color });
-    } else {
-      editor.addStyles({ textColor: color });
+      return;
     }
-    setTimeout(() => editor.focus());
-  };
-
-  const applyBackgroundColor = (color: string) => {
-    if (color === 'default') {
-      editor.removeStyles({ backgroundColor: color });
-    } else {
-      editor.addStyles({ backgroundColor: color });
-    }
-    setTimeout(() => editor.focus());
-  };
-
-  const handleTextColorSelect = (color: BlockNoteColor) => {
-    applyTextColor(color);
-    setIsOpen(false);
+    editor.addStyles({ textColor: color });
   };
 
   const handleBackgroundColorSelect = (color: BlockNoteColor) => {
-    applyBackgroundColor(color);
-    setIsOpen(false);
+    if (color === 'default') {
+      editor.removeStyles({ backgroundColor: color });
+      return;
+    }
+    editor.addStyles({ backgroundColor: color });
   };
 
   return (
-    <>
-      <StyledColorButton
-        ref={buttonRef}
-        onClick={handleButtonClick}
-        data-click-outside-id={COLOR_BUTTON_CLICK_OUTSIDE_ID}
-      >
-        <DashboardColorIcon
-          textColor={currentTextColor}
-          backgroundColor={currentBackgroundColor}
-        />
-      </StyledColorButton>
-
-      {isOpen &&
-        createPortal(
-          <OverlayContainer
-            ref={(node) => {
-              refs.setFloating(node);
-              (
-                menuRef as React.MutableRefObject<HTMLDivElement | null>
-              ).current = node;
-            }}
-            style={{
-              ...floatingStyles,
-              zIndex: COLOR_DROPDOWN_FLOATING_CONFIG.zIndex,
-            }}
-            className="bn-ui-container"
-            data-click-outside-id={COLOR_BUTTON_CLICK_OUTSIDE_ID}
-          >
-            <DashboardColorSelectionMenu
-              currentTextColor={currentTextColor}
-              currentBackgroundColor={currentBackgroundColor}
-              onTextColorSelect={handleTextColorSelect}
-              onBackgroundColorSelect={handleBackgroundColorSelect}
+    <DropdownRoot dropdownId={`dashboard-color-${instanceId}`} type="picker">
+      <Dropdown.Trigger
+        render={
+          <StyledColorButton aria-label={t`Text and background colors`}>
+            <DashboardColorIcon
+              textColor={currentTextColor}
+              backgroundColor={currentBackgroundColor}
             />
-          </OverlayContainer>,
-          document.body,
-        )}
-    </>
+          </StyledColorButton>
+        }
+      />
+      <DropdownContent
+        sideOffset={8}
+        className="bn-ui-container"
+        aria-label={t`Text and background colors`}
+        finalFocus={() => {
+          editor.focus();
+          return false;
+        }}
+      >
+        <DashboardColorSelectionMenu
+          currentTextColor={currentTextColor}
+          currentBackgroundColor={currentBackgroundColor}
+          onTextColorSelect={handleTextColorSelect}
+          onBackgroundColorSelect={handleBackgroundColorSelect}
+        />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

@@ -3,7 +3,7 @@ import type * as ical from 'node-ical';
 import { isDefined } from 'twenty-shared/utils';
 
 import { mapPartStatToResponseStatus } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-partstat-to-response-status.util';
-import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export const extractAttendeesFromEvent = (
   event: ical.VEvent,

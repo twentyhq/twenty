@@ -1,6 +1,6 @@
 import { type PerformTwentyConfigQueryParams } from 'test/integration/twenty-config/types/perform-twenty-config-query.type';
 
-import { makeAdminPanelAPIRequest } from './make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequest } from './make-admin-panel-api-request.util';
 import {
   type UpdateConfigVariableFactoryInput,
   updateConfigVariableQueryFactory,
@@ -15,7 +15,7 @@ export const updateConfigVariable = async ({
     value: input.value,
   });
 
-  const response = await makeAdminPanelAPIRequest(graphqlOperation);
+  const response = await makeAdminPanelApiRequest(graphqlOperation);
 
   if (!expectToFail) {
     expect(response.body.data).toBeDefined();

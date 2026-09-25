@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   extractMetadataItemPayload,
   extractMetadataListPayload,
@@ -136,7 +136,7 @@ describe('object metadata i18n', () => {
     });
 
     it('should return French labels from GET /metadata/objects', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/objects?limit=200',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -157,7 +157,7 @@ describe('object metadata i18n', () => {
     });
 
     it('should return French labels on the fields inlined by GET /metadata/objects', async () => {
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/objects?limit=200',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -181,7 +181,7 @@ describe('object metadata i18n', () => {
     });
 
     it('should return French labels from GET /metadata/fields/:id', async () => {
-      const objectsResponse = await makeRestAPIRequest({
+      const objectsResponse = await makeRestApiRequest({
         method: 'get',
         path: '/metadata/objects?limit=200',
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -199,7 +199,7 @@ describe('object metadata i18n', () => {
 
       expect(companyField).toBeDefined();
 
-      const response = await makeRestAPIRequest({
+      const response = await makeRestApiRequest({
         method: 'get',
         path: `/metadata/fields/${companyField!.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

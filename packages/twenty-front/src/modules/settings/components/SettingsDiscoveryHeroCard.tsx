@@ -72,7 +72,7 @@ export const SettingsDiscoveryHeroCard = ({
 
   return (
     <>
-      <Card rounded>
+      <Card.Root rounded>
         <StyledCoverContainer coverHeight={coverHeight}>
           <StyledImage src={src} alt="" aria-hidden />
           {shouldDisplayVideo && (
@@ -87,7 +87,7 @@ export const SettingsDiscoveryHeroCard = ({
         {footer !== undefined && footer !== null && (
           <StyledFooter>{footer}</StyledFooter>
         )}
-      </Card>
+      </Card.Root>
       {shouldDisplayVideo && (
         <SettingsCustomizeVideoModal
           modalInstanceId={modalInstanceId}

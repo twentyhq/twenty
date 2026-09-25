@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 const TEST_COMPANY_IDS = {
   ALPHA: '20202020-aaaa-4000-8000-000000000001',
@@ -48,7 +48,7 @@ describe('Order by relation field (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createCompanies);
+    await makeGraphqlApiRequest(createCompanies);
 
     const createPeople = createManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -81,7 +81,7 @@ describe('Order by relation field (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createPeople);
+    await makeGraphqlApiRequest(createPeople);
   });
 
   it('should sort people by company name ascending', async () => {
@@ -113,7 +113,7 @@ describe('Order by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.errors).toBeUndefined();
@@ -166,7 +166,7 @@ describe('Order by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.errors).toBeUndefined();
@@ -219,7 +219,7 @@ describe('Order by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.errors).toBeUndefined();
@@ -269,7 +269,7 @@ describe('Order by relation field (e2e)', () => {
       },
     };
 
-    const firstResponse = await makeGraphqlAPIRequest(firstQueryData);
+    const firstResponse = await makeGraphqlApiRequest(firstQueryData);
 
     expect(firstResponse.body.data).toBeDefined();
     expect(firstResponse.body.errors).toBeUndefined();
@@ -314,7 +314,7 @@ describe('Order by relation field (e2e)', () => {
       },
     };
 
-    const secondResponse = await makeGraphqlAPIRequest(secondQueryData);
+    const secondResponse = await makeGraphqlApiRequest(secondQueryData);
 
     expect(secondResponse.body.data).toBeDefined();
     expect(secondResponse.body.errors).toBeUndefined();
@@ -343,7 +343,7 @@ describe('Order by relation field (e2e)', () => {
     let after: string | undefined = undefined;
 
     for (let iteration = 0; iteration < 10; iteration++) {
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           query People(
             $orderBy: [PersonOrderByInput]
@@ -409,7 +409,7 @@ describe('Order by relation field (e2e)', () => {
   });
 
   it('should walk backward across the missing-relation boundary with before cursors', async () => {
-    const forwardResponse = await makeGraphqlAPIRequest({
+    const forwardResponse = await makeGraphqlApiRequest({
       query: gql`
         query People(
           $orderBy: [PersonOrderByInput]
@@ -451,7 +451,7 @@ describe('Order by relation field (e2e)', () => {
     let before: string | undefined = forwardConnection.pageInfo.endCursor;
 
     for (let iteration = 0; iteration < 10; iteration++) {
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           query People(
             $orderBy: [PersonOrderByInput]
@@ -514,7 +514,7 @@ describe('Order by relation field (e2e)', () => {
     let after: string | undefined = undefined;
 
     for (let iteration = 0; iteration < 10; iteration++) {
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           query People(
             $orderBy: [PersonOrderByInput]
@@ -551,7 +551,9 @@ describe('Order by relation field (e2e)', () => {
       const connection = response.body.data.people;
 
       collectedIds.push(
-        ...connection.edges.map((edge: { node: { id: string } }) => edge.node.id),
+        ...connection.edges.map(
+          (edge: { node: { id: string } }) => edge.node.id,
+        ),
       );
 
       if (!connection.pageInfo.hasNextPage) {
@@ -571,7 +573,7 @@ describe('Order by relation field (e2e)', () => {
     let after: string | undefined = undefined;
 
     for (let iteration = 0; iteration < 20; iteration++) {
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeGraphqlApiRequest({
         query: gql`
           query People(
             $orderBy: [PersonOrderByInput]
@@ -608,7 +610,9 @@ describe('Order by relation field (e2e)', () => {
       const connection = response.body.data.people;
 
       collectedIds.push(
-        ...connection.edges.map((edge: { node: { id: string } }) => edge.node.id),
+        ...connection.edges.map(
+          (edge: { node: { id: string } }) => edge.node.id,
+        ),
       );
 
       if (!connection.pageInfo.hasNextPage) {
@@ -644,7 +648,7 @@ describe('Order by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.errors).toBeUndefined();
@@ -680,7 +684,7 @@ describe('Order by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.errors).toBeUndefined();
@@ -732,7 +736,7 @@ describe('Order by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.errors).toBeUndefined();
@@ -799,7 +803,7 @@ describe('Order by relation field (e2e)', () => {
       },
     };
 
-    const response = await makeGraphqlAPIRequest(queryData);
+    const response = await makeGraphqlApiRequest(queryData);
 
     // Should succeed without "column distinctAlias.person_position does not exist" error
     expect(response.body.errors).toBeUndefined();
@@ -874,7 +878,7 @@ describe('Order by a composite field through a relation (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createPeople);
+    await makeGraphqlApiRequest(createPeople);
 
     const createOpportunities = createManyOperationFactory({
       objectMetadataSingularName: 'opportunity',
@@ -915,11 +919,11 @@ describe('Order by a composite field through a relation (e2e)', () => {
       upsert: true,
     });
 
-    await makeGraphqlAPIRequest(createOpportunities);
+    await makeGraphqlApiRequest(createOpportunities);
   });
 
   const fetchPage = async (variables: Record<string, unknown>) => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: gql`
         query Opportunities(
           $orderBy: [OpportunityOrderByInput]

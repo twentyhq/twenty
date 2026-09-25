@@ -58,7 +58,8 @@ jest.mock('@/ui/utilities/pointer-event/hooks/useClickOutsideListener', () => ({
   useClickOutsideListener: () => ({ toggleClickOutside: jest.fn() }),
 }));
 
-jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => false,
 }));
 

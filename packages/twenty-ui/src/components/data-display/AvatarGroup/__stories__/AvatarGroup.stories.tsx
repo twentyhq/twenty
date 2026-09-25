@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
@@ -41,6 +42,25 @@ type Story = StoryObj<typeof AvatarGroup>;
 
 export const Default: Story = {
   decorators: [ComponentDecorator],
+};
+
+export const WithOverflowCount: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <AvatarGroup
+      avatars={getAvatars({ shape: 'circle' })}
+      maxVisible={3}
+      overflowCount={9}
+      overflowShape="circle"
+      overlap="left"
+      overlapOffset="4px"
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('+9')).toBeVisible();
+  },
 };
 
 export const Catalog: Story = {

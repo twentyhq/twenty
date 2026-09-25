@@ -1,4 +1,4 @@
-import { type WorkflowValidationIssueCode } from '@/workflow/validation/types/workflow-validation.type';
+import { type WorkflowValidationIssueCode } from '@/workflow/validation/types/WorkflowValidation';
 
 // Issues a well-formed draft may carry while being edited, but that keep it
 // from being activated because a run could not proceed through them.
