@@ -32,6 +32,8 @@ import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-ob
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { type CampaignDeliverySettlement } from 'src/modules/emailing/types/campaign-delivery-settlement.type';
 import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { buildCampaignBatchReplacements } from 'src/modules/emailing/utils/build-campaign-batch-replacements.util';
 import { buildCampaignThreadExternalId } from 'src/modules/emailing/utils/build-campaign-thread-external-id.util';
 import { getCampaignDeliveryTableName } from 'src/modules/emailing/utils/get-campaign-delivery-table-name.util';
@@ -61,6 +63,8 @@ export class MessageCampaignBatchDeliveryService {
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
+    private readonly campaignTrackingContentService: CampaignTrackingContentService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly campaignSendSlotService: CampaignSendSlotService,
@@ -305,10 +309,11 @@ export class MessageCampaignBatchDeliveryService {
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId } = data;
 
-    const { template, variableNames } = await compileCampaignBatchTemplate({
-      subjectTemplate: campaign.subject ?? '',
-      bodyTemplate: campaign.bodyTemplate ?? '',
-    });
+    const { template, plainTextSourceHtml, variableNames } =
+      await compileCampaignBatchTemplate({
+        subjectTemplate: campaign.subject ?? '',
+        bodyTemplate: campaign.bodyTemplate ?? '',
+      });
 
     const personRepository = this.workspaceOrmManager.getRepository(
       PersonWorkspaceEntity,
@@ -337,6 +342,29 @@ export class MessageCampaignBatchDeliveryService {
       );
     }
 
+    const trackedBatch = await this.campaignTrackingContentService
+      .prepareBatch({
+        workspaceId,
+        emailingDomainId,
+        template,
+        plainTextSourceHtml,
+        variableNames,
+        recipients: claimedRecipients.map((recipient) => ({
+          deliveryId: recipient.messageId,
+          replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
+        })),
+      })
+      .catch((error) => {
+        this.exceptionHandlerService.captureExceptions([error], {
+          additionalData: { workspaceId, campaignId },
+        });
+        this.logger.warn(
+          `Campaign ${campaignId} of workspace ${workspaceId} is sending a batch without tracking: ${error}`,
+        );
+
+        return { template, replacementsByDeliveryId };
+      });
+
     const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
 
     const providerOutcome = await this.emailingDomainSenderService
@@ -345,10 +373,12 @@ export class MessageCampaignBatchDeliveryService {
         emailingDomainId,
         sendKind: 'MARKETING',
         from: fromAddress,
-        template,
+        template: trackedBatch.template,
         recipients: claimedRecipients.map((recipient) => ({
           email: recipient.email,
-          replacements: replacementsByDeliveryId.get(recipient.messageId) ?? {},
+          replacements:
+            trackedBatch.replacementsByDeliveryId.get(recipient.messageId) ??
+            {},
           headers: buildOutboundThreadingHeaders({
             threadExternalId: buildCampaignThreadExternalId({
               messageId: recipient.messageId,

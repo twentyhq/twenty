@@ -5052,6 +5052,7 @@ input UpdateWorkspaceInput {
   logo: String
   inviteHash: String
   isPublicInviteLinkEnabled: Boolean
+  isCampaignClickTrackingEnabled: Boolean
   workspaceDiscoverability: WorkspaceDiscoverability
   allowImpersonation: Boolean
   isGoogleAuthEnabled: Boolean
