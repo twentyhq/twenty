@@ -1,0 +1,67 @@
+---
+title: AnimatedExpandableContainer
+description: Animate a controlled panel as it opens and closes.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AnimatedExpandableContainerReference from '/snippets/ui/generated/layout/animated-expandable-container.mdx';
+
+`AnimatedExpandableContainer` animates the height or width of its content. The application owns its expanded state and trigger. There is no uncontrolled mode or built-in toggle.
+
+## Anatomy
+
+```text
+Application
+├── Button (application-supplied trigger)
+└── AnimatedExpandableContainer
+    └── Content
+```
+
+`children` and `isExpanded` are required. The component supplies the collapsible root and animated panel internally. Supply the trigger separately and keep its `aria-expanded` value synchronized with `isExpanded`.
+
+<StoryEmbed
+  storyId="ui-layout-animatedexpandablecontainer--default"
+  title="AnimatedExpandableContainer example"
+/>
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportDetails = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <>
+      <Button
+        aria-expanded={isExpanded}
+        onClick={() => setIsExpanded((expanded) => !expanded)}
+      >
+        {isExpanded ? 'Hide import details' : 'Show import details'}
+      </Button>
+      <AnimatedExpandableContainer isExpanded={isExpanded}>
+        <Text>Match each CSV column to a record field before importing.</Text>
+      </AnimatedExpandableContainer>
+    </>
+  );
+};
+```
+
+## Animation and content lifetime
+
+The default dimension is `height`. Use `dimension="width"` for horizontal expansion. `containAnimation` defaults to `true`, clips overflow, and lays content out in a column. Turn it off when content needs to overflow during the transition.
+
+Use `duration` for a theme timing preset (`instant`, `fast`, `normal`, or `slow`). `animationDurations={{ opacity: 0.15, size: 0.25 }}` supplies independent durations in seconds and takes precedence over the preset.
+
+The panel unmounts its content after closing. Keep state that must survive closing outside the panel. The component does not forward native attributes or refs to its internal panel; keep focus handling and trigger relationships in the application.
+
+`mode` and `initial` remain in the accepted prop type but currently have no effect.
+
+## Props
+
+<AnimatedExpandableContainerReference />
