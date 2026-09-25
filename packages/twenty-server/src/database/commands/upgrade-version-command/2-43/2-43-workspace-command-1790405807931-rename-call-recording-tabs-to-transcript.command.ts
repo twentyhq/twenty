@@ -11,7 +11,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.43.0', 1790322700000)
+@RegisteredWorkspaceCommand('2.43.0', 1790405807931)
 @Command({
   name: 'upgrade:2-43:rename-call-recording-tabs-to-transcript',
   description:
