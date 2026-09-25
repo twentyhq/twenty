@@ -1,20 +1,17 @@
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
+import { type TriggerEventType } from '@/ui/navigation/utils/types/trigger-event.type';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
+import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AvatarOrIcon,
-  LinkChip,
-  Chip,
-  type ChipSize,
-} from 'twenty-ui/primitives/data-display';
-import { type TriggerEventType } from 'twenty-ui/utilities';
+import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export type RecordChipProps = {
   objectNameSingular: string;

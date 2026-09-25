@@ -6,7 +6,7 @@ import { type EmailThreadMessageWithSender } from '@/activities/emails/types/Ema
 import { t } from '@lingui/core/macro';
 import { IconArrowsVertical } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledButtonContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};

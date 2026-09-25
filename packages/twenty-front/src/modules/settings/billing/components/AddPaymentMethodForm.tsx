@@ -17,9 +17,9 @@ import {
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Info, useToast } from 'twenty-ui/primitives/feedback';
+import { Info, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { CreateBillingPaymentMethodSetupIntentDocument } from '~/generated-metadata/graphql';
 
 type AddPaymentMethodFormContentProps = {

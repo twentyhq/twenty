@@ -13,7 +13,6 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
-import { SUBSCRIPTION_INACTIVE_REASON_USER_FRIENDLY_MESSAGE } from 'src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant';
 import { type BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
@@ -24,10 +23,11 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { type CreditAvailability } from 'src/engine/core-modules/billing/types/credit-availability.type';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
+import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
+import { buildUsageRefusalException } from 'src/engine/core-modules/billing/utils/build-usage-refusal-exception.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
-import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
@@ -59,44 +59,40 @@ export class BillingUsageService {
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
-  async assertUsageAllowed({
-    workspaceId,
-    resourceType,
-    operationType,
-    spenders,
-  }: UsageQuotaScope): Promise<void> {
-    await this.assertSubscriptionActive(workspaceId);
+  async assertUsageAllowed(scope: UsageQuotaScope): Promise<void> {
+    const usageRefusal = await this.findUsageRefusal(scope);
 
-    await this.usageLimitQuotaService.assertQuotaNotExhausted({
-      workspaceId,
-      resourceType,
-      operationType,
-      spenders,
-    });
+    if (isDefined(usageRefusal)) {
+      throw buildUsageRefusalException({
+        usageRefusal,
+        workspaceId: scope.workspaceId,
+      });
+    }
   }
 
-  async consumeUsageQuota({
+  async findUsageRefusal({
     workspaceId,
     resourceType,
     operationType,
     spenders,
-    cost,
-  }: UsageQuotaScope & { cost: QuotaCost }): Promise<{
-    hasNoMoreAvailableCredits: boolean;
-  }> {
-    const { exhausted } = await this.usageLimitQuotaService.consumeQuota({
-      workspaceId,
-      resourceType,
-      operationType,
-      spenders,
-      cost,
-    });
+  }: UsageQuotaScope): Promise<UsageRefusal | null> {
+    const subscriptionInactiveReason =
+      await this.getSubscriptionInactiveReason(workspaceId);
 
-    const isAllowanceExhausted = exhausted.some(
-      (scope) => scope.exhaustedKind === 'allowance',
+    if (isDefined(subscriptionInactiveReason)) {
+      return {
+        kind: 'subscriptionInactive',
+        reason: subscriptionInactiveReason,
+      };
+    }
+
+    const exhaustedScope = await this.usageLimitQuotaService.findExhaustedScope(
+      { workspaceId, resourceType, operationType, spenders },
     );
 
-    return { hasNoMoreAvailableCredits: isAllowanceExhausted };
+    return isDefined(exhaustedScope)
+      ? { kind: 'quotaExhausted', exhaustedScope }
+      : null;
   }
 
   async getSubscriptionInactiveReason(
@@ -126,24 +122,6 @@ export class BillingUsageService {
     }
 
     return null;
-  }
-
-  async assertSubscriptionActive(workspaceId: string): Promise<void> {
-    const subscriptionInactiveReason =
-      await this.getSubscriptionInactiveReason(workspaceId);
-
-    if (isDefined(subscriptionInactiveReason)) {
-      throw new BillingException(
-        `Workspace ${workspaceId} has no active subscription: ${subscriptionInactiveReason}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE,
-        {
-          userFriendlyMessage:
-            SUBSCRIPTION_INACTIVE_REASON_USER_FRIENDLY_MESSAGE[
-              subscriptionInactiveReason
-            ],
-        },
-      );
-    }
   }
 
   async getCreditAvailability(

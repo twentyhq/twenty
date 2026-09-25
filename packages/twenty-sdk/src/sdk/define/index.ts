@@ -39,6 +39,13 @@ export { defineTimelineActivityType } from '@/sdk/define/timeline-activity-types
 export type { TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 export type { TimelineActivityTypeManifest } from 'twenty-shared/application';
 
+export { defineSettingsMenuItem } from '@/sdk/define/settings-menu-items/define-settings-menu-item';
+export type { SettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
+export type {
+  SettingsMenuItemManifest,
+  SettingsMenuItemScope,
+} from 'twenty-shared/application';
+
 export {
   canAccessFullAdminPanel,
   canImpersonate,
@@ -88,6 +95,7 @@ export type {
   IndexManifest,
 } from 'twenty-shared/application';
 
+export { defineHealthCheck } from '@/sdk/define/logic-functions/define-health-check';
 export { defineLogicFunction } from '@/sdk/define/logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from '@/sdk/define/logic-functions/define-post-install-logic-function';
 export { definePreInstallLogicFunction } from '@/sdk/define/logic-functions/define-pre-install-logic-function';
@@ -100,6 +108,13 @@ export type {
   UninstallHandler,
   UninstallPayload,
 } from '@/sdk/define/logic-functions/uninstall-payload-type';
+export type { HealthCheckHandler } from '@/sdk/define/logic-functions/health-check-handler-type';
+export type { HealthCheckLogicFunctionConfig } from '@/sdk/define/logic-functions/health-check-logic-function-config';
+export type {
+  ApplicationHealthCheckAction,
+  ApplicationHealthCheckResult,
+} from 'twenty-shared/application';
+export { ApplicationHealthStatus } from 'twenty-shared/application';
 export type {
   LogicFunctionConfig,
   LogicFunctionHandler,

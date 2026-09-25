@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import { ResizeHandle, useResizeHandle } from 'twenty-ui/primitives/layout';
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import { TextArea } from '@/ui/input/components/TextArea';
 
 type LogicFunctionLogsProps = {
@@ -13,29 +14,26 @@ export const LogicFunctionLogs = ({
 }: LogicFunctionLogsProps) => {
   const { t } = useLingui();
 
-  const {
-    size: height,
-    handleResizeStart,
-    handleResizeMove,
-    handleResizeEnd,
-  } = useResizeHandle({
-    initialSize: 150,
-  });
+  const [height, setHeight] = useState(150);
+  const logsContainerId = useId();
 
   return (
     <>
-      <TextArea
-        textAreaId={`logs-${componentInstanceId}`}
-        label={t`Logs`}
-        value={value}
-        height={height}
-        maxRows={5}
-        readOnly
-      />
+      <div id={logsContainerId}>
+        <TextArea
+          textAreaId={`logs-${componentInstanceId}`}
+          label={t`Logs`}
+          value={value}
+          height={height}
+          maxRows={5}
+          readOnly
+        />
+      </div>
       <ResizeHandle
-        onPointerDown={handleResizeStart}
-        onPointerMove={handleResizeMove}
-        onPointerUp={handleResizeEnd}
+        aria-label={t`Resize logs`}
+        aria-controls={logsContainerId}
+        value={height}
+        onValueChange={setHeight}
       />
     </>
   );

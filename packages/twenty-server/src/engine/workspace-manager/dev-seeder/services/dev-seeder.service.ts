@@ -1,3 +1,4 @@
+import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
 import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
@@ -40,7 +41,6 @@ import {
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedEmailingDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
-import { seedMessageSuppressions } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-message-suppressions.util';
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
@@ -109,7 +109,7 @@ export class DevSeederService {
       initialCursor,
     });
 
-    await this.applicationRegistrationService.createCliRegistrationIfNotExists();
+    await this.applicationRegistrationService.findOrCreateCliRegistration();
 
     const schemaName =
       await this.workspaceSchemaService.createWorkspaceDBSchema(workspaceId);
@@ -248,13 +248,19 @@ export class DevSeederService {
   }) {
     await this.agentHistoryStorageService.run(
       workspaceId,
-      async ({ manager, storage }) => {
+      async ({ manager, storage, table }) => {
         await seedAgents({
           queryRunner: manager.queryRunner!,
           schemaName:
             storage === 'core' ? 'core' : getWorkspaceSchemaName(workspaceId),
           workspaceId,
           chatReferenceIds,
+        });
+        await backfillChatThreadOwnerGrants({
+          manager,
+          workspaceId,
+          threadTableExpression: table('agentChatThread'),
+          isCoreStorage: storage === 'core',
         });
       },
     );
@@ -328,7 +334,6 @@ export class DevSeederService {
         await seedEmailingDomains({ queryRunner, schemaName, workspaceId });
       }
       await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
-      await seedMessageSuppressions({ queryRunner, schemaName, workspaceId });
       await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
 
       if (seedBilling) {

@@ -10,6 +10,10 @@ Read the [twenty-ui documentation](https://docs.twenty.com/ui/getting-started) f
 
 > **Alpha:** `twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
 
+## Upgrading
+
+The next release changes public module ownership and removes exports without a deprecation window. Read the [breaking release notes](./CHANGELOG.md#unreleased) before upgrading.
+
 # Installation
 
 For a standalone React application, install the library and its peer dependencies. React 19 is required.
@@ -31,7 +35,7 @@ For Twenty apps, follow [Using Twenty UI components](https://docs.twenty.com/dev
 For a standalone React application, import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
 
 ```tsx
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 import { Button } from 'twenty-ui/primitives/input';
 
 import 'twenty-ui/style.css';
@@ -52,27 +56,25 @@ import { Button } from 'twenty-ui/primitives/input';
 
 # Entry points
 
-| Subpath | Contents |
-| --- | --- |
-| `twenty-ui` | Components except the code editor, icons, theme tokens, and utilities |
-| `twenty-ui/assets` | Logos and static assets |
-| `twenty-ui/components` | Shared design presets and reusable app building blocks |
-| `twenty-ui/components/code-editor` | Code editor, editor header, and editor theme helpers |
-| `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/primitives` | Foundational UI controls and compound controls |
-| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |
-| `twenty-ui/primitives/data-display` | Avatars, chips, tags, status indicators, and display helpers |
-| `twenty-ui/primitives/feedback` | Toasts, banners, progress bars, and loaders |
-| `twenty-ui/primitives/input` | Buttons, form controls, and pickers |
-| `twenty-ui/primitives/json-visualizer` | JSON tree viewer |
-| `twenty-ui/primitives/layout` | Layout, animation, resizing, and section components |
-| `twenty-ui/primitives/navigation` | Links, list items, menus, and tabs |
-| `twenty-ui/primitives/surfaces` | Cards, dialogs, menus, popovers, and tooltips |
-| `twenty-ui/primitives/typography` | Text, headings, labels, and typography helpers |
-| `twenty-ui/testing` | Storybook and test decorators |
-| `twenty-ui/theme` | Theme types and helpers |
-| `twenty-ui/theme-constants` | Design tokens, `ThemeProvider`, and `useTheme` |
-| `twenty-ui/utilities` | Hooks and shared utilities |
+| Subpath                              | Contents                                                              |
+| ------------------------------------ | --------------------------------------------------------------------- |
+| `twenty-ui`                          | Components except the code editor, icons, theme tokens, and utilities |
+| `twenty-ui/assets`                   | Logos and static assets                                               |
+| `twenty-ui/components`               | Shared design presets and reusable app building blocks                |
+| `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers                  |
+| `twenty-ui/icon`                     | Icon components and the icon provider                                 |
+| `twenty-ui/primitives`               | Foundational UI controls and compound controls                        |
+| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers                      |
+| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators            |
+| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                                   |
+| `twenty-ui/primitives/input`         | Buttons and form controls                                             |
+| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                        |
+| `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                                    |
+| `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                         |
+| `twenty-ui/primitives/typography`    | Text and headings                                                     |
+| `twenty-ui/testing`                  | Storybook and test decorators                                         |
+| `twenty-ui/theme`          | Design tokens, `ThemeProvider`, and `useTheme`                        |
+| `twenty-ui/utilities`                | Hooks and shared utilities                                            |
 
 # Theming
 
@@ -81,6 +83,8 @@ import { Button } from 'twenty-ui/primitives/input';
 - `ThemeProvider` exposes the active theme through `useTheme()` and applies the `light` / `dark` class. Pass `applyToRoot={false}` with `overrides` to scope a theme to a subtree instead of the document root.
 
 # Development
+
+Shared component sources live in `src/components/{data-display,feedback,input,layout,navigation,typography}`, with the optional editor in `src/components/code-editor`. Keep each component's types, stories, tests, and private parts beside its implementation. The generated `components` barrel provides the public imports.
 
 Primitive guides belong in `packages/twenty-docs/ui/primitives`. Shared component guides belong in `packages/twenty-docs/ui/components`. For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
 
@@ -108,3 +112,13 @@ npx vitest run --root packages/twenty-ui --project unit <file>   # Run a single 
 # License
 
 twenty-ui is released under the [MIT](https://github.com/twentyhq/twenty/blob/main/packages/twenty-ui/LICENSE) license.
+
+# Module ownership
+
+Primitives provide foundational interaction and presentation. Shared components compose primitives into reusable presets, pickers, menu rows, notifications, and the JSON viewer. Both layers accept data, labels, and callbacks from their host.
+
+Record formatting, product illustrations, and feature-specific animation belong to `twenty-front`. Implementation parts live in `internal` or `parts` directories and are excluded from published barrels.
+
+Run `node --import tsx scripts/checkModuleOwnership.ts` from this package after changing the public interface. When intentionally adding or removing a public React component, regenerate `docs/module-ownership.json` with `node --import tsx scripts/checkModuleOwnership.ts --write` and review the snapshot diff. CI checks the committed snapshot and the dependency boundaries without updating them.
+
+The package check allows the optional Monaco peers only in `twenty-ui/components/code-editor`.

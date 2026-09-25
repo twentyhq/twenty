@@ -33,6 +33,18 @@ describe('getAgentHistorySchemaAdditions', () => {
     expect(
       additions.objects.map((object) => object.universalIdentifier).sort(),
     ).toEqual([...HISTORY_IDENTIFIERS].sort());
+    expect(
+      additions.objects.every(
+        (object) =>
+          object.readability === MetadataReadability.SYSTEM &&
+          object.writability === MetadataWritability.SYSTEM,
+      ),
+    ).toBe(true);
+    expect(
+      additions.fields.every(
+        (field) => field.writability === MetadataWritability.SYSTEM,
+      ),
+    ).toBe(true);
     expect(additions.fields.length).toBeGreaterThan(0);
     expect(additions.indexes.length).toBeGreaterThan(0);
     for (const entry of [...additions.fields, ...additions.indexes]) {
@@ -53,6 +65,23 @@ describe('getAgentHistorySchemaAdditions', () => {
     });
   });
 
+  it('accepts protected legacy history before the sharing upgrade', () => {
+    const standard = createStandardMetadata();
+    const existing = createStandardMetadata();
+    Object.assign(
+      existing.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      ]!,
+      {
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+      },
+    );
+    expect(
+      getAgentHistorySchemaAdditions({ existing, standard }).objects,
+    ).toEqual([]);
+  });
+
   it('repairs missing fields and indexes without recreating existing objects', () => {
     const standard = createStandardMetadata();
     const additions = getAgentHistorySchemaAdditions({
@@ -70,7 +99,10 @@ describe('getAgentHistorySchemaAdditions', () => {
 
   it.each([
     { readability: MetadataReadability.OPEN },
-    { writability: MetadataWritability.OPEN },
+    {
+      readability: MetadataReadability.SYSTEM,
+      writability: MetadataWritability.OPEN,
+    },
     { isSearchable: true },
     { isAuditLogged: true },
     { nameSingular: 'unexpectedName' },

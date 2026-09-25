@@ -1,17 +1,14 @@
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useDuplicatePageLayoutWidget } from '@/page-layout/hooks/useDuplicatePageLayoutWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { SidePanelOptionsDropdown } from '@/side-panel/components/SidePanelOptionsDropdown';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
 import { IconCopyPlus, IconTrash } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 export const WidgetSettingsFooter = ({
   pageLayoutId,
@@ -20,7 +17,6 @@ export const WidgetSettingsFooter = ({
 }) => {
   const dropdownId = useId();
   const { t } = useLingui();
-  const { closeDropdown } = useCloseDropdown();
   const { duplicateWidget } = useDuplicatePageLayoutWidget(pageLayoutId);
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget(pageLayoutId);
   const pageLayoutEditingWidgetId = useAtomComponentStateValue(
@@ -32,55 +28,32 @@ export const WidgetSettingsFooter = ({
     if (isDefined(pageLayoutEditingWidgetId)) {
       duplicateWidget(pageLayoutEditingWidgetId);
     }
-    closeDropdown(dropdownId);
   };
 
   const handleDeleteWidget = () => {
     if (isDefined(pageLayoutEditingWidgetId)) {
       deletePageLayoutWidget(pageLayoutEditingWidgetId);
     }
-    closeDropdown(dropdownId);
   };
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
 
   return (
     <SidePanelFooter
       actions={[
-        <OptionsDropdownMenu
-          key="options"
-          dropdownId={dropdownId}
-          selectableListId={dropdownId}
-          selectableItemIdArray={['duplicate-widget', 'delete-widget']}
-        >
-          <SelectableListItem
-            itemId="duplicate-widget"
-            onEnter={handleDuplicateWidget}
+        <SidePanelOptionsDropdown key="options" dropdownId={dropdownId}>
+          <Dropdown.ActionItem
+            onClick={handleDuplicateWidget}
+            startIcon={<IconCopyPlus />}
           >
-            <MenuItem
-              focused={selectedItemId === 'duplicate-widget'}
-              onClick={handleDuplicateWidget}
-              text={t`Duplicate widget`}
-              LeftIcon={IconCopyPlus}
-            />
-          </SelectableListItem>
-
-          <SelectableListItem
-            itemId="delete-widget"
-            onEnter={handleDeleteWidget}
+            {t`Duplicate widget`}
+          </Dropdown.ActionItem>
+          <Dropdown.ActionItem
+            onClick={handleDeleteWidget}
+            startIcon={<IconTrash />}
+            color="danger"
           >
-            <MenuItem
-              focused={selectedItemId === 'delete-widget'}
-              onClick={handleDeleteWidget}
-              text={t`Delete widget`}
-              LeftIcon={IconTrash}
-              accent="danger"
-            />
-          </SelectableListItem>
-        </OptionsDropdownMenu>,
+            {t`Delete widget`}
+          </Dropdown.ActionItem>
+        </SidePanelOptionsDropdown>,
       ]}
     />
   );

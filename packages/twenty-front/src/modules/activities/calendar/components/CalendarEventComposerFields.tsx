@@ -1,9 +1,9 @@
-import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
-import { ComposerHeader } from '@/activities/components/ComposerHeader';
-import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { CalendarEventComposerTargetsInput } from '@/activities/calendar/components/CalendarEventComposerTargetsInput';
 import { CalendarEventLocationInput } from '@/activities/calendar/components/CalendarEventLocationInput';
 import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
+import { ComposerHeader } from '@/activities/components/ComposerHeader';
+import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
 import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
@@ -21,9 +21,9 @@ import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/Dra
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Callout } from 'twenty-ui/primitives/feedback';
+import { Callout } from 'twenty-ui/components';
 import { Switch } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const COMPOSER_LABEL_MIN_WIDTH = '80px';
 

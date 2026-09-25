@@ -8,8 +8,8 @@ export type ConnectedAccount = {
   handle: string;
   provider: ConnectedAccountProvider;
   authFailedAt: string | null;
-  // Set when the account was frozen after its owner left the workspace:
-  // synced data is kept but the account is read-only.
+  // Set when the account is disconnected or frozen: synced data is kept but
+  // cannot be updated until the account is reconnected.
   archivedAt: string | null;
   scopes: string[] | null;
   handleAliases: string[] | null;

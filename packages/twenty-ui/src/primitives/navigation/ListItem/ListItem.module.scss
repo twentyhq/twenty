@@ -22,6 +22,7 @@
   padding-inline: var(--t-spacing-1);
   position: relative;
   text-align: start;
+  text-decoration: none;
   transition: background duration(instant) ease;
   user-select: none;
 
@@ -49,6 +50,12 @@
 
     cursor: default;
     transition: none;
+
+    // Hidden rather than removed so a disabled row keeps the same trailing
+    // width as its enabled siblings in the same menu.
+    .submenuIcon {
+      visibility: hidden;
+    }
   }
 }
 
@@ -123,6 +130,7 @@
     opacity: 0;
   }
 
+  .root[data-actions-visibility='always'] .actions,
   .root:hover .actions,
   .root:focus-within .actions {
     opacity: 1;

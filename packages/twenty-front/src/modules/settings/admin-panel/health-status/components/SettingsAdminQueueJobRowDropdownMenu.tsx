@@ -1,11 +1,9 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
 import { JobState } from '~/generated-admin/graphql';
 
 type SettingsAdminQueueJobRowDropdownMenuProps = {
@@ -22,46 +20,30 @@ export const SettingsAdminQueueJobRowDropdownMenu = ({
   onDelete,
 }: SettingsAdminQueueJobRowDropdownMenuProps) => {
   const dropdownId = `queue-job-row-${jobId}`;
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleRetry = () => {
-    onRetry?.();
-    closeDropdown(dropdownId);
-  };
-
-  const handleDelete = () => {
-    onDelete();
-    closeDropdown(dropdownId);
-  };
-
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="right-start"
-      clickableComponent={
-        <LightIconButton aria-label={t`Job Actions`} emphasis="subtle">
-          <IconDotsVertical />
-        </LightIconButton>
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            {jobState === JobState.FAILED && onRetry && (
-              <MenuItem
-                text={t`Retry`}
-                LeftIcon={IconRefresh}
-                onClick={handleRetry}
-              />
-            )}
-            <MenuItem
-              accent="danger"
-              text={t`Delete`}
-              LeftIcon={IconTrash}
-              onClick={handleDelete}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-    />
+    <DropdownRoot type="menu" dropdownId={dropdownId}>
+      <Dropdown.Trigger
+        render={
+          <LightIconButton aria-label={t`Job Actions`} emphasis="subtle">
+            <IconDotsVertical />
+          </LightIconButton>
+        }
+      />
+      <DropdownContent side="right" align="start">
+        <Dropdown.Section>
+          {jobState === JobState.FAILED && isDefined(onRetry) && (
+            <Dropdown.ActionItem
+              startIcon={<IconRefresh />}
+              onClick={onRetry}
+            >{t`Retry`}</Dropdown.ActionItem>
+          )}
+          <Dropdown.ActionItem
+            color="danger"
+            startIcon={<IconTrash />}
+            onClick={onDelete}
+          >{t`Delete`}</Dropdown.ActionItem>
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

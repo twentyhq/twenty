@@ -9,10 +9,6 @@ import {
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import {
-  UsageLimitException,
-  UsageLimitExceptionCode,
-} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
@@ -82,6 +78,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   meter: 'creditsUsedMicro',
   limitValue: 1_000,
   burstValue: null,
+  isInstanceOverride: false,
   ...overrides,
 });
 
@@ -147,8 +144,8 @@ describe('UsageLimitQuotaService', () => {
     );
   };
 
-  const assertQuotaNotExhausted = () =>
-    service.assertQuotaNotExhausted({
+  const findExhaustedScope = () =>
+    service.findExhaustedScope({
       workspaceId: 'workspace-1',
       resourceType: UsageResourceType.AI,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
@@ -223,7 +220,7 @@ describe('UsageLimitQuotaService', () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([250]);
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(
       usageAnalyticsService.getConsumptionRowsForAllScopes,
     ).not.toHaveBeenCalled();
@@ -233,13 +230,10 @@ describe('UsageLimitQuotaService', () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([0]);
 
-    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-      code: UsageLimitExceptionCode.QUOTA_EXHAUSTED,
-      exhaustedScope: expect.objectContaining({
-        spenderType: 'workspace',
-        limitKind: 'quota',
-        exhaustedKind: 'limit',
-      }),
+    await expect(findExhaustedScope()).resolves.toMatchObject({
+      spenderType: 'workspace',
+      limitKind: 'quota',
+      exhaustedKind: 'limit',
     });
   });
 
@@ -247,7 +241,7 @@ describe('UsageLimitQuotaService', () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([undefined]);
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(
       usageAnalyticsService.getConsumptionRowsForAllScopes,
     ).toHaveBeenCalledWith(
@@ -265,7 +259,7 @@ describe('UsageLimitQuotaService', () => {
     ]);
     cacheStorage.mget.mockResolvedValue([undefined, undefined]);
 
-    await assertQuotaNotExhausted();
+    await findExhaustedScope();
 
     expect(
       usageAnalyticsService.getConsumptionRowsForAllScopes,
@@ -279,9 +273,7 @@ describe('UsageLimitQuotaService', () => {
       150,
     );
 
-    await expect(assertQuotaNotExhausted()).rejects.toThrow(
-      UsageLimitException,
-    );
+    await expect(findExhaustedScope()).resolves.not.toBeNull();
     expect(
       usageAnalyticsService.getCreditsUsedMicroForBillingPeriod,
     ).toHaveBeenCalledWith({
@@ -304,7 +296,7 @@ describe('UsageLimitQuotaService', () => {
     });
     cacheStorage.mget.mockResolvedValue([undefined]);
 
-    await assertQuotaNotExhausted();
+    await findExhaustedScope();
 
     const [[entries]] = cacheStorage.mset.mock.calls;
 
@@ -316,11 +308,9 @@ describe('UsageLimitQuotaService', () => {
     setAllowance(2_000_000);
     cacheStorage.mget.mockResolvedValue([0]);
 
-    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-      exhaustedScope: expect.objectContaining({
-        exhaustedKind: 'allowance',
-        limitValue: 2_000_000,
-      }),
+    await expect(findExhaustedScope()).resolves.toMatchObject({
+      exhaustedKind: 'allowance',
+      limitValue: 2_000_000,
     });
   });
 
@@ -329,8 +319,8 @@ describe('UsageLimitQuotaService', () => {
     setAllowance(2_000_000);
     cacheStorage.mget.mockResolvedValue([0, 0]);
 
-    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-      exhaustedScope: expect.objectContaining({ exhaustedKind: 'allowance' }),
+    await expect(findExhaustedScope()).resolves.toMatchObject({
+      exhaustedKind: 'allowance',
     });
   });
 
@@ -340,8 +330,8 @@ describe('UsageLimitQuotaService', () => {
     creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
     cacheStorage.mget.mockResolvedValue([0]);
 
-    await expect(assertQuotaNotExhausted()).rejects.toMatchObject({
-      exhaustedScope: expect.objectContaining({ exhaustedKind: 'limit' }),
+    await expect(findExhaustedScope()).resolves.toMatchObject({
+      exhaustedKind: 'limit',
     });
     expect(cacheStorage.mget).toHaveBeenCalledWith([
       expect.not.stringContaining(':allowance:'),
@@ -361,7 +351,7 @@ describe('UsageLimitQuotaService', () => {
     });
     cacheStorage.mget.mockResolvedValue([undefined]);
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(cacheStorage.mset).toHaveBeenCalledWith([]);
   });
 
@@ -391,7 +381,7 @@ describe('UsageLimitQuotaService', () => {
         },
       ]);
 
-      await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+      await expect(findExhaustedScope()).resolves.toBeNull();
 
       expect(
         usageAnalyticsService.getConsumptionRowsForAllScopes,
@@ -412,7 +402,7 @@ describe('UsageLimitQuotaService', () => {
     setLimits([buildLimit({})]);
     cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(metricsService.incrementCounterBy).toHaveBeenCalledTimes(1);
     expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
       key: MetricsKeys.UsageLimitQuotaAdmittedOnFailure,
@@ -453,7 +443,7 @@ describe('UsageLimitQuotaService', () => {
       new Error('clickhouse unreachable'),
     );
 
-    await expect(assertQuotaNotExhausted()).resolves.toBeUndefined();
+    await expect(findExhaustedScope()).resolves.toBeNull();
     expect(cacheStorage.mset).not.toHaveBeenCalled();
   });
 
@@ -530,7 +520,7 @@ describe('UsageLimitQuotaService', () => {
       setLimits([buildLimit({})]);
       cacheStorage.mget.mockResolvedValue([250]);
 
-      await assertQuotaNotExhausted();
+      await findExhaustedScope();
 
       expect(
         entitlementProvider.hasIntraWorkspaceLimitEntitlement,
@@ -547,7 +537,7 @@ describe('UsageLimitQuotaService', () => {
       ]);
       cacheStorage.mget.mockResolvedValue([250]);
 
-      await assertQuotaNotExhausted();
+      await findExhaustedScope();
 
       expect(cacheStorage.mget.mock.calls[0][0]).toHaveLength(1);
     });
@@ -559,7 +549,7 @@ describe('UsageLimitQuotaService', () => {
       ]);
       cacheStorage.mget.mockResolvedValue([250, 250]);
 
-      await assertQuotaNotExhausted();
+      await findExhaustedScope();
 
       expect(cacheStorage.mget.mock.calls[0][0]).toHaveLength(2);
     });

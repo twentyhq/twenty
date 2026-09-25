@@ -1,6 +1,7 @@
 import { Inject, SetMetadata } from '@nestjs/common';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { QueryRunner } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
@@ -29,7 +30,7 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
+import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 import {
   WorkspaceMigrationActionRunnerContext,
@@ -58,7 +59,7 @@ export type ActionHandlerExecuteResult<TMetadataName extends AllMetadataName> =
       | MetadataToFlatEntityMapsKey<TMetadataName>
     >;
     metadataEvents: MetadataEvent[];
-    afterCommitSideEffects: AfterCommitSideEffect[];
+    deferredActions: DeferredWorkspaceMigrationAction[];
   };
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
@@ -142,10 +143,10 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     return Promise.resolve();
   }
 
-  protected getAfterCommitSideEffects(
+  protected getDeferredAction(
     _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
-  ): AfterCommitSideEffect[] {
-    return [];
+  ): DeferredWorkspaceMigrationAction | undefined {
+    return undefined;
   }
 
   private optimisticallyApplyActionOnAllFlatEntityMaps({
@@ -292,10 +293,16 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       allFlatEntityMaps: context.allFlatEntityMaps,
     });
 
-    const afterCommitSideEffects = this.getAfterCommitSideEffects({
+    const deferredAction = this.getDeferredAction({
       ...context,
       flatAction,
     });
+
+    const deferredActions: DeferredWorkspaceMigrationAction[] = isDefined(
+      deferredAction,
+    )
+      ? [deferredAction]
+      : [];
 
     const partialOptimisticCache =
       this.optimisticallyApplyActionOnAllFlatEntityMaps({
@@ -303,7 +310,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
         allFlatEntityMaps: context.allFlatEntityMaps,
       });
 
-    return { partialOptimisticCache, metadataEvents, afterCommitSideEffects };
+    return { partialOptimisticCache, metadataEvents, deferredActions };
   }
 
   async rollback(

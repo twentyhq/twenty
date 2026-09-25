@@ -1,6 +1,5 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
@@ -42,7 +41,7 @@ export const TabListDropdown = ({
         />
       }
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
             {hiddenTabs.map((tab) => {
               const isDisabled = tab.disabled ?? loading;
@@ -65,12 +64,12 @@ export const TabListDropdown = ({
                   indicator="check"
                   startIcon={<TabAvatar tab={tab} />}
                 >
-                  <OverflowingTextWithTooltip text={tab.title} />
+                  {tab.title}
                 </ListItem>
               );
             })}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

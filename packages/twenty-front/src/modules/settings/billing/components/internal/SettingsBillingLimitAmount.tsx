@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconCoins } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const CREDITS_UNIT_ICON_SIZE = 12;
 

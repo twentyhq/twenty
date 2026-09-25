@@ -2,11 +2,11 @@ import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNa
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import React, { useContext } from 'react';
+import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { Label } from 'twenty-ui/primitives/typography';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Text } from 'twenty-ui/primitives/typography';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTitle = styled.div`
   align-items: center;
@@ -79,7 +79,7 @@ export const NavigationDrawerSectionTitle = ({
   alwaysShowRightIcon = false,
   isOpen,
 }: NavigationDrawerSectionTitleProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -92,7 +92,9 @@ export const NavigationDrawerSectionTitle = ({
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
-        <Label className="section-title-label">{label}</Label>
+        <StyledDisplayLabel className="section-title-label">
+          {label}
+        </StyledDisplayLabel>
         {isOpen !== undefined && (
           <StyledChevron>
             <MotionIconChevronRight
@@ -117,3 +119,9 @@ export const NavigationDrawerSectionTitle = ({
     </StyledTitle>
   );
 };
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;

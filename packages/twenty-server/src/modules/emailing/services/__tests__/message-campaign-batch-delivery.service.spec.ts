@@ -1,4 +1,3 @@
-import { getDataSourceToken } from '@nestjs/typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 
@@ -10,11 +9,10 @@ import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain
 import { type SendSlotRefusal } from 'src/engine/core-modules/emailing-domain/types/send-slot-refusal.type';
 import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
 import { CLAIMABLE_CAMPAIGN_DELIVERY_STATES } from 'src/engine/core-modules/emailing-domain/constants/claimable-campaign-delivery-states.constant';
-import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
@@ -52,9 +50,13 @@ const buildJobData = (recipientCount: number) => ({
 
 // buildCampaignDeliverySettleQuery passes the settlement columns as parallel
 // arrays; this reads one back as rows.
-const decodeSettleCall = (parameters: unknown[]) => {
-  const [ids, states, , failureReasons, providerMessageIds] =
-    parameters as string[][];
+const decodeSettleCall = (parameters: Record<string, unknown>) => {
+  const {
+    deliveryIds: ids,
+    states,
+    failureReasons,
+    providerMessageIds,
+  } = parameters as Record<string, string[]>;
 
   return ids.map((id, index) => ({
     deliveryId: id,
@@ -67,25 +69,33 @@ const decodeSettleCall = (parameters: unknown[]) => {
 const buildHarness = () => {
   const claimedIds: string[] = [];
 
-  const queryBuilder = {
-    update: () => queryBuilder,
-    set: () => queryBuilder,
-    where: () => queryBuilder,
-    andWhere: () => queryBuilder,
-    returning: () => queryBuilder,
-    execute: jest.fn(async () => ({
-      raw: claimedIds.map((id) => ({ id })),
-    })),
+  const deliveryUpdateAssignments: Record<string, unknown>[] = [];
+
+  const buildDeliveryUpdateQueryBuilder = () => {
+    let isClaim = false;
+    const deliveryUpdateQueryBuilder = {
+      where: () => deliveryUpdateQueryBuilder,
+      update: () => deliveryUpdateQueryBuilder,
+      set: (assignments: Record<string, unknown>) => {
+        deliveryUpdateAssignments.push(assignments);
+        isClaim = assignments.state === CAMPAIGN_DELIVERY_STATE.SENDING;
+
+        return deliveryUpdateQueryBuilder;
+      },
+      returning: () => deliveryUpdateQueryBuilder,
+      execute: jest.fn(async () => ({
+        generatedMaps: isClaim ? claimedIds.map((id) => ({ id })) : [],
+      })),
+    };
+
+    return deliveryUpdateQueryBuilder;
   };
 
   const campaignDeliveryRepository = {
-    createQueryBuilder: () => queryBuilder,
-    update: jest.fn(
-      async (
-        _workspaceId: string,
-        _criteria: unknown,
-        _update: Record<string, unknown>,
-      ) => ({ affected: claimedIds.length }),
+    createQueryBuilder: jest.fn(buildDeliveryUpdateQueryBuilder),
+    executeRaw: jest.fn(
+      async (_sql: string, _parameters: Record<string, unknown>) =>
+        claimedIds.map((id) => ({ id })),
     ),
   };
 
@@ -110,6 +120,10 @@ const buildHarness = () => {
         return associationRepository;
       }
 
+      if (entity === CampaignDeliveryWorkspaceEntity) {
+        return campaignDeliveryRepository;
+      }
+
       return personRepository;
     }),
   };
@@ -119,7 +133,7 @@ const buildHarness = () => {
     findBlockedRecipientAddresses: jest.fn(async () => new Set<string>()),
   };
   const emailBillingService = {
-    getEmailCreditContext: jest.fn(async () => ({ hasCredits: true })),
+    findEmailSendRefusal: jest.fn(async () => null),
     billSentEmails: jest.fn(async () => undefined),
   };
   const campaignVariableService = {
@@ -152,21 +166,11 @@ const buildHarness = () => {
       ) => [],
     ),
   };
-  const dataSource = {
-    query: jest.fn(async (_sql: string, _parameters: unknown[]) =>
-      claimedIds.map((id) => ({ id })),
-    ),
-  };
 
   const buildService = async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MessageCampaignBatchDeliveryService,
-        {
-          provide: getWorkspaceScopedRepositoryToken(CampaignDeliveryEntity),
-          useValue: campaignDeliveryRepository,
-        },
-        { provide: getDataSourceToken(), useValue: dataSource },
         {
           provide: getQueueToken(MessageQueue.campaignSendQueue),
           useValue: messageQueueService,
@@ -196,8 +200,8 @@ const buildHarness = () => {
   return {
     buildService,
     claimedIds,
+    deliveryUpdateAssignments,
     campaignDeliveryRepository,
-    dataSource,
     emailingDomainSenderService,
     messageCampaignLifecycleService,
     campaignSendSlotService,
@@ -248,17 +252,12 @@ describe('MessageCampaignBatchDeliveryService', () => {
 
     await (await harness.buildService()).processSendBatchJob(buildJobData(1));
 
-    const settleCall =
-      harness.campaignDeliveryRepository.update.mock.calls.find(
-        ([, , update]) =>
-          (update as { failureReason?: string }).failureReason ===
-          CAMPAIGN_FAILURE_REASON.SANDBOX_ACCOUNT,
-      );
-
-    expect(settleCall).toBeDefined();
-    expect((settleCall?.[2] as { state: string }).state).toBe(
-      CAMPAIGN_DELIVERY_STATE.FAILED,
+    const sandboxSettlement = harness.deliveryUpdateAssignments.find(
+      (assignments) =>
+        assignments.failureReason === CAMPAIGN_FAILURE_REASON.SANDBOX_ACCOUNT,
     );
+
+    expect(sandboxSettlement?.state).toBe(CAMPAIGN_DELIVERY_STATE.FAILED);
   });
 
   it('rethrows a retriable provider failure so the job runs again', async () => {
@@ -288,7 +287,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
       suppressedRecipientIndexes: [],
     });
     // The settle statement fails once; the rescue reruns it.
-    harness.dataSource.query
+    harness.campaignDeliveryRepository.executeRaw
       .mockRejectedValueOnce(new Error('settle exploded'))
       .mockResolvedValue([{ id: 'message-0' }]);
 
@@ -297,7 +296,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
     ).rejects.toThrow('settle exploded');
 
     const [rescued] = decodeSettleCall(
-      harness.dataSource.query.mock.calls[1][1],
+      harness.campaignDeliveryRepository.executeRaw.mock.calls[1][1],
     );
 
     expect(CLAIMABLE_CAMPAIGN_DELIVERY_STATES).not.toContain(rescued.state);
@@ -318,7 +317,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
       ],
       suppressedRecipientIndexes: [],
     });
-    harness.dataSource.query
+    harness.campaignDeliveryRepository.executeRaw
       .mockRejectedValueOnce(new Error('settle exploded'))
       .mockResolvedValue([]);
 
@@ -326,7 +325,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
       (await harness.buildService()).processSendBatchJob(buildJobData(2)),
     ).rejects.toThrow('settle exploded');
 
-    const rescuedRows = harness.dataSource.query.mock.calls
+    const rescuedRows = harness.campaignDeliveryRepository.executeRaw.mock.calls
       .slice(1)
       .flatMap(([, parameters]) => decodeSettleCall(parameters));
 
@@ -349,7 +348,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
       ],
       suppressedRecipientIndexes: [],
     });
-    harness.dataSource.query
+    harness.campaignDeliveryRepository.executeRaw
       .mockRejectedValueOnce(new Error('settle exploded'))
       .mockResolvedValue([]);
 
@@ -360,7 +359,7 @@ describe('MessageCampaignBatchDeliveryService', () => {
     // Whatever the rescue does not reach is re-queued by the finally block, so
     // the rows the provider took have to be settled by the first of the two.
     const [acceptedFirst] = decodeSettleCall(
-      harness.dataSource.query.mock.calls[1][1],
+      harness.campaignDeliveryRepository.executeRaw.mock.calls[1][1],
     );
 
     expect(acceptedFirst.deliveryId).toBe('message-0');

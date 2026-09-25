@@ -1,10 +1,11 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { CONFIG_VARIABLE_SOURCE_OPTIONS } from '@/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions';
 import { type ConfigVariableFilterCategory } from '@/settings/admin-panel/config-variables/types/ConfigVariableFilterCategory';
 import { type ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -12,9 +13,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { MenuItem, ListItem } from 'twenty-ui/primitives/navigation';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
 type ConfigVariableOptionsDropdownContentProps = {
   selectedCategory: ConfigVariableFilterCategory | null;
   onSelectCategory: (category: ConfigVariableFilterCategory | null) => void;
@@ -38,7 +36,6 @@ export const ConfigVariableOptionsDropdownContent = ({
   onGroupFilterChange,
   onShowHiddenChange,
 }: ConfigVariableOptionsDropdownContentProps) => {
-  const { theme } = useContext(ThemeContext);
   const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
@@ -49,7 +46,7 @@ export const ConfigVariableOptionsDropdownContent = ({
 
   if (!selectedCategory) {
     return (
-      <DropdownContent>
+      <LegacyDropdownContent>
         <DropdownMenuItemsContainer>
           <ListItem
             onClick={() => onSelectCategory('source')}
@@ -80,34 +77,21 @@ export const ConfigVariableOptionsDropdownContent = ({
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
-          <MenuItem
-            text={
-              showHiddenGroupVariables
-                ? t`Hide hidden groups`
-                : t`Show hidden groups`
-            }
-            LeftIcon={() =>
-              showHiddenGroupVariables ? (
-                <IconEyeOff
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              ) : (
-                <IconEye
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              )
-            }
+          <ListItem
+            startIcon={showHiddenGroupVariables ? <IconEyeOff /> : <IconEye />}
             onClick={() => onShowHiddenChange(!showHiddenGroupVariables)}
-          />
+          >
+            {showHiddenGroupVariables
+              ? t`Hide hidden groups`
+              : t`Show hidden groups`}
+          </ListItem>
         </DropdownMenuItemsContainer>
-      </DropdownContent>
+      </LegacyDropdownContent>
     );
   }
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -167,6 +151,6 @@ export const ConfigVariableOptionsDropdownContent = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

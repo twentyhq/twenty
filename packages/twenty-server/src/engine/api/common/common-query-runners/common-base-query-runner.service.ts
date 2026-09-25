@@ -332,6 +332,9 @@ export abstract class CommonBaseQueryRunnerService<
           apiKeyId: isApiKeyAuthContext(authContext)
             ? authContext.apiKey.id
             : undefined,
+          applicationId: isUserAuthContext(authContext)
+            ? authContext.application?.id
+            : undefined,
         });
 
       if (!userHasPermission) {
@@ -381,7 +384,6 @@ export abstract class CommonBaseQueryRunnerService<
       rolePermissionConfig,
       repository,
       featureFlagsMap: context.featureFlagsMap,
-      isRecordSharingEnabled: context.isRecordSharingEnabled,
     };
   }
 

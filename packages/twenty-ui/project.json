@@ -6,6 +6,19 @@
   "tags": ["scope:shared"],
   "targets": {
     "build": { "dependsOn": ["^build"], "outputs": ["{projectRoot}/dist"] },
+    "check:ownership": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["generateBarrels"],
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/docs/module-ownership.json",
+        "{projectRoot}/scripts/checkModuleOwnership.ts"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/checkModuleOwnership.ts"
+      }
+    },
     "generateTokens": {
       "executor": "nx:run-commands",
       "cache": false,
@@ -98,7 +111,7 @@
       "inputs": ["production"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsx scripts/checkOptionalDependencies.ts"
+        "command": "tsx scripts/checkOptionalDependencies.ts && tsx scripts/checkThemeExports.ts"
       }
     },
     "clean": {
@@ -109,6 +122,7 @@
     "lint": {},
     "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } },
     "test": {
+      "dependsOn": ["check:ownership"],
       "executor": "nx:run-commands",
       "cache": true,
       "inputs": ["default", "^default"],

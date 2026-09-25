@@ -3,9 +3,9 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconPlus } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const INSERT_BUTTON_CLASS_NAME = css`
   background: ${themeCssVariables.background.transparent.primary};

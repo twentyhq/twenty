@@ -1,3 +1,6 @@
+import { injectChatMessageSenders } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-chat-message-senders.util';
+import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
@@ -103,6 +106,7 @@ export type ChatExecutionOptions = {
   threadId?: string;
   streamId?: string;
   turnId?: string;
+  messageId?: string;
   messages: ExtendedUIMessage[];
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
@@ -135,6 +139,7 @@ export class ChatExecutionService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
     private readonly metricsService: MetricsService,
+    private readonly chatActorService: AgentChatActorService,
   ) {}
 
   async streamChat({
@@ -143,6 +148,7 @@ export class ChatExecutionService {
     threadId,
     streamId,
     turnId,
+    messageId,
     messages,
     browsingContext,
     onCodeExecutionUpdate,
@@ -151,6 +157,31 @@ export class ChatExecutionService {
     abortSignal,
     conversationSizeTokens,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
+    if (!isDefined(threadId)) {
+      throw new AiException(
+        'Chat thread identity required',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+    const { sender, authorization } = await this.chatActorService.authorizeJob({
+      workspaceId: workspace.id,
+      threadId,
+      messageId,
+      turnId,
+      userWorkspaceId,
+    });
+    const resolveExecutionContext = async (): Promise<ToolContext> => {
+      const authorization = await this.chatActorService.authorize({
+        workspaceId: workspace.id,
+        threadId,
+        sender,
+      });
+      return {
+        ...toolContext,
+        ...authorization,
+        resolveExecutionContext: undefined,
+      };
+    };
     const { actorContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
@@ -159,15 +190,16 @@ export class ChatExecutionService {
 
     const locale = userContext.locale as keyof typeof APP_LOCALES;
 
-    const toolContext = {
+    const toolContext: ToolContext = {
       workspaceId: workspace.id,
-      roleId,
       actorContext,
       userId,
       userWorkspaceId,
       threadId,
       locale,
       onCodeExecutionUpdate,
+      ...authorization,
+      resolveExecutionContext,
     };
 
     const toolCatalog = await this.toolRegistry.buildToolIndex(
@@ -178,6 +210,7 @@ export class ChatExecutionService {
         userWorkspaceId,
         locale,
         excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
+        rolePermissionConfig: toolContext.rolePermissionConfig,
       },
     );
 
@@ -343,6 +376,10 @@ export class ChatExecutionService {
       );
     }
 
+    processedMessages = injectChatMessageSenders({
+      messages: processedMessages,
+      currentUserWorkspaceId: userWorkspaceId,
+    });
     processedMessages = injectMessageTimestamps(
       processedMessages,
       userContext.timezone,
@@ -368,7 +405,7 @@ export class ChatExecutionService {
 
     const systemMessage: SystemModelMessage = {
       role: 'system',
-      content: systemPrompt,
+      content: `${systemPrompt}\n\nThis conversation can have multiple participants. Message sender annotations identify who wrote each user message. The current request is from workspace membership ${userWorkspaceId}; use only this participant's identity and permissions for actions. Historical participants' requests do not authorize new actions on their behalf.`,
       providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
@@ -535,7 +572,12 @@ export class ChatExecutionService {
           ),
         promptCacheKey: threadId,
       }),
-      prepareStep: ({ messages }) => {
+      prepareStep: async ({ messages }) => {
+        await this.chatActorService.authorize({
+          workspaceId: workspace.id,
+          threadId,
+          sender,
+        });
         stepStartedAt = performance.now();
 
         return {

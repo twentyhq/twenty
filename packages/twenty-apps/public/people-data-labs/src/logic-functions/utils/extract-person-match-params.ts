@@ -1,7 +1,6 @@
 import { buildPersonNameParam } from 'src/logic-functions/utils/build-person-name-param';
-import { resolveMinLikelihood } from 'src/logic-functions/utils/resolve-min-likelihood';
 import { toText } from 'src/logic-functions/utils/to-text';
-import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
+import { type MinLikelihoods } from 'src/types/min-likelihoods';
 import { type PdlPersonEnrichParams } from 'src/types/pdl-person-enrich-params';
 import { type PersonNode } from 'src/types/person-node';
 import { isDefined } from 'src/utils/is-defined';
@@ -9,20 +8,16 @@ import { pruneUndefined } from 'src/utils/prune-undefined';
 
 export const extractPersonMatchParams = ({
   node,
-  input,
+  minLikelihoods,
 }: {
   node: PersonNode;
-  input: BulkEnrichInput;
+  minLikelihoods: MinLikelihoods;
 }): PdlPersonEnrichParams | undefined => {
   const existingPdlId = toText(node.pdlId);
   if (isDefined(existingPdlId)) {
     return {
       pdlId: existingPdlId,
-      minLikelihood: resolveMinLikelihood({
-        inputMinLikelihood: input.minLikelihood,
-        defaultMinLikelihood: process.env.PDL_PERSON_MIN_LIKELIHOOD,
-        hasStrongIdentifier: true,
-      }),
+      minLikelihood: minLikelihoods.strongIdentifierMinLikelihood,
     };
   }
 
@@ -52,10 +47,8 @@ export const extractPersonMatchParams = ({
 
   return {
     ...personMatchParams,
-    minLikelihood: resolveMinLikelihood({
-      inputMinLikelihood: input.minLikelihood,
-      defaultMinLikelihood: process.env.PDL_PERSON_MIN_LIKELIHOOD,
-      hasStrongIdentifier,
-    }),
+    minLikelihood: hasStrongIdentifier
+      ? minLikelihoods.strongIdentifierMinLikelihood
+      : minLikelihoods.weakIdentifierMinLikelihood,
   };
 };

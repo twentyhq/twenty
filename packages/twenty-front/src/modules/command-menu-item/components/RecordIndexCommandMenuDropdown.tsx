@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
@@ -6,7 +7,7 @@ import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/u
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -19,7 +20,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const StyledDropdownMenuContainer = styled.div`
@@ -78,7 +78,7 @@ export const RecordIndexCommandMenuDropdown = () => {
         y: recordIndexCommandMenuDropdownPosition.y ?? 0,
       }}
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <StyledDropdownMenuContainer
             data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
           >
@@ -100,21 +100,20 @@ export const RecordIndexCommandMenuDropdown = () => {
                       openSidePanelMenu();
                     }}
                   >
-                    <MenuItem
-                      LeftIcon={IconLayoutSidebarRightExpand}
+                    <ListItem
+                      startIcon={<IconLayoutSidebarRightExpand />}
                       onClick={() => {
                         closeDropdown(dropdownId);
                         openSidePanelMenu();
                       }}
                       focused={selectedItemId === 'more-actions'}
-                      text={t`More actions`}
-                    />
+                    >{t`More actions`}</ListItem>
                   </SelectableListItem>
                 )}
               </SelectableList>
             </DropdownMenuItemsContainer>
           </StyledDropdownMenuContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

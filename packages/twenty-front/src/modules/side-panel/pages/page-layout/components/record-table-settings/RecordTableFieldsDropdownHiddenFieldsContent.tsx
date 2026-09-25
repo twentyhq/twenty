@@ -1,19 +1,20 @@
-import { LightIconButton } from 'twenty-ui/components';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconEye, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
@@ -89,7 +90,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
   };
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -102,10 +103,12 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         {hiddenFieldMetadataItems.map((fieldMetadataItem) => (
-          <MenuItem
+          <ListItem
             key={fieldMetadataItem.id}
-            LeftIcon={getIcon(fieldMetadataItem.icon)}
-            iconButtons={
+            startIcon={
+              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+            }
+            actions={
               <LightIconButton
                 aria-label={t`Show field`}
                 onClick={() => handleShowField(fieldMetadataItem.id)}
@@ -113,10 +116,11 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
                 <IconEye />
               </LightIconButton>
             }
-            text={fieldMetadataItem.label}
-          />
+          >
+            {fieldMetadataItem.label}
+          </ListItem>
         ))}
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

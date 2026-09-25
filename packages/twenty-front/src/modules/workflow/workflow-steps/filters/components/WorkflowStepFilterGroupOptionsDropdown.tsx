@@ -1,14 +1,12 @@
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRemoveStepFilterGroup } from '@/workflow/workflow-steps/filters/hooks/useRemoveStepFilterGroup';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { Dropdown, IconButton } from 'twenty-ui/components';
 
 type WorkflowStepFilterGroupOptionsDropdownProps = {
   stepFilterGroupId: string;
@@ -22,30 +20,36 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
   const { removeStepFilterGroup } = useRemoveStepFilterGroup();
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={`step-filter-group-options-${stepFilterGroupId}`}
-      clickableComponent={
-        <IconButton
-          aria-label={t`Step filter group options`}
-          variant="ghost"
-          disabled={readonly}
-        >
-          <IconDotsVertical />
-        </IconButton>
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconTrash}
-              text={t`Delete group`}
-              onClick={() => removeStepFilterGroup(stepFilterGroupId)}
-              accent="danger"
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-      dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
-    />
+      type="menu"
+    >
+      <Dropdown.Trigger
+        disabled={readonly}
+        render={
+          <IconButton
+            aria-label={t`Step filter group options`}
+            variant="ghost"
+            disabled={readonly}
+          >
+            <IconDotsVertical />
+          </IconButton>
+        }
+      />
+      <DropdownContent
+        align="end"
+        sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET.y}
+      >
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            startIcon={<IconTrash />}
+            onClick={() => removeStepFilterGroup(stepFilterGroupId)}
+            color="danger"
+          >
+            {t`Delete group`}
+          </Dropdown.ActionItem>
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

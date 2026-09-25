@@ -1,3 +1,4 @@
+import { AppChip } from '@/applications/components/AppChip';
 import {
   StyledActionTableCell,
   StyledNameTableCell,
@@ -5,12 +6,10 @@ import {
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { AppChip } from '@/applications/components/AppChip';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type ApplicationContentRow = {
   key: string;
@@ -37,7 +36,7 @@ export const SettingsApplicationContentSubtable = ({
     name?: string | null;
   };
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { getIcon } = useIcons();
 
   if (rows.length === 0) {

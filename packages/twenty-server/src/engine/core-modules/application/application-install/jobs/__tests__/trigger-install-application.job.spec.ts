@@ -26,6 +26,7 @@ describe('TriggerInstallApplicationJob', () => {
     expect(applicationInstallService.installApplication).toHaveBeenCalledWith({
       appRegistrationId: jobData.applicationRegistrationId,
       workspaceId: jobData.workspaceId,
+      hasUserApprovedCapabilities: true,
     });
   });
 

@@ -22,19 +22,6 @@ export type FileUploadFailure = {
 
 const DIRECT_UPLOAD_CONCURRENCY = 10;
 
-const isMissingDirectUploadMutationError = (error: unknown): boolean => {
-  const message = serializeError(error);
-
-  return (
-    (message.includes('createApplicationFileUploads') ||
-      message.includes('ApplicationFileUploadRequestInput') ||
-      message.includes('CreateApplicationFileUploads')) &&
-    (message.includes('Cannot query field') ||
-      message.includes('Unknown type') ||
-      message.includes('Unknown field'))
-  );
-};
-
 export class FileUploader {
   private apiService = new ApiService();
   private applicationUniversalIdentifier: string;
@@ -92,14 +79,6 @@ export class FileUploader {
     });
 
     if (!createResult.success) {
-      if (
-        isMissingDirectUploadMutationError(
-          createResult.error ?? createResult.message,
-        )
-      ) {
-        return this.uploadBatchWithMultipartMutation(batch);
-      }
-
       return this.failWholeBatch(batch, serializeError(createResult.error));
     }
 
@@ -162,30 +141,6 @@ export class FileUploader {
         error: error.message,
       });
     }
-
-    return failures;
-  }
-
-  private async uploadBatchWithMultipartMutation(
-    batch: FileToUpload[],
-  ): Promise<FileUploadFailure[]> {
-    const failures: FileUploadFailure[] = [];
-
-    await this.runWithConcurrency(batch, async ({ builtPath, fileFolder }) => {
-      const result = await this.apiService.uploadFile({
-        filePath: path.join(this.appPath, builtPath),
-        builtHandlerPath: relative(OUTPUT_DIR, builtPath),
-        fileFolder,
-        applicationUniversalIdentifier: this.applicationUniversalIdentifier,
-      });
-
-      if (!result.success) {
-        failures.push({
-          builtPath,
-          error: serializeError(result.error ?? result.message),
-        });
-      }
-    });
 
     return failures;
   }

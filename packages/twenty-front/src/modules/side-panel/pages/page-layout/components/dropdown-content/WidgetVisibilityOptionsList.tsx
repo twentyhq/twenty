@@ -1,4 +1,3 @@
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { VISIBILITY_OPTIONS } from '@/side-panel/pages/page-layout/constants/VisibilityOptions';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -55,7 +54,7 @@ export const WidgetVisibilityOptionsList = ({
               selected={currentOptionId === option.id}
               indicator="check"
             >
-              <OverflowingTextWithTooltip text={visibilityLabels[option.id]} />
+              {visibilityLabels[option.id]}
             </ListItem>
           </SelectableListItem>
         ))}

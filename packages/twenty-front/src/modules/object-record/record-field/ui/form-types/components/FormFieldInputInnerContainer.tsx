@@ -1,10 +1,11 @@
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { forwardRef, type HTMLAttributes, type Ref } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type FormFieldInputInnerContainerProps = {
   hasRightElement: boolean;
@@ -12,6 +13,7 @@ type FormFieldInputInnerContainerProps = {
   multiline?: boolean;
   readonly?: boolean;
   preventFocusStackUpdate?: boolean;
+  enableGlobalEscapeHotkeysConflictingWithKeyboard?: boolean;
   formFieldInputInstanceId: string;
   variant?: FormFieldInputVariant;
 };
@@ -87,6 +89,7 @@ export const FormFieldInputInnerContainer = forwardRef(
       multiline,
       readonly,
       preventFocusStackUpdate = false,
+      enableGlobalEscapeHotkeysConflictingWithKeyboard = true,
       onClick,
       formFieldInputInstanceId,
       variant = 'default',
@@ -96,6 +99,11 @@ export const FormFieldInputInnerContainer = forwardRef(
     const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
     const { removeFocusItemFromFocusStackById } =
       useRemoveFocusItemFromFocusStackById();
+
+    useRemoveFocusItemFromFocusStackOnUnmount({
+      focusId: formFieldInputInstanceId,
+      isEnabled: !preventFocusStackUpdate,
+    });
 
     const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
       onFocus?.(e);
@@ -109,6 +117,7 @@ export const FormFieldInputInnerContainer = forwardRef(
           },
           globalHotkeysConfig: {
             enableGlobalHotkeysConflictingWithKeyboard: false,
+            enableGlobalEscapeHotkeysConflictingWithKeyboard,
           },
         });
       }

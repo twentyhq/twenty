@@ -10,7 +10,7 @@ import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpd
 import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/update-record-form-data.type';
+import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/UpdateRecordFormData';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';

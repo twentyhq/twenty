@@ -22,7 +22,7 @@ export interface WorkspaceInternalContext {
   objectIdByNameSingular: Record<string, string>;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   billingEntitlements: BillingEntitlements;
-  isRecordSharingEnabled: boolean;
+  isLegacyRecordAccessOpen?: boolean;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;

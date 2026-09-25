@@ -184,6 +184,9 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
       Record<string, Partial<Record<string, string>>>
     > =
       'partPropDescriptions' in component ? component.partPropDescriptions : {};
+    const partPropDefaults: Partial<
+      Record<string, Partial<Record<string, string>>>
+    > = 'partPropDefaults' in component ? component.partPropDefaults : {};
     const componentParts = type
       .getProperties()
       .filter((part) => COMPONENT_PART_NAME_PATTERN.test(part.name))
@@ -211,6 +214,7 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
           symbol: partSymbol,
           name: `${component.name}.${part.name}`,
           propDescriptions: partPropDescriptions[part.name],
+          propDefaults: partPropDefaults[part.name],
         }),
       };
     });

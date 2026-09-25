@@ -2,7 +2,9 @@ import { useCallback } from 'react';
 
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { currentGlobalHotkeysConfigSelector } from '@/ui/utilities/focus/states/currentGlobalHotkeysConfigSelector';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { useStore } from 'jotai';
+import { Key } from 'ts-key-enum';
 import {
   type Hotkey,
   type OptionsOrDependencyArray,
@@ -50,9 +52,16 @@ export const useGlobalHotkeysCallback = (
         return;
       }
 
+      const isAllowedGlobalEscapeHotkey =
+        currentGlobalHotkeysConfig.enableGlobalEscapeHotkeysConflictingWithKeyboard ===
+          true &&
+        keyboardEvent.key === Key.Escape &&
+        !isKeyboardEventComposing(keyboardEvent);
+
       if (
         !containsModifier &&
-        !currentGlobalHotkeysConfig.enableGlobalHotkeysConflictingWithKeyboard
+        !currentGlobalHotkeysConfig.enableGlobalHotkeysConflictingWithKeyboard &&
+        !isAllowedGlobalEscapeHotkey
       ) {
         if (DEBUG_FOCUS_STACK) {
           logDebug(

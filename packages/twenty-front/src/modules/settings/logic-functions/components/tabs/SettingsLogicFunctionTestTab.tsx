@@ -22,7 +22,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type TriggerButton = {
   kind: TriggerKind;
@@ -172,6 +172,7 @@ export const SettingsLogicFunctionTestTab = ({
             onChange={onChange}
             variant="with-header"
             resizable
+            resizeLabel={t`Resize input`}
           />
         </StyledCodeEditorContainer>
         <LogicFunctionExecutionResult

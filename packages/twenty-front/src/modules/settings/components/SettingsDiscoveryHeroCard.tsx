@@ -4,9 +4,9 @@ import { HeroPlayButton } from '@/ui/layout/hero/components/HeroPlayButton';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useThemeColorScheme, themeCssVariables } from 'twenty-ui/theme';
 
 const DEFAULT_COVER_HEIGHT = 150;
 
@@ -61,7 +61,7 @@ export const SettingsDiscoveryHeroCard = ({
   playButtonAriaLabel,
 }: SettingsDiscoveryHeroCardProps) => {
   const { t } = useLingui();
-  const { colorScheme } = useContext(ThemeContext);
+  const colorScheme = useThemeColorScheme();
   const { openDialog } = useDialog();
   const shouldDisplayVideo = tabs.length > 0;
 

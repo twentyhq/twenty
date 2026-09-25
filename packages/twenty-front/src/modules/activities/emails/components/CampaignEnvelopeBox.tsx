@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type MouseEventHandler, type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 

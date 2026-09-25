@@ -43,8 +43,9 @@ jest.mock(
     })),
   }),
 );
-jest.mock('@/ui/layout/dropdown/components/DropdownContent', () => ({
-  DropdownContent: ({ children }: { children: React.ReactNode }) => children,
+jest.mock('@/ui/layout/dropdown/components/LegacyDropdownContent', () => ({
+  LegacyDropdownContent: ({ children }: { children: React.ReactNode }) =>
+    children,
 }));
 jest.mock(
   '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader',
@@ -93,7 +94,6 @@ jest.mock('twenty-ui/primitives/data-display', () => ({
   Pill: ({ label }: { label: string }) => <span>{label}</span>,
 }));
 jest.mock('twenty-ui/primitives/navigation', () => ({
-  MenuItem: ({ text }: { text: string }) => <span>{text}</span>,
   ListItem: ({
     description,
     disabled,

@@ -25,7 +25,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
@@ -106,10 +106,13 @@ describe('ObjectRecordEventPublisher', () => {
     >
   >;
   let mockRecordSharingFeatureService: jest.Mocked<
-    Pick<RecordSharingFeatureService, 'isRecordSharingEnabled'>
+    Pick<
+      RecordSharingFeatureService,
+      'isRecordSharingEnabled' | 'isLegacyRecordAccessOpen'
+    >
   >;
-  let mockRecordShareService: jest.Mocked<
-    Pick<RecordShareService, 'findByRecordIds'>
+  let mockRecordShareStorageService: jest.Mocked<
+    Pick<RecordShareStorageService, 'findByRecordIds'>
   >;
 
   const workspaceId = COMPANY_FLAT_OBJECT_MOCK.workspaceId;
@@ -208,6 +211,8 @@ describe('ObjectRecordEventPublisher', () => {
   const createPermissionsContext = (
     overrides: PermissionsContextOverrides = {},
   ) => ({
+    flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+    billingEntitlements: {},
     flatRowLevelPermissionPredicateMaps: {
       byId: {},
       idByUniversalIdentifier: {},
@@ -278,11 +283,12 @@ describe('ObjectRecordEventPublisher', () => {
       processNestedRelations: jest.fn(),
     };
 
-    mockRecordShareService = {
+    mockRecordShareStorageService = {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     };
 
     mockRecordSharingFeatureService = {
+      isLegacyRecordAccessOpen: jest.fn().mockResolvedValue(false),
       isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
     };
 
@@ -337,8 +343,8 @@ describe('ObjectRecordEventPublisher', () => {
           useValue: new CommonSelectFieldsHelper(),
         },
         {
-          provide: RecordShareService,
-          useValue: mockRecordShareService,
+          provide: RecordShareStorageService,
+          useValue: mockRecordShareStorageService,
         },
         {
           provide: RecordSharingFeatureService,
@@ -503,7 +509,9 @@ describe('ObjectRecordEventPublisher', () => {
         events: [createMockEvent()],
       } as WorkspaceEventBatch<never>);
 
-      expect(mockRecordShareService.findByRecordIds).not.toHaveBeenCalled();
+      expect(
+        mockRecordShareStorageService.findByRecordIds,
+      ).not.toHaveBeenCalled();
       expect(
         mockSubscriptionService.publishToEventStream,
       ).not.toHaveBeenCalled();
@@ -552,17 +560,13 @@ describe('ObjectRecordEventPublisher', () => {
       });
     });
 
-    it('should only publish events of a private object for records shared with the subscriber', async () => {
+    it('only publishes shared private records after metadata activation', async () => {
       const privateObjectMetadata: FlatObjectMetadata = {
         ...companyObjectMetadata,
         readability: MetadataReadability.PRIVATE,
       };
 
-      mockRecordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
-        true,
-      );
-
-      mockRecordShareService.findByRecordIds.mockResolvedValue([
+      mockRecordShareStorageService.findByRecordIds.mockResolvedValue([
         {
           id: 'record-share-1',
           recordId: 'record-1',
@@ -590,7 +594,9 @@ describe('ObjectRecordEventPublisher', () => {
 
       await service.publish(eventBatch as WorkspaceEventBatch<never>);
 
-      expect(mockRecordShareService.findByRecordIds).toHaveBeenCalledWith({
+      expect(
+        mockRecordShareStorageService.findByRecordIds,
+      ).toHaveBeenCalledWith({
         workspaceId,
         objectMetadataId: privateObjectMetadata.id,
         recordIds: ['record-1', 'record-2'],
@@ -608,7 +614,7 @@ describe('ObjectRecordEventPublisher', () => {
       ).toEqual(['record-1']);
     });
 
-    it('should read the record sharing entitlement once for a batch whatever the subscriber count', async () => {
+    it('publishes a batch without consulting the sharing rollout flag', async () => {
       mockRecordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
         true,
       );
@@ -633,7 +639,7 @@ describe('ObjectRecordEventPublisher', () => {
       ).toHaveBeenCalledTimes(3);
       expect(
         mockRecordSharingFeatureService.isRecordSharingEnabled,
-      ).toHaveBeenCalledTimes(1);
+      ).not.toHaveBeenCalled();
     });
 
     it('should not publish events when record does not match RLS filter', async () => {

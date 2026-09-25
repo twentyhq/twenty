@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { USAGE_LIMIT_SPENDER_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitSpenderTypeIcons';
@@ -37,7 +36,7 @@ type SettingsBillingLimitSpenderCellProps = {
 export const SettingsBillingLimitSpenderCell = ({
   row,
 }: SettingsBillingLimitSpenderCellProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isWorkspaceWide = row.spenderType === 'workspace';

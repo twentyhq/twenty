@@ -332,6 +332,16 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [],
   },
+  "settingsMenuItem": {
+    "propertiesToCompare": [
+      "frontComponentUniversalIdentifier",
+      "title",
+      "icon",
+      "position",
+      "scope",
+    ],
+    "propertiesToStringify": [],
+  },
   "skill": {
     "propertiesToCompare": [
       "name",
@@ -383,6 +393,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "mainGroupByFieldMetadataUniversalIdentifier",
       "shouldHideEmptyGroups",
       "kanbanColumnWidth",
+      "groupLoadLimit",
       "isActive",
       "universalOverrides",
     ],
@@ -475,6 +486,27 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [
       "operations",
+    ],
+  },
+  "workflow": {
+    "propertiesToCompare": [
+      "name",
+      "visibility",
+      "lastPublishedVersionId",
+      "lastPublishedCoreWorkflowVersionId",
+    ],
+    "propertiesToStringify": [],
+  },
+  "workflowVersion": {
+    "propertiesToCompare": [
+      "status",
+      "triggers",
+      "steps",
+      "coreWorkflowId",
+    ],
+    "propertiesToStringify": [
+      "triggers",
+      "steps",
     ],
   },
 }

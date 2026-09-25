@@ -17,7 +17,7 @@ import {
   type RelativeDateFilterDirection,
   type RelativeDateFilterUnit,
 } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div<{ noPadding: boolean }>`
   display: flex;

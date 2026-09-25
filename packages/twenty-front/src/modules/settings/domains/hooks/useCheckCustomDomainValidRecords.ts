@@ -4,7 +4,7 @@ import { customDomainRecordsState } from '@/settings/domains/states/customDomain
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { CheckCustomDomainValidRecordsDocument } from '~/generated-metadata/graphql';
 
 export const useCheckCustomDomainValidRecords = () => {

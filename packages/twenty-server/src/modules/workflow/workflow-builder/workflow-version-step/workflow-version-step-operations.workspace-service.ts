@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
@@ -15,7 +14,6 @@ import {
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
 } from 'twenty-shared/workflow';
-import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
@@ -78,8 +76,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly agentService: AgentService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -146,6 +144,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         break;
       }
     }
+  }
+
+  private async findFirstActiveObjectMetadata(workspaceId: string) {
+    return this.objectMetadataRepository.findOne(workspaceId, {
+      where: { isActive: true, isSystem: false },
+    });
   }
 
   async runStepCreationSideEffectsAndBuildStep({
@@ -374,9 +378,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.CREATE_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -395,9 +397,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.UPDATE_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -418,9 +418,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.DELETE_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -439,9 +437,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.UPSERT_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -461,9 +457,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.FIND_RECORDS: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -483,9 +477,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.PICK_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -569,7 +561,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: 'AI Agent',
+            name: 'Agent',
             type: WorkflowActionType.AI_AGENT,
             settings: {
               ...BASE_STEP_DEFINITION,
@@ -594,10 +586,16 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 questions: [
                   {
                     id: v4(),
-                    name: 'category',
+                    name: '',
                     type: 'choice',
                     instructions: '',
-                    criteria: [],
+                    criteria: [
+                      {
+                        id: v4(),
+                        name: 'Lawyer',
+                        description: 'Advises clients on legal matters',
+                      },
+                    ],
                   },
                 ],
               },

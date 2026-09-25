@@ -1,21 +1,20 @@
-import { useLocation } from 'react-router-dom';
-
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
-
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ViewFieldsHiddenDropdownSection } from '@/views/components/ViewFieldsHiddenDropdownSection';
 import { useLingui } from '@lingui/react/macro';
+import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
-import { MenuItem, UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const { t } = useLingui();
@@ -36,7 +35,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -57,9 +56,9 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
         }}
       >
         <DropdownMenuItemsContainer scrollable={false}>
-          <MenuItem LeftIcon={IconSettings} text={t`Edit Fields`} />
+          <ListItem startIcon={<IconSettings />}>{t`Edit Fields`}</ListItem>
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

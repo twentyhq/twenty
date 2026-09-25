@@ -1,4 +1,4 @@
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -25,7 +25,7 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const [searchValue, setSearchValue] = useState('');
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -48,6 +48,6 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
       {availableWorkspaces.availableWorkspacesForSignUp.length > 0 && (
         <WorkspacesForSignUp searchValue={searchValue} />
       )}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

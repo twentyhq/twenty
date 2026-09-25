@@ -1,10 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { SettingsRow } from 'twenty-ui/components';
+
 import { IconAlertTriangle, IconMessage, IconSparkles } from 'twenty-ui/icon';
+
 import { type AdminChatsFilterState } from '@/settings/admin-panel/chats/types/AdminChatsFilterState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
 type SettingsAdminChatsFilterDropdownProps = {
@@ -25,7 +27,7 @@ export const SettingsAdminChatsFilterDropdown = ({
       dropdownOffset={{ x: 0, y: 8 }}
       clickableComponent={filterButton}
       dropdownComponents={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
             <SettingsRow
               startIcon={<IconSparkles />}
@@ -58,7 +60,7 @@ export const SettingsAdminChatsFilterDropdown = ({
               checked={filters.userNeverEngagedOnly}
             >{t`No user reply`}</SettingsRow>
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

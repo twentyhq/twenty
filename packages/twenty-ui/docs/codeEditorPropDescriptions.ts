@@ -23,6 +23,8 @@ export const CODE_EDITOR_PROP_DESCRIPTIONS = {
   transparentBackground:
     'Removes the editor background so the surrounding surface shows through.',
   resizable: 'Adds a handle below the editor to drag its height.',
+  resizeLabel:
+    'Accessible name of the resize handle. Pass a localized label when `resizable` is enabled.',
   contentPadding:
     '`default` pads the top and bottom of the content. `comfortable` also widens the gap between line numbers and code.',
   autoHeight:

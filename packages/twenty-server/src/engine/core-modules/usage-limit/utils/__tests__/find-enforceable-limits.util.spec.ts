@@ -4,7 +4,11 @@ import { findEnforceableLimits } from 'src/engine/core-modules/usage-limit/utils
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-const buildLimit = (spenderType: SpenderType, id: string): FlatUsageLimit => ({
+const buildLimit = (
+  spenderType: SpenderType,
+  id: string,
+  isInstanceOverride = false,
+): FlatUsageLimit => ({
   id,
   resourceType: UsageResourceType.API,
   operationType: UsageOperationType.API_REQUEST,
@@ -16,6 +20,7 @@ const buildLimit = (spenderType: SpenderType, id: string): FlatUsageLimit => ({
   meter: 'quantity',
   limitValue: 100,
   burstValue: null,
+  isInstanceOverride,
 });
 
 describe('findEnforceableLimits', () => {
@@ -39,5 +44,16 @@ describe('findEnforceableLimits', () => {
         isIntraWorkspaceLimitEntitled: false,
       }),
     ).toEqual([workspaceLimit]);
+  });
+
+  it('keeps an operator override on an unentitled workspace, since the plan sells what a tenant may cap, not what the instance may', () => {
+    const operatorApiKeyLimit = buildLimit('apiKey', 'operator-ak', true);
+
+    expect(
+      findEnforceableLimits({
+        limits: [userWorkspaceLimit, apiKeyLimit, operatorApiKeyLimit],
+        isIntraWorkspaceLimitEntitled: false,
+      }),
+    ).toEqual([operatorApiKeyLimit]);
   });
 });

@@ -1,6 +1,5 @@
-import { expect, userEvent, waitFor, within } from 'storybook/test';
-
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 export const iconButtonElevatedTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,

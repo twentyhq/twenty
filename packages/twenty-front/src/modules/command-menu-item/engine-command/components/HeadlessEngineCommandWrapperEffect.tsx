@@ -4,7 +4,7 @@ import { CommandComponentInstanceContext } from '@/command-menu-item/engine-comm
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useEffect } from 'react';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 export type HeadlessEngineCommandWrapperEffectProps = {
   execute: () => void | Promise<unknown>;

@@ -3,7 +3,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -14,14 +14,19 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useContext, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   assertUnreachable,
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { SettingsRow, Section } from 'twenty-ui/components';
+import {
+  SearchInput,
+  Section,
+  SettingsRow,
+  useToast,
+} from 'twenty-ui/components';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -29,9 +34,8 @@ import {
   IconRefresh,
 } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 import {
   type ApplicationRegistrationFragmentFragment,
@@ -215,7 +219,7 @@ export const SettingsAdminApps = () => {
               dropdownOffset={{ x: 0, y: 8 }}
               clickableComponent={filterButton}
               dropdownComponents={
-                <DropdownContent>
+                <LegacyDropdownContent>
                   <DropdownMenuItemsContainer>
                     <SettingsRow
                       startIcon={<IconPinned />}
@@ -271,7 +275,7 @@ export const SettingsAdminApps = () => {
                       checked={isConfiguredFilter === false}
                     >{t`Not configured`}</SettingsRow>
                   </DropdownMenuItemsContainer>
-                </DropdownContent>
+                </LegacyDropdownContent>
               }
             />
           )}
@@ -332,7 +336,7 @@ const SettingsAdminAppsTableRow = ({
   registration,
   getFormattedSource,
 }: SettingsAdminAppsTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <TableRow

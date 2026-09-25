@@ -10,8 +10,8 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Label } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSectionHeader = styled.div`
   align-items: center;
@@ -102,7 +102,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
     return (
       <>
         <StyledSectionHeader>
-          <Label>{t`All`}</Label>
+          <StyledDisplayLabel>{t`All`}</StyledDisplayLabel>
           <div></div>
           <>
             {shouldShowEmptyTableHeader && <div />}
@@ -131,3 +131,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       </>
     );
   };
+
+const StyledDisplayLabel = styled(Text)`
+  color: var(--t-font-color-light);
+  font-size: 11px;
+  font-weight: var(--t-font-weight-semi-bold);
+`;
