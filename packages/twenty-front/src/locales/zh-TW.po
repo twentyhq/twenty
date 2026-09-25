@@ -287,12 +287,6 @@ msgstr "{0}/{1}"
 msgid "{0} opted out of this topic"
 msgstr "{0} 已選擇不接收此主題"
 
-#. js-lingui-id: q1Pok/
-#. placeholder {0}: formatNumber(counts.overCap)
-#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
-msgid "{0} over the recipient limit"
-msgstr "{0} 位超過收件人上限"
-
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -19728,11 +19722,6 @@ msgstr "在不發佈到市集的情況下，將您的應用程式分享到其他
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Shared email"
 msgstr "共用電子郵件"
-
-#. js-lingui-id: NyIsOu
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-msgid "Sharing link copied to clipboard"
-msgstr "分享連結已複製到剪貼簿"
 
 #. js-lingui-id: Z+MFnO
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx

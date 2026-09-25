@@ -282,12 +282,6 @@ msgstr ""
 msgid "{0} opted out of this topic"
 msgstr ""
 
-#. js-lingui-id: q1Pok/
-#. placeholder {0}: formatNumber(counts.overCap)
-#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
-msgid "{0} over the recipient limit"
-msgstr ""
-
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -19722,11 +19716,6 @@ msgstr ""
 #. js-lingui-id: JTP6zD
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Shared email"
-msgstr ""
-
-#. js-lingui-id: NyIsOu
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-msgid "Sharing link copied to clipboard"
 msgstr ""
 
 #. js-lingui-id: Z+MFnO

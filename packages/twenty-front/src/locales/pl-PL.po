@@ -287,12 +287,6 @@ msgstr "{0} z {1}"
 msgid "{0} opted out of this topic"
 msgstr "{0} zrezygnowało z tego tematu"
 
-#. js-lingui-id: q1Pok/
-#. placeholder {0}: formatNumber(counts.overCap)
-#: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
-msgid "{0} over the recipient limit"
-msgstr "{0} przekraczających limit odbiorców"
-
 #. js-lingui-id: 55frRG
 #. placeholder {0}: index + 1
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -19751,11 +19745,6 @@ msgstr "Udostępnij swoją aplikację innym przestrzeniom roboczym bez publikowa
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Shared email"
 msgstr "Współdzielony e-mail"
-
-#. js-lingui-id: NyIsOu
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-msgid "Sharing link copied to clipboard"
-msgstr "Link do udostępniania został skopiowany do schowka"
 
 #. js-lingui-id: Z+MFnO
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
