@@ -36,9 +36,9 @@ export class OAuthService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
-    // The OAuth token endpoint authenticates a client, not a workspace: it
-    // resolves installs from the registration or the token's applicationId
-    // before any workspace is known.
+    // The client-credentials grant counts a registration's installs across
+    // every workspace to enforce that exactly one exists, so that one read has
+    // no workspace to scope by.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly unscopedApplicationRepository: Repository<ApplicationEntity>,
@@ -387,9 +387,12 @@ export class OAuthService {
         );
 
       // Verify the refresh token belongs to this client
-      const application = await this.unscopedApplicationRepository.findOne({
-        where: { id: payload.applicationId },
-      });
+      const application = await this.applicationRepository.findOne(
+        payload.workspaceId,
+        {
+          where: { id: payload.applicationId },
+        },
+      );
 
       if (
         !application ||
@@ -479,9 +482,12 @@ export class OAuthService {
       // behind it, and only the client the token was issued to may ask for
       // that. Access tokens stay stateless and live out their few minutes.
       if (isDefined(applicationRegistration) && isDefined(payload.userId)) {
-        const application = await this.unscopedApplicationRepository.findOne({
-          where: { id: payload.applicationId },
-        });
+        const application = await this.applicationRepository.findOne(
+          payload.workspaceId,
+          {
+            where: { id: payload.applicationId },
+          },
+        );
 
         if (
           application?.applicationRegistrationId === applicationRegistration.id
@@ -548,9 +554,12 @@ export class OAuthService {
       }
 
       // Verify the token belongs to this client
-      const application = await this.unscopedApplicationRepository.findOne({
-        where: { id: decoded.applicationId },
-      });
+      const application = await this.applicationRepository.findOne(
+        decoded.workspaceId,
+        {
+          where: { id: decoded.applicationId },
+        },
+      );
 
       if (
         !application ||
@@ -587,9 +596,12 @@ export class OAuthService {
             token,
           );
 
-        const application = await this.unscopedApplicationRepository.findOne({
-          where: { id: payload.applicationId },
-        });
+        const application = await this.applicationRepository.findOne(
+          payload.workspaceId,
+          {
+            where: { id: payload.applicationId },
+          },
+        );
 
         if (
           !application ||
