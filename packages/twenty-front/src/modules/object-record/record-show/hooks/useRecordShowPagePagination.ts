@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useState } from 'react';
 import {
@@ -12,20 +11,16 @@ import {
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
-import { computeCursorArgFilter } from '@/object-record/graphql/utils/computeCursorArgFilter';
 import { extractOrderByFieldNames } from '@/object-record/graphql/utils/extractOrderByFieldNames';
 import { reverseOrderBy } from '@/object-record/graphql/utils/reverseOrderBy';
+import { computeRecordShowNeighborQueryArgs } from '@/object-record/record-show/utils/computeRecordShowNeighborQueryArgs';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
-import {
-  AppPath,
-  type QueryCursorDirection,
-  SidePanelPages,
-} from 'twenty-shared/types';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { combineFilters, getAppPath, isDefined } from 'twenty-shared/utils';
 
 export const useRecordShowPagePagination = (
@@ -109,27 +104,17 @@ export const useRecordShowPagePagination = (
         }
       : undefined;
 
-  const beforeFilter = isDefined(currentRecordKeysetValues)
-    ? computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: currentRecordKeysetValues,
-        isForwardPagination: false,
-      })
-    : undefined;
-
-  const afterFilter = isDefined(currentRecordKeysetValues)
-    ? computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: currentRecordKeysetValues,
-        isForwardPagination: true,
-      })
-    : undefined;
-
-  const hasNeighborQueryArgs =
-    isDefined(beforeFilter) &&
-    isDefined(afterFilter) &&
-    isNonEmptyString(currentRecordCursor);
-  const skipNeighborQueries = loadingCurrentRecord || !hasNeighborQueryArgs;
+  const {
+    hasNeighborQueryArgs,
+    skipNeighborQueries,
+    before: beforeNeighborQueryArgs,
+    after: afterNeighborQueryArgs,
+  } = computeRecordShowNeighborQueryArgs({
+    orderBy,
+    currentRecordKeysetValues,
+    currentRecordCursor,
+    isLoadingCurrentRecord: loadingCurrentRecord,
+  });
 
   const baseNeighborOptions = {
     skip: skipNeighborQueries,
@@ -143,11 +128,6 @@ export const useRecordShowPagePagination = (
     [filter, deletedOnlyFilter].filter(isDefined),
   );
 
-  const buildNeighborCursorFilter = (cursorDirection: QueryCursorDirection) =>
-    isNonEmptyString(currentRecordCursor)
-      ? { cursor: currentRecordCursor, cursorDirection }
-      : undefined;
-
   const {
     loading: loadingRecordBefore,
     records: recordsBefore,
@@ -155,9 +135,11 @@ export const useRecordShowPagePagination = (
   } = useFindManyRecords({
     ...baseNeighborOptions,
     fetchPolicy: 'network-only',
-    filter: combineFilters([mergedFilter, beforeFilter].filter(isDefined)),
-    orderBy,
-    cursorFilter: buildNeighborCursorFilter('before'),
+    filter: combineFilters(
+      [mergedFilter, beforeNeighborQueryArgs.keysetFilter].filter(isDefined),
+    ),
+    orderBy: beforeNeighborQueryArgs.orderBy,
+    cursorFilter: beforeNeighborQueryArgs.cursorFilter,
   });
 
   const {
@@ -167,9 +149,11 @@ export const useRecordShowPagePagination = (
   } = useFindManyRecords({
     ...baseNeighborOptions,
     fetchPolicy: 'network-only',
-    filter: combineFilters([mergedFilter, afterFilter].filter(isDefined)),
-    orderBy,
-    cursorFilter: buildNeighborCursorFilter('after'),
+    filter: combineFilters(
+      [mergedFilter, afterNeighborQueryArgs.keysetFilter].filter(isDefined),
+    ),
+    orderBy: afterNeighborQueryArgs.orderBy,
+    cursorFilter: afterNeighborQueryArgs.cursorFilter,
   });
 
   const recordBefore = recordsBefore[0];
