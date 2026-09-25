@@ -20,11 +20,11 @@ export const SignInUpGlobalScopeFormEffect = () => {
   useEffect(() => {
     const resumeOnCentralDomain = async () => {
       const { user } = await loadCurrentUser();
-      await navigateAfterMultiWorkspaceSignInUp(
-        user.availableWorkspaces,
-        user.email,
-        { isResumingSession },
-      );
+      await navigateAfterMultiWorkspaceSignInUp({
+        availableWorkspaces: user.availableWorkspaces,
+        email: user.email,
+        isResumingSession,
+      });
     };
 
     if (signInUpStep !== SignInUpStep.Init) return;

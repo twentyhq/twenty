@@ -9,8 +9,7 @@ import { ThemeProvider } from 'twenty-ui/theme';
 
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
-import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
-import { syncStayOnDefaultDomainRequest } from '@/domain-manager/utils/syncStayOnDefaultDomainRequest';
+import { isStayingOnDefaultDomainState } from '@/domain-manager/states/isStayingOnDefaultDomainState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -119,10 +118,7 @@ describe('SignInUpGlobalScopeForm', () => {
     expect(resetPasswordClickMock).toHaveBeenCalledTimes(1);
   });
   it('forgets the stay-on-default-domain request when a workspace is picked', () => {
-    window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
-    syncStayOnDefaultDomainRequest();
-    window.history.replaceState(null, '', '/welcome');
-
+    jotaiStore.set(isStayingOnDefaultDomainState.atom, true);
     buildWorkspaceUrlMock.mockReturnValue('https://apple.twenty.com/verify');
     jotaiStore.set(signInUpStepState.atom, SignInUpStep.WorkspaceSelection);
     jotaiStore.set(availableWorkspacesState.atom, {
@@ -158,10 +154,8 @@ describe('SignInUpGlobalScopeForm', () => {
       </MockedProvider>,
     );
 
-    expect(isStayOnDefaultDomainRequested()).toBe(true);
-
     fireEvent.click(screen.getByText('Apple'));
 
-    expect(isStayOnDefaultDomainRequested()).toBe(false);
+    expect(jotaiStore.get(isStayingOnDefaultDomainState.atom)).toBe(false);
   });
 });

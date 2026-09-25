@@ -4,8 +4,7 @@ import { getDefaultStore } from 'jotai';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { isStayOnDefaultDomainRequested } from '@/domain-manager/utils/isStayOnDefaultDomainRequested';
-import { syncStayOnDefaultDomainRequest } from '@/domain-manager/utils/syncStayOnDefaultDomainRequest';
+import { isStayingOnDefaultDomainState } from '@/domain-manager/states/isStayingOnDefaultDomainState';
 
 const redirectSpy = jest.fn();
 
@@ -18,11 +17,8 @@ jest.mock('@/domain-manager/hooks/useRedirect', () => ({
 describe('useRedirectToWorkspaceDomain', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    sessionStorage.clear();
     getDefaultStore().set(isMultiWorkspaceEnabledState.atom, true);
-    window.history.replaceState(null, '', '/welcome?stayOnDefaultDomain=true');
-    syncStayOnDefaultDomainRequest();
-    window.history.replaceState(null, '', '/welcome');
+    getDefaultStore().set(isStayingOnDefaultDomainState.atom, true);
   });
 
   it('forgets the stay-on-default-domain request once the user lands on a workspace', async () => {
@@ -35,7 +31,9 @@ describe('useRedirectToWorkspaceDomain', () => {
     });
 
     expect(redirectSpy).toHaveBeenCalledTimes(1);
-    expect(isStayOnDefaultDomainRequested()).toBe(false);
+    expect(getDefaultStore().get(isStayingOnDefaultDomainState.atom)).toBe(
+      false,
+    );
   });
 
   it('keeps the request when multi workspace is disabled and no redirect happens', async () => {
@@ -50,6 +48,8 @@ describe('useRedirectToWorkspaceDomain', () => {
     });
 
     expect(redirectSpy).not.toHaveBeenCalled();
-    expect(isStayOnDefaultDomainRequested()).toBe(true);
+    expect(getDefaultStore().get(isStayingOnDefaultDomainState.atom)).toBe(
+      true,
+    );
   });
 });

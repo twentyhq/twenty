@@ -21,8 +21,7 @@ export const useRedirectToDefaultDomain = () => {
     if (url.hostname !== defaultDomain) {
       setLastAuthenticateWorkspaceDomain(null);
 
-      // Clearing the cookie above misses custom domains and never covered the
-      // session resume, so mark the navigation as deliberate instead
+      // A custom domain cannot clear the cookie, and the cookie never stopped the session resume
       url.searchParams.set(STAY_ON_DEFAULT_DOMAIN_SEARCH_PARAM, 'true');
 
       const returnToPath = store.get(returnToPathState.atom);

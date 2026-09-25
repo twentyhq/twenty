@@ -24,6 +24,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { isStayingOnDefaultDomainState } from '@/domain-manager/states/isStayingOnDefaultDomainState';
 import { renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
@@ -102,6 +103,7 @@ describe('useAuth', () => {
     sessionStorage.clear();
     getDefaultStore().set(returnToPathState.atom, '');
     getDefaultStore().set(signInUpStepState.atom, SignInUpStep.Init);
+    getDefaultStore().set(isStayingOnDefaultDomainState.atom, false);
   });
 
   it('should return login token object', async () => {
@@ -256,10 +258,10 @@ describe('useAuth', () => {
       const { result } = renderHooks();
 
       await act(async () => {
-        await result.current.navigateAfterMultiWorkspaceSignInUp(
+        await result.current.navigateAfterMultiWorkspaceSignInUp({
           availableWorkspaces,
           email,
-        );
+        });
       });
 
       expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledTimes(1);
@@ -280,11 +282,31 @@ describe('useAuth', () => {
       const { result } = renderHooks();
 
       await act(async () => {
-        await result.current.navigateAfterMultiWorkspaceSignInUp(
+        await result.current.navigateAfterMultiWorkspaceSignInUp({
           availableWorkspaces,
           email,
-          { isResumingSession: true },
-        );
+          isResumingSession: true,
+        });
+      });
+
+      expect(redirectToWorkspaceDomainSpy).not.toHaveBeenCalled();
+      expect(getDefaultStore().get(signInUpStepState.atom)).toBe(
+        SignInUpStep.WorkspaceSelection,
+      );
+    });
+
+    it('should let the user choose when a resumed session stays on the default domain after the url marker is gone', async () => {
+      window.history.replaceState(null, '', '/welcome');
+      getDefaultStore().set(isStayingOnDefaultDomainState.atom, true);
+
+      const { result } = renderHooks();
+
+      await act(async () => {
+        await result.current.navigateAfterMultiWorkspaceSignInUp({
+          availableWorkspaces,
+          email,
+          isResumingSession: true,
+        });
       });
 
       expect(redirectToWorkspaceDomainSpy).not.toHaveBeenCalled();
@@ -303,10 +325,10 @@ describe('useAuth', () => {
       const { result } = renderHooks();
 
       await act(async () => {
-        await result.current.navigateAfterMultiWorkspaceSignInUp(
+        await result.current.navigateAfterMultiWorkspaceSignInUp({
           availableWorkspaces,
           email,
-        );
+        });
       });
 
       expect(redirectToWorkspaceDomainSpy).toHaveBeenCalledTimes(1);
