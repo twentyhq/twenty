@@ -13,16 +13,20 @@ import { DATE_FORMAT_WITHOUT_YEAR } from '@/localization/constants/DateFormatWit
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/format-preferences/getWorkspaceDateFormatFromDateFormat';
+import { LogConsoleFilterBar } from '@/log-console/components/LogConsoleFilterBar';
 import { LogConsoleTable } from '@/log-console/components/LogConsoleTable';
 import { LogConsoleTimeRangeDropdown } from '@/log-console/components/LogConsoleTimeRangeDropdown';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { useLogConsoleRetention } from '@/log-console/hooks/useLogConsoleRetention';
 import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
+import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
+import { type LogConsoleFilter } from '@/log-console/types/LogConsoleFilter';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { type LogConsoleTimeRange } from '@/log-console/types/LogConsoleTimeRange';
+import { getLogConsoleFieldFilters } from '@/log-console/utils/getLogConsoleFieldFilters';
 import { getLogConsoleTimeRangeBounds } from '@/log-console/utils/getLogConsoleTimeRangeBounds';
 import { isLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/isLogConsoleTimeRangeWithinRetention';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -53,16 +57,12 @@ const StyledToolbar = styled.div`
 
 const StyledSummary = styled.div`
   color: ${themeCssVariables.font.color.secondary};
-  display: flex;
+  display: grid;
   flex: 1;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
-  justify-content: flex-end;
-  min-width: 0;
-`;
-
-const StyledTimeZone = styled.span`
-  flex-shrink: 0;
+  grid-template-columns: max-content minmax(0, auto) max-content;
+  justify-content: end;
 `;
 
 type LogConsoleResultsProps = {
@@ -87,6 +87,9 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const [logConsoleTimeRange, setLogConsoleTimeRange] = useAtomState(
     logConsoleTimeRangeState,
   );
+  const [logConsoleFilters, setLogConsoleFilters] = useAtomState(
+    logConsoleFiltersState,
+  );
   const [refreshedAt, setRefreshedAt] = useState(() =>
     new Date().toISOString(),
   );
@@ -106,7 +109,10 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     first: RECORDS_PER_PAGE,
     filters: {
       dateRange: getDateRange(now),
-      fieldFilters: source.fieldFilters,
+      fieldFilters: getLogConsoleFieldFilters({
+        source,
+        filters: logConsoleFilters,
+      }),
     },
   });
 
@@ -135,6 +141,12 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     scrollToTop();
     setRefreshedAt(new Date().toISOString());
     setLogConsoleTimeRange(selectedTimeRange);
+  };
+
+  const changeFilters = (filters: LogConsoleFilter[]) => {
+    scrollToTop();
+    setRefreshedAt(new Date().toISOString());
+    setLogConsoleFilters(filters);
   };
 
   const openLog = (entry: EventLogRecord) => {
@@ -168,7 +180,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     formattedCount: formatNumber(totalCount),
   });
 
-  const summary = `${countLabel} · ${formatRangeBound(dateRange.start)} – ${formatRangeBound(rangeEnd)}`;
+  const summaryRange = `· ${formatRangeBound(dateRange.start)} – ${formatRangeBound(rangeEnd)}`;
 
   const summaryTimeZone = formatRangeDate(rangeEnd, 'zzz');
 
@@ -213,14 +225,22 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
           timeRange={timeRange}
           onTimeRangeChange={changeTimeRange}
         />
+        {isDefined(source.filterFields) && (
+          <LogConsoleFilterBar
+            filterFields={source.filterFields}
+            filters={logConsoleFilters}
+            onFiltersChange={changeFilters}
+          />
+        )}
         <StyledSummary>
           {!isInitialLoading && !isDefined(error) && (
             <>
+              <span>{countLabel}</span>
               <OverflowingTextWithTooltip
-                text={summary}
-                tooltipContent={`${summary} ${summaryTimeZone}`}
+                text={summaryRange}
+                tooltipContent={`${countLabel} ${summaryRange} ${summaryTimeZone}`}
               />
-              <StyledTimeZone>{summaryTimeZone}</StyledTimeZone>
+              <span>{summaryTimeZone}</span>
             </>
           )}
         </StyledSummary>

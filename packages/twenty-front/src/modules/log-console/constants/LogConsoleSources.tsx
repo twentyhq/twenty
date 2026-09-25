@@ -20,15 +20,19 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { LogConsoleRecordCell } from '@/log-console/components/LogConsoleRecordCell';
 import { LogConsoleRecordChangeDetail } from '@/log-console/components/LogConsoleRecordChangeDetail';
+import { LOG_CONSOLE_ACTOR_FILTER_FIELD } from '@/log-console/constants/LogConsoleActorFilterField';
 import { LOG_CONSOLE_ACTOR_TYPE_LABELS } from '@/log-console/constants/LogConsoleActorTypeLabels';
 import { LOG_CONSOLE_APPLICATION_LOG_COLUMNS } from '@/log-console/constants/LogConsoleApplicationLogColumns';
+import { LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS } from '@/log-console/constants/LogConsoleApplicationLogFilterFields';
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
 import { LOG_CONSOLE_PAGE_VIEW_COLUMNS } from '@/log-console/constants/LogConsolePageViewColumns';
 import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRecordActions';
 import { LOG_CONSOLE_RECORD_CHANGE_ACTOR_COLUMN } from '@/log-console/constants/LogConsoleRecordChangeActorColumn';
 import { LOG_CONSOLE_RECORD_CHANGE_COLUMNS } from '@/log-console/constants/LogConsoleRecordChangeColumns';
+import { LOG_CONSOLE_RECORD_CHANGE_FILTER_FIELDS } from '@/log-console/constants/LogConsoleRecordChangeFilterFields';
 import { LOG_CONSOLE_SECURITY_COLUMNS } from '@/log-console/constants/LogConsoleSecurityColumns';
 import { LOG_CONSOLE_SECURITY_EVENT_COLUMN } from '@/log-console/constants/LogConsoleSecurityEventColumn';
+import { LOG_CONSOLE_SECURITY_FILTER_FIELDS } from '@/log-console/constants/LogConsoleSecurityFilterFields';
 import { LOG_CONSOLE_USAGE_EVENT_COLUMNS } from '@/log-console/constants/LogConsoleUsageEventColumns';
 import { LOG_CONSOLE_USAGE_OPERATION_COLUMN } from '@/log-console/constants/LogConsoleUsageOperationColumn';
 import { LOG_CONSOLE_WEBHOOK_COLUMNS } from '@/log-console/constants/LogConsoleWebhookColumns';
@@ -49,6 +53,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     entryLabel: msg`Record change`,
     Icon: IconAddressBook,
     table: EventLogTable.OBJECT_EVENT,
+    filterFields: LOG_CONSOLE_RECORD_CHANGE_FILTER_FIELDS,
     requiresAuditLogs: true,
     columns: LOG_CONSOLE_RECORD_CHANGE_COLUMNS,
     idFields: [
@@ -113,6 +118,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         ],
       },
     ],
+    filterFields: LOG_CONSOLE_SECURITY_FILTER_FIELDS,
     requiresAuditLogs: true,
     columns: LOG_CONSOLE_SECURITY_COLUMNS,
     idFields: [{ label: msg`User ID`, getId: (entry) => entry.userId }],
@@ -130,6 +136,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     entryLabel: msg`App log`,
     Icon: IconTerminal,
     table: EventLogTable.APPLICATION_LOG,
+    filterFields: LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS,
     requiresAuditLogs: false,
     columns: LOG_CONSOLE_APPLICATION_LOG_COLUMNS,
     idFields: [
@@ -223,6 +230,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     entryLabel: msg`Page view`,
     Icon: IconEye,
     table: EventLogTable.PAGEVIEW,
+    filterFields: [{ ...LOG_CONSOLE_ACTOR_FILTER_FIELD, label: msg`Member` }],
     requiresAuditLogs: true,
     columns: LOG_CONSOLE_PAGE_VIEW_COLUMNS,
     idFields: [

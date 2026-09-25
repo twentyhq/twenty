@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
+import { useEffect } from 'react';
 import { expect, screen, userEvent, within } from 'storybook/test';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -10,13 +11,17 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
+import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
+import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -37,6 +42,8 @@ import {
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import {
+  mockedEventLogApplications,
+  mockedEventLogLogicFunctions,
   mockedEventLogRecordsByTable,
   mockedEventLogWorkspaceMembers,
 } from '~/testing/mock-data/event-logs';
@@ -44,6 +51,7 @@ import {
   mockCurrentWorkspace,
   mockedUserData,
 } from '~/testing/mock-data/users';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getOperationName } from '~/utils/getOperationName';
 
 const WORKSPACE_WITH_LOGS_CONSOLE = {
@@ -83,7 +91,25 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Modules/LogConsole/LogConsole',
   component: LogConsole,
   render: () => <PageWithLogConsole />,
-  decorators: [PageDecorator],
+  decorators: [
+    (Story) => {
+      useEffect(() => {
+        jotaiStore.set(metadataStoreState.atomFamily('logicFunctions'), {
+          current: mockedEventLogLogicFunctions,
+          draft: [],
+          status: 'up-to-date',
+        });
+        jotaiStore.set(metadataStoreState.atomFamily('applications'), {
+          current: mockedEventLogApplications,
+          draft: [],
+          status: 'up-to-date',
+        });
+      }, []);
+
+      return <Story />;
+    },
+    PageDecorator,
+  ],
   args: { routePath: '/settings/objects' },
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, WORKSPACE_WITH_LOGS_CONSOLE);
@@ -221,7 +247,7 @@ export const SecurityOpen: Story = {
     );
 
     expect(await canvas.findAllByText('Support team')).toHaveLength(3);
-    await canvas.findByText(/^6 events · /);
+    await canvas.findByText('6 events');
   },
 };
 
@@ -366,8 +392,73 @@ export const LastSevenDaysInUtc: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Sep 24 11:57:48', {}, { timeout: 5000 });
-    await canvas.findByText(/^8 changes · /);
+    await canvas.findByText('8 changes');
     await canvas.findByText('UTC');
+  },
+};
+
+export const LevelFilter: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(
+      activeTabIdComponentState.atomFamily({
+        instanceId: LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+      }),
+      'app-logs',
+    );
+    jotaiStore.set(logConsoleFiltersState.atom, [
+      {
+        filterFieldId: 'level',
+        operand: EventLogFilterOperand.IS,
+        values: ['ERROR', 'WARN'],
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('4 logs', {}, { timeout: 5000 });
+
+    expect(
+      canvas.queryByText('Received 9 invoices from Stripe'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const AddFilterMenu: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('tab', { name: 'App logs' }, { timeout: 5000 }),
+    );
+    await userEvent.click(await canvas.findByText('Add filter'));
+    await userEvent.click(await screen.findByRole('option', { name: 'Level' }));
+
+    expect(
+      await screen.findByRole('option', { name: 'Warning' }),
+    ).toHaveAttribute('aria-selected', 'false');
+  },
+};
+
+export const NoFilterMatch: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(logConsoleFiltersState.atom, [
+      {
+        filterFieldId: 'object',
+        operand: EventLogFilterOperand.IS,
+        values: [getMockObjectMetadataItemOrThrow('task').id],
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('No event logs found', {}, { timeout: 5000 });
   },
 };
 

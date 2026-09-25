@@ -1,3 +1,4 @@
+import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import {
   type EventLogRecord,
@@ -28,6 +29,24 @@ const ENRICH_COMPANY_FROM_DOMAIN: MockedLogicFunction = {
   name: 'enrichCompanyFromDomain',
   applicationId: 'ab72cb06-98e5-4090-8b71-31a7eed337d9',
 };
+
+export const mockedEventLogLogicFunctions: MockedLogicFunction[] = [
+  SYNC_STRIPE_INVOICES,
+  SCORE_INBOUND_LEAD,
+  ENRICH_COMPANY_FROM_DOMAIN,
+];
+
+export const mockedEventLogApplications: Pick<
+  FlatApplication,
+  'id' | 'name'
+>[] = [
+  { id: SYNC_STRIPE_INVOICES.applicationId, name: 'Stripe Sync' },
+  { id: SCORE_INBOUND_LEAD.applicationId, name: 'Lead Scoring' },
+  {
+    id: ENRICH_COMPANY_FROM_DOMAIN.applicationId,
+    name: 'Company Enrichment',
+  },
+];
 
 const SYNC_STRIPE_INVOICES_EXECUTION_ID =
   '88637fa4-e95f-4901-85f1-4227b6e3a1c2';

@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
+import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilterField';
 import { type LogConsoleIdField } from '@/log-console/types/LogConsoleIdField';
 import { type LogConsoleSeverity } from '@/log-console/types/LogConsoleSeverity';
 import { type LogConsoleSourceId } from '@/log-console/types/LogConsoleSourceId';
@@ -19,6 +20,7 @@ export type LogConsoleSource = {
   Icon: IconComponent;
   table: EventLogTable;
   fieldFilters?: EventLogFieldFilterInput[];
+  filterFields?: LogConsoleFilterField[];
   requiresAuditLogs: boolean;
   columns: LogConsoleColumn[];
   detailFields?: Pick<LogConsoleColumn, 'label' | 'renderCell'>[];

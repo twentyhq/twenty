@@ -17,10 +17,12 @@ import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouse
 import { LogConsoleResults } from '@/log-console/components/LogConsoleResults';
 import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
+import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { useLogConsoleHotKeys } from '@/log-console/hooks/useLogConsoleHotKeys';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
+import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -39,14 +41,13 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   BillingEntitlementKey,
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-
-const LOG_CONSOLE_TAB_LIST_INSTANCE_ID = 'log-console-tab-list';
 
 const LOG_CONSOLE_BAR_HEIGHT = 48;
 
@@ -134,6 +135,7 @@ export const LogConsole = () => {
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
   );
+  const setLogConsoleFilters = useSetAtomState(logConsoleFiltersState);
   const { height: windowHeight } = useScreenSize();
 
   const isLogConsoleAllowed =
@@ -237,6 +239,20 @@ export const LogConsole = () => {
     }
   };
 
+  const changeSource = (sourceId: string) => {
+    const filterFields =
+      sources.find((source) => source.id === sourceId)?.filterFields ?? [];
+
+    closeSelectedLog();
+    setLogConsoleFilters((filters) =>
+      filters.filter((filter) =>
+        filterFields.some(
+          (filterField) => filterField.id === filter.filterFieldId,
+        ),
+      ),
+    );
+  };
+
   const closeLogConsole = () => {
     closeSelectedLog();
     setLogConsoleDisplayMode('closed');
@@ -283,7 +299,7 @@ export const LogConsole = () => {
           centerTabs
           componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}
           onClickTab={openLogConsole}
-          onChangeTab={closeSelectedLog}
+          onChangeTab={changeSource}
           rightComponent={
             <StyledBarActions>
               <IconButton
