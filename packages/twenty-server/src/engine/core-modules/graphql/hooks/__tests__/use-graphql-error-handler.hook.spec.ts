@@ -1,16 +1,17 @@
 import { setupI18n } from '@lingui/core';
-import { filter, pipe } from '@graphql-yoga/subscription';
 import { GraphQLError } from 'graphql';
 import { createClient, type ExecutionResult } from 'graphql-sse';
 import { PubSub } from 'graphql-subscriptions';
-import { createSchema, createYoga, type Plugin } from 'graphql-yoga';
+import {
+  createSchema,
+  createYoga,
+  filter,
+  pipe,
+  type Plugin,
+} from 'graphql-yoga';
 
-import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 
 const createTestYoga = (
@@ -54,16 +55,16 @@ const createTestYoga = (
       useGraphQLErrorHandlerHook({
         metricsService: {
           incrementCounterForEvent: jest.fn(),
-        } as unknown as MetricsService,
+        },
         exceptionHandlerService: {
           captureExceptions: jest.fn(),
-        } as unknown as ExceptionHandlerService,
+        },
         i18nService: {
           getI18nInstance: () => setupI18n({ locale: 'en', messages: {} }),
-        } as unknown as I18nService,
+        },
         twentyConfigService: {
           get: jest.fn(),
-        } as unknown as TwentyConfigService,
+        },
       }),
     ],
   });

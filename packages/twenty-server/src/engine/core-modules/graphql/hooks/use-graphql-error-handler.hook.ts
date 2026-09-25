@@ -44,13 +44,13 @@ const APP_VERSION_MISMATCH_ERROR = 'App version mismatch.';
 const APP_VERSION_MISMATCH_CODE = 'APP_VERSION_MISMATCH';
 
 type GraphQLErrorHandlerHookOptions = {
-  metricsService: MetricsService;
+  metricsService: Pick<MetricsService, 'incrementCounterForEvent'>;
 
-  exceptionHandlerService: ExceptionHandlerService;
+  exceptionHandlerService: Pick<ExceptionHandlerService, 'captureExceptions'>;
 
-  i18nService: I18nService;
+  i18nService: Pick<I18nService, 'getI18nInstance'>;
 
-  twentyConfigService: TwentyConfigService;
+  twentyConfigService: Pick<TwentyConfigService, 'get'>;
   /**
    * The key of the event id in the error's extension. `null` to disable.
    * @default exceptionEventId
