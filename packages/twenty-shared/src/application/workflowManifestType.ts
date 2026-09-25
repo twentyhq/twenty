@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { isDefined } from '@/utils/validation/isDefined';
+
 const workflowStepManifestSchema = z.strictObject({
   universalIdentifier: z.uuid(),
   name: z.string().min(1),
@@ -57,7 +59,7 @@ export const workflowManifestSchema = z
         return;
       }
       const step = stepsById.get(id);
-      if (step === undefined) {
+      if (!isDefined(step)) {
         context.addIssue({
           code: 'custom',
           message: `Workflow references missing step ${id}`,

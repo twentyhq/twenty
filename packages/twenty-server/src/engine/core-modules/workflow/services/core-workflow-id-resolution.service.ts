@@ -85,7 +85,7 @@ export class CoreWorkflowIdResolutionService {
       },
     );
 
-    if (coreWorkflowVersion.coreWorkflowId) {
+    if (isDefined(coreWorkflowVersion.coreWorkflowId)) {
       await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow(
         {
           workspaceId,
