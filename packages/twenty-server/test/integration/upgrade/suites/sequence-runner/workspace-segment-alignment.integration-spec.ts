@@ -582,4 +582,126 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
       `Wc1:${WS_3}:completed:1`,
     ]);
   });
+
+  it('should retry an IC failure that follows a WC segment, accept workspace created mid-failure, and succeed on restart', async () => {
+    const failOnce = { shouldFail: true };
+
+    const ic1Command = {
+      up: async () => {
+        if (failOnce.shouldFail) {
+          failOnce.shouldFail = false;
+          throw new Error('Ic1 temporary failure');
+        }
+      },
+      down: async () => {},
+    };
+
+    const sequence = [
+      makeWorkspace('Wc0'),
+      {
+        ...makeFastInstance('Ic1'),
+        command: ic1Command,
+      } as unknown as ReturnType<typeof makeFastInstance>,
+      makeWorkspace('Wc1'),
+    ];
+
+    setMockActiveWorkspaceIds([WS_1, WS_2]);
+
+    await seedWorkspaceMigration(context.dataSource, {
+      name: 'Wc0',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+    await seedWorkspaceMigration(context.dataSource, {
+      name: 'Wc0',
+      status: 'completed',
+      workspaceId: WS_2,
+    });
+
+    await expect(
+      context.runner.run({
+        sequence,
+        options: DEFAULT_OPTIONS,
+      }),
+    ).rejects.toThrow('Ic1 temporary failure');
+
+    await seedWorkspaceMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'failed',
+      workspaceId: WS_3,
+      isInitial: true,
+      useCurrentTimestamp: true,
+    });
+
+    setMockActiveWorkspaceIds([WS_1, WS_2, WS_3]);
+
+    const report = await context.runner.run({
+      sequence,
+      options: DEFAULT_OPTIONS,
+    });
+
+    expect(report.totalFailures).toBe(0);
+
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
+
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
+      `Wc0:${WS_1}:completed:1`,
+      `Wc0:${WS_2}:completed:1`,
+      'Ic1:instance:failed:1',
+      `Ic1:${WS_1}:failed:1`,
+      `Ic1:${WS_2}:failed:1`,
+      `Ic1:${WS_3}:failed:1:initial`,
+      'Ic1:instance:completed:2',
+      `Ic1:${WS_1}:completed:2`,
+      `Ic1:${WS_2}:completed:2`,
+      `Ic1:${WS_3}:completed:2`,
+      `Wc1:${WS_1}:completed:1`,
+      `Wc1:${WS_2}:completed:1`,
+      `Wc1:${WS_3}:completed:1`,
+    ]);
+  });
+
+  it('should reject retrying an IC failure that follows a WC segment when a workspace has not completed that segment', async () => {
+    const sequence = [
+      makeWorkspace('Wc0'),
+      makeFastInstance('Ic1'),
+      makeWorkspace('Wc1'),
+    ];
+
+    setMockActiveWorkspaceIds([WS_1, WS_2]);
+
+    await seedWorkspaceMigration(context.dataSource, {
+      name: 'Wc0',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+    await seedWorkspaceMigration(context.dataSource, {
+      name: 'Wc0',
+      status: 'failed',
+      workspaceId: WS_2,
+    });
+    await seedInstanceMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'failed',
+      workspaceIds: [WS_1],
+    });
+
+    await expect(
+      context.runner.run({
+        sequence,
+        options: DEFAULT_OPTIONS,
+      }),
+    ).rejects.toThrow(
+      `Cannot run instance step: workspace ${WS_2} has not completed "Wc0" (cursor: "Wc0", status: "failed")`,
+    );
+
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
+
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
+      `Wc0:${WS_1}:completed:1`,
+      `Wc0:${WS_2}:failed:1`,
+      'Ic1:instance:failed:1',
+      `Ic1:${WS_1}:failed:1`,
+    ]);
+  });
 });
