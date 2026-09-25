@@ -204,21 +204,10 @@ function evaluateTextAndArrayFilter(
   }
 }
 
-// Variables can resolve a JSON field to its stringified form
-function parseRawJsonOperand(value: unknown): unknown {
-  if (!isString(value)) {
-    return value;
-  }
-
-  try {
-    return JSON.parse(value);
-  } catch {
-    return value;
-  }
-}
-
 function evaluateRawJsonFilter(filter: ResolvedFilter): boolean {
-  const jsonValue = parseRawJsonOperand(filter.leftOperand);
+  const jsonValue = isString(filter.leftOperand)
+    ? (parseJson<unknown>(filter.leftOperand) ?? filter.leftOperand)
+    : filter.leftOperand;
   const isEmpty = !isDefined(jsonValue) || jsonValue === '';
 
   const containsSearchValue = () =>

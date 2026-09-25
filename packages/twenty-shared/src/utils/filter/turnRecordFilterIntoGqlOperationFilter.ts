@@ -345,16 +345,23 @@ const buildDirectFieldGqlOperationFilter = ({
         case RecordFilterOperand.CONTAINS:
           return {
             [fieldMetadataItem.name]: {
-              like: `%${recordFilter.value}%`,
+              ilike: `%${recordFilter.value}%`,
             } as FilesFilter,
           };
         case RecordFilterOperand.DOES_NOT_CONTAIN:
           return {
-            not: {
-              [fieldMetadataItem.name]: {
-                like: `%${recordFilter.value}%`,
-              } as FilesFilter,
-            },
+            or: [
+              {
+                not: {
+                  [fieldMetadataItem.name]: {
+                    ilike: `%${recordFilter.value}%`,
+                  } as FilesFilter,
+                },
+              },
+              {
+                [fieldMetadataItem.name]: { is: 'NULL' } as FilesFilter,
+              },
+            ],
           };
         default:
           throw new Error(

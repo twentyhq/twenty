@@ -46,9 +46,9 @@ export const isMatchingRawJsonFilter = ({
     }
     case rawJsonFilter.is !== undefined: {
       if (rawJsonFilter.is === 'NULL') {
-        return value === null;
+        return !isDefined(value);
       } else {
-        return value !== null;
+        return isDefined(value);
       }
     }
     default: {

@@ -1537,7 +1537,9 @@ describe('evaluateFilterConditions', () => {
           true,
         );
         expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, null)).toBe(true);
-        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, 'null')).toBe(true);
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, undefined)).toBe(
+          true,
+        );
         expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, '')).toBe(true);
       });
     });

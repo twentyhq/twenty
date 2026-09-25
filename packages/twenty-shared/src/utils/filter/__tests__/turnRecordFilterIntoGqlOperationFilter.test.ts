@@ -752,7 +752,26 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toEqual({ attachments: { like: '%doc%' } });
+      expect(result).toEqual({ attachments: { ilike: '%doc%' } });
+    });
+
+    it('should handle DOES_NOT_CONTAIN operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-files',
+          RecordFilterOperand.DOES_NOT_CONTAIN,
+          'doc',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        or: [
+          { not: { attachments: { ilike: '%doc%' } } },
+          { attachments: { is: 'NULL' } },
+        ],
+      });
     });
   });
 

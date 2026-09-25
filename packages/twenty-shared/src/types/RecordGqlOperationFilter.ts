@@ -160,6 +160,7 @@ export type RawJsonFilter = {
 
 export type FilesFilter = {
   like?: string;
+  ilike?: string;
   is?: IsFilter;
 };
 
