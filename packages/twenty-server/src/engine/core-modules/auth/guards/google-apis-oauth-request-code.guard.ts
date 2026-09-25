@@ -7,8 +7,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { ConnectedAccountOAuthService } from 'src/engine/core-modules/auth/services/connected-account-oauth.service';
 import { GoogleAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-request-code.auth.strategy';
-import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
@@ -19,7 +19,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly transientTokenService: TransientTokenService,
+    private readonly connectedAccountOAuthService: ConnectedAccountOAuthService,
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -37,7 +37,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
       const request = context.switchToHttp().getRequest();
 
       const { workspaceId, userId } =
-        await this.transientTokenService.verifyTransientToken(
+        await this.connectedAccountOAuthService.verifyTransientTokenAndPermissions(
           request.query.transientToken,
         );
 
