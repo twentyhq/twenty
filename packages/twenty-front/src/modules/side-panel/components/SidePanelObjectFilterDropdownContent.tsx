@@ -51,6 +51,12 @@ export const SidePanelObjectFilterDropdownContent = ({
     return item.labelPlural.toLowerCase().includes(searchFilter);
   });
 
+  const allObjectsLabel = t`All objects`;
+
+  const isAllObjectsOptionMatchingSearch = allObjectsLabel
+    .toLowerCase()
+    .includes(searchFilter);
+
   return (
     <>
       <StyledHeader>{t`Object`}</StyledHeader>
@@ -62,11 +68,15 @@ export const SidePanelObjectFilterDropdownContent = ({
       />
       <Dropdown.Separator />
       <Dropdown.Section scrollable>
-        <Dropdown.OptionItem
-          onSelect={() => onSelectObject(null)}
-          selected={selectedObjectNameSingular === null}
-          startIcon={<TintedIconTile Icon={IconCube} />}
-        >{t`All objects`}</Dropdown.OptionItem>
+        {isAllObjectsOptionMatchingSearch && (
+          <Dropdown.OptionItem
+            onSelect={() => onSelectObject(null)}
+            selected={selectedObjectNameSingular === null}
+            startIcon={<TintedIconTile Icon={IconCube} />}
+          >
+            {allObjectsLabel}
+          </Dropdown.OptionItem>
+        )}
         {displayedObjects.map((objectMetadataItem) => (
           <Dropdown.OptionItem
             key={objectMetadataItem.id}

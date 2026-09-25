@@ -13,6 +13,6 @@ const StyledCardContainer = styled.div`
 
 export const SettingsListSkeletonCard = () => (
   <StyledCardContainer>
-    <Card />
+    <Card.Root />
   </StyledCardContainer>
 );

@@ -5,7 +5,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
-import { Tooltip, Card } from 'twenty-ui/primitives/surfaces';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
@@ -249,7 +249,7 @@ export const SettingsSkillFormContent = ({
                       )
                     }
                   />
-                  <Card rounded>
+                  <Card.Root rounded>
                     <SettingsOptionCardContentSwitch
                       Icon={IconRefresh}
                       title={t`Synchronize Label and API Name`}
@@ -261,7 +261,7 @@ export const SettingsSkillFormContent = ({
                         handleFieldChange('isLabelSyncedWithName', value)
                       }
                     />
-                  </Card>
+                  </Card.Root>
                 </StyledAdvancedSettingsContainer>
               </StyledAdvancedSettingsOuterContainer>
             </AdvancedSettingsWrapper>

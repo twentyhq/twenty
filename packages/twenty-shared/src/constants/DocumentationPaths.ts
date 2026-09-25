@@ -142,10 +142,20 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_TOAST: '/ui/components/toast',
   UI_DARK_MODE: '/ui/dark-mode',
   UI_GETTING_STARTED: '/ui/getting-started',
+  UI_PRIMITIVES_ACCESSIBILITY_VISIBILITY_HIDDEN:
+    '/ui/primitives/accessibility/visibility-hidden',
   UI_PRIMITIVES_DATA_DISPLAY_AVATAR: '/ui/primitives/data-display/avatar',
   UI_PRIMITIVES_DATA_DISPLAY_CHIP: '/ui/primitives/data-display/chip',
+  UI_PRIMITIVES_DATA_DISPLAY_COLOR_SAMPLE:
+    '/ui/primitives/data-display/color-sample',
+  UI_PRIMITIVES_DATA_DISPLAY_PILL: '/ui/primitives/data-display/pill',
   UI_PRIMITIVES_DATA_DISPLAY_STATUS: '/ui/primitives/data-display/status',
   UI_PRIMITIVES_DATA_DISPLAY_TAG: '/ui/primitives/data-display/tag',
+  UI_PRIMITIVES_FEEDBACK_BANNER: '/ui/primitives/feedback/banner',
+  UI_PRIMITIVES_FEEDBACK_CIRCULAR_PROGRESS_BAR:
+    '/ui/primitives/feedback/circular-progress-bar',
+  UI_PRIMITIVES_FEEDBACK_LOADER: '/ui/primitives/feedback/loader',
+  UI_PRIMITIVES_FEEDBACK_PROGRESS_BAR: '/ui/primitives/feedback/progress-bar',
   UI_PRIMITIVES_INPUT_BUTTON: '/ui/primitives/input/button',
   UI_PRIMITIVES_INPUT_BUTTON_GROUP: '/ui/primitives/input/button-group',
   UI_PRIMITIVES_INPUT_CHECKBOX: '/ui/primitives/input/checkbox',
@@ -154,19 +164,33 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_INPUT_GROUP: '/ui/primitives/input/input-group',
   UI_PRIMITIVES_INPUT_RADIO: '/ui/primitives/input/radio',
   UI_PRIMITIVES_INPUT_RADIO_GROUP: '/ui/primitives/input/radio-group',
+  UI_PRIMITIVES_INPUT_SEGMENTED_CONTROL:
+    '/ui/primitives/input/segmented-control',
   UI_PRIMITIVES_INPUT_SELECT: '/ui/primitives/input/select',
   UI_PRIMITIVES_INPUT_SLIDER: '/ui/primitives/input/slider',
   UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',
   UI_PRIMITIVES_INPUT_TEXTAREA: '/ui/primitives/input/textarea',
+  UI_PRIMITIVES_LAYOUT_ANIMATED_EXPANDABLE_CONTAINER:
+    '/ui/primitives/layout/animated-expandable-container',
+  UI_PRIMITIVES_LAYOUT_HORIZONTAL_SEPARATOR:
+    '/ui/primitives/layout/horizontal-separator',
+  UI_PRIMITIVES_LAYOUT_RESIZE_HANDLE: '/ui/primitives/layout/resize-handle',
+  UI_PRIMITIVES_LAYOUT_TEXT_DIRECTION_PROVIDER:
+    '/ui/primitives/layout/text-direction-provider',
+  UI_PRIMITIVES_NAVIGATION_CLICK_TO_ACTION_LINK:
+    '/ui/primitives/navigation/click-to-action-link',
   UI_PRIMITIVES_NAVIGATION_LIST_ITEM: '/ui/primitives/navigation/list-item',
   UI_PRIMITIVES_NAVIGATION_TABS: '/ui/primitives/navigation/tabs',
   UI_PRIMITIVES_OVERVIEW: '/ui/primitives/overview',
   UI_PRIMITIVES_SURFACES_ALERT_DIALOG: '/ui/primitives/surfaces/alert-dialog',
+  UI_PRIMITIVES_SURFACES_CARD: '/ui/primitives/surfaces/card',
   UI_PRIMITIVES_SURFACES_DIALOG: '/ui/primitives/surfaces/dialog',
   UI_PRIMITIVES_SURFACES_MENU: '/ui/primitives/surfaces/menu',
   UI_PRIMITIVES_SURFACES_POPOVER: '/ui/primitives/surfaces/popover',
   UI_PRIMITIVES_SURFACES_TOOLTIP: '/ui/primitives/surfaces/tooltip',
   UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',
+  UI_PRIMITIVES_TYPOGRAPHY_OVERFLOWING_TEXT_WITH_TOOLTIP:
+    '/ui/primitives/typography/overflowing-text-with-tooltip',
   UI_PRIMITIVES_TYPOGRAPHY_TEXT: '/ui/primitives/typography/text',
   UI_SSR: '/ui/ssr',
   UI_THEMING: '/ui/theming',

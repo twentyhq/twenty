@@ -4,6 +4,7 @@ import { type ToolSet, jsonSchema } from 'ai';
 import { type ToolCategory } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
@@ -183,6 +184,7 @@ export class ToolRegistryService {
       rolePermissionConfig?: RolePermissionConfig;
       categories?: ToolCategory[];
       excludeTools?: Set<string>;
+      application?: FlatApplication;
     },
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
@@ -192,6 +194,7 @@ export class ToolRegistryService {
       userId: options?.userId,
       userWorkspaceId: options?.userWorkspaceId,
       locale: options?.locale,
+      application: options?.application,
     });
 
     return this.getCatalog(context, {
