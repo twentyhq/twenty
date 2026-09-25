@@ -7630,6 +7630,8 @@ export type Workspace = {
   installedApplications: Array<Application>;
   inviteHash?: Maybe<Scalars['String']['output']>;
   isAutoModelSelectionEnabled: Scalars['Boolean']['output'];
+  isCampaignClickTrackingEnabled: Scalars['Boolean']['output'];
+  isCampaignOpenTrackingEnabled: Scalars['Boolean']['output'];
   isCustomDomainEnabled: Scalars['Boolean']['output'];
   isGoogleAuthBypassEnabled: Scalars['Boolean']['output'];
   isGoogleAuthEnabled: Scalars['Boolean']['output'];

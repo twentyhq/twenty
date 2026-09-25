@@ -588,6 +588,8 @@ export interface Workspace {
     updatedAt: Scalars['DateTime']
     allowImpersonation: Scalars['Boolean']
     isPublicInviteLinkEnabled: Scalars['Boolean']
+    isCampaignClickTrackingEnabled: Scalars['Boolean']
+    isCampaignOpenTrackingEnabled: Scalars['Boolean']
     workspaceDiscoverability: WorkspaceDiscoverability
     trashRetentionDays: Scalars['Float']
     eventLogRetentionDays: Scalars['Float']
@@ -4348,6 +4350,8 @@ export interface WorkspaceGenqlSelection{
     updatedAt?: boolean | number
     allowImpersonation?: boolean | number
     isPublicInviteLinkEnabled?: boolean | number
+    isCampaignClickTrackingEnabled?: boolean | number
+    isCampaignOpenTrackingEnabled?: boolean | number
     workspaceDiscoverability?: boolean | number
     trashRetentionDays?: boolean | number
     eventLogRetentionDays?: boolean | number
