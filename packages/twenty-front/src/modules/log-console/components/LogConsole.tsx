@@ -326,7 +326,7 @@ export const LogConsole = () => {
       );
     }
 
-    return <LogConsoleResults source={activeSource} />;
+    return <LogConsoleResults key={activeSource.id} source={activeSource} />;
   };
 
   return (

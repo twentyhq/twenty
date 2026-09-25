@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, screen, userEvent, within } from 'storybook/test';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -13,6 +13,8 @@ import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConso
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
+import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
+import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
 import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -273,7 +275,56 @@ export const UsageOpen: Story = {
   },
 };
 
-export const Empty: Story = {
+export const TimeRangeMenu: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('tab', { name: 'App logs' }, { timeout: 5000 }),
+    );
+    await userEvent.click(await canvas.findByText('Last 24 hours'));
+
+    expect(
+      await screen.findByRole('option', { name: 'Last 90 days' }),
+    ).toHaveAttribute('aria-disabled', 'true');
+  },
+};
+
+export const CustomTimeRange: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByText('Last 24 hours', {}, { timeout: 5000 }),
+    );
+    await userEvent.click(await screen.findByText('Custom range...'));
+
+    await screen.findByText('Sep 23, 2026 14:05');
+  },
+};
+
+export const LastSevenDaysInUtc: Story = {
+  beforeEach: () => {
+    jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    jotaiStore.set(logConsoleTimeRangeState.atom, '7d');
+    jotaiStore.set(logConsoleTimeZoneState.atom, 'utc');
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Sep 24 11:57:48', {}, { timeout: 5000 });
+    await canvas.findByText('8 changes · Sep 17, 12:05 – Sep 24, 12:05');
+    await canvas.findByText('UTC');
+  },
+};
+
+export const EmptyInRange: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
   },
@@ -303,7 +354,12 @@ export const Empty: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('No logs yet', {}, { timeout: 5000 });
+    await canvas.findByText(
+      'No logs in this time range',
+      {},
+      { timeout: 5000 },
+    );
+    await canvas.findByRole('button', { name: 'Search last 7 days' });
   },
 };
 

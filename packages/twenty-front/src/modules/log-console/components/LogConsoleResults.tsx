@@ -1,18 +1,32 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isBefore } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import { useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
-import { IconRefresh } from 'twenty-ui/icon';
+import { IconCalendarEvent, IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { DATE_FORMAT_WITHOUT_YEAR } from '@/localization/constants/DateFormatWithoutYear';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { getWorkspaceDateFormatFromDateFormat } from '@/localization/utils/format-preferences/getWorkspaceDateFormatFromDateFormat';
 import { LogConsoleTable } from '@/log-console/components/LogConsoleTable';
+import { LogConsoleTimeRangeDropdown } from '@/log-console/components/LogConsoleTimeRangeDropdown';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
+import { useLogConsoleRetention } from '@/log-console/hooks/useLogConsoleRetention';
+import { useLogConsoleTimeZone } from '@/log-console/hooks/useLogConsoleTimeZone';
 import { isLogConsoleSelectedLogOpenedSelector } from '@/log-console/states/isLogConsoleSelectedLogOpenedSelector';
 import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
+import { logConsoleTimeRangeState } from '@/log-console/states/logConsoleTimeRangeState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { type LogConsoleTimeRange } from '@/log-console/types/LogConsoleTimeRange';
+import { getLogConsoleTimeRangeBounds } from '@/log-console/utils/getLogConsoleTimeRangeBounds';
+import { isLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/isLogConsoleTimeRangeWithinRetention';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
@@ -21,6 +35,7 @@ import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScro
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 const RECORDS_PER_PAGE = 100;
 
@@ -37,12 +52,20 @@ const StyledToolbar = styled.div`
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[8]};
-  justify-content: flex-end;
 `;
 
-const StyledCount = styled.span`
+const StyledSummary = styled.div`
   color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  flex: 1;
   font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: flex-end;
+  min-width: 0;
+`;
+
+const StyledTimeZone = styled.span`
+  flex-shrink: 0;
 `;
 
 type LogConsoleResultsProps = {
@@ -53,6 +76,11 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
   const { navigateSidePanel } = useNavigateSidePanel();
+  const timeZone = useLogConsoleTimeZone();
+  const { dateFormat, timeFormat } = useDateTimeFormat();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const { retentionInDays, retentionDescription } =
+    useLogConsoleRetention(source);
 
   const [logConsoleSelectedLog, setLogConsoleSelectedLog] = useAtomState(
     logConsoleSelectedLogState,
@@ -60,20 +88,54 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const isLogConsoleSelectedLogOpened = useAtomStateValue(
     isLogConsoleSelectedLogOpenedSelector,
   );
+  const [logConsoleTimeRange, setLogConsoleTimeRange] = useAtomState(
+    logConsoleTimeRangeState,
+  );
+  const [refreshedAt, setRefreshedAt] = useState(() =>
+    new Date().toISOString(),
+  );
+
+  const timeRange = isLogConsoleTimeRangeWithinRetention({
+    timeRange: logConsoleTimeRange,
+    retentionInDays,
+  })
+    ? logConsoleTimeRange
+    : '24h';
+
+  const getDateRange = (now: string) =>
+    getLogConsoleTimeRangeBounds({ timeRange, now, timeZone });
+
+  const getEventLogsInput = (now: string) => ({
+    table: source.table,
+    first: RECORDS_PER_PAGE,
+    filters: { dateRange: getDateRange(now) },
+  });
+
+  const dateRange = getDateRange(refreshedAt);
 
   const { records, totalCount, loading, error, loadMore, refetch } =
-    useEventLogs({
-      table: source.table,
-      first: RECORDS_PER_PAGE,
-    });
+    useEventLogs(getEventLogsInput(refreshedAt));
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
     LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
   );
 
-  const refreshLogs = () => {
+  const scrollToTop = () => {
     getScrollWrapperElement().scrollWrapperElement?.scrollTo({ top: 0 });
-    void refetch();
+  };
+
+  const refreshLogs = () => {
+    const now = new Date().toISOString();
+
+    scrollToTop();
+    setRefreshedAt(now);
+    void refetch({ input: getEventLogsInput(now) });
+  };
+
+  const changeTimeRange = (selectedTimeRange: LogConsoleTimeRange) => {
+    scrollToTop();
+    setRefreshedAt(new Date().toISOString());
+    setLogConsoleTimeRange(selectedTimeRange);
   };
 
   const openLog = (entry: EventLogRecord) => {
@@ -85,6 +147,44 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
       resetNavigationStack: true,
     });
   };
+
+  const formatRangeDate = (date: string, format: string) =>
+    formatInTimeZone(date, timeZone, format, { locale: localeCatalog });
+
+  const formatRangeBound = (date: string) => {
+    const boundDateFormat =
+      formatRangeDate(date, 'yyyy') === formatRangeDate(refreshedAt, 'yyyy')
+        ? DATE_FORMAT_WITHOUT_YEAR[
+            getWorkspaceDateFormatFromDateFormat(dateFormat)
+          ]
+        : dateFormat;
+
+    return formatRangeDate(date, `${boundDateFormat}, ${timeFormat}`);
+  };
+
+  const rangeEnd = dateRange.end ?? refreshedAt;
+
+  const countLabel = source.getCountLabel({
+    count: totalCount,
+    formattedCount: formatNumber(totalCount),
+  });
+
+  const summary = `${countLabel} · ${formatRangeBound(dateRange.start)} – ${formatRangeBound(rangeEnd)}`;
+
+  const summaryTimeZone = formatRangeDate(rangeEnd, 'zzz');
+
+  const isInitialLoading = loading && records.length === 0;
+
+  const longerTimeRange = (['7d', '30d'] as const).find((preset) =>
+    isBefore(
+      getLogConsoleTimeRangeBounds({
+        timeRange: preset,
+        now: refreshedAt,
+        timeZone,
+      }).start,
+      dateRange.start,
+    ),
+  );
 
   const renderLogs = () => {
     if (isDefined(error)) {
@@ -108,8 +208,24 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
       return (
         <EmptyState.Root>
           <EmptyState.Content>
-            <EmptyState.Title>{t`No logs yet`}</EmptyState.Title>
+            <EmptyState.Title>{t`No logs in this time range`}</EmptyState.Title>
+            <EmptyState.Description>
+              {isDefined(longerTimeRange)
+                ? t`Try a longer time range.`
+                : retentionDescription}
+            </EmptyState.Description>
           </EmptyState.Content>
+          {isDefined(longerTimeRange) && (
+            <Button
+              variant="outline"
+              startIcon={<IconCalendarEvent />}
+              onClick={() => changeTimeRange(longerTimeRange)}
+            >
+              {longerTimeRange === '7d'
+                ? t`Search last 7 days`
+                : t`Search last 30 days`}
+            </Button>
+          )}
         </EmptyState.Root>
       );
     }
@@ -133,14 +249,22 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   return (
     <StyledResults>
       <StyledToolbar>
-        {records.length > 0 && (
-          <StyledCount>
-            {source.getCountLabel({
-              count: totalCount,
-              formattedCount: formatNumber(totalCount),
-            })}
-          </StyledCount>
-        )}
+        <LogConsoleTimeRangeDropdown
+          source={source}
+          timeRange={timeRange}
+          onTimeRangeChange={changeTimeRange}
+        />
+        <StyledSummary>
+          {!isInitialLoading && !isDefined(error) && (
+            <>
+              <OverflowingTextWithTooltip
+                text={summary}
+                tooltipContent={`${summary} ${summaryTimeZone}`}
+              />
+              <StyledTimeZone>{summaryTimeZone}</StyledTimeZone>
+            </>
+          )}
+        </StyledSummary>
         <IconButton
           size="sm"
           variant="ghost"
