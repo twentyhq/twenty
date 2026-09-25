@@ -31,23 +31,24 @@ const isCurrentWorkspaceMemberFilterableField = (
   );
 };
 
-export const validateFlatViewMineFilterField = ({
+export const validateFlatViewToggleMineFilterField = ({
   flatView,
   flatFieldMetadataMaps,
 }: {
   flatView: UniversalFlatView;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
 }): FlatEntityValidationError[] => {
-  if (!isDefined(flatView.mineFilterFieldMetadataUniversalIdentifier)) {
+  if (!isDefined(flatView.toggleMineFilterFieldMetadataUniversalIdentifier)) {
     return [];
   }
 
-  const mineFilterFieldMetadata = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: flatView.mineFilterFieldMetadataUniversalIdentifier,
+  const toggleMineFilterFieldMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier:
+      flatView.toggleMineFilterFieldMetadataUniversalIdentifier,
     flatEntityMaps: flatFieldMetadataMaps,
   });
 
-  if (!isDefined(mineFilterFieldMetadata)) {
+  if (!isDefined(toggleMineFilterFieldMetadata)) {
     return [
       {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
@@ -60,7 +61,7 @@ export const validateFlatViewMineFilterField = ({
   const errors: FlatEntityValidationError[] = [];
 
   if (
-    mineFilterFieldMetadata.objectMetadataUniversalIdentifier !==
+    toggleMineFilterFieldMetadata.objectMetadataUniversalIdentifier !==
     flatView.objectMetadataUniversalIdentifier
   ) {
     errors.push({
@@ -70,7 +71,7 @@ export const validateFlatViewMineFilterField = ({
     });
   }
 
-  if (!isCurrentWorkspaceMemberFilterableField(mineFilterFieldMetadata)) {
+  if (!isCurrentWorkspaceMemberFilterableField(toggleMineFilterFieldMetadata)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Mine filter field must be an actor or a many-to-one relation to workspace members`,

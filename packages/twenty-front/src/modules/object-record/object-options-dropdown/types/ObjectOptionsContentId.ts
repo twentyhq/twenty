@@ -10,5 +10,5 @@ export type ObjectOptionsContentId =
   | 'addRecordGroup'
   | 'calendarFields'
   | 'calendarView'
-  | 'mineFilterFields'
+  | 'toggleMineFilterFields'
   | 'visibility';

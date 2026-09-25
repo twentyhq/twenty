@@ -32,7 +32,7 @@ export const VIEW_FRAGMENT = gql`
     anyFieldFilterValue
     calendarFieldMetadataId
     calendarEndFieldMetadataId
-    mineFilterFieldMetadataId
+    toggleMineFilterFieldMetadataId
     calendarLayout
     visibility
     createdByUserWorkspaceId

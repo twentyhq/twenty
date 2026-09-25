@@ -100,7 +100,7 @@ export class UpdateViewInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  mineFilterFieldMetadataId?: string | null;
+  toggleMineFilterFieldMetadataId?: string | null;
 
   @IsOptional()
   @IsEnum(ViewVisibility)

@@ -10,13 +10,13 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { isFieldMetadataItemMineFilterable } from '@/views/utils/isFieldMetadataItemMineFilterable';
+import { isFieldMetadataItemToggleMineFilterable } from '@/views/utils/isFieldMetadataItemToggleMineFilterable';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconX, useIcons } from 'twenty-ui/icon';
 
-export const ObjectOptionsDropdownMineFilterFieldsContent = () => {
+export const ObjectOptionsDropdownToggleMineFilterFieldsContent = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [searchInput, setSearchInput] = useState('');
@@ -27,17 +27,17 @@ export const ObjectOptionsDropdownMineFilterFieldsContent = () => {
   const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
 
-  const mineFilterableFields = objectMetadataItem.fields.filter(
+  const toggleMineFilterableFields = objectMetadataItem.fields.filter(
     (field) =>
-      isFieldMetadataItemMineFilterable(field) &&
+      isFieldMetadataItemToggleMineFilterable(field) &&
       field.label.toLowerCase().includes(searchInput.toLowerCase()),
   );
 
-  const handleMineFilterFieldChange = async (
+  const handleToggleMineFilterFieldChange = async (
     fieldMetadataItem: FieldMetadataItem | null,
   ) => {
     await updateCurrentView({
-      mineFilterFieldMetadataId: fieldMetadataItem?.id ?? null,
+      toggleMineFilterFieldMetadataId: fieldMetadataItem?.id ?? null,
     });
     closeDropdown();
   };
@@ -62,16 +62,18 @@ export const ObjectOptionsDropdownMineFilterFieldsContent = () => {
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        {mineFilterableFields.map((fieldMetadataItem) => (
+        {toggleMineFilterableFields.map((fieldMetadataItem) => (
           <ListItem
             key={fieldMetadataItem.id}
-            onClick={() => handleMineFilterFieldChange(fieldMetadataItem)}
+            onClick={() => handleToggleMineFilterFieldChange(fieldMetadataItem)}
             role="option"
             aria-selected={
-              fieldMetadataItem.id === currentView?.mineFilterFieldMetadataId
+              fieldMetadataItem.id ===
+              currentView?.toggleMineFilterFieldMetadataId
             }
             selected={
-              fieldMetadataItem.id === currentView?.mineFilterFieldMetadataId
+              fieldMetadataItem.id ===
+              currentView?.toggleMineFilterFieldMetadataId
             }
             indicator="check"
             startIcon={
@@ -82,13 +84,13 @@ export const ObjectOptionsDropdownMineFilterFieldsContent = () => {
           </ListItem>
         ))}
       </DropdownMenuItemsContainer>
-      {isDefined(currentView?.mineFilterFieldMetadataId) && (
+      {isDefined(currentView?.toggleMineFilterFieldMetadataId) && (
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
             <ListItem
               startIcon={<IconX />}
-              onClick={() => handleMineFilterFieldChange(null)}
+              onClick={() => handleToggleMineFilterFieldChange(null)}
             >{t`Remove All/Mine toggle`}</ListItem>
           </DropdownMenuItemsContainer>
         </>

@@ -32,8 +32,8 @@ export const convertUpdateViewInputToGql = (
     ...(view.calendarEndFieldMetadataId !== undefined && {
       calendarEndFieldMetadataId: view.calendarEndFieldMetadataId,
     }),
-    ...(view.mineFilterFieldMetadataId !== undefined && {
-      mineFilterFieldMetadataId: view.mineFilterFieldMetadataId,
+    ...(view.toggleMineFilterFieldMetadataId !== undefined && {
+      toggleMineFilterFieldMetadataId: view.toggleMineFilterFieldMetadataId,
     }),
     ...(isDefined(view.visibility) && { visibility: view.visibility }),
     ...(isDefined(view.shouldHideEmptyGroups) && {

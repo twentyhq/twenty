@@ -4,21 +4,21 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { computeMineRecordFilterToggle } from '@/views/utils/computeMineRecordFilterToggle';
+import { computeToggleMineRecordFilter } from '@/views/utils/computeToggleMineRecordFilter';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { v4 } from 'uuid';
 
-type ViewBarMineFilterButtonProps = {
+type ToggleMineFilterButtonProps = {
   viewBarId: string;
   objectNameSingular: string;
 };
 
-export const ViewBarMineFilterButton = ({
+export const ToggleMineFilterButton = ({
   viewBarId,
   objectNameSingular,
-}: ViewBarMineFilterButtonProps) => {
+}: ToggleMineFilterButtonProps) => {
   const { currentView } = useGetCurrentViewOnly();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -33,17 +33,17 @@ export const ViewBarMineFilterButton = ({
   const { upsertRecordFilter } = useUpsertRecordFilter(viewBarId);
   const { removeRecordFilter } = useRemoveRecordFilter(viewBarId);
 
-  const mineFilterFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === currentView?.mineFilterFieldMetadataId,
+  const toggleMineFilterFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === currentView?.toggleMineFilterFieldMetadataId,
   );
 
-  if (!isDefined(mineFilterFieldMetadataItem)) {
+  if (!isDefined(toggleMineFilterFieldMetadataItem)) {
     return null;
   }
 
-  const { isMineSelected, toggleAction } = computeMineRecordFilterToggle({
+  const { isMineSelected, toggleAction } = computeToggleMineRecordFilter({
     currentRecordFilters,
-    mineFilterFieldMetadataItem,
+    toggleMineFilterFieldMetadataItem,
     newRecordFilterId: v4(),
   });
 

@@ -10,55 +10,57 @@ import {
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 
-type MineRecordFilterToggleAction =
+type ToggleMineRecordFilterAction =
   | { type: 'upsert'; recordFilter: RecordFilter }
   | { type: 'remove'; recordFilterId: string };
 
-type ComputeMineRecordFilterToggleParams = {
+type ComputeToggleMineRecordFilterParams = {
   currentRecordFilters: RecordFilter[];
-  mineFilterFieldMetadataItem: FieldMetadataItem;
+  toggleMineFilterFieldMetadataItem: FieldMetadataItem;
   newRecordFilterId: string;
 };
 
-export const computeMineRecordFilterToggle = ({
+export const computeToggleMineRecordFilter = ({
   currentRecordFilters,
-  mineFilterFieldMetadataItem,
+  toggleMineFilterFieldMetadataItem,
   newRecordFilterId,
-}: ComputeMineRecordFilterToggleParams): {
+}: ComputeToggleMineRecordFilterParams): {
   isMineSelected: boolean;
-  toggleAction: MineRecordFilterToggleAction;
+  toggleAction: ToggleMineRecordFilterAction;
 } => {
-  const mineFilterSubFieldName =
-    mineFilterFieldMetadataItem.type === FieldMetadataType.ACTOR
+  const toggleMineFilterSubFieldName =
+    toggleMineFilterFieldMetadataItem.type === FieldMetadataType.ACTOR
       ? 'workspaceMemberId'
       : undefined;
 
   // Same lookup as the native filter dropdown, so "Me" merges into the existing chip
-  const recordFilterOnMineField = currentRecordFilters.find(
+  const recordFilterOnToggleMineFilterField = currentRecordFilters.find(
     (recordFilter) =>
-      recordFilter.fieldMetadataId === mineFilterFieldMetadataItem.id &&
+      recordFilter.fieldMetadataId === toggleMineFilterFieldMetadataItem.id &&
       !isDefined(recordFilter.recordFilterGroupId) &&
       recordFilter.operand === ViewFilterOperand.IS &&
-      (recordFilter.subFieldName ?? undefined) === mineFilterSubFieldName,
+      (recordFilter.subFieldName ?? undefined) === toggleMineFilterSubFieldName,
   );
 
-  if (!isDefined(recordFilterOnMineField)) {
+  if (!isDefined(recordFilterOnToggleMineFilterField)) {
     return {
       isMineSelected: false,
       toggleAction: {
         type: 'upsert',
         recordFilter: {
           id: newRecordFilterId,
-          fieldMetadataId: mineFilterFieldMetadataItem.id,
+          fieldMetadataId: toggleMineFilterFieldMetadataItem.id,
           value: JSON.stringify({
             isCurrentWorkspaceMemberSelected: true,
             selectedRecordIds: [],
           } satisfies RelationFilterValue),
           displayValue: 'Me',
-          type: getFilterTypeFromFieldType(mineFilterFieldMetadataItem.type),
+          type: getFilterTypeFromFieldType(
+            toggleMineFilterFieldMetadataItem.type,
+          ),
           operand: ViewFilterOperand.IS,
-          label: mineFilterFieldMetadataItem.label,
-          subFieldName: mineFilterSubFieldName,
+          label: toggleMineFilterFieldMetadataItem.label,
+          subFieldName: toggleMineFilterSubFieldName,
         },
       },
     };
@@ -70,9 +72,9 @@ export const computeMineRecordFilterToggle = ({
         isCurrentWorkspaceMemberSelected: false,
         selectedRecordIds: arrayOfUuidOrVariableSchema
           .catch([])
-          .parse(recordFilterOnMineField.value),
+          .parse(recordFilterOnToggleMineFilterField.value),
       })
-      .parse(recordFilterOnMineField.value);
+      .parse(recordFilterOnToggleMineFilterField.value);
 
   const isMineSelected = isCurrentWorkspaceMemberSelected === true;
 
@@ -81,16 +83,17 @@ export const computeMineRecordFilterToggle = ({
       isMineSelected,
       toggleAction: {
         type: 'remove',
-        recordFilterId: recordFilterOnMineField.id,
+        recordFilterId: recordFilterOnToggleMineFilterField.id,
       },
     };
   }
 
   // Filters loaded from a view carry the raw value as display value
   const otherSelectedNames =
-    recordFilterOnMineField.displayValue === recordFilterOnMineField.value
+    recordFilterOnToggleMineFilterField.displayValue ===
+    recordFilterOnToggleMineFilterField.value
       ? []
-      : recordFilterOnMineField.displayValue
+      : recordFilterOnToggleMineFilterField.displayValue
           .split(', ')
           .filter((name) => isNonEmptyString(name) && name !== 'Me');
 
@@ -99,7 +102,7 @@ export const computeMineRecordFilterToggle = ({
     toggleAction: {
       type: 'upsert',
       recordFilter: {
-        ...recordFilterOnMineField,
+        ...recordFilterOnToggleMineFilterField,
         value: JSON.stringify({
           isCurrentWorkspaceMemberSelected: !isMineSelected,
           selectedRecordIds,

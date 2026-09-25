@@ -33,7 +33,7 @@ export type View = {
   groupLoadLimit?: number | null;
   calendarFieldMetadataId?: string | null;
   calendarEndFieldMetadataId?: string | null;
-  mineFilterFieldMetadataId?: string | null;
+  toggleMineFilterFieldMetadataId?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
   position: number;
   icon: string;

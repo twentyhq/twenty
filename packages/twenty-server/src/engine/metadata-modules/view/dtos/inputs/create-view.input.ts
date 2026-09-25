@@ -129,7 +129,7 @@ export class CreateViewInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  mineFilterFieldMetadataId?: string;
+  toggleMineFilterFieldMetadataId?: string;
 
   @IsOptional()
   @IsUUID()

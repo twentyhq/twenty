@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { computeMineRecordFilterToggle } from '@/views/utils/computeMineRecordFilterToggle';
+import { computeToggleMineRecordFilter } from '@/views/utils/computeToggleMineRecordFilter';
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 const OTHER_MEMBER_ID = '20202020-0687-4c41-b707-ed1bfca972a7';
@@ -34,12 +34,12 @@ const relationValue = (
   selectedRecordIds: string[],
 ) => JSON.stringify({ isCurrentWorkspaceMemberSelected, selectedRecordIds });
 
-describe('computeMineRecordFilterToggle', () => {
+describe('computeToggleMineRecordFilter', () => {
   it('adds a "Me" filter when the field has no filter', () => {
     expect(
-      computeMineRecordFilterToggle({
+      computeToggleMineRecordFilter({
         currentRecordFilters: [],
-        mineFilterFieldMetadataItem: relationField,
+        toggleMineFilterFieldMetadataItem: relationField,
         newRecordFilterId: 'new-filter-id',
       }),
     ).toEqual({
@@ -61,9 +61,9 @@ describe('computeMineRecordFilterToggle', () => {
   });
 
   it('adds a "Me" filter on the workspaceMemberId sub field of an actor field', () => {
-    const { toggleAction } = computeMineRecordFilterToggle({
+    const { toggleAction } = computeToggleMineRecordFilter({
       currentRecordFilters: [],
-      mineFilterFieldMetadataItem: actorField,
+      toggleMineFilterFieldMetadataItem: actorField,
       newRecordFilterId: 'new-filter-id',
     });
 
@@ -84,9 +84,9 @@ describe('computeMineRecordFilterToggle', () => {
     });
 
     expect(
-      computeMineRecordFilterToggle({
+      computeToggleMineRecordFilter({
         currentRecordFilters: [existingRecordFilter],
-        mineFilterFieldMetadataItem: relationField,
+        toggleMineFilterFieldMetadataItem: relationField,
         newRecordFilterId: 'new-filter-id',
       }),
     ).toEqual({
@@ -109,9 +109,9 @@ describe('computeMineRecordFilterToggle', () => {
     });
 
     expect(
-      computeMineRecordFilterToggle({
+      computeToggleMineRecordFilter({
         currentRecordFilters: [existingRecordFilter],
-        mineFilterFieldMetadataItem: relationField,
+        toggleMineFilterFieldMetadataItem: relationField,
         newRecordFilterId: 'new-filter-id',
       }),
     ).toEqual({
@@ -129,11 +129,11 @@ describe('computeMineRecordFilterToggle', () => {
 
   it('removes the filter when "Me" is its only value', () => {
     expect(
-      computeMineRecordFilterToggle({
+      computeToggleMineRecordFilter({
         currentRecordFilters: [
           buildRecordFilter({ value: relationValue(true, []) }),
         ],
-        mineFilterFieldMetadataItem: relationField,
+        toggleMineFilterFieldMetadataItem: relationField,
         newRecordFilterId: 'new-filter-id',
       }),
     ).toEqual({
@@ -143,11 +143,11 @@ describe('computeMineRecordFilterToggle', () => {
   });
 
   it('reads the legacy array value format', () => {
-    const { toggleAction } = computeMineRecordFilterToggle({
+    const { toggleAction } = computeToggleMineRecordFilter({
       currentRecordFilters: [
         buildRecordFilter({ value: JSON.stringify([OTHER_MEMBER_ID]) }),
       ],
-      mineFilterFieldMetadataItem: relationField,
+      toggleMineFilterFieldMetadataItem: relationField,
       newRecordFilterId: 'new-filter-id',
     });
 
@@ -163,9 +163,9 @@ describe('computeMineRecordFilterToggle', () => {
   it('ignores the raw value that filters loaded from a view carry as display value', () => {
     const value = relationValue(false, [OTHER_MEMBER_ID]);
 
-    const { toggleAction } = computeMineRecordFilterToggle({
+    const { toggleAction } = computeToggleMineRecordFilter({
       currentRecordFilters: [buildRecordFilter({ value, displayValue: value })],
-      mineFilterFieldMetadataItem: relationField,
+      toggleMineFilterFieldMetadataItem: relationField,
       newRecordFilterId: 'new-filter-id',
     });
 
@@ -183,14 +183,14 @@ describe('computeMineRecordFilterToggle', () => {
     ['a filter with another operand', { operand: ViewFilterOperand.IS_NOT }],
     ['a filter on another field', { fieldMetadataId: 'other-field-id' }],
   ])('does not merge into %s', (_description, overrides) => {
-    const { toggleAction } = computeMineRecordFilterToggle({
+    const { toggleAction } = computeToggleMineRecordFilter({
       currentRecordFilters: [
         buildRecordFilter({
           value: relationValue(false, [OTHER_MEMBER_ID]),
           ...overrides,
         }),
       ],
-      mineFilterFieldMetadataItem: relationField,
+      toggleMineFilterFieldMetadataItem: relationField,
       newRecordFilterId: 'new-filter-id',
     });
 

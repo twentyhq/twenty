@@ -10,7 +10,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { validateFlatViewCalendarFields } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util';
-import { validateFlatViewMineFilterField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-mine-filter-field.util';
+import { validateFlatViewToggleMineFilterField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-toggle-mine-filter-field.util';
 import { isAllowedFlatViewKanbanMainGroupByField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-allowed-flat-view-kanban-main-group-by-field.util';
 
 export const validateFlatViewUpdate = ({
@@ -152,7 +152,7 @@ export const validateFlatViewUpdate = ({
       flatView: updatedFlatView,
       flatFieldMetadataMaps,
     }),
-    ...validateFlatViewMineFilterField({
+    ...validateFlatViewToggleMineFilterField({
       flatView: updatedFlatView,
       flatFieldMetadataMaps,
     }),

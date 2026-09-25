@@ -102,7 +102,7 @@ export class ViewDTO {
   calendarEndFieldMetadataId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  mineFilterFieldMetadataId?: string | null;
+  toggleMineFilterFieldMetadataId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;

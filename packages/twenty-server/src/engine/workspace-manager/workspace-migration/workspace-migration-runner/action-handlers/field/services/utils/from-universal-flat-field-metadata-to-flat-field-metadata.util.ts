@@ -132,7 +132,7 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
     fieldPermissionIds: [],
     calendarViewIds: [],
     calendarEndViewIds: [],
-    mineFilterViewIds: [],
+    toggleMineFilterViewIds: [],
     mainGroupByFieldMetadataViewIds: [],
     kanbanAggregateOperationViewIds: [],
     viewSortIds: [],

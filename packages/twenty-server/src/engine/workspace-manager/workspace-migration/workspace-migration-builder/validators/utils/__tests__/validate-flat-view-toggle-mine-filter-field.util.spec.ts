@@ -4,21 +4,21 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
-import { validateFlatViewMineFilterField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-mine-filter-field.util';
+import { validateFlatViewToggleMineFilterField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-toggle-mine-filter-field.util';
 
 const buildFlatView = (
-  mineFilterFieldMetadataUniversalIdentifier: string | null,
+  toggleMineFilterFieldMetadataUniversalIdentifier: string | null,
 ) =>
   ({
     objectMetadataUniversalIdentifier: 'object',
-    mineFilterFieldMetadataUniversalIdentifier,
+    toggleMineFilterFieldMetadataUniversalIdentifier,
   }) as UniversalFlatView;
 
 const validate = (
   flatView: UniversalFlatView,
   fields: UniversalFlatFieldMetadata[],
 ) =>
-  validateFlatViewMineFilterField({
+  validateFlatViewToggleMineFilterField({
     flatView,
     flatFieldMetadataMaps: {
       byUniversalIdentifier: Object.fromEntries(
@@ -28,7 +28,7 @@ const validate = (
   });
 
 const actorField = {
-  universalIdentifier: 'mine-field',
+  universalIdentifier: 'toggle-mine-filter-field',
   objectMetadataUniversalIdentifier: 'object',
   type: FieldMetadataType.ACTOR,
 } as UniversalFlatFieldMetadata;
@@ -41,20 +41,22 @@ const buildRelationField = ({
   relationTargetObjectMetadataUniversalIdentifier: string;
 }) =>
   ({
-    universalIdentifier: 'mine-field',
+    universalIdentifier: 'toggle-mine-filter-field',
     objectMetadataUniversalIdentifier: 'object',
     type: FieldMetadataType.RELATION,
     relationTargetObjectMetadataUniversalIdentifier,
     universalSettings: { relationType },
   }) as unknown as UniversalFlatFieldMetadata;
 
-describe('validateFlatViewMineFilterField', () => {
-  it('accepts a view without a mine filter field', () => {
+describe('validateFlatViewToggleMineFilterField', () => {
+  it('accepts a view without a toggle mine filter field', () => {
     expect(validate(buildFlatView(null), [])).toEqual([]);
   });
 
   it('accepts an actor field', () => {
-    expect(validate(buildFlatView('mine-field'), [actorField])).toEqual([]);
+    expect(
+      validate(buildFlatView('toggle-mine-filter-field'), [actorField]),
+    ).toEqual([]);
   });
 
   it('accepts a many-to-one relation to workspace members', () => {
@@ -64,11 +66,13 @@ describe('validateFlatViewMineFilterField', () => {
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,
     });
 
-    expect(validate(buildFlatView('mine-field'), [relationField])).toEqual([]);
+    expect(
+      validate(buildFlatView('toggle-mine-filter-field'), [relationField]),
+    ).toEqual([]);
   });
 
   it('rejects an unknown field', () => {
-    expect(validate(buildFlatView('mine-field'), [])).toEqual([
+    expect(validate(buildFlatView('toggle-mine-filter-field'), [])).toEqual([
       expect.objectContaining({ code: ViewExceptionCode.INVALID_VIEW_DATA }),
     ]);
   });
@@ -80,7 +84,9 @@ describe('validateFlatViewMineFilterField', () => {
     } as UniversalFlatFieldMetadata;
 
     expect(
-      validate(buildFlatView('mine-field'), [otherObjectActorField]),
+      validate(buildFlatView('toggle-mine-filter-field'), [
+        otherObjectActorField,
+      ]),
     ).toEqual([
       expect.objectContaining({ code: ViewExceptionCode.INVALID_VIEW_DATA }),
     ]);
@@ -110,7 +116,9 @@ describe('validateFlatViewMineFilterField', () => {
       } as UniversalFlatFieldMetadata,
     ],
   ])('rejects %s', (_description, field) => {
-    expect(validate(buildFlatView('mine-field'), [field])).toEqual([
+    expect(
+      validate(buildFlatView('toggle-mine-filter-field'), [field]),
+    ).toEqual([
       expect.objectContaining({ code: ViewExceptionCode.INVALID_VIEW_DATA }),
     ]);
   });

@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isFieldMetadataItemMineFilterable } from '@/views/utils/isFieldMetadataItemMineFilterable';
+import { isFieldMetadataItemToggleMineFilterable } from '@/views/utils/isFieldMetadataItemToggleMineFilterable';
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -20,10 +20,10 @@ const buildRelationField = ({
     },
   }) as FieldMetadataItem;
 
-describe('isFieldMetadataItemMineFilterable', () => {
+describe('isFieldMetadataItemToggleMineFilterable', () => {
   it('accepts an active actor field', () => {
     expect(
-      isFieldMetadataItemMineFilterable({
+      isFieldMetadataItemToggleMineFilterable({
         id: 'field-id',
         isActive: true,
         type: FieldMetadataType.ACTOR,
@@ -33,7 +33,7 @@ describe('isFieldMetadataItemMineFilterable', () => {
 
   it('accepts a many-to-one relation to workspace members', () => {
     expect(
-      isFieldMetadataItemMineFilterable(
+      isFieldMetadataItemToggleMineFilterable(
         buildRelationField({
           relationType: RelationType.MANY_TO_ONE,
           targetObjectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -44,7 +44,7 @@ describe('isFieldMetadataItemMineFilterable', () => {
 
   it('rejects an inactive field', () => {
     expect(
-      isFieldMetadataItemMineFilterable({
+      isFieldMetadataItemToggleMineFilterable({
         id: 'field-id',
         isActive: false,
         type: FieldMetadataType.ACTOR,
@@ -54,7 +54,7 @@ describe('isFieldMetadataItemMineFilterable', () => {
 
   it('rejects a relation to another object', () => {
     expect(
-      isFieldMetadataItemMineFilterable(
+      isFieldMetadataItemToggleMineFilterable(
         buildRelationField({
           relationType: RelationType.MANY_TO_ONE,
           targetObjectNameSingular: CoreObjectNameSingular.Company,
@@ -65,7 +65,7 @@ describe('isFieldMetadataItemMineFilterable', () => {
 
   it('rejects a one-to-many relation to workspace members', () => {
     expect(
-      isFieldMetadataItemMineFilterable(
+      isFieldMetadataItemToggleMineFilterable(
         buildRelationField({
           relationType: RelationType.ONE_TO_MANY,
           targetObjectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -76,7 +76,7 @@ describe('isFieldMetadataItemMineFilterable', () => {
 
   it('rejects a text field', () => {
     expect(
-      isFieldMetadataItemMineFilterable({
+      isFieldMetadataItemToggleMineFilterable({
         id: 'field-id',
         isActive: true,
         type: FieldMetadataType.TEXT,

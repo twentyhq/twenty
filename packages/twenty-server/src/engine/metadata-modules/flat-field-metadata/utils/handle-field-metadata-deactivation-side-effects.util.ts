@@ -89,12 +89,14 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     fromFlatFieldMetadata.kanbanAggregateOperationViewIds,
   );
   const calendarEndViewIds = new Set(fromFlatFieldMetadata.calendarEndViewIds);
-  const mineFilterViewIds = new Set(fromFlatFieldMetadata.mineFilterViewIds);
+  const toggleMineFilterViewIds = new Set(
+    fromFlatFieldMetadata.toggleMineFilterViewIds,
+  );
   const viewIdsToUpdate = [
     ...new Set([
       ...kanbanAggregateOperationViewIds,
       ...calendarEndViewIds,
-      ...mineFilterViewIds,
+      ...toggleMineFilterViewIds,
     ]),
   ].filter((viewId) => !viewIdsToDelete.includes(viewId));
   const flatViewsToUpdate = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -104,7 +106,9 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     const shouldClearKanbanAggregateOperation =
       kanbanAggregateOperationViewIds.has(flatView.id);
     const shouldClearCalendarEndField = calendarEndViewIds.has(flatView.id);
-    const shouldClearMineFilterField = mineFilterViewIds.has(flatView.id);
+    const shouldClearToggleMineFilterField = toggleMineFilterViewIds.has(
+      flatView.id,
+    );
 
     return {
       ...flatView,
@@ -117,9 +121,9 @@ export const handleFieldMetadataDeactivationSideEffects = ({
         calendarEndFieldMetadataId: null,
         calendarEndFieldMetadataUniversalIdentifier: null,
       }),
-      ...(shouldClearMineFilterField && {
-        mineFilterFieldMetadataId: null,
-        mineFilterFieldMetadataUniversalIdentifier: null,
+      ...(shouldClearToggleMineFilterField && {
+        toggleMineFilterFieldMetadataId: null,
+        toggleMineFilterFieldMetadataUniversalIdentifier: null,
       }),
     };
   });

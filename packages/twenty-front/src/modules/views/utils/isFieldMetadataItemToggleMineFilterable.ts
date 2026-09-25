@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 
-export const isFieldMetadataItemMineFilterable = (
+export const isFieldMetadataItemToggleMineFilterable = (
   fieldMetadataItem: FieldMetadataItem,
 ) => {
   if (!fieldMetadataItem.isActive) {

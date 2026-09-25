@@ -158,18 +158,19 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
       calendarEndFieldMetadataUniversalIdentifier;
   }
 
-  if (updatedEditableProperties.mineFilterFieldMetadataId !== undefined) {
-    const { mineFilterFieldMetadataUniversalIdentifier } =
+  if (updatedEditableProperties.toggleMineFilterFieldMetadataId !== undefined) {
+    const { toggleMineFilterFieldMetadataUniversalIdentifier } =
       resolveEntityRelationUniversalIdentifiers({
         metadataName: 'view',
         foreignKeyValues: {
-          mineFilterFieldMetadataId: mergedRecord.mineFilterFieldMetadataId,
+          toggleMineFilterFieldMetadataId:
+            mergedRecord.toggleMineFilterFieldMetadataId,
         },
         flatEntityMaps: { flatFieldMetadataMaps },
       });
 
-    flatViewToUpdate.mineFilterFieldMetadataUniversalIdentifier =
-      mineFilterFieldMetadataUniversalIdentifier;
+    flatViewToUpdate.toggleMineFilterFieldMetadataUniversalIdentifier =
+      toggleMineFilterFieldMetadataUniversalIdentifier;
   }
 
   if (updatedEditableProperties.mainGroupByFieldMetadataId !== undefined) {

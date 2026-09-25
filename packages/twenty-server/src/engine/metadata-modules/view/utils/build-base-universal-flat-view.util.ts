@@ -42,7 +42,7 @@ export const buildBaseUniversalFlatView = ({
     anyFieldFilterValue: null,
     calendarFieldMetadataUniversalIdentifier: null,
     calendarEndFieldMetadataUniversalIdentifier: null,
-    mineFilterFieldMetadataUniversalIdentifier: null,
+    toggleMineFilterFieldMetadataUniversalIdentifier: null,
     calendarLayout: null,
     isCompact: false,
     shouldHideEmptyGroups: false,

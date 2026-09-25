@@ -190,7 +190,7 @@ const buildFlatView = ({
   kanbanAggregateOperationFieldMetadataId: null,
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
-  mineFilterFieldMetadataId: null,
+  toggleMineFilterFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
   overrides: null,
   viewFieldIds: [],
@@ -850,7 +850,7 @@ describe('reconstructViewsManifest', () => {
 
   it.each([
     'mainGroupByFieldMetadataUniversalIdentifier',
-    'mineFilterFieldMetadataUniversalIdentifier',
+    'toggleMineFilterFieldMetadataUniversalIdentifier',
   ] as const)(
     'should refuse a view whose %s references a field that does not exist together with its children',
     (fieldReferenceProperty) => {

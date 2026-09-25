@@ -74,8 +74,8 @@ export const ObjectOptionsDropdownCustomView = ({
     recordIndexCalendarFieldMetadataIdComponentState,
   );
 
-  const mineFilterFieldMetadata = objectMetadataItem.fields.find(
-    (field) => field.id === currentView?.mineFilterFieldMetadataId,
+  const toggleMineFilterFieldMetadata = objectMetadataItem.fields.find(
+    (field) => field.id === currentView?.toggleMineFilterFieldMetadataId,
   );
 
   const calendarFieldMetadata = recordIndexCalendarFieldMetadataId
@@ -128,7 +128,7 @@ export const ObjectOptionsDropdownCustomView = ({
       ? ['CalendarDateField', 'CalendarView']
       : []),
     ...(customViewData?.type !== ViewType.CALENDAR ? ['Group'] : []),
-    'MineFilterField',
+    'ToggleMineFilterField',
     'Delete view',
   ];
 
@@ -284,14 +284,14 @@ export const ObjectOptionsDropdownCustomView = ({
             </Tooltip>
           )}
           <SelectableListItem
-            itemId="MineFilterField"
-            onEnter={() => onContentChange('mineFilterFields')}
+            itemId="ToggleMineFilterField"
+            onEnter={() => onContentChange('toggleMineFilterFields')}
           >
             <ListItem
-              focused={selectedItemId === 'MineFilterField'}
-              onClick={() => onContentChange('mineFilterFields')}
+              focused={selectedItemId === 'ToggleMineFilterField'}
+              onClick={() => onContentChange('toggleMineFilterFields')}
               startIcon={<IconUser />}
-              description={mineFilterFieldMetadata?.label}
+              description={toggleMineFilterFieldMetadata?.label}
               descriptionPlacement="end"
               hasSubmenu
             >{t`All/Mine field`}</ListItem>
