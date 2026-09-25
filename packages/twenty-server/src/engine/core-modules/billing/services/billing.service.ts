@@ -72,8 +72,8 @@ export class BillingService {
     );
   }
 
-  // Stripe only shows Apple Pay, Google Pay and the Link button on registered
-  // domains, and each workspace subdomain has to be registered on its own.
+  // Stripe only shows Apple Pay on registered domains, and each workspace
+  // subdomain has to be registered on its own.
   // Callers have already committed the workspace, so a failure here must not
   // reach them.
   async registerPaymentMethodDomain(
@@ -95,7 +95,13 @@ export class BillingService {
       await this.messageQueueService.add<RegisterPaymentMethodDomainJobData>(
         RegisterPaymentMethodDomainJob.name,
         { domainName },
-        { retryLimit: REGISTER_PAYMENT_METHOD_DOMAIN_JOB_RETRY_LIMIT },
+        {
+          retryLimit: REGISTER_PAYMENT_METHOD_DOMAIN_JOB_RETRY_LIMIT,
+          backoff: {
+            strategy: 'exponential',
+            initialDelayMilliseconds: 60_000,
+          },
+        },
       );
     } catch (error) {
       this.logger.error(

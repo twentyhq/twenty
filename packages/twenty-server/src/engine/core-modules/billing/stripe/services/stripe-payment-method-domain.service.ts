@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { PAYMENT_METHOD_DOMAIN_STRIPE_REQUEST_OPTIONS } from 'src/engine/core-modules/billing/constants/payment-method-domain-stripe-request-options.constant';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -28,15 +29,18 @@ export class StripePaymentMethodDomainService {
 
     const {
       data: [existingPaymentMethodDomain],
-    } = await stripe.paymentMethodDomains.list({
-      domain_name: domainName,
-      limit: 1,
-    });
+    } = await stripe.paymentMethodDomains.list(
+      { domain_name: domainName, limit: 1 },
+      PAYMENT_METHOD_DOMAIN_STRIPE_REQUEST_OPTIONS,
+    );
 
     if (isDefined(existingPaymentMethodDomain)) {
       return;
     }
 
-    await stripe.paymentMethodDomains.create({ domain_name: domainName });
+    await stripe.paymentMethodDomains.create(
+      { domain_name: domainName },
+      PAYMENT_METHOD_DOMAIN_STRIPE_REQUEST_OPTIONS,
+    );
   }
 }

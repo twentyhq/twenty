@@ -46,14 +46,15 @@ describe('StripePaymentMethodDomainService', () => {
     await service.registerDomain('acme.twenty.com');
 
     expect(stripe.paymentMethodDomains.list).toHaveBeenCalledTimes(1);
-    expect(stripe.paymentMethodDomains.list).toHaveBeenCalledWith({
-      domain_name: 'acme.twenty.com',
-      limit: 1,
-    });
+    expect(stripe.paymentMethodDomains.list).toHaveBeenCalledWith(
+      { domain_name: 'acme.twenty.com', limit: 1 },
+      { timeout: 10_000, maxNetworkRetries: 0 },
+    );
     expect(stripe.paymentMethodDomains.create).toHaveBeenCalledTimes(1);
-    expect(stripe.paymentMethodDomains.create).toHaveBeenCalledWith({
-      domain_name: 'acme.twenty.com',
-    });
+    expect(stripe.paymentMethodDomains.create).toHaveBeenCalledWith(
+      { domain_name: 'acme.twenty.com' },
+      { timeout: 10_000, maxNetworkRetries: 0 },
+    );
   });
 
   it('should leave an already registered domain untouched', async () => {
