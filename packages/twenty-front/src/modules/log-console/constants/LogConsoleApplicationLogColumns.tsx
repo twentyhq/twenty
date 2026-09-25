@@ -55,7 +55,6 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
 
       return <Text truncate>{firstLine}</Text>;
     },
-    hiddenInDetails: true,
   },
   {
     id: 'execution',
@@ -64,6 +63,5 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
     renderCell: (entry) =>
       entry.properties?.executionId?.slice(0, EXECUTION_ID_DISPLAYED_LENGTH),
     hiddenWhenPanelOpen: true,
-    hiddenInDetails: true,
   },
 ];

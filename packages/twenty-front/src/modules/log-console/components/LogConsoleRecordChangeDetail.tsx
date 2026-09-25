@@ -5,26 +5,29 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
-import { IconArrowUpRight } from 'twenty-ui/icon';
+import { IconArrowUpRight, useIcons } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { EventFieldDiffLabel } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffLabel';
 import { EventFieldDiffValue } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValue';
 import { EventFieldDiffValueEffect } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect';
 import { EventRelationFieldDiffValues } from '@/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues';
+import { StyledLogConsoleFieldsCard } from '@/log-console/components/StyledLogConsoleFieldsCard';
 import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRecordActions';
 import { getLogConsoleRecordChangeFieldDiffs } from '@/log-console/utils/getLogConsoleRecordChangeFieldDiffs';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
+import { BillingFieldRow } from '@/settings/billing/components/internal/SettingsBillingCardField';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
+
+const StyledRecordChange = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
 
 const StyledEmptyValue = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
@@ -42,6 +45,7 @@ export const LogConsoleRecordChangeDetail = ({
   entry,
 }: LogConsoleRecordChangeDetailProps) => {
   const { t } = useLingui();
+  const { getIcon } = useIcons();
   const diffId = useId();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const objectMetadataItemsByIdMap = useAtomStateValue(
@@ -63,15 +67,7 @@ export const LogConsoleRecordChangeDetail = ({
     objectMetadataItem,
   });
 
-  const valueColumns: { label: string; snapshot: 'before' | 'after' }[] =
-    isDefined(action.valuesSnapshot)
-      ? [{ label: t`Value`, snapshot: action.valuesSnapshot }]
-      : [
-          { label: t`Before`, snapshot: 'before' },
-          { label: t`After`, snapshot: 'after' },
-        ];
-
-  const gridTemplateColumns = `minmax(0, 3fr) repeat(${valueColumns.length}, minmax(0, 4fr))`;
+  const displayedSnapshot = action.valuesSnapshot ?? 'after';
 
   const renderFieldValue = ({
     fieldMetadataItem,
@@ -118,7 +114,7 @@ export const LogConsoleRecordChangeDetail = ({
   };
 
   return (
-    <>
+    <StyledRecordChange>
       {isDefined(action.valuesTitle) &&
         (isNonEmptyArray(fieldDiffs) || !isDefined(recordSnapshot)) && (
           <Section.Root>
@@ -131,46 +127,29 @@ export const LogConsoleRecordChangeDetail = ({
               }
             />
             {isNonEmptyArray(fieldDiffs) && (
-              <Table>
-                <TableRow gridTemplateColumns={gridTemplateColumns}>
-                  <TableHeader>{t`Field`}</TableHeader>
-                  {valueColumns.map(({ label, snapshot }) => (
-                    <TableHeader key={snapshot}>{label}</TableHeader>
-                  ))}
-                </TableRow>
+              <StyledLogConsoleFieldsCard>
                 {fieldDiffs.map((fieldDiff) => (
-                  <TableRow
+                  <BillingFieldRow
                     key={fieldDiff.key}
-                    gridTemplateColumns={gridTemplateColumns}
+                    Icon={getIcon(fieldDiff.fieldMetadataItem.icon)}
+                    label={fieldDiff.fieldMetadataItem.label}
                   >
-                    <TableCell overflow="hidden" whiteSpace="nowrap">
-                      <EventFieldDiffLabel
-                        fieldMetadataItem={fieldDiff.fieldMetadataItem}
-                      />
-                    </TableCell>
-                    {valueColumns.map(({ snapshot }) => (
-                      <TableCell
-                        key={snapshot}
-                        overflow="hidden"
-                        whiteSpace="nowrap"
-                      >
-                        <ErrorBoundary fallbackRender={() => null}>
-                          {renderFieldValue({
-                            fieldMetadataItem: fieldDiff.fieldMetadataItem,
-                            value: fieldDiff[snapshot],
-                            recordStoreId: `${diffId}-${snapshot}-${fieldDiff.key}`,
-                          })}
-                        </ErrorBoundary>
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                    <ErrorBoundary fallbackRender={() => null}>
+                      {renderFieldValue({
+                        fieldMetadataItem: fieldDiff.fieldMetadataItem,
+                        value: fieldDiff[displayedSnapshot],
+                        recordStoreId: `${diffId}-${fieldDiff.key}`,
+                      })}
+                    </ErrorBoundary>
+                  </BillingFieldRow>
                 ))}
-              </Table>
+              </StyledLogConsoleFieldsCard>
             )}
           </Section.Root>
         )}
       {isDefined(recordSnapshot) && (
         <StyledOpenRecordButton
+          size="sm"
           startIcon={<IconArrowUpRight />}
           onClick={() =>
             openRecordInSidePanel({
@@ -182,6 +161,6 @@ export const LogConsoleRecordChangeDetail = ({
           {t`Open record`}
         </StyledOpenRecordButton>
       )}
-    </>
+    </StyledRecordChange>
   );
 };

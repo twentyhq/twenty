@@ -8,5 +8,4 @@ export const LOG_CONSOLE_TIME_COLUMN: LogConsoleColumn = {
   label: msg`Time`,
   gridTrack: '192px',
   renderCell: (entry) => <LogConsoleTimeCell timestamp={entry.timestamp} />,
-  hiddenInDetails: true,
 };

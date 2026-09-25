@@ -1,13 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, type ChipProps } from 'twenty-ui/primitives/data-display';
 
+import { getLogConsoleRecordLabel } from '@/log-console/utils/getLogConsoleRecordLabel';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
-
-const RECORD_ID_DISPLAYED_LENGTH = 8;
 
 type LogConsoleRecordCellProps = {
   entry: EventLogRecord;
@@ -38,11 +37,6 @@ export const LogConsoleRecordCell = ({
     );
   }
 
-  const displayedRecordId = entry.recordId?.slice(
-    0,
-    RECORD_ID_DISPLAYED_LENGTH,
-  );
-
   return (
     <Chip
       color={color}
@@ -51,9 +45,7 @@ export const LogConsoleRecordCell = ({
       }
       style={{ paddingInlineStart: 0 }}
     >
-      {isDefined(objectMetadataItem)
-        ? `${objectMetadataItem.labelSingular} ${displayedRecordId}`
-        : displayedRecordId}
+      {getLogConsoleRecordLabel({ entry, objectMetadataItem })}
     </Chip>
   );
 };
