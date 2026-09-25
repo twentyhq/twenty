@@ -2704,6 +2704,7 @@ export interface CampaignAudiencePreviewDTO {
     hardSuppressed: Scalars['Int']
     globallyUnsubscribed: Scalars['Int']
     topicUnsubscribed: Scalars['Int']
+    trackingRefused: Scalars['Int']
     sendable: Scalars['Int']
     __typename: 'CampaignAudiencePreviewDTO'
 }
@@ -2747,7 +2748,7 @@ export interface MessageSuppression {
     __typename: 'MessageSuppression'
 }
 
-export type MessageSuppressionReason = 'BOUNCE' | 'COMPLAINT' | 'TRACKING' | 'UNSUBSCRIBE'
+export type MessageSuppressionReason = 'BOUNCE' | 'COMPLAINT' | 'UNSUBSCRIBE' | 'TRACKING'
 
 export type MessageSuppressionSource = 'WEBHOOK' | 'SYSTEM'
 
@@ -6565,6 +6566,7 @@ export interface CampaignAudiencePreviewDTOGenqlSelection{
     hardSuppressed?: boolean | number
     globallyUnsubscribed?: boolean | number
     topicUnsubscribed?: boolean | number
+    trackingRefused?: boolean | number
     sendable?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -11410,8 +11412,8 @@ export const enumMessageChannelSyncStage = {
 export const enumMessageSuppressionReason = {
    BOUNCE: 'BOUNCE' as const,
    COMPLAINT: 'COMPLAINT' as const,
-   TRACKING: 'TRACKING' as const,
-   UNSUBSCRIBE: 'UNSUBSCRIBE' as const
+   UNSUBSCRIBE: 'UNSUBSCRIBE' as const,
+   TRACKING: 'TRACKING' as const
 }
 
 export const enumMessageSuppressionSource = {
