@@ -14,6 +14,7 @@ import {
 } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
+  workflows: [],
   timelineActivityTypes: [
     {
       universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',

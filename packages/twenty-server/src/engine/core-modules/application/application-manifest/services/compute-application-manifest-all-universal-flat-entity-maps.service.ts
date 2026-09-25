@@ -1,3 +1,6 @@
+import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
+import { msg } from '@lingui/core/macro';
+import { fromWorkflowManifestToCoreDefinitionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-core-definitions-or-throw.util';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -65,14 +68,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
+    existingAllFlatEntityMaps = fromAllFlatEntityMaps,
     isLogicFunctionPrebuiltModeEnabled,
+    inferDeletionFromMissingEntities = false,
     now,
     workspaceId,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
+    existingAllFlatEntityMaps?: AllFlatEntityMaps;
     isLogicFunctionPrebuiltModeEnabled: boolean;
+    inferDeletionFromMissingEntities?: boolean;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
@@ -153,7 +160,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const flatField of Object.values(
       allUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     )) {
-      if (!isDefined(flatField)) continue;
+      if (!isDefined(flatField)) {
+        continue;
+      }
 
       const bucket =
         fieldsByObjectUniversalIdentifier.get(
@@ -686,6 +695,98 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatSettingsMenuItemMaps,
       });
+    }
+
+    const workflows = manifest.workflows ?? [];
+    const declaredWorkflowIds = new Set(
+      workflows.map((workflow) => workflow.universalIdentifier),
+    );
+    for (const existing of Object.values(
+      fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier,
+    )) {
+      if (
+        inferDeletionFromMissingEntities &&
+        isDefined(existing) &&
+        existing.workspaceWorkflowId === null &&
+        !declaredWorkflowIds.has(existing.universalIdentifier)
+      ) {
+        throw new ApplicationException(
+          'Removing application workflows is not supported by the defineWorkflow POC; existing runs may still reference them',
+          ApplicationExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`Removing application workflows is not supported yet.`,
+          },
+        );
+      }
+    }
+
+    if (workflows.length > 0) {
+      const references = prepareWorkflowManifestReferences({
+        fromAllFlatEntityMaps,
+        toAllUniversalFlatEntityMaps: allUniversalFlatEntityMaps,
+        existingAllFlatEntityMaps,
+        ownerApplicationId: ownerFlatApplication.id,
+      });
+      const versionIdentifiersByWorkflowId = new Map<string, Set<string>>();
+      for (const version of Object.values(
+        fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier,
+      )) {
+        if (!isDefined(version) || !isDefined(version.coreWorkflowId)) {
+          continue;
+        }
+        const identifiers =
+          versionIdentifiersByWorkflowId.get(version.coreWorkflowId) ??
+          new Set<string>();
+        identifiers.add(version.universalIdentifier);
+        versionIdentifiersByWorkflowId.set(version.coreWorkflowId, identifiers);
+      }
+      for (const workflowManifest of workflows) {
+        const existingWorkflow =
+          fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier[
+            workflowManifest.universalIdentifier
+          ];
+        const existingVersion =
+          fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
+            workflowManifest.version.universalIdentifier
+          ];
+        const existingVersionIdentifiers = isDefined(existingWorkflow)
+          ? versionIdentifiersByWorkflowId.get(existingWorkflow.id)
+          : undefined;
+        if (
+          isDefined(existingVersionIdentifiers) &&
+          (existingVersionIdentifiers.size !== 1 ||
+            !existingVersionIdentifiers.has(
+              workflowManifest.version.universalIdentifier,
+            ))
+        ) {
+          throw new ApplicationException(
+            'An application workflow must keep the same version universal identifier across updates',
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`Keep the same workflow version universal identifier when updating an application.`,
+            },
+          );
+        }
+        const { workflow, version } =
+          fromWorkflowManifestToCoreDefinitionsOrThrow({
+            manifest: workflowManifest,
+            applicationUniversalIdentifier,
+            existingWorkflow,
+            existingVersion,
+            ...references,
+            now,
+          });
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: workflow,
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatWorkflowMaps,
+        });
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: version,
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatWorkflowVersionMaps,
+        });
+      }
     }
 
     return allUniversalFlatEntityMaps;

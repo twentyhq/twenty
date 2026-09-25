@@ -1,0 +1,109 @@
+---
+title: Workflows
+description: Declare an application-owned core workflow with defineWorkflow.
+icon: 'diagram-project'
+---
+
+<Warning>
+  This is an experimental development POC. It requires a compatible SDK and
+  server with the core workflow feature flag enabled. It is not ready for
+  production rollout.
+</Warning>
+
+`defineWorkflow` from `twenty-sdk/define` declares a workflow in the application's manifest. The POC supports manual triggers and every existing workflow action type. Declare referenced functions and agents in the same app. Functions used by `LOGIC_FUNCTION` steps must expose `workflowActionTriggerSettings`; `CODE` steps can use any app-declared function.
+
+```ts src/workflows/greeting.workflow.ts
+import { defineWorkflow } from 'twenty-sdk/define';
+import { GREET_UNIVERSAL_IDENTIFIER } from '../logic-functions/greet.function';
+
+const GREET_STEP_ID = 'a90528b8-5a87-4cd8-8dc5-b93f7e864c15';
+
+export default defineWorkflow({
+  universalIdentifier: '96cfb613-dc0f-47c4-9410-8971ebc3c263',
+  name: 'Application greeting',
+  version: {
+    universalIdentifier: '0f1d0260-e781-4501-9d26-1e7f73585331',
+    trigger: {
+      universalIdentifier: '02720fe3-1977-4306-a9c3-66f7c99e3199',
+      type: 'MANUAL',
+      nextStepIds: [GREET_STEP_ID],
+    },
+    steps: [
+      {
+        universalIdentifier: GREET_STEP_ID,
+        name: 'Greet',
+        type: 'LOGIC_FUNCTION',
+        logicFunctionUniversalIdentifier: GREET_UNIVERSAL_IDENTIFIER,
+        input: { greeting: 'Before upgrade' },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+```
+
+The imported `GREET_UNIVERSAL_IDENTIFIER` is the universal identifier of the app's greeting logic function. That function accepts `{ greeting: string }` and returns the greeting.
+
+| Field                                      | Meaning                                                       |
+| ------------------------------------------ | ------------------------------------------------------------- |
+| `universalIdentifier`, `name`              | Stable workflow UUID and display name                         |
+| `version.universalIdentifier`              | Stable UUID for the workflow's single version                 |
+| `version.trigger`                          | Universal identifier, `type: 'MANUAL'`, and starting step IDs |
+| `version.steps`                            | Nonempty list of workflow steps                               |
+| Step `universalIdentifier`, `name`, `type` | Stable step UUID, display name, and action type               |
+| Step `logicFunctionUniversalIdentifier`    | App function UUID for `CODE` or `LOGIC_FUNCTION` steps        |
+| Step `input`                               | Typed action input; function arguments for function steps     |
+| `nextStepIds`                              | Step universal identifiers; use `[]` for a terminal step      |
+
+Workflow, version, trigger and step UUIDs must be distinct. The graph must be acyclic, all destinations must exist, and every step must be reachable from the trigger. Runtime function IDs are resolved for the installing workspace, including functions created in the same synchronization.
+
+## Supported steps
+
+`defineWorkflow` supports every existing workflow action: `CODE`, `LOGIC_FUNCTION`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT`, `CREATE_RECORD`, `UPDATE_RECORD`, `DELETE_RECORD`, `UPSERT_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FORM`, `HTTP_REQUEST`, `AI_AGENT`, `CLASSIFY`, `FILTER`, `IF_ELSE`, `ITERATOR`, `DELAY`, and `EMPTY`.
+
+Every step has a stable `universalIdentifier`, `name`, `type`, `input`, and `nextStepIds`. Optional `position`, `outputSchema`, `expectedOutputSchema`, and `errorHandlingOptions` use the existing workflow action formats. Inputs use the native action schemas with these portable metadata references:
+
+| Step                         | Manifest reference                                                  | Resolved at installation                                                                       |
+| ---------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `CODE`, `LOGIC_FUNCTION`     | Top-level `logicFunctionUniversalIdentifier`                        | An app-declared function ID; `LOGIC_FUNCTION` additionally requires an exposed workflow action |
+| Record actions               | `input.objectUniversalIdentifier`                                   | Object API name                                                                                |
+| `FIND_RECORDS` filters/sorts | `fieldMetadataUniversalIdentifier`                                  | Field ID, checked against the selected object                                                  |
+| `PICK_RECORD` load balancing | `loadBalance.objectUniversalIdentifier`, `fieldUniversalIdentifier` | Object and field API names                                                                     |
+| `FILTER`, `IF_ELSE` filters  | Optional `fieldMetadataUniversalIdentifier`                         | Field ID                                                                                       |
+| `FORM` record picker         | `settings.objectUniversalIdentifier`                                | Object API name                                                                                |
+| `AI_AGENT`                   | Optional `input.agentUniversalIdentifier`                           | An app-declared agent ID                                                                       |
+
+Objects and fields can come from the same installation or metadata already installed in the workspace. Record values and `fieldsToUpdate` use API field names. Record IDs and connected-account IDs are runtime data, not metadata universal identifiers; provide workspace-specific values or workflow variable references. Existing execution permissions still apply.
+
+A record step can use an object declared by the same app:
+
+```ts
+{
+  universalIdentifier: CREATE_COMPANY_STEP_ID,
+  name: 'Create company',
+  type: 'CREATE_RECORD',
+  input: {
+    objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+    objectRecord: { name: '{{trigger.companyName}}' },
+  },
+  nextStepIds: [],
+}
+```
+
+For `IF_ELSE`, each branch's `nextStepIds` identifies its entry steps. For `ITERATOR`, `input.initialLoopStepIds` identifies the loop body, while the iterator's `nextStepIds` identifies the steps after the loop. Loop-body terminal steps have no outgoing edge; do not add a back edge to the iterator. Manifest validation checks these edges for missing steps, cycles and reachability.
+
+`CODE` uses a separately declared app logic function rather than inline source. External integrations still require their normal setup: connected accounts for email/calendar, AI availability for agent/classification actions, and reachable HTTP endpoints. Supporting their definitions does not bypass those requirements or change their permissions.
+
+## Updates and runs
+
+Synchronization creates one ACTIVE version. Changing the source updates that same version without allocating another workflow or version ID. Keep both universal identifiers stable across releases.
+
+Existing runs retain the graph saved when they started, including their step inputs and edges. Function implementations are not pinned: a step executed after an upgrade uses the current function implementation. Keep functions needed by existing runs available.
+
+Installed app workflows are read-only in the normal workflow editor and APIs. Open the workflow show page and click Run to start a run. Change the app source and sync to update the definition.
+
+## POC boundaries
+
+Removing a workflow from a full manifest sync, replacing its version universal identifier, and adopting a workspace-owned workflow are rejected. Additive pre-install synchronization can omit existing workflows.
+
+Automated triggers, command-menu registration, duplication, export/pull, uninstall safety, execution-dependency pinning, application execution permissions and production rollback support remain separate work. Existing workspace-owned workflow APIs and rollback mirrors retain their current lifecycle.

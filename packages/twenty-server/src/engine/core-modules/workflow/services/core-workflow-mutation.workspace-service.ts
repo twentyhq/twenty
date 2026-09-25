@@ -310,13 +310,11 @@ export class CoreWorkflowMutationWorkspaceService {
     coreWorkflowId: string;
     name: string;
   }): Promise<void> {
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds: [coreWorkflowId],
-      },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflowId],
+    });
 
     const { workspaceWorkflowId } =
       await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
@@ -540,13 +538,11 @@ export class CoreWorkflowMutationWorkspaceService {
     userWorkspaceId: string | undefined;
     coreWorkflowIds: string[];
   }): Promise<DeletedCoreWorkflowDTO[]> {
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds,
-      },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds,
+    });
 
     const coreWorkflowsToDelete = await this.coreWorkflowRepository.find(
       workspaceId,
@@ -694,13 +690,11 @@ export class CoreWorkflowMutationWorkspaceService {
       );
     }
 
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds: [coreVersion.coreWorkflowId],
-      },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreVersion.coreWorkflowId],
+    });
 
     const siblingCount = await this.coreWorkflowVersionRepository.count(
       workspaceId,
@@ -861,13 +855,11 @@ export class CoreWorkflowMutationWorkspaceService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<CoreWorkflowDTO | null> {
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowIds: [coreWorkflowId],
-      },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflowId],
+    });
 
     // Workflows that predate this column have no owner, and the first member to
     // set a visibility claims one. The ownership test is the UPDATE's own WHERE

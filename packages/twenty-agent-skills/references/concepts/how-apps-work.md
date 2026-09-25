@@ -12,12 +12,12 @@ The app does not run as a separate server. It is built, published, and installed
 
 A Twenty app depends on two SDK packages:
 
-| Package | Purpose | Used in |
-| --- | --- | --- |
-| `twenty-sdk` | Define app entities and access front component runtime APIs | Entity definitions (`twenty-sdk/define`), front component hooks and host APIs (`twenty-sdk/front-component`) |
-| `twenty-client-sdk` | Access workspace data from front components | Core object queries (`twenty-client-sdk/core`), metadata queries (`twenty-client-sdk/metadata`) |
+| Package             | Purpose                                                     | Used in                                                                                                      |
+| ------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `twenty-sdk`        | Define app entities and access front component runtime APIs | Entity definitions (`twenty-sdk/define`), front component hooks and host APIs (`twenty-sdk/front-component`) |
+| `twenty-client-sdk` | Access workspace data from front components                 | Core object queries (`twenty-client-sdk/core`), metadata queries (`twenty-client-sdk/metadata`)              |
 
-`twenty-sdk/define` provides the registration functions: `defineApplication`, `defineObject`, `defineField`, `defineView`, `definePageLayout`, `defineFrontComponent`, `defineSettingsMenuItem`, `defineNavigationMenuItem`, `defineLogicFunction`, `defineRole`, and others. Every app entity is declared through one of these functions.
+`twenty-sdk/define` provides the registration functions: `defineApplication`, `defineObject`, `defineField`, `defineView`, `definePageLayout`, `defineFrontComponent`, `defineSettingsMenuItem`, `defineNavigationMenuItem`, `defineLogicFunction`, `defineRole`, experimental `defineWorkflow`, and others. Every app entity is declared through one of these functions.
 
 `twenty-sdk/front-component` provides runtime APIs available inside front components: `navigate`, `enqueueSnackbar`, `openSidePanelPage`, `useSelectedRecordIds`, `getApplicationVariable`, and others.
 
@@ -73,6 +73,7 @@ Each publish requires a strictly higher semver version in `package.json`. See th
 Front components do not run as a separate frontend application. The Twenty workspace renders them inside an isolated Remote DOM container. The SDK mounts the component, provides a `ThemeProvider`, and proxies host APIs (navigation, snackbars, side panels) through `twenty-sdk/front-component`.
 
 This means:
+
 - Front components cannot access `document` or `window` globals directly.
 - They cannot use React portals or third-party libraries that manipulate the DOM outside their tree.
 - They import UI primitives from `twenty-ui` (installed from npm), not from external component libraries.

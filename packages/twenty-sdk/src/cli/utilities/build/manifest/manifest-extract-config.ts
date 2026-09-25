@@ -15,6 +15,7 @@ export enum TargetFunction {
   DefineRole = 'defineRole',
   DefineSkill = 'defineSkill',
   DefineAgent = 'defineAgent',
+  DefineWorkflow = 'defineWorkflow',
   DefineConnectionProvider = 'defineConnectionProvider',
   DefineFrontComponent = 'defineFrontComponent',
   DefineSettingsFrontComponent = 'defineSettingsFrontComponent',
@@ -39,6 +40,7 @@ export enum ManifestEntityKey {
   Roles = 'roles',
   Skills = 'skills',
   Agents = 'agents',
+  Workflows = 'workflows',
   ConnectionProviders = 'connectionProviders',
   FrontComponents = 'frontComponents',
   PublicAssets = 'publicAssets',
@@ -76,6 +78,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineRole]: ManifestEntityKey.Roles,
   [TargetFunction.DefineSkill]: ManifestEntityKey.Skills,
   [TargetFunction.DefineAgent]: ManifestEntityKey.Agents,
+  [TargetFunction.DefineWorkflow]: ManifestEntityKey.Workflows,
   [TargetFunction.DefineConnectionProvider]:
     ManifestEntityKey.ConnectionProviders,
   [TargetFunction.DefineFrontComponent]: ManifestEntityKey.FrontComponents,
