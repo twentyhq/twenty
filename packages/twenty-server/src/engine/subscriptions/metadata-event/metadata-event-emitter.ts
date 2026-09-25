@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
@@ -22,13 +22,16 @@ type EmitMetadataEventsArgs = {
 
 @Injectable()
 export class MetadataEventEmitter {
+  private readonly logger = new Logger(MetadataEventEmitter.name);
+  private readonly pendingEvents = new Set<Promise<unknown>>();
+
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  public async emitMetadataEvents({
+  public emitMetadataEvents({
     metadataEvents,
     workspaceId,
     initiatorContext,
-  }: EmitMetadataEventsArgs): Promise<void> {
+  }: EmitMetadataEventsArgs): void {
     if (metadataEvents.length === 0) {
       return;
     }
@@ -63,7 +66,23 @@ export class MetadataEventEmitter {
         apiKeyId,
       };
 
-      await this.eventEmitter.emitAsync(eventName, metadataEventBatch);
+      const pendingEvent = this.eventEmitter
+        .emitAsync(eventName, metadataEventBatch)
+        .catch((error: unknown) => {
+          this.logger.error(error);
+        })
+        .finally(() => {
+          this.pendingEvents.delete(pendingEvent);
+        });
+
+      this.pendingEvents.add(pendingEvent);
+    }
+  }
+
+  async drain(): Promise<void> {
+    // A listener can emit more metadata events while an earlier batch settles.
+    while (this.pendingEvents.size > 0) {
+      await Promise.allSettled([...this.pendingEvents]);
     }
   }
 

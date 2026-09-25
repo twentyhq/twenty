@@ -6,6 +6,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { isDefined } from 'twenty-shared/utils';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/metadata-event-publisher';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -18,6 +19,7 @@ describe('Metadata event completion before command shutdown', () => {
   let workspaceCacheService: WorkspaceCacheService;
   let migrations: WorkspaceMigrationValidateBuildAndRunService;
   let publisher: MetadataEventPublisher;
+  let emitter: MetadataEventEmitter;
 
   beforeAll(async () => {
     workspaceCacheService = getAppProviderByClassName('WorkspaceCacheService');
@@ -25,6 +27,7 @@ describe('Metadata event completion before command shutdown', () => {
       'WorkspaceMigrationValidateBuildAndRunService',
     );
     publisher = getAppProviderByClassName('MetadataEventPublisher');
+    emitter = getAppProviderByClassName('MetadataEventEmitter');
 
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
@@ -38,9 +41,11 @@ describe('Metadata event completion before command shutdown', () => {
       },
     });
     objectMetadataId = data.createOneObject.id;
+    await emitter.drain();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await emitter.drain();
     jest.restoreAllMocks();
   });
 
@@ -60,6 +65,7 @@ describe('Metadata event completion before command shutdown', () => {
       expectToFail: false,
       input: { idToDelete: objectMetadataId },
     });
+    await emitter.drain();
   });
 
   const migrate = async (description: string, dryRun = false) => {
@@ -108,7 +114,7 @@ describe('Metadata event completion before command shutdown', () => {
     ).findOneByOrFail({ id: objectMetadataId });
 
   it.each(['objectMetadata', 'fieldMetadata'])(
-    'does not return while the %s notification is still pending',
+    'returns the mutation immediately but drains the pending %s notification before shutdown',
     async (metadataName) => {
       let release!: () => void;
       const blocked = new Promise<void>((resolve) => {
@@ -135,28 +141,97 @@ describe('Metadata event completion before command shutdown', () => {
       });
 
       let migrationCompleted = false;
+      let commandCompleted = false;
       const description = `Wait for ${metadataName}`;
       const migration = migrate(description).then((result) => {
         migrationCompleted = true;
         return result;
       });
 
+      const command = migration.then(async () => {
+        await emitter.drain();
+        commandCompleted = true;
+      });
+
       try {
-        await Promise.race([started, migration]);
-        // The transaction is already durable, but the caller must not close Redis yet.
+        await Promise.race([started, command]);
+        // Only shutdown should wait for notification delivery, not the mutation.
         expect((await readObject()).description).toBe(description);
-        expect(migrationCompleted).toBe(false);
+        expect(migrationCompleted).toBe(true);
+        expect(commandCompleted).toBe(false);
       } finally {
         release();
-        await migration;
+        await command;
       }
 
       expect(await migration).toMatchObject({ status: 'success' });
+      expect(commandCompleted).toBe(true);
       expect(completedBatches).toEqual(
         expect.arrayContaining(['objectMetadata', 'fieldMetadata']),
       );
     },
   );
+
+  it('also drains notifications emitted after draining has started', async () => {
+    let releaseFirst!: () => void;
+    const firstBlocked = new Promise<void>((resolve) => {
+      releaseFirst = resolve;
+    });
+    let releaseSecond!: () => void;
+    const secondBlocked = new Promise<void>((resolve) => {
+      releaseSecond = resolve;
+    });
+    let notifyFirstCompleted!: () => void;
+    const firstCompleted = new Promise<void>((resolve) => {
+      notifyFirstCompleted = resolve;
+    });
+    const publish = publisher.publish.bind(publisher);
+    let objectBatchCount = 0;
+
+    jest.spyOn(publisher, 'publish').mockImplementation(async (batch) => {
+      if (batch.type !== 'updated' || batch.metadataName !== 'objectMetadata') {
+        return publish(batch);
+      }
+
+      const isFirstBatch = objectBatchCount++ === 0;
+
+      await (isFirstBatch ? firstBlocked : secondBlocked);
+      await publish(batch);
+      if (isFirstBatch) {
+        notifyFirstCompleted();
+      }
+    });
+
+    let drained = false;
+    let draining: Promise<void> | undefined;
+
+    try {
+      await expect(
+        migrate('First pending notification'),
+      ).resolves.toMatchObject({ status: 'success' });
+      draining = emitter.drain().then(() => {
+        drained = true;
+      });
+      await expect(
+        migrate('Second pending notification'),
+      ).resolves.toMatchObject({ status: 'success' });
+      releaseFirst();
+      await firstCompleted;
+      // Let the first drain snapshot settle while the second notification is blocked.
+      await new Promise<void>((resolve) => setImmediate(resolve));
+      expect(drained).toBe(false);
+    } finally {
+      releaseFirst();
+      releaseSecond();
+      await draining;
+      await emitter.drain();
+    }
+
+    expect(drained).toBe(true);
+    expect((await readObject()).description).toBe(
+      'Second pending notification',
+    );
+  });
 
   it('preserves committed metadata when notification delivery fails', async () => {
     jest
@@ -166,6 +241,7 @@ describe('Metadata event completion before command shutdown', () => {
     await expect(
       migrate('Committed despite notification failure'),
     ).resolves.toMatchObject({ status: 'success' });
+    await expect(emitter.drain()).resolves.toBeUndefined();
     expect((await readObject()).description).toBe(
       'Committed despite notification failure',
     );
