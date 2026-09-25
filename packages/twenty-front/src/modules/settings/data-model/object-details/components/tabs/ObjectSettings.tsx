@@ -9,7 +9,7 @@ import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/ob
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
-import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
+import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -132,7 +132,7 @@ export const ObjectSettings = ({
             title={t`Translations`}
             description={t`What each language displays for this object's labels`}
           />
-          <SettingsTranslationsButton
+          <SettingsTranslationsCard
             objectNamePlural={objectMetadataItem.namePlural}
           />
         </Section.Root>

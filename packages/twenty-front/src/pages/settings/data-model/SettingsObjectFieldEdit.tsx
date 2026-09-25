@@ -20,7 +20,7 @@ import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fi
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
+import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -407,7 +407,7 @@ export const SettingsObjectFieldEdit = () => {
                 title={t`Translations`}
                 description={t`What each language displays for this field's labels`}
               />
-              <SettingsTranslationsButton
+              <SettingsTranslationsCard
                 objectNamePlural={objectNamePlural}
                 fieldName={fieldMetadataItem.name}
               />
