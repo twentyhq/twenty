@@ -1,7 +1,7 @@
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildTranscriptPageLayoutTabUpdates } from 'src/database/commands/upgrade-version-command/2-42/utils/build-transcript-page-layout-tab-updates.util';
+import { buildTranscriptPageLayoutTabUpdates } from 'src/database/commands/upgrade-version-command/2-43/utils/build-transcript-page-layout-tab-updates.util';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 

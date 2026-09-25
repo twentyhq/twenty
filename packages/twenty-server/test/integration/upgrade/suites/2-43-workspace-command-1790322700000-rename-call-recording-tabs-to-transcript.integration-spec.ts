@@ -3,7 +3,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { In } from 'typeorm';
 
-import { type RenameCallRecordingTabsToTranscriptCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1790014992118-rename-call-recording-tabs-to-transcript.command';
+import { type RenameCallRecordingTabsToTranscriptCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790322700000-rename-call-recording-tabs-to-transcript.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
