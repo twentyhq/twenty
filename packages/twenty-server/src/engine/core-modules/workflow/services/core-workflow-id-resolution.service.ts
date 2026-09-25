@@ -85,6 +85,16 @@ export class CoreWorkflowIdResolutionService {
       },
     );
 
+    if (coreWorkflowVersion.coreWorkflowId) {
+      await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow(
+        {
+          workspaceId,
+          userWorkspaceId,
+          coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
+        },
+      );
+    }
+
     const workspaceWorkflowVersionId =
       coreWorkflowVersion.workspaceWorkflowVersionId;
 
@@ -131,9 +141,11 @@ export class CoreWorkflowIdResolutionService {
       );
     }
 
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      { workspaceId, userWorkspaceId, coreWorkflowIds: [coreWorkflow.id] },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflow.id],
+    });
 
     const workspaceWorkflowId = coreWorkflow.workspaceWorkflowId;
 

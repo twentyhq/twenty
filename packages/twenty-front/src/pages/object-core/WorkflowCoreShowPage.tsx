@@ -1,3 +1,4 @@
+import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkflowEditor';
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
 import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
@@ -29,6 +30,7 @@ import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleBu
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { getWorkflowCurrentVersion } from '@/workflow/utils/getWorkflowCurrentVersion';
 
@@ -45,10 +47,14 @@ const CoreWorkflowShowContent = ({
   coreWorkflowId: string;
 }) => {
   const client = useApolloCoreClient();
+  const { runWorkflowVersion } = useRunWorkflowVersion();
   const { record, coreWorkflow, loading, error, refetch } =
     useCoreWorkflowShowPageResource({
       coreWorkflowId,
     });
+  const isApplicationManaged = useIsThirdPartyApplication(
+    coreWorkflow?.applicationId,
+  );
   const versions = useCoreWorkflowVersions(coreWorkflowId);
   const { refetchCoreWorkflowVersions } = versions;
 
@@ -71,7 +77,8 @@ const CoreWorkflowShowContent = ({
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
-  const isReadOnlyVersion = isDefined(requestedVersionId);
+  const isReadOnlyVersion =
+    isApplicationManaged || isDefined(requestedVersionId);
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
     currentName: record?.name,
@@ -141,6 +148,17 @@ const CoreWorkflowShowContent = ({
             actionButton={
               <>
                 {!isReadOnlyVersion && <RecordShowCommandMenu />}
+                {isApplicationManaged && isDefined(currentVersion) && (
+                  <Button
+                    title={t`Run`}
+                    onClick={() =>
+                      runWorkflowVersion({
+                        workflowId: coreWorkflowId,
+                        workflowVersionId: currentVersion.id,
+                      })
+                    }
+                  />
+                )}
                 <SidePanelToggleButton />
               </>
             }
@@ -153,6 +171,7 @@ const CoreWorkflowShowContent = ({
             name={record.name}
             namePlaceholder={t`Workflow name`}
             onRename={renameWorkflow}
+            readonly={isApplicationManaged}
           />
           {isDefined(selectedVersion) ? (
             <CoreWorkflowEditor
