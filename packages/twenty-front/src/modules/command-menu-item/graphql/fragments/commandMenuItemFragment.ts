@@ -27,8 +27,11 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     hotKeys
     conditionalAvailabilityExpression
     conditionalPinnedExpression
+    conditionalVariantExpression
+    variant
     availabilityType
     availabilityObjectMetadataId
+    availabilityFieldMetadataId
     navigationTargetObjectMetadataId
     pageLayoutId
     isActive

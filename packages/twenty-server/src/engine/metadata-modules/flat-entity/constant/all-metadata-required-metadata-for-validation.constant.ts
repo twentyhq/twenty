@@ -68,6 +68,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   skill: {},
   commandMenuItem: {
     objectMetadata: true,
+    fieldMetadata: true,
     frontComponent: true,
     pageLayout: true,
   },

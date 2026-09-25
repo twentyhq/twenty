@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
 import {
   CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
   EngineComponentKey,
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
@@ -32,6 +33,7 @@ const buildMockItem = (
   hotKeys: null,
   conditionalAvailabilityExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+  variant: CommandMenuItemVariant.SECONDARY,
   availabilityObjectMetadataId: null,
   payload: null,
   isActive: true,

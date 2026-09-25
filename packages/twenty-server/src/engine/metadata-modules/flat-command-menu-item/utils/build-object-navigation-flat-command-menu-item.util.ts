@@ -36,6 +36,7 @@ export const buildObjectNavigationFlatCommandMenuItem = ({
   frontComponentId: null,
   navigationTargetObjectMetadataId: objectMetadata.id,
   availabilityObjectMetadataId: null,
+  availabilityFieldMetadataId: null,
   pageLayoutId: null,
   overrides: null,
 });

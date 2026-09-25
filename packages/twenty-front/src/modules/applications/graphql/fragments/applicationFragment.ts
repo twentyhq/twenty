@@ -63,7 +63,9 @@ export const APPLICATION_FRAGMENT = gql`
       icon
       isPinned
       availabilityType
+      availabilityFieldMetadataId
       conditionalAvailabilityExpression
+      conditionalVariantExpression
       frontComponentId
       universalIdentifier
       applicationId

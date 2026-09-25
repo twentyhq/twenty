@@ -9,7 +9,10 @@ import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SearchInput, Section } from 'twenty-ui/components';
-import { type Application } from '~/generated-metadata/graphql';
+import {
+  type Application,
+  CommandMenuItemAvailabilityType,
+} from '~/generated-metadata/graphql';
 import {
   type ApplicationContentRow,
   SettingsApplicationContentSubtable,
@@ -33,6 +36,7 @@ type InstalledApplicationForContentTab = Omit<
     id: string;
     label: string;
     shortLabel?: string | null;
+    availabilityType: CommandMenuItemAvailabilityType;
   }[];
 };
 
@@ -137,9 +141,9 @@ export const SettingsApplicationDetailContentTab = ({
         secondary: fc.description ?? undefined,
       }));
 
-  const commandMenuItemRows: ApplicationContentRow[] = isDefined(
-    installedApplication,
-  )
+  const commandMenuItemRowsWithType: (ApplicationContentRow & {
+    isRecordField: boolean;
+  })[] = isDefined(installedApplication)
     ? (installedApplication.commandMenuItems ?? []).map((item) => ({
         key: item.id,
         name: item.label,
@@ -148,12 +152,25 @@ export const SettingsApplicationDetailContentTab = ({
           applicationId,
           commandMenuItemId: item.id,
         }),
+        isRecordField:
+          item.availabilityType ===
+          CommandMenuItemAvailabilityType.RECORD_FIELD,
       }))
     : (manifestContent?.commandMenuItems ?? []).map((item) => ({
         key: item.universalIdentifier,
         name: item.label,
         secondary: item.shortLabel ?? undefined,
+        isRecordField:
+          item.availabilityType ===
+          CommandMenuItemAvailabilityType.RECORD_FIELD,
       }));
+
+  const commandMenuItemRows = commandMenuItemRowsWithType.filter(
+    (row) => !row.isRecordField,
+  );
+  const fieldButtonRows = commandMenuItemRowsWithType.filter(
+    (row) => row.isRecordField,
+  );
 
   const [searchTerm, setSearchTerm] = useState('');
   const normalizedSearch = normalizeSearchText(searchTerm);
@@ -193,6 +210,7 @@ export const SettingsApplicationDetailContentTab = ({
     navigation: filterRows(navigationMenuItemRows, normalizedSearch),
     frontComponents: filterRows(frontComponentRows, normalizedSearch),
     commandMenuItems: filterRows(commandMenuItemRows, normalizedSearch),
+    fieldButtons: filterRows(fieldButtonRows, normalizedSearch),
     logicFunctions: filterRows(logicFunctionRows, normalizedSearch),
     agents: filterRows(agentRows, normalizedSearch),
     skills: filterRows(skillRows, normalizedSearch),
@@ -206,7 +224,8 @@ export const SettingsApplicationDetailContentTab = ({
     filtered.views.length > 0 ||
     filtered.navigation.length > 0 ||
     filtered.frontComponents.length > 0 ||
-    filtered.commandMenuItems.length > 0;
+    filtered.commandMenuItems.length > 0 ||
+    filtered.fieldButtons.length > 0;
   const hasLogic =
     filtered.logicFunctions.length > 0 ||
     filtered.agents.length > 0 ||
@@ -286,6 +305,12 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Command menu items`}
               rows={filtered.commandMenuItems}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Field buttons`}
+              rows={filtered.fieldButtons}
               applicationId={applicationId}
               fallbackApplicationData={fallbackApplicationData}
             />

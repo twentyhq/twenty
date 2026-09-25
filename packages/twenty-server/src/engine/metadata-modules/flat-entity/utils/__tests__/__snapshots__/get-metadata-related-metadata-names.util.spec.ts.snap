@@ -7,6 +7,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 exports[`getMetadataRelatedMetadataNames should return related metadata names for commandMenuItem 1`] = `
 [
   "objectMetadata",
+  "fieldMetadata",
   "frontComponent",
   "pageLayout",
 ]

@@ -19,7 +19,10 @@ import {
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemVariant,
+} from 'twenty-shared/types';
 import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { CommandMenuItemPayloadUnion } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
 import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
@@ -28,6 +31,10 @@ import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/d
 
 registerEnumType(CommandMenuItemAvailabilityType, {
   name: 'CommandMenuItemAvailabilityType',
+});
+
+registerEnumType(CommandMenuItemVariant, {
+  name: 'CommandMenuItemVariant',
 });
 
 @ObjectType('CommandMenuItem')
@@ -106,10 +113,24 @@ export class CommandMenuItemDTO {
   @Field({ nullable: true })
   conditionalPinnedExpression?: string;
 
+  @IsEnum(CommandMenuItemVariant)
+  @Field(() => CommandMenuItemVariant)
+  variant: CommandMenuItemVariant;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  conditionalVariantExpression?: string;
+
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   availabilityObjectMetadataId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  availabilityFieldMetadataId?: string;
 
   @IsUUID()
   @IsOptional()

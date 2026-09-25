@@ -121,7 +121,10 @@ type CommandMenuItem {
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   conditionalPinnedExpression: String
+  variant: CommandMenuItemVariant!
+  conditionalVariantExpression: String
   availabilityObjectMetadataId: UUID
+  availabilityFieldMetadataId: UUID
   navigationTargetObjectMetadataId: UUID
   pageLayoutId: UUID
   universalIdentifier: UUID
@@ -213,6 +216,7 @@ enum CommandMenuItemAvailabilityType {
   GLOBAL_OBJECT_CONTEXT
   RECORD_SELECTION
   FALLBACK
+  RECORD_FIELD
 }
 
 union CommandMenuItemPayload = PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload
@@ -223,6 +227,12 @@ type PathCommandMenuItemPayload {
 
 type ObjectMetadataCommandMenuItemPayload {
   objectMetadataItemId: UUID! @deprecated(reason: "Never returned anymore: navigation targets moved to CommandMenuItem.navigationTargetObjectMetadataId. This variant only remains one release so frontends deployed after the server keep validating; it will be removed in the next release.")
+}
+
+enum CommandMenuItemVariant {
+  PRIMARY
+  SECONDARY
+  DISABLED
 }
 
 type SettingsMenuItem {
@@ -4991,7 +5001,10 @@ input CreateCommandMenuItemInput {
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   conditionalPinnedExpression: String
+  variant: CommandMenuItemVariant
+  conditionalVariantExpression: String
   availabilityObjectMetadataId: UUID
+  availabilityFieldMetadataId: UUID
   payload: JSON
   navigationTargetObjectMetadataId: UUID
   pageLayoutId: UUID

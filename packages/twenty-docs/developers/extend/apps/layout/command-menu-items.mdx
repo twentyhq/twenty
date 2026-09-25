@@ -27,12 +27,15 @@ export default defineCommandMenuItem({
 | `label` | Yes | Full label shown in the command menu (Cmd+K) |
 | `frontComponentUniversalIdentifier` | Yes | The `universalIdentifier` of the front component this command opens |
 | `shortLabel` | No | Shorter label displayed on the pinned quick-action button |
-| `icon` | No | **Deprecated** — ignored in favor of the application icon; the build emits a warning if set |
+| `icon` | No | **Deprecated** — ignored in favor of the application icon; the build emits a warning if set. Exception: [field buttons](#field-buttons) use it |
 | `isPinned` | No | When `true`, shows the command as a quick-action button in the top-right corner of the page |
-| `availabilityType` | No | Controls where the command appears: `'GLOBAL'` (always available), `'GLOBAL_OBJECT_CONTEXT'` (only on pages with an object context — index and record pages), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
-| `availabilityObjectUniversalIdentifier` | No | Restrict the command to pages of a specific object type (e.g. only on Company records) |
+| `availabilityType` | No | Controls where the command appears: `'GLOBAL'` (always available), `'GLOBAL_OBJECT_CONTEXT'` (only on pages with an object context — index and record pages), `'RECORD_SELECTION'` (only when records are selected), `'FALLBACK'` (shown when no other commands match), or `'RECORD_FIELD'` (a button next to one field on the record page, see [field buttons](#field-buttons)) |
+| `availabilityObjectUniversalIdentifier` | No | Restrict the command to pages of a specific object type (e.g. only on Company records). Required for `'RECORD_FIELD'` |
+| `availabilityFieldUniversalIdentifier` | No | The field the button sits next to. Required for `'RECORD_FIELD'`, not allowed otherwise |
 | `conditionalAvailabilityExpression` | No | A boolean expression that dynamically controls visibility (see below) |
 | `conditionalPinnedExpression` | No | A boolean expression that narrows `isPinned`: the command shows as a quick-action button only while it holds, and stays in the command menu otherwise. Same syntax and variables as `conditionalAvailabilityExpression` |
+| `variant` | No | Button style: `'PRIMARY'`, `'SECONDARY'` (default), or `'DISABLED'` (shown but not clickable) |
+| `conditionalVariantExpression` | No | An expression that returns `'PRIMARY'`, `'SECONDARY'` or `'DISABLED'` and overrides `variant`. Same variables as `conditionalAvailabilityExpression` |
 
 ## Headless commands
 
@@ -49,6 +52,35 @@ export default defineCommandMenuItem({
   frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```
+
+## Field buttons
+
+With `availabilityType: 'RECORD_FIELD'`, the command renders as a button after one field's value on the record page, not in the command menu. The context is the current record, so `selectedRecords` holds that one record.
+
+```ts src/command-menu-items/generate-meeting-link.command-menu-item.ts
+import {
+  defineCommandMenuItem,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Generate meeting link',
+  shortLabel: 'Generate',
+  icon: 'IconVideoPlus',
+  availabilityType: 'RECORD_FIELD',
+  availabilityObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  availabilityFieldUniversalIdentifier: '...',
+  conditionalVariantExpression:
+    'someNonEmptyString(selectedRecords, "meetingLink.primaryLinkUrl") ? "SECONDARY" : "PRIMARY"',
+  frontComponentUniversalIdentifier: '...',
+});
+```
+
+- The button shows `icon` and `shortLabel`. Without `shortLabel` it is icon-only and `label` becomes its tooltip.
+- Use `conditionalAvailabilityExpression` to hide the button, `conditionalVariantExpression` to highlight or disable it.
+- Settings → Apps lists field buttons in their own "Field buttons" section.
 
 ## Conditional availability expressions
 

@@ -31,6 +31,7 @@ export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmati
 export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
 export { CommandMenuItemAvailabilityType } from './CommandMenuItemAvailabilityType';
+export { CommandMenuItemVariant } from './CommandMenuItemVariant';
 export { CommandMenuItemViewType } from './CommandMenuItemViewType';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {

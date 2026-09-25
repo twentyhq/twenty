@@ -28,7 +28,9 @@ export const useEditableCommandMenuItems = () => {
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
       .filter(
         (item) =>
-          item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK,
+          item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK &&
+          item.availabilityType !==
+            CommandMenuItemAvailabilityType.RECORD_FIELD,
       )
       .filter(doesCommandMenuItemMatchPageLayoutId(currentPageLayoutId))
       .sort(

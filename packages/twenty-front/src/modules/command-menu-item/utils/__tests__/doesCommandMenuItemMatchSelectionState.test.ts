@@ -33,4 +33,12 @@ describe('doesCommandMenuItemMatchSelectionState', () => {
 
     expect(doesCommandMenuItemMatchSelectionState(true)(item)).toBe(true);
   });
+
+  it('should hide a record-field item when no records are selected', () => {
+    const item = buildCommandMenuItem(
+      CommandMenuItemAvailabilityType.RECORD_FIELD,
+    );
+
+    expect(doesCommandMenuItemMatchSelectionState(false)(item)).toBe(false);
+  });
 });
