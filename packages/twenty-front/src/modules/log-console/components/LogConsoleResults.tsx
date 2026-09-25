@@ -4,7 +4,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, LightButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 import {
   IconEraser,
   IconPlayerPause,
@@ -43,11 +43,15 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { sortByProperty } from '~/utils/array/sortByProperty';
 
 const RECORDS_PER_PAGE = 100;
 
 const getLaterDate = (date: string, otherDate: string) =>
   new Date(otherDate).getTime() > new Date(date).getTime() ? otherDate : date;
+
+const sortNewestFirst = (eventLogRecords: EventLogRecord[]) =>
+  eventLogRecords.toSorted(sortByProperty('timestamp')).toReversed();
 
 const StyledResults = styled.div`
   display: flex;
@@ -102,9 +106,10 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   const [refreshedAt, setRefreshedAt] = useState(() =>
     new Date().toISOString(),
   );
-  const [clearedAt, setClearedAt] = useState<string>();
   const [pausedLiveRecords, setPausedLiveRecords] =
     useState<EventLogRecord[]>();
+  const [clearedLiveRecordCount, setClearedLiveRecordCount] =
+    useState<number>();
 
   const timeRange = isLogConsoleTimeRangeWithinRetention({
     timeRange: logConsoleTimeRange,
@@ -118,17 +123,8 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     filters: logConsoleFilters,
   });
 
-  const getDateRange = (now: string) => {
-    const rangeBounds = getLogConsoleTimeRangeBounds({
-      timeRange,
-      now,
-      timeZone,
-    });
-
-    return isDefined(clearedAt)
-      ? { ...rangeBounds, start: getLaterDate(rangeBounds.start, clearedAt) }
-      : rangeBounds;
-  };
+  const getDateRange = (now: string) =>
+    getLogConsoleTimeRangeBounds({ timeRange, now, timeZone });
 
   const getEventLogsInput = (now: string) => ({
     table: source.table,
@@ -152,7 +148,19 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   const displayedLiveRecords = pausedLiveRecords ?? liveRecords;
 
-  const displayedRecords = [...displayedLiveRecords, ...records];
+  const liveRecordCountSinceClear = isDefined(clearedLiveRecordCount)
+    ? displayedLiveRecords.length - clearedLiveRecordCount
+    : 0;
+
+  const liveEntries = sortNewestFirst(
+    displayedLiveRecords.slice(liveRecordCountSinceClear),
+  );
+
+  const entriesSinceClear = isDefined(clearedLiveRecordCount)
+    ? sortNewestFirst(displayedLiveRecords.slice(0, liveRecordCountSinceClear))
+    : undefined;
+
+  const displayedEntryCount = records.length + displayedLiveRecords.length;
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
     LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
@@ -167,6 +175,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     setRefreshedAt(now);
     clearLiveRecords();
     setPausedLiveRecords(isPaused ? [] : undefined);
+    setClearedLiveRecordCount(undefined);
   };
 
   const refreshLogs = () => {
@@ -177,16 +186,9 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
   };
 
   const clearLogs = () => {
-    const now = new Date().toISOString();
-
-    restartLogs(now);
+    scrollToTop();
     setPausedLiveRecords(undefined);
-    setClearedAt(now);
-  };
-
-  const reloadHistory = () => {
-    restartLogs(new Date().toISOString());
-    setClearedAt(undefined);
+    setClearedLiveRecordCount(liveRecords.length);
   };
 
   const togglePause = () => {
@@ -195,7 +197,6 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   const changeTimeRange = (selectedTimeRange: LogConsoleTimeRange) => {
     restartLogs(new Date().toISOString());
-    setClearedAt(undefined);
     setLogConsoleTimeRange(selectedTimeRange);
   };
 
@@ -246,7 +247,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
 
   const summaryTimeZone = formatRangeDate(rangeEnd, 'zzz');
 
-  const isInitialLoading = loading && displayedRecords.length === 0;
+  const isInitialLoading = loading && displayedEntryCount === 0;
 
   const pauseLabel = isPaused ? t`Resume` : t`Pause`;
 
@@ -259,7 +260,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
       );
     }
 
-    if (!loading && displayedRecords.length === 0) {
+    if (!loading && displayedEntryCount === 0) {
       return (
         <SettingsEmptyPlaceholder>{t`No event logs found`}</SettingsEmptyPlaceholder>
       );
@@ -268,8 +269,9 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
     return (
       <LogConsoleTable
         source={source}
-        entries={displayedRecords}
-        liveEntryCount={displayedLiveRecords.length}
+        entries={[...liveEntries, ...records]}
+        liveEntryCount={liveEntries.length}
+        entriesSinceClear={entriesSinceClear}
         loading={loading}
         selectedEntry={
           isLogConsoleSelectedLogOpened
@@ -309,12 +311,7 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
             </>
           )}
         </StyledSummary>
-        {isDefined(clearedAt) && (
-          <LightButton emphasis="subtle" onClick={reloadHistory}>
-            {t`Reload history`}
-          </LightButton>
-        )}
-        {isLive && (
+        {isLive && !isDefined(error) ? (
           <>
             <IconButton
               size="sm"
@@ -335,17 +332,18 @@ export const LogConsoleResults = ({ source }: LogConsoleResultsProps) => {
               <IconEraser />
             </IconButton>
           </>
+        ) : (
+          <IconButton
+            size="sm"
+            variant="ghost"
+            tooltip={t`Refresh`}
+            aria-label={t`Refresh`}
+            loading={loading}
+            onClick={refreshLogs}
+          >
+            <IconRefresh />
+          </IconButton>
         )}
-        <IconButton
-          size="sm"
-          variant="ghost"
-          tooltip={t`Refresh`}
-          aria-label={t`Refresh`}
-          loading={loading}
-          onClick={refreshLogs}
-        >
-          <IconRefresh />
-        </IconButton>
       </StyledToolbar>
       {renderLogs()}
     </StyledResults>

@@ -5,7 +5,6 @@ import { type RequestParams, type Sink } from 'graphql-sse';
 import { http, HttpResponse } from 'msw';
 import { type ReactNode, useEffect } from 'react';
 import { expect, screen, userEvent, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -192,14 +191,8 @@ const meta: Meta<PageDecoratorArgs> = {
         metadataGraphql.query<EventLogsQuery, EventLogsQueryVariables>(
           getOperationName(GET_EVENT_LOGS) ?? '',
           ({ variables }) => {
-            const rangeStart = variables.input.filters?.dateRange?.start;
-            const isRangeStartingNow =
-              isDefined(rangeStart) &&
-              Date.now() - Date.parse(rangeStart) < 60_000;
             const records = (
-              isRangeStartingNow
-                ? []
-                : (mockedEventLogRecordsByTable[variables.input.table] ?? [])
+              mockedEventLogRecordsByTable[variables.input.table] ?? []
             ).filter((record) =>
               (variables.input.filters?.fieldFilters ?? []).every(
                 ({ field, operand, values }) =>
@@ -383,7 +376,7 @@ export const AppLogsLive: Story = {
   },
 };
 
-export const ClearAndReloadHistory: Story = {
+export const Clear: Story = {
   beforeEach: () => {
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
     jotaiStore.set(
@@ -392,25 +385,29 @@ export const ClearAndReloadHistory: Story = {
       }),
       'app-logs',
     );
+    jotaiStore.set(sseClientState.atom, fakeSseClient as never);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    const getTextUnderHeader = () => {
+      const { left, right, bottom, height } = canvas
+        .getByText('Message')
+        .getBoundingClientRect();
+
+      return document.elementFromPoint((left + right) / 2, bottom + height / 2)
+        ?.textContent;
+    };
+
     await canvas.findByText('8 logs', {}, { timeout: 5000 });
     await userEvent.click(canvas.getByRole('button', { name: 'Clear' }));
 
-    await canvas.findByText('No event logs found');
-    await canvas.findByText('0 logs');
+    expect(getTextUnderHeader()).toBe('');
 
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Reload history' }),
-    );
+    emitEventLogsLive([firstLiveApplicationLog, secondLiveApplicationLog]);
+    await canvas.findByText('Lead score for Lena Park: 64');
 
-    await canvas.findByText('Received 9 invoices from Stripe');
-    await canvas.findByText('8 logs');
-    expect(
-      canvas.queryByRole('button', { name: 'Reload history' }),
-    ).not.toBeInTheDocument();
+    expect(getTextUnderHeader()).toBe('Lead score for Lena Park: 64');
   },
 };
 

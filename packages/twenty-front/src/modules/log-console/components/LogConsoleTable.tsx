@@ -48,10 +48,20 @@ const StyledLoadMoreTrigger = styled.div`
   height: 1px;
 `;
 
+const StyledScrollWrapper = styled(ScrollWrapper)`
+  container-type: size;
+`;
+
+const StyledEntriesSinceClear = styled.div`
+  min-height: calc(100cqh - ${themeCssVariables.spacing[8]});
+  padding-top: ${themeCssVariables.spacing[2]};
+`;
+
 type LogConsoleTableProps = {
   source: LogConsoleSource;
   entries: EventLogRecord[];
   liveEntryCount: number;
+  entriesSinceClear?: EventLogRecord[];
   loading: boolean;
   selectedEntry?: EventLogRecord;
   onLoadMore: () => void;
@@ -62,6 +72,7 @@ export const LogConsoleTable = ({
   source,
   entries,
   liveEntryCount,
+  entriesSinceClear,
   loading,
   selectedEntry,
   onLoadMore,
@@ -95,8 +106,34 @@ export const LogConsoleTable = ({
 
   const isInitialLoading = loading && entries.length === 0;
 
+  const renderEntryRow = (entry: EventLogRecord, key: number) => (
+    <StyledEntryRow
+      key={key}
+      gridTemplateColumns={gridTemplateColumns}
+      severity={source.getSeverity?.(entry)}
+      isSelected={
+        isDefined(selectedEntry) && isDeeplyEqual(entry, selectedEntry)
+      }
+      onClick={() => onEntryClick(entry)}
+    >
+      {columns.map((column) => (
+        <TableCell
+          key={column.id}
+          align={column.align}
+          gap={themeCssVariables.spacing[2]}
+          overflow="hidden"
+          whiteSpace="nowrap"
+        >
+          {column.renderCell(entry)}
+        </TableCell>
+      ))}
+    </StyledEntryRow>
+  );
+
   return (
-    <ScrollWrapper componentInstanceId={LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID}>
+    <StyledScrollWrapper
+      componentInstanceId={LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID}
+    >
       <Table>
         <StyledHeaderRow
           gridTemplateColumns={gridTemplateColumns}
@@ -108,6 +145,13 @@ export const LogConsoleTable = ({
             </TableHeader>
           ))}
         </StyledHeaderRow>
+        {isDefined(entriesSinceClear) && (
+          <StyledEntriesSinceClear>
+            {entriesSinceClear.map((entry, entryIndex) =>
+              renderEntryRow(entry, entriesSinceClear.length - entryIndex),
+            )}
+          </StyledEntriesSinceClear>
+        )}
         {isInitialLoading ? (
           <SkeletonTheme
             baseColor={theme.background.tertiary}
@@ -128,32 +172,12 @@ export const LogConsoleTable = ({
             ))}
           </SkeletonTheme>
         ) : (
-          entries.map((entry, entryIndex) => (
-            <StyledEntryRow
-              key={liveEntryCount - entryIndex}
-              gridTemplateColumns={gridTemplateColumns}
-              severity={source.getSeverity?.(entry)}
-              isSelected={
-                isDefined(selectedEntry) && isDeeplyEqual(entry, selectedEntry)
-              }
-              onClick={() => onEntryClick(entry)}
-            >
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  gap={themeCssVariables.spacing[2]}
-                  overflow="hidden"
-                  whiteSpace="nowrap"
-                >
-                  {column.renderCell(entry)}
-                </TableCell>
-              ))}
-            </StyledEntryRow>
-          ))
+          entries.map((entry, entryIndex) =>
+            renderEntryRow(entry, liveEntryCount - entryIndex),
+          )
         )}
       </Table>
       <StyledLoadMoreTrigger ref={loadMoreTriggerRef} />
-    </ScrollWrapper>
+    </StyledScrollWrapper>
   );
 };
