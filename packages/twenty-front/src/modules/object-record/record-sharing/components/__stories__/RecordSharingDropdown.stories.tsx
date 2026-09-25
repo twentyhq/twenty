@@ -29,21 +29,25 @@ const SharingStory = ({
         id: 'owner',
         name: { firstName: 'Alex', lastName: 'Morgan' },
         userEmail: 'alex@example.com',
+        userId: 'owner-user',
       },
       {
         id: 'member',
         name: { firstName: 'Phil', lastName: 'Schiler' },
         userEmail: 'phil@example.com',
+        userId: 'member-user',
       },
       {
         id: 'invite',
         name: { firstName: 'Jane', lastName: 'Austen' },
         userEmail: 'jane.austen@example.com',
+        userId: 'invite-user',
       },
       {
         id: 'long',
         name: { firstName: 'Alexandra', lastName: 'Montgomery-Wellington' },
         userEmail: 'alexandra.montgomery.wellington@example.com',
+        userId: 'long-user',
       },
     ];
     store.set(currentWorkspaceMembersState.atom, members);
