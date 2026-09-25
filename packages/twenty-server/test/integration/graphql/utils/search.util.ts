@@ -1,4 +1,4 @@
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
@@ -33,7 +33,7 @@ export const search = async ({
     filter,
   });
 
-  const response = await makeGraphqlAPIRequest(graphqlOperation, accessToken);
+  const response = await makeGraphqlApiRequest(graphqlOperation, accessToken);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

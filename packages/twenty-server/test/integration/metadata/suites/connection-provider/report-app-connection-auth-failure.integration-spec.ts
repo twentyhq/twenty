@@ -5,7 +5,7 @@ import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/g
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type Manifest } from 'twenty-shared/application';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -130,7 +130,7 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
     reason?: string;
     token?: string;
   }) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       {
         query: REPORT_AUTH_FAILURE_MUTATION,
         variables: { input: { id, reason } },

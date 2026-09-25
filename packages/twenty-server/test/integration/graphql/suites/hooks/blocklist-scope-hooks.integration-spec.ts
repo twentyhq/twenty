@@ -8,8 +8,8 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
@@ -69,7 +69,7 @@ describe('blocklist scope hooks', () => {
     });
 
   const createAsMember = (input: Record<string, unknown>) =>
-    makeGraphqlAPIRequestWithMemberRole(
+    makeGraphqlApiRequestWithMemberRole(
       createOneOperationFactory({
         objectMetadataSingularName: 'blocklist',
         gqlFields: BLOCKLIST_GQL_FIELDS,
@@ -78,19 +78,19 @@ describe('blocklist scope hooks', () => {
     );
 
   const upsertAsMember = (data: Record<string, unknown>) =>
-    makeGraphqlAPIRequestWithMemberRole({
+    makeGraphqlApiRequestWithMemberRole({
       query: CREATE_BLOCKLISTS_WITH_UPSERT,
       variables: { data: [data], upsert: true },
     });
 
   const upsertAsAdmin = (data: Record<string, unknown>) =>
-    makeGraphqlAPIRequest({
+    makeGraphqlApiRequest({
       query: CREATE_BLOCKLISTS_WITH_UPSERT,
       variables: { data: [data], upsert: true },
     });
 
   const deleteAsAdmin = (recordId: string) =>
-    makeGraphqlAPIRequest(
+    makeGraphqlApiRequest(
       deleteOneOperationFactory({
         objectMetadataSingularName: 'blocklist',
         gqlFields: BLOCKLIST_GQL_FIELDS,
@@ -100,7 +100,7 @@ describe('blocklist scope hooks', () => {
 
   const restoreOne = (
     recordId: string,
-    request: typeof makeGraphqlAPIRequest = makeGraphqlAPIRequest,
+    request: typeof makeGraphqlApiRequest = makeGraphqlApiRequest,
   ) =>
     request(
       restoreOneOperationFactory({
@@ -112,7 +112,7 @@ describe('blocklist scope hooks', () => {
 
   afterAll(async () => {
     for (const blocklistId of blocklistIds) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'blocklist',
           gqlFields: 'id',
@@ -245,7 +245,7 @@ describe('blocklist scope hooks', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
     });
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'blocklist',
         gqlFields: BLOCKLIST_GQL_FIELDS,
@@ -267,7 +267,7 @@ describe('blocklist scope hooks', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
     });
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'blocklist',
         gqlFields: BLOCKLIST_GQL_FIELDS,
@@ -288,7 +288,7 @@ describe('blocklist scope hooks', () => {
       scope: BlocklistScope.WORKSPACE,
     });
 
-    const deleteAsMemberResponse = await makeGraphqlAPIRequestWithMemberRole(
+    const deleteAsMemberResponse = await makeGraphqlApiRequestWithMemberRole(
       deleteOneOperationFactory({
         objectMetadataSingularName: 'blocklist',
         gqlFields: BLOCKLIST_GQL_FIELDS,
@@ -309,7 +309,7 @@ describe('blocklist scope hooks', () => {
 
     const restoreAsMemberResponse = await restoreOne(
       id,
-      makeGraphqlAPIRequestWithMemberRole,
+      makeGraphqlApiRequestWithMemberRole,
     );
 
     expectOneNotInternalServerErrorSnapshot({
@@ -357,7 +357,7 @@ describe('blocklist scope hooks', () => {
     }
 
     const bulkResponses = [
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         deleteManyOperationFactory({
           objectMetadataSingularName: 'blocklist',
           objectMetadataPluralName: 'blocklists',
@@ -365,7 +365,7 @@ describe('blocklist scope hooks', () => {
           filter,
         }),
       ),
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyManyOperationFactory({
           objectMetadataSingularName: 'blocklist',
           objectMetadataPluralName: 'blocklists',
@@ -373,7 +373,7 @@ describe('blocklist scope hooks', () => {
           filter,
         }),
       ),
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         restoreManyOperationFactory({
           objectMetadataSingularName: 'blocklist',
           objectMetadataPluralName: 'blocklists',
@@ -381,7 +381,7 @@ describe('blocklist scope hooks', () => {
           filter,
         }),
       ),
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         updateManyOperationFactory({
           objectMetadataSingularName: 'blocklist',
           objectMetadataPluralName: 'blocklists',
@@ -390,7 +390,7 @@ describe('blocklist scope hooks', () => {
           data: { handle: uniqueDomainHandle() },
         }),
       ),
-      await makeGraphqlAPIRequest({
+      await makeGraphqlApiRequest({
         query: MERGE_BLOCKLISTS,
         variables: { ids: mergeSourceIds, conflictPriorityIndex: 0 },
       }),

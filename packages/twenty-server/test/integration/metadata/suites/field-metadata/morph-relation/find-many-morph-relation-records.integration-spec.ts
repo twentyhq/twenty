@@ -1,5 +1,5 @@
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -215,7 +215,7 @@ xdescribe('findMany morph relation records', () => {
       objectMetadataPluralName: 'opportunitiesForMorphRelation',
       gqlFields: MANY_TO_ONE_GQL_FIELDS,
     });
-    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data).toBeDefined();
