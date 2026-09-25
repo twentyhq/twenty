@@ -47,8 +47,8 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | --- | --- |
 | Field controls | Forwarded events lack the native event used for `composedPath`. React serializes boolean `aria-invalid` as an empty string; Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
 | Tabs | React cannot mount without `compareDocumentPosition`; Preact activation fails on the missing native event for `composedPath`. |
-| Radio, RadioGroup | Unselected radios need the `:disabled` pseudo-class, which the worker selector engine does not support; React also orders radio groups with `compareDocumentPosition`. |
-| SegmentedControl | Ordering its radios needs `compareDocumentPosition`, so React cannot mount it. In the Preact input gallery the `Radio` failure skips that ordering at mount, so the control fails on first focus instead. Selecting would also need `PointerEvent` and native radio activation. |
+| RadioGroup | Ordering its radios needs `compareDocumentPosition`, which the sandbox DOM does not implement. |
+| SegmentedControl | Ordering its radios needs `compareDocumentPosition`, so React cannot mount it. In the Preact input gallery it mounts and fails on first focus instead. Selecting would also need `PointerEvent` and native radio activation. |
 | Popover, AlertDialog | Opening fails while reading unavailable viewport width data. |
 | Menu, Select | Opening fails on viewport data and/or missing `nativeEvent.pointerType`. |
 | Switch | Activation attempts to construct an unavailable `PointerEvent`. |
@@ -56,11 +56,11 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Responsive hooks | The sandbox has no `window.matchMedia`, so `useIsMobile` and `useIsTouchDevice` return `false` whatever the host viewport or input. The fixture asserts that fallback and must assert host-derived values once a media-query bridge lands. |
 
 The worker DOM now provides `Element.matches`, `closest`, and `querySelector`
-backed by a port of `css-what` and `css-select`. The selector engine handles
-custom element tags and relative selectors. `TooltipPreact` therefore covers
-hover opening and Escape dismissal. Pointer leave still needs the
-`Node.contains` fix and document-level `mousemove` delivery for the safe
-polygon, and the compound tooltip's title and description are not covered yet.
+backed by `css-select`, which matches the sandbox's custom element tags by
+their HTML tag names. `TooltipPreact` therefore covers hover opening and Escape
+dismissal. Pointer leave still needs the `Node.contains` fix and document-level
+`mousemove` delivery for the safe polygon, and the compound tooltip's title and
+description are not covered yet.
 
 Once the remaining gaps are fixed, extend the stories to verify selection,
 disabled items, keyboard navigation, and overlay content, dismissal, and focus

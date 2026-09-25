@@ -7,7 +7,7 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 import { createGalleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/createGalleryRenderTest';
 
 export const inputPreactTest: TwentyUiGalleryPlayFunction = async (context) => {
-  await createGalleryRenderTest({ expectedFailedComponents: ['Radio'] })(
+  await createGalleryRenderTest({ expectedFailedComponents: ['RadioGroup'] })(
     context,
   );
 
@@ -27,7 +27,7 @@ export const inputPreactTest: TwentyUiGalleryPlayFunction = async (context) => {
 
     expect(status).toHaveAttribute(
       'data-failed-names',
-      'Radio, SegmentedControl',
+      'RadioGroup, SegmentedControl',
     );
     expect(status).toHaveAttribute(
       'data-failed-messages',

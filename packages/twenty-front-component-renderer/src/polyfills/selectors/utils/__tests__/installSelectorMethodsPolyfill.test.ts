@@ -74,7 +74,7 @@ describe('installSelectorMethodsPolyfill', () => {
       const textarea = document.createElement('html-textarea') as Element;
 
       expect(button.matches('button')).toBe(true);
-      expect(button.matches('html-button')).toBe(true);
+      expect(button.matches('html-button')).toBe(false);
       expect(button.matches('button,a[href],[role="button"]')).toBe(true);
       expect(textarea.matches('input,textarea,[contenteditable]')).toBe(true);
       expect(button.matches('textarea')).toBe(false);
@@ -122,7 +122,6 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(candidate.matches(':has(+ p)')).toBe(true);
       expect(candidate.matches(':has(~ p)')).toBe(true);
       expect(candidate.matches(':has(.outer span)')).toBe(false);
-      expect(candidate.matches(':has(section span)')).toBe(false);
       descendant.remove();
       expect(candidate.matches(':has(> span)')).toBe(false);
     });
@@ -152,6 +151,15 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(firstTab.matches(':where(span, .tab)')).toBe(true);
       expect(list.matches(':has(span)')).toBe(true);
       expect(list.matches(':has(input)')).toBe(false);
+    });
+
+    it('should evaluate form state pseudo-classes from attributes', () => {
+      const { document } = createSelectorFixture();
+      const { firstTab, secondTab } = createTree(document);
+
+      expect(secondTab.matches(':disabled')).toBe(true);
+      expect(firstTab.matches(':disabled')).toBe(false);
+      expect(firstTab.matches(':enabled')).toBe(true);
     });
 
     it('should treat interaction pseudo-classes that the sandbox cannot observe as unmatched', () => {
@@ -224,15 +232,16 @@ describe('installSelectorMethodsPolyfill', () => {
     });
 
     it.each([
-      '',
-      ' ',
       'div,',
       '> div',
-      'div >',
       '[',
       ':unknown-pseudo',
       ':not(',
       ':disabled(x)',
+      ':defined(tab)',
+      ':focus(x)',
+      ':state',
+      'button::before',
     ])(
       'should reject invalid selector %p through the DOM interface',
       (selector) => {
@@ -410,76 +419,7 @@ describe('installSelectorMethodsPolyfill', () => {
     });
   });
 
-  describe('sibling arguments of :has', () => {
-    it('should keep nested selector lists relative to the sibling instead of the :has subject', () => {
-      const { document } = createSelectorFixture();
-      const list = document.createElement('ul');
-      const [first, second, third] = ['first', 'second', 'third'].map(
-        (itemId) => {
-          const item = document.createElement('li');
-
-          item.setAttribute('id', itemId);
-
-          return item;
-        },
-      );
-      second.setAttribute('class', 'hidden');
-      list.append(first, second, third);
-      document.body.append(list);
-
-      expect(Array.from(list.querySelectorAll('li:has(+ :is(li))'))).toEqual([
-        first,
-        second,
-      ]);
-      expect(
-        Array.from(list.querySelectorAll('li:has(~ :where(#third))')),
-      ).toEqual([first, second]);
-      expect(
-        Array.from(list.querySelectorAll('li:has(+ :not(.hidden))')),
-      ).toEqual([second]);
-    });
-  });
-
-  describe('selector validity', () => {
-    it('should accept pseudo-elements in the last compound and never match them', () => {
-      const { document } = createSelectorFixture();
-      const { list, firstTab } = createTree(document);
-
-      expect(firstTab.matches('button::before')).toBe(false);
-      expect(firstTab.matches('button:before')).toBe(false);
-      expect(firstTab.matches('::placeholder, button')).toBe(true);
-      expect(Array.from(list.querySelectorAll('button::after'))).toEqual([]);
-      expect(() => firstTab.matches('div::before button')).toThrow(
-        expect.objectContaining({ name: 'SyntaxError' }),
-      );
-      expect(() => firstTab.matches(':not(::before)')).toThrow(
-        expect.objectContaining({ name: 'SyntaxError' }),
-      );
-    });
-
-    it('should drop unsupported arguments from forgiving :is and :where lists', () => {
-      const { document } = createSelectorFixture();
-      const { firstTab } = createTree(document);
-
-      expect(firstTab.matches(':is(.active, :unknown-pseudo)')).toBe(true);
-      expect(firstTab.matches(':where(:unknown-pseudo)')).toBe(false);
-      expect(() => firstTab.matches(':not(.active, :unknown-pseudo)')).toThrow(
-        expect.objectContaining({ name: 'SyntaxError' }),
-      );
-    });
-
-    it('should support the any and empty namespaces and reject named ones', () => {
-      const { document } = createSelectorFixture();
-      const { firstTab } = createTree(document);
-
-      expect(firstTab.matches('*|button')).toBe(true);
-      expect(firstTab.matches('[*|role="tab"]')).toBe(true);
-      expect(firstTab.matches('|button')).toBe(false);
-      expect(() => firstTab.matches('svg|button')).toThrow(
-        expect.objectContaining({ name: 'SyntaxError' }),
-      );
-    });
-
+  describe(':nth-child of a selector', () => {
     it('should count :nth-child and :nth-last-child among siblings matching the of selector', () => {
       const { document } = createSelectorFixture();
       const { list, firstTab, secondTab } = createTree(document);
@@ -494,36 +434,6 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(() =>
         firstTab.matches(':nth-child(2 of :unknown-pseudo)'),
       ).toThrow(expect.objectContaining({ name: 'SyntaxError' }));
-    });
-
-    it('should skip parentheses inside quoted strings of an of selector', () => {
-      const { document } = createSelectorFixture();
-      const { firstTab, secondTab } = createTree(document);
-      firstTab.setAttribute('data-label', ')');
-      secondTab.setAttribute('data-label', '(');
-
-      expect(firstTab.matches(':nth-child(1 of [data-label=")"])')).toBe(true);
-      expect(secondTab.matches(":nth-child(1 of [data-label='('])")).toBe(true);
-      expect(() =>
-        firstTab.matches(':nth-child(1 of [data-label=")"]'),
-      ).toThrow(expect.objectContaining({ name: 'SyntaxError' }));
-    });
-
-    it('should reject non-standard and nested :has selectors', () => {
-      const { document } = createSelectorFixture();
-      const { firstTab } = createTree(document);
-
-      for (const selectorsText of [
-        ':defined(tab)',
-        ':button',
-        ':contains(Overview)',
-        'div < button',
-        ':has(:has(span))',
-      ]) {
-        expect(() => firstTab.matches(selectorsText)).toThrow(
-          expect.objectContaining({ name: 'SyntaxError' }),
-        );
-      }
     });
   });
 

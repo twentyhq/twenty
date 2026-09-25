@@ -24,6 +24,7 @@
     "@remote-dom/core": "^1.10.1",
     "@remote-dom/react": "^1.2.2",
     "@sniptt/guards": "^0.2.0",
+    "css-select": "^7.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-error-boundary": "^4.0.11",

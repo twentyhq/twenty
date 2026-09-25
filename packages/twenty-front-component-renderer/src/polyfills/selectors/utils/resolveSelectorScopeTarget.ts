@@ -5,7 +5,7 @@ import { isSelectorElementNode } from '@/polyfills/selectors/utils/isSelectorEle
 
 export const resolveSelectorScopeTarget = (
   scopeElement: SelectorElementLike,
-): object | null =>
+): SelectorElementLike | undefined =>
   isDocumentNode(scopeElement)
-    ? (collectChildNodes(scopeElement).find(isSelectorElementNode) ?? null)
+    ? collectChildNodes(scopeElement).find(isSelectorElementNode)
     : scopeElement;

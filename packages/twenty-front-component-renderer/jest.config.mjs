@@ -14,7 +14,9 @@ const jestConfig = {
   preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',
   setupFiles: ['<rootDir>/jest.setup.mjs'],
-  transformIgnorePatterns: ['node_modules/(?!@quilted/)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(@quilted|boolbase|css-select|css-what|dom-serializer|domelementtype|domhandler|domutils|entities|nth-check)/)',
+  ],
   transform: {
     '^.+\\.(mjs|[tj]sx?)$': [
       '@swc/jest',
