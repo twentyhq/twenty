@@ -85,7 +85,8 @@ const pageLayoutWithTranscriptWidget: PageLayout = {
       applicationId: '',
       universalIdentifier: '20202020-0000-0000-0000-000000000002',
       id: CALL_RECORDING_TAB_ID,
-      title: 'Call Recording',
+      title: 'Transcript',
+      icon: 'IconBlockquote',
       position: 0,
       pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       widgets: [transcriptWidget],
@@ -871,7 +872,7 @@ export const NoRecording: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('No Call Recording');
+    await canvas.findByText('No Transcript');
   },
 };
 

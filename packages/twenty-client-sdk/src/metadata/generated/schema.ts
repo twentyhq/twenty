@@ -3010,7 +3010,7 @@ export interface RecordExport {
     filename: Scalars['String']
     progress: Scalars['Int']
     errorMessage?: Scalars['String']
-    downloadUrl?: Scalars['String']
+    downloadPath?: Scalars['String']
     __typename: 'RecordExport'
 }
 
@@ -6891,7 +6891,7 @@ export interface RecordExportGenqlSelection{
     filename?: boolean | number
     progress?: boolean | number
     errorMessage?: boolean | number
-    downloadUrl?: boolean | number
+    downloadPath?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

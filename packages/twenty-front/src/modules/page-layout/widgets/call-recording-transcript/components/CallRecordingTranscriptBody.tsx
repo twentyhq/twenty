@@ -68,8 +68,8 @@ export const CallRecordingTranscriptBody = ({
     return (
       <CallRecordingWidgetEmptyStateDisplay
         animatedPlaceholderType="noCallRecording"
-        title={t`No Call Recording`}
-        subTitle={t`No call recording exists for this calendar event yet.`}
+        title={t`No Transcript`}
+        subTitle={t`No transcript is available for this calendar event yet.`}
       />
     );
   }
