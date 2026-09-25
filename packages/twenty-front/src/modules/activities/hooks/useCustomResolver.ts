@@ -28,6 +28,7 @@ export const useCustomResolver = <
   objectName,
   activityTargetableObject,
   pageSize,
+  extraVariables,
 }: {
   query:
     | DocumentNode
@@ -36,6 +37,7 @@ export const useCustomResolver = <
   objectName: string;
   activityTargetableObject: ActivityTargetableObject;
   pageSize: number;
+  extraVariables?: OperationVariables;
 }): {
   error: ErrorLike | undefined;
   data: CustomResolverQueryResult<T> | undefined;
@@ -46,14 +48,10 @@ export const useCustomResolver = <
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const [page, setPage] = useState({
-    pageNumber: 1,
-    hasNextPage: true,
-  });
-
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const queryVariables = {
+    ...extraVariables,
     objectNameSingular: activityTargetableObject.targetObjectNameSingular,
     recordId: activityTargetableObject.id,
     page: 1,
@@ -69,46 +67,29 @@ export const useCustomResolver = <
 
   const firstQueryLoading = loading && !data;
 
+  const loadedRecordsCount = data?.[queryName]?.[objectName]?.length ?? 0;
+
   const fetchMoreRecords = async () => {
-    if (page.hasNextPage && !isFetchingMore && !firstQueryLoading) {
+    if (!isFetchingMore && !firstQueryLoading) {
       setIsFetchingMore(true);
 
       await fetchMore({
         variables: {
           ...queryVariables,
-          page: page.pageNumber + 1,
+          // Refetches and variable changes replace the loaded pages, so the
+          // next page must follow what is loaded rather than a stored counter
+          page: Math.floor(loadedRecordsCount / pageSize) + 1,
         },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult?.[queryName]?.[objectName]?.length) {
-            setPage((page) => ({
-              ...page,
-              hasNextPage: false,
-            }));
-
-            return {
-              [queryName]: {
-                ...prev?.[queryName],
-                [objectName]: [...(prev?.[queryName]?.[objectName] ?? [])],
-              },
-            };
-          }
-
-          return {
-            [queryName]: {
-              ...prev?.[queryName],
-              [objectName]: [
-                ...(prev?.[queryName]?.[objectName] ?? []),
-                ...(fetchMoreResult?.[queryName]?.[objectName] ?? []),
-              ],
-            },
-          };
-        },
+        updateQuery: (prev, { fetchMoreResult }) => ({
+          [queryName]: {
+            ...prev?.[queryName],
+            [objectName]: [
+              ...(prev?.[queryName]?.[objectName] ?? []),
+              ...(fetchMoreResult?.[queryName]?.[objectName] ?? []),
+            ],
+          },
+        }),
       });
-
-      setPage((page) => ({
-        ...page,
-        pageNumber: page.pageNumber + 1,
-      }));
 
       setIsFetchingMore(false);
     }
