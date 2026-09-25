@@ -59,9 +59,12 @@ release flag; connecting an account only stores its credentials for future use.
 
 The AI and workflow action lists transcripts for scheduled meetings organized by
 the connected Microsoft account. It reads one calendar page at a time and returns
-`nextPageUrl` for continuation. It does not import transcript content or write CRM
-records. Both `IS_TRANSCRIPT_IMPORT_ENABLED` and `TEAMS_TRANSCRIPTS_ENABLED` must
-be enabled before the action can access connections or Microsoft Graph.
+`nextPageUrl` for continuation. A transcript is listed with the scheduled
+occurrence it was created during, give or take 15 minutes, so a recurring
+meeting lists only the transcripts of its occurrences in the requested window.
+It does not import transcript content or write CRM records. Both
+`IS_TRANSCRIPT_IMPORT_ENABLED` and `TEAMS_TRANSCRIPTS_ENABLED` must be enabled
+before the action can access connections or Microsoft Graph.
 
 ## Bot server variables
 

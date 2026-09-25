@@ -12,8 +12,10 @@ import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/trans
 import { TEAMS_LIST_ORGANIZER_TRANSCRIPTS_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { getMeetingByJoinUrl } from 'src/features/transcripts/logic-functions/utils/get-meeting-by-join-url.util';
 import { getTeamsConnectionForRequestOrThrow } from 'src/features/transcripts/logic-functions/utils/get-teams-connection-for-request-or-throw.util';
+import { isTranscriptDuringOccurrence } from 'src/features/transcripts/logic-functions/utils/is-transcript-during-occurrence.util';
 import { listMeetingTranscripts } from 'src/features/transcripts/logic-functions/utils/list-meeting-transcripts.util';
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page.util';
+import { resolveTeamsCalendarPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-page-url-or-throw.util';
 import { resolveTeamsMeetingWindowOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-meeting-window-or-throw.util';
 import { toErrorMessage } from 'src/features/transcripts/logic-functions/utils/to-error-message.util';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
@@ -77,18 +79,23 @@ export const teamsListOrganizerTranscriptsHandler = async (
   }
 
   try {
-    const window = resolveTeamsMeetingWindowOrThrow(parameters);
-    const connection = await getTeamsConnectionForRequestOrThrow(context);
-    const page = await listTeamsCalendarPage({
-      accessToken: connection.accessToken,
-      window,
+    const calendarPageUrl = resolveTeamsCalendarPageUrlOrThrow({
+      window: resolveTeamsMeetingWindowOrThrow(parameters),
       ...(isNonEmptyString(parameters.nextPageUrl)
         ? { nextPageUrl: parameters.nextPageUrl }
         : {}),
     });
+    const connection = await getTeamsConnectionForRequestOrThrow(context);
+    const page = await listTeamsCalendarPage({
+      accessToken: connection.accessToken,
+      url: calendarPageUrl,
+    });
+    const joinWebUrls = [
+      ...new Set(page.occurrences.map((occurrence) => occurrence.joinWebUrl)),
+    ];
     const transcripts: ListedTranscript[] = [];
 
-    for (const joinWebUrl of page.joinWebUrls) {
+    for (const joinWebUrl of joinWebUrls) {
       const meeting = await getMeetingByJoinUrl({
         accessToken: connection.accessToken,
         joinWebUrl,
@@ -98,22 +105,31 @@ export const teamsListOrganizerTranscriptsHandler = async (
         continue;
       }
 
+      const occurrences = page.occurrences.filter(
+        (occurrence) => occurrence.joinWebUrl === joinWebUrl,
+      );
       const meetingTranscripts = await listMeetingTranscripts({
         accessToken: connection.accessToken,
         meetingId: meeting.id,
       });
 
       transcripts.push(
-        ...meetingTranscripts.map((transcript) => ({
-          transcriptId: transcript.id,
-          meetingId: transcript.meetingId,
-          ...(isNonEmptyString(meeting.subject)
-            ? { subject: meeting.subject }
-            : {}),
-          ...(isNonEmptyString(transcript.createdDateTime)
-            ? { createdDateTime: transcript.createdDateTime }
-            : {}),
-        })),
+        ...meetingTranscripts
+          .filter((transcript) =>
+            occurrences.some((occurrence) =>
+              isTranscriptDuringOccurrence({ transcript, occurrence }),
+            ),
+          )
+          .map((transcript) => ({
+            transcriptId: transcript.id,
+            meetingId: transcript.meetingId,
+            ...(isNonEmptyString(meeting.subject)
+              ? { subject: meeting.subject }
+              : {}),
+            ...(isNonEmptyString(transcript.createdDateTime)
+              ? { createdDateTime: transcript.createdDateTime }
+              : {}),
+          })),
       );
     }
 
