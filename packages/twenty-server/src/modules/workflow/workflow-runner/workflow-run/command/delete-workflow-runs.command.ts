@@ -104,7 +104,6 @@ export class DeleteWorkflowRunsCommand extends ProvisionedWorkspaceCommandRunner
               },
               order: { id: 'ASC' },
               take: RECORD_DELETE_BATCH_SIZE,
-              // Soft-deleted runs older than the cutoff are deleted too
               withDeleted: true,
             });
 

@@ -183,7 +183,6 @@ describe('CalendarFetchEventsService', () => {
         ([{ calendarEventIds }]) => calendarEventIds.length,
       ),
     ).toEqual([RECORD_DELETE_BATCH_SIZE, RECORD_DELETE_BATCH_SIZE, 200]);
-    // Each full chunk takes one more read to confirm it is exhausted
     expect(runInWorkspaceTransaction).toHaveBeenCalledTimes(5);
     deleteOrphanedCalendarEvents.mock.invocationCallOrder.forEach(
       (orphanCleanupOrder, batchIndex) =>

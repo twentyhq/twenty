@@ -87,8 +87,6 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
     return destroyedRecords;
   }
 
-  // The records are counted with the destroy's own filter and row-level
-  // predicates, then only the records counted can be destroyed
   private async destroyWithinRecordLimitOrThrow({
     queryRunnerContext,
     filter,
@@ -192,7 +190,6 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
 
     args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
 
-    // Checked before the pre-query hooks, which act on these ids first
     if ((args.filter.id?.in?.length ?? 0) > QUERY_MAX_RECORDS) {
       throw buildTooManyRecordsToDestroyException();
     }

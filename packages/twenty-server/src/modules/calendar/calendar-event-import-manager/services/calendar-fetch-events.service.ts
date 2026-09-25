@@ -141,7 +141,6 @@ export class CalendarFetchEventsService {
                   },
                   select: { id: true, calendarEventId: true, deletedAt: true },
                   take: RECORD_DELETE_BATCH_SIZE,
-                  // Soft-deleted associations of cancelled events are deleted too
                   withDeleted: true,
                 });
 
@@ -159,10 +158,7 @@ export class CalendarFetchEventsService {
           break;
         }
 
-        // The cleaner runs its own transaction, so it only sees this batch
-        // once it is committed
         await this.calendarEventCleanerService.deleteOrphanedCalendarEvents({
-          // Only deleting a live association can orphan its event
           calendarEventIds: associationsToDelete
             .filter(({ deletedAt }) => !isDefined(deletedAt))
             .map(({ calendarEventId }) => calendarEventId),

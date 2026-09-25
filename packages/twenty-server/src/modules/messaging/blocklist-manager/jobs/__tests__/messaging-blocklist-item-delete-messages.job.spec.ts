@@ -389,7 +389,6 @@ describe('BlocklistItemDeleteMessagesJob', () => {
       { length: 2 * RECORD_DELETE_BATCH_SIZE + 300 },
       (_, index) => `message-${String(index).padStart(6, '0')}`,
     );
-    // The first 500 messages come back in the last page through a recipient
     const participants = [
       ...matchingMessageIds.map((messageId, index) =>
         buildParticipant({

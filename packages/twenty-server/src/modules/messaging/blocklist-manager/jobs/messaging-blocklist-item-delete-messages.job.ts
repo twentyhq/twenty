@@ -235,8 +235,6 @@ export class BlocklistItemDeleteMessagesJob {
                 ),
               ];
 
-              // A channel has at most one live association per message, so
-              // this never returns more than RECORD_DELETE_BATCH_SIZE rows
               const messageChannelMessageAssociationsToDelete =
                 messageIds.length > 0
                   ? await messageChannelMessageAssociationRepository.find({

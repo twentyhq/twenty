@@ -1486,8 +1486,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(rows.map((row) => String(row.id)));
   }
 
-  // Reads up to `limit` ids of the rows a delete built on this query builder
-  // would remove, with the same permission checks and row-level predicates
   async findDeleteTargetIds({
     selectQueryBuilder,
     rowLevelPermissionsApplied,
@@ -1547,9 +1545,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
 
-    // A delete builds its events from the rows returned by the DELETE itself,
-    // so it only reads them beforehand when inherited permissions or
-    // readability need them while they still exist
     const shouldReadRecordsBefore =
       kind !== 'delete' || this.shouldReadRecordsBeforeDeletion();
 
@@ -1698,7 +1693,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         return [];
       }
 
-      // A row that starts matching after the checks must not be deleted unchecked
       selectQueryBuilder.andWhere({
         id: In(checkedRecords.map(({ id }) => id)),
       });

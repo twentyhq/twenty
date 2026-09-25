@@ -43,7 +43,6 @@ const buildRegExpFromLikePattern = (pattern: string): RegExp =>
     'i',
   );
 
-// NULL never satisfies a comparison, a negation or a pattern, as in SQL
 const matchesCondition = (value: unknown, condition: unknown): boolean => {
   if (!(condition instanceof FindOperator)) {
     return isDefined(condition) ? value === condition : !isDefined(value);
@@ -116,9 +115,6 @@ const selectColumns = (
   ) as InMemoryRecord;
 };
 
-// Mirrors the workspace ORM: reads skip soft-deleted rows unless withDeleted
-// is set, a hard delete matches them, and rows without an ORDER BY come back
-// in storage order
 export const createInMemoryWorkspaceRepository = (
   initialRecords: InMemoryRecord[],
 ) => {

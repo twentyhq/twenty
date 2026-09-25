@@ -122,8 +122,6 @@ export class CalendarSaveEventsService {
             },
           );
 
-          // Removed participants are deleted in batches that each commit on
-          // their own, so a large removal never waits on a single transaction
           await this.calendarEventParticipantService.deleteCalendarEventParticipants(
             participantOperations.participantIdsToDelete,
           );

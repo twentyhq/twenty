@@ -29,7 +29,6 @@ const buildWorkflowRuns = ({
   idPrefix: string;
   deletedAt?: string | null;
 }): InMemoryRecord[] =>
-  // Reversed so storage order differs from id order
   Array.from({ length: count }, (_, index) => ({
     id: `${idPrefix}-${String(index).padStart(6, '0')}`,
     createdAt,

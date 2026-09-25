@@ -52,8 +52,6 @@ const selectIds = async (
   return rows.map(({ id }) => id);
 };
 
-// Events are swallowed so the test does not flood the queues, and each batch
-// is checked from another connection when it is emitted
 const recordDestroyEventBatches = ({
   objectMetadataNameSingular,
   countRemainingRecords,
@@ -68,8 +66,6 @@ const recordDestroyEventBatches = ({
       getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter'),
       'emitDatabaseBatchEvent',
     )
-    // The after-commit hook awaits the emitter, so each check completes before
-    // the next batch starts
     // oxlint-disable-next-line typescript/no-misused-promises
     .mockImplementation(async (databaseBatchEvent) => {
       if (
@@ -96,8 +92,6 @@ const recordDestroyEventBatches = ({
   return destroyEventBatches;
 };
 
-// Other suites may leave matching rows behind, so only the test's own rows
-// are compared
 const getDestroyedIdsAmong = (
   destroyEventBatches: DestroyEventBatch[],
   recordIds: string[],
@@ -109,8 +103,6 @@ const getDestroyedIdsAmong = (
     .filter((recordId) => recordIdSet.has(recordId));
 };
 
-// Fails the given transaction once its work is done, so whatever it deleted
-// is rolled back
 const failTransactionAfterItsWork = (failingTransactionNumber: number) => {
   const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
     'WorkspaceOrmManager',

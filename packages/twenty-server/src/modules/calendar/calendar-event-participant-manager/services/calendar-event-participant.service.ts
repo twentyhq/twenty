@@ -78,7 +78,6 @@ export class CalendarEventParticipantService {
     }
   }
 
-  // Each batch commits on its own, so a failure keeps the batches before it
   public async deleteCalendarEventParticipants(
     participantIds: string[],
   ): Promise<void> {
