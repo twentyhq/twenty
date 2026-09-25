@@ -3138,6 +3138,7 @@ type CampaignAudiencePreviewDTO {
   hardSuppressed: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
+  trackingRefused: Int!
   sendable: Int!
 }
 
@@ -3178,8 +3179,8 @@ type MessageSuppression {
 enum MessageSuppressionReason {
   BOUNCE
   COMPLAINT
-  TRACKING
   UNSUBSCRIBE
+  TRACKING
 }
 
 enum MessageSuppressionSource {
