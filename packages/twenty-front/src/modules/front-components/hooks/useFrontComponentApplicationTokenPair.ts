@@ -134,22 +134,27 @@ export const useFrontComponentApplicationTokenPair = () => {
 
       const currentApplicationTokenPair = store.get(applicationTokenPairAtom);
 
-      const applicationTokenPairPromise = (
-        isDefined(currentApplicationTokenPair)
-          ? renewApplicationTokenPair({
-              applicationId,
-              applicationTokenPair: currentApplicationTokenPair,
-            })
-          : generateApplicationTokenPair(applicationId)
-      )
-        .then((applicationTokenPair) => {
-          store.set(applicationTokenPairAtom, applicationTokenPair);
+      const renewOrGenerateApplicationTokenPair =
+        async (): Promise<FrontComponentApplicationTokenPair> => {
+          try {
+            const applicationTokenPair = isDefined(currentApplicationTokenPair)
+              ? await renewApplicationTokenPair({
+                  applicationId,
+                  applicationTokenPair: currentApplicationTokenPair,
+                })
+              : await generateApplicationTokenPair(applicationId);
 
-          return applicationTokenPair;
-        })
-        .finally(() => {
-          store.set(pendingApplicationTokenPairPromiseAtom, null);
-        });
+            store.set(applicationTokenPairAtom, applicationTokenPair);
+
+            return applicationTokenPair;
+          } finally {
+            store.set(pendingApplicationTokenPairPromiseAtom, null);
+          }
+        };
+
+      // Not awaited: the promise is stored synchronously so callers arriving
+      // while it is pending reuse it instead of starting another request
+      const applicationTokenPairPromise = renewOrGenerateApplicationTokenPair();
 
       store.set(
         pendingApplicationTokenPairPromiseAtom,
