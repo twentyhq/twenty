@@ -1,4 +1,4 @@
-import { type UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
+import { type UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case.type';
 import { type SuccessfulAndFailingTestCases } from 'twenty-shared/testing';
 
 export type FieldMetadataEnumSuccessfulAndFailingTestCases =
