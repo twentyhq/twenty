@@ -7,6 +7,7 @@ const mockGetJobs = jest.fn();
 const mockGetJob = jest.fn();
 const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
+const mockSetGlobalConcurrency = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -14,6 +15,7 @@ jest.mock('bullmq', () => ({
     getJob: mockGetJob,
     add: mockAdd,
     addBulk: mockAddBulk,
+    setGlobalConcurrency: mockSetGlobalConcurrency,
   })),
   Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
   MetricsTime: { ONE_WEEK: 1 },
@@ -23,6 +25,41 @@ jest.mock('uuid', () => ({ v4: () => 'generated-uuid-000000000000000000000' }));
 
 const WAITING_JOB_ID = 'sync-catalog-ws-1-5c98b035-5b09-4550-a4fb-b52056c494d1';
 
+describe('BullMQDriver queue registration', () => {
+  const driver = new BullMQDriver(
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+  );
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('limits record exports across workers', async () => {
+    await driver.register(MessageQueue.recordExportQueue);
+
+    expect(mockSetGlobalConcurrency).toHaveBeenCalledWith(2);
+  });
+
+  it('leaves queues without a global limit unchanged', async () => {
+    await driver.register(MessageQueue.workspaceQueue);
+
+    expect(mockSetGlobalConcurrency).not.toHaveBeenCalled();
+  });
+
+  it('fails registration when the global limit cannot be configured', async () => {
+    mockSetGlobalConcurrency.mockRejectedValueOnce(
+      new Error('Redis unavailable'),
+    );
+
+    await expect(
+      driver.register(MessageQueue.recordExportQueue),
+    ).rejects.toThrow('Redis unavailable');
+  });
+});
+
 describe('BullMQDriver deduplication', () => {
   const driver = new BullMQDriver(
     {} as never,
@@ -31,7 +68,9 @@ describe('BullMQDriver deduplication', () => {
     {} as never,
   );
 
-  driver.register(MessageQueue.workspaceQueue);
+  beforeAll(async () => {
+    await driver.register(MessageQueue.workspaceQueue);
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -141,7 +180,9 @@ describe('BullMQDriver progress', () => {
     {} as never,
   );
 
-  driver.register(MessageQueue.workspaceQueue);
+  beforeAll(async () => {
+    await driver.register(MessageQueue.workspaceQueue);
+  });
 
   it.each([0, 50, { completed: 5, total: 10 }])(
     'persists progress %p through BullMQ and exposes it in job snapshots',

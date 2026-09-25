@@ -15,6 +15,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 export type MessageQueueWorkerConfig = {
   priority: number;
+  globalConcurrency?: number;
   workerOptions: Required<MessageQueueWorkerOptions>;
 };
 
@@ -24,6 +25,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
 > = {
   [MessageQueue.recordExportQueue]: {
     priority: 7,
+    globalConcurrency: 2,
     workerOptions: {
       concurrency: 1,
       lockDuration: 60_000,

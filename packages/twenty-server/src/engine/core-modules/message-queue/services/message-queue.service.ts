@@ -26,11 +26,7 @@ export class MessageQueueService {
   constructor(
     @Inject(QUEUE_DRIVER) protected driver: MessageQueueDriver,
     protected queueName: MessageQueue,
-  ) {
-    if (typeof this.driver.register === 'function') {
-      this.driver.register(queueName);
-    }
-  }
+  ) {}
 
   add<T extends MessageQueueJobData>(
     jobName: string,

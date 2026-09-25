@@ -108,8 +108,15 @@ export class BullMQDriver
     });
   }
 
-  register(queueName: MessageQueue): void {
-    this.queueMap[queueName] = new Queue(queueName, this.options);
+  async register(queueName: MessageQueue): Promise<void> {
+    const queue = new Queue(queueName, this.options);
+    const { globalConcurrency } = MESSAGE_QUEUE_WORKER_CONFIG[queueName];
+
+    this.queueMap[queueName] = queue;
+
+    if (isDefined(globalConcurrency)) {
+      await queue.setGlobalConcurrency(globalConcurrency);
+    }
   }
 
   async onModuleDestroy() {
