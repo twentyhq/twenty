@@ -79,6 +79,19 @@ export class LocalChildProcessRunnerService {
     const code = `
       // Auto-generated. Do not edit.
       const { pathToFileURL } = require('node:url');
+      const { format, inspect } = require('node:util');
+
+      const writeLogRecord = (logLevel, message) => {
+        process.stdout.write(new Date().toISOString() + ' ' + logLevel + ' ' + message + '\\n');
+      };
+
+      const logLevelByConsoleMethod = { log: 'INFO', info: 'INFO', debug: 'DEBUG', warn: 'WARN', error: 'ERROR' };
+
+      for (const [consoleMethod, logLevel] of Object.entries(logLevelByConsoleMethod)) {
+        console[consoleMethod] = (...args) => writeLogRecord(logLevel, format(...args));
+      }
+
+      console.dir = (object, options) => writeLogRecord('INFO', inspect(object, { customInspect: false, ...options }));
 
       (async () => {
         try {

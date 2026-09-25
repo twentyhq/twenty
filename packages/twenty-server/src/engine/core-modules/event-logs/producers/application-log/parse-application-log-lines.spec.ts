@@ -87,7 +87,7 @@ describe('parseApplicationLogLines', () => {
     ]);
   });
 
-  it('should handle a mix of structured and unstructured lines', () => {
+  it('should append unstructured lines to the previous entry', () => {
     const raw = [
       '2024-01-01T00:00:00.000Z INFO structured line',
       'plain unstructured line',
@@ -96,19 +96,31 @@ describe('parseApplicationLogLines', () => {
 
     const result = parseApplicationLogLines(raw);
 
-    expect(result).toHaveLength(3);
+    expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
       timestamp: new Date('2024-01-01T00:00:00.000Z'),
       level: 'INFO',
-      message: 'structured line',
+      message: 'structured line\nplain unstructured line',
     });
-    expect(result[1].level).toBe('INFO');
-    expect(result[1].message).toBe('plain unstructured line');
-    expect(result[2]).toEqual({
+    expect(result[1]).toEqual({
       timestamp: new Date('2024-01-01T00:00:01.000Z'),
       level: 'ERROR',
       message: 'another structured',
     });
+  });
+
+  it('should keep an error stack in one entry', () => {
+    const message = 'Error: boom\n    at main (file:///logic-function.mjs:2:9)';
+
+    expect(
+      parseApplicationLogLines(`2024-01-01T00:00:00.000Z ERROR ${message}`),
+    ).toEqual([
+      {
+        timestamp: new Date('2024-01-01T00:00:00.000Z'),
+        level: 'ERROR',
+        message,
+      },
+    ]);
   });
 
   it('should preserve message content including special characters', () => {

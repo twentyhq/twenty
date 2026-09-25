@@ -65,6 +65,26 @@ describe('parseLambdaLogResult', () => {
     expect(result.logs).toBe('2026-06-02T12:00:00.000Z INFO hello');
   });
 
+  it('strips request-id from every level and maps TRACE to DEBUG and FATAL to ERROR', () => {
+    const raw = [
+      '2026-06-02T12:00:00.000Z\t11111111-1111-1111-1111-111111111111\tERROR\tboom',
+      '2026-06-02T12:00:00.001Z\t11111111-1111-1111-1111-111111111111\tWARN\tslow',
+      '2026-06-02T12:00:00.002Z\t11111111-1111-1111-1111-111111111111\tTRACE\tchecking cache',
+      '2026-06-02T12:00:00.003Z\t11111111-1111-1111-1111-111111111111\tFATAL\tgiving up',
+    ].join('\n');
+
+    const result = parseLambdaLogResult(toBase64(raw));
+
+    expect(result.logs).toBe(
+      [
+        '2026-06-02T12:00:00.000Z ERROR boom',
+        '2026-06-02T12:00:00.001Z WARN slow',
+        '2026-06-02T12:00:00.002Z DEBUG checking cache',
+        '2026-06-02T12:00:00.003Z ERROR giving up',
+      ].join('\n'),
+    );
+  });
+
   it('trims leading and trailing whitespace from logs', () => {
     const raw = [
       'START RequestId: abc',

@@ -14,6 +14,15 @@ const EMPTY_PARSED_LAMBDA_LOG_RESULT: ParsedLambdaLogResult = {
   coldStart: false,
 };
 
+const APPLICATION_LOG_LEVEL_BY_LAMBDA_LOG_LEVEL: Record<string, string> = {
+  TRACE: 'DEBUG',
+  DEBUG: 'DEBUG',
+  INFO: 'INFO',
+  WARN: 'WARN',
+  ERROR: 'ERROR',
+  FATAL: 'ERROR',
+};
+
 export const parseLambdaLogResult = (
   logResult: string | undefined,
 ): ParsedLambdaLogResult => {
@@ -35,8 +44,9 @@ export const parseLambdaLogResult = (
     .join(' ')
     .replace(/^(START|END|REPORT).*\n?/gm, '')
     .replace(
-      /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z) [a-f0-9-]+ INFO /gm,
-      '$1 INFO ',
+      /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z) [a-f0-9-]+ (TRACE|DEBUG|INFO|WARN|ERROR|FATAL) /gm,
+      (_match, timestamp: string, lambdaLogLevel: string) =>
+        `${timestamp} ${APPLICATION_LOG_LEVEL_BY_LAMBDA_LOG_LEVEL[lambdaLogLevel]} `,
     )
     .trim();
 

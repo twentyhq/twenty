@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type ParsedLogLine } from 'src/engine/core-modules/event-logs/producers/application-log/parsed-log-line.type';
 import { stripAnsiEscapes } from 'src/engine/core-modules/event-logs/producers/application-log/strip-ansi-escapes.util';
 
@@ -11,22 +13,28 @@ export const parseApplicationLogLines = (rawLogs: string): ParsedLogLine[] => {
   }
 
   const lines = rawLogs.split('\n').filter(Boolean);
+  const parsedLogLines: ParsedLogLine[] = [];
 
-  return lines.map((line) => {
+  for (const line of lines) {
     const match = line.match(LOG_LINE_REGEX);
+    const previousParsedLogLine = parsedLogLines[parsedLogLines.length - 1];
 
-    if (match) {
-      return {
+    if (isDefined(match)) {
+      parsedLogLines.push({
         timestamp: new Date(match[1]),
         level: match[2],
         message: stripAnsiEscapes(match[3]),
-      };
+      });
+    } else if (isDefined(previousParsedLogLine)) {
+      previousParsedLogLine.message += `\n${stripAnsiEscapes(line)}`;
+    } else {
+      parsedLogLines.push({
+        timestamp: new Date(),
+        level: 'INFO',
+        message: stripAnsiEscapes(line),
+      });
     }
+  }
 
-    return {
-      timestamp: new Date(),
-      level: 'INFO',
-      message: stripAnsiEscapes(line),
-    };
-  });
+  return parsedLogLines;
 };
